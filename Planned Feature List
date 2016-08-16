@@ -1,0 +1,15 @@
+1. Create People blueprint.
+2. Create Region blueprint.
+3. Create Event system based on population's needs/wants.
+4. Create Decision system for player interaction.
+5. Implement player controls.
+6. Implement difficulty settings.
+7. Implement menu system.
+8. Implement Save system.
+9. Implement method to populate region at runtime, and update region, cycle people as neccessary.
+10. Tie in region diversity and population size with difficulty.
+11. Create GUI.
+12. Create Graphics for GUI.
+13. Create Sounds.
+0. Implement Score tracking and Acheivement system.
+0. Implement Multiplayer.
