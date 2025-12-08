@@ -236,6 +236,29 @@
       </p>
       <div id="history"></div>
     </div>
+
+    <!-- Co‑op Session card: allows generating shareable sessions -->
+    <div class="card">
+      <h2>4. Co‑op Session</h2>
+      <p class="muted">Share your Labyrinth session with a friend.</p>
+      <button id="start-coop">Start Co‑op Session</button>
+      <button id="copy-coop" style="display:none;">Copy Link</button>
+      <input
+        id="coop-link"
+        type="text"
+        readonly
+        placeholder="Your co‑op link will appear here"
+        style="width:100%;box-sizing:border-box;margin-top:0.5rem;"
+      />
+    </div>
+
+    <!-- Support card: optional tip jar for those who wish to support the project -->
+    <div class="card">
+      <h2>5. Support the Oracle</h2>
+      <p class="muted">Optional – helps keep the project going.</p>
+      <button id="support-button">☕ Support the Oracle</button>
+      <span id="support-badge" class="pill" style="display:none; margin-left:0.5rem;">★ Supporter Mode</span>
+    </div>
   </div>
 
   <script src="halo.js"></script>

@@ -1,188 +1,90 @@
-// HALO Meta-Oracle skeleton script.
-// This script defines the HALO core engine (dice roll), plugin hooks, and local storage.
-// The detailed symbol definitions (Tarot cards, runes, I Ching, etc.) and deeper synthesis logic
-// should be filled in later.
+// HALO JavaScript for the Labyrinth page
+// This script provides support for monetization (supporter mode) and cooperative sessions.
 
-(function() {
-  const STORAGE_KEY_PROFILE = 'halo_profile_v1';
-  const STORAGE_KEY_READINGS = 'halo_meta_readings_v1';
-  // Replace the placeholder with your actual API Gateway invoke URL once deployed.
-  const API_URL = 'https://YOUR_API_ID.execute-api.YOUR_REGION.amazonaws.com/readings';
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize supporter and co‑op features once the DOM is ready.
+  setupSupport();
+  setupCoop();
+});
 
-  // Axis definitions
-  const AXES = ['Body & Hardware','Mind & Narrative','Heart & Relationships','Domain & Magic'];
-  const VECTORS = ['Ingress','Grow','Stabilize','Release','Transmute','Witness'];
-  const TIMELINES = [
-    'Right now','Today','This week','This month','This season','This year',
-    '1–3 years','3–7 years','7–20 years','Lifetime','Generational','Meta'
-  ];
-  const ARCHETYPES = [
-    'The Fool','The Magician','The Healer','The Warrior','The Shield','The Hermit','The Lover',
-    'The Trickster','The Phoenix','The Architect','The Bridge','The Teacher','The Explorer',
-    'The Mirror','The Guardian','The Key','The Storm','The Weaver','The Sovereign'
-  ];
-
-  // Basic utility to roll a die
-  function rollDie(sides) {
-    return Math.floor(Math.random() * sides) + 1;
+// Supporter functionality: allow users to tip via Ko‑Fi and unlock a badge.
+function setupSupport() {
+  const supportButton = document.getElementById("support-button");
+  const supportBadge = document.getElementById("support-badge");
+  if (!supportButton || !supportBadge) {
+    return;
   }
-
-  // Load/save profile
-  function loadProfile() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY_PROFILE)) || {};
-    } catch (err) {
-      return {};
+  // Display supporter badge if previously activated.
+  const isSupporter = localStorage.getItem("halo_supporter") === "true";
+  if (isSupporter) {
+    supportBadge.style.display = "inline-flex";
+  }
+  supportButton.addEventListener("click", () => {
+    // Open Ko-Fi in a new tab.
+    window.open("https://ko-fi.com/oneinfinity", "_blank", "noopener");
+    // Ask the user if they actually supported. If yes, set supporter flag and show badge.
+    const opted = confirm(
+      "Thank you for considering support! If you just tipped on Ko‑Fi, click OK to enable supporter mode."
+    );
+    if (opted) {
+      localStorage.setItem("halo_supporter", "true");
+      supportBadge.style.display = "inline-flex";
     }
+  });
+}
+
+// Co‑op functionality: generate shareable session codes and handle incoming sessions.
+function setupCoop() {
+  const startBtn = document.getElementById("start-coop");
+  const copyBtn = document.getElementById("copy-coop");
+  const linkInput = document.getElementById("coop-link");
+  if (!startBtn || !copyBtn || !linkInput) {
+    return;
   }
-
-  function saveProfile(profile) {
-    localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));
-  }
-
-  // Load/save readings
-  function loadReadings() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY_READINGS)) || [];
-    } catch (err) {
-      return [];
-    }
-  }
-
-  function saveReadings(readings) {
-    localStorage.setItem(STORAGE_KEY_READINGS, JSON.stringify(readings));
-  }
-
-  // Fire-and-forget sync to server if API_URL is set.
-  async function syncReadingToServer(reading) {
-    if (!API_URL || API_URL.includes('YOUR_API_ID')) {
-      return;
-    }
-    try {
-      const payload = {
-        userId: reading.user?.name || 'anonymous',
-        reading
-      };
-      await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    } catch (err) {
-      console.warn('Sync failed', err);
-    }
-  }
-
-  // Create a new reading
-  function createReading(question, profile) {
-    const timestamp = new Date().toISOString();
-    const d4 = rollDie(4);
-    const d6 = rollDie(6);
-    const d12 = rollDie(12);
-    const d20 = rollDie(20);
-
-    const reading = {
-      id: `${Date.now().toString(36)}-${Math.random().toString(16).slice(2,8)}`,
-      question: question || '',
-      created_at: timestamp,
-      halo: {
-        axis: d4,
-        vector: d6,
-        timeline: d12,
-        archetype: d20,
-        dice: { d4, d6, d12, d20 }
-      },
-      user: profile,
-      // plugin results can be added here in the future
+  // Create a co‑op session link with encoded payload when the user clicks the button.
+  startBtn.addEventListener("click", () => {
+    // Build a simple payload. In a real game, include the state (e.g., RNG seed, moves, etc.).
+    const payload = {
+      version: 1,
+      timestamp: Date.now(),
+      seed: Math.floor(Math.random() * 1e9)
     };
-
-    const readings = loadReadings();
-    readings.push(reading);
-    saveReadings(readings);
-    syncReadingToServer(reading);
-    return reading;
-  }
-
-  // Render functions
-  function renderHistory() {
-    const historyEl = document.getElementById('history');
-    const readings = loadReadings();
-    if (!readings.length) {
-      historyEl.innerHTML = '<p>No readings yet.</p>';
-      return;
+    const json = JSON.stringify(payload);
+    const encoded = btoa(encodeURIComponent(json));
+    const url = new URL(window.location.href);
+    url.searchParams.set("coop", encoded);
+    linkInput.value = url.toString();
+    copyBtn.style.display = "inline-block";
+  });
+  // Copy the session link to the clipboard when requested.
+  copyBtn.addEventListener("click", () => {
+    if (!linkInput.value) return;
+    navigator.clipboard
+      .writeText(linkInput.value)
+      .then(() => {
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtn.textContent = "Copy Link";
+        }, 1500);
+      })
+      .catch(() => {
+        alert("Copy failed. You can copy the link manually.");
+      });
+  });
+  // Check if the current URL contains a co‑op payload. If so, reconstruct the session.
+  const currentUrl = new URL(window.location.href);
+  const param = currentUrl.searchParams.get("coop");
+  if (param) {
+    try {
+      const json = decodeURIComponent(atob(param));
+      const data = JSON.parse(json);
+      // Notify the user they've joined a co‑op session. In a real game, apply this state.
+      console.log("Loaded co‑op session:", data);
+      alert(
+        "You have joined a shared Labyrinth session! Enjoy this synchronized journey."
+      );
+    } catch (err) {
+      console.error("Failed to parse co‑op session data", err);
     }
-    const rows = readings.slice().reverse().map(reading => {
-      const date = new Date(reading.created_at).toLocaleString();
-      const axis = AXES[(reading.halo.axis - 1) % AXES.length];
-      const vector = VECTORS[(reading.halo.vector - 1) % VECTORS.length];
-      const timeline = TIMELINES[(reading.halo.timeline - 1) % TIMELINES.length];
-      const archetype = ARCHETYPES[(reading.halo.archetype - 1) % ARCHETYPES.length];
-      return `
-        <tr>
-          <td>${date}</td>
-          <td>${axis}</td>
-          <td>${vector}</td>
-          <td>${timeline}</td>
-          <td>${archetype}</td>
-        </tr>
-      `;
-    }).join('');
-    historyEl.innerHTML = `
-      <table>
-        <thead>
-          <tr><th>When</th><th>Axis</th><th>Vector</th><th>Timeline</th><th>Archetype</th></tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    `;
   }
-
-  function renderCurrentReading(reading) {
-    const container = document.getElementById('current-reading');
-    if (!reading) {
-      container.innerHTML = '';
-      return;
-    }
-    const halo = reading.halo;
-    container.innerHTML = `
-      <h3>HALO Roll</h3>
-      <p><strong>Axis:</strong> ${AXES[(halo.axis - 1) % AXES.length]} (${halo.dice.d4})</p>
-      <p><strong>Vector:</strong> ${VECTORS[(halo.vector - 1) % VECTORS.length]} (${halo.dice.d6})</p>
-      <p><strong>Timeline:</strong> ${TIMELINES[(halo.timeline - 1) % TIMELINES.length]} (${halo.dice.d12})</p>
-      <p><strong>Archetype:</strong> ${ARCHETYPES[(halo.archetype - 1) % ARCHETYPES.length]} (${halo.dice.d20})</p>
-      <p><em>This is a bare-bones skeleton. Interpretations and plugin hooks go here.</em></p>
-    `;
-  }
-
-  // Initialize UI
-  function init() {
-    const profile = loadProfile();
-    document.getElementById('profile-name').value = profile.name || '';
-    document.getElementById('profile-sun').value = profile.sun || '';
-    document.getElementById('profile-moon').value = profile.moon || '';
-    document.getElementById('profile-rising').value = profile.rising || '';
-
-    document.getElementById('save-profile').addEventListener('click', () => {
-      const p = {
-        name: document.getElementById('profile-name').value.trim(),
-        sun: document.getElementById('profile-sun').value.trim(),
-        moon: document.getElementById('profile-moon').value.trim(),
-        rising: document.getElementById('profile-rising').value.trim()
-      };
-      saveProfile(p);
-    });
-
-    document.getElementById('roll-btn').addEventListener('click', () => {
-      const q = document.getElementById('question').value.trim();
-      const p = loadProfile();
-      const r = createReading(q, p);
-      renderCurrentReading(r);
-      renderHistory();
-    });
-
-    renderHistory();
-  }
-
-  // run
-  init();
-})();
+}
