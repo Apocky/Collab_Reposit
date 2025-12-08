@@ -1,11 +1,193 @@
-// HALO JavaScript for the Labyrinth page
-// This script provides support for monetization (supporter mode) and cooperative sessions.
+// HALO Meta‑Oracle + Co‑op + Supporter JS
+// This script defines the core Labyrinth oracle logic and plugs in
+// optional supporter (Ko‑Fi) and cooperative session features.
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Initialize supporter and co‑op features once the DOM is ready.
-  setupSupport();
-  setupCoop();
-});
+// === Meta‑Oracle Definitions ===
+// We define a handful of symbolic categories for the oracle.  These lists
+// are deliberately compact but evocative; they can be expanded or
+// modified to suit your mythology.  Each entry contains a name and a
+// brief tagline.
+const AXES = [
+  { name: "Mind & Narrative", tagline: "Rewrite your story" },
+  { name: "Domain & Magic", tagline: "Shape your reality" },
+  { name: "Body & Elemental", tagline: "Honor the vessel" },
+  { name: "Spirit & Communion", tagline: "Call your allies" },
+  { name: "Fate & Unknown", tagline: "Embrace mystery" }
+];
+
+const VECTORS = [
+  { name: "Observe", tagline: "Watch and wait" },
+  { name: "Release", tagline: "Let go and clear" },
+  { name: "Transmute", tagline: "Change and evolve" },
+  { name: "Illuminate", tagline: "Reveal and understand" },
+  { name: "Manifest", tagline: "Bring it into being" }
+];
+
+const TIMELINES = [
+  { name: "Now–1 year", tagline: "Immediate/short term" },
+  { name: "1–3 years", tagline: "Short term" },
+  { name: "3–7 years", tagline: "Medium term" },
+  { name: "7–20 years", tagline: "Long term" }
+];
+
+const ARCHETYPES = [
+  { name: "The Weaver (18)", tagline: "Fates and patterns" },
+  { name: "The Gatekeeper (4)", tagline: "Thresholds and choices" },
+  { name: "The Fool (0)", tagline: "Beginner's mind" },
+  { name: "The Magician (1)", tagline: "Will and manifestation" },
+  { name: "The Empress (3)", tagline: "Fertility and nurture" },
+  { name: "The Hermit (9)", tagline: "Inner search" },
+  { name: "The Tower (16)", tagline: "Sudden change" },
+  { name: "The Star (17)", tagline: "Hope and renewal" },
+  { name: "The Sun (19)", tagline: "Clarity and vitality" }
+];
+
+// Storage keys for localStorage.  These can be namespaced to avoid
+// colliding with other apps on the same domain.
+const PROFILE_KEY = "halo_profile";
+const HISTORY_KEY = "halo_history";
+
+// Utility: Roll a die with a given number of sides.
+function roll(sides) {
+  return Math.floor(Math.random() * sides);
+}
+
+// Create a new reading based off the defined lists.  A reading bundles
+// four random selections along with the user's question and a timestamp.
+function createReading(question) {
+  const axis = AXES[roll(AXES.length)];
+  const vector = VECTORS[roll(VECTORS.length)];
+  const timeline = TIMELINES[roll(TIMELINES.length)];
+  const archetype = ARCHETYPES[roll(ARCHETYPES.length)];
+  return {
+    axis,
+    vector,
+    timeline,
+    archetype,
+    question: question || "",
+    timestamp: new Date().toISOString()
+  };
+}
+
+// Load the saved profile from localStorage and populate the form fields.
+function loadProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (!raw) return;
+    const profile = JSON.parse(raw);
+    const nameInput = document.getElementById("profile-name");
+    const sunInput = document.getElementById("profile-sun");
+    const moonInput = document.getElementById("profile-moon");
+    const risingInput = document.getElementById("profile-rising");
+    if (nameInput) nameInput.value = profile.name || "";
+    if (sunInput) sunInput.value = profile.sun || "";
+    if (moonInput) moonInput.value = profile.moon || "";
+    if (risingInput) risingInput.value = profile.rising || "";
+  } catch (err) {
+    console.warn("Failed to load profile", err);
+  }
+}
+
+// Save the profile to localStorage.  This persists only on the client.
+function saveProfile() {
+  const name = document.getElementById("profile-name").value.trim();
+  const sun = document.getElementById("profile-sun").value.trim();
+  const moon = document.getElementById("profile-moon").value.trim();
+  const rising = document.getElementById("profile-rising").value.trim();
+  const profile = { name, sun, moon, rising };
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+}
+
+// Load reading history from storage.  Returns an array (possibly empty).
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.warn("Failed to load history", err);
+    return [];
+  }
+}
+
+// Save reading history back to storage.
+function saveHistory(history) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+// Render the current reading into the DOM.  If no reading is provided,
+// clears the current display.
+function renderCurrent(reading) {
+  const container = document.getElementById("current-reading");
+  if (!container) return;
+  if (!reading) {
+    container.innerHTML = "";
+    return;
+  }
+  // Format the timestamp into a human‑readable string.
+  const ts = new Date(reading.timestamp);
+  const tsStr = ts.toLocaleString();
+  container.innerHTML = `
+    <div class="reading-result">
+      <p><strong>When:</strong> <span class="timestamp">${tsStr}</span></p>
+      <p><strong>Axis:</strong> ${reading.axis.name}</p>
+      <p><strong>Vector:</strong> ${reading.vector.name}</p>
+      <p><strong>Timeline:</strong> ${reading.timeline.name}</p>
+      <p><strong>Archetype:</strong> ${reading.archetype.name}</p>
+      ${reading.question ? `<p><strong>Q:</strong> ${reading.question}</p>` : ""}
+    </div>
+  `;
+}
+
+// Render the history table.  Each entry shows the timestamp and top‑level
+// categories.  You could expand this to include question or notes.
+function renderHistory(history) {
+  const container = document.getElementById("history");
+  if (!container) return;
+  if (!history || history.length === 0) {
+    container.innerHTML = "<p class='muted'>No past readings yet.</p>";
+    return;
+  }
+  // Build a simple HTML table.
+  let html = "<table><thead><tr><th>When</th><th>Axis</th><th>Vector</th><th>Timeline</th><th>Archetype</th></tr></thead><tbody>";
+  history.forEach((r) => {
+    const ts = new Date(r.timestamp).toLocaleString();
+    html += `<tr><td>${ts}</td><td>${r.axis.name}</td><td>${r.vector.name}</td><td>${r.timeline.name}</td><td>${r.archetype.name}</td></tr>`;
+  });
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}
+
+// Main initialization: wire up event handlers and load any saved data.
+function init() {
+  // Load profile and history on page load.
+  loadProfile();
+  let history = loadHistory();
+  renderHistory(history);
+
+  // Profile save button.
+  const saveBtn = document.getElementById("save-profile");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+      saveProfile();
+      alert("Profile saved locally");
+    });
+  }
+  // Roll button: generate a reading and update the UI and history.
+  const rollBtn = document.getElementById("roll-btn");
+  if (rollBtn) {
+    rollBtn.addEventListener("click", () => {
+      const question = document.getElementById("question").value.trim();
+      const reading = createReading(question);
+      // Unshift reading (add to beginning) to show latest first.
+      history.unshift(reading);
+      saveHistory(history);
+      renderCurrent(reading);
+      renderHistory(history);
+    });
+  }
+}
+
+// === Supporter and Co‑op Features ===
 
 // Supporter functionality: allow users to tip via Ko‑Fi and unlock a badge.
 function setupSupport() {
@@ -20,7 +202,7 @@ function setupSupport() {
     supportBadge.style.display = "inline-flex";
   }
   supportButton.addEventListener("click", () => {
-    // Open Ko-Fi in a new tab.
+    // Open Ko‑Fi in a new tab.
     window.open("https://ko-fi.com/oneinfinity", "_blank", "noopener");
     // Ask the user if they actually supported. If yes, set supporter flag and show badge.
     const opted = confirm(
@@ -43,7 +225,10 @@ function setupCoop() {
   }
   // Create a co‑op session link with encoded payload when the user clicks the button.
   startBtn.addEventListener("click", () => {
-    // Build a simple payload. In a real game, include the state (e.g., RNG seed, moves, etc.).
+    // Build a simple payload.  You could include the current reading seed or
+    // other game state here.  Using Date.now() as a nonce ensures each
+    // session link is unique.  You can later decode this and recreate
+    // identical outcomes if your game is deterministic.
     const payload = {
       version: 1,
       timestamp: Date.now(),
@@ -78,7 +263,8 @@ function setupCoop() {
     try {
       const json = decodeURIComponent(atob(param));
       const data = JSON.parse(json);
-      // Notify the user they've joined a co‑op session. In a real game, apply this state.
+      // Notify the user they've joined a co‑op session. In a real game, you
+      // could apply this seed and timeline to synchronize outcomes.
       console.log("Loaded co‑op session:", data);
       alert(
         "You have joined a shared Labyrinth session! Enjoy this synchronized journey."
@@ -88,3 +274,13 @@ function setupCoop() {
     }
   }
 }
+
+// When the DOM is ready, wire everything up.  We call init() to load
+// profile/history and attach the Meta‑Oracle roll handler, then set up
+// supporter/coop after that.  We deliberately initialize meta logic
+// first so that any co‑op code can leverage the state if needed.
+document.addEventListener("DOMContentLoaded", () => {
+  init();
+  setupSupport();
+  setupCoop();
+});
