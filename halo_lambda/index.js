@@ -16,9 +16,22 @@ const {
   PutCommand,
 } = require("@aws-sdk/lib-dynamodb");
 
-// Create low‑level and Document clients. The region and credentials
-// are resolved automatically from the Lambda execution environment.
-const ddbClient = new DynamoDBClient({});
+// Create low‑level and Document clients. The region defaults to a
+// real AWS region even if someone left a placeholder like
+// "MY_AWS_REGION" in their environment variables.
+const resolvedRegion = (() => {
+  const candidate =
+    process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "";
+
+  // Treat obvious placeholders or malformed regions as invalid and fall back.
+  // A valid AWS region looks like "us-east-1", "eu-west-3", etc.
+  const isValidRegion = /^[a-z]{2}-[a-z]+-\d+$/.test(candidate);
+  if (candidate && candidate !== "MY_AWS_REGION" && isValidRegion) return candidate;
+
+  return "us-east-1"; // safe fallback so deployments don't fail on placeholders
+})();
+
+const ddbClient = new DynamoDBClient({ region: resolvedRegion });
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 exports.handler = async (event) => {
