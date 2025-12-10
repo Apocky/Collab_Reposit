@@ -24,8 +24,10 @@ const resolvedRegion = (() => {
     process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "";
 
   // Treat obvious placeholders or malformed regions as invalid and fall back.
-  // A valid AWS region looks like "us-east-1", "eu-west-3", etc.
-  const isValidRegion = /^[a-z]{2}-[a-z]+-\d+$/.test(candidate);
+  // A valid AWS region looks like "us-east-1", "eu-west-3", "us-gov-west-1",
+  // etc. Allow multiple dash-delimited fragments before the trailing number so
+  // GovCloud/ISO/CN regions are accepted instead of misflagged as malformed.
+  const isValidRegion = /^[a-z]{2}(?:-[a-z]+)+-\d+$/.test(candidate);
   if (candidate && candidate !== "MY_AWS_REGION" && isValidRegion) return candidate;
 
   return "us-east-1"; // safe fallback so deployments don't fail on placeholders

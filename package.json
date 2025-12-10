@@ -7,8 +7,6 @@
     "server": "node scripts/server.js"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.948.0",
-    "@aws-sdk/lib-dynamodb": "^3.948.0",
     "ws": "^8.18.0"
   }
 }

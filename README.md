@@ -43,6 +43,5 @@ The Lambda handler in `halo_lambda/index.js` now auto-corrects placeholder or
 malformed regions (e.g., `MY_AWS_REGION`, `LOCAL`, blank) to `us-east-1` so
 builds do not fail when a default value is left unchanged. For production, set
 `AWS_REGION` or `AWS_DEFAULT_REGION` to a valid AWS region pattern (for
-example, `us-west-2`) before deploying the function. When bundling the Lambda,
-install dependencies so the AWS SDK v3 ships with the zip (for example,
-`npm ci --omit=dev` at the repo root before `zip -r lambda.zip halo_lambda node_modules`).
+example, `us-west-2`, `us-gov-west-1`, or `cn-north-1`) before deploying the
+function.
