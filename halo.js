@@ -1,12 +1,10 @@
-// HALO Meta‑Oracle + Co‑op + Supporter JS
-// This script defines the core Labyrinth oracle logic and plugs in
-// optional supporter (Ko‑Fi) and cooperative session features.
+// HALO Pocket Labyrinth – mobile-first micro game
+// Deterministic, seedable oracle with light resource management.
 
-// === Meta‑Oracle Definitions ===
-// We define a handful of symbolic categories for the oracle.  These lists
-// are deliberately compact but evocative; they can be expanded or
-// modified to suit your mythology.  Each entry contains a name and a
-// brief tagline.
+const STORAGE_KEY = "halo_mobile_state";
+let memoryFallback = null;
+let warnedStorage = false;
+
 const AXES = [
   { name: "Mind & Narrative", tagline: "Rewrite your story" },
   { name: "Domain & Magic", tagline: "Shape your reality" },
@@ -31,256 +29,390 @@ const TIMELINES = [
 ];
 
 const ARCHETYPES = [
-  { name: "The Weaver (18)", tagline: "Fates and patterns" },
-  { name: "The Gatekeeper (4)", tagline: "Thresholds and choices" },
-  { name: "The Fool (0)", tagline: "Beginner's mind" },
-  { name: "The Magician (1)", tagline: "Will and manifestation" },
-  { name: "The Empress (3)", tagline: "Fertility and nurture" },
-  { name: "The Hermit (9)", tagline: "Inner search" },
-  { name: "The Tower (16)", tagline: "Sudden change" },
-  { name: "The Star (17)", tagline: "Hope and renewal" },
-  { name: "The Sun (19)", tagline: "Clarity and vitality" }
+  { name: "The Weaver", tagline: "Fates and patterns" },
+  { name: "The Gatekeeper", tagline: "Thresholds and choices" },
+  { name: "The Fool", tagline: "Beginner's mind" },
+  { name: "The Magician", tagline: "Will and manifestation" },
+  { name: "The Empress", tagline: "Fertility and nurture" },
+  { name: "The Hermit", tagline: "Inner search" },
+  { name: "The Tower", tagline: "Sudden change" },
+  { name: "The Star", tagline: "Hope and renewal" },
+  { name: "The Sun", tagline: "Clarity and vitality" }
 ];
 
-// Storage keys for localStorage.  These can be namespaced to avoid
-// colliding with other apps on the same domain.
-const PROFILE_KEY = "halo_profile";
-const HISTORY_KEY = "halo_history";
+const SITUATIONS = [
+  "A locked door within a shifting hallway",
+  "A bargain you thought you understood twists",
+  "A mirror shows a version of you you almost forgot",
+  "Two timelines overlap; pick one to stabilize",
+  "An old ally calls in a favor",
+  "A signal appears from deep within the Labyrinth",
+  "A beacon flickers; it's both a trap and an invitation",
+  "You find a cache of forgotten notes",
+  "The path folds; shortcuts reveal hidden costs",
+  "A rival steps aside, revealing a deeper threat"
+];
 
-// Utility: Roll a die with a given number of sides.
-function roll(sides) {
-  return Math.floor(Math.random() * sides);
+const BOONS = [
+  "Gain clarity: +1 Momentum",
+  "Shield spark: restore 1 Aegis",
+  "Shortcut: skip a depth penalty",
+  "Companion: reroll one bad beat this run",
+  "Archive ping: lock in current seed for sync",
+  "Hidden stash: bank your current Momentum",
+  "Anchor: reduce Doom by 1",
+  "Insight: write one true thing about your quest"
+];
+
+const THREATS = [
+  "Static surge: lose 1 Aegis",
+  "False lead: -1 Momentum",
+  "Depth collapse: +1 Doom if Momentum is 0",
+  "Shadow bargain: trade 1 Aegis for +2 Momentum",
+  "Exhaustion: Momentum cannot exceed 3 until you rest",
+  "Glitch: repeat the next beat twice",
+  "Echo: your last log entry replays with a darker spin",
+  "Lockdown: you must cash out after the next beat"
+];
+
+function notify(message) {
+  const el = document.getElementById("notice");
+  if (!el) return;
+  if (!message) {
+    el.textContent = "";
+    el.classList.remove("show");
+    return;
+  }
+  el.textContent = message;
+  el.classList.add("show");
 }
 
-// Create a new reading based off the defined lists.  A reading bundles
-// four random selections along with the user's question and a timestamp.
-function createReading(question) {
-  const axis = AXES[roll(AXES.length)];
-  const vector = VECTORS[roll(VECTORS.length)];
-  const timeline = TIMELINES[roll(TIMELINES.length)];
-  const archetype = ARCHETYPES[roll(ARCHETYPES.length)];
+function hashSeed(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0; // force 32-bit
+  }
+  return Math.abs(hash) + 1;
+}
+
+function random(state) {
+  const raw = Math.sin(state.seedHash + state.cursor) * 10000;
+  state.cursor += 1;
+  return raw - Math.floor(raw);
+}
+
+function pick(list, state) {
+  const idx = Math.floor(random(state) * list.length);
+  return list[idx];
+}
+
+function generateSeed() {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let out = "HALO-";
+  for (let i = 0; i < 6; i++) {
+    out += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return out;
+}
+
+function baseState(overrides = {}) {
+  const seed = overrides.seed || generateSeed();
+  const seedHash = hashSeed(seed);
   return {
-    axis,
-    vector,
-    timeline,
-    archetype,
-    question: question || "",
-    timestamp: new Date().toISOString()
+    id: Date.now(),
+    player: overrides.player || "", 
+    quest: overrides.quest || "",
+    mode: overrides.mode || "solo",
+    difficulty: overrides.difficulty || "standard",
+    momentum: 2,
+    aegis: 2,
+    depth: 0,
+    doom: 0,
+    cursor: 0,
+    seed,
+    seedHash,
+    log: [],
+    status: "running",
+    flags: {}
   };
 }
 
-// Load the saved profile from localStorage and populate the form fields.
-function loadProfile() {
-  try {
-    const raw = localStorage.getItem(PROFILE_KEY);
-    if (!raw) return;
-    const profile = JSON.parse(raw);
-    const nameInput = document.getElementById("profile-name");
-    const sunInput = document.getElementById("profile-sun");
-    const moonInput = document.getElementById("profile-moon");
-    const risingInput = document.getElementById("profile-rising");
-    if (nameInput) nameInput.value = profile.name || "";
-    if (sunInput) sunInput.value = profile.sun || "";
-    if (moonInput) moonInput.value = profile.moon || "";
-    if (risingInput) risingInput.value = profile.rising || "";
-  } catch (err) {
-    console.warn("Failed to load profile", err);
+function applyDifficulty(state) {
+  if (state.difficulty === "chill") {
+    state.momentum = 3;
+    state.aegis = 3;
+  } else if (state.difficulty === "brutal") {
+    state.momentum = 2;
+    state.aegis = 1;
+    state.doom = 1;
   }
 }
 
-// Save the profile to localStorage.  This persists only on the client.
-function saveProfile() {
-  const name = document.getElementById("profile-name").value.trim();
-  const sun = document.getElementById("profile-sun").value.trim();
-  const moon = document.getElementById("profile-moon").value.trim();
-  const rising = document.getElementById("profile-rising").value.trim();
-  const profile = { name, sun, moon, rising };
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-}
-
-// Load reading history from storage.  Returns an array (possibly empty).
-function loadHistory() {
+function saveState(state) {
   try {
-    const raw = localStorage.getItem(HISTORY_KEY);
-    return raw ? JSON.parse(raw) : [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    memoryFallback = state;
   } catch (err) {
-    console.warn("Failed to load history", err);
-    return [];
+    memoryFallback = state;
+    if (!warnedStorage) {
+      console.warn("Local storage unavailable; keeping state in memory only", err);
+      notify("Local storage is blocked. Progress will reset if you close this tab.");
+      warnedStorage = true;
+    }
   }
 }
 
-// Save reading history back to storage.
-function saveHistory(history) {
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (err) {
+    if (!warnedStorage) {
+      console.warn("Failed to load state", err);
+      notify("Cannot access local storage. Using in-memory state for this session.");
+      warnedStorage = true;
+    }
+    if (memoryFallback) return memoryFallback;
+  }
+  return memoryFallback;
 }
 
-// Render the current reading into the DOM.  If no reading is provided,
-// clears the current display.
-function renderCurrent(reading) {
-  const container = document.getElementById("current-reading");
-  if (!container) return;
-  if (!reading) {
-    container.innerHTML = "";
+function statusPills(state) {
+  const pills = [];
+  if (state.mode === "coop") pills.push("Co-op seed active");
+  if (state.mode === "gauntlet") pills.push("Gauntlet: doom ticks faster");
+  pills.push(`Seed ${state.seed}`);
+  pills.push(`Quest: ${state.quest || "open"}`);
+  return pills;
+}
+
+function renderState(state) {
+  document.getElementById("stat-momentum").textContent = state.momentum;
+  document.getElementById("stat-aegis").textContent = state.aegis;
+  document.getElementById("stat-depth").textContent = state.depth;
+  document.getElementById("stat-doom").textContent = state.doom;
+
+  const statusLine = document.getElementById("status-line");
+  statusLine.innerHTML = statusPills(state)
+    .map((p) => `<span class="pill">${p}</span>`)
+    .join("");
+
+  document.getElementById("seed-display").textContent =
+    state.status === "running"
+      ? `Active seed: ${state.seed}`
+      : `Run ended. Seed was ${state.seed}`;
+
+  renderLog(state);
+  renderCurrent(state);
+
+  const playBtn = document.getElementById("play-turn");
+  const cashBtn = document.getElementById("cash-out");
+  playBtn.disabled = state.status !== "running";
+  cashBtn.disabled = state.status !== "running";
+}
+
+function renderCurrent(state) {
+  const slot = document.getElementById("current-event");
+  slot.innerHTML = "";
+  const latest = [...state.log].reverse().find((entry) => entry.type === "turn");
+  if (!latest) {
+    slot.innerHTML = '<div class="empty-state">No beats yet. Tap “Draw next beat.”</div>';
     return;
   }
-  // Format the timestamp into a human‑readable string.
-  const ts = new Date(reading.timestamp);
-  const tsStr = ts.toLocaleString();
-  container.innerHTML = `
-    <div class="reading-result">
-      <p><strong>When:</strong> <span class="timestamp">${tsStr}</span></p>
-      <p><strong>Axis:</strong> ${reading.axis.name}</p>
-      <p><strong>Vector:</strong> ${reading.vector.name}</p>
-      <p><strong>Timeline:</strong> ${reading.timeline.name}</p>
-      <p><strong>Archetype:</strong> ${reading.archetype.name}</p>
-      ${reading.question ? `<p><strong>Q:</strong> ${reading.question}</p>` : ""}
-    </div>
+  const el = document.createElement("div");
+  el.className = "log-entry";
+  el.innerHTML = `
+    <h3>${latest.title}</h3>
+    <p>${latest.body}</p>
+    <small>${latest.meta}</small>
   `;
+  slot.appendChild(el);
 }
 
-// Render the history table.  Each entry shows the timestamp and top‑level
-// categories.  You could expand this to include question or notes.
-function renderHistory(history) {
-  const container = document.getElementById("history");
-  if (!container) return;
-  if (!history || history.length === 0) {
-    container.innerHTML = "<p class='muted'>No past readings yet.</p>";
+function renderLog(state) {
+  const container = document.getElementById("run-log");
+  container.innerHTML = "";
+  if (!state.log.length) {
+    container.innerHTML = '<div class="empty-state">No history yet.</div>';
     return;
   }
-  // Build a simple HTML table.
-  let html = "<table><thead><tr><th>When</th><th>Axis</th><th>Vector</th><th>Timeline</th><th>Archetype</th></tr></thead><tbody>";
-  history.forEach((r) => {
-    const ts = new Date(r.timestamp).toLocaleString();
-    html += `<tr><td>${ts}</td><td>${r.axis.name}</td><td>${r.vector.name}</td><td>${r.timeline.name}</td><td>${r.archetype.name}</td></tr>`;
-  });
-  html += "</tbody></table>";
-  container.innerHTML = html;
+  state.log
+    .slice(-12)
+    .reverse()
+    .forEach((entry) => {
+      const card = document.createElement("div");
+      card.className = "log-entry";
+      card.innerHTML = `
+        <h3>${entry.title}</h3>
+        <p>${entry.body}</p>
+        <small>${entry.meta}</small>
+      `;
+      container.appendChild(card);
+    });
 }
 
-// Main initialization: wire up event handlers and load any saved data.
-function init() {
-  // Load profile and history on page load.
-  loadProfile();
-  let history = loadHistory();
-  renderHistory(history);
+function addLog(state, entry) {
+  state.log.push({ ...entry, timestamp: Date.now() });
+}
 
-  // Profile save button.
-  const saveBtn = document.getElementById("save-profile");
-  if (saveBtn) {
-    saveBtn.addEventListener("click", () => {
-      saveProfile();
-      alert("Profile saved locally");
+function clamp(num, min, max) {
+  return Math.max(min, Math.min(num, max));
+}
+
+function momentumShift(state) {
+  const roll = Math.floor(random(state) * 6) + 1;
+  if (roll === 1) return -1;
+  if (roll === 6) return 2;
+  if (roll >= 5) return 1;
+  return 0;
+}
+
+function aegisShift(state) {
+  const roll = Math.floor(random(state) * 6) + 1;
+  return roll === 1 ? -1 : 0;
+}
+
+function doomShift(state) {
+  let increment = 0;
+  if (state.mode === "gauntlet") increment += 1;
+  if (state.momentum < 0) increment += 1;
+  if (state.aegis <= 0) increment += 1;
+  return increment;
+}
+
+function takeTurn(state) {
+  if (state.status !== "running") return;
+
+  const axis = pick(AXES, state);
+  const vector = pick(VECTORS, state);
+  const timeline = pick(TIMELINES, state);
+  const archetype = pick(ARCHETYPES, state);
+  const situation = pick(SITUATIONS, state);
+  const boon = random(state) > 0.55 ? pick(BOONS, state) : null;
+  const threat = random(state) > 0.55 ? pick(THREATS, state) : null;
+
+  state.depth += 1;
+  state.momentum = clamp(state.momentum + momentumShift(state), -2, 6);
+  state.aegis = clamp(state.aegis + aegisShift(state), 0, 4);
+  state.doom = clamp(state.doom + doomShift(state), 0, 6);
+
+  const lines = [
+    `${axis.name} × ${vector.name} (${timeline.name})`,
+    `${archetype.name}: ${archetype.tagline}`,
+    situation
+  ];
+  if (boon) lines.push(`✨ ${boon}`);
+  if (threat) lines.push(`⚠️ ${threat}`);
+
+  addLog(state, {
+    type: "turn",
+    title: `Depth ${state.depth} • Momentum ${state.momentum}`,
+    body: lines.join(" • "),
+    meta: new Date().toLocaleTimeString()
+  });
+
+  if (state.doom >= 6 || state.aegis <= 0) {
+    addLog(state, {
+      type: "crash",
+      title: "Run collapsed",
+      body: `Doom hit ${state.doom}. Aegis at ${state.aegis}. Cash out or reset.`,
+      meta: "Labyrinth spits you out"
+    });
+    state.status = "ended";
+  }
+}
+
+function cashOut(state) {
+  if (state.status !== "running") return;
+  state.status = "ended";
+  addLog(state, {
+    type: "cashout",
+    title: "Run banked",
+    body: `Depth ${state.depth}, Momentum ${state.momentum}, Aegis ${state.aegis}, Doom ${state.doom}. Share seed ${state.seed}.`,
+    meta: "You step out with what you can carry"
+  });
+}
+
+function resetRun() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (err) {
+    console.warn("Could not clear stored state", err);
+  }
+  memoryFallback = null;
+  return baseState();
+}
+
+function startOrResume(currentState) {
+  const nameInput = document.getElementById("player-name").value.trim();
+  const questInput = document.getElementById("player-quest").value.trim();
+  const mode = document.getElementById("mode").value;
+  const difficulty = document.getElementById("difficulty").value;
+  const seedInput = document.getElementById("seed").value.trim();
+
+  let next = currentState;
+  if (!currentState || currentState.status !== "running") {
+    next = baseState({
+      player: nameInput,
+      quest: questInput,
+      mode,
+      difficulty,
+      seed: seedInput || undefined
+    });
+    applyDifficulty(next);
+    addLog(next, {
+      type: "start",
+      title: "Run initialized",
+      body: `Mode ${mode}, difficulty ${difficulty}, quest ${questInput || "open"}. Seed ${next.seed}.`,
+      meta: "All threads aligned"
     });
   }
-  // Roll button: generate a reading and update the UI and history.
-  const rollBtn = document.getElementById("roll-btn");
-  if (rollBtn) {
-    rollBtn.addEventListener("click", () => {
-      const question = document.getElementById("question").value.trim();
-      const reading = createReading(question);
-      // Unshift reading (add to beginning) to show latest first.
-      history.unshift(reading);
-      saveHistory(history);
-      renderCurrent(reading);
-      renderHistory(history);
-    });
-  }
+  return next;
 }
 
-// === Supporter and Co‑op Features ===
+function hydrateInputs(state) {
+  document.getElementById("player-name").value = state.player || "";
+  document.getElementById("player-quest").value = state.quest || "";
+  document.getElementById("mode").value = state.mode;
+  document.getElementById("difficulty").value = state.difficulty;
+  document.getElementById("seed").value = state.seed;
+}
 
-// Supporter functionality: allow users to tip via Ko‑Fi and unlock a badge.
-function setupSupport() {
-  const supportButton = document.getElementById("support-button");
-  const supportBadge = document.getElementById("support-badge");
-  if (!supportButton || !supportBadge) {
-    return;
-  }
-  // Display supporter badge if previously activated.
-  const isSupporter = localStorage.getItem("halo_supporter") === "true";
-  if (isSupporter) {
-    supportBadge.style.display = "inline-flex";
-  }
-  supportButton.addEventListener("click", () => {
-    // Open Ko‑Fi in a new tab.
-    window.open("https://ko-fi.com/oneinfinity", "_blank", "noopener");
-    // Ask the user if they actually supported. If yes, set supporter flag and show badge.
-    const opted = confirm(
-      "Thank you for considering support! If you just tipped on Ko‑Fi, click OK to enable supporter mode."
-    );
-    if (opted) {
-      localStorage.setItem("halo_supporter", "true");
-      supportBadge.style.display = "inline-flex";
-    }
+function bootstrap() {
+  let state = loadState() || baseState();
+  applyDifficulty(state);
+  hydrateInputs(state);
+  notify(null);
+  renderState(state);
+
+  document.getElementById("start-run").addEventListener("click", () => {
+    state = startOrResume(state);
+    hydrateInputs(state);
+    saveState(state);
+    renderState(state);
+  });
+
+  document.getElementById("play-turn").addEventListener("click", () => {
+    state = startOrResume(state);
+    takeTurn(state);
+    saveState(state);
+    renderState(state);
+  });
+
+  document.getElementById("cash-out").addEventListener("click", () => {
+    cashOut(state);
+    saveState(state);
+    renderState(state);
+  });
+
+  document.getElementById("reset-run").addEventListener("click", () => {
+    if (!confirm("Reset the current run?")) return;
+    state = resetRun();
+    applyDifficulty(state);
+    hydrateInputs(state);
+    renderState(state);
   });
 }
 
-// Co‑op functionality: generate shareable session codes and handle incoming sessions.
-function setupCoop() {
-  const startBtn = document.getElementById("start-coop");
-  const copyBtn = document.getElementById("copy-coop");
-  const linkInput = document.getElementById("coop-link");
-  if (!startBtn || !copyBtn || !linkInput) {
-    return;
-  }
-  // Create a co‑op session link with encoded payload when the user clicks the button.
-  startBtn.addEventListener("click", () => {
-    // Build a simple payload.  You could include the current reading seed or
-    // other game state here.  Using Date.now() as a nonce ensures each
-    // session link is unique.  You can later decode this and recreate
-    // identical outcomes if your game is deterministic.
-    const payload = {
-      version: 1,
-      timestamp: Date.now(),
-      seed: Math.floor(Math.random() * 1e9)
-    };
-    const json = JSON.stringify(payload);
-    const encoded = btoa(encodeURIComponent(json));
-    const url = new URL(window.location.href);
-    url.searchParams.set("coop", encoded);
-    linkInput.value = url.toString();
-    copyBtn.style.display = "inline-block";
-  });
-  // Copy the session link to the clipboard when requested.
-  copyBtn.addEventListener("click", () => {
-    if (!linkInput.value) return;
-    navigator.clipboard
-      .writeText(linkInput.value)
-      .then(() => {
-        copyBtn.textContent = "Copied!";
-        setTimeout(() => {
-          copyBtn.textContent = "Copy Link";
-        }, 1500);
-      })
-      .catch(() => {
-        alert("Copy failed. You can copy the link manually.");
-      });
-  });
-  // Check if the current URL contains a co‑op payload. If so, reconstruct the session.
-  const currentUrl = new URL(window.location.href);
-  const param = currentUrl.searchParams.get("coop");
-  if (param) {
-    try {
-      const json = decodeURIComponent(atob(param));
-      const data = JSON.parse(json);
-      // Notify the user they've joined a co‑op session. In a real game, you
-      // could apply this seed and timeline to synchronize outcomes.
-      console.log("Loaded co‑op session:", data);
-      alert(
-        "You have joined a shared Labyrinth session! Enjoy this synchronized journey."
-      );
-    } catch (err) {
-      console.error("Failed to parse co‑op session data", err);
-    }
-  }
-}
-
-// When the DOM is ready, wire everything up.  We call init() to load
-// profile/history and attach the Meta‑Oracle roll handler, then set up
-// supporter/coop after that.  We deliberately initialize meta logic
-// first so that any co‑op code can leverage the state if needed.
-document.addEventListener("DOMContentLoaded", () => {
-  init();
-  setupSupport();
-  setupCoop();
-});
+document.addEventListener("DOMContentLoaded", bootstrap);
