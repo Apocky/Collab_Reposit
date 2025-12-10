@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#050816</color>
+    <color name="halo_primary">#6dd5ff</color>
+    <color name="halo_secondary">#7485ff</color>
+</resources>

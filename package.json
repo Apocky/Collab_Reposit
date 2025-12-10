@@ -1,0 +1,12 @@
+{
+  "name": "halo-pocket-labyrinth",
+  "version": "0.1.0",
+  "description": "Mobile-first HALO Pocket Labyrinth build outputs with optional relay server",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "server": "node scripts/server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
