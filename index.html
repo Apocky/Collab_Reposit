@@ -259,6 +259,68 @@
       <button id="support-button">☕ Support the Oracle</button>
       <span id="support-badge" class="pill" style="display:none; margin-left:0.5rem;">★ Supporter Mode</span>
     </div>
+
+    <!-- Monetization hooks: simulated ad reward + premium booster packs -->
+    <div class="card">
+      <h2>6. Monetization Hooks & Boosts</h2>
+      <p class="muted">Prototype hooks for monetization: ad rewards, supporter pass, and premium boosters.</p>
+      <div class="row" style="gap:0.5rem;">
+        <div class="col" style="min-width:200px;">
+          <button id="ad-bonus">🎞️ Claim Daily Ad Bonus (+10 ◎)</button>
+          <small class="muted">Simulated rewarded video; available once per day.</small>
+        </div>
+        <div class="col" style="min-width:200px;">
+          <button class="booster-btn" data-pack="sigil">Unlock Sigil Booster Pack (+15 ◎ & +1 ◎/room)</button>
+          <small class="muted">Mock in-app purchase; ties to supporter flow for real payments.</small>
+        </div>
+      </div>
+      <div id="monetization-status" class="muted" style="margin-top:0.5rem; font-size:0.82rem;"></div>
+    </div>
+
+    <!-- Labyrinth Run: lightweight roguelike loop tied to HALO themes -->
+    <div class="card">
+      <h2>7. Labyrinth Run (Game Mode)</h2>
+      <p class="muted">Clear rooms, earn luminous coins, and trigger omen chains.</p>
+      <div class="row" style="gap:0.35rem; align-items:flex-end;">
+        <div class="col">
+          <label>Banked Coins</label>
+          <div id="banked-coins" class="pill">0 ◎</div>
+        </div>
+        <div class="col">
+          <label>Runs Cleared</label>
+          <div id="runs-cleared" class="pill">0</div>
+        </div>
+        <div class="col">
+          <label>Best Run</label>
+          <div id="best-run" class="pill">0 rooms</div>
+        </div>
+        <div class="col">
+          <label>Daily Challenge</label>
+          <div id="daily-target" class="pill">–</div>
+        </div>
+        <div class="col">
+          <label>Streak</label>
+          <div id="daily-streak" class="pill">0 days</div>
+        </div>
+      </div>
+      <div id="run-status" class="reading-block" style="margin-top:0.5rem;">No active run.</div>
+      <div class="row">
+        <div class="col" style="flex:1 1 220px;">
+          <button id="start-run">Start Run</button>
+          <button id="next-room" style="display:none;">Next Room</button>
+          <button id="end-run" style="display:none; background:#8a4f9a;">End Run</button>
+        </div>
+      </div>
+      <details style="margin-top:0.4rem;">
+        <summary>How scoring works</summary>
+        <ul class="muted">
+          <li>Each room clears 3–7 ◎ coins; supporter mode adds +2.</li>
+          <li>Daily challenge: finish at least <span class="mono">X</span> rooms to bank a streak bonus.</li>
+          <li>Random 906/4:44/11:11 omens inject bonuses or early exits—embrace the chaos.</li>
+        </ul>
+      </details>
+      <div id="run-log" class="muted" style="margin-top:0.5rem; font-size:0.82rem;"></div>
+    </div>
   </div>
 
   <script src="halo.js"></script>
