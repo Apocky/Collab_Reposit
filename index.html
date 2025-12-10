@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#050816" />
-  <title>HALO Pocket Labyrinth</title>
+  <title>HALO Pocket Labyrinth Online</title>
   <style>
     :root {
       color-scheme: dark;
@@ -17,23 +17,19 @@
       --pill: rgba(255, 255, 255, 0.08);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       background: radial-gradient(circle at 30% 10%, rgba(118, 172, 255, 0.1), transparent 25%),
-        radial-gradient(circle at 70% 0%, rgba(255, 122, 250, 0.14), transparent 22%),
-        var(--bg);
+        radial-gradient(circle at 70% 0%, rgba(255, 122, 250, 0.14), transparent 22%), var(--bg);
       color: var(--text);
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       padding: 1rem;
     }
 
     header {
-      max-width: 960px;
+      max-width: 1080px;
       margin: 0 auto 1rem;
       display: flex;
       align-items: center;
@@ -50,269 +46,59 @@
       z-index: 10;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 1.1rem;
-      letter-spacing: 0.02em;
-    }
+    header h1 { margin: 0; font-size: 1.1rem; letter-spacing: 0.02em; }
+    .badge { display: inline-flex; align-items: center; padding: 0.35rem 0.75rem; border-radius: 999px; background: var(--pill); border: 1px solid var(--border); font-size: 0.8rem; gap: 0.35rem; }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      background: var(--pill);
-      border: 1px solid var(--border);
-      font-size: 0.8rem;
-      gap: 0.35rem;
-    }
-
-    .layout {
-      max-width: 960px;
-      margin: 0 auto 3rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1rem 1.05rem;
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
-    }
-
-    h2 {
-      margin: 0 0 0.35rem;
-      font-size: 1.1rem;
-      letter-spacing: 0.01em;
-    }
-
-    p {
-      margin: 0 0 0.5rem;
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.95rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.25rem;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 0.8rem;
-      padding: 0.65rem 0.75rem;
-      background: rgba(4, 8, 20, 0.9);
-      color: var(--text);
-      font-size: 1rem;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 64px;
-      resize: vertical;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0.75rem;
-    }
-
-    button {
-      border: none;
-      border-radius: 0.9rem;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #0c0c15;
-      background-image: var(--accent);
-      cursor: pointer;
-      width: 100%;
-      transition: transform 160ms ease, box-shadow 160ms ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .pill-row {
-      display: flex;
-      gap: 0.45rem;
-      flex-wrap: wrap;
-      margin: 0.35rem 0;
-    }
-
-    .pill {
-      background: var(--pill);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.2rem 0.65rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.05em;
-      color: var(--text);
-    }
-
-    .stat-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-    }
-
-    .stat {
-      padding: 0.65rem 0.75rem;
-      border-radius: 0.75rem;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.02);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 700;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    .log {
-      display: grid;
-      gap: 0.65rem;
-      margin-top: 0.6rem;
-    }
-
-    .log-entry {
-      border: 1px solid var(--border);
-      border-radius: 0.9rem;
-      padding: 0.65rem 0.75rem;
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .log-entry h3 {
-      margin: 0 0 0.2rem;
-      font-size: 0.95rem;
-      letter-spacing: 0.03em;
-    }
-
-    .log-entry small {
-      display: block;
-      color: var(--muted);
-      margin-top: 0.25rem;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.6rem;
-      margin-top: 0.6rem;
-    }
-
-    .meta-line {
-      font-size: 0.86rem;
-      color: var(--muted);
-      margin-top: 0.25rem;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 0.75rem;
-      color: var(--muted);
-    }
-
-    .notice {
-      max-width: 960px;
-      margin: 0 auto 0.75rem;
-      padding: 0.65rem 0.85rem;
-      border-radius: 0.85rem;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--muted);
-      font-size: 0.9rem;
-      display: none;
-    }
-
-    .notice.show {
-      display: block;
-    }
-
-    footer {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 2rem;
-    }
-
-    @media (max-width: 640px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      button {
-        width: 100%;
-      }
-    }
+    .layout { max-width: 1080px; margin: 0 auto 3rem; display: flex; flex-direction: column; gap: 1rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem 1.05rem; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55); }
+    h2 { margin: 0 0 0.35rem; font-size: 1.1rem; letter-spacing: 0.01em; }
+    p { margin: 0 0 0.5rem; color: var(--muted); line-height: 1.6; font-size: 0.95rem; }
+    label { display: block; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--muted); }
+    input, select, textarea { width: 100%; border: 1px solid var(--border); border-radius: 0.8rem; padding: 0.65rem 0.75rem; background: rgba(4, 8, 20, 0.9); color: var(--text); font-size: 1rem; outline: none; }
+    textarea { min-height: 64px; resize: vertical; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; }
+    button { border: none; border-radius: 0.9rem; padding: 0.75rem 1rem; font-size: 1rem; font-weight: 700; color: #0c0c15; background-image: var(--accent); cursor: pointer; width: 100%; transition: transform 160ms ease, box-shadow 160ms ease; }
+    button:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4); }
+    button:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+    .pill-row { display: flex; gap: 0.45rem; flex-wrap: wrap; margin: 0.35rem 0; }
+    .pill { background: var(--pill); border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.65rem; font-size: 0.78rem; letter-spacing: 0.05em; color: var(--text); }
+    .stat-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin-top: 0.75rem; }
+    .stat { padding: 0.65rem 0.75rem; border-radius: 0.75rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.02); display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+    .stat span { color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+    .log { display: grid; gap: 0.65rem; margin-top: 0.6rem; }
+    .log-entry { border: 1px solid var(--border); border-radius: 0.9rem; padding: 0.65rem 0.75rem; background: rgba(255, 255, 255, 0.02); }
+    .log-entry h3 { margin: 0 0 0.2rem; font-size: 0.95rem; letter-spacing: 0.03em; }
+    .log-entry small { display: block; color: var(--muted); margin-top: 0.25rem; }
+    .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+    .meta-line { font-size: 0.86rem; color: var(--muted); margin-top: 0.25rem; }
+    .empty-state { text-align: center; padding: 0.75rem; color: var(--muted); }
+    .notice { max-width: 1080px; margin: 0 auto 0.75rem; padding: 0.65rem 0.85rem; border-radius: 0.85rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.04); color: var(--muted); font-size: 0.9rem; display: none; }
+    .notice.show { display: block; }
+    .card-btn { width: 100%; text-align: left; margin-bottom: 0.35rem; }
+    .ghost { background: rgba(255, 255, 255, 0.08); color: var(--text); border: 1px solid var(--border); width: auto; padding: 0.35rem 0.7rem; font-size: 0.9rem; }
+    .card-pill { align-items: center; justify-content: space-between; }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { header { flex-direction: column; align-items: flex-start; } button { width: 100%; } }
   </style>
 </head>
 <body>
   <header>
-    <h1>HALO Pocket Labyrinth</h1>
-    <div class="badge">📱 Mobile-first micro game • Dice-lite • Oracle-driven</div>
+    <h1>HALO Pocket Labyrinth • Online Roguelike</h1>
+    <div class="badge">🎴 Card roguelike • 📡 Online relay • 📱 Mobile-first</div>
   </header>
 
   <div id="notice" class="notice" role="status"></div>
 
   <main class="layout">
     <section class="card">
-      <h2>1) Spin up a run</h2>
-      <p>Pick your vibe, set a quest, and generate a deterministic seed so your friends can mirror the same Labyrinth on their phones.</p>
+      <h2>Profile & Seed</h2>
+      <p>Define your pilot, quest, mode, and seed. Seeds stay deterministic so squads can mirror the same Labyrinth.</p>
       <div class="grid">
-        <div>
-          <label for="player-name">Pilot / handle</label>
-          <input id="player-name" type="text" placeholder="Player Zero" />
-        </div>
-        <div>
-          <label for="player-quest">Quest headline</label>
-          <input id="player-quest" type="text" placeholder="" />
-        </div>
-        <div>
-          <label for="mode">Mode</label>
-          <select id="mode">
-            <option value="solo">Solo</option>
-            <option value="coop">Co-op sync</option>
-            <option value="gauntlet">Gauntlet</option>
-          </select>
-        </div>
-        <div>
-          <label for="difficulty">Difficulty</label>
-          <select id="difficulty">
-            <option value="chill">Chill</option>
-            <option value="standard">Standard</option>
-            <option value="brutal">Brutal</option>
-          </select>
-        </div>
-        <div>
-          <label for="seed">Seed (optional, shareable)</label>
-          <input id="seed" type="text" placeholder="auto-generated" />
-        </div>
+        <div><label for="player-name">Pilot</label><input id="player-name" type="text" placeholder="Player Zero" /></div>
+        <div><label for="player-quest">Quest</label><input id="player-quest" type="text" placeholder="Fix the timeline" /></div>
+        <div><label for="mode">Mode</label><select id="mode"><option value="solo">Solo</option><option value="coop">Co-op sync</option><option value="gauntlet">Gauntlet</option></select></div>
+        <div><label for="difficulty">Difficulty</label><select id="difficulty"><option value="chill">Chill</option><option value="standard">Standard</option><option value="brutal">Brutal</option></select></div>
+        <div><label for="seed">Seed (shareable)</label><input id="seed" type="text" placeholder="auto-generated" /></div>
       </div>
       <div class="actions">
         <button id="start-run">Start / Resume Run</button>
@@ -322,44 +108,97 @@
     </section>
 
     <section class="card">
-      <h2>2) Core meters</h2>
-      <p>Momentum fuels forward motion. Aegis is your shield. Depth is how far you’ve descended. Doom clocks inevitable collapse.</p>
+      <h2>Economy & Paid features</h2>
+      <p>Earn credits by delving, spend Embers on Radiant pulls or the VIP Blessing (rarity boost). Purchases are simulated for testing.</p>
+      <div class="stat-bar">
+        <div class="stat"><span>Credits</span><strong id="stat-credits">–</strong></div>
+        <div class="stat"><span>Embers</span><strong id="stat-embers">–</strong></div>
+        <div class="stat"><span>Shards</span><strong id="stat-shards">–</strong></div>
+        <div class="stat"><span>Status</span><strong id="vip-status">–</strong></div>
+      </div>
+      <div class="actions">
+        <button id="buy-embers">Simulated purchase: +300 Embers</button>
+        <button id="vip-upgrade" style="background-image: linear-gradient(120deg, #ffd166, #ff7bfa);">Unlock VIP Blessing (120 Embers)</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Gacha & Collection</h2>
+      <p>Open packs to expand your deck. Pity kicks in after 8 non-rare pulls. Radiant pulls guarantee at least one rare.</p>
+      <div class="actions">
+        <button id="pull-starter">Pulse Pack (3) – 250 Credits</button>
+        <button id="pull-radiant">Radiant Pull (5) – 80 Embers</button>
+      </div>
+      <div id="gacha-results" class="log" style="margin-top:0.6rem;"></div>
+    </section>
+
+    <section class="card">
+      <h2>Deck Builder</h2>
+      <p>Tap Add to move owned cards into your Adventure Deck. Max 12 cards; duplicates limited by ownership.</p>
+      <div>
+        <h3>Adventure Deck</h3>
+        <div id="deck-list" class="log"></div>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <h3>Collection</h3>
+        <div id="collection-list" class="log"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Run (Roguelike beats)</h2>
+      <p>Draw an encounter, play cards from your hand, then resolve the beat. Depth and Doom define survival; Momentum fuels speed; Aegis is your shield.</p>
       <div class="stat-bar">
         <div class="stat"><span>Momentum</span><strong id="stat-momentum">–</strong></div>
         <div class="stat"><span>Aegis</span><strong id="stat-aegis">–</strong></div>
         <div class="stat"><span>Depth</span><strong id="stat-depth">–</strong></div>
         <div class="stat"><span>Doom</span><strong id="stat-doom">–</strong></div>
       </div>
-      <p class="pill-row" id="status-line"></p>
-    </section>
-
-    <section class="card">
-      <h2>3) Take your turn</h2>
-      <p>Tap once per beat. HALO rolls the oracle, applies momentum/aegis shifts, and hands you a short prompt. Screenshot or share your seed to sync.</p>
       <div class="actions">
-        <button id="play-turn">Draw next beat</button>
+        <button id="play-turn">Resolve Beat</button>
         <button id="cash-out" style="background-image: linear-gradient(120deg, #6ff5b5, #6dd5ff);">Bank rewards / End run</button>
       </div>
       <div id="current-event" class="log" style="margin-top:0.6rem;"></div>
-    </section>
-
-    <section class="card">
-      <h2>4) Run log</h2>
+      <h3>Hand</h3>
+      <div id="hand" class="actions"></div>
+      <h3>Run Log</h3>
       <div id="run-log" class="log"></div>
     </section>
 
     <section class="card">
-      <h2>Offline + phone friendly</h2>
-      <p>Save this page to your home screen for an instant PWA-style shell. All state lives on-device in localStorage. Use the seed to mirror the same timeline on another phone.</p>
+      <h2>Online relay (optional)</h2>
+      <p>Run your own websocket relay (`npm run server`) or point to a shared instance. Rooms are lightweight; share the seed/room to sync spread depth and chat.</p>
+      <div class="grid">
+        <div><label for="online-enabled">Enable relay</label><input id="online-enabled" type="checkbox" /></div>
+        <div><label for="online-url">Relay URL</label><input id="online-url" type="text" placeholder="ws://localhost:8787" /></div>
+        <div><label for="online-room">Room / Squad code</label><input id="online-room" type="text" placeholder="seed or custom" /></div>
+      </div>
+      <div class="pill-row"><span class="pill">Status: <span id="online-status">offline</span></span></div>
+      <div class="grid">
+        <div>
+          <label for="chat-text">Squad chat</label>
+          <input id="chat-text" type="text" placeholder="Ping your squad" />
+          <div class="actions" style="margin-top:0.4rem;"><button id="send-chat">Send</button></div>
+        </div>
+        <div>
+          <h3>Relay log</h3>
+          <div id="online-log" class="log"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Phone-first</h2>
+      <p>Save `dist/index.html` to your device or add this page to your home screen. All state is on-device; relay is opt-in.</p>
       <div class="pill-row">
         <span class="pill">Deterministic seed</span>
-        <span class="pill">No account required</span>
-        <span class="pill">Dice-lite oracle</span>
+        <span class="pill">Offline-friendly</span>
+        <span class="pill">Relay-ready</span>
       </div>
     </section>
   </main>
 
-  <footer>Built for tiny screens and quick spreads. HALO respects your sovereignty.</footer>
+  <footer>Built on the HALO oracle. You are the Root User.</footer>
 
   <script src="halo.js"></script>
 </body>
