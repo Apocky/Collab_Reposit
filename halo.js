@@ -46,6 +46,24 @@ const ARCHETYPES = [
 // colliding with other apps on the same domain.
 const PROFILE_KEY = "halo_profile";
 const HISTORY_KEY = "halo_history";
+const GAME_KEY = "halo_game_state";
+const SUPPORTER_KEY = "halo_supporter";
+const ENTITLEMENTS_KEY = "halo_entitlements";
+
+// Game-mode data
+const ROOM_TYPES = [
+  { name: "Encounter", reward: [3, 7], note: "Face an archetype; negotiate your cost." },
+  { name: "Boon", reward: [4, 8], note: "A gift arrives when you name your need." },
+  { name: "Trial", reward: [3, 6], note: "Solve a puzzle; gain clarity coins." },
+  { name: "Mirror", reward: [2, 6], note: "Reflect and re-align; slower, but safer." },
+  { name: "Threshold", reward: [5, 9], note: "Geometry shifts; bank extra if you commit." }
+];
+
+const OMEN_BONUSES = [
+  { label: "4:44", effect: "Path confirmation", bonus: 3 },
+  { label: "11:11", effect: "Doorframe fork", bonus: 5 },
+  { label: "906", effect: "Jackpot convergence", bonus: 9 }
+];
 
 // Utility: Roll a die with a given number of sides.
 function roll(sides) {
@@ -114,6 +132,57 @@ function saveHistory(history) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 }
 
+// === Game State Helpers ===
+function defaultGameState() {
+  return {
+    coins: 0,
+    runs: 0,
+    bestRooms: 0,
+    dailyTarget: null,
+    dailyStreak: 0,
+    lastDaily: null
+  };
+}
+
+function defaultEntitlements() {
+  return {
+    booster: false,
+    adBonusDate: null
+  };
+}
+
+function loadGameState() {
+  try {
+    const raw = localStorage.getItem(GAME_KEY);
+    if (!raw) return defaultGameState();
+    const parsed = JSON.parse(raw);
+    return { ...defaultGameState(), ...parsed };
+  } catch (err) {
+    console.warn("Failed to load game state", err);
+    return defaultGameState();
+  }
+}
+
+function saveGameState(state) {
+  localStorage.setItem(GAME_KEY, JSON.stringify(state));
+}
+
+function loadEntitlements() {
+  try {
+    const raw = localStorage.getItem(ENTITLEMENTS_KEY);
+    if (!raw) return defaultEntitlements();
+    const parsed = JSON.parse(raw);
+    return { ...defaultEntitlements(), ...parsed };
+  } catch (err) {
+    console.warn("Failed to load entitlements", err);
+    return defaultEntitlements();
+  }
+}
+
+function saveEntitlements(state) {
+  localStorage.setItem(ENTITLEMENTS_KEY, JSON.stringify(state));
+}
+
 // Render the current reading into the DOM.  If no reading is provided,
 // clears the current display.
 function renderCurrent(reading) {
@@ -157,6 +226,201 @@ function renderHistory(history) {
   container.innerHTML = html;
 }
 
+// === Labyrinth Run Rendering ===
+let gameState = defaultGameState();
+let entitlements = defaultEntitlements();
+let currentRun = null;
+
+function renderGameState() {
+  const coinsEl = document.getElementById("banked-coins");
+  const runsEl = document.getElementById("runs-cleared");
+  const bestEl = document.getElementById("best-run");
+  const dailyEl = document.getElementById("daily-target");
+  const streakEl = document.getElementById("daily-streak");
+  if (coinsEl) coinsEl.textContent = `${gameState.coins} ◎`;
+  if (runsEl) runsEl.textContent = gameState.runs;
+  if (bestEl) bestEl.textContent = `${gameState.bestRooms} rooms`;
+  if (dailyEl)
+    dailyEl.textContent = gameState.dailyTarget ? `${gameState.dailyTarget} rooms` : "–";
+  if (streakEl) streakEl.textContent = `${gameState.dailyStreak} days`;
+}
+
+function renderRunStatus(message) {
+  const status = document.getElementById("run-status");
+  if (status) {
+    status.innerHTML = message || "No active run.";
+  }
+}
+
+function appendRunLog(line) {
+  const log = document.getElementById("run-log");
+  if (!log) return;
+  const now = new Date().toLocaleTimeString();
+  const existing = log.innerHTML || "";
+  log.innerHTML = `<div>[${now}] ${line}</div>` + existing;
+}
+
+function renderMonetization() {
+  const status = document.getElementById("monetization-status");
+  if (!status) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const adReady = entitlements.adBonusDate !== today;
+  const supporterStatus = supporterActive()
+    ? "Supporter Mode: active (Ko‑Fi badge)"
+    : "Supporter Mode: locked (tip to unlock)";
+  const boosterStatus = entitlements.booster
+    ? "Sigil Booster: active (+1 ◎ per room)"
+    : "Sigil Booster: not purchased";
+  const adStatus = adReady ? "Daily ad bonus available" : "Ad bonus claimed today";
+  status.innerHTML = `
+    <div>${supporterStatus}</div>
+    <div>${boosterStatus}</div>
+    <div>${adStatus}</div>
+  `;
+}
+
+function refreshDailyTarget() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (gameState.lastDaily === today && gameState.dailyTarget) return;
+  const base = new Date().getDate();
+  gameState.dailyTarget = Math.max(3, (base % 8) + 3); // 3–10 rooms
+  gameState.lastDaily = today;
+  saveGameState(gameState);
+}
+
+function supporterActive() {
+  return localStorage.getItem(SUPPORTER_KEY) === "true";
+}
+
+function claimAdBonus() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (entitlements.adBonusDate === today) {
+    appendRunLog("Ad bonus already claimed today.");
+    return;
+  }
+  const bonus = 10;
+  entitlements.adBonusDate = today;
+  gameState.coins += bonus;
+  saveEntitlements(entitlements);
+  saveGameState(gameState);
+  renderGameState();
+  renderMonetization();
+  appendRunLog(`Ad reward claimed: +${bonus} ◎ added to bank.`);
+}
+
+function purchaseBooster(pack) {
+  if (entitlements.booster) {
+    appendRunLog("Sigil Booster already active.");
+    return;
+  }
+  const confirmed = confirm(
+    "Mock purchase: unlock the Sigil Booster by tipping via Supporter mode? (Adds +15 ◎ now and +1 ◎ per room.)"
+  );
+  if (!confirmed) return;
+  entitlements.booster = true;
+  saveEntitlements(entitlements);
+  gameState.coins += 15;
+  saveGameState(gameState);
+  renderMonetization();
+  renderGameState();
+  appendRunLog("Sigil Booster unlocked: banked +15 ◎ and future rooms gain +1 ◎.");
+}
+
+function startRun() {
+  refreshDailyTarget();
+  if (currentRun) {
+    appendRunLog("Run already active—clear the current room first.");
+    return;
+  }
+  currentRun = {
+    rooms: 0,
+    coins: 0,
+    omen: null
+  };
+  document.getElementById("next-room")?.style.setProperty("display", "inline-block");
+  document.getElementById("end-run")?.style.setProperty("display", "inline-block");
+  appendRunLog("Run opened. Choose your rooms wisely.");
+  renderRunStatus("Run active: step into the first room.");
+}
+
+function rollRoomReward(range) {
+  const [min, max] = range;
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function maybeOmenBonus() {
+  // ~35% chance to trigger an omen event per room
+  if (Math.random() > 0.35) return null;
+  return OMEN_BONUSES[roll(OMEN_BONUSES.length)];
+}
+
+function endRun(reason) {
+  if (!currentRun) return;
+  gameState.coins += currentRun.coins;
+  gameState.runs += 1;
+  gameState.bestRooms = Math.max(gameState.bestRooms, currentRun.rooms);
+  // Daily streak bonus
+  if (currentRun.rooms >= gameState.dailyTarget) {
+    gameState.dailyStreak += 1;
+    const streakBonus = 5 + gameState.dailyStreak;
+    gameState.coins += streakBonus;
+    appendRunLog(`Daily streak advanced (+${streakBonus} ◎).`);
+  }
+  saveGameState(gameState);
+  renderGameState();
+
+  appendRunLog(
+    `Run closed after ${currentRun.rooms} room(s); banked ${currentRun.coins} ◎. ${reason || ""}`
+  );
+  renderRunStatus("No active run.");
+  document.getElementById("next-room")?.style.setProperty("display", "none");
+  document.getElementById("end-run")?.style.setProperty("display", "none");
+  currentRun = null;
+}
+
+function stepRoom() {
+  if (!currentRun) {
+    appendRunLog("Start a run first.");
+    return;
+  }
+  const room = ROOM_TYPES[roll(ROOM_TYPES.length)];
+  const baseReward = rollRoomReward(room.reward);
+  const supporterBoost = supporterActive() ? 2 : 0;
+  const boosterBoost = entitlements.booster ? 1 : 0;
+  const omen = maybeOmenBonus();
+  let totalReward = baseReward + supporterBoost + boosterBoost;
+  let closure = false;
+
+  if (omen) {
+    totalReward += omen.bonus;
+    // 906 closes the loop early as a jackpot
+    if (omen.label === "906" && Math.random() < 0.5) {
+      closure = true;
+    }
+  }
+
+  currentRun.rooms += 1;
+  currentRun.coins += totalReward;
+
+  const omenText = omen
+    ? ` | Omen ${omen.label} (${omen.effect}) +${omen.bonus} ◎`
+    : "";
+  const supporterText = supporterBoost ? " | Supporter bonus +2 ◎" : "";
+  const boosterText = boosterBoost ? " | Booster +1 ◎" : "";
+
+  renderRunStatus(
+    `Room ${currentRun.rooms}: ${room.name} → ${room.note}<br/>Reward: ${totalReward} ◎${omenText}${supporterText}${boosterText}`
+  );
+  appendRunLog(
+    `${room.name} cleared for ${totalReward} ◎.${omenText}${supporterText}${boosterText}`
+  );
+
+  // Small chance the labyrinth decides you've had enough
+  if (closure || Math.random() < 0.15) {
+    endRun("The labyrinth seals behind you—bank what you earned.");
+  }
+}
+
 // Main initialization: wire up event handlers and load any saved data.
 function init() {
   // Load profile and history on page load.
@@ -197,7 +461,7 @@ function setupSupport() {
     return;
   }
   // Display supporter badge if previously activated.
-  const isSupporter = localStorage.getItem("halo_supporter") === "true";
+  const isSupporter = supporterActive();
   if (isSupporter) {
     supportBadge.style.display = "inline-flex";
   }
@@ -209,9 +473,24 @@ function setupSupport() {
       "Thank you for considering support! If you just tipped on Ko‑Fi, click OK to enable supporter mode."
     );
     if (opted) {
-      localStorage.setItem("halo_supporter", "true");
+      localStorage.setItem(SUPPORTER_KEY, "true");
       supportBadge.style.display = "inline-flex";
+      renderGameState();
+      renderMonetization();
     }
+  });
+}
+
+function setupMonetization() {
+  entitlements = loadEntitlements();
+  renderMonetization();
+  const adButton = document.getElementById("ad-bonus");
+  if (adButton) {
+    adButton.addEventListener("click", claimAdBonus);
+  }
+  const boosterButtons = document.querySelectorAll(".booster-btn");
+  boosterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => purchaseBooster(btn.dataset.pack));
   });
 }
 
@@ -275,12 +554,28 @@ function setupCoop() {
   }
 }
 
+// Game mode wiring
+function setupGame() {
+  gameState = loadGameState();
+  refreshDailyTarget();
+  renderGameState();
+
+  const startBtn = document.getElementById("start-run");
+  const nextBtn = document.getElementById("next-room");
+  const endBtn = document.getElementById("end-run");
+  if (startBtn) startBtn.addEventListener("click", startRun);
+  if (nextBtn) nextBtn.addEventListener("click", stepRoom);
+  if (endBtn) endBtn.addEventListener("click", () => endRun("You chose to exit."));
+}
+
 // When the DOM is ready, wire everything up.  We call init() to load
 // profile/history and attach the Meta‑Oracle roll handler, then set up
 // supporter/coop after that.  We deliberately initialize meta logic
 // first so that any co‑op code can leverage the state if needed.
 document.addEventListener("DOMContentLoaded", () => {
   init();
+  setupGame();
+  setupMonetization();
   setupSupport();
   setupCoop();
 });
