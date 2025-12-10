@@ -6,6 +6,8 @@ A mobile-first, seedable micro game built on the HALO oracle. Run the HTML offli
 
 Open `index.html` in a mobile browser or add it to your home screen for a lightweight PWA-style shell. State is stored locally in your browser.
 
+To ship a single self-contained file to your phone, run `npm run build` and send `dist/index.html` to your device (AirDrop, email, cloud drive, or a local file server). The build inlines `halo.js` so it loads cleanly from local storage on iOS/Android without needing a separate script.
+
 ## Loop
 
 1. Set your handle, quest, mode (solo, co-op, gauntlet), difficulty, and optional seed.

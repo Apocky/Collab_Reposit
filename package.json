@@ -1,0 +1,8 @@
+{
+  "name": "halo-pocket-labyrinth",
+  "version": "0.0.0",
+  "description": "Mobile-first HALO Pocket Labyrinth build outputs",
+  "scripts": {
+    "build": "node scripts/build.js"
+  }
+}
