@@ -36,3 +36,11 @@ An optional, ultra-light relay server lets multiple pilots sync depth/seed metad
 * `scripts/server.js` – minimal WebSocket relay for multiplayer metadata/chat.
 
 All content stays in this repo for easy sideloading. No external CDNs or assets are required.
+
+## Serverless API (DynamoDB) deployment note
+
+The Lambda handler in `halo_lambda/index.js` now auto-corrects placeholder
+regions (e.g., `MY_AWS_REGION`) to `us-east-1` so builds do not fail when a
+default value is left unchanged. For production, set `AWS_REGION` or
+`AWS_DEFAULT_REGION` to your real AWS region (for example, `us-west-2`) before
+deploying the function.
