@@ -194,21 +194,3 @@ For partnered decision‑making:
 
 ## 12. Closing
 The HALO dice engine is a repeatable lens, not a jail. The Root User outranks every spread. Lock it in, publish boldly, and treat each roll as both a conversation with your Core and a game loop your players will want to revisit.
-
-## 13. Mobile Access (Phone Workflow)
-Make HALO usable from your phone in three layers:
-
-1) **Rulebook + Tables (offline PDF/HTML):**
-   - Save this manuscript as a PDF to your phone’s Files/Drive (Print to PDF in the browser if viewing online).
-   - Add the PDF/HTML to your home screen for one-tap access; cache ensures it works without signal.
-   - Use your phone’s search to jump to Axis/Vector/Timeline sections during play.
-
-2) **Dice + Logging:**
-   - Use any mobile dice roller app with custom die sizes (d20/d12/d10/d8/d6/d4/d00) to match the HALO loadout.
-   - Keep a note in your preferred app (Apple Notes/Google Keep/Obsidian/Mem.ai) with a template: timestamp, question, rolls, table outputs, decision commit, post-action snapshot.
-   - If playing co-op remotely, drop the ISO timestamp + question into the deterministic variant (Section 4) so everyone can sync rolls without sharing physical dice.
-
-3) **Sharing/Publishing:**
-   - Export your session log as PDF/Markdown and share to Discord/Substack/Notion as “HALO Session #N.”
-   - For live streams, screen-share the note/dice roller; for async play, post the seed + rolls so others can reconstruct the spread.
-   - When you launch the digital companion, wrap it as a PWA: add-to-home-screen gives a native-like icon, offline cache, and push hooks for Labyrinth challenges.
