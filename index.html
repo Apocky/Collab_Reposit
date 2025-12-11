@@ -3,264 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HALO Meta-Oracle – Local Prototype</title>
+  <meta name="theme-color" content="#050816" />
+  <title>HALO Meta Labyrinth</title>
   <style>
+    :root {
+      color-scheme: dark;
+      --bg: #030712;
+      --panel: rgba(10, 14, 30, 0.92);
+      --border: rgba(120, 150, 255, 0.35);
+      --text: #eef2ff;
+      --muted: rgba(238, 242, 255, 0.72);
+      --pill: rgba(255, 255, 255, 0.08);
+      --accent: linear-gradient(120deg, #6dd5ff, #7a7bff, #ff7bfa);
+    }
+
+    * { box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
       margin: 0;
-      padding: 0;
-      background: #02030a;
-      color: #dde3ff;
+      min-height: 100vh;
+      background: radial-gradient(circle at 25% 0%, rgba(111, 213, 255, 0.12), transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 123, 250, 0.1), transparent 22%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 1rem;
     }
 
-    .app-shell {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 1.25rem;
+    header {
+      max-width: 1100px;
+      margin: 0 auto 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 1rem;
+      background: rgba(6, 9, 24, 0.85);
+      border: 1px solid var(--border);
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.55);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
     }
 
-    h1 {
-      font-size: 1.6rem;
-      margin: 0 0 0.75rem;
-    }
+    header h1 { margin: 0 0 0.25rem; font-size: 1.2rem; letter-spacing: 0.03em; }
+    header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
 
-    h2 {
-      font-size: 1.2rem;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
+    .notice { max-width: 1100px; margin: 0 auto 0.75rem; padding: 0.65rem 0.85rem; border-radius: 0.85rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.04); color: var(--muted); display: none; }
+    .notice.show { display: block; }
 
-    .card {
-      background: rgba(6, 10, 30, 0.98);
-      border-radius: 0.9rem;
-      padding: 1rem 1.1rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(60, 100, 180, 0.35);
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      margin-bottom: 0.15rem;
-      opacity: 0.9;
-    }
-
-    input[type="text"],
-    textarea,
-    select {
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 0.6rem;
-      border: 1px solid rgba(132, 183, 255, 0.4);
-      padding: 0.55rem 0.65rem;
-      font-size: 0.95rem;
-      background: rgba(4, 9, 29, 0.96);
-      color: #f7fbff;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: rgba(199, 214, 255, 0.6);
-    }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .row > .col {
-      flex: 1 1 150px;
-    }
-
-    button {
-      border-radius: 999px;
-      border: none;
-      padding: 0.55rem 1.2rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      background: linear-gradient(120deg, #355a9f, #5c4fa8, #8a4f9a);
-      color: #f3f3ff;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    small {
-      opacity: 0.85;
-      font-size: 0.78rem;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.15rem 0.65rem;
-      border-radius: 999px;
-      border: 1px solid rgba(171, 208, 255, 0.4);
-      font-size: 0.72rem;
-      margin-right: 0.35rem;
-      margin-bottom: 0.2rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .reading-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.75rem;
-      margin-top: 0.7rem;
-    }
-
-    .reading-block {
-      border-radius: 0.75rem;
-      border: 1px dashed rgba(152, 196, 255, 0.5);
-      padding: 0.6rem 0.7rem;
-      background: rgba(9, 20, 52, 0.8);
-      font-size: 0.86rem;
-    }
-
-    .reading-block h3 {
-      font-size: 0.9rem;
-      margin: 0 0 0.3rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      opacity: 0.9;
-    }
-
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
-      font-size: 0.8rem;
-    }
-
-    details {
-      margin-top: 0.4rem;
-    }
-
-    details summary {
-      cursor: pointer;
-      font-size: 0.82rem;
-      opacity: 0.95;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      margin-top: 0.5rem;
-    }
-
-    th,
-    td {
-      border-bottom: 1px solid rgba(106, 151, 230, 0.35);
-      padding: 0.35rem 0.25rem;
-      text-align: left;
-    }
-
-    th {
-      font-weight: 600;
-      opacity: 0.9;
-    }
-
-    .muted {
-      opacity: 0.7;
-      font-size: 0.8rem;
-    }
-
-    .timestamp {
-      font-size: 0.78rem;
-      opacity: 0.7;
-    }
-
-    @media (max-width: 640px) {
-      .app-shell {
-        padding: 0.8rem;
-      }
-    }
+    main { max-width: 1100px; margin: 0 auto 2rem; display: grid; gap: 1rem; }
+    section { background: var(--panel); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem; box-shadow: 0 18px 34px rgba(0, 0, 0, 0.55); }
+    h2 { margin: 0 0 0.45rem; font-size: 1.1rem; letter-spacing: 0.02em; }
+    p { margin: 0 0 0.6rem; color: var(--muted); line-height: 1.6; }
+    label { display: block; margin-bottom: 0.25rem; font-size: 0.9rem; color: var(--muted); }
+    input, select { width: 100%; padding: 0.65rem 0.75rem; border-radius: 0.8rem; border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: var(--text); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; }
+    button { border: none; border-radius: 0.85rem; padding: 0.75rem 1rem; font-size: 1rem; font-weight: 700; color: #070811; background-image: var(--accent); cursor: pointer; width: 100%; }
+    button.secondary { background: rgba(255, 255, 255, 0.08); color: var(--text); border: 1px solid var(--border); }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 0.65rem; margin-bottom: 0.4rem; background: rgba(255, 255, 255, 0.02); }
+    .pill-row { display: flex; gap: 0.45rem; flex-wrap: wrap; margin: 0.3rem 0; }
+    .pill { padding: 0.25rem 0.65rem; border-radius: 999px; background: var(--pill); border: 1px solid var(--border); font-size: 0.82rem; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.5rem; margin-top: 0.6rem; }
+    .stat { padding: 0.55rem 0.65rem; border-radius: 0.75rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.02); display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+    .stat span { color: var(--muted); font-weight: 500; }
+    .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.55rem; margin-top: 0.6rem; }
+    .hand { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .card-btn { padding: 0.5rem 0.65rem; border-radius: 0.7rem; border: 2px solid var(--border); background: rgba(255, 255, 255, 0.05); color: var(--text); min-width: 140px; text-align: left; }
+    .gacha-card { padding: 0.55rem 0.65rem; border-radius: 0.7rem; border: 2px solid var(--border); background: rgba(255,255,255,0.05); margin-bottom: 0.4rem; }
+    .log { max-height: 200px; overflow: auto; }
+    @media (max-width: 640px) { header { position: static; } button { width: 100%; } }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <h1>HALO Meta-Oracle – Local Prototype</h1>
+  <header>
+    <h1>HALO Meta Labyrinth</h1>
+    <p>Meta-divination roguelike • Wu Xing archetypes • Dice oracle • Relay-ready multiplayer</p>
+  </header>
+  <div id="notice" class="notice" role="status"></div>
+  <main>
+    <section>
+      <h2>Main menu</h2>
+      <p>Define your pilot, quest, and seed. Seeds are deterministic so squads can share a run.</p>
+      <div class="grid">
+        <div><label for="pilot-name">Pilot</label><input id="pilot-name" type="text" placeholder="Axis Runner" /></div>
+        <div><label for="quest">Quest</label><input id="quest" type="text" placeholder="Fix the timeline" /></div>
+        <div><label for="mode">Mode</label><select id="mode"><option value="solo">Solo</option><option value="coop">Co-op</option><option value="gauntlet">Gauntlet</option></select></div>
+        <div><label for="difficulty">Difficulty</label><select id="difficulty"><option value="chill">Chill</option><option value="standard">Standard</option><option value="brutal">Brutal</option></select></div>
+        <div><label for="seed">Seed</label><input id="seed" type="text" placeholder="HALO-XXXXXX" /></div>
+      </div>
+      <div class="actions">
+        <button id="start-run">Start Run</button>
+        <button id="resume-run" class="secondary">Resume / regenerate</button>
+        <button id="toggle-vip" class="secondary">Toggle VIP Blessing</button>
+      </div>
+      <div class="pill-row">
+        <span class="pill">Meta-divination oracle</span>
+        <span class="pill">Wu Xing matchup</span>
+        <span class="pill">Deck up to 12 archetypes</span>
+      </div>
+    </section>
 
-    <div class="card">
-      <h2>1. Profile</h2>
-      <p class="muted">Optional but helpful—used for tags and flavor text.</p>
-      <div class="row">
-        <div class="col">
-          <label for="profile-name">Name / handle</label>
-          <input id="profile-name" type="text" placeholder="Player Zero, Apocky, etc." />
+    <section>
+      <h2>Run status</h2>
+      <div id="currency" class="pill-row"></div>
+      <div id="run-panel"></div>
+    </section>
+
+    <section>
+      <h2>Deck & Codex</h2>
+      <p>Tap to add/remove archetypes. Elemental advantages follow the controlling cycle.</p>
+      <div class="grid">
+        <div>
+          <h3>Deck</h3>
+          <ul id="deck-list"></ul>
         </div>
-        <div class="col">
-          <label for="profile-sun">Sun sign</label>
-          <input id="profile-sun" type="text" placeholder="Taurus, Leo, etc." />
-        </div>
-        <div class="col">
-          <label for="profile-moon">Moon sign</label>
-          <input id="profile-moon" type="text" placeholder="Gemini, Pisces, etc." />
-        </div>
-        <div class="col">
-          <label for="profile-rising">Rising / Ascendant</label>
-          <input id="profile-rising" type="text" placeholder="Scorpio Rising, etc." />
+        <div>
+          <h3>Collection</h3>
+          <ul id="collection-list"></ul>
         </div>
       </div>
-      <button id="save-profile">Save profile locally</button>
-      <small class="muted">Stored only in this browser using localStorage.</small>
-    </div>
+    </section>
 
-    <div class="card">
-      <h2>2. Ask HALO</h2>
-      <label for="question">Question or focus</label>
-      <textarea id="question" placeholder="What do I most need to understand about…?"></textarea>
-      <button id="roll-btn">Roll the Meta-Oracle</button>
-      <div id="current-reading" style="margin-top:0.75rem;"></div>
-    </div>
+    <section>
+      <h2>Gacha</h2>
+      <p>Pulse packs spend Credits; Radiant/Axis spend premium currency. VIP nudges rarity odds.</p>
+      <div class="actions">
+        <button data-pack="pulse">Pulse Pack (Credits)</button>
+        <button data-pack="radiant">Radiant Cache (Embers)</button>
+        <button data-pack="legend">Axis Vault (Shards)</button>
+      </div>
+      <div id="gacha-results" style="margin-top:0.6rem;"></div>
+    </section>
 
-    <div class="card">
-      <h2>3. Past Readings (this device)</h2>
-      <p class="muted">
-        Local Spiritual Blockchain prototype – readings are chained with simple hashes.
-      </p>
-      <div id="history"></div>
-    </div>
+    <section>
+      <h2>Online relay</h2>
+      <p>Optional WebSocket relay for room sync and squad chat. Room defaults to your seed.</p>
+      <div class="grid">
+        <div><label><input id="relay-enabled" type="checkbox" /> Enable relay</label></div>
+        <div><label for="relay-url">Relay URL</label><input id="relay-url" type="text" placeholder="ws://localhost:8787" /></div>
+        <div><label for="relay-room">Room code</label><input id="relay-room" type="text" placeholder="Seed or custom" /></div>
+      </div>
+      <div class="pill-row"><span class="pill">Peers: <span id="peers"></span></span></div>
+      <form id="chat-form" class="grid" style="margin-top:0.6rem; grid-template-columns: 1fr auto; align-items: center; gap:0.5rem;">
+        <input id="chat-text" type="text" placeholder="Ping the squad" />
+        <button type="submit">Send</button>
+      </form>
+      <ul id="relay-log" class="log"></ul>
+    </section>
 
-    <!-- Co‑op Session card: allows generating shareable sessions -->
-    <div class="card">
-      <h2>4. Co‑op Session</h2>
-      <p class="muted">Share your Labyrinth session with a friend.</p>
-      <button id="start-coop">Start Co‑op Session</button>
-      <button id="copy-coop" style="display:none;">Copy Link</button>
-      <input
-        id="coop-link"
-        type="text"
-        readonly
-        placeholder="Your co‑op link will appear here"
-        style="width:100%;box-sizing:border-box;margin-top:0.5rem;"
-      />
-    </div>
-
-    <!-- Support card: optional tip jar for those who wish to support the project -->
-    <div class="card">
-      <h2>5. Support the Oracle</h2>
-      <p class="muted">Optional – helps keep the project going.</p>
-      <button id="support-button">☕ Support the Oracle</button>
-      <span id="support-badge" class="pill" style="display:none; margin-left:0.5rem;">★ Supporter Mode</span>
-    </div>
-  </div>
-
+    <section>
+      <h2>Recent log</h2>
+      <ul id="log" class="log"></ul>
+    </section>
+  </main>
   <script src="halo.js"></script>
 </body>
 </html>
