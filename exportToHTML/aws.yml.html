@@ -1,0 +1,116 @@
+<html>
+<head>
+<title>aws.yml</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #5f826b; font-style: italic;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #bcbec4;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+aws.yml</font>
+</center></td></tr></table>
+<pre><span class="s0"># This workflow will build and push a new container image to Amazon ECR,</span>
+<span class="s0"># and then will deploy a new task definition to Amazon ECS, when there is a push to the &quot;master&quot; branch.</span>
+<span class="s0">#</span>
+<span class="s0"># To use this workflow, you will need to complete the following set-up steps:</span>
+<span class="s0">#</span>
+<span class="s0"># 1. Create an ECR repository to store your images.</span>
+<span class="s0">#    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`.</span>
+<span class="s0">#    Replace the value of the `ECR_REPOSITORY` environment variable in the workflow below with your repository's name.</span>
+<span class="s0">#    Replace the value of the `AWS_REGION` environment variable in the workflow below with your repository's region.</span>
+<span class="s0">#</span>
+<span class="s0"># 2. Create an ECS task definition, an ECS cluster, and an ECS service.</span>
+<span class="s0">#    For example, follow the Getting Started guide on the ECS console:</span>
+<span class="s0">#      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun</span>
+<span class="s0">#    Replace the value of the `ECS_SERVICE` environment variable in the workflow below with the name you set for the Amazon ECS service.</span>
+<span class="s0">#    Replace the value of the `ECS_CLUSTER` environment variable in the workflow below with the name you set for the cluster.</span>
+<span class="s0">#</span>
+<span class="s0"># 3. Store your ECS task definition as a JSON file in your repository.</span>
+<span class="s0">#    The format should follow the output of `aws ecs register-task-definition --generate-cli-skeleton`.</span>
+<span class="s0">#    Replace the value of the `ECS_TASK_DEFINITION` environment variable in the workflow below with the path to the JSON file.</span>
+<span class="s0">#    Replace the value of the `CONTAINER_NAME` environment variable in the workflow below with the name of the container</span>
+<span class="s0">#    in the `containerDefinitions` section of the task definition.</span>
+<span class="s0">#</span>
+<span class="s0"># 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.</span>
+<span class="s0">#    See the documentation for each action used below for the recommended IAM policies for this IAM user,</span>
+<span class="s0">#    and best practices on handling the access key credentials.</span>
+
+<span class="s2">name</span><span class="s3">: </span><span class="s4">Deploy to Amazon ECS</span>
+
+<span class="s2">on</span><span class="s3">:</span>
+  <span class="s2">push</span><span class="s3">:</span>
+    <span class="s2">branches</span><span class="s3">: [ </span><span class="s5">&quot;master&quot; </span><span class="s3">]</span>
+
+<span class="s2">env</span><span class="s3">:</span>
+  <span class="s2">AWS_REGION</span><span class="s3">: </span><span class="s4">MY_AWS_REGION                   </span><span class="s0"># set this to your preferred AWS region, e.g. us-west-1</span>
+  <span class="s2">ECR_REPOSITORY</span><span class="s3">: </span><span class="s4">MY_ECR_REPOSITORY           </span><span class="s0"># set this to your Amazon ECR repository name</span>
+  <span class="s2">ECS_SERVICE</span><span class="s3">: </span><span class="s4">MY_ECS_SERVICE                 </span><span class="s0"># set this to your Amazon ECS service name</span>
+  <span class="s2">ECS_CLUSTER</span><span class="s3">: </span><span class="s4">MY_ECS_CLUSTER                 </span><span class="s0"># set this to your Amazon ECS cluster name</span>
+  <span class="s2">ECS_TASK_DEFINITION</span><span class="s3">: </span><span class="s4">MY_ECS_TASK_DEFINITION </span><span class="s0"># set this to the path to your Amazon ECS task definition</span>
+                                               <span class="s0"># file, e.g. .aws/task-definition.json</span>
+  <span class="s2">CONTAINER_NAME</span><span class="s3">: </span><span class="s4">MY_CONTAINER_NAME           </span><span class="s0"># set this to the name of the container in the</span>
+                                               <span class="s0"># containerDefinitions section of your task definition</span>
+
+<span class="s2">permissions</span><span class="s3">:</span>
+  <span class="s2">contents</span><span class="s3">: </span><span class="s4">read</span>
+
+<span class="s2">jobs</span><span class="s3">:</span>
+  <span class="s2">deploy</span><span class="s3">:</span>
+    <span class="s2">name</span><span class="s3">: </span><span class="s4">Deploy</span>
+    <span class="s2">runs-on</span><span class="s3">: </span><span class="s4">ubuntu-latest</span>
+    <span class="s2">environment</span><span class="s3">: </span><span class="s4">production</span>
+
+    <span class="s2">steps</span><span class="s3">:</span>
+    <span class="s3">- </span><span class="s2">name</span><span class="s3">: </span><span class="s4">Checkout</span>
+      <span class="s2">uses</span><span class="s3">: </span><span class="s4">actions/checkout@v4</span>
+
+    <span class="s3">- </span><span class="s2">name</span><span class="s3">: </span><span class="s4">Configure AWS credentials</span>
+      <span class="s2">uses</span><span class="s3">: </span><span class="s4">aws-actions/configure-aws-credentials@v1</span>
+      <span class="s2">with</span><span class="s3">:</span>
+        <span class="s2">aws-access-key-id</span><span class="s3">: </span><span class="s4">${{ secrets.AWS_ACCESS_KEY_ID }}</span>
+        <span class="s2">aws-secret-access-key</span><span class="s3">: </span><span class="s4">${{ secrets.AWS_SECRET_ACCESS_KEY }}</span>
+        <span class="s2">aws-region</span><span class="s3">: </span><span class="s4">${{ env.AWS_REGION }}</span>
+
+    <span class="s3">- </span><span class="s2">name</span><span class="s3">: </span><span class="s4">Login to Amazon ECR</span>
+      <span class="s2">id</span><span class="s3">: </span><span class="s4">login-ecr</span>
+      <span class="s2">uses</span><span class="s3">: </span><span class="s4">aws-actions/amazon-ecr-login@v1</span>
+
+    <span class="s3">- </span><span class="s2">name</span><span class="s3">: </span><span class="s4">Build, tag, and push image to Amazon ECR</span>
+      <span class="s2">id</span><span class="s3">: </span><span class="s4">build-image</span>
+      <span class="s2">env</span><span class="s3">:</span>
+        <span class="s2">ECR_REGISTRY</span><span class="s3">: </span><span class="s4">${{ steps.login-ecr.outputs.registry }}</span>
+        <span class="s2">IMAGE_TAG</span><span class="s3">: </span><span class="s4">${{ github.sha }}</span>
+      <span class="s2">run</span><span class="s3">: </span><span class="s4">|</span>
+        <span class="s4"># Build a docker container and</span>
+        <span class="s4"># push it to ECR so that it can</span>
+        <span class="s4"># be deployed to ECS.</span>
+        <span class="s4">docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .</span>
+        <span class="s4">docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG</span>
+        <span class="s4">echo &quot;image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG&quot; &gt;&gt; $GITHUB_OUTPUT</span>
+
+    <span class="s3">- </span><span class="s2">name</span><span class="s3">: </span><span class="s4">Fill in the new image ID in the Amazon ECS task definition</span>
+      <span class="s2">id</span><span class="s3">: </span><span class="s4">task-def</span>
+      <span class="s2">uses</span><span class="s3">: </span><span class="s4">aws-actions/amazon-ecs-render-task-definition@v1</span>
+      <span class="s2">with</span><span class="s3">:</span>
+        <span class="s2">task-definition</span><span class="s3">: </span><span class="s4">${{ env.ECS_TASK_DEFINITION }}</span>
+        <span class="s2">container-name</span><span class="s3">: </span><span class="s4">${{ env.CONTAINER_NAME }}</span>
+        <span class="s2">image</span><span class="s3">: </span><span class="s4">${{ steps.build-image.outputs.image }}</span>
+
+    <span class="s3">- </span><span class="s2">name</span><span class="s3">: </span><span class="s4">Deploy Amazon ECS task definition</span>
+      <span class="s2">uses</span><span class="s3">: </span><span class="s4">aws-actions/amazon-ecs-deploy-task-definition@v1</span>
+      <span class="s2">with</span><span class="s3">:</span>
+        <span class="s2">task-definition</span><span class="s3">: </span><span class="s4">${{ steps.task-def.outputs.task-definition }}</span>
+        <span class="s2">service</span><span class="s3">: </span><span class="s4">${{ env.ECS_SERVICE }}</span>
+        <span class="s2">cluster</span><span class="s3">: </span><span class="s4">${{ env.ECS_CLUSTER }}</span>
+        <span class="s2">wait-for-service-stability</span><span class="s3">: </span><span class="s4">true</span>
+</pre>
+</body>
+</html>
