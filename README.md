@@ -20,10 +20,14 @@ Mobile-first HALO rebuilt as a meta-divination card roguelike with a Wu Xing ele
 - Start the relay locally: `npm install` then `npm run server` (defaults to `ws://localhost:8787`).
 - In the client, toggle **Enable relay**, set the relay URL and room (defaults to the seed), and play. Depth pings and chat flow automatically once connected.
 
-## Build
+## Build & test locally
 
-- `npm run build` – inlines `halo.js` into `dist/index.html` and copies assets for sideloading or the Android shell.
-- `npm run server` – lightweight WebSocket relay for squad sync/chat (optional).
+1. Install dependencies: `npm install`.
+2. Build the bundled client: `npm run build` (outputs `dist/index.html` and `dist/halo.js`).
+3. Open `dist/index.html` in a browser (desktop or mobile) to sanity-check the UI and run loop. Use the seed field to validate deterministic behavior across devices.
+4. (Optional multiplayer) Start the relay with `npm run server`, set the relay URL/room in the client, and confirm depth/chat sync with a second browser tab.
+
+The project does not ship automated tests; the build completes in a few seconds and acts as the smoke test. Relay and client run entirely offline aside from optional WebSocket connectivity.
 
 ## Serverless API (DynamoDB) deployment note
 
