@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050816" />
+  <title>HALO Pocket Labyrinth Online</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050816;
+      --card: rgba(10, 16, 40, 0.96);
+      --border: rgba(110, 150, 255, 0.35);
+      --text: #e8edff;
+      --muted: rgba(232, 237, 255, 0.72);
+      --accent: linear-gradient(120deg, #6dd5ff, #7485ff, #ff7bfa);
+      --pill: rgba(255, 255, 255, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 30% 10%, rgba(118, 172, 255, 0.1), transparent 25%),
+        radial-gradient(circle at 70% 0%, rgba(255, 122, 250, 0.14), transparent 22%), var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 1rem;
+    }
+
+    header {
+      max-width: 1080px;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-radius: 1rem;
+      background: rgba(7, 12, 30, 0.85);
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    header h1 { margin: 0; font-size: 1.1rem; letter-spacing: 0.02em; }
+    .badge { display: inline-flex; align-items: center; padding: 0.35rem 0.75rem; border-radius: 999px; background: var(--pill); border: 1px solid var(--border); font-size: 0.8rem; gap: 0.35rem; }
+
+    .layout { max-width: 1080px; margin: 0 auto 3rem; display: flex; flex-direction: column; gap: 1rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem 1.05rem; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55); }
+    h2 { margin: 0 0 0.35rem; font-size: 1.1rem; letter-spacing: 0.01em; }
+    p { margin: 0 0 0.5rem; color: var(--muted); line-height: 1.6; font-size: 0.95rem; }
+    label { display: block; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--muted); }
+    input, select, textarea { width: 100%; border: 1px solid var(--border); border-radius: 0.8rem; padding: 0.65rem 0.75rem; background: rgba(4, 8, 20, 0.9); color: var(--text); font-size: 1rem; outline: none; }
+    textarea { min-height: 64px; resize: vertical; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; }
+    button { border: none; border-radius: 0.9rem; padding: 0.75rem 1rem; font-size: 1rem; font-weight: 700; color: #0c0c15; background-image: var(--accent); cursor: pointer; width: 100%; transition: transform 160ms ease, box-shadow 160ms ease; }
+    button:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4); }
+    button:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+    .pill-row { display: flex; gap: 0.45rem; flex-wrap: wrap; margin: 0.35rem 0; }
+    .pill { background: var(--pill); border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.65rem; font-size: 0.78rem; letter-spacing: 0.05em; color: var(--text); }
+    .stat-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin-top: 0.75rem; }
+    .stat { padding: 0.65rem 0.75rem; border-radius: 0.75rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.02); display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+    .stat span { color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+    .log { display: grid; gap: 0.65rem; margin-top: 0.6rem; }
+    .log-entry { border: 1px solid var(--border); border-radius: 0.9rem; padding: 0.65rem 0.75rem; background: rgba(255, 255, 255, 0.02); }
+    .log-entry h3 { margin: 0 0 0.2rem; font-size: 0.95rem; letter-spacing: 0.03em; }
+    .log-entry small { display: block; color: var(--muted); margin-top: 0.25rem; }
+    .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+    .meta-line { font-size: 0.86rem; color: var(--muted); margin-top: 0.25rem; }
+    .empty-state { text-align: center; padding: 0.75rem; color: var(--muted); }
+    .notice { max-width: 1080px; margin: 0 auto 0.75rem; padding: 0.65rem 0.85rem; border-radius: 0.85rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.04); color: var(--muted); font-size: 0.9rem; display: none; }
+    .notice.show { display: block; }
+    .card-btn { width: 100%; text-align: left; margin-bottom: 0.35rem; }
+    .ghost { background: rgba(255, 255, 255, 0.08); color: var(--text); border: 1px solid var(--border); width: auto; padding: 0.35rem 0.7rem; font-size: 0.9rem; }
+    .card-pill { align-items: center; justify-content: space-between; }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { header { flex-direction: column; align-items: flex-start; } button { width: 100%; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HALO Pocket Labyrinth • Online Roguelike</h1>
+    <div class="badge">🎴 Card roguelike • 📡 Online relay • 📱 Mobile-first</div>
+  </header>
+
+  <div id="notice" class="notice" role="status"></div>
+
+  <main class="layout">
+    <section class="card">
+      <h2>Profile & Seed</h2>
+      <p>Define your pilot, quest, mode, and seed. Seeds stay deterministic so squads can mirror the same Labyrinth.</p>
+      <div class="grid">
+        <div><label for="player-name">Pilot</label><input id="player-name" type="text" placeholder="Player Zero" /></div>
+        <div><label for="player-quest">Quest</label><input id="player-quest" type="text" placeholder="Fix the timeline" /></div>
+        <div><label for="mode">Mode</label><select id="mode"><option value="solo">Solo</option><option value="coop">Co-op sync</option><option value="gauntlet">Gauntlet</option></select></div>
+        <div><label for="difficulty">Difficulty</label><select id="difficulty"><option value="chill">Chill</option><option value="standard">Standard</option><option value="brutal">Brutal</option></select></div>
+        <div><label for="seed">Seed (shareable)</label><input id="seed" type="text" placeholder="auto-generated" /></div>
+      </div>
+      <div class="actions">
+        <button id="start-run">Start / Resume Run</button>
+        <button id="reset-run" style="background-image: linear-gradient(120deg, #ffa14e, #ff758c);">Reset Run</button>
+      </div>
+      <p class="meta-line" id="seed-display"></p>
+    </section>
+
+    <section class="card">
+      <h2>Economy & Paid features</h2>
+      <p>Earn credits by delving, spend Embers on Radiant pulls or the VIP Blessing (rarity boost). Purchases are simulated for testing.</p>
+      <div class="stat-bar">
+        <div class="stat"><span>Credits</span><strong id="stat-credits">–</strong></div>
+        <div class="stat"><span>Embers</span><strong id="stat-embers">–</strong></div>
+        <div class="stat"><span>Shards</span><strong id="stat-shards">–</strong></div>
+        <div class="stat"><span>Status</span><strong id="vip-status">–</strong></div>
+      </div>
+      <div class="actions">
+        <button id="buy-embers">Simulated purchase: +300 Embers</button>
+        <button id="vip-upgrade" style="background-image: linear-gradient(120deg, #ffd166, #ff7bfa);">Unlock VIP Blessing (120 Embers)</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Gacha & Collection</h2>
+      <p>Open packs to expand your deck. Pity kicks in after 8 non-rare pulls. Radiant pulls guarantee at least one rare.</p>
+      <div class="actions">
+        <button id="pull-starter">Pulse Pack (3) – 250 Credits</button>
+        <button id="pull-radiant">Radiant Pull (5) – 80 Embers</button>
+      </div>
+      <div id="gacha-results" class="log" style="margin-top:0.6rem;"></div>
+    </section>
+
+    <section class="card">
+      <h2>Deck Builder</h2>
+      <p>Tap Add to move owned cards into your Adventure Deck. Max 12 cards; duplicates limited by ownership.</p>
+      <div>
+        <h3>Adventure Deck</h3>
+        <div id="deck-list" class="log"></div>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <h3>Collection</h3>
+        <div id="collection-list" class="log"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Run (Roguelike beats)</h2>
+      <p>Draw an encounter, play cards from your hand, then resolve the beat. Depth and Doom define survival; Momentum fuels speed; Aegis is your shield.</p>
+      <div class="stat-bar">
+        <div class="stat"><span>Momentum</span><strong id="stat-momentum">–</strong></div>
+        <div class="stat"><span>Aegis</span><strong id="stat-aegis">–</strong></div>
+        <div class="stat"><span>Depth</span><strong id="stat-depth">–</strong></div>
+        <div class="stat"><span>Doom</span><strong id="stat-doom">–</strong></div>
+      </div>
+      <div class="actions">
+        <button id="play-turn">Resolve Beat</button>
+        <button id="cash-out" style="background-image: linear-gradient(120deg, #6ff5b5, #6dd5ff);">Bank rewards / End run</button>
+      </div>
+      <div id="current-event" class="log" style="margin-top:0.6rem;"></div>
+      <h3>Hand</h3>
+      <div id="hand" class="actions"></div>
+      <h3>Run Log</h3>
+      <div id="run-log" class="log"></div>
+    </section>
+
+    <section class="card">
+      <h2>Online relay (optional)</h2>
+      <p>Run your own websocket relay (`npm run server`) or point to a shared instance. Rooms are lightweight; share the seed/room to sync spread depth and chat.</p>
+      <div class="grid">
+        <div><label for="online-enabled">Enable relay</label><input id="online-enabled" type="checkbox" /></div>
+        <div><label for="online-url">Relay URL</label><input id="online-url" type="text" placeholder="ws://localhost:8787" /></div>
+        <div><label for="online-room">Room / Squad code</label><input id="online-room" type="text" placeholder="seed or custom" /></div>
+      </div>
+      <div class="pill-row"><span class="pill">Status: <span id="online-status">offline</span></span></div>
+      <div class="grid">
+        <div>
+          <label for="chat-text">Squad chat</label>
+          <input id="chat-text" type="text" placeholder="Ping your squad" />
+          <div class="actions" style="margin-top:0.4rem;"><button id="send-chat">Send</button></div>
+        </div>
+        <div>
+          <h3>Relay log</h3>
+          <div id="online-log" class="log"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Phone-first</h2>
+      <p>Save `dist/index.html` to your device or add this page to your home screen. All state is on-device; relay is opt-in.</p>
+      <div class="pill-row">
+        <span class="pill">Deterministic seed</span>
+        <span class="pill">Offline-friendly</span>
+        <span class="pill">Relay-ready</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>Built on the HALO oracle. You are the Root User.</footer>
+
+  <script>
+// Bundled by scripts/build.js
+// HALO Pocket Labyrinth: Online roguelike card crawler with gacha and relay-ready co-op
+
+const STORAGE_KEY = "halo_mobile_state_v2";
+const ONLINE_DEFAULT = "ws://localhost:8787";
+let socket = null;
+let warnedStorage = false;
+let memoryFallback = null;
+
+const AXES = [
+  { name: "Mind & Narrative", tagline: "Rewrite your story" },
+  { name: "Domain & Magic", tagline: "Shape your reality" },
+  { name: "Body & Elemental", tagline: "Honor the vessel" },
+  { name: "Spirit & Communion", tagline: "Call your allies" },
+  { name: "Fate & Unknown", tagline: "Embrace mystery" }
+];
+
+const VECTORS = [
+  { name: "Observe", tagline: "Watch and wait" },
+  { name: "Release", tagline: "Let go and clear" },
+  { name: "Transmute", tagline: "Change and evolve" },
+  { name: "Illuminate", tagline: "Reveal and understand" },
+  { name: "Manifest", tagline: "Bring it into being" }
+];
+
+const TIMELINES = [
+  { name: "Now–1 year", tagline: "Immediate/short term" },
+  { name: "1–3 years", tagline: "Short term" },
+  { name: "3–7 years", tagline: "Medium term" },
+  { name: "7–20 years", tagline: "Long term" }
+];
+
+const RARITY_WEIGHTS = {
+  common: 70,
+  rare: 25,
+  mythic: 5
+};
+
+const PACKS = {
+  starter: { name: "Pulse Pack", size: 3, cost: { credits: 250 } },
+  radiant: { name: "Radiant Pull", size: 5, cost: { embers: 80 }, bonusRare: true }
+};
+
+const CARD_POOL = [
+  {
+    id: "rush",
+    name: "Momentum Rush",
+    rarity: "common",
+    axis: "Mind",
+    text: "+1 Momentum. Draw 1."
+  },
+  {
+    id: "ward",
+    name: "Aegis Ward",
+    rarity: "common",
+    axis: "Body",
+    text: "Restore 1 Aegis. If a threat is present, prevent 1 Doom."
+  },
+  {
+    id: "spark",
+    name: "Prismatic Spark",
+    rarity: "common",
+    axis: "Spirit",
+    text: "Gain 1 Momentum and reveal the boon on this beat if any."
+  },
+  {
+    id: "mirror",
+    name: "Mirror Veil",
+    rarity: "rare",
+    axis: "Mind",
+    text: "If a threat exists, turn it into a boon. Otherwise +1 Aegis."
+  },
+  {
+    id: "gate",
+    name: "Gatekeeper's Key",
+    rarity: "rare",
+    axis: "Domain",
+    text: "Reduce Doom by 1 and bank current Momentum as Credits."
+  },
+  {
+    id: "star",
+    name: "Starfall Surge",
+    rarity: "rare",
+    axis: "Fate",
+    text: "+2 Momentum, then lose 1 Aegis."
+  },
+  {
+    id: "tower",
+    name: "Tower Break",
+    rarity: "rare",
+    axis: "Fate",
+    text: "Clear hand, draw 3 fresh cards, Doom cannot increase this beat."
+  },
+  {
+    id: "time",
+    name: "Time Lattice",
+    rarity: "mythic",
+    axis: "Spirit",
+    text: "Set Doom to 0 or Depth-1 (whichever is lower). Gain +1 Aegis."
+  },
+  {
+    id: "empress",
+    name: "Empress Bloom",
+    rarity: "mythic",
+    axis: "Body",
+    text: "Heal to 3 Aegis, add +2 Momentum, then bank 1 Ember."
+  },
+  {
+    id: "magus",
+    name: "Magus Rewrite",
+    rarity: "mythic",
+    axis: "Mind",
+    text: "Replay the last boon you saw and draw 2 cards."
+  }
+];
+
+function notify(message) {
+  const el = document.getElementById("notice");
+  if (!el) return;
+  if (!message) {
+    el.textContent = "";
+    el.classList.remove("show");
+    return;
+  }
+  el.textContent = message;
+  el.classList.add("show");
+}
+
+function hashSeed(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) + 1;
+}
+
+function random(state) {
+  const raw = Math.sin(state.seedHash + state.cursor) * 10000;
+  state.cursor += 1;
+  return raw - Math.floor(raw);
+}
+
+function pick(list, state) {
+  const idx = Math.floor(random(state) * list.length);
+  return list[idx];
+}
+
+function shuffle(list, state) {
+  const arr = [...list];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(random(state) * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function generateSeed() {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let out = "HALO-";
+  for (let i = 0; i < 6; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
+}
+
+function starterCollection() {
+  const inventory = {};
+  CARD_POOL.forEach((c) => {
+    if (c.rarity === "common") inventory[c.id] = 2;
+    if (c.rarity === "rare") inventory[c.id] = 1;
+  });
+  return inventory;
+}
+
+function baseState(overrides = {}) {
+  const seed = overrides.seed || generateSeed();
+  const seedHash = hashSeed(seed);
+  return {
+    player: overrides.player || "",
+    quest: overrides.quest || "",
+    mode: overrides.mode || "solo",
+    difficulty: overrides.difficulty || "standard",
+    seed,
+    seedHash,
+    cursor: 1,
+    currencies: { credits: 800, embers: 160, shards: 0 },
+    pity: 0,
+    vip: false,
+    collection: starterCollection(),
+    deck: ["rush", "rush", "ward", "spark", "mirror", "gate", "star", "tower"],
+    run: null,
+    online: {
+      enabled: false,
+      url: overrides.url || ONLINE_DEFAULT,
+      room: "",
+      status: "offline",
+      peers: [],
+      log: []
+    },
+    gachaLog: [],
+    log: []
+  };
+}
+
+function clamp(num, min, max) {
+  return Math.max(min, Math.min(max, num));
+}
+
+function saveState(state) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    memoryFallback = state;
+  } catch (err) {
+    memoryFallback = state;
+    if (!warnedStorage) {
+      console.warn("Local storage unavailable; keeping state in memory only", err);
+      notify("Local storage is blocked. Progress will reset if you close this tab.");
+      warnedStorage = true;
+    }
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (err) {
+    if (!warnedStorage) {
+      console.warn("Failed to load state", err);
+      notify("Cannot access local storage. Using in-memory state for this session.");
+      warnedStorage = true;
+    }
+    if (memoryFallback) return memoryFallback;
+  }
+  return memoryFallback;
+}
+
+function addLog(state, entry) {
+  state.log.push({ ...entry, timestamp: Date.now() });
+  state.log = state.log.slice(-80);
+}
+
+function rarityRoll(state) {
+  const bonus = state.vip ? 5 : 0;
+  const roll = random(state) * (100 + bonus);
+  const mythicCut = RARITY_WEIGHTS.mythic + bonus;
+  if (roll >= 100 - mythicCut) return "mythic";
+  if (roll >= 100 - RARITY_WEIGHTS.rare) return "rare";
+  return "common";
+}
+
+function randomCardByRarity(rarity, state) {
+  const pool = CARD_POOL.filter((c) => c.rarity === rarity);
+  return pick(pool, state);
+}
+
+function addToCollection(state, cardId) {
+  state.collection[cardId] = (state.collection[cardId] || 0) + 1;
+}
+
+function pullPack(state, packKey) {
+  const pack = PACKS[packKey];
+  if (!pack) return { results: [], reason: "Missing pack" };
+  const cost = pack.cost;
+  if (cost.credits && state.currencies.credits < cost.credits)
+    return { results: [], reason: "Not enough credits" };
+  if (cost.embers && state.currencies.embers < cost.embers)
+    return { results: [], reason: "Not enough embers" };
+
+  if (cost.credits) state.currencies.credits -= cost.credits;
+  if (cost.embers) state.currencies.embers -= cost.embers;
+
+  const results = [];
+  for (let i = 0; i < pack.size; i++) {
+    let rarity = rarityRoll(state);
+    if (state.pity >= 8) rarity = "rare";
+    if (pack.bonusRare && i === pack.size - 1) rarity = rarity === "common" ? "rare" : rarity;
+    const card = randomCardByRarity(rarity, state);
+    addToCollection(state, card.id);
+    results.push(card);
+    state.pity = rarity === "rare" || rarity === "mythic" ? 0 : state.pity + 1;
+  }
+
+  state.gachaLog.push({
+    pack: pack.name,
+    results,
+    timestamp: Date.now()
+  });
+
+  return { results };
+}
+
+function ensureDeckLegal(state) {
+  const cleaned = state.deck.filter((id) => state.collection[id]);
+  if (!cleaned.length) cleaned.push("rush", "rush", "ward", "spark");
+  state.deck = cleaned.slice(0, 12);
+}
+
+function drawCards(run, state, count = 1) {
+  for (let i = 0; i < count; i++) {
+    if (!run.drawPile.length) {
+      run.drawPile = shuffle(run.discard, state);
+      run.discard = [];
+    }
+    if (!run.drawPile.length) break;
+    run.hand.push(run.drawPile.shift());
+  }
+}
+
+function nextEncounter(state) {
+  const encounter = {
+    axis: pick(AXES, state),
+    vector: pick(VECTORS, state),
+    timeline: pick(TIMELINES, state),
+    boon: random(state) > 0.55,
+    threat: random(state) > 0.5,
+    situation: pick(
+      [
+        "A rival faction challenges your route",
+        "Two timelines overlap; pick one to stabilize",
+        "An ally pings you from deeper layers",
+        "A cache of relics hums with risk",
+        "A distorted mirror tries to rewrite you",
+        "A sealed gate leaks starlight",
+        "A phantom deal returns for payment"
+      ],
+      state
+    )
+  };
+  return encounter;
+}
+
+function baseRun(state) {
+  const run = {
+    status: "running",
+    depth: 0,
+    momentum: state.difficulty === "chill" ? 3 : 2,
+    aegis: state.difficulty === "brutal" ? 1 : 2,
+    doom: state.difficulty === "brutal" ? 1 : 0,
+    drawPile: shuffle(state.deck, state),
+    discard: [],
+    hand: [],
+    current: null,
+    lastBoon: null
+  };
+  drawCards(run, state, 3);
+  run.current = nextEncounter(state);
+  return run;
+}
+
+function startRun(state) {
+  ensureDeckLegal(state);
+  state.run = baseRun(state);
+  addLog(state, { type: "run", title: "Run initialized", body: `Deck size ${state.deck.length}`, meta: state.seed });
+}
+
+function endRun(state, reason = "banked") {
+  if (!state.run) return;
+  const reward = Math.max(0, state.run.depth + state.run.momentum);
+  state.currencies.credits += reward * 20;
+  if (reason === "victory") state.currencies.embers += 10;
+  addLog(state, {
+    type: "cashout",
+    title: `Run ${reason}`,
+    body: `Depth ${state.run.depth}, Momentum ${state.run.momentum}, Aegis ${state.run.aegis}, Doom ${state.run.doom}. +${
+      reward * 20
+    } credits`,
+    meta: new Date().toLocaleTimeString()
+  });
+  state.run = null;
+}
+
+function doomTick(run) {
+  let inc = 0;
+  if (run.momentum < 0) inc += 1;
+  if (run.aegis <= 0) inc += 1;
+  return inc;
+}
+
+function applyCard(state, run, card, encounter) {
+  switch (card.id) {
+    case "rush":
+      run.momentum = clamp(run.momentum + 1, -2, 8);
+      drawCards(run, state, 1);
+      break;
+    case "ward":
+      run.aegis = clamp(run.aegis + 1, 0, 5);
+      if (encounter.threat) run.doom = clamp(run.doom - 1, 0, 6);
+      break;
+    case "spark":
+      run.momentum = clamp(run.momentum + 1, -2, 8);
+      if (encounter.boon) run.lastBoon = encounter;
+      break;
+    case "mirror":
+      if (encounter.threat) {
+        encounter.threat = false;
+        encounter.boon = true;
+        run.lastBoon = encounter;
+      } else {
+        run.aegis = clamp(run.aegis + 1, 0, 5);
+      }
+      break;
+    case "gate":
+      run.doom = clamp(run.doom - 1, 0, 6);
+      state.currencies.credits += Math.max(0, run.momentum) * 30;
+      break;
+    case "star":
+      run.momentum = clamp(run.momentum + 2, -2, 8);
+      run.aegis = clamp(run.aegis - 1, 0, 5);
+      break;
+    case "tower":
+      run.hand = [];
+      run.drawPile = shuffle(run.drawPile.concat(run.discard), state);
+      run.discard = [];
+      drawCards(run, state, 3);
+      run.doom = clamp(run.doom, 0, 5);
+      break;
+    case "time":
+      run.doom = clamp(Math.min(run.doom, Math.max(0, run.depth - 1)), 0, 6);
+      run.aegis = clamp(run.aegis + 1, 0, 5);
+      break;
+    case "empress":
+      run.aegis = 3;
+      run.momentum = clamp(run.momentum + 2, -2, 8);
+      state.currencies.embers += 1;
+      break;
+    case "magus":
+      if (run.lastBoon) {
+        run.momentum = clamp(run.momentum + 1, -2, 8);
+        run.aegis = clamp(run.aegis + 1, 0, 5);
+      }
+      drawCards(run, state, 2);
+      break;
+    default:
+      break;
+  }
+}
+
+function playCard(state, cardId) {
+  if (!state.run || state.run.status !== "running") return;
+  const idx = state.run.hand.indexOf(cardId);
+  if (idx === -1) return;
+  const [cardRef] = state.run.hand.splice(idx, 1);
+  const card = CARD_POOL.find((c) => c.id === cardRef);
+  const encounter = state.run.current;
+  applyCard(state, state.run, card, encounter);
+  state.run.discard.push(cardRef);
+}
+
+function resolveBeat(state) {
+  if (!state.run || state.run.status !== "running") return;
+  const run = state.run;
+  run.depth += 1;
+  const encounter = run.current;
+
+  // Apply base tick
+  run.doom = clamp(run.doom + doomTick(run), 0, 6);
+
+  const title = `${encounter.axis.name} × ${encounter.vector.name} (${encounter.timeline.name})`;
+  const lines = [encounter.situation];
+  if (encounter.boon) lines.push("✨ Boon in play");
+  if (encounter.threat) lines.push("⚠️ Threat in play");
+
+  addLog(state, {
+    type: "turn",
+    title: `Depth ${run.depth} • Momentum ${run.momentum}`,
+    body: lines.join(" • "),
+    meta: new Date().toLocaleTimeString()
+  });
+
+  if (run.doom >= 6 || run.aegis <= 0) {
+    run.status = "crashed";
+    addLog(state, {
+      type: "crash",
+      title: "Run collapsed",
+      body: `Doom ${run.doom}, Aegis ${run.aegis}. Bank or reset.`,
+      meta: "Labyrinth spits you out"
+    });
+    pushOnline(state, { kind: "crash", depth: run.depth, doom: run.doom });
+    return;
+  }
+
+  drawCards(run, state, 1);
+  run.current = nextEncounter(state);
+  pushOnline(state, { kind: "sync", depth: run.depth, momentum: run.momentum, doom: run.doom });
+}
+
+function cashOut(state) {
+  endRun(state, "banked");
+}
+
+function resetRun(state) {
+  state.run = null;
+  state.seed = generateSeed();
+  state.seedHash = hashSeed(state.seed);
+  state.cursor = 1;
+}
+
+function toggleVip(state) {
+  if (state.vip) return;
+  const cost = 120;
+  if (state.currencies.embers < cost) return notify("Need more embers for VIP Blessing");
+  state.currencies.embers -= cost;
+  state.vip = true;
+  addLog(state, { type: "vip", title: "VIP Blessing unlocked", body: "Rarity boosts active", meta: "Paid feature" });
+}
+
+// Online sync
+function connectOnline(state) {
+  if (!state.online.enabled) {
+    disconnectOnline(state);
+    return;
+  }
+  if (socket && socket.readyState === WebSocket.OPEN) return;
+  try {
+    socket = new WebSocket(state.online.url || ONLINE_DEFAULT);
+  } catch (err) {
+    notify("Failed to start socket. Check relay URL.");
+    state.online.status = "offline";
+    return;
+  }
+  socket.addEventListener("open", () => {
+    state.online.status = "connected";
+    socket.send(
+      JSON.stringify({ type: "join", room: state.online.room || state.seed, player: state.player || "anon" })
+    );
+    render(state);
+  });
+  socket.addEventListener("message", (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === "welcome") {
+      state.online.status = "connected";
+      state.online.log.push({ meta: "system", message: `Joined ${data.room} with ${data.peers} peers` });
+    }
+    if (data.type === "system") state.online.log.push({ meta: "system", message: data.message });
+    if (data.type === "chat") state.online.log.push({ meta: data.from, message: data.message });
+    if (data.type === "sync") state.online.log.push({ meta: data.from, message: `Depth ${data.payload.depth}` });
+    state.online.log = state.online.log.slice(-30);
+    render(state);
+  });
+  socket.addEventListener("close", () => {
+    state.online.status = "offline";
+    render(state);
+  });
+  socket.addEventListener("error", () => {
+    notify("Relay connection failed");
+    state.online.status = "offline";
+    render(state);
+  });
+}
+
+function disconnectOnline(state) {
+  if (socket) socket.close();
+  state.online.status = "offline";
+}
+
+function pushOnline(state, payload) {
+  if (!state.online.enabled || !socket || socket.readyState !== WebSocket.OPEN) return;
+  socket.send(JSON.stringify({ type: "sync", payload }));
+}
+
+// Rendering helpers
+function renderProfile(state) {
+  document.getElementById("player-name").value = state.player;
+  document.getElementById("player-quest").value = state.quest;
+  document.getElementById("mode").value = state.mode;
+  document.getElementById("difficulty").value = state.difficulty;
+  document.getElementById("seed").value = state.seed;
+  document.getElementById("online-url").value = state.online.url;
+  document.getElementById("online-room").value = state.online.room || state.seed;
+  document.getElementById("online-enabled").checked = state.online.enabled;
+  document.getElementById("seed-display").textContent = `Seed: ${state.seed}`;
+}
+
+function renderEconomy(state) {
+  document.getElementById("stat-credits").textContent = state.currencies.credits;
+  document.getElementById("stat-embers").textContent = state.currencies.embers;
+  document.getElementById("stat-shards").textContent = state.currencies.shards;
+  document.getElementById("vip-status").textContent = state.vip ? "VIP active" : "Standard";
+}
+
+function renderCollection(state) {
+  const deckList = document.getElementById("deck-list");
+  const collectionList = document.getElementById("collection-list");
+  deckList.innerHTML = "";
+  collectionList.innerHTML = "";
+
+  state.deck.forEach((id, idx) => {
+    const card = CARD_POOL.find((c) => c.id === id);
+    const el = document.createElement("div");
+    el.className = "pill-row card-pill";
+    el.innerHTML = `<strong>${card.name}</strong><span class="pill">${card.rarity}</span><button data-remove="${
+      idx
+    }" class="ghost">Remove</button>`;
+    deckList.appendChild(el);
+  });
+
+  CARD_POOL.forEach((card) => {
+    const owned = state.collection[card.id] || 0;
+    const el = document.createElement("div");
+    el.className = "pill-row card-pill";
+    el.innerHTML = `<div><strong>${card.name}</strong> <span class="pill">${card.rarity}</span> <small>${card.axis}</small></div><div class="pill">x${owned}</div><button data-add="${
+      card.id
+    }" class="ghost">Add</button>`;
+    collectionList.appendChild(el);
+  });
+
+  deckList.querySelectorAll("button[data-remove]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const idx = parseInt(e.target.getAttribute("data-remove"), 10);
+      state.deck.splice(idx, 1);
+      saveState(state);
+      render(state);
+    });
+  });
+
+  collectionList.querySelectorAll("button[data-add]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const id = e.target.getAttribute("data-add");
+      if ((state.collection[id] || 0) <= state.deck.filter((c) => c === id).length) return;
+      state.deck.push(id);
+      ensureDeckLegal(state);
+      saveState(state);
+      render(state);
+    });
+  });
+}
+
+function renderRun(state) {
+  const run = state.run;
+  document.getElementById("stat-momentum").textContent = run ? run.momentum : "–";
+  document.getElementById("stat-aegis").textContent = run ? run.aegis : "–";
+  document.getElementById("stat-depth").textContent = run ? run.depth : "–";
+  document.getElementById("stat-doom").textContent = run ? run.doom : "–";
+
+  const current = document.getElementById("current-event");
+  current.innerHTML = "";
+  if (!run) {
+    current.innerHTML = '<div class="empty-state">Start a run to see encounters.</div>';
+  } else {
+    const enc = run.current;
+    const card = document.createElement("div");
+    card.className = "log-entry";
+    card.innerHTML = `<h3>${enc.axis.name} × ${enc.vector.name} (${enc.timeline.name})</h3><p>${enc.situation}</p><small>${
+      enc.boon ? "✨ Boon available" : ""
+    } ${enc.threat ? "⚠️ Threat active" : ""}</small>`;
+    current.appendChild(card);
+  }
+
+  const hand = document.getElementById("hand");
+  hand.innerHTML = "";
+  if (run) {
+    run.hand.forEach((cardId) => {
+      const card = CARD_POOL.find((c) => c.id === cardId);
+      const el = document.createElement("button");
+      el.className = "card-btn";
+      el.textContent = `${card.name} (${card.rarity})`;
+      el.addEventListener("click", () => {
+        playCard(state, cardId);
+        render(state);
+      });
+      hand.appendChild(el);
+    });
+  }
+
+  const logBox = document.getElementById("run-log");
+  logBox.innerHTML = "";
+  state.log
+    .slice(-14)
+    .reverse()
+    .forEach((entry) => {
+      const el = document.createElement("div");
+      el.className = "log-entry";
+      el.innerHTML = `<h3>${entry.title}</h3><p>${entry.body}</p><small>${entry.meta}</small>`;
+      logBox.appendChild(el);
+    });
+
+  document.getElementById("play-turn").disabled = !run;
+  document.getElementById("cash-out").disabled = !run;
+}
+
+function renderGacha(state) {
+  const results = document.getElementById("gacha-results");
+  const last = state.gachaLog[state.gachaLog.length - 1];
+  if (!last) {
+    results.innerHTML = '<div class="empty-state">Open a pack to see pulls.</div>';
+    return;
+  }
+  results.innerHTML = `<p><strong>${last.pack}</strong> yielded:</p>`;
+  last.results.forEach((card) => {
+    const el = document.createElement("div");
+    el.className = "log-entry";
+    el.innerHTML = `<h3>${card.name}</h3><p>${card.text}</p><small>${card.rarity} • ${card.axis}</small>`;
+    results.appendChild(el);
+  });
+}
+
+function renderOnline(state) {
+  const status = document.getElementById("online-status");
+  status.textContent = state.online.status;
+  const log = document.getElementById("online-log");
+  log.innerHTML = "";
+  state.online.log
+    .slice(-8)
+    .reverse()
+    .forEach((entry) => {
+      const el = document.createElement("div");
+      el.className = "log-entry";
+      el.innerHTML = `<h3>${entry.meta}</h3><p>${entry.message}</p>`;
+      log.appendChild(el);
+    });
+}
+
+function render(state) {
+  renderProfile(state);
+  renderEconomy(state);
+  renderCollection(state);
+  renderRun(state);
+  renderGacha(state);
+  renderOnline(state);
+}
+
+function bootstrap() {
+  let state = loadState() || baseState();
+  render(state);
+
+  document.getElementById("start-run").addEventListener("click", () => {
+    state.player = document.getElementById("player-name").value.trim();
+    state.quest = document.getElementById("player-quest").value.trim();
+    state.mode = document.getElementById("mode").value;
+    state.difficulty = document.getElementById("difficulty").value;
+    state.seed = document.getElementById("seed").value.trim() || generateSeed();
+    state.seedHash = hashSeed(state.seed);
+    state.cursor = 1;
+    startRun(state);
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("reset-run").addEventListener("click", () => {
+    if (!confirm("Reset the current run?")) return;
+    resetRun(state);
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("play-turn").addEventListener("click", () => {
+    resolveBeat(state);
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("cash-out").addEventListener("click", () => {
+    cashOut(state);
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("pull-starter").addEventListener("click", () => {
+    const res = pullPack(state, "starter");
+    if (!res.results.length && res.reason) return notify(res.reason);
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("pull-radiant").addEventListener("click", () => {
+    const res = pullPack(state, "radiant");
+    if (!res.results.length && res.reason) return notify(res.reason);
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("buy-embers").addEventListener("click", () => {
+    state.currencies.embers += 300;
+    addLog(state, { type: "purchase", title: "Simulated purchase", body: "+300 Embers", meta: "Test harness" });
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("vip-upgrade").addEventListener("click", () => {
+    toggleVip(state);
+    saveState(state);
+    render(state);
+  });
+
+  document.getElementById("online-enabled").addEventListener("change", (e) => {
+    state.online.enabled = e.target.checked;
+    state.online.url = document.getElementById("online-url").value.trim() || ONLINE_DEFAULT;
+    state.online.room = document.getElementById("online-room").value.trim() || state.seed;
+    saveState(state);
+    connectOnline(state);
+    render(state);
+  });
+
+  document.getElementById("online-url").addEventListener("change", (e) => {
+    state.online.url = e.target.value.trim();
+    saveState(state);
+  });
+
+  document.getElementById("online-room").addEventListener("change", (e) => {
+    state.online.room = e.target.value.trim();
+    saveState(state);
+  });
+
+  document.getElementById("send-chat").addEventListener("click", () => {
+    const text = document.getElementById("chat-text").value.trim();
+    if (!text || !socket || socket.readyState !== WebSocket.OPEN) return;
+    socket.send(JSON.stringify({ type: "chat", message: text }));
+    document.getElementById("chat-text").value = "";
+  });
+}
+
+document.addEventListener("DOMContentLoaded", bootstrap);
+
+</script>
+</body>
+</html>
