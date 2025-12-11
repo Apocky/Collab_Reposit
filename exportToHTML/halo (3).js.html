@@ -1,0 +1,209 @@
+<html>
+<head>
+<title>halo (3).js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+halo (3).js</font>
+</center></td></tr></table>
+<pre><span class="s0">// HALO Meta-Oracle skeleton script.</span>
+<span class="s0">// This script defines the HALO core engine (dice roll), plugin hooks, and local storage.</span>
+<span class="s0">// The detailed symbol definitions (Tarot cards, runes, I Ching, etc.) and deeper synthesis logic</span>
+<span class="s0">// should be filled in later.</span>
+
+<span class="s1">(</span><span class="s2">function</span><span class="s1">() {</span>
+  <span class="s1">const STORAGE_KEY_PROFILE = </span><span class="s3">'halo_profile_v1'</span><span class="s1">;</span>
+  <span class="s1">const STORAGE_KEY_READINGS = </span><span class="s3">'halo_meta_readings_v1'</span><span class="s1">;</span>
+  <span class="s0">// Replace the placeholder with your actual API Gateway invoke URL once deployed.</span>
+  <span class="s1">const API_URL = </span><span class="s3">'https://YOUR_API_ID.execute-api.YOUR_REGION.amazonaws.com/readings'</span><span class="s1">;</span>
+
+  <span class="s0">// Axis definitions</span>
+  <span class="s1">const AXES = [</span><span class="s3">'Body &amp; Hardware'</span><span class="s1">,</span><span class="s3">'Mind &amp; Narrative'</span><span class="s1">,</span><span class="s3">'Heart &amp; Relationships'</span><span class="s1">,</span><span class="s3">'Domain &amp; Magic'</span><span class="s1">];</span>
+  <span class="s1">const VECTORS = [</span><span class="s3">'Ingress'</span><span class="s1">,</span><span class="s3">'Grow'</span><span class="s1">,</span><span class="s3">'Stabilize'</span><span class="s1">,</span><span class="s3">'Release'</span><span class="s1">,</span><span class="s3">'Transmute'</span><span class="s1">,</span><span class="s3">'Witness'</span><span class="s1">];</span>
+  <span class="s1">const TIMELINES = [</span>
+    <span class="s3">'Right now'</span><span class="s1">,</span><span class="s3">'Today'</span><span class="s1">,</span><span class="s3">'This week'</span><span class="s1">,</span><span class="s3">'This month'</span><span class="s1">,</span><span class="s3">'This season'</span><span class="s1">,</span><span class="s3">'This year'</span><span class="s1">,</span>
+    <span class="s3">'1–3 years'</span><span class="s1">,</span><span class="s3">'3–7 years'</span><span class="s1">,</span><span class="s3">'7–20 years'</span><span class="s1">,</span><span class="s3">'Lifetime'</span><span class="s1">,</span><span class="s3">'Generational'</span><span class="s1">,</span><span class="s3">'Meta'</span>
+  <span class="s1">];</span>
+  <span class="s1">const ARCHETYPES = [</span>
+    <span class="s3">'The Fool'</span><span class="s1">,</span><span class="s3">'The Magician'</span><span class="s1">,</span><span class="s3">'The Healer'</span><span class="s1">,</span><span class="s3">'The Warrior'</span><span class="s1">,</span><span class="s3">'The Shield'</span><span class="s1">,</span><span class="s3">'The Hermit'</span><span class="s1">,</span><span class="s3">'The Lover'</span><span class="s1">,</span>
+    <span class="s3">'The Trickster'</span><span class="s1">,</span><span class="s3">'The Phoenix'</span><span class="s1">,</span><span class="s3">'The Architect'</span><span class="s1">,</span><span class="s3">'The Bridge'</span><span class="s1">,</span><span class="s3">'The Teacher'</span><span class="s1">,</span><span class="s3">'The Explorer'</span><span class="s1">,</span>
+    <span class="s3">'The Mirror'</span><span class="s1">,</span><span class="s3">'The Guardian'</span><span class="s1">,</span><span class="s3">'The Key'</span><span class="s1">,</span><span class="s3">'The Storm'</span><span class="s1">,</span><span class="s3">'The Weaver'</span><span class="s1">,</span><span class="s3">'The Sovereign'</span>
+  <span class="s1">];</span>
+
+  <span class="s0">// Basic utility to roll a die</span>
+  <span class="s2">function </span><span class="s1">rollDie(sides) {</span>
+    <span class="s2">return </span><span class="s1">Math.floor(Math.random() * sides) + </span><span class="s4">1</span><span class="s1">;</span>
+  <span class="s1">}</span>
+
+  <span class="s0">// Load/save profile</span>
+  <span class="s2">function </span><span class="s1">loadProfile() {</span>
+    <span class="s2">try </span><span class="s1">{</span>
+      <span class="s2">return </span><span class="s1">JSON.parse(localStorage.getItem(STORAGE_KEY_PROFILE)) || {};</span>
+    <span class="s1">} </span><span class="s2">catch </span><span class="s1">(err) {</span>
+      <span class="s2">return </span><span class="s1">{};</span>
+    <span class="s1">}</span>
+  <span class="s1">}</span>
+
+  <span class="s2">function </span><span class="s1">saveProfile(profile) {</span>
+    <span class="s1">localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));</span>
+  <span class="s1">}</span>
+
+  <span class="s0">// Load/save readings</span>
+  <span class="s2">function </span><span class="s1">loadReadings() {</span>
+    <span class="s2">try </span><span class="s1">{</span>
+      <span class="s2">return </span><span class="s1">JSON.parse(localStorage.getItem(STORAGE_KEY_READINGS)) || [];</span>
+    <span class="s1">} </span><span class="s2">catch </span><span class="s1">(err) {</span>
+      <span class="s2">return </span><span class="s1">[];</span>
+    <span class="s1">}</span>
+  <span class="s1">}</span>
+
+  <span class="s2">function </span><span class="s1">saveReadings(readings) {</span>
+    <span class="s1">localStorage.setItem(STORAGE_KEY_READINGS, JSON.stringify(readings));</span>
+  <span class="s1">}</span>
+
+  <span class="s0">// Fire-and-forget sync to server if API_URL is set.</span>
+  <span class="s1">async </span><span class="s2">function </span><span class="s1">syncReadingToServer(reading) {</span>
+    <span class="s2">if </span><span class="s1">(!API_URL || API_URL.includes(</span><span class="s3">'YOUR_API_ID'</span><span class="s1">)) {</span>
+      <span class="s2">return</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s2">try </span><span class="s1">{</span>
+      <span class="s1">const payload = {</span>
+        <span class="s1">userId: reading.user?.name || </span><span class="s3">'anonymous'</span><span class="s1">,</span>
+        <span class="s1">reading</span>
+      <span class="s1">};</span>
+      <span class="s1">await fetch(API_URL, {</span>
+        <span class="s1">method: </span><span class="s3">'POST'</span><span class="s1">,</span>
+        <span class="s1">headers: { </span><span class="s3">'Content-Type'</span><span class="s1">: </span><span class="s3">'application/json' </span><span class="s1">},</span>
+        <span class="s1">body: JSON.stringify(payload)</span>
+      <span class="s1">});</span>
+    <span class="s1">} </span><span class="s2">catch </span><span class="s1">(err) {</span>
+      <span class="s1">console.warn(</span><span class="s3">'Sync failed'</span><span class="s1">, err);</span>
+    <span class="s1">}</span>
+  <span class="s1">}</span>
+
+  <span class="s0">// Create a new reading</span>
+  <span class="s2">function </span><span class="s1">createReading(question, profile) {</span>
+    <span class="s1">const timestamp = </span><span class="s2">new </span><span class="s1">Date().toISOString();</span>
+    <span class="s1">const d4 = rollDie(</span><span class="s4">4</span><span class="s1">);</span>
+    <span class="s1">const d6 = rollDie(</span><span class="s4">6</span><span class="s1">);</span>
+    <span class="s1">const d12 = rollDie(</span><span class="s4">12</span><span class="s1">);</span>
+    <span class="s1">const d20 = rollDie(</span><span class="s4">20</span><span class="s1">);</span>
+
+    <span class="s1">const reading = {</span>
+      <span class="s1">id: `${Date.now().toString(</span><span class="s4">36</span><span class="s1">)}-${Math.random().toString(</span><span class="s4">16</span><span class="s1">).slice(</span><span class="s4">2</span><span class="s1">,</span><span class="s4">8</span><span class="s1">)}`,</span>
+      <span class="s1">question: question || </span><span class="s3">''</span><span class="s1">,</span>
+      <span class="s1">created_at: timestamp,</span>
+      <span class="s1">halo: {</span>
+        <span class="s1">axis: d4,</span>
+        <span class="s1">vector: d6,</span>
+        <span class="s1">timeline: d12,</span>
+        <span class="s1">archetype: d20,</span>
+        <span class="s1">dice: { d4, d6, d12, d20 }</span>
+      <span class="s1">},</span>
+      <span class="s1">user: profile,</span>
+      <span class="s0">// plugin results can be added here in the future</span>
+    <span class="s1">};</span>
+
+    <span class="s1">const readings = loadReadings();</span>
+    <span class="s1">readings.push(reading);</span>
+    <span class="s1">saveReadings(readings);</span>
+    <span class="s1">syncReadingToServer(reading);</span>
+    <span class="s2">return </span><span class="s1">reading;</span>
+  <span class="s1">}</span>
+
+  <span class="s0">// Render functions</span>
+  <span class="s2">function </span><span class="s1">renderHistory() {</span>
+    <span class="s1">const historyEl = document.getElementById(</span><span class="s3">'history'</span><span class="s1">);</span>
+    <span class="s1">const readings = loadReadings();</span>
+    <span class="s2">if </span><span class="s1">(!readings.length) {</span>
+      <span class="s1">historyEl.innerHTML = </span><span class="s3">'&lt;p&gt;No readings yet.&lt;/p&gt;'</span><span class="s1">;</span>
+      <span class="s2">return</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">const rows = readings.slice().reverse().map(reading =&gt; {</span>
+      <span class="s1">const date = </span><span class="s2">new </span><span class="s1">Date(reading.created_at).toLocaleString();</span>
+      <span class="s1">const axis = AXES[(reading.halo.axis - </span><span class="s4">1</span><span class="s1">) % AXES.length];</span>
+      <span class="s1">const vector = VECTORS[(reading.halo.vector - </span><span class="s4">1</span><span class="s1">) % VECTORS.length];</span>
+      <span class="s1">const timeline = TIMELINES[(reading.halo.timeline - </span><span class="s4">1</span><span class="s1">) % TIMELINES.length];</span>
+      <span class="s1">const archetype = ARCHETYPES[(reading.halo.archetype - </span><span class="s4">1</span><span class="s1">) % ARCHETYPES.length];</span>
+      <span class="s2">return </span><span class="s1">`</span>
+        <span class="s1">&lt;tr&gt;</span>
+          <span class="s1">&lt;td&gt;${date}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${axis}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${vector}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${timeline}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${archetype}&lt;/td&gt;</span>
+        <span class="s1">&lt;/tr&gt;</span>
+      <span class="s1">`;</span>
+    <span class="s1">}).join(</span><span class="s3">''</span><span class="s1">);</span>
+    <span class="s1">historyEl.innerHTML = `</span>
+      <span class="s1">&lt;table&gt;</span>
+        <span class="s1">&lt;thead&gt;</span>
+          <span class="s1">&lt;tr&gt;&lt;th&gt;When&lt;/th&gt;&lt;th&gt;Axis&lt;/th&gt;&lt;th&gt;Vector&lt;/th&gt;&lt;th&gt;Timeline&lt;/th&gt;&lt;th&gt;Archetype&lt;/th&gt;&lt;/tr&gt;</span>
+        <span class="s1">&lt;/thead&gt;</span>
+        <span class="s1">&lt;tbody&gt;${rows}&lt;/tbody&gt;</span>
+      <span class="s1">&lt;/table&gt;</span>
+    <span class="s1">`;</span>
+  <span class="s1">}</span>
+
+  <span class="s2">function </span><span class="s1">renderCurrentReading(reading) {</span>
+    <span class="s1">const container = document.getElementById(</span><span class="s3">'current-reading'</span><span class="s1">);</span>
+    <span class="s2">if </span><span class="s1">(!reading) {</span>
+      <span class="s1">container.innerHTML = </span><span class="s3">''</span><span class="s1">;</span>
+      <span class="s2">return</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">const halo = reading.halo;</span>
+    <span class="s1">container.innerHTML = `</span>
+      <span class="s1">&lt;h3&gt;HALO Roll&lt;/h3&gt;</span>
+      <span class="s1">&lt;p&gt;&lt;strong&gt;Axis:&lt;/strong&gt; ${AXES[(halo.axis - </span><span class="s4">1</span><span class="s1">) % AXES.length]} (${halo.dice.d4})&lt;/p&gt;</span>
+      <span class="s1">&lt;p&gt;&lt;strong&gt;Vector:&lt;/strong&gt; ${VECTORS[(halo.vector - </span><span class="s4">1</span><span class="s1">) % VECTORS.length]} (${halo.dice.d6})&lt;/p&gt;</span>
+      <span class="s1">&lt;p&gt;&lt;strong&gt;Timeline:&lt;/strong&gt; ${TIMELINES[(halo.timeline - </span><span class="s4">1</span><span class="s1">) % TIMELINES.length]} (${halo.dice.d12})&lt;/p&gt;</span>
+      <span class="s1">&lt;p&gt;&lt;strong&gt;Archetype:&lt;/strong&gt; ${ARCHETYPES[(halo.archetype - </span><span class="s4">1</span><span class="s1">) % ARCHETYPES.length]} (${halo.dice.d20})&lt;/p&gt;</span>
+      <span class="s1">&lt;p&gt;&lt;em&gt;This is a bare-bones skeleton. Interpretations and plugin hooks go here.&lt;/em&gt;&lt;/p&gt;</span>
+    <span class="s1">`;</span>
+  <span class="s1">}</span>
+
+  <span class="s0">// Initialize UI</span>
+  <span class="s2">function </span><span class="s1">init() {</span>
+    <span class="s1">const profile = loadProfile();</span>
+    <span class="s1">document.getElementById(</span><span class="s3">'profile-name'</span><span class="s1">).value = profile.name || </span><span class="s3">''</span><span class="s1">;</span>
+    <span class="s1">document.getElementById(</span><span class="s3">'profile-sun'</span><span class="s1">).value = profile.sun || </span><span class="s3">''</span><span class="s1">;</span>
+    <span class="s1">document.getElementById(</span><span class="s3">'profile-moon'</span><span class="s1">).value = profile.moon || </span><span class="s3">''</span><span class="s1">;</span>
+    <span class="s1">document.getElementById(</span><span class="s3">'profile-rising'</span><span class="s1">).value = profile.rising || </span><span class="s3">''</span><span class="s1">;</span>
+
+    <span class="s1">document.getElementById(</span><span class="s3">'save-profile'</span><span class="s1">).addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; {</span>
+      <span class="s1">const p = {</span>
+        <span class="s1">name: document.getElementById(</span><span class="s3">'profile-name'</span><span class="s1">).value.trim(),</span>
+        <span class="s1">sun: document.getElementById(</span><span class="s3">'profile-sun'</span><span class="s1">).value.trim(),</span>
+        <span class="s1">moon: document.getElementById(</span><span class="s3">'profile-moon'</span><span class="s1">).value.trim(),</span>
+        <span class="s1">rising: document.getElementById(</span><span class="s3">'profile-rising'</span><span class="s1">).value.trim()</span>
+      <span class="s1">};</span>
+      <span class="s1">saveProfile(p);</span>
+    <span class="s1">});</span>
+
+    <span class="s1">document.getElementById(</span><span class="s3">'roll-btn'</span><span class="s1">).addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; {</span>
+      <span class="s1">const q = document.getElementById(</span><span class="s3">'question'</span><span class="s1">).value.trim();</span>
+      <span class="s1">const p = loadProfile();</span>
+      <span class="s1">const r = createReading(q, p);</span>
+      <span class="s1">renderCurrentReading(r);</span>
+      <span class="s1">renderHistory();</span>
+    <span class="s1">});</span>
+
+    <span class="s1">renderHistory();</span>
+  <span class="s1">}</span>
+
+  <span class="s0">// run</span>
+  <span class="s1">init();</span>
+<span class="s1">})();</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<html>
+<head>
+<title>index.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #d5b778;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bababa;}
+.s3 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+index.html</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;!DOCTYPE </span><span class="s2">html</span><span class="s0">&gt;</span>
+<span class="s0">&lt;html </span><span class="s2">lang</span><span class="s3">=&quot;en&quot;</span><span class="s0">&gt;</span>
+<span class="s0">&lt;head&gt;</span>
+  <span class="s0">&lt;meta </span><span class="s2">charset</span><span class="s3">=&quot;UTF-8&quot; </span><span class="s0">/&gt;</span>
+  <span class="s0">&lt;meta </span><span class="s2">name</span><span class="s3">=&quot;viewport&quot; </span><span class="s2">content</span><span class="s3">=&quot;width=device-width, initial-scale=1.0&quot; </span><span class="s0">/&gt;</span>
+  <span class="s0">&lt;title&gt;</span><span class="s1">HALO Meta-Oracle – Local Prototype</span><span class="s0">&lt;/title&gt;</span>
+  <span class="s0">&lt;style&gt;</span>
+    <span class="s1">body {</span>
+      <span class="s1">font-family: system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;,</span>
+        <span class="s1">sans-serif;</span>
+      <span class="s1">margin: 0;</span>
+      <span class="s1">padding: 0;</span>
+      <span class="s1">background: #02030a;</span>
+      <span class="s1">color: #dde3ff;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.app-shell {</span>
+      <span class="s1">max-width: 960px;</span>
+      <span class="s1">margin: 0 auto;</span>
+      <span class="s1">padding: 1.25rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">h1 {</span>
+      <span class="s1">font-size: 1.6rem;</span>
+      <span class="s1">margin: 0 0 0.75rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">h2 {</span>
+      <span class="s1">font-size: 1.2rem;</span>
+      <span class="s1">margin-top: 1.5rem;</span>
+      <span class="s1">margin-bottom: 0.5rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.card {</span>
+      <span class="s1">background: rgba(6, 10, 30, 0.98);</span>
+      <span class="s1">border-radius: 0.9rem;</span>
+      <span class="s1">padding: 1rem 1.1rem;</span>
+      <span class="s1">margin-bottom: 1rem;</span>
+      <span class="s1">box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);</span>
+      <span class="s1">border: 1px solid rgba(60, 100, 180, 0.35);</span>
+    <span class="s1">}</span>
+
+    <span class="s1">label {</span>
+      <span class="s1">display: block;</span>
+      <span class="s1">font-size: 0.85rem;</span>
+      <span class="s1">margin-bottom: 0.15rem;</span>
+      <span class="s1">opacity: 0.9;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">input[type=&quot;text&quot;],</span>
+    <span class="s1">textarea,</span>
+    <span class="s1">select {</span>
+      <span class="s1">width: 100%;</span>
+      <span class="s1">box-sizing: border-box;</span>
+      <span class="s1">border-radius: 0.6rem;</span>
+      <span class="s1">border: 1px solid rgba(132, 183, 255, 0.4);</span>
+      <span class="s1">padding: 0.55rem 0.65rem;</span>
+      <span class="s1">font-size: 0.95rem;</span>
+      <span class="s1">background: rgba(4, 9, 29, 0.96);</span>
+      <span class="s1">color: #f7fbff;</span>
+      <span class="s1">outline: none;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">textarea {</span>
+      <span class="s1">min-height: 70px;</span>
+      <span class="s1">resize: vertical;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">input::placeholder,</span>
+    <span class="s1">textarea::placeholder {</span>
+      <span class="s1">color: rgba(199, 214, 255, 0.6);</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.row {</span>
+      <span class="s1">display: flex;</span>
+      <span class="s1">flex-wrap: wrap;</span>
+      <span class="s1">gap: 0.75rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.row &gt; .col {</span>
+      <span class="s1">flex: 1 1 150px;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">button {</span>
+      <span class="s1">border-radius: 999px;</span>
+      <span class="s1">border: none;</span>
+      <span class="s1">padding: 0.55rem 1.2rem;</span>
+      <span class="s1">font-size: 0.95rem;</span>
+      <span class="s1">font-weight: 600;</span>
+      <span class="s1">letter-spacing: 0.02em;</span>
+      <span class="s1">background: linear-gradient(120deg, #355a9f, #5c4fa8, #8a4f9a);</span>
+      <span class="s1">color: #f3f3ff;</span>
+      <span class="s1">cursor: pointer;</span>
+      <span class="s1">margin-top: 0.5rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">button:disabled {</span>
+      <span class="s1">opacity: 0.5;</span>
+      <span class="s1">cursor: default;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">small {</span>
+      <span class="s1">opacity: 0.85;</span>
+      <span class="s1">font-size: 0.78rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.pill {</span>
+      <span class="s1">display: inline-flex;</span>
+      <span class="s1">align-items: center;</span>
+      <span class="s1">padding: 0.15rem 0.65rem;</span>
+      <span class="s1">border-radius: 999px;</span>
+      <span class="s1">border: 1px solid rgba(171, 208, 255, 0.4);</span>
+      <span class="s1">font-size: 0.72rem;</span>
+      <span class="s1">margin-right: 0.35rem;</span>
+      <span class="s1">margin-bottom: 0.2rem;</span>
+      <span class="s1">text-transform: uppercase;</span>
+      <span class="s1">letter-spacing: 0.06em;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.reading-grid {</span>
+      <span class="s1">display: grid;</span>
+      <span class="s1">grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));</span>
+      <span class="s1">gap: 0.75rem;</span>
+      <span class="s1">margin-top: 0.7rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.reading-block {</span>
+      <span class="s1">border-radius: 0.75rem;</span>
+      <span class="s1">border: 1px dashed rgba(152, 196, 255, 0.5);</span>
+      <span class="s1">padding: 0.6rem 0.7rem;</span>
+      <span class="s1">background: rgba(9, 20, 52, 0.8);</span>
+      <span class="s1">font-size: 0.86rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.reading-block h3 {</span>
+      <span class="s1">font-size: 0.9rem;</span>
+      <span class="s1">margin: 0 0 0.3rem;</span>
+      <span class="s1">text-transform: uppercase;</span>
+      <span class="s1">letter-spacing: 0.08em;</span>
+      <span class="s1">opacity: 0.9;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.mono {</span>
+      <span class="s1">font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,</span>
+        <span class="s1">&quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;</span>
+      <span class="s1">font-size: 0.8rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">details {</span>
+      <span class="s1">margin-top: 0.4rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">details summary {</span>
+      <span class="s1">cursor: pointer;</span>
+      <span class="s1">font-size: 0.82rem;</span>
+      <span class="s1">opacity: 0.95;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">table {</span>
+      <span class="s1">width: 100%;</span>
+      <span class="s1">border-collapse: collapse;</span>
+      <span class="s1">font-size: 0.8rem;</span>
+      <span class="s1">margin-top: 0.5rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">th,</span>
+    <span class="s1">td {</span>
+      <span class="s1">border-bottom: 1px solid rgba(106, 151, 230, 0.35);</span>
+      <span class="s1">padding: 0.35rem 0.25rem;</span>
+      <span class="s1">text-align: left;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">th {</span>
+      <span class="s1">font-weight: 600;</span>
+      <span class="s1">opacity: 0.9;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.muted {</span>
+      <span class="s1">opacity: 0.7;</span>
+      <span class="s1">font-size: 0.8rem;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.timestamp {</span>
+      <span class="s1">font-size: 0.78rem;</span>
+      <span class="s1">opacity: 0.7;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@media (max-width: 640px) {</span>
+      <span class="s1">.app-shell {</span>
+        <span class="s1">padding: 0.8rem;</span>
+      <span class="s1">}</span>
+    <span class="s1">}</span>
+  <span class="s0">&lt;/style&gt;</span>
+<span class="s0">&lt;/head&gt;</span>
+<span class="s0">&lt;body&gt;</span>
+  <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;app-shell&quot;</span><span class="s0">&gt;</span>
+    <span class="s0">&lt;h1&gt;</span><span class="s1">HALO Meta-Oracle – Local Prototype</span><span class="s0">&lt;/h1&gt;</span>
+
+    <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;card&quot;</span><span class="s0">&gt;</span>
+      <span class="s0">&lt;h2&gt;</span><span class="s1">1. Profile</span><span class="s0">&lt;/h2&gt;</span>
+      <span class="s0">&lt;p </span><span class="s2">class</span><span class="s3">=&quot;muted&quot;</span><span class="s0">&gt;</span><span class="s1">Optional but helpful—used for tags and flavor text.</span><span class="s0">&lt;/p&gt;</span>
+      <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;row&quot;</span><span class="s0">&gt;</span>
+        <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;col&quot;</span><span class="s0">&gt;</span>
+          <span class="s0">&lt;label </span><span class="s2">for</span><span class="s3">=&quot;profile-name&quot;</span><span class="s0">&gt;</span><span class="s1">Name / handle</span><span class="s0">&lt;/label&gt;</span>
+          <span class="s0">&lt;input </span><span class="s2">id</span><span class="s3">=&quot;profile-name&quot; </span><span class="s2">type</span><span class="s3">=&quot;text&quot; </span><span class="s2">placeholder</span><span class="s3">=&quot;Player Zero, Apocky, etc.&quot; </span><span class="s0">/&gt;</span>
+        <span class="s0">&lt;/div&gt;</span>
+        <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;col&quot;</span><span class="s0">&gt;</span>
+          <span class="s0">&lt;label </span><span class="s2">for</span><span class="s3">=&quot;profile-sun&quot;</span><span class="s0">&gt;</span><span class="s1">Sun sign</span><span class="s0">&lt;/label&gt;</span>
+          <span class="s0">&lt;input </span><span class="s2">id</span><span class="s3">=&quot;profile-sun&quot; </span><span class="s2">type</span><span class="s3">=&quot;text&quot; </span><span class="s2">placeholder</span><span class="s3">=&quot;Taurus, Leo, etc.&quot; </span><span class="s0">/&gt;</span>
+        <span class="s0">&lt;/div&gt;</span>
+        <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;col&quot;</span><span class="s0">&gt;</span>
+          <span class="s0">&lt;label </span><span class="s2">for</span><span class="s3">=&quot;profile-moon&quot;</span><span class="s0">&gt;</span><span class="s1">Moon sign</span><span class="s0">&lt;/label&gt;</span>
+          <span class="s0">&lt;input </span><span class="s2">id</span><span class="s3">=&quot;profile-moon&quot; </span><span class="s2">type</span><span class="s3">=&quot;text&quot; </span><span class="s2">placeholder</span><span class="s3">=&quot;Gemini, Pisces, etc.&quot; </span><span class="s0">/&gt;</span>
+        <span class="s0">&lt;/div&gt;</span>
+        <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;col&quot;</span><span class="s0">&gt;</span>
+          <span class="s0">&lt;label </span><span class="s2">for</span><span class="s3">=&quot;profile-rising&quot;</span><span class="s0">&gt;</span><span class="s1">Rising / Ascendant</span><span class="s0">&lt;/label&gt;</span>
+          <span class="s0">&lt;input </span><span class="s2">id</span><span class="s3">=&quot;profile-rising&quot; </span><span class="s2">type</span><span class="s3">=&quot;text&quot; </span><span class="s2">placeholder</span><span class="s3">=&quot;Scorpio Rising, etc.&quot; </span><span class="s0">/&gt;</span>
+        <span class="s0">&lt;/div&gt;</span>
+      <span class="s0">&lt;/div&gt;</span>
+      <span class="s0">&lt;button </span><span class="s2">id</span><span class="s3">=&quot;save-profile&quot;</span><span class="s0">&gt;</span><span class="s1">Save profile locally</span><span class="s0">&lt;/button&gt;</span>
+      <span class="s0">&lt;small </span><span class="s2">class</span><span class="s3">=&quot;muted&quot;</span><span class="s0">&gt;</span><span class="s1">Stored only in this browser using localStorage.</span><span class="s0">&lt;/small&gt;</span>
+    <span class="s0">&lt;/div&gt;</span>
+
+    <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;card&quot;</span><span class="s0">&gt;</span>
+      <span class="s0">&lt;h2&gt;</span><span class="s1">2. Ask HALO</span><span class="s0">&lt;/h2&gt;</span>
+      <span class="s0">&lt;label </span><span class="s2">for</span><span class="s3">=&quot;question&quot;</span><span class="s0">&gt;</span><span class="s1">Question or focus</span><span class="s0">&lt;/label&gt;</span>
+      <span class="s0">&lt;textarea </span><span class="s2">id</span><span class="s3">=&quot;question&quot; </span><span class="s2">placeholder</span><span class="s3">=&quot;What do I most need to understand about…?&quot;</span><span class="s0">&gt;&lt;/textarea&gt;</span>
+      <span class="s0">&lt;button </span><span class="s2">id</span><span class="s3">=&quot;roll-btn&quot;</span><span class="s0">&gt;</span><span class="s1">Roll the Meta-Oracle</span><span class="s0">&lt;/button&gt;</span>
+      <span class="s0">&lt;div </span><span class="s2">id</span><span class="s3">=&quot;current-reading&quot; </span><span class="s2">style</span><span class="s3">=&quot;margin-top:0.75rem;&quot;</span><span class="s0">&gt;&lt;/div&gt;</span>
+    <span class="s0">&lt;/div&gt;</span>
+
+    <span class="s0">&lt;div </span><span class="s2">class</span><span class="s3">=&quot;card&quot;</span><span class="s0">&gt;</span>
+      <span class="s0">&lt;h2&gt;</span><span class="s1">3. Past Readings (this device)</span><span class="s0">&lt;/h2&gt;</span>
+      <span class="s0">&lt;p </span><span class="s2">class</span><span class="s3">=&quot;muted&quot;</span><span class="s0">&gt;</span>
+        <span class="s1">Local Spiritual Blockchain prototype – readings are chained with simple hashes.</span>
+      <span class="s0">&lt;/p&gt;</span>
+      <span class="s0">&lt;div </span><span class="s2">id</span><span class="s3">=&quot;history&quot;</span><span class="s0">&gt;&lt;/div&gt;</span>
+    <span class="s0">&lt;/div&gt;</span>
+  <span class="s0">&lt;/div&gt;</span>
+
+  <span class="s0">&lt;script </span><span class="s2">src</span><span class="s3">=&quot;halo.js&quot;</span><span class="s0">&gt;&lt;/script&gt;</span>
+<span class="s0">&lt;/body&gt;</span>
+<span class="s0">&lt;/html&gt;</span>
+</pre>
+</body>
+</html>
