@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0f2c" />
+  <meta name="description" content="A magical first-birthday page for Lyra Evana Baker — sea creatures drifting beneath the Northern Lights, a golden alethiometer, and a candle to wish upon." />
+  <title>Lyra Evana Baker turns One 🌌</title>
+  <style>
+    :root {
+      color-scheme: dark;
+
+      /* Aurora night — cool neutrals biased toward the accent */
+      --night:        #0a0f2c;
+      --night-2:      #131a44;
+      --night-3:      #1b2358;
+      --ink:          #eaf0ff;                /* body text on night */
+      --ink-soft:     rgba(234, 240, 255, .70);
+      --ink-faint:    rgba(234, 240, 255, .48);
+      --line:         rgba(140, 170, 255, .22);
+
+      /* Aurora ribbons */
+      --aurora-teal:  #5ffbd0;
+      --aurora-cyan:  #39d0ff;
+      --aurora-violet:#b57bff;
+      --aurora-rose:  #ff8be0;
+
+      /* Gold — the one bold spend (alethiometer + the "1") */
+      --gold:         #f4c95d;
+      --gold-bright:  #ffdf8a;
+      --gold-deep:    #b8862b;
+
+      /* Bluey nod — heeler blue + warm tan, supporting only */
+      --heeler:       #4aa3e0;
+      --tan:          #e8c79a;
+
+      --shell:        rgba(12, 18, 46, .72);
+      --shell-line:   rgba(150, 180, 255, .18);
+
+      --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      --sans:  system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      --maxw: 720px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--night);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ---- Fixed cosmos layers ---- */
+    #sky {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      display: block;
+    }
+    /* soft vignette + ground glow above the canvas for depth */
+    .veil {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(120% 80% at 50% -10%, rgba(90,120,255,.18), transparent 55%),
+        radial-gradient(140% 60% at 50% 112%, rgba(57,208,255,.16), transparent 60%),
+        radial-gradient(100% 70% at 50% 120%, rgba(10,14,44,.9), transparent 60%);
+      transition: opacity .6s ease;
+    }
+    /* brief brightening when a wish is made */
+    body.wish .veil { opacity: 1; animation: shimmer 1.6s ease; }
+    @keyframes shimmer {
+      0%   { filter: brightness(1); }
+      30%  { filter: brightness(1.8) saturate(1.3); }
+      100% { filter: brightness(1); }
+    }
+
+    #confetti {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    /* ---- Layout ---- */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: clamp(1.25rem, 4vw, 2.5rem);
+    }
+
+    section { margin: clamp(3rem, 9vw, 6rem) 0; }
+
+    /* ---- Hero ---- */
+    .hero { text-align: center; padding-top: clamp(2rem, 9vh, 5rem); }
+    .eyebrow {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .42em;
+      font-size: .72rem;
+      color: var(--aurora-teal);
+      margin: 0 0 1.4rem;
+      padding-left: .42em; /* optical: balance the tracking */
+    }
+    .name {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(2.6rem, 11vw, 5rem);
+      line-height: 1.02;
+      letter-spacing: .01em;
+      margin: 0;
+      text-wrap: balance;
+      background: linear-gradient(180deg, #ffffff 0%, #dfe8ff 55%, var(--aurora-cyan) 130%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 40px rgba(120,150,255,.25);
+    }
+    .name .mid { font-style: italic; font-size: .62em; display: block; color: transparent; }
+    .turns {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(1.05rem, 3.4vw, 1.4rem);
+      color: var(--ink-soft);
+      margin: 1.1rem 0 0;
+    }
+
+    /* The golden ONE with a candle */
+    .cake { margin: clamp(2rem, 6vw, 3rem) auto 0; width: min(340px, 78vw); }
+    .one-btn {
+      display: block;
+      margin: 0 auto;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+      width: 100%;
+    }
+    .one-btn:focus-visible { outline: 3px solid var(--aurora-cyan); outline-offset: 12px; border-radius: 24px; }
+    .digit-wrap { position: relative; display: inline-block; }
+    .digit {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(9rem, 34vw, 15rem);
+      line-height: .9;
+      background: linear-gradient(175deg, var(--gold-bright), var(--gold) 45%, var(--gold-deep));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 26px rgba(244,201,93,.45));
+    }
+    /* candle sits on top of the 1 */
+    .candle {
+      position: absolute;
+      top: -8%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 46px;
+      border-radius: 5px 5px 3px 3px;
+      background: linear-gradient(180deg, #fff6f0, #ffd9e6 40%, #b9d4ff);
+      box-shadow: inset 0 -6px 10px rgba(0,0,0,.15), 0 6px 14px rgba(0,0,0,.35);
+    }
+    .candle::before { /* stripes */
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(74,163,224,.5) 6px 10px);
+      opacity: .55;
+    }
+    .flame {
+      position: absolute;
+      top: -30px; left: 50%;
+      width: 16px; height: 28px;
+      transform: translateX(-50%);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: radial-gradient(ellipse at 50% 75%, #fff 0%, var(--gold-bright) 35%, #ff8a3c 75%, transparent 100%);
+      box-shadow: 0 0 22px 6px rgba(255,180,80,.75), 0 0 60px 20px rgba(255,140,60,.35);
+      transform-origin: 50% 100%;
+      animation: flicker 1.6s ease-in-out infinite;
+    }
+    @keyframes flicker {
+      0%,100% { transform: translateX(-50%) scale(1) rotate(-1deg); }
+      50%     { transform: translateX(-52%) scale(1.06, .96) rotate(2deg); }
+    }
+    .smoke {
+      position: absolute;
+      top: -24px; left: 50%;
+      width: 8px; height: 8px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: rgba(220,225,255,.5);
+      opacity: 0;
+    }
+    .out .flame { opacity: 0; transform: translateX(-50%) scale(.2); transition: opacity .5s ease, transform .5s ease; }
+    .out .smoke { animation: puff 1.4s ease-out forwards; }
+    @keyframes puff {
+      0%   { opacity: .7; transform: translate(-50%, 0) scale(.6); }
+      100% { opacity: 0;  transform: translate(-40%, -46px) scale(2.4); }
+    }
+    .cake-hint {
+      font-family: var(--sans);
+      font-size: .82rem;
+      letter-spacing: .04em;
+      color: var(--ink-faint);
+      margin: .9rem 0 0;
+    }
+
+    .wish-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      margin-top: 1.8rem;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--night);
+      background: linear-gradient(120deg, var(--gold-bright), var(--gold));
+      border: 0;
+      border-radius: 999px;
+      padding: .8rem 1.6rem;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(244,201,93,.28);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .wish-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(244,201,93,.4); }
+    .wish-btn:focus-visible { outline: 3px solid var(--aurora-cyan); outline-offset: 3px; }
+
+    /* ---- Alethiometer ---- */
+    .instrument { text-align: center; }
+    .kicker {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .34em;
+      font-size: .7rem;
+      color: var(--aurora-violet);
+      margin: 0 0 1rem;
+      padding-left: .34em;
+    }
+    .alethiometer {
+      width: min(360px, 82vw);
+      height: auto;
+      margin: 0 auto;
+      display: block;
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,.5));
+    }
+    .aleth-needle { transform-origin: 190px 190px; animation: sweep 24s linear infinite; }
+    @keyframes sweep { to { transform: rotate(360deg); } }
+    .caption {
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--ink-soft);
+      max-width: 40ch;
+      margin: 1.6rem auto 0;
+      font-size: 1.05rem;
+      text-wrap: balance;
+    }
+
+    /* ---- Favorite things ---- */
+    .things-head { text-align: center; margin-bottom: 2rem; }
+    .things-head h2 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(1.7rem, 6vw, 2.4rem);
+      margin: 0;
+      text-wrap: balance;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .panel {
+      background: linear-gradient(180deg, var(--shell), rgba(12,18,46,.55));
+      border: 1px solid var(--shell-line);
+      border-radius: 20px;
+      padding: 1.4rem 1.25rem 1.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 14px 30px rgba(0,0,0,.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .panel h3 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 1.35rem;
+      margin: .2rem 0 .4rem;
+    }
+    .panel p { margin: 0; color: var(--ink-soft); font-size: .95rem; }
+    .panel .glyphs {
+      font-size: 2.1rem;
+      line-height: 1.2;
+      letter-spacing: .1rem;
+      margin-bottom: .4rem;
+      display: flex; gap: .35rem; flex-wrap: wrap;
+    }
+    .panel.bluey  { border-color: rgba(74,163,224,.4); }
+    .panel.bluey h3  { color: var(--heeler); }
+    .panel.sea    { border-color: rgba(57,208,255,.35); }
+    .panel.sea h3    { color: var(--aurora-cyan); }
+    .panel.critters { border-color: rgba(255,139,224,.32); }
+    .panel.critters h3 { color: var(--aurora-rose); }
+    .paw {
+      position: absolute;
+      right: -6px; bottom: -10px;
+      font-size: 3.4rem;
+      opacity: .12;
+      transform: rotate(-18deg);
+    }
+    .float { display: inline-block; animation: bob 4s ease-in-out infinite; }
+    .float:nth-child(2) { animation-delay: .6s; }
+    .float:nth-child(3) { animation-delay: 1.2s; }
+    .float:nth-child(4) { animation-delay: 1.8s; }
+    @keyframes bob {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50%     { transform: translateY(-7px) rotate(4deg); }
+    }
+
+    /* ---- Ocean band with drifting friends ---- */
+    .ocean {
+      position: relative;
+      height: 130px;
+      margin: 3rem 0 0;
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(57,208,255,.10), rgba(27,35,88,.7));
+      border: 1px solid var(--shell-line);
+    }
+    .swimmer {
+      position: absolute;
+      font-size: 2.2rem;
+      top: 50%;
+      left: -60px;
+      will-change: transform;
+      animation: swim 18s linear infinite;
+    }
+    .swimmer.b { top: 26%; font-size: 1.7rem; animation-duration: 24s; animation-delay: -6s; }
+    .swimmer.c { top: 68%; font-size: 1.9rem; animation-duration: 21s; animation-delay: -12s; }
+    .swimmer.d { top: 40%; font-size: 1.4rem; animation-duration: 28s; animation-delay: -3s; }
+    @keyframes swim {
+      0%   { transform: translateX(0) translateY(0) scaleX(1); }
+      50%  { transform: translateX(52vw) translateY(-10px) scaleX(1); }
+      100% { transform: translateX(105vw) translateY(0) scaleX(1); }
+    }
+
+    /* ---- Dedication ---- */
+    .dedication { text-align: center; }
+    .poem {
+      font-family: var(--serif);
+      font-size: clamp(1.15rem, 3.6vw, 1.5rem);
+      line-height: 1.8;
+      color: var(--ink);
+      max-width: 30ch;
+      margin: 0 auto;
+      text-wrap: balance;
+    }
+    .poem .soft { color: var(--aurora-teal); font-style: italic; }
+    .sign {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .3em;
+      font-size: .72rem;
+      color: var(--ink-faint);
+      margin-top: 2.4rem;
+      padding-left: .3em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem 3rem;
+      color: var(--ink-faint);
+      font-size: .82rem;
+    }
+    footer .heart { color: var(--aurora-rose); }
+
+    @media (max-width: 640px) {
+      .ocean { height: 108px; }
+      .caption { font-size: 1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .flame, .aleth-needle, .float, .swimmer, .veil { animation: none !important; }
+      body.wish .veil { animation: none; }
+      .swimmer { left: auto; right: 12%; }
+      .swimmer.b { right: 40%; } .swimmer.c { right: 66%; } .swimmer.d { right: 24%; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="veil" aria-hidden="true"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <main class="wrap">
+
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="lyra-name">
+      <p class="eyebrow">Under the Northern Lights</p>
+      <h1 class="name" id="lyra-name">Lyra<span class="mid">Evana</span>Baker</h1>
+      <p class="turns">turns <strong>one</strong> &nbsp;·&nbsp; the tenth of July</p>
+
+      <div class="cake">
+        <button class="one-btn" id="candleBtn" type="button" aria-label="Blow out Lyra's birthday candle and make a wish">
+          <span class="digit-wrap" id="digitWrap">
+            <span class="candle" aria-hidden="true">
+              <span class="smoke"></span>
+              <span class="flame"></span>
+            </span>
+            <span class="digit" aria-hidden="true">1</span>
+          </span>
+        </button>
+        <p class="cake-hint" id="cakeHint">✨ tap the candle to make a wish ✨</p>
+      </div>
+
+      <button class="wish-btn" id="wishBtn" type="button">
+        <span aria-hidden="true">🎂</span> Make a wish
+      </button>
+    </section>
+
+    <!-- ALETHIOMETER -->
+    <section class="instrument" aria-labelledby="aleth-title">
+      <p class="kicker" id="aleth-title">The Golden Compass</p>
+      <svg class="alethiometer" viewBox="0 0 380 380" role="img"
+           aria-label="A golden alethiometer, its needle turning slowly past symbols of Lyra's favorite things.">
+        <defs>
+          <radialGradient id="brass" cx="50%" cy="38%" r="70%">
+            <stop offset="0%"  stop-color="#fff2cf"/>
+            <stop offset="42%" stop-color="#f4c95d"/>
+            <stop offset="78%" stop-color="#b8862b"/>
+            <stop offset="100%" stop-color="#7a5715"/>
+          </radialGradient>
+          <radialGradient id="face" cx="50%" cy="42%" r="62%">
+            <stop offset="0%"  stop-color="#182150"/>
+            <stop offset="100%" stop-color="#0a0f2c"/>
+          </radialGradient>
+          <linearGradient id="needle" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stop-color="#ffe9a8"/>
+            <stop offset="100%" stop-color="#c8951f"/>
+          </linearGradient>
+        </defs>
+
+        <!-- rings -->
+        <circle cx="190" cy="190" r="184" fill="url(#brass)"/>
+        <circle cx="190" cy="190" r="168" fill="#0a0f2c"/>
+        <circle cx="190" cy="190" r="162" fill="none" stroke="#f4c95d" stroke-width="2" opacity=".7"/>
+        <circle cx="190" cy="190" r="140" fill="url(#face)" stroke="#b8862b" stroke-width="3"/>
+
+        <!-- 24 tick marks -->
+        <g id="ticks" stroke="#f4c95d" stroke-width="2" opacity=".6"></g>
+
+        <!-- symbol ring: Lyra's favorite things -->
+        <g id="symbols" font-size="26" text-anchor="middle" dominant-baseline="central"></g>
+
+        <!-- slowly sweeping needle -->
+        <g class="aleth-needle">
+          <polygon points="190,64 199,190 190,206 181,190" fill="url(#needle)"/>
+          <polygon points="190,316 197,190 190,178 183,190" fill="#8c6a1e"/>
+        </g>
+
+        <!-- hub -->
+        <circle cx="190" cy="190" r="15" fill="url(#brass)" stroke="#7a5715" stroke-width="2"/>
+        <circle cx="190" cy="190" r="5" fill="#5a3f0f"/>
+      </svg>
+      <p class="caption">Named for a girl who read the truth in a golden dial and walked between the worlds. May yours always point you home.</p>
+    </section>
+
+    <!-- FAVORITE THINGS -->
+    <section aria-labelledby="things-title">
+      <div class="things-head">
+        <h2 id="things-title">A few of her favorite things</h2>
+      </div>
+      <div class="cards">
+        <article class="panel bluey">
+          <div class="glyphs" aria-hidden="true"><span class="float">🐶</span><span class="float">🐾</span><span class="float">🎨</span></div>
+          <h3>For real life!</h3>
+          <p>Blue heelers, backyard games, and dancing along with Bingo. Wackadoo!</p>
+          <span class="paw" aria-hidden="true">🐾</span>
+        </article>
+        <article class="panel sea">
+          <div class="glyphs" aria-hidden="true"><span class="float">🐋</span><span class="float">🐢</span><span class="float">🪼</span><span class="float">🐠</span></div>
+          <h3>Sea friends</h3>
+          <p>Whales that sing, turtles that glide, and jellyfish drifting like little lanterns.</p>
+        </article>
+        <article class="panel critters">
+          <div class="glyphs" aria-hidden="true"><span class="float">🐞</span><span class="float">🦋</span><span class="float">🐌</span></div>
+          <h3>Little critters</h3>
+          <p>Ladybugs on leaves, butterflies in the garden, and every tiny creature that says hello.</p>
+        </article>
+      </div>
+
+      <div class="ocean" aria-hidden="true">
+        <span class="swimmer a">🐋</span>
+        <span class="swimmer b">🐢</span>
+        <span class="swimmer c">🐠</span>
+        <span class="swimmer d">🪼</span>
+      </div>
+    </section>
+
+    <!-- DEDICATION -->
+    <section class="dedication" aria-labelledby="ded-title">
+      <h2 class="kicker" id="ded-title" style="color:var(--aurora-teal)">For Lyra, at one</h2>
+      <p class="poem">
+        One whole trip around the sun,<br>
+        little explorer, <span class="soft">brightest one</span>.<br>
+        The whales still sing, the aurora glows,<br>
+        and every year, the wonder grows.
+      </p>
+      <p class="sign">With all our love · 7 · 10</p>
+    </section>
+
+  </main>
+
+  <footer>
+    Made with <span class="heart" aria-hidden="true">♥</span> for Lyra Evana Baker
+  </footer>
+
+  <script>
+  (() => {
+    "use strict";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---------- Alethiometer face (built once, in JS to keep markup light) ---------- */
+    (function buildDial() {
+      const cx = 190, cy = 190;
+      const ticks = document.getElementById("ticks");
+      const symbols = document.getElementById("symbols");
+      if (ticks) {
+        let d = "";
+        for (let i = 0; i < 24; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          const r1 = 150, r2 = i % 2 === 0 ? 138 : 144;
+          d += `<line x1="${cx + r1 * Math.sin(a)}" y1="${cy - r1 * Math.cos(a)}" x2="${cx + r2 * Math.sin(a)}" y2="${cy - r2 * Math.cos(a)}"/>`;
+        }
+        ticks.innerHTML = d;
+      }
+      if (symbols) {
+        const glyphs = ["🐋","🐾","🐞","⭐","🐢","🪼","🦋","🐚","🌙","🐶","🐠","☀️"];
+        const r = 116;
+        let s = "";
+        glyphs.forEach((g, i) => {
+          const a = (i / glyphs.length) * Math.PI * 2;
+          const x = cx + r * Math.sin(a), y = cy - r * Math.cos(a);
+          s += `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}">${g}</text>`;
+        });
+        symbols.innerHTML = s;
+      }
+    })();
+
+    /* ---------- Aurora + starfield backdrop (Canvas) ---------- */
+    (function sky() {
+      const canvas = document.getElementById("sky");
+      const ctx = canvas.getContext("2d");
+      let w, h, dpr, stars = [], ribbons = [];
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = canvas.width = Math.floor(innerWidth * dpr);
+        h = canvas.height = Math.floor(innerHeight * dpr);
+        canvas.style.width = innerWidth + "px";
+        canvas.style.height = innerHeight + "px";
+        buildStars();
+      }
+      function buildStars() {
+        const count = Math.round((innerWidth * innerHeight) / 6500);
+        stars = [];
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x: Math.random() * w,
+            y: Math.random() * h * 0.92,
+            r: (Math.random() * 1.3 + 0.3) * dpr,
+            base: Math.random() * 0.5 + 0.3,
+            tw: Math.random() * Math.PI * 2,
+            sp: Math.random() * 0.9 + 0.3
+          });
+        }
+      }
+      ribbons = [
+        { hue: [95, 251, 208], y: 0.30, amp: 0.10, len: 0.9, speed: 0.10, phase: 0 },
+        { hue: [57, 208, 255], y: 0.42, amp: 0.13, len: 1.2, speed: 0.07, phase: 2 },
+        { hue: [181, 123, 255], y: 0.52, amp: 0.11, len: 1.0, speed: 0.05, phase: 4 }
+      ];
+
+      function drawSkyGradient() {
+        const g = ctx.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0,   "#070a20");
+        g.addColorStop(0.55,"#0b1136");
+        g.addColorStop(1,   "#131a44");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      }
+      function drawStars(t) {
+        for (const s of stars) {
+          const a = reduce ? s.base : s.base + Math.sin(t * 0.001 * s.sp + s.tw) * 0.35;
+          ctx.globalAlpha = Math.max(0, Math.min(1, a));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = "#eef3ff";
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+      function drawAurora(t) {
+        ctx.globalCompositeOperation = "lighter";
+        for (const rb of ribbons) {
+          const baseY = h * rb.y;
+          const drift = reduce ? 0 : t * 0.001 * rb.speed;
+          ctx.beginPath();
+          ctx.moveTo(0, h);
+          for (let x = 0; x <= w; x += 14 * dpr) {
+            const p = x / w;
+            const y = baseY
+              + Math.sin(p * Math.PI * 2 * rb.len + rb.phase + drift) * (h * rb.amp)
+              + Math.sin(p * Math.PI * 6 + drift * 1.7) * (h * rb.amp * 0.25);
+            ctx.lineTo(x, y);
+          }
+          ctx.lineTo(w, h);
+          ctx.closePath();
+          const [r, g, b] = rb.hue;
+          const grad = ctx.createLinearGradient(0, baseY - h * rb.amp, 0, h);
+          grad.addColorStop(0,   `rgba(${r},${g},${b},0)`);
+          grad.addColorStop(0.35,`rgba(${r},${g},${b},0.16)`);
+          grad.addColorStop(1,   `rgba(${r},${g},${b},0)`);
+          ctx.fillStyle = grad;
+          ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+      }
+
+      let raf;
+      function frame(t) {
+        drawSkyGradient();
+        drawAurora(t);
+        drawStars(t);
+        if (!reduce) raf = requestAnimationFrame(frame);
+      }
+      window.addEventListener("resize", () => { resize(); if (reduce) frame(0); });
+      resize();
+      frame(0);
+    })();
+
+    /* ---------- Confetti burst on a wish ---------- */
+    const confetti = (function () {
+      const canvas = document.getElementById("confetti");
+      const ctx = canvas.getContext("2d");
+      let dpr = 1, parts = [], running = false;
+
+      function fit() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(innerWidth * dpr);
+        canvas.height = Math.floor(innerHeight * dpr);
+        canvas.style.width = innerWidth + "px";
+        canvas.style.height = innerHeight + "px";
+      }
+      window.addEventListener("resize", fit);
+      fit();
+
+      const colors = ["#f4c95d","#ffdf8a","#5ffbd0","#39d0ff","#b57bff","#ff8be0","#4aa3e0","#e8c79a"];
+
+      function burst() {
+        fit();
+        const cx = canvas.width / 2, cy = canvas.height * 0.32;
+        const n = reduce ? 60 : 150;
+        for (let i = 0; i < n; i++) {
+          const ang = Math.random() * Math.PI * 2;
+          const spd = (Math.random() * 9 + 4) * dpr;
+          parts.push({
+            x: cx, y: cy,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd - 6 * dpr,
+            g: 0.22 * dpr,
+            size: (Math.random() * 7 + 4) * dpr,
+            rot: Math.random() * Math.PI,
+            vr: (Math.random() - 0.5) * 0.3,
+            color: colors[(Math.random() * colors.length) | 0],
+            life: 0,
+            max: Math.random() * 80 + 90
+          });
+        }
+        if (!running) { running = true; requestAnimationFrame(tick); }
+      }
+
+      function tick() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const p of parts) {
+          p.vy += p.g; p.x += p.vx; p.y += p.vy; p.vx *= 0.99;
+          p.rot += p.vr; p.life++;
+        }
+        parts = parts.filter(p => p.life < p.max && p.y < canvas.height + 40);
+        for (const p of parts) {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.globalAlpha = Math.max(0, 1 - p.life / p.max);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          ctx.restore();
+        }
+        ctx.globalAlpha = 1;
+        if (parts.length) requestAnimationFrame(tick);
+        else { running = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+      }
+      return { burst };
+    })();
+
+    /* ---------- Candle + wish interactions ---------- */
+    const digitWrap = document.getElementById("digitWrap");
+    const candleBtn = document.getElementById("candleBtn");
+    const wishBtn = document.getElementById("wishBtn");
+    const hint = document.getElementById("cakeHint");
+    let relightTimer = null;
+
+    function makeWish() {
+      confetti.burst();
+      document.body.classList.add("wish");
+      digitWrap.classList.add("out");            // blow the candle out
+      if (hint) hint.textContent = "🌠 wish made — happy birthday, Lyra!";
+      setTimeout(() => document.body.classList.remove("wish"), 1700);
+
+      clearTimeout(relightTimer);
+      relightTimer = setTimeout(() => {
+        digitWrap.classList.remove("out");        // relight so it can be wished again
+        if (hint) hint.textContent = "✨ tap the candle to make a wish ✨";
+      }, 5000);
+    }
+
+    candleBtn.addEventListener("click", makeWish);
+    wishBtn.addEventListener("click", makeWish);
+  })();
+  </script>
+</body>
+</html>
