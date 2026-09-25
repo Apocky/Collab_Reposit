@@ -1,5 +1,10 @@
 # UNFINISHED_WORK — PARK lines, newest first
 
+- 2026-09-25 L0 PASS (container) | handle: receipts/L0.md ; apocrypha-core b310eb0 | the from-scratch
+  model trained, BREAK-tested, exported, loaded by apx-model with parity, served by apx-hive and
+  answered a turn in apx-room. next: L1 =  on the host (records transcript count, bytes, tokens, license summary in
+  receipts/L1.md), then ; R1 Muon ablation on L1 (optim.rs, orthogonality test).
+
 - 2026-09-25 L0 | handle: apocrypha-core kernel/unified-v1 (apx-nn ckpt.rs, apx-train
   tokenize/train/eval, e2e test, all green on Linux) — NOT YET COMMITTED there when this repo was
   created; commit them first. owed for the L0 receipt: the BREAK run (word-shuffled corpus, same
