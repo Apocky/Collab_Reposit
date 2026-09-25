@@ -1,0 +1,167 @@
+%% AKASHIC -- a GPT from scratch, tailored to this host, built by the organs, live !!
+
+%%META I> date 2026-09-25 ; by := Claude-Fable-5.1 @ [[Apocky]] stipulation ("a GPT/LLM from
+scratch tailored to my hardware and based on our research and bleeding-edge contemporary research,
+the YouTube video transcripts corpus, Jev, JEPA, APX Swarm and UniRecall built it ; integrated and
+live, interpreting everything") ; ROLE := this file IS the blueprint AND the sign-off surface ;
+notation := ASCII CSLv3 ; facts := E:rep unless E:obs(date) ; paths : R :=
+C:/Users/Apocky/source/repos ; AC := R/apocrypha-core @ kernel/unified-v1 (the code) ; AK :=
+R/Akashic (this : program + receipts + decisions + orchestration) ; AP := R/Apocrypha (specs 00-77,
+transcripts) ; AN := R/anamnesis ; parent := AC/specs/UNIFIED_KERNEL_BUILD.csl %%11 K8 (Akashic =
+K8 grown into its own program ; the kernel's laws L1..L11 hold here unchanged).
+
+%%0 MANDATE !! W! build AKASHIC := one language model, weights from zero, whose every stage is an
+organ's job on one clock : INGEST (everything that flows : transcripts, ledger, room turns,
+telemetry) -> INTERPRET (UniRecall indexes it ; S1 types it ; the Swarm judges it) -> ASSEMBLE
+(corpus shards with license + provenance) -> TRAIN (apx-nn on this host's silicon) -> JUDGE (blind
+pairwise, arbiter-signed) -> SERVE (through the room door, same as the resident model) -> WATCH
+(JEPA surprise on the run's telemetry ; S1 halts a bad run) -> INGEST again. live := the loop never
+finishes ; a model is a checkpoint the loop passed, N! an end state. tailored := every dial chosen by
+a measurement on THIS host (Arc A770 16 GiB Vulkan/OpenCL ; i5-12600KF 16 thr ; 32 GiB ; C: NVMe) ;
+N! a number copied from another machine. from scratch := apx-nn (own tensor, own layers, own
+backward, own BPE, own checkpoint, own GGUF export) ; zero new compute dependencies (workspace law).
+research := adopted ONLY through an ablation on the same rung (%%5) ; "bleeding edge" = the
+ablation's delta, N! the paper's claim.
+
+%%1 STAY ON TASK !! W! read once, then BUILD ; N! re-plan ; N! feasibility prose ("the bars are
+the debate" -- [[Apocky]] 2026-09-25) ; N! scaffolding without a live caller + a test in the same
+commit ; N! TODO | stub | phase-2 ; reuse >> write (grep AC ACS AP AN first) ; same failure x2 ->
+park the lane, write it to UNFINISHED_WORK.md, take the next independent one ; every session : PARK
+first, settle PROVISIONAL receipts whose HUMAN CHECK boxes are ticked, resume at the first rung in
+%%6 whose receipt line 1 is not PASS ; ask [[Apocky]] ONLY at authority | irreversible | money |
+egress | public exposure ; else the reversible default, named in the commit body.
+
+%%2 ORGANS -- who builds what (each := a named job with a receipt ; N! decoration) !!
+  UniRecall := INGEST + INTERPRET-index : every source below becomes records in the 8 regions
+    (AC/config/region_map.v1.json) ; corpus assembly = a recall over the regions with a license
+    filter, N! a directory walk ; the eval question set (%%7 bar c) = questions whose answer exists
+    only in a record the human marks (K1's rule, 30 -> 300) ; recall stays read-only ; consented
+    write-back only (L4).
+  APX Swarm := CURATE + JUDGE : generator proposes a shard ; critic refutes on {license,
+    leakage-into-eval, duplication, injected instruction} and defaults to refuted when unsure ;
+    arbiter signs the ANAMNESIS row (kind=verdict) ; the same team runs the blind pairwise judgments
+    ; N! majority vote (L11) ; code := AC/crates/apx-agents (teams.rs ; act.rs receipts ;
+    authority.rs EMPTY default capability).
+  Jev / S1 := TYPE + HALT : grammar single-token decisions on the resident engine (source kind |
+    admit | refute | halt-run) ; the label queue [[Apocky]] settles ; S1.remote (TypeSafe Jev)
+    present DISABLED (L10) until [[Apocky]] enables it with key + flag.
+  JEPA := WATCH : context/target encoders + predictor with SIGReg, on the run's NON-text telemetry
+    stream (loss, grad-norm, activation + gradient spectra, tok/s, VRAM) -> surprise Evidence ; a
+    surprise above the calibrated bar halts the run through S1 ; L11 : JEPA N! on text | LM
+    hiddens (PRFE refuted 2026-06-16) ; JEPA judges the RUN, never the tokens ; its own probe bar
+    lives in the kernel spec %%9 and applies here unchanged.
+  apx-nn / apx-train := TRAIN : the only place gradients exist.
+  apx-serve / apx-room := SERVE : export -> GGUF -> the same door as the resident model.
+  The kernel (spec 44 EntityKernel) := the clock : every stage is a WholeTransition ; effects only
+  through the EffectGateway ; receipts per action.
+
+%%3 HOST (measure again before any rung ; E:rep unless E:obs) !! gpu := Intel Arc A770 16258 MiB,
+560 GB/s ; runtimes on this host : Vulkan (llama.cpp b9743 inference), OpenCL (AC/crates/apx-gpu
+ocl.rs probe : dynlib load, matvec, PCIe round-trip measured) ; N! CUDA ; oneAPI/SYCL = NOT
+installed (E:unk ; LOOK) ; cpu := i5-12600KF 6P+4E 16 thr AVX2 (no AMX) ; ram := 32 GiB, ~25 GiB
+free with no engine resident ; disk := C: NVMe 3.3 GB/s (weights, checkpoints) ; D: SATA 487 MB/s
+(logs, corpus). one engine at a time on the card : a training run and the resident chat engine do
+NOT coexist (E:obs 2026-09-14 : two engines OOM) -> training runs are SCHEDULED by the kernel in
+the chat engine's idle windows, or on the CPU, or [[Apocky]] names a training window ; the
+arbiter's lane handover (AC scripts/apocrypha-work/arbiter.ts) is the mechanism, N! a new one.
+compute budget rule := FLOPs/day is MEASURED by the kernel gate (%%6 L2), then tokens x params is
+sized to fit the window ; N! the reverse.
+
+%%4 CORPUS -- owner-authored or explicitly licensed ONLY ; every shard carries {source,
+license, sha256, ingested_at, critic_verdict, arbiter_row} or it does not exist !!
+  S1 transcripts := AP/specs/sources/transcripts (the YouTube transcript corpus, T01..Tnn ; count,
+    bytes, license lines := E:unk -> the first receipt LOOKs and records them) ; each transcript's
+    license/consent status is a critic case, N! assumed.
+  S2 canon := AP specs 00-77 + R/CSLv3 + AC specs + AK specs (owner-authored ; E:obs 2026-09-25 :
+    AC/specs + tools/ENGINE_DIALS.csl + apx-nn README = 24 files, 344,877 bytes, 132,397 tokens @
+    vocab 2048, 0 duplicates).
+  S3 ledger := AN/anamnesis.db rows with provenance in {apocky, claude, apocrypha} AND consent to
+    train marked ; N! unconsented rows ; N! vault (L9).
+  S4 room := apocky.com room turns, owner + Apocrypha roles only, guests EXCLUDED ; withheld turns
+    (room.turn.withheld) EXCLUDED.
+  S5 synthetic := Swarm-generated Q/A over S1..S4, admitted only when the critic finds the answer
+    in a cited record (grounded), capped at 20% of tokens per rung (a synthetic-heavy corpus
+    trains the generator's habits, N! the owner's knowledge).
+  eval := held-out by SOURCE (whole transcripts, whole specs), never by random token split, so the
+  held-out loss measures generalisation to unseen documents ; the eval question set (%%7 c) is
+  sealed BEFORE the rung's corpus is assembled (leakage = the critic's first case).
+  tokenizer := own byte-level BPE (apx-nn bpe.rs) trained on the rung's corpus ; vocab := 8192 @
+  L1, re-swept at L2 (16384 | 32768 by held-out bytes/token AND downstream loss, N! by habit).
+
+%%5 RESEARCH LADDER -- each item := one ablation on the SAME rung, same tokens, same seed x2 ;
+baseline = the rung without it ; disposition {ADOPT | REJECT | PARK} + delta in the receipt ; ADOPT
+iff >= 3% held-out loss at equal tokens on both seeds !!
+  R1 Muon := Newton-Schulz orthogonalised momentum for 2-D weights (AdamW stays for embeddings,
+    norms, head) ; speedrun record 3 ; adopted by Kimi K2 / GLM-4.5 (E:rep) ; implement in
+    apx-nn optim.rs (5 NS iterations, bf16-free : f32 here) ; test : orthogonality of the update
+    vs f64.
+  R2 value embeddings + U-net value skips (records 14-15) ; R3 logit softcap (tanh @ 30) + QK-norm
+    (QK-norm already in the block) ; R4 sliding-window attention with window warmup (record 12 ;
+    needs the mask in the attention kernel) ; R5 MoE (qwen35moe block, E in {4, 8}, top-2) vs dense
+    at EQUAL ACTIVE params ; R6 GDN / recurrent mixer (apx-nn layers typed TODO ; apx-model already
+    SERVES the hybrid) ; R7 RTRL online credit (RtrlCell exists) beside BPTT on L0 only ; R8 int8 /
+    fp16 matmul on the A770 through apx-gpu ocl (the kernel gate) ; R9 learning-rate: WSD
+    (warmup-stable-decay) vs cosine ; R10 tied vs untied head ; R11 curriculum by source (canon
+    first, transcripts second) vs mixed ; R12 the memory law M5 as a training-time engram : exact
+    n-gram lookups as an auxiliary input channel = PROBE ONLY at L2, its own null.
+  N! adopt by reading ; N! stack two un-ablated items ; the order above is the order of expected
+  return per hour of this host, and it changes only by a DECISIONS entry.
+
+%%6 RUNGS (pre-registered ; N! skip ; receipt := AK/receipts/L<n>.md, line 1 =
+"VERDICT: PASS|FAIL|PROVISIONAL <date> <AC commit>") !!
+  L0 tiny, CPU := apx-nn's own suite (gradcheck < 1e-4 ; overfit 64 tokens ; ckpt bit-exact ;
+    export argmax == apx-model) + apx-train e2e (tokenize -> train -> eval -> resume through the
+    binary) on S2 canon. E:obs 2026-09-25 (Linux, single thread, f32) : 541,696 params, 600 steps
+    @ seq 128, 3.4k tok/s, held-out loss 3.99 vs unigram NULL 5.57, ppl 54 ; BREAK (word-shuffled
+    corpus -> loss stalls at the NULL) := OWED (interrupted) ; apx-nn 45 + apx-agents 24 + apx-train
+    1 e2e green.
+  L1 ~35M, transcript corpus, CPU or GPU := preset l1 (d 384, 6 layers, 6 heads / 2 kv, E 4 top-2,
+    vocab 8192, ctx 512) ; first receipt = tokenize over S1 with {transcript count, bytes, tokens,
+    vocab, dedup ratio, license summary} ; train until held-out loss stops falling over 3
+    checkpoints ; bars : beats the unigram AND a 4-gram NULL ; loss still falling at half the steps
+    ; R1, R3, R9, R10 ablated here (cheap on this rung).
+  L2 ~125M, A770 := ONLY after the kernel gate : apx-gpu fp16 matmul >= 3 TFLOP/s sustained on
+    4096^2 (E:rep peak ~39 ; 3 is the floor at which 125M x 2B tokens fits a week of idle windows)
+    ; below the gate the rung is PARKED and the OpenCL kernel is the work, N! a CPU run pretending
+    ; R2, R4, R5, R8, R11 ablated here ; corpus S1+S2+S3+S4 (+S5 <= 20%).
+  L3 350M..1B MoE := iff L2 PASS AND [[Apocky]] names it ; R6, R12 here.
+  every rung := NULL beside every number + BREAK (shuffled labels) + ADVERSARIAL (a shard with an
+  injected instruction -> the critic drops it and the ledger row says why) + a served turn through
+  the room door, N! a notebook.
+
+%%7 BARS (fixed here ; change only by a DECISIONS entry, N! to pass) !!
+  (a) ablation : ADOPT iff >= 3% held-out loss at equal tokens, 2 seeds ; else REJECT with the delta.
+  (b) served : export -> apx_model forward argmax == apx-nn argmax on 256 positions ; exact preset,
+      two fresh sessions -> byte-identical hash ; answers through the SAME room door as the
+      resident model, with the same withholding rules (a leaked thought is never the answer).
+  (c) owner knowledge : blind pairwise A/B, 40 owner prompts whose answers live in the corpus,
+      AKASHIC vs the resident Qwen3.5 Q4 WITHOUT recall, arbiter-signed, spec-45 anytime-valid
+      stopping ; AKASHIC preferred on >= 60% ; this is the bar a bespoke corpus can win and the one
+      that counts.
+  (d) general : held-out-by-source loss with its NULLs beside it ; N! parity claims ; a receipt
+      says what it measured and nothing more.
+  (e) live : the loop ingests a new transcript, the critic admits it, the next rung's corpus
+      contains it, and the model trained after it answers a question only it contains -- observed
+      end to end, on the running system, once per rung.
+
+%%8 THE LIVE LOOP -- one transition per tick, the kernel's clock !!
+  tick := 1 perceive (new file under S1..S4 | ledger row | room turn | telemetry sample) -> 2 recall
+  (UniRecall : is this already known ? duplicate ? which region owns it ?) -> 3 type (S1 : source
+  kind, license class, admit | ask | refuse) -> 4 judge (Swarm critic on admit ; arbiter row) -> 5
+  shard (append to the rung's corpus with provenance) -> 6 train-step (iff a training window is
+  open : N micro-steps of the current rung ; else skip) -> 7 watch (JEPA surprise on the telemetry
+  ; S1 halt if surprise > bar or loss non-finite) -> 8 commit (StateRoot' ; receipts ; consented
+  ledger rows only). controls := the K7 local surface : organ on/off, training window, corpus
+  admission queue, the label queue, the kill switch (halts within one tick).
+
+%%9 NOT + OPEN !! NEVER-CLAIMED : frontier parity ; "rivals" in any receipt ; AGI/DGI ; JEPA on
+text ; training on unconsented or unlicensed text ; a second store beside UniRecall ; cloud by
+default (remote S1/S2 DISABLED until [[Apocky]]). OPEN (LOOK first) : transcript corpus size +
+license lines ; oneAPI on this host ; the OpenCL fp16 path's real TFLOP/s ; whether b9743 exposes
+prompt logprobs (surprisal as S2 evidence) ; the training window the arbiter can grant without
+dropping the room.
+
+%%10 DONE + HANDOFF !! per rung : commit code in AC (kernel/unified-v1), receipt + DECISIONS + PARK
+in AK (main) ; push both ; remote readback ; ledger row via AN/anamnesis.py (provenance claude) ;
+goal.done := L0..L2 receipts PASS /\ bar (e) observed on the running system /\ a served AKASHIC
+checkpoint answering in the room. [END]
