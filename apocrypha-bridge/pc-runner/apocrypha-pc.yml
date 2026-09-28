@@ -1,0 +1,50 @@
+# Rail C — approval-gated PC actions. Place at .github/workflows/apocrypha-pc.yml in a PRIVATE repo.
+# Never attach a self-hosted runner to a public repository.
+name: Apocrypha PC action
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "What to do on the PC (fixed menu; no free text reaches a shell)"
+        type: choice
+        required: true
+        options:
+          - health
+          - diag
+          - engine-status
+          - engine-restart
+          - worker-restart
+          - memory-health
+      note:
+        description: "Why (recorded in the run log only)"
+        type: string
+        required: false
+
+concurrency:
+  group: apocrypha-pc
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    name: ${{ inputs.action }}
+    runs-on: [self-hosted, windows, apocrypha-pc]
+    environment: apocrypha-pc          # required reviewer = Apocky → approval on the phone before anything runs
+    timeout-minutes: 15
+    env:
+      APX_ACTION: ${{ inputs.action }} # passed via env, never interpolated into a command line
+      APX_NOTE: ${{ inputs.note }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools/Invoke-ApxAction.ps1
+          sparse-checkout-cone-mode: false
+      - name: Run allowlisted action
+        shell: pwsh
+        run: |
+          Write-Host "note: $env:APX_NOTE"
+          & ./tools/Invoke-ApxAction.ps1 -Action $env:APX_ACTION
