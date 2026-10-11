@@ -60,19 +60,34 @@ def ids_in(text):
             out.append(tok)
     return out
 
-def defined_ids(text):
-    """IDs this document defines: Exports section, first table cell, JSON "id" values."""
+def declared_ids(text):
+    """IDs a document declares outright: its Exports section and JSON "id" values."""
     d = set()
     if "## Exports" in text:
         exp = text.split("## Exports", 1)[1].split("\n## ", 1)[0]
         d.update(ids_in(exp))
+    for m in re.finditer(r'"id"\s*:\s*"([a-z0-9_.]+)"', text):
+        if ID_RE.match(m.group(1)):
+            d.add(m.group(1))
+    return d
+
+def first_cell_ids(text):
+    d = set()
     for line in text.splitlines():
         if line.startswith("|") and not line.startswith("|---"):
             first = line.strip("|").split("|")[0]
             d.update(ids_in(first))
-    for m in re.finditer(r'"id"\s*:\s*"([a-z0-9_.]+)"', text):
-        if ID_RE.match(m.group(1)):
-            d.add(m.group(1))
+    return d
+
+def defined_ids(text, n, own):
+    """IDs chapter n defines: declared IDs, plus first-table-cell IDs in namespaces it owns
+    (or in namespaces with no registered owner). A consumer table keyed by another owner's
+    IDs is a reference, not a definition."""
+    d = declared_ids(text)
+    for i in first_cell_ids(text):
+        pf, owners = owners_of(i, own)
+        if not owners or n in owners:
+            d.add(i)
     return d
 
 def json_blocks(text):
@@ -92,7 +107,7 @@ def main():
     docs = {chapter_num(p): p.read_text() for p in chapters()}
     defs = collections.defaultdict(set)  # id -> chapters
     for n, t in docs.items():
-        for i in defined_ids(t) if n != "00" else ids_in(t):
+        for i in defined_ids(t, n, own) if n != "00" else ids_in(t):
             defs[i].add(n)
     all_defined = set(defs)
     report = {}
@@ -106,7 +121,7 @@ def main():
         r["undefined_ids"] = sorted(set(i for i in used if i not in all_defined and "<" not in i))
         bad_owner = []
         if n != "00":
-            for i in defined_ids(t):
+            for i in declared_ids(t):
                 pf, owners = owners_of(i, own)
                 if pf and owners and n not in owners and "00" not in owners:
                     bad_owner.append(f"{i} (namespace {pf} owned by {','.join(sorted(owners))})")
