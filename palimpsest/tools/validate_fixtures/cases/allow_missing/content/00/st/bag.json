@@ -1,0 +1,13 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.user",
+      "genre": "genre.atlantis",
+      "statuses": [
+        "st.user",
+        "st.nope"
+      ]
+    }
+  ]
+}

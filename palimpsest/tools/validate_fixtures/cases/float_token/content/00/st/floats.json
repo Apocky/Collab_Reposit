@@ -1,0 +1,8 @@
+{"schema": "00.t_bag", "records": [
+  {"id": "st.f1", "n": 1.5},
+  {"id": "st.f2", "n": 1e3},
+  {"id": "st.f3", "n": -0.0},
+  {"id": "st.f4", "n": -0},
+  {"id": "st.f5", "n": 2E0},
+  {"id": "st.f6", "text": "1.5e3 inside a string is fine"}
+]}

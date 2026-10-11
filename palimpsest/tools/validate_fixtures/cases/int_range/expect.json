@@ -1,0 +1,7 @@
+{
+  "description": "Doc 02 test 19: integers beyond ±(2^53 − 1) are rejected; the bounds themselves and a hex u64 string pass.",
+  "errors": {
+    "E_INT_RANGE": 3
+  },
+  "warnings": {}
+}

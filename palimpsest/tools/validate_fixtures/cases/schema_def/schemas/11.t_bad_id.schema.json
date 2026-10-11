@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:11.t_other",
+  "title": "Fixture: defective schema",
+  "x-owner": "11",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "properties": {
+    "x": {
+      "type": "integer"
+    }
+  },
+  "unevaluatedProperties": false
+}

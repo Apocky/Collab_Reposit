@@ -1,0 +1,8 @@
+{
+  "schema": "07.t_enum",
+  "records": [
+    {
+      "id": "mat.iron"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "07.t_enum",
+  "records": [
+    {
+      "id": "q.normal"
+    },
+    {
+      "id": "q.excellent"
+    }
+  ]
+}

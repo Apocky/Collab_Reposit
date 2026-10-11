@@ -1,0 +1,416 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:common",
+  "title": "PALIMPSEST common definitions",
+  "description": "Doc 19 §2. Record schemas reach these through urn:palimpsest:schema:common#/$defs/<name>. Integers only: no definition here or in any record schema uses the JSON Schema type number (canon §1.6).",
+  "$defs": {
+    "id": {
+      "description": "Canon §1.1 content ID: at most 64 bytes, ASCII, 2 to 6 dot-separated segments; the namespace loc is reserved for text keys (canon §1.10).",
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^(?!loc\\.)[a-z][a-z0-9_]*(\\.[a-z0-9_]+){1,5}$"
+    },
+    "id_list": {
+      "description": "A set of content IDs, without existence check (pair it with x-idref for references).",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "ref_any": { "$ref": "#/$defs/id", "x-idref": ["*"] },
+    "loc_key": {
+      "description": "Canon §1.10 text key. Never a content ID, never an id32.",
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^loc\\.[a-z0-9_.]+$"
+    },
+    "schema_id": {
+      "description": "Doc 19 §1.3 schema identity: <owner_doc>.<record_kind>, owner 00 to 18.",
+      "type": "string",
+      "pattern": "^(0[0-9]|1[0-8])\\.[a-z][a-z0-9_]{0,47}$"
+    },
+    "doc_number": { "type": "integer", "minimum": 0, "maximum": 18 },
+    "doc_dir": { "type": "string", "pattern": "^(0[0-9]|1[0-8])$" },
+    "hex_u64": {
+      "description": "Canon §1.6 u64 as a string: lower-case 0x then 1 to 16 hex digits of either case (palimpsest_data::hex).",
+      "type": "string",
+      "pattern": "^0x[0-9A-Fa-f]{1,16}$"
+    },
+    "blake3_hex": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "date": {
+      "description": "UTC calendar date YYYY-MM-DD; the owning document checks that the date exists (canon §3.6).",
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+
+    "i8": { "type": "integer", "minimum": -128, "maximum": 127 },
+    "u8": { "type": "integer", "minimum": 0, "maximum": 255 },
+    "i16": { "type": "integer", "minimum": -32768, "maximum": 32767 },
+    "u16": { "type": "integer", "minimum": 0, "maximum": 65535 },
+    "i32": { "type": "integer", "minimum": -2147483648, "maximum": 2147483647 },
+    "u32": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+    "i53": { "type": "integer", "minimum": -9007199254740991, "maximum": 9007199254740991 },
+    "u53": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+
+    "bp": {
+      "description": "Canon §1.2 Bp: i32 basis points, 10000 = 100% = x1.0.",
+      "$ref": "#/$defs/i32"
+    },
+    "bp_i64": {
+      "description": "Canon §1.2 and §13.8 i64 Bp (power tables, i64 table multipliers), bounded by the JSON integer bound.",
+      "$ref": "#/$defs/i53"
+    },
+    "bp_unit": {
+      "description": "Probabilities, shares, penetration and scaling coefficients: 0..=10000.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    },
+    "pct_bp": {
+      "description": "Signed additive percentage modifier (+% damage and the like): -10000..=10000.",
+      "type": "integer",
+      "minimum": -10000,
+      "maximum": 10000
+    },
+    "mult_bp": {
+      "description": "Non-negative multiplier in Bp, 15000 = x1.5.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "resist_bp": {
+      "description": "Canon §10.2 resistance: -10000 up to the highest cap, 9000.",
+      "type": "integer",
+      "minimum": -10000,
+      "maximum": 9000
+    },
+    "milli": {
+      "description": "Canon §1.2 Milli: display value x 1000 (HP, stamina, aether, composure, toxicity, poise, ward, skill XP).",
+      "$ref": "#/$defs/i53"
+    },
+    "milli_nonneg": { "$ref": "#/$defs/u53" },
+    "mm": {
+      "description": "Canon §1.6 length in integer mm; |mm| < 2^30 x 1000 keeps fx_from_milli inside the canon §1.4 coordinate range |raw| < 2^62.",
+      "type": "integer",
+      "minimum": -1073741823999,
+      "maximum": 1073741823999
+    },
+    "mm_nonneg": { "type": "integer", "minimum": 0, "maximum": 1073741823999 },
+    "mm_pos": {
+      "description": "Strictly positive length in mm (radii, ranges, sizes).",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1073741823999
+    },
+    "mm_s": {
+      "description": "Speed in mm/s (canon §1.6).",
+      "type": "integer",
+      "minimum": -1073741823999,
+      "maximum": 1073741823999
+    },
+    "mm_s2": {
+      "description": "Acceleration in mm/s² (canon §1.6).",
+      "type": "integer",
+      "minimum": -1073741823999,
+      "maximum": 1073741823999
+    },
+    "mm3": {
+      "description": "Offset or position in mm, canon §1.8 axes (+Y up, -Z forward).",
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "$ref": "#/$defs/mm" },
+        "y": { "$ref": "#/$defs/mm" },
+        "z": { "$ref": "#/$defs/mm" }
+      },
+      "additionalProperties": false
+    },
+    "block3": {
+      "description": "Canon §1.8 block coordinate triple.",
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "$ref": "#/$defs/i32" },
+        "y": { "$ref": "#/$defs/i32" },
+        "z": { "$ref": "#/$defs/i32" }
+      },
+      "additionalProperties": false
+    },
+    "ticks": {
+      "description": "Canon §1.2 Ticks: u32 duration at 60 ticks per second.",
+      "$ref": "#/$defs/u32"
+    },
+    "ticks_pos": { "type": "integer", "minimum": 1, "maximum": 4294967295 },
+    "bam": {
+      "description": "Canon §1.9 binary angle, 65536 = one turn.",
+      "$ref": "#/$defs/u16"
+    },
+    "bam_cone": {
+      "description": "Canon §1.9 cone half-angle.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 32768
+    },
+    "pitch": {
+      "description": "Canon §1.9 pitch as i16, clamped range.",
+      "type": "integer",
+      "minimum": -16000,
+      "maximum": 16000
+    },
+    "grams": { "description": "Canon §1.2 mass.", "$ref": "#/$defs/u53" },
+    "ml": { "description": "Canon §1.2 liquid and gas volume.", "$ref": "#/$defs/u53" },
+    "deci_c": { "description": "Canon §1.2 temperature in tenths of a degree Celsius.", "$ref": "#/$defs/i32" },
+    "light": { "description": "Canon §1.2 light channel level.", "type": "integer", "minimum": 0, "maximum": 15 },
+    "db": { "description": "Canon §1.2 whole decibels.", "$ref": "#/$defs/i32" },
+    "axiom": { "description": "Canon §5.1 axiom value.", "type": "integer", "minimum": 0, "maximum": 10 },
+    "sub_attr_base": { "description": "Canon §6.2 stored sub-attribute.", "type": "integer", "minimum": 1, "maximum": 100 },
+    "sub_attr_eff": { "description": "Canon §6.2 effective sub-attribute or primary value.", "type": "integer", "minimum": 1, "maximum": 150 },
+    "skill_value": { "description": "Canon §7 skill value.", "type": "integer", "minimum": 0, "maximum": 100 },
+    "satiation": { "description": "Canon §12 res.satiation.", "type": "integer", "minimum": 0, "maximum": 2400 },
+    "char_xp": { "description": "Canon §1.2 character XP, whole points.", "$ref": "#/$defs/u53" },
+    "money": { "description": "Canon §1.2 money amount, whole units.", "$ref": "#/$defs/u53" },
+    "armor_rating": { "description": "Canon §1.2 and §10.3 AR.", "$ref": "#/$defs/u53" },
+    "standing": { "description": "Canon §15 reputation and §12 res.favor.", "type": "integer", "minimum": -1000, "maximum": 1000 },
+    "depth": { "description": "Canon §13.8 depth, item level or source level: u32, at least 1.", "type": "integer", "minimum": 1, "maximum": 4294967295 },
+    "party_slot": { "description": "Canon §2.4 party slot.", "type": "integer", "minimum": 0, "maximum": 3 },
+    "color": {
+      "description": "sRGB color as upper-case #RRGGBB, the canon §5.9, §10.1 and §13.3 form.",
+      "type": "string",
+      "pattern": "^#[0-9A-F]{6}$"
+    },
+
+    "ref_axis": { "$ref": "#/$defs/id", "x-idref": ["ax."] },
+    "ref_genre": { "$ref": "#/$defs/id", "x-idref": ["genre."] },
+    "ref_dmg": { "$ref": "#/$defs/id", "x-idref": ["dmg."] },
+    "ref_status": { "$ref": "#/$defs/id", "x-idref": ["st."] },
+    "ref_resource": { "$ref": "#/$defs/id", "x-idref": ["res."] },
+    "ref_attr": { "$ref": "#/$defs/id", "x-idref": ["attr."] },
+    "ref_sub": { "$ref": "#/$defs/id", "x-idref": ["sub."] },
+    "ref_skill": { "$ref": "#/$defs/id", "x-idref": ["skill."] },
+    "ref_material": { "$ref": "#/$defs/id", "x-idref": ["mat."] },
+    "ref_quality": { "$ref": "#/$defs/id", "x-idref": ["q."] },
+    "ref_rarity": { "$ref": "#/$defs/id", "x-idref": ["rar."] },
+    "ref_buc": { "$ref": "#/$defs/id", "x-idref": ["buc."] },
+    "ref_affix": { "$ref": "#/$defs/id", "x-idref": ["affix."] },
+    "ref_perk": { "$ref": "#/$defs/id", "x-idref": ["perk."] },
+    "ref_mfr": { "$ref": "#/$defs/id", "x-idref": ["mfr."] },
+    "ref_part": { "$ref": "#/$defs/id", "x-idref": ["part."] },
+    "ref_faction": { "$ref": "#/$defs/id", "x-idref": ["fac."] },
+    "ref_rank": { "$ref": "#/$defs/id", "x-idref": ["rank."] },
+    "ref_event": { "$ref": "#/$defs/id", "x-idref": ["ev."] },
+    "ref_category": { "$ref": "#/$defs/id", "x-idref": ["cat."] },
+    "ref_slot": { "$ref": "#/$defs/id", "x-idref": ["slot."] },
+    "ref_loot": { "$ref": "#/$defs/id", "x-idref": ["loot."] },
+    "ref_item_template": {
+      "description": "Canon §13.9 template: an archetype or a unique template.",
+      "$ref": "#/$defs/id",
+      "x-idref": ["arch.melee.", "arch.ranged.", "arch.armor.", "arch.offhand.", "arch.ward.", "ammo.", "item.", "alch.potion.", "alch.bomb.", "apparatus.", "gadget.", "part.", "mat.", "ing.", "block.", "aug."]
+    },
+
+    "dep_set": {
+      "description": "Canon §5.3 dependency set.",
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/ref_axis" }
+    },
+    "axiom_vector": {
+      "description": "Canon §5.2 axiom columns.",
+      "type": "object",
+      "required": ["arcana", "techne", "mythos", "verve"],
+      "properties": {
+        "arcana": { "$ref": "#/$defs/axiom" },
+        "techne": { "$ref": "#/$defs/axiom" },
+        "mythos": { "$ref": "#/$defs/axiom" },
+        "verve": { "$ref": "#/$defs/axiom" }
+      },
+      "additionalProperties": false
+    },
+    "weight": {
+      "description": "Canon §3.1 Rng::weighted weight (u32).",
+      "$ref": "#/$defs/u32"
+    },
+    "weighted_entry": {
+      "description": "One entry of a weighted table. Extend with properties and unevaluatedProperties: false.",
+      "type": "object",
+      "required": ["w"],
+      "properties": { "w": { "$ref": "#/$defs/weight" } }
+    },
+    "positive_weight": {
+      "description": "Use as contains on a weighted table so its total is above 0 (canon §3.1 asserts total > 0).",
+      "type": "object",
+      "required": ["w"],
+      "properties": { "w": { "type": "integer", "minimum": 1 } }
+    },
+    "dmg_share": {
+      "type": "object",
+      "required": ["type", "bp"],
+      "properties": {
+        "type": { "$ref": "#/$defs/ref_dmg" },
+        "bp": { "$ref": "#/$defs/bp_unit" }
+      },
+      "additionalProperties": false
+    },
+    "dmg_shares": {
+      "description": "Canon §10.5 type shares: Bp summing to exactly 10000, one entry per type.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/dmg_share" },
+      "x-sum": { "field": "bp", "total": 10000 },
+      "x-unique-by": "type"
+    },
+    "scaling_entry": {
+      "type": "object",
+      "required": ["sub", "c"],
+      "properties": {
+        "sub": { "$ref": "#/$defs/ref_sub" },
+        "c": { "$ref": "#/$defs/bp_unit" }
+      },
+      "additionalProperties": false
+    },
+    "weapon_scaling": {
+      "description": "Canon §6.4 row 12 coefficients: each c in 0..=10000 and the sum at most 15000.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/scaling_entry" },
+      "x-sum-max": { "field": "c", "max": 15000 },
+      "x-unique-by": "sub"
+    },
+    "attr_requirement": {
+      "type": "object",
+      "required": ["attr", "min"],
+      "properties": {
+        "attr": { "$ref": "#/$defs/ref_attr" },
+        "min": { "$ref": "#/$defs/sub_attr_eff" }
+      },
+      "additionalProperties": false
+    },
+    "attr_requirements": {
+      "description": "Canon §6.3 primary-attribute requirements.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/attr_requirement" },
+      "x-unique-by": "attr"
+    },
+
+    "record_base": {
+      "description": "Doc 19 §1.2: every record has id; aliases lists retired IDs that now resolve to it (canon §1.1).",
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "aliases": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+
+    "part_slot": {
+      "description": "Doc 07 §7.1 part slot names.",
+      "enum": ["barrel", "feed", "optic", "stock", "graft", "edge", "haft", "grip", "focus", "plate", "lining", "coil", "module_1", "module_2"]
+    },
+    "knowledge": {
+      "description": "Canon §13.6 and §13.9 knowledge: state plus the doc 10 §2.3 flag word and counters.",
+      "type": "object",
+      "required": ["state", "flags"],
+      "properties": {
+        "state": {
+          "enum": ["know.unknown", "know.classified", "know.appraised", "know.identified"],
+          "x-idref": ["know."]
+        },
+        "flags": { "$ref": "#/$defs/u32" },
+        "appr_progress": { "$ref": "#/$defs/i53" },
+        "appr_tier_done": { "type": "integer", "minimum": -1, "maximum": 127 },
+        "est_skill": { "$ref": "#/$defs/i16" },
+        "est_key": { "$ref": "#/$defs/hex_u64" },
+        "est_steps": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "fam_ticks": { "$ref": "#/$defs/u32" },
+        "fam_kills": { "$ref": "#/$defs/u16" },
+        "analysis_lvl": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "integer", "minimum": -1, "maximum": 32767 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "affix_roll": {
+      "type": "object",
+      "required": ["id", "tier", "roll_bp"],
+      "properties": {
+        "id": { "$ref": "#/$defs/ref_affix" },
+        "tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "roll_bp": { "$ref": "#/$defs/bp_unit" }
+      },
+      "additionalProperties": false
+    },
+    "part_entry": {
+      "type": "object",
+      "required": ["slot", "part_id"],
+      "properties": {
+        "slot": { "$ref": "#/$defs/part_slot" },
+        "part_id": { "$ref": "#/$defs/ref_part" },
+        "mfr": { "anyOf": [{ "$ref": "#/$defs/ref_mfr" }, { "type": "null" }] },
+        "quality": { "$ref": "#/$defs/ref_quality" }
+      },
+      "additionalProperties": false
+    },
+    "charges": {
+      "type": "object",
+      "required": ["cur", "max"],
+      "properties": {
+        "cur": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+        "max": { "type": "integer", "minimum": 0, "maximum": 2147483647 }
+      },
+      "additionalProperties": false
+    },
+    "perk_column": {
+      "type": "object",
+      "required": ["column", "options", "chosen"],
+      "properties": {
+        "column": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/ref_perk" }
+        },
+        "chosen": { "type": "integer", "minimum": 0, "maximum": 2 }
+      },
+      "additionalProperties": false
+    },
+    "item_instance": {
+      "description": "Canon §13.9 item instance contract; doc 19 owns the full schema. Owner documents extend it through their doc 19 §6 fragments.",
+      "type": "object",
+      "required": ["uid", "template", "origin_genre", "rarity", "quality", "ilvl", "enhancement", "buc", "curse_penalty", "knowledge", "affixes", "parts", "materials", "mass_g", "value", "manufacturer", "gear_tier", "perk_columns", "illuminated", "finder_slot"],
+      "properties": {
+        "uid": { "$ref": "#/$defs/hex_u64" },
+        "template": { "$ref": "#/$defs/ref_item_template" },
+        "origin_genre": { "$ref": "#/$defs/ref_genre" },
+        "rarity": { "$ref": "#/$defs/ref_rarity" },
+        "quality": { "$ref": "#/$defs/ref_quality" },
+        "ilvl": { "type": "integer", "minimum": 1, "maximum": 2147483647 },
+        "enhancement": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+        "buc": { "$ref": "#/$defs/ref_buc" },
+        "curse_penalty": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "knowledge": { "$ref": "#/$defs/knowledge" },
+        "affixes": { "type": "array", "items": { "$ref": "#/$defs/affix_roll" } },
+        "parts": { "type": "array", "items": { "$ref": "#/$defs/part_entry" }, "x-unique-by": "slot" },
+        "materials": { "type": "array", "items": { "$ref": "#/$defs/ref_material" } },
+        "charges": { "$ref": "#/$defs/charges" },
+        "zaps_total": { "$ref": "#/$defs/u32" },
+        "stack":{ "type": "integer", "minimum": 1, "maximum": 2147483647 },
+        "mass_g": { "$ref": "#/$defs/grams" },
+        "value": { "$ref": "#/$defs/money" },
+        "manufacturer": { "anyOf": [{ "$ref": "#/$defs/ref_mfr" }, { "type": "null" }] },
+        "gear_tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "perk_columns": { "type": "array", "items": { "$ref": "#/$defs/perk_column" }, "x-unique-by": "column" },
+        "illuminated": { "type": "boolean" },
+        "finder_slot": { "$ref": "#/$defs/party_slot" }
+      },
+      "unevaluatedProperties": false
+    }
+  }
+}

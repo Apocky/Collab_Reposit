@@ -1,0 +1,7 @@
+{
+  "description": "A file under content/13 uses a schema whose x-owner is 11.",
+  "errors": {
+    "E_SCHEMA_OWNER": 1
+  },
+  "warnings": {}
+}

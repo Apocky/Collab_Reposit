@@ -1,0 +1,7 @@
+{
+  "description": "x-unique-by with a composite key and with one field; each repeat is one finding.",
+  "errors": {
+    "E_UNIQUE": 3
+  },
+  "warnings": {}
+}

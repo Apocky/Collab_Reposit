@@ -1,0 +1,40 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.s1",
+      "shares": [
+        {
+          "k": "a",
+          "bp": 5000
+        },
+        {
+          "k": "b",
+          "bp": 4999
+        }
+      ]
+    },
+    {
+      "id": "st.s2",
+      "tolerance": {
+        "arcana": 2,
+        "techne": 1,
+        "mythos": 0,
+        "verve": 0
+      }
+    },
+    {
+      "id": "st.s3",
+      "shares": []
+    },
+    {
+      "id": "st.s4",
+      "shares": [
+        {
+          "k": "a",
+          "bp": 10000
+        }
+      ]
+    }
+  ]
+}

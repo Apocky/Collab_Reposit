@@ -1,0 +1,20 @@
+{
+  "schema": "11.t_enum",
+  "records": [
+    {
+      "id": "item.c93fb1c3b7c754cf3"
+    },
+    {
+      "id": "item.cd16e77dd95ebbaed"
+    },
+    {
+      "id": "item.c8a651be5c267ee9e"
+    },
+    {
+      "id": "item.holder",
+      "aliases": [
+        "item.ca63bf2042bd07c1d"
+      ]
+    }
+  ]
+}

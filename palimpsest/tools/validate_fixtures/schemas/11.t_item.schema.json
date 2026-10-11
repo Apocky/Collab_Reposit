@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:11.t_item",
+  "title": "Fixture: item template with fixed instances",
+  "x-owner": "11",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "required": [
+    "rarity",
+    "value"
+  ],
+  "properties": {
+    "rarity": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ref_rarity"
+    },
+    "value": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/money"
+    },
+    "seed": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/hex_u64"
+    },
+    "kit": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:palimpsest:schema:common#/$defs/item_instance"
+      }
+    },
+    "cap": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/i53"
+    },
+    "floor": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/i53"
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "unevaluatedProperties": false
+}

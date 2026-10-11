@@ -1,0 +1,8 @@
+{
+  "schema": "12.t_enum",
+  "records": [
+    {
+      "id": "item.misplaced"
+    }
+  ]
+}

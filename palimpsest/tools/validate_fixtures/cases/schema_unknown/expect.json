@@ -1,0 +1,7 @@
+{
+  "description": "The envelope names a schema with no file.",
+  "errors": {
+    "E_SCHEMA_UNKNOWN": 1
+  },
+  "warnings": {}
+}

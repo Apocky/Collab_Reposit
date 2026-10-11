@@ -1,0 +1,28 @@
+{
+  "schema": "11.t_loot_table",
+  "records": [
+    {
+      "id": "loot.chest.fixture",
+      "entries": [
+        {
+          "item": "item.ring.fixture",
+          "w": 70
+        },
+        {
+          "item": "loot.chest.fixture_small",
+          "w": 30
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "id": "loot.chest.fixture_small",
+      "entries": [
+        {
+          "item": "item.ring.fixture",
+          "w": 1
+        }
+      ]
+    }
+  ]
+}

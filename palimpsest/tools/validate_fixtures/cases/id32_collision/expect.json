@@ -1,0 +1,7 @@
+{
+  "description": "Two record IDs and a record/alias pair from palimpsest_data's COLLISION_PAIRS share an fnv1a32 (canon §21 test 29).",
+  "errors": {
+    "E_ID32_COLLISION": 2
+  },
+  "warnings": {}
+}

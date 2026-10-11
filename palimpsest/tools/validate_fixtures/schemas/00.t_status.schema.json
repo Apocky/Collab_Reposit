@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:00.t_status",
+  "title": "Fixture: status record",
+  "x-owner": "00",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "required": [
+    "category",
+    "base_duration"
+  ],
+  "properties": {
+    "category": {
+      "enum": [
+        "dot",
+        "debuff",
+        "control",
+        "buff",
+        "special"
+      ]
+    },
+    "base_duration": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ticks_pos"
+    },
+    "max_stacks": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "builds_from": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ref_dmg"
+    }
+  },
+  "unevaluatedProperties": false
+}

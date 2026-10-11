@@ -1,0 +1,11 @@
+{
+  "schema": "00.t_enum",
+  "records": [
+    {
+      "id": "rar.common"
+    },
+    {
+      "id": "rar.epic"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "00.t_status",
+  "records": [
+    {
+      "id": "st.bleeding",
+      "category": "dot",
+      "base_duration": 360,
+      "max_stacks": 5,
+      "builds_from": "dmg.slash"
+    },
+    {
+      "id": "st.burning",
+      "category": "dot",
+      "base_duration": 240,
+      "builds_from": "dmg.fire"
+    },
+    {
+      "id": "st.stunned",
+      "category": "control",
+      "base_duration": 90
+    }
+  ]
+}

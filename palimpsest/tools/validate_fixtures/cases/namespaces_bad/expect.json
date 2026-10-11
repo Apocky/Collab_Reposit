@@ -1,0 +1,9 @@
+{
+  "description": "A malformed ownership table: owner checks are skipped and the record fails 00.namespace.",
+  "errors": {
+    "E_NAMESPACES": 1,
+    "E_SCHEMA": 1
+  },
+  "warnings": {},
+  "namespaces": "case"
+}

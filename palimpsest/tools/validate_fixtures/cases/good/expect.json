@@ -1,0 +1,5 @@
+{
+  "description": "A small valid content set exercising every common definition family and every custom keyword at its boundary (sums of exactly 10000 and 15000, integers at ±(2^53 − 1), number-like strings).",
+  "errors": {},
+  "warnings": {}
+}

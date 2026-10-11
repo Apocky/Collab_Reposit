@@ -1,0 +1,17 @@
+{
+  "schema": "00.t_enum",
+  "records": [
+    {
+      "id": "know.unknown"
+    },
+    {
+      "id": "know.classified"
+    },
+    {
+      "id": "know.appraised"
+    },
+    {
+      "id": "know.identified"
+    }
+  ]
+}

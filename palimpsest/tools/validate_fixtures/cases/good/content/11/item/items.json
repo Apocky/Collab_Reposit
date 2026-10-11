@@ -1,0 +1,48 @@
+{
+  "schema": "11.t_item",
+  "records": [
+    {
+      "id": "item.ring.fixture",
+      "rarity": "rar.common",
+      "value": 120,
+      "seed": "0x00000000000000FF",
+      "cap": 9007199254740991,
+      "floor": -9007199254740991,
+      "note": "\"0.5\" is a string, not a number",
+      "kit": [
+        {
+          "uid": "0x000007000000019c",
+          "template": "arch.melee.blade_long",
+          "origin_genre": "genre.wuxia",
+          "rarity": "rar.epic",
+          "quality": "q.excellent",
+          "ilvl": 7,
+          "enhancement": 0,
+          "buc": "buc.uncursed",
+          "curse_penalty": 0,
+          "knowledge": {
+            "state": "know.classified",
+            "flags": 0
+          },
+          "affixes": [],
+          "parts": [],
+          "materials": [
+            "mat.iron"
+          ],
+          "charges": {
+            "cur": 0,
+            "max": 0
+          },
+          "stack": 1,
+          "mass_g": 1400,
+          "value": 1382,
+          "manufacturer": null,
+          "gear_tier": 3,
+          "perk_columns": [],
+          "illuminated": false,
+          "finder_slot": 1
+        }
+      ]
+    }
+  ]
+}

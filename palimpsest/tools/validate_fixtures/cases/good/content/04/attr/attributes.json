@@ -1,0 +1,8 @@
+{
+  "schema": "04.t_enum",
+  "records": [
+    {
+      "id": "attr.finesse"
+    }
+  ]
+}

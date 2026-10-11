@@ -1,0 +1,8 @@
+{
+  "description": "No ownership table at all.",
+  "errors": {
+    "E_NAMESPACES": 1
+  },
+  "warnings": {},
+  "namespaces": "none"
+}

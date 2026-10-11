@@ -1,0 +1,7 @@
+{
+  "description": "Malformed JSON, including a repeated object key, stops the file at stage 4.",
+  "errors": {
+    "E_JSON": 3
+  },
+  "warnings": {}
+}

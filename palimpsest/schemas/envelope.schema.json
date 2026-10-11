@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:envelope",
+  "title": "PALIMPSEST content file envelope",
+  "description": "Doc 02 §11.1 and doc 19 §1.2: a content file is exactly {schema, records}; each record is an object with a string id and, when present, an array of string aliases. The ID grammar is checked separately (E_ID_GRAMMAR) with the palimpsest_data::ids rules.",
+  "type": "object",
+  "required": ["schema", "records"],
+  "properties": {
+    "schema": { "$ref": "urn:palimpsest:schema:common#/$defs/schema_id" },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "aliases": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

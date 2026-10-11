@@ -1,0 +1,7 @@
+{
+  "description": "A scalar and an array-element reference to IDs no record defines.",
+  "errors": {
+    "E_REF_MISSING": 2
+  },
+  "warnings": {}
+}

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:00.t_bag",
+  "title": "Fixture: one field per keyword under test",
+  "x-owner": "00",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "properties": {
+    "n": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/i53"
+    },
+    "text": {
+      "type": "string"
+    },
+    "seed": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/hex_u64"
+    },
+    "len": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/mm_pos"
+    },
+    "genre": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ref_genre"
+    },
+    "statuses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "x-idref": [
+        "st."
+      ]
+    },
+    "shares": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "k",
+          "bp"
+        ],
+        "properties": {
+          "k": {
+            "type": "string"
+          },
+          "bp": {
+            "$ref": "urn:palimpsest:schema:common#/$defs/bp_unit"
+          }
+        },
+        "additionalProperties": false
+      },
+      "x-sum": {
+        "field": "bp",
+        "total": 10000
+      }
+    },
+    "coeffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "k",
+          "c"
+        ],
+        "properties": {
+          "k": {
+            "type": "string"
+          },
+          "c": {
+            "$ref": "urn:palimpsest:schema:common#/$defs/bp_unit"
+          }
+        },
+        "additionalProperties": false
+      },
+      "x-sum-max": {
+        "field": "c",
+        "max": 15000
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "a",
+          "b"
+        ],
+        "properties": {
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "x-unique-by": [
+        "a",
+        "b"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "x-unique-by": "name",
+      "x-patchable": true
+    },
+    "tolerance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2
+      },
+      "x-sum": {
+        "total": 4
+      }
+    }
+  },
+  "unevaluatedProperties": false
+}

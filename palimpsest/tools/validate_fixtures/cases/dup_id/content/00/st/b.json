@@ -1,0 +1,11 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.dup"
+    },
+    {
+      "id": "st.two"
+    }
+  ]
+}

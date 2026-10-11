@@ -1,0 +1,7 @@
+{
+  "description": "References outside the namespaces their x-idref allows.",
+  "errors": {
+    "E_REF_PREFIX": 2
+  },
+  "warnings": {}
+}

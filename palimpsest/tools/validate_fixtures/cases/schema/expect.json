@@ -1,0 +1,7 @@
+{
+  "description": "Plain JSON Schema failures, including a pattern that must not accept a trailing newline.",
+  "errors": {
+    "E_SCHEMA": 6
+  },
+  "warnings": {}
+}

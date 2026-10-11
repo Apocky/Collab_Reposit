@@ -1,0 +1,29 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.t1",
+      "n": "seven"
+    },
+    {
+      "id": "st.t2",
+      "unknown_field": 1
+    },
+    {
+      "id": "st.t3",
+      "len": 0
+    },
+    {
+      "id": "st.t4",
+      "seed": "0x"
+    },
+    {
+      "id": "st.t5",
+      "seed": "0x10000000000000000"
+    },
+    {
+      "id": "st.t6",
+      "seed": "0xFF\n"
+    }
+  ]
+}

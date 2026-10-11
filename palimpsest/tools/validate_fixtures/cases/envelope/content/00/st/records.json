@@ -1,0 +1,7 @@
+{"schema": "00.t_bag", "records": [
+  7,
+  {},
+  {"id": 5},
+  {"id": "st.e", "aliases": "st.old"},
+  {"id": "st.ok"}
+]}

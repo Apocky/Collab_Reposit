@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:12.t_genre",
+  "title": "Fixture: genre record",
+  "x-owner": "12",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "required": [
+    "axioms",
+    "tolerance",
+    "aether_axiom",
+    "gravity_bp",
+    "ambient_light",
+    "palette"
+  ],
+  "properties": {
+    "axioms": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/axiom_vector"
+    },
+    "tolerance": {
+      "type": "object",
+      "required": [
+        "arcana",
+        "techne",
+        "mythos",
+        "verve"
+      ],
+      "properties": {
+        "arcana": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "techne": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "mythos": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "verve": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        }
+      },
+      "additionalProperties": false,
+      "x-sum": {
+        "total": 4
+      }
+    },
+    "aether_axiom": {
+      "anyOf": [
+        {
+          "$ref": "urn:palimpsest:schema:common#/$defs/ref_axis"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "gravity_bp": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/mult_bp"
+    },
+    "ambient_light": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/light"
+    },
+    "palette": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "urn:palimpsest:schema:common#/$defs/color"
+      }
+    }
+  },
+  "unevaluatedProperties": false
+}

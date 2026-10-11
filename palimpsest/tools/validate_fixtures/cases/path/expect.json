@@ -1,0 +1,7 @@
+{
+  "description": "Files outside the content/<NN>/<namespace>/<name>.json layout.",
+  "errors": {
+    "E_PATH": 6
+  },
+  "warnings": {}
+}

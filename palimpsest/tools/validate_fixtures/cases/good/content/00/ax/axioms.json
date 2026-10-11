@@ -1,0 +1,17 @@
+{
+  "schema": "00.t_enum",
+  "records": [
+    {
+      "id": "ax.arcana"
+    },
+    {
+      "id": "ax.techne"
+    },
+    {
+      "id": "ax.mythos"
+    },
+    {
+      "id": "ax.verve"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "description": "A dmg. record in the st/ directory.",
+  "errors": {
+    "E_NS_DIR": 1
+  },
+  "warnings": {}
+}

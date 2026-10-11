@@ -1,0 +1,7 @@
+{
+  "description": "Canon §6.4 row 12: 15001 fails, 15000 passes.",
+  "errors": {
+    "E_SUM_MAX": 1
+  },
+  "warnings": {}
+}

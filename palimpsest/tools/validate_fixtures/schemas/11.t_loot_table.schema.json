@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:11.t_loot_table",
+  "title": "Fixture: weighted loot table",
+  "x-owner": "11",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "required": [
+    "entries"
+  ],
+  "properties": {
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "x-patchable": true,
+      "items": {
+        "$ref": "urn:palimpsest:schema:common#/$defs/weighted_entry",
+        "required": [
+          "item"
+        ],
+        "properties": {
+          "item": {
+            "$ref": "urn:palimpsest:schema:common#/$defs/id",
+            "x-idref": [
+              "item.",
+              "loot."
+            ]
+          }
+        },
+        "unevaluatedProperties": false
+      },
+      "contains": {
+        "$ref": "urn:palimpsest:schema:common#/$defs/positive_weight"
+      },
+      "x-unique-by": "item"
+    },
+    "rolls": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 16
+    }
+  },
+  "unevaluatedProperties": false
+}

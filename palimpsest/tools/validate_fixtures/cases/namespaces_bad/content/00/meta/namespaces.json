@@ -1,0 +1,16 @@
+{
+  "schema": "00.namespace",
+  "records": [
+    {
+      "id": "meta.ns.st",
+      "kind": "prefix",
+      "prefix": "st.",
+      "owners": "00",
+      "rule_owners": [],
+      "owner_text": "00",
+      "text_keys": false,
+      "row": 1,
+      "source": "fixture"
+    }
+  ]
+}

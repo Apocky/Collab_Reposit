@@ -1,0 +1,7 @@
+{
+  "description": "Doc 02 test 19 and canon §21 test 34: 1.5, 1e3, -0.0, -0 and 2E0 are rejected as tokens; the same characters inside a string are not.",
+  "errors": {
+    "E_FLOAT_TOKEN": 5
+  },
+  "warnings": {}
+}

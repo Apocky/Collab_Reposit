@@ -1,0 +1,7 @@
+{
+  "description": "item. belongs to 11 (and 00), not to 12.",
+  "errors": {
+    "E_OWNER": 1
+  },
+  "warnings": {}
+}

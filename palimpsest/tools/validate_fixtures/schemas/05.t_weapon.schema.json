@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:05.t_weapon",
+  "title": "Fixture: melee archetype record",
+  "x-owner": "05",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "required": [
+    "shares",
+    "scaling",
+    "reach",
+    "cone",
+    "swing_ticks",
+    "mass_g",
+    "origin"
+  ],
+  "properties": {
+    "shares": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/dmg_shares"
+    },
+    "scaling": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/weapon_scaling"
+    },
+    "reach": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/mm_pos"
+    },
+    "cone": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/bam_cone"
+    },
+    "swing_ticks": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ticks_pos"
+    },
+    "mass_g": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/grams"
+    },
+    "requires": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/attr_requirements"
+    },
+    "origin": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ref_genre"
+    },
+    "procs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:palimpsest:schema:common#/$defs/ref_status"
+      }
+    },
+    "muzzle": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/mm3"
+    }
+  },
+  "unevaluatedProperties": false
+}

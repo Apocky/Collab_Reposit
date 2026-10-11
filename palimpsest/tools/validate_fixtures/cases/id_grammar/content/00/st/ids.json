@@ -1,0 +1,27 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "Genre.Cyberpunk"
+    },
+    {
+      "id": "st..x"
+    },
+    {
+      "id": "loc.item.sword"
+    },
+    {
+      "id": "st"
+    },
+    {
+      "id": "st.ok",
+      "genre": "Genre.X"
+    },
+    {
+      "id": "st.ok2",
+      "aliases": [
+        "St.old"
+      ]
+    }
+  ]
+}

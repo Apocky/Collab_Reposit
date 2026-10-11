@@ -1,0 +1,17 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.rider",
+      "statuses": [
+        "st.mounted"
+      ]
+    },
+    {
+      "id": "st.renamed",
+      "aliases": [
+        "st.mounted"
+      ]
+    }
+  ]
+}

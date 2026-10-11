@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:11.t_enum",
+  "title": "Fixture: plain enum record",
+  "x-owner": "11",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "properties": {
+    "order": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/u16"
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "unevaluatedProperties": false
+}

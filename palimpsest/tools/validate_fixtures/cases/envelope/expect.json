@@ -1,0 +1,7 @@
+{
+  "description": "File-level envelope errors stop the file; record-level ones drop only that record.",
+  "errors": {
+    "E_ENVELOPE": 8
+  },
+  "warnings": {}
+}

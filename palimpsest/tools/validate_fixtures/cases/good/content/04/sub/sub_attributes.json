@@ -1,0 +1,11 @@
+{
+  "schema": "04.t_enum",
+  "records": [
+    {
+      "id": "sub.precision"
+    },
+    {
+      "id": "sub.power"
+    }
+  ]
+}

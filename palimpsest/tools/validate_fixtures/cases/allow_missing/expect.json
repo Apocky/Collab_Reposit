@@ -1,0 +1,11 @@
+{
+  "description": "The ref_missing content with --allow-missing-prefix genre. st.",
+  "errors": {},
+  "warnings": {
+    "W_REF_MISSING": 2
+  },
+  "allow_missing_prefix": [
+    "genre.",
+    "st."
+  ]
+}

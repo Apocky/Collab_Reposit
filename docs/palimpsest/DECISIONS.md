@@ -105,6 +105,22 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 90 | Mythic Fantasy Lucre skin | **Changed (triage Q9 overruled): keep "Crowns".** It is exempt from the third-party currency-name rule | Canon §5.2, §22; docs 11, 18 |
 | 91 | Erasure hunter identity | Kept (triage Q12): keeps `rank.hunter` identity, music cue and immunities, with `rank.elite` multipliers | Canon §11.6; doc 13 |
 | 92 | Field of view | Kept (triage Q10): 60 to 120 degrees, default 90 | Docs 02, 17 |
+| 93 | Host migration detail | **Refines 76:** hot and warm migrations continue the Folio from the live state; only a cold migration (no peer holds current state) restores the Folio-entry snapshot (doc 16 §9.3) | Docs 14, 16 |
+| 94 | Gore and rating | **New: ink gore.** Wounds bleed ink and severed parts unravel into script; a settings toggle switches to red blood. Rating target PEGI 16 and ESRB M | Docs 15, 17, 18 |
+| 95 | Movement kit | **New:** jump, crouch, sprint, ledge mantle up to 2,000 mm, sprint-slide, and a genre-skinned grappling tool that is an item, not part of the base kit | Canon §4; docs 03, 05, 11, 17 |
+| 96 | Asynchronous traces | **New:** opt-in grammar-built marginal notes (Souls-style messages) and replayable ink-stain death echoes left in other players' Folios of the same seed or genre | Canon §3, §17; docs 14, 16, 17 |
+| 97 | Character creator | **New: light presets.** 12 presets per Kin plus palette and marking colors; no slider editor | Docs 04, 17, 18 |
+| 98 | Platforms | **New: PC only** through 1.0 (Windows on Steam and Epic, Steam Deck verified via Proton); no console, Switch or native macOS/Linux ports planned | Docs 02, 21 |
+| 99 | Time of day and weather | **New:** each Folio rolls one time of day from its genre's table and one weather state; weather feeds light, sound, surfaces and fire | Canon §5, §12; docs 03, 09, 12, 18 |
+| 100 | Post-game | **New: Second Edition NG+.** After the first Ur-Text clear the Editors rewrite the lattice: remixed genre pairings, new bosses and a second ending layer, alongside Grades and Marginalia | Docs 12, 13, 14, 18 |
+| 101 | Second Edition Folios | **New:** each Second Edition Folio is written in two fused genres (both rosters, laws and skins; axioms averaged), built on the seam and bleed systems | Canon §5; docs 12, 13 |
+| 102 | Second Edition carry-over | **New: the character continues.** The Errata who clear the Ur-Text continue straight into Second Edition with gear and levels, against scaled enemies | Docs 04, 11, 14 |
+| 103 | Second Edition bosses | **New:** the 5 Editors return as revised versions with new phases and mechanics, plus a new final boss, the Author | Docs 13, 18 |
+| 104 | Streaming | **New: audience votes, opt-in.** Twitch and YouTube viewers vote on doors, boons and a Chaos mutator; off by default; never in ranked or daily runs; streamer-safe mode hides names and notes | Docs 14, 16, 17 |
+| 105 | Second Edition length | **New:** 15 Folios in 3 Volumes of fused genres; each Volume ends on a revised Editor; the Author follows Volume 3 | Docs 12, 14 |
+| 106 | Second Edition scaling | **New:** Second Edition Folio n uses depth 25 + 2n in the P, T, H and S tables (canon §13.8) | Canon §13.8; docs 13, 14 |
+| 107 | Second Edition party | **New:** every slot enters; ghosts return with their character as it was at death | Docs 14, 16 |
+| 108 | Second Edition stakes | **New: high stakes.** Entering Second Edition is a choice offered at the Ur-Text clear. A party wipe in Second Edition forfeits the run's clear (the run is recorded as a non-clear). A Second Edition clear in which no party member died grants the Ironman reward: an exclusive cosmetic and a leaderboard mark | Docs 14, 15, 17 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 

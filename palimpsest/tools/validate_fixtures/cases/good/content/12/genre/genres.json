@@ -1,0 +1,74 @@
+{
+  "schema": "12.t_genre",
+  "records": [
+    {
+      "id": "genre.cyberpunk",
+      "axioms": {
+        "arcana": 1,
+        "techne": 9,
+        "mythos": 2,
+        "verve": 5
+      },
+      "tolerance": {
+        "arcana": 0,
+        "techne": 2,
+        "mythos": 1,
+        "verve": 1
+      },
+      "aether_axiom": "ax.techne",
+      "gravity_bp": 10000,
+      "ambient_light": 3,
+      "palette": [
+        "#120B1F",
+        "#FF2E88",
+        "#00E5FF"
+      ]
+    },
+    {
+      "id": "genre.wuxia",
+      "axioms": {
+        "arcana": 6,
+        "techne": 2,
+        "mythos": 5,
+        "verve": 10
+      },
+      "tolerance": {
+        "arcana": 1,
+        "techne": 0,
+        "mythos": 1,
+        "verve": 2
+      },
+      "aether_axiom": "ax.verve",
+      "gravity_bp": 8000,
+      "ambient_light": 5,
+      "palette": [
+        "#1F3A2E",
+        "#D9C9A3",
+        "#B32020"
+      ]
+    },
+    {
+      "id": "genre.unwritten",
+      "axioms": {
+        "arcana": 0,
+        "techne": 0,
+        "mythos": 0,
+        "verve": 0
+      },
+      "tolerance": {
+        "arcana": 2,
+        "techne": 1,
+        "mythos": 1,
+        "verve": 0
+      },
+      "aether_axiom": null,
+      "gravity_bp": 10000,
+      "ambient_light": 8,
+      "palette": [
+        "#FFFFFF",
+        "#E6E6E6",
+        "#CCCCCC"
+      ]
+    }
+  ]
+}

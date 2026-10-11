@@ -1,0 +1,7 @@
+{
+  "description": "Canon §1.1: base content never uses a second segment starting with x_.",
+  "errors": {
+    "E_MOD_ID": 1
+  },
+  "warnings": {}
+}

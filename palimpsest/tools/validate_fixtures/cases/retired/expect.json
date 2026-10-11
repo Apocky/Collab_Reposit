@@ -1,0 +1,7 @@
+{
+  "description": "Canon §17.7 retired IDs as a record, as an alias and as a reference.",
+  "errors": {
+    "E_RETIRED": 3
+  },
+  "warnings": {}
+}

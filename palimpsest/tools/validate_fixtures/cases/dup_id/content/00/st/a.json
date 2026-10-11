@@ -1,0 +1,14 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.dup"
+    },
+    {
+      "id": "st.one",
+      "aliases": [
+        "st.two"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Canon §21 test 29: record IDs, aliases and references are checked with the palimpsest_data grammar, including the reserved loc namespace; one finding per location.",
+  "errors": {
+    "E_ID_GRAMMAR": 6
+  },
+  "warnings": {}
+}

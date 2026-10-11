@@ -1,0 +1,7 @@
+{
+  "description": "The same ID twice across files, and an alias equal to a record ID.",
+  "errors": {
+    "E_DUP_ID": 2
+  },
+  "warnings": {}
+}

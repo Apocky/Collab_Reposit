@@ -1,0 +1,8 @@
+{
+  "schema": "11.t_enum",
+  "records": [
+    {
+      "id": "enemy.misfiled"
+    }
+  ]
+}

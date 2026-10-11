@@ -1,0 +1,12 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.user",
+      "genre": "st.user",
+      "statuses": [
+        "genre.x"
+      ]
+    }
+  ]
+}

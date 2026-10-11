@@ -1,0 +1,7 @@
+{
+  "description": "A reference through an alias resolves, with a warning.",
+  "errors": {},
+  "warnings": {
+    "W_REF_ALIAS": 1
+  }
+}

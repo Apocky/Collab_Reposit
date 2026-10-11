@@ -1,0 +1,47 @@
+{
+  "schema": "05.t_weapon",
+  "records": [
+    {
+      "id": "arch.melee.blade_long",
+      "shares": [
+        {
+          "type": "dmg.slash",
+          "bp": 7000
+        },
+        {
+          "type": "dmg.fire",
+          "bp": 3000
+        }
+      ],
+      "scaling": [
+        {
+          "sub": "sub.precision",
+          "c": 8000
+        },
+        {
+          "sub": "sub.power",
+          "c": 7000
+        }
+      ],
+      "reach": 1800,
+      "cone": 8192,
+      "swing_ticks": 24,
+      "mass_g": 1400,
+      "requires": [
+        {
+          "attr": "attr.finesse",
+          "min": 45
+        }
+      ],
+      "origin": "genre.wuxia",
+      "procs": [
+        "st.bleeding"
+      ],
+      "muzzle": {
+        "x": 0,
+        "y": -50,
+        "z": -900
+      }
+    }
+  ]
+}

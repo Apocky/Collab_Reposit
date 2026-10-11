@@ -1,0 +1,7 @@
+{
+  "description": "x-sum over an array field, over an object's values, and over an empty array.",
+  "errors": {
+    "E_SUM": 3
+  },
+  "warnings": {}
+}

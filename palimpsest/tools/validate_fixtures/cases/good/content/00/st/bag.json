@@ -1,0 +1,65 @@
+{
+  "schema": "00.t_bag",
+  "records": [
+    {
+      "id": "st.fixture_bag",
+      "n": -5,
+      "text": "1.5 and 1e3 are fine inside strings",
+      "seed": "0xff",
+      "len": 1,
+      "genre": "genre.cyberpunk",
+      "statuses": [
+        "st.bleeding",
+        "st.burning"
+      ],
+      "shares": [
+        {
+          "k": "a",
+          "bp": 2500
+        },
+        {
+          "k": "b",
+          "bp": 7500
+        }
+      ],
+      "coeffs": [
+        {
+          "k": "a",
+          "c": 10000
+        },
+        {
+          "k": "b",
+          "c": 5000
+        }
+      ],
+      "rows": [
+        {
+          "a": "x",
+          "b": 1
+        },
+        {
+          "a": "x",
+          "b": 2
+        },
+        {
+          "a": "y",
+          "b": 1
+        }
+      ],
+      "tags": [
+        {
+          "name": "p"
+        },
+        {
+          "name": "q"
+        }
+      ],
+      "tolerance": {
+        "arcana": 2,
+        "techne": 1,
+        "mythos": 1,
+        "verve": 0
+      }
+    }
+  ]
+}

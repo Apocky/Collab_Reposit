@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimpsest:schema:13.t_enemy",
+  "title": "Fixture: enemy template",
+  "x-owner": "13",
+  "$ref": "urn:palimpsest:schema:common#/$defs/record_base",
+  "required": [
+    "rank",
+    "faction",
+    "genre",
+    "hp",
+    "attack"
+  ],
+  "properties": {
+    "rank": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ref_rank"
+    },
+    "faction": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ref_faction"
+    },
+    "genre": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/ref_genre"
+    },
+    "hp": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/milli_nonneg"
+    },
+    "attack": {
+      "type": "object",
+      "required": [
+        "shares",
+        "range",
+        "cone",
+        "windup"
+      ],
+      "properties": {
+        "shares": {
+          "$ref": "urn:palimpsest:schema:common#/$defs/dmg_shares"
+        },
+        "range": {
+          "$ref": "urn:palimpsest:schema:common#/$defs/mm_pos"
+        },
+        "cone": {
+          "$ref": "urn:palimpsest:schema:common#/$defs/bam_cone"
+        },
+        "windup": {
+          "$ref": "urn:palimpsest:schema:common#/$defs/ticks"
+        }
+      },
+      "additionalProperties": false
+    },
+    "immune": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "x-idref": [
+        "st."
+      ]
+    },
+    "abilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:palimpsest:schema:common#/$defs/id",
+        "x-idref": [
+          "enemy.ab."
+        ]
+      }
+    },
+    "eye": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/mm3"
+    },
+    "speed": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/mm_s"
+    },
+    "accel": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/mm_s2"
+    },
+    "seed": {
+      "$ref": "urn:palimpsest:schema:common#/$defs/hex_u64"
+    }
+  },
+  "unevaluatedProperties": false
+}
