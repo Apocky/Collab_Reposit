@@ -118,7 +118,7 @@ With the doc 12 data on disk the first four channels alone give every pair at le
 
 | Test | Pass condition | Method |
 |---|---|---|
-| `pillar.living_page.t1` | `systemic_share >= 800` Bp of NPC kills (definition in §10.3, `kpi.pillar.systemic_kill_share`); before EA measured over 1,000 solo and 1,000 four-player Standard bot runs, after EA over opt-in live runs | event tally joining `ev.entity_killed.damage_seq` to the lethal `ev.damage_dealt` |
+| `pillar.living_page.t1` | `systemic_share >= 800` Bp of NPC kills (definition in §10.3, `kpi.pillar.systemic_kill_share`); before EA measured over 1,000 solo and 1,000 four-player Standard bot runs, after EA over opt-in live runs | event tally joining `ev.entity_killed` to the lethal `ev.damage_dealt` |
 | `pillar.living_page.t2` | the doc 02 §6.4 determinism set (50 golden replays of 3,600 ticks per pull request, 500 of 18,000 ticks nightly) writes byte-identical `hashes.json` on all 5 targets | determinism CI |
 | `pillar.living_page.t3` | each Rubric type (`run.rubric.keeper`, `run.rubric.catchwords`, `run.rubric.seal`) in each core genre is completed by the combat-led bot policy in ≥ 6000 Bp of 200 seeds, and by the stealth-led and the environment-led policies in ≥ 3000 Bp each (108 cells) | headless bot sweep (doc 02 §16 bots) |
 
@@ -846,7 +846,7 @@ Record schemas: the pillar record and `release_gate` / `prefer` (§2.7); the KPI
 | Doc | Assumed to provide |
 |---|---|
 | 02 | the bot harness with three policies (combat-led, stealth-led, environment-led) for `pillar.living_page.t3`, and the scenario runner for §3.13; the 5-target determinism set; `flag.telemetry.usage`, `flag.telemetry.crash_mode`, `flag.scribe.enabled`; nightly `perf.` gates; opt-in run summaries widened with the per-Folio fields listed under doc 16 |
-| 03 | `ev.entity_killed.damage_seq` naming the lethal `ev.damage_dealt` of the same tick; `DmgFlags.env` set on every §10.6 environmental hazard hit, every Canon §12.1 surface or reaction damage and fire-spread ignition damage, and inherited by the DoT pulses of a status that an `env` hit or a surface contact applied |
+| 03 | `ev.entity_killed` naming the lethal `ev.damage_dealt` of the same tick; `DmgFlags.env` set on every §10.6 environmental hazard hit, every Canon §12.1 surface or reaction damage and fire-spread ignition damage, and inherited by the DoT pulses of a status that an `env` hit or a surface contact applied |
 | 04 | four ability slots; each of the 13 Calling kits lists its ally-targeting verbs (`pillar.party_of_errata.t2`) |
 | 06 | the doc 06 §16.3 supplication algorithm with its fixed 4 keyed draws (SM-08); a levitation spell that compiles within complexity 8 (SM-05) |
 | 07 | `cat.placeable` records used from the quickbar through doc 17's placement mode |

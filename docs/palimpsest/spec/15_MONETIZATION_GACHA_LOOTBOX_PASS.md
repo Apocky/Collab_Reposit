@@ -217,13 +217,13 @@ All hours use play Ink only, `REF_INK_PER_HOUR = 400`, `INK_PULL_COST = 160` (Be
 | `echo.tallow` | PA | Illuminated | p006 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p006 | 9.10 |
 | `echo.preacher_amos` | WW | Illuminated | p007 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p007 | 9.10 |
 | `echo.vera_lux` | HN | Illuminated | p008 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p008 | 9.10 |
-| `echo.old_master_huo` | WX | Illuminated | p009 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p009 | 9.10 |
+| `echo.sun_wukong` | WX | Illuminated | p009 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p009 | 9.10 |
 | `echo.colonel_wexley` | SP | Illuminated | p010 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p010 | 9.10 |
 | `echo.wolf_in_wool` | FT | Illuminated | p011 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p011 | 9.10 |
-| `echo.sibyl_of_ash` | MA | Illuminated | p012 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p012 | 9.25 |
-| `echo.aldric_unsworn` | MF | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 20 Vellum = 8.0 h, from launch | 4.70 |
-| `echo.vesper_crane` | GH | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.20 |
-| `echo.dr_halloway` | CH | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
+| `echo.loki` | MA | Illuminated | p012 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p012 | 9.25 |
+| `echo.fenrir` | MF | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 20 Vellum = 8.0 h, from launch | 4.70 |
+| `echo.lilith` | GH | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.20 |
+| `echo.jormungandr` | CH | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
 | `echo.ostra_vey` | SO | Rubricated | p004 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.20 |
 | `echo.nix_seventeen` | CP | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
 | `echo.ma_rust` | PA | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
@@ -266,18 +266,18 @@ Echo acquisition belongs to this chapter (Canon §19). Each core genre's doc 14 
 
 | g | Genre | Illuminated Echo (slot A) | Rubricated Echo (slot B) |
 |---|---|---|---|
-| 1 | MF | `echo.wren_long_index` | `echo.aldric_unsworn` |
-| 2 | GH | `echo.mother_ilse` | `echo.vesper_crane` |
-| 3 | CH | `echo.drowned_clerk` | `echo.dr_halloway` |
+| 1 | MF | `echo.wren_long_index` | `echo.fenrir` |
+| 2 | GH | `echo.mother_ilse` | `echo.lilith` |
+| 3 | CH | `echo.drowned_clerk` | `echo.jormungandr` |
 | 4 | SO | `echo.kestrel_unit` | `echo.ostra_vey` |
 | 5 | CP | `echo.ronin_valdez` | `echo.nix_seventeen` |
 | 6 | PA | `echo.tallow` | `echo.ma_rust` |
 | 7 | WW | `echo.preacher_amos` | `echo.josephine_crowe` |
 | 8 | HN | `echo.vera_lux` | `echo.dex_halloran` |
-| 9 | WX | `echo.old_master_huo` | `echo.lan_ninth_peak` |
+| 9 | WX | `echo.sun_wukong` | `echo.lan_ninth_peak` |
 | 10 | SP | `echo.colonel_wexley` | `echo.ada_brassvane` |
 | 11 | FT | `echo.wolf_in_wool` | `echo.briar_thornwood` |
-| 12 | MA | `echo.sibyl_of_ash` | `echo.kallias_twice_drowned` |
+| 12 | MA | `echo.loki` | `echo.kallias_twice_drowned` |
 
 Each Folio Expansion adds one Illuminated and one Rubricated Echo for its genre on the same rule.
 
@@ -331,10 +331,10 @@ Genres are indexed 1 to 12 in Canon §5.2 order (§3.1.1). Period `k` (1-based) 
 | p006 | PA-A `echo.tallow` | PA-B, SP-B, GH-B |
 | p007 | WW-A `echo.preacher_amos` | WW-B, FT-B, CH-B |
 | p008 | HN-A `echo.vera_lux` | HN-B, MA-B, SO-B |
-| p009 | WX-A `echo.old_master_huo` | WX-B, MF-B, CP-B |
+| p009 | WX-A `echo.sun_wukong` | WX-B, MF-B, CP-B |
 | p010 | SP-A `echo.colonel_wexley` | SP-B, GH-B, PA-B |
 | p011 | FT-A `echo.wolf_in_wool` | FT-B, CH-B, WW-B |
-| p012 | MA-A `echo.sibyl_of_ash` | MA-B, SO-B, HN-B |
+| p012 | MA-A `echo.loki` | MA-B, SO-B, HN-B |
 
 Featured Script banners use the same `g`: period `k` features the Illuminated Script with index `g` of §3.1.2 and rates up the Rubricated Scripts with indices `2g − 1`, `2g` and `((2g + 11) mod 24) + 1`. The third index is `2g + 12` for `g ≤ 6` and `2g − 12` for `g ≥ 7`, so the three indices of one period are always distinct. Over 12 periods every Rubricated Script is rated up at least once, and the 12 even-indexed ones twice. Example: p001 features `bundle.script.lost_chapter_cosmic_horror` and rates up `bundle.script.glyphs_ember` (1), `bundle.script.glyphs_hollow` (2) and `bundle.script.kit_beastbinder` (14).
 
@@ -680,7 +680,7 @@ Banner record (content, validated by JSON Schema; integers only):
   "featured_top": ["echo.wren_long_index"],
   "top_featured_bp": 7500,
   "off_top_pool": "banner.pool.illuminated_echo",
-  "rate_up_mid": ["echo.aldric_unsworn", "echo.lan_ninth_peak", "echo.nix_seventeen"],
+  "rate_up_mid": ["echo.fenrir", "echo.lan_ninth_peak", "echo.nix_seventeen"],
   "mid_featured_bp": 5000,
   "off_mid_pool": "banner.pool.rubricated",
   "plain_pool": "banner.pool.plain",

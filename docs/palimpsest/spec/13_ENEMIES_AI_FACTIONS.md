@@ -923,7 +923,7 @@ Factions: `outlaw_gang`, `lawmen`, `railroad_company`, `hex_coven`, wild.
 | `marshal_rifleman` | sniper | humanoid | human; sapient | lawmen | `high_noon`: a 90-tick standoff telegraph; if the target is visible at its end, the shot is a guaranteed crit at × 15000 | verve | marksman | 1000 |
 | `hexslinger` | caster | humanoid | human; sapient | hex_coven | `hex_bullet`: `dmg.umbral` 10000, `st.withering` power 60 | mythos | caster | 1500 |
 | `railroad_automaton` | brute | construct | —; construct, electronic | railroad_company | `steam_ram`: `charge` that leaves one saturated cell of `gas.steam` (`emit_gas_volume(cell, gas.steam, 1)`, doc 08 §2.7) in each of the last 3 cells of its charge path | techne | construct | 1500 |
-| `sand_wyrm` | stalker | serpentine | —; beast, burrowing | wild | `sand_swim`: moves through `block.sand` and `block.dirt` cells as if passable (no block breaks) and surfaces under its target with direct `st.knocked_down`, cooldown 600 | — | beast | 500 |
+| `sand_wyrm` | stalker | serpentine | —; beast, burrowing | wild | `sand_swim`: moves through `block.sand` and `block.soil` cells as if passable (no block breaks) and surfaces under its target with direct `st.knocked_down`, cooldown 600 | — | beast | 500 |
 | `posse_rider` | cavalry | humanoid on runner (horse) | human; sapient, mounted | lawmen | `lasso`: 12000 mm projectile, direct `st.grappled` and a 4000 mm pull | — | marksman | 1500 |
 
 ### 8.8 Hardboiled Noir
@@ -1078,7 +1078,7 @@ Notation in this section: `w/a/r` is windup, active and recovery in ticks; `×N`
 - **Enrage.** From 18000 ticks after sealing, the boss gains +1000 Bp in its step-1 additive bucket, and another +1000 every 1800 ticks, up to +10000.
 - **Erasure.** Erasure accrual pauses in Editor Folios while the Editor lives (Canon §11.6); mini-boss Folios do not pause.
 - **Genre adaptation.** The boss takes its skin from the local genre. Editors also add a **verse** chosen by the local genre's dominant axiom: the highest of ARC, TEC, MYT, VRV, ties broken in that order. Dominant axioms: ARC for Mythic Fantasy, Fairy Tale, Oneiric, Unwritten and Ur-Text; TEC for Space Opera, Cyberpunk, Post-Apocalypse, Hardboiled Noir, Steampunk and The Redaction; MYT for Gothic Horror, Cosmic Horror and Mythic Antiquity; VRV for Weird West and Wuxia.
-- **Loot.** Doc 11 owns every table and draw count. A mini-boss (`rank.boss`) rolls `loot.drop.boss` once per Active, living Erratum with doc 11's `drop_rng(folio, boss EntityId, tick, slot)` (doc 11 §9.5: two item lines, floor Rare, and `item.bag.boss`). An Editor rolls `loot.drop.editor` the same way (Lucre, `item.key.illumined`, `item.bag.editor` with its 1000 Bp Palimpsestic line) and then offers the Volume reward `loot.volume_reward` (doc 11 §9.8, doc 14 §3.9). This chapter adds no boss loot of its own, so Palimpsestic items stay limited to Editor bags, Volume rewards and Palimpsest vaults (Canon §13.3).
+- **Loot.** Doc 11 owns every table and draw count. A mini-boss (`rank.boss`) rolls `loot.boss.mini` once per Active, living Erratum with doc 11's `drop_rng(folio, boss EntityId, tick, slot)` (doc 11 §9.5: two item lines, floor Rare, and `item.bag.boss`). An Editor rolls `loot.boss.editor` the same way (Lucre, `item.key.illumined`, `item.bag.editor` with its 1000 Bp Palimpsestic line) and then offers the Volume reward `loot.volume_reward` (doc 11 §9.8, doc 14 §3.9). This chapter adds no boss loot of its own, so Palimpsestic items stay limited to Editor bags, Volume rewards and Palimpsest vaults (Canon §13.3).
 
 Boss HP (`hp_max`, mHP) by party size:
 
@@ -1150,7 +1150,7 @@ With doc 14's `final_phase_extra`, the final Editor gains a fifth phase below 10
 
 ### 9.3 Genre mini-bosses
 
-A Normal standard or challenge Folio whose layout holds a `room.arena` (doc 12 §8.2 `room.rule.arena`, one `roll_bp(3000)` per Normal Folio) holds the mini-boss of the arena's zone genre there, paid from the Folio's population budget (§10.1), except in a siege challenge, whose arena hosts the siege waves (§10.4). Genres without a mini-boss (`genre.unwritten`, `genre.ur_text`) put one champion of the zone roster in the arena instead, also paid from the budget. The arena seals as §9.1 says. Killing the mini-boss is optional; it drops `loot.drop.boss` (§9.1). Each mini-boss has two phases; phase 1 ends at 5000 Bp. IDs `boss.<genre_suffix>.<name>`.
+A Normal standard or challenge Folio whose layout holds a `room.arena` (doc 12 §8.2 `room.rule.arena`, one `roll_bp(3000)` per Normal Folio) holds the mini-boss of the arena's zone genre there, paid from the Folio's population budget (§10.1), except in a siege challenge, whose arena hosts the siege waves (§10.4). Genres without a mini-boss (`genre.unwritten`, `genre.ur_text`) put one champion of the zone roster in the arena instead, also paid from the budget. The arena seals as §9.1 says. Killing the mini-boss is optional; it drops `loot.boss.mini` (§9.1). Each mini-boss has two phases; phase 1 ends at 5000 Bp. IDs `boss.<genre_suffix>.<name>`.
 
 | ID | Body | Arena | Attacks (phase 2 additions marked P2) |
 |---|---|---|---|
@@ -1169,7 +1169,7 @@ A Normal standard or challenge Folio whose layout holds a `room.arena` (doc 12 �
 | `boss.oneiric.sandman` | humanoid | giant bedroom 48 × 48 m | `dream_sand` area r6000, w45, `st.sleeping` 80; `gravity_flip` w90, arena gravity reversed for 300 ticks (doc 12 §9.5 gravity-flip volume over the arena); P2 summons 2 `nightmare_mare` every 1200 ticks |
 | `boss.redacted.director_of_records` | humanoid | open-plan office 40 × 30 m | `file_wall` places a 6 × 3 block wall of cabinets removed on its death; `termination_notice` marker w90, ×3.0 arcane; P2 `memo_storm` 10 projectiles ×0.3 |
 
-Mini-boss loot is `loot.drop.boss` (§9.1). Every mini-boss attack has the `dep` of its genre's signature verb: the wyrm, countess, herald, queen, gorgon and sandman depend on their genre's `aether_axiom`, the admiral, daemon, war boss, fixer, colossus and director on techne, the judge on mythos and the sword saint on verve; they are native in their arenas, so they are Coherent unless a bleed zone overlaps the arena.
+Mini-boss loot is `loot.boss.mini` (§9.1). Every mini-boss attack has the `dep` of its genre's signature verb: the wyrm, countess, herald, queen, gorgon and sandman depend on their genre's `aether_axiom`, the admiral, daemon, war boss, fixer, colossus and director on techne, the judge on mythos and the sword saint on verve; they are native in their arenas, so they are Coherent unless a bleed zone overlaps the arena.
 
 ## 10. The Director
 
@@ -1717,7 +1717,7 @@ Also exported: the §2.4 tag bit layout of doc 03's tags component, the `ai_targ
 | 04 | the `value` bonuses of §6 and §13.7 (`courtesy`, `silver_tongue`, `beast_tongue`, Speech 50 and 100, Handling 75); `ev.entity_pacified`; Handling and Leadership factors applied after the §6 minion formulas; a replay of doc 04 §6.3 on the §11.2 plan |
 | 05 | NPC action state machines that run §2.1 attack profiles; counters; NPC riders on `arch.mount.*` with `mount_hp_mhp`; NPC grabs |
 | 06 | summon profiles and stats; hostile `summon.herald` and `summon.misprint` spawns handed to §5.5; NPC spell scale; scorer queries |
-| 07 | `break_ticks(material)`; the `destructible` tag; doors with HP; ladder, vine and rope blocks; `block.sand`, `block.dirt`; `mat.cold_iron`; lit and unlit fixture states; `placed_meta.hp` of Errata `block.barricade.*` and `block.cover.*` cells for the §4.13 breach link, and placeables at `tooltier.t0` (doc 07 §10.5 asks for `ai.action.breach`) |
+| 07 | `break_ticks(material)`; the `destructible` tag; doors with HP; ladder, vine and rope blocks; `block.sand`, `block.soil`; `mat.cold_iron`; lit and unlit fixture states; `placed_meta.hp` of Errata `block.barricade.*` and `block.cover.*` cells for the §4.13 breach link, and placeables at `tooltier.t0` (doc 07 §10.5 asks for `ai.action.breach`) |
 | 08 | potion heal amounts; `emit_gas_volume` for the steam, miasma and smoke cells of §7.2, §8 and §9.3 (doc 08 gap 18) |
 | 09 | the six awareness states and their `ai.input.target_aware` values; the §6.7 search plan; sight-pass queries; callouts, radio and `raise_alarm` with `alarm_raised(pos, faction)` to the Director; hacking buildup; senses `breath`, `tremor`, `thermal`, `scent`; holding breath; perception profiles reading the `flier` tag; disguises reading `outfit`, `enforcer` and `radio`; subdue as a pacification |
 | 10 | monster-use and witness identification; `curse.red_letter` radius |
@@ -1790,7 +1790,7 @@ Also exported: the §2.4 tag bit layout of doc 03's tags component, the `ai_targ
 22. **Attribution.** An enemy killed by another faction after Errata dealt 2000 Bp of its Max HP pays 0; after 2500 Bp it pays full kill XP.
 23. **Level pacing.** The §11.2 reference run gives cumulative XP 47,839 and level 13 after Folio 10, 480,822 and level 29 on arrival at Folio 25, main skill 50 at Folio 10 and 75 at Folio 22; every §11.2 sensitivity row lands in `25..=31`.
 24. **Boss HP.** `boss.editor_v1` solo 7,113,600 mHP; `boss.ur_editor` with 4 players 359,677,296 mHP; a mini-boss in Folio 3 solo 2,148,000.
-25. **Boss loot.** A mini-boss kill rolls doc 11's `loot.drop.boss` once per Active, living Erratum with `drop_rng(folio, boss EntityId, tick, slot)`; an Editor kill rolls `loot.drop.editor` the same way and opens `loot.volume_reward`; this chapter makes no other loot draw for bosses.
+25. **Boss loot.** A mini-boss kill rolls doc 11's `loot.boss.mini` once per Active, living Erratum with `drop_rng(folio, boss EntityId, tick, slot)`; an Editor kill rolls `loot.boss.editor` the same way and opens `loot.volume_reward`; this chapter makes no other loot draw for bosses.
 26. **Phase shift.** A hit taking `boss.editor_v1` from 6700 to 6500 Bp stops at 6667 Bp; for 90 ticks the boss takes 0 damage and loses every status; it publishes a `ring` telegraph and switches to its phase-2 attack set; no block changes.
 27. **Reputation.** A witnessed `kingsguard_knight` kill: `kingsguard` 150 → 0 and `orc_warband` −600 → −563 after 300 ticks. If both witnesses die within 300 ticks: `kingsguard` 150 → 110 and `orc_warband` −600 → −590.
 28. **Dialogue.** Persuade with CHM 52, Speech 35, reputation +150, Hard tier, Folio 12: `value = 42`, `dc = 36`, pass, no random draw, 3,600 milli-XP of Speech; with Speech 25 it fails and stays unavailable on that speaker until the value rises.

@@ -914,7 +914,7 @@ Body-part item (Canon §13.1 `cat.body_part`, rots after 7200 ticks):
 
 ```json
 {
-  "uid": "0x0000070000000041", "template": "bp.arm_r", "source_template": "enemy.mythic_fantasy.troll",
+  "uid": "0x0000070000000041", "template": "bp.arm_r", "source_template": "enemy.mythic_fantasy.cave_troll",
   "owner": "0x0000070000000013", "created_tick": 151200, "mass_g": 9100, "ilvl": 7,
   "materials": [ "mat.flesh", "mat.bone" ], "tags": [ "regenerating", "beast_sapient" ], "rotten": 0
 }
@@ -1081,7 +1081,7 @@ All needs run on the Needs subsystem (period 60, phase 7, `k = 1`) unless stated
 |---|---|---|---|---|
 | ration (`item.food.ration`) | 600 | never | 60 | |
 | meal (`item.food.meal`; also any cooked dish) | 900 | 36000 | 60 | composure +10 |
-| snack (`item.food.snack`), bread, fruit, produce | 300 | 18000 | 60 | |
+| snack (`item.food.bread`), bread, fruit, produce | 300 | 18000 | 60 | |
 | raw meat | 300 | 7200 | 60 | +40 `st.diseased` power |
 | raw body part | `min(900, floor_div(mass_g, 10))` | 7200 (rotten at once) | 120 | raw-meat rule; sapient: composure −15 |
 | corpse (Eat action) | 1200 | 7200 from death | 600 | +80 `st.diseased` power |
@@ -1640,11 +1640,11 @@ Echo signature traits: variant A of each of the 24 launch Echoes. Doc 14 §6.3 a
 
 | ID | Echo | Effect |
 |---|---|---|
-| `trait.echo.aldric_unsworn` | `echo.aldric_unsworn` | doc 14 §6.3 |
+| `trait.echo.fenrir` | `echo.fenrir` | doc 14 §6.3 |
 | `trait.echo.wren_long_index` | `echo.wren_long_index` | doc 14 §6.3 |
-| `trait.echo.vesper_crane` | `echo.vesper_crane` | doc 14 §6.3 |
+| `trait.echo.lilith` | `echo.lilith` | doc 14 §6.3 |
 | `trait.echo.mother_ilse` | `echo.mother_ilse` | doc 14 §6.3 |
-| `trait.echo.dr_halloway` | `echo.dr_halloway` | doc 14 §6.3 |
+| `trait.echo.jormungandr` | `echo.jormungandr` | doc 14 §6.3 |
 | `trait.echo.drowned_clerk` | `echo.drowned_clerk` | doc 14 §6.3 |
 | `trait.echo.ostra_vey` | `echo.ostra_vey` | doc 14 §6.3 |
 | `trait.echo.kestrel_unit` | `echo.kestrel_unit` | doc 14 §6.3 |
@@ -1657,13 +1657,13 @@ Echo signature traits: variant A of each of the 24 launch Echoes. Doc 14 §6.3 a
 | `trait.echo.dex_halloran` | `echo.dex_halloran` | doc 14 §6.3 |
 | `trait.echo.vera_lux` | `echo.vera_lux` | doc 14 §6.3 |
 | `trait.echo.lan_ninth_peak` | `echo.lan_ninth_peak` | doc 14 §6.3 |
-| `trait.echo.old_master_huo` | `echo.old_master_huo` | doc 14 §6.3 |
+| `trait.echo.sun_wukong` | `echo.sun_wukong` | doc 14 §6.3 |
 | `trait.echo.ada_brassvane` | `echo.ada_brassvane` | doc 14 §6.3 |
 | `trait.echo.colonel_wexley` | `echo.colonel_wexley` | doc 14 §6.3 |
 | `trait.echo.briar_thornwood` | `echo.briar_thornwood` | doc 14 §6.3 |
 | `trait.echo.wolf_in_wool` | `echo.wolf_in_wool` | doc 14 §6.3 |
 | `trait.echo.kallias_twice_drowned` | `echo.kallias_twice_drowned` | doc 14 §6.3 |
-| `trait.echo.sibyl_of_ash` | `echo.sibyl_of_ash` | doc 14 §6.3 |
+| `trait.echo.loki` | `echo.loki` | doc 14 §6.3 |
 
 ### 15.7 Afflictions and wounds
 

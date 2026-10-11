@@ -1129,7 +1129,7 @@ A mod is `mods/<mod_id>/` with `mod.json` (`id` matching `^[a-z][a-z0-9_]{2,31}$
 - **Adding, never overriding.** A mod record whose `id32` equals any loaded `id32`, an identical ID included, is rejected with `id32_collision` (Canon §1.1). A mod changes base content only through `patches/*.json` records `{ "target": "<base id>", "op": "append", "path": "/<array field>", "value": [ … ] }`, allowed only on array fields that the base schema marks `"x-patchable": true` (loot tables, spawn lists, recipe lists, shop stock). Patches apply in mod load order and are validated like any record; the patched record enters `content_hash`. Example (the target ID is illustrative; doc 11 owns loot-table IDs):
 
 ```json
-{ "id": "loot.x_frostpack.add_ice_blade", "target": "loot.mythic_fantasy.chest_common", "op": "append",
+{ "id": "loot.x_frostpack.add_ice_blade", "target": "loot.chest.plain", "op": "append",
   "path": "/entries", "value": [ { "item": "item.x_frostpack.ice_blade", "w": 20 } ] }
 ```
 - **Forbidden namespaces.** Mod records in `crate.`, `flag.`, `perf.`, `cur.`, `ent.`, `juris.`, `banner.`, `pass.`, `store.`, `bundle.` or `cosm.` are rejected with `mod_namespace_forbidden`, so no mod touches the economy, jurisdiction gates or budgets.

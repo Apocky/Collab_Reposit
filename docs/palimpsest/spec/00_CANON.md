@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.10 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.11 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -44,6 +44,7 @@ Every piece of content and every enum value has a string **content ID**.
 - `id32 = fnv1a32(utf8(id))` is the compact form used in saves and packets. It is computed for content IDs only, never for text keys (§1.10).
 - The content loader rejects any `id32` collision among base content and aliases at build time. An alias's old ID takes part in the collision check and maps to the new ID's `id32` at load.
 - A mod whose content ID collides with an already loaded `id32` is rejected at mod load with error `id32_collision`.
+- Mod content IDs use `x_<mod_id>` as their second segment, for example `item.x_frostpack.ice_blade`. Base content never uses a second segment that starts with `x_`.
 
 FNV-1a constants:
 
@@ -114,13 +115,13 @@ Simulation state never contains `f32` or `f64`. Rendering, audio and UI may use 
 - Units: meters, seconds, grams, milliliters, tenths of a degree Celsius, decibels. One block is 1 m on each side.
 - **Display-unit rule.** Any quantity of a `Milli` resource written in this canon or any spec without an "m" prefix is in display units and is stored × 1000. Max HP 85 is stored as 85,000 mHP. A dodge cost of 20 stamina is 20,000. Composure −15 is −15,000. Death's Door sets HP to 1,000 mHP.
 - `Fx` quantities shown to players, such as distances, display with `round_half_even` at the shown precision.
-- `Milli` values display as `floor(x / 1000)`, except current HP, which displays as `ceil_div(x, 1000)` so a living entity never shows 0 HP. Percentages from `Bp` display with one decimal place via `round_half_even`.
+- `Milli` values display as `floor(x / 1000)`, except current HP, which displays as `ceil_div(x, 1000)` so a living entity never shows 0 HP, and per-second rates below 10 display units, which display with one decimal place as `floor(x / 100)` tenths. Percentages from `Bp` display with one decimal place via `round_half_even`.
 
 ### 1.6 Content numeric encoding
 
 - Content files contain no floating-point numbers. A float in content is a schema error.
 - Lengths are authored in integer millimeters, speeds in mm/s, accelerations in mm/s², angles in Bam, chances and multipliers in Bp, durations in ticks, masses in grams, volumes in ml, temperatures in DeciC.
-- `u64` values such as seeds and hashes are written as `"0x"`-prefixed hexadecimal strings, because JSON tooling loses precision above 2^53.
+- Every JSON integer in content lies in `-(2^53 - 1)..=2^53 - 1`. Larger values, and every `u64` such as a seed or a hash, are written as `"0x"`-prefixed hexadecimal strings, because JSON tooling loses precision above 2^53.
 
 ### 1.7 Ranges
 
@@ -145,7 +146,7 @@ Ranges use Rust syntax. `a..=b` is inclusive and `a..b` is half-open.
 - `sin_bam(a)`: `q = a >> 14`, `r = a & 0x3FFF`. `q = 0 → T[r]`, `q = 1 → T[16384 - r]`, `q = 2 → -T[r]`, `q = 3 → -T[16384 - r]`.
 - `cos_bam(a) = sin_bam(a.wrapping_add(16384))`.
 - Forward vector in Q2.30: `fwd(yaw, pitch) = (((-sin_bam(yaw)) × cos_bam(pitch)) >> 30, sin_bam(pitch), ((-cos_bam(yaw)) × cos_bam(pitch)) >> 30)`, computed in `i64`. The negation happens before the multiply and the shift. `pitch` is the `i16` pitch reinterpreted as `Bam`; `fwd` does not clamp, because the simulation clamps pitch when it applies input.
-- `atan2_bam(y, x)` uses 16-iteration CORDIC on `i64` with a committed arctangent table. Doc 02 specifies it. Its accuracy contract is ±1 Bam, which is sufficient for aim and facing.
+- `atan2_bam(y, x)` returns the angle of the vector `(x, y)` counter-clockwise from +x, by 16-iteration CORDIC on `i64` with a committed arctangent table. The yaw that faces a horizontal direction `(dx, dz)` is `yaw_from_dir(dx, dz) = atan2_bam(-dx, -dz)`, the inverse of `fwd`. Doc 02 specifies it. Its accuracy contract is ±1 Bam, which is sufficient for aim and facing.
 
 ### 1.10 Text keys
 
@@ -177,7 +178,7 @@ Ranges use Rust syntax. `a..=b` is inclusive and `a..b` is half-open.
 
 ### 2.2 Tick schedule
 
-A subsystem runs on tick `t` when `(t + phase) % period == 0`. Per-entity phases use the §1.11 phase key.
+A subsystem runs on tick `t` when `(t + phase) % period == 0`. Per-entity phases use the §1.11 phase key. Boundary `b` is the state after tick `b - 1` completes and before tick `b` runs. A row that runs on tick `t` reads boundary `t` and writes boundary `t + 1`, so the network snapshot row publishes boundary `t + 1` for every even `t`.
 
 | Subsystem | Period (ticks) | Phase | Rate |
 |---|---|---|---|
@@ -217,22 +218,23 @@ apply q on this run
   Per-tick systems use `k = 60`. The status pulse uses `k = 4`. Needs use `k = 1`. No rate drifts.
 
 - `in_combat(e, t)` is true when `e` dealt or took non-DoT damage within ticks `(t-300) ..= t`, or any hostile AI held awareness `alerted` toward `e` within that window.
-- `light_at(e)` is the effective light of block `fx_floor_block(e.pos + (0, 0.5 m, 0))`. Stealth and composure use effective light. Spawn rules use `light_block` only (§12.3).
+- `light_at(e)` is the effective light of block `fx_floor_block(e.pos + (0, 0.5 m, 0))`. Every read of a cell's light, `light_at` and spawn light included, is clamped by the active light overrides of doc 03 §10.6, such as an Editor's blackout, which change no stored level. Composure uses `light_at`. Stealth uses doc 09's `stealth_light`, which starts from `light_at`. Spawn rules use the clamped `light_block` only (§12.3).
 
 ### 2.4 Sessions and replays
 
-- Every save, replay and lobby handshake carries `sim_version: u32`, `content_hash: [u8; 32]` and `run_seed: u64`.
-- `content_hash` is BLAKE3 over the canonical serialization of all loaded content sorted by content ID, including mods and the run's unlock set.
+- Every save, replay and lobby handshake carries `sim_version: u32` and `content_hash: [u8; 32]`. Saves and replays also carry `run_seed: u64`; a lobby receives it in the run header the host sends when it commits the run (doc 16).
+- `content_hash` is BLAKE3 over the canonical serialization (doc 02 §11.2) of every loaded content record outside the presentation namespaces `art.`, `aud.`, `vfx.`, `nar.` and `ui.`, sorted by content ID, plus the simulation-affecting mods, the run's unlock set and the simulation-affecting flags. `presentation_hash` is built the same way over the presentation records, the localization tables and the presentation-only mods. Peers, saves and replays must match `content_hash`. Replays record `presentation_hash`, and a mismatch only warns.
 - Hot reload of content is refused while a run is active, except in dev builds.
 - The replay log records the host's applied command per (tick, player slot), with slots `0..=3` for the party and slot 4 for an invader (§17.9): `{ tick: u64, slot: u8, move_x: i8, move_z: i8, yaw: u16, pitch: i16, buttons: u32, action_seq: u32, view_tick: u64 }`.
+- The replay log also records every applied intent `{ tick: u64, slot: u8, action_seq: u32, kind }`, where `kind` is doc 02's `IntentKind`: actions that are not button bits, such as shop, trade, crafting and menu actions, session intents and the host's slot-4 `InvaderJoin` and `InvaderLeave`. Intents apply on their logged tick, at the point doc 03's tick order sets, in ascending `(slot, action_seq)`. Doc 02 owns the list of kinds; adding a kind needs no canon change.
 - Lag-compensated hit tests rewind to `view_tick`. Replays use the logged `view_tick`, so a replay reproduces exactly the hits the live host computed.
 
 ### 2.5 Saves and state hash
 
 - A save is the canonical serialization of the entire `palimpsest_sim` state at a tick boundary, in sorted-key order, preceded by the §2.4 header. It includes every RNG state, every accumulator, buildup meters and timers, status expiry ticks, Death's Door flags, the Shock of the New set, EntityId and uid counters, the light relight FIFO, the liquid, gas, temperature and fire grids, AI state and the lattice history.
 - `state_hash = BLAKE3(serialization)`. The canonical serialization is hand-written and self-delimiting (doc 02 §6.5); it does not depend on serde. Any other hash over several variable-length fields prefixes each field with its byte length as a little-endian `u32`.
-- Debug builds may count draws per stream inside `palimpsest_sim` for diagnostics. Those counters never enter simulation state, saves or hashes. The host broadcasts `state_hash` every 60 ticks for desync detection (doc 16).
-- Single player may save at any tick boundary. Co-op saves only at Folio entry.
+- Debug builds may count draws per stream inside `palimpsest_sim` for diagnostics. Those counters never enter simulation state, saves or hashes. The host hashes every boundary `b` with `b % 60 == 0` and `b >= 60`, and broadcasts that `state_hash` for desync detection (doc 16).
+- Single player may save at any tick boundary, except while replay slot 4 holds an invader: a save request then completes on the tick `ev.invasion_ended` is emitted. Co-op saves only at Folio entry.
 
 ---
 
@@ -290,7 +292,7 @@ impl Rng {
     /// Uniform integer in lo..=hi.
     pub fn range_incl(&mut self, lo: i64, hi: i64) -> i64 {
         assert!(lo <= hi && ((hi as i128) - (lo as i128)) < (u64::MAX as i128));
-        lo + self.range((hi - lo + 1) as u64) as i64
+        ((lo as i128) + (self.range(((hi as i128) - (lo as i128) + 1) as u64) as i128)) as i64   // exact: the result lies in lo..=hi
     }
     /// Calls range(10000) exactly once regardless of chance_bp.
     pub fn roll_bp(&mut self, chance_bp: i32) -> bool {
@@ -329,24 +331,29 @@ stream_seed(run_seed, name, folio_index) =
 rng = Rng::from_seed64(stream_seed(...))
 ```
 
+**Sub-streams.** A sequential stream's owner may split it into labeled sub-streams with `derive(parent, salt) = mix64(parent ^ mix64(salt))`, seeding `Rng::from_seed64(derive(stream_seed(run_seed, name, folio_index), fnv1a64(label) ^ index))`, or another salt or a longer chain of `derive` calls that the owner documents (doc 11 `place_rng`; doc 12 §7.2, whose `gen_seed` uses the genre's `id32` as the salt). A sub-stream never advances its parent, so previews may recompute it and stages may run in any order.
+
 Run-scoped streams use `folio_index = 0`. Folio indices start at 1. Per-Folio streams are derived fresh at Folio entry, so a Folio's generation depends only on the run seed, the Folio index and the Folio's genre inputs.
 
 | Stream name | Scope | Owner | Draws for |
 |---|---|---|---|
 | `rng.lattice` | folio | 12 | genre candidates offered at the exit of that Folio: always exactly 3 candidates by one fixed procedure (§17.1) |
 | `rng.appearance` | run | 10 | the run-start appearance shuffle (§13.6) |
-| `rng.worldgen` | folio | 12 | layout, rooms, blocks, dressing |
+| `rng.worldgen` | folio | 12 | layout, rooms, blocks, dressing, and the counts and positions of loot spots (chests, floor spots, caches) |
 | `rng.spawn` | folio | 13 | initial population and spawn waves |
-| `rng.loot_place` | folio | 11 | contents of placed containers, shop stock, floor loot placed by worldgen |
+| `rng.loot_place` | folio | 11 | everything placed in loot spots and containers, and shop stock |
 | `rng.event` | folio | 12 | ambient and narrative events |
 | `rng.ai_idle` | folio | 13 | idle and wander behavior with no actor input |
 | `rng.fire` | folio | 03 | fire ignition and spread |
 | `rng.blocktick` | folio | 03 | random block ticks |
-| `rng.physics` | folio | 03 | debris and explosion block-break variation |
+| `rng.physics` | folio | 03 | debris, explosion block-break variation and explosion block drops |
+| `rng.run` | folio | 14 | Daily setup and Weekly mutators (`folio_index = 0`), marginal notes and Marginal mutations |
 
 ### 3.3 Keyed draws
 
 Every random draw **caused by an entity's action** uses a keyed generator instead of a sequential stream. The key makes the draw independent of how many other draws happened that tick, so client prediction, late inputs under lag compensation, and players joining or leaving cannot shift it.
+
+Exception: explosions resolve host-side in doc 03's explosion-queue order and are never client-predicted, so their block-break variation and block drops draw from `rng.physics`, and their incendiary ignition from `rng.fire` (§3.2), with the counts doc 03 lists.
 
 ```rust
 fn keyed_rng(stream: &str, folio: u32, actor: u64, tick: u64, seq: u32) -> Rng {
@@ -357,8 +364,9 @@ fn keyed_rng(stream: &str, folio: u32, actor: u64, tick: u64, seq: u32) -> Rng {
 }
 ```
 
-- `actor` is the acting entity's `EntityId`. `tick` is the input tick of the action. `seq` is a per-actor action counter that resets to 0 each tick.
+- `actor` is the acting entity's `EntityId`. `tick` is the input tick of the action. `seq` is in `0..=0xFFFF`; larger values panic in the checked shift of §1.3. It separates draws that share `(stream, actor, tick)`. Each draw takes its `seq` from a fixed allocation published by the drawing document, never from a count of other entities' draws, and a running per-actor counter is allowed only inside a range its document reserves. Reserved: `0x0000..=0x01FF` on `rng.combat` and `rng.status` (doc 05 §1.4 action and hit slots); `0x2000..=0x2FFF`, `0x3000` and `0x4000..=0x4FFF` (doc 06); `1000..=1006` on `rng.stealth` (doc 09); `0xFFFE` on `rng.check` (madness episodes) and `0xFFFF` on `rng.combat` (Death's Door), both doc 04. The per-tick action counters of docs 04 and 10 stay below `0x2000`. Allocations on one stream never overlap.
 - Loot drops use `actor` = the killed entity's `EntityId` or the container's uid, and `seq` = the receiving player's slot.
+- **Object-keyed draws.** A value that must stay fixed for one object across ticks uses `keyed_rng(stream, (key >> 40) as u32, key, u64::MAX, purpose)`, where `key` is the object's uid or its owner's stable object key (doc 10's `est_key`) and `purpose` is a code the stream's owner allocates. `u64::MAX` is never a real tick, so object keys never collide with action keys.
 
 | Keyed stream | Owner | Used for |
 |---|---|---|
@@ -369,11 +377,14 @@ fn keyed_rng(stream: &str, folio: u32, actor: u64, tick: u64, seq: u32) -> Rng {
 | `rng.ident` | 10 | appraisal error, curse sensing on pickup (§6.4 row 36) |
 | `rng.craft` | 07 | crafting quality |
 | `rng.alchemy` | 08 | brewing variance, unknown liquid effects |
-| `rng.loot` | 11 | drops from kills and opened containers, Reliquary contents, Fortune Engine reels |
+| `rng.loot` | 11 | drops from kills and opened containers, Reliquary contents, Fortune Engine dispensing |
 | `rng.ai` | 13 | utility AI tie-breaks during an agent's think |
 | `rng.progress` | 04 | talent offers and level-up choices, with `actor` = the player's EntityId |
+| `rng.check` | 04 | non-combat skill checks (doc 04 §4.2) and madness episodes. Disguise challenges are AI detection rolls and use `rng.stealth` (doc 09) |
 
-Trap and secret detection (§6.4 row 35) rolls once per (observer, hidden object) pair on ticks where `(t + observer_phase) % 60 == 0`, with `seq` = the object's index in ascending ID order among objects in range.
+The "Used for" column names each stream's canonical uses. A stream's owner may add uses inside its own domain and lists each with its draw count (§3.4): for example doc 07's crafted perk seeds, mining bonus units and seed returns on `rng.craft`, doc 10 §5.12 on `rng.ident`, and doc 11's bag, bundle, salvage, mimic, quest and illumination rolls on `rng.loot`. Per-shot and per-swing chance components (doc 05 §1.4) are on-hit procs on `rng.combat`.
+
+Trap and secret detection (§6.4 row 35) rolls once per (observer, hidden object) pair on ticks where `(t + observer_phase) % 60 == 0`, with `seq` = the object's index in ascending ID order among objects in range, which stays below 1000.
 
 ### 3.4 Draw counts
 
@@ -381,7 +392,7 @@ A single game action draws the same number of values regardless of outcome where
 
 ### 3.5 Commit-only offer streams
 
-Offers a player can re-open, such as Scriptorium rewrite choices, reforge options and the faces shown on a Fortune Engine before a spin, come from the run-scoped sequential stream `rng.offer.p<slot>`, where `<slot>` is the player's party slot 0 to 3. The offer is generated once and stored. The stream advances only when the player commits. Re-opening a menu shows the stored offer and never rerolls, following Minecraft's enchanting seed.
+Offers a player can re-open, such as Scriptorium rewrite choices, reforge options and the faces shown on a Fortune Engine before a spin, come from the run-scoped sequential stream `rng.offer.p<slot>`, where `<slot>` is the player's party slot 0 to 3. The offer is generated once and stored. The stream advances only when the player commits. Re-opening a menu shows the stored offer and never rerolls, following Minecraft's enchanting seed. An offer's generator is `Rng::from_seed64(mix64(peek ^ mix64(context_uid ^ fnv1a64(purpose))))`, where `peek` is the next output of `rng.offer.p<slot>` read without advancing it, `context_uid` is the uid or `EntityId` of the offering object, and `purpose` is a label the owning document fixes (doc 11 §11.2, doc 14 boons). Each commit advances the stream by exactly one `next_u64`.
 
 ### 3.6 Seeds
 
@@ -391,11 +402,15 @@ Offers a player can re-open, such as Scriptorium rewrite choices, reforge option
 - Daily seed: `fnv1a64("PALIMPSEST/DAILY/" + "YYYY-MM-DD")`, with the date in UTC.
 - Weekly seed: `fnv1a64("PALIMPSEST/WEEKLY/" + "YYYY-Www")`, using the ISO week.
 - Date strings are validated strictly: `YYYY-MM-DD` must be a real calendar date with year `0001..=9999`, and `YYYY-Www` must use an uppercase `W` and a week number no higher than that ISO year's week count. Invalid strings are rejected, never hashed.
-- Paid gacha never uses this generator. Doc 15 specifies a server-side ChaCha20 generator with commit-reveal.
+- Account draws (Inkwell pulls and account Reliquaries) never use this generator: doc 15 specifies an HMAC-SHA256-keyed ChaCha20 generator with commit-reveal. Doc 15 §5.4 alone seeds `Rng::from_seed64` outside the simulation, for Keepsake item generation; the Keepsake enters the simulation only as a recorded item record.
 
 ### 3.7 Mods
 
 Mod scripts draw only from keyed or sequential streams named `rng.mod.<mod_id>.<name>`. WASM mod hooks run with NaN canonicalization enabled and fuel limits (doc 02).
+
+### 3.8 Presentation generators
+
+Rendering, audio and narration draw only from `nar_rng(run_seed, folio, job, key) = Rng::from_seed64(mix64(stream_seed(run_seed, job, folio as u64) ^ mix64(key)))`, where `job` is a `nar.job.` ID, and from `pres_hash(tag, a, b) = mix64(fnv1a64(tag) ^ mix64(a ^ mix64(b)))` (doc 18 §1.2). They never read or advance a simulation stream, and their outputs never enter simulation state, saves or `state_hash`.
 
 ---
 ## 4. World and movement constants
@@ -443,16 +458,17 @@ All values are given in content units (§1.6). Code converts them with `fx_from_
 - **Jump.** `JUMP_H = 1100 + 30 × min(vrv(e), 5) + 150 × max(0, vrv(e) - 5)` mm: 1100, 1250, 1400, 1550, 1700, 1850 and 2000 mm at VERVE 0, 5, 6, 7, 8, 9 and 10. Launch speed is `v0 = sqrt_fx(2 × g × JUMP_H) + g × DT / 2`, where `g` is the local gravity. With the §2.1 integrator the apex equals `JUMP_H` within 1 mm for `g` from 12000 to 20000 mm/s². Every genre can mount a 1-block ledge, and Wuxia clears 2-block walls.
 - **Air jump.** At `vrv(e) >= 9`, every entity gets one air jump per airborne period, with height `mul_bp(JUMP_H, 6000)`. This is genre physics, not a component, and never Contradicts.
 - **Lean.** `move.lean_l` and `move.lean_r` shift the eye 350 mm sideways over 9 ticks. The capsule stays put and the head hitbox follows the eye (doc 05).
-- **Fall damage.** `fall_height = max(0, peak - land)`, measured along the current gravity axis. `peak` is the extreme origin coordinate against gravity since the entity last stood on ground, swam, climbed or had `st.levitating`. `SAFE_FALL = 4000 mm × (10000 + (vrv(e) - 5) × 400) Bp`. If `excess = fall_height - SAFE_FALL > 0`, damage is `mul_bp(max_hp_mhp, ((excess.raw as i128 × 800) >> 32) as i32)` mHP, which is 8% of Max HP per meter of excess. It is a `dmg.blunt` hit entering the damage pipeline at step 4 (§10.5). It skips armor and the chip floor and never crits. Acrobatics (doc 04) multiplies it afterwards.
+- **Fall damage.** `fall_height = max(0, peak - land)`, measured along the current gravity axis. `peak` is the extreme origin coordinate against gravity since the entity last stood on ground, swam, climbed or had `st.levitating`. `SAFE_FALL = 4000 mm × (10000 + (vrv(e) - 5) × 400) Bp`. If `excess = fall_height - SAFE_FALL > 0`, damage is `mul_bp(max_hp_mhp, ((excess.raw as i128 × 800) >> 32) as i32)` mHP, which is 8% of Max HP per meter of excess. It is a `dmg.blunt` hit entering the damage pipeline at step 4 (§10.5). It skips armor and the chip floor and never crits. It is then multiplied by the local genre's `fall_dmg_bp` (§5.9), then by each doc 04 fall-damage factor (Acrobatics, kin, talents) in ascending source ID order, one `mul_bp` each.
 - **Dodge.** A 3000 mm burst over 12 ticks costing 20 stamina. Invulnerability starts on the dodge's first tick and lasts `min(12, 8 + floor_div(max(0, AGI - 40), 15))` ticks, never past the dodge's 12th tick. A new dodge cannot start until 18 ticks after the previous one started.
-- **Final move speed** is base speed, then §6.4 row 11, then each active status multiplier in ascending status ID byte order. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
+- **Final move speed** is base speed, then §6.4 row 11, then doc 04's body factor `body_move_bp` (severed legs, crutch, leg wounds), then each active status multiplier in ascending status ID byte order. Base speed is the table above, or the doc 05 stance base that replaces it (combat and casting stances, armor sprint and swim bases); armor never multiplies speed. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
 
 ### 4.3 Terrain and placeables
 
 Building is limited (DECISIONS.md, item 16).
 
-- **Terrain is fixed.** Worldgen blocks are indestructible unless their block definition carries the tag `destructible`. Destructible blocks are doors, crates, barrels, cracked walls that hide secrets, wooden structures, glass, ice, webs and every Errata placeable. Explosions, melee and projectiles damage only destructible blocks.
-- **Placeables.** Errata place only `cat.placeable` items: barricades, bridge spans, ladders, traps, light sources and deployable cover. Doc 07 owns placement rules, anchors, block HP and costs. Placing takes ticks scaled by `skill.fieldcraft`.
+- **Terrain is fixed.** Worldgen blocks are indestructible unless their block definition carries the tag `block.tag.destructible` (doc 07). Destructible blocks are doors, crates, barrels, cracked walls that hide secrets, wooden structures, glass, ice, webs, light fixtures, rubble, pit lids, hull panels and every Errata placeable; no structural wall or floor is destructible. Explosions, melee and projectiles damage only destructible blocks. A block without the tag never burns, melts, falls, washes away, decays or explodes, and changes type only through worldgen, a scripted event or a swap between doc 07's lit and unlit twins; doors, growth and connections may still change its properties.
+- **Projectiles and terrain.** Fixed terrain stops every projectile, beam and penetration; only destructible or non-opaque cells can be penetrated (doc 05 §7.3).
+- **Placeables.** Errata place only `cat.placeable` items: barricades, bridge spans, ladders, block traps (spikes, webs), light sources and deployable cover. Doc 07 owns placement rules, anchors, block HP and costs. Placing takes ticks scaled by `skill.fieldcraft`.
 - **Resource nodes.** Materials come from resource nodes (ore veins, plants, salvage piles) that are interactable props, not from digging terrain.
 - Liquids, gases, fire, light and sound still simulate on the block grid (doc 03).
 - **No item durability** (product-owner decision, DECISIONS.md item 65). Weapons, armor, tools and accessories never wear or break. Placeables and destructible blocks keep block HP.
@@ -464,8 +480,8 @@ Higher-resolution geometry by product-owner decision (DECISIONS.md, item 37). Do
 - Every 1 m cell carries a **micro-voxel occupancy mask**: a `u64` covering 4 × 4 × 4 micro-voxels of 250 mm. Bit index is `mx + 4 × (mz + 4 × my)` for `mx, my, mz ∈ 0..=3`. A full cell is `u64::MAX`; an empty cell is 0.
 - Storage is sparse: a cell's block state names its material and a **shape**. The shape is either a predefined mask (full, slab, stairs, pillar, fence, pane and the other doc 03 shapes) or an index into a per-chunk table of custom masks for authored detail.
 - **Collision** tests capsules against the occupied 250 mm micro-voxel boxes, replacing per-shape collision boxes. The 550 mm step-up climbs two micro-voxel steps.
-- **The 1 m cell grid stays the simulation grid** for liquids, gases, fire, temperature, light, sound, navigation, stealth and spawning. Each cell's fill fraction is `popcount(mask) / 64`. Liquid capacity is `floor_div(1000 × (64 - popcount(mask)), 64)` units. A cell blocks light and sight when `popcount(mask) >= 48`. Otherwise its opacity and its concealment are scaled by the fill fraction. Sound attenuation through a cell scales the same way.
-- **Destruction** removes micro-voxels, not whole cells. Damage to a `destructible` cell removes micro-voxels inside the damage volume, nearest the impact first, at 250 mm granularity. A cell whose mask reaches 0 becomes air. Removed micro-voxels emit render-only debris, which never feeds the simulation. Terrain stays indestructible (§4.3).
+- **The 1 m cell grid stays the simulation grid** for liquids, gases, fire, temperature, light, sound, navigation, stealth and spawning. Each cell's fill fraction is `popcount(mask) / 64`. The liquid grid stores whole units of 1 litre (1000 ml). A cell holds at most `floor_div(1000 × (64 - popcount(mask)), 64)` units, 1000 when its mask is empty. `Ml = units × 1000` at every boundary, so any non-zero unit meets the 100 ml contact threshold of §12.1. Gas concentration is `0..=10000` per cell, where 10000 is a saturated cell of 1,000,000 ml (doc 03). A cell blocks light and sight when `popcount(mask) >= 48`. Otherwise its opacity and its concealment are scaled by the fill fraction. Sound attenuation through a cell scales the same way.
+- **Destruction** removes micro-voxels, not whole cells. Damage to a destructible cell (`block.tag.destructible`, §4.3) removes micro-voxels inside the damage volume, nearest the impact first, at 250 mm granularity. A cell whose mask reaches 0 becomes air. Removed micro-voxels emit render-only debris, which never feeds the simulation. Terrain stays indestructible (§4.3).
 - Rendering meshes micro-voxels with binary greedy meshing over the masks and textures them with world-space triplanar mapping at 64 texels per meter (doc 02, doc 18).
 
 ---
@@ -491,7 +507,7 @@ The suffix after `genre.` is the **genre suffix** used in text keys. `gravity_bp
 
 | # | ID | Display name | ARC | TEC | MYT | VRV | aether_axiom | gravity_bp | ambient_light | Lucre skin | Aether skin | Tier |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `genre.mythic_fantasy` | Mythic Fantasy | 8 | 2 | 6 | 6 | arcana | 10000 | 4 | Crowns | Mana | core |
+| 1 | `genre.mythic_fantasy` | Mythic Fantasy | 8 | 2 | 6 | 6 | arcana | 10000 | 4 | Nobles | Mana | core |
 | 2 | `genre.gothic_horror` | Gothic Horror | 5 | 3 | 9 | 3 | mythos | 10000 | 2 | Shillings | Sanguine | core |
 | 3 | `genre.cosmic_horror` | Cosmic Horror | 3 | 6 | 10 | 1 | mythos | 10000 | 1 | Bonds | Gnosis | core |
 | 4 | `genre.space_opera` | Space Opera | 6 | 10 | 3 | 7 | arcana | 8000 | 6 | Credits | Psi | core |
@@ -516,7 +532,7 @@ Special rules:
 - `genre.redacted` is the Editors' home genre.
 - In any genre whose VERVE is 0 nobody crits (§6.4 row 13).
 - The Contradiction overrides for these genres are in §5.5.
-- **Naming rule.** No Lucre or Aether skin may match a real-world brand, a third-party game's currency or resource name, the display name of any `cur.` or `ent.` entry, or the word Ink. Doc 18 runs a name review against this rule.
+- **Naming rule.** No Lucre or Aether skin may match a real-world brand, a third-party game's currency or resource name, the display name of any `cur.` or `ent.` entry other than its own base currency, or the word Ink; `genre.unwritten`'s Lucre skin "Lucre" therefore passes. Doc 18 runs a name review against this rule.
 - The minimum pairwise L1 distance between the axiom vectors of the 12 core genres is 6.
 
 ### 5.3 Dependencies and requirements
@@ -527,13 +543,15 @@ Every **component** of an item or ability has a dependency set `dep ⊆ {arcana,
 |---|---|
 | Mundane melee base, mundane armor base, bows, slings, thrown blades, food, raw materials, blocks | none |
 | Firearms, energy weapons, gadgets, drones, turrets, implants, electronic tools, hacking, tech consumables | techne |
-| Spell glyphs, wands, staves, magic texts | `{origin_genre.aether_axiom}`; `{arcana}` when the origin's aether_axiom is none |
-| Enchantment affixes, grafts, supernatural alchemical effects | arcana |
+| Spell glyphs, wands, staves, magic texts, supernatural alchemical effects | `{origin_genre.aether_axiom}`; `{arcana}` when the origin's aether_axiom is none |
+| Enchantment affixes, doc 04 body grafts | arcana |
 | Prayers, relics, holy or unholy affixes, curse effects, undead-bane, divine favors, mutations of supernatural origin | mythos |
 | Cinematic techniques: wall-run, double jump, qinggong glide, gun-kata, "rule of cool" exotic perks | verve |
 | Mundane alchemical effects: healing, poison, stamina, acid, fire, smoke | none |
 | Kin passive traits, tamed beasts | none |
 | Summons | the summoning glyph's dependency |
+
+Holy, unholy and curse alchemical effects keep `mythos`. Licensed grafts (`cat.part`) take the dependency of their gimmick (doc 11).
 
 A component's **requirement** on axis `a`:
 
@@ -604,7 +622,7 @@ C          = max over a of gap[a]      (0 if dep is empty)
 - **Re-evaluation.** Contradiction is recomputed on Folio entry, on the tick the wielder's local genre changes, when the wielder changes, and when tolerance changes. Each change emits `ev.contradiction_changed`.
 - **Potency** multiplies everything the component produces: damage, healing, magnitude, duration, buildup, ward, armor rating, poise and resistances it grants.
 - **Per-component scope.** An affix, perk or augment contributes `mul_bp(value, its own potency)`, and contributes 0 when Disconnected. The damage pipeline uses the base-function component's potency (§10.5 step 2.5).
-- **Failure** is rolled only for the base-function component, only when its failure chance is above 0, with keyed `rng.combat`. Single-shot, semi-automatic, cast and use actions roll once per activation. Weapons with a fire interval under 30 ticks roll on the first shot of each trigger hold and then once per 30 ticks of continuous fire. Doc 05 defines a failed shot as a jam. Doc 06 defines a failed spell as a fizzle that spends full aether. Doc 07 defines a failed gadget as a spark dealing 5% of the user's Max HP as `dmg.shock`.
+- **Failure** is rolled only for the base-function component, only when its failure chance is above 0, with keyed `rng.combat`. Single-shot, semi-automatic, cast and use actions roll once per activation. Weapons with a fire interval under 30 ticks roll on the first shot of each trigger hold and then once per 30 ticks of continuous fire. Doc 05 defines a failed shot as a jam. Doc 06 defines a failed spell as a fizzle that spends full aether. Doc 07 defines a failed gadget as a spark dealing 5% of the user's Max HP as `dmg.shock`. Doc 08 defines a failed potion: it is consumed, and only its toxicity (drunk) or its plain base-liquid spill (thrown) applies.
 - **Disconnected** components cannot activate and their passive bonuses are off. The item shows a torn-page icon.
 - Contradiction applies to native and foreign creatures alike. A foreign enemy that arrives through genre bleed carries its own Contradiction.
 
@@ -617,7 +635,7 @@ edge_bp = E × 400
 
 - A target is **native** when `target.origin_genre == local_genre(target.pos)`.
 - Against a native target, the base-function component's damage and status buildup are multiplied by `10000 + edge_bp`, up to +24%.
-- **Shock of the New:** the first hit from a base-function component with `E >= 3` on each native non-boss target applies `st.staggered` regardless of poise. The simulation tracks this in a `BTreeSet<(item uid, target EntityId)>` that is cleared at Folio entry.
+- **Shock of the New:** the first hit from a base-function component with `E >= 3` on each native target whose rank is not `rank.boss`, `rank.editor` or `rank.hunter` applies `st.staggered` regardless of poise. The simulation tracks this in a `BTreeSet<(item uid, target EntityId)>` that is cleared at Folio entry.
 
 **Worked example.** A Cyberpunk smart pistol has `dep = {techne}` and `Req[techne] = max(1, 9 - 2) = 7`. It is carried into Fairy Tale, where TECHNE is 1, so `raw_gap = 6`. The wielder has a Cyberpunk Origin, giving `origin_tol[techne] = 2`, and ATN 60, giving `attune_tol = floor_div(20, 30) = 0`. So `Tol = 2` and `gap = 4`. The state is Contradicted: potency 6000 and failure 1000. `E = min(6, 6) = 6`, so `edge_bp = 2400`. Against a native wolf the damage factor is `0.60 × 1.24 = 0.744`, with a 10% jam chance and a guaranteed first-hit stagger.
 
@@ -646,12 +664,12 @@ All axiom values here are local axioms at the relevant entity's position (§5.8)
 - `local_axiom(pos, a)` is the axiom value of `local_genre(pos)`.
 - §5.5 to §5.7 always use local values at the wielder's position, except that "native" uses the target's position.
 - **Law discovery.** World Laws are discovered in play (DECISIONS.md, item 56). A Law is hidden from exit previews and HUD until it first triggers for the account; the Codex then remembers it and previews show it in later runs.
-- **Seam zones.** Doc 12 may place at most one `zone.seam` per Folio, covering 1 or 2 rooms, where two genres are stitched together. Inside a seam zone, `local_axiom(pos, a)` is the larger of the two genres' axiom values for each `a`, both genres' World Laws (§5.10) are active, entities of either genre count as native, and the Folio's genre supplies skins. This is the only place where both toolsets work at full strength.
+- **Seam zones.** Doc 12 may place at most one `zone.seam` per Folio, covering 1 or 2 rooms, where two genres are stitched together. Inside a seam zone, `local_genre(pos)` is the Folio's genre, `local_axiom(pos, a)` is the larger of the two genres' axiom values for each `a`, both genres' World Laws (§5.10) are active, entities of either genre count as native, and the Folio's genre supplies skins. This is the only place where both toolsets work at full strength.
 - `vrv(e) = min(10, local_axiom(e.pos, verve) + 2 × [e has st.inspired])`. Jump, safe fall, crit chance and Death's Door use `vrv(e)`. Contradiction requirements always use the unmodified local axiom.
 
 ### 5.9 Genre identity
 
-Doc 12 copies this table into the full Genre Parameter Vectors. Doc 07 defines every listed material. Doc 11 owns manufacturer mechanics and adds one more manufacturer per core genre plus the Errata manufacturer. Physics columns multiply the base constants of §4: `air_accel_bp` multiplies air acceleration, `fall_dmg_bp` multiplies fall damage, `ground_friction_bp` multiplies ground deceleration. `spawn_block_max` is the highest block-light level in which ambient and wave spawns may occur (§12.3).
+Doc 12 copies this table into the full Genre Parameter Vectors. Doc 07 defines every listed material. Doc 11 owns manufacturer mechanics and adds one more manufacturer per core genre plus the Errata manufacturer. Physics columns multiply the base constants of §4: `air_accel_bp` multiplies air acceleration, `fall_dmg_bp` multiplies fall damage, `ground_friction_bp` multiplies ground deceleration. `spawn_block_max` is the highest block-light level in which ambient spawns, wave spawns and the initial population may occur (§12.3).
 
 | Genre | air_accel_bp | fall_dmg_bp | ground_friction_bp | spawn_block_max | Palette | Music register | Enemy themes | Materials |
 |---|---|---|---|---|---|---|---|---|
@@ -688,7 +706,7 @@ Core manufacturers (doc 11 owns the full mechanics):
 | steampunk | `mfr.steampunk.brassworth`: +200 Bp per consecutive hit, maximum +3000. `mfr.steampunk.aetherline`: every 4th hit chains 3000 Bp of its damage as `dmg.shock` to 2 targets within 5 m. |
 | fairy_tale | `mfr.fairy_tale.thimbleweald`: × 13000 against targets with a larger capsule radius than the wielder. `mfr.fairy_tale.thornwood`: 1000 Bp chance per hit to apply `st.rooted`. |
 | mythic_antiquity | `mfr.mythic_antiquity.hephaesteum`: the wielder is immune to `st.disarmed` and `st.corroded`. `mfr.mythic_antiquity.argive`: +1500 Bp damage while an allied Erratum is within 3 m. |
-| oneiric | `mfr.oneiric.somnambule`: projectiles pass through blocks after 10 m of flight. |
+| oneiric | `mfr.oneiric.somnambule`: after 10 m of flight, projectiles pass through destructible and non-opaque blocks without spending penetration (§4.3). |
 | redacted | `mfr.redacted.bureau`: never rolls Contradiction failure; the potency loss still applies. |
 | ur_text | `mfr.ur_text.first_press`: Palimpsestic items only. |
 
@@ -703,7 +721,7 @@ Each genre has 1 to 3 **World Laws** (`law.<genre_suffix>.<name>`, owned by doc 
 ### 5.11 Going Native and being Unmoored
 
 - **Going Native.** Once per run, at a Colophon (§17.1), an Erratum may permanently set its Origin to the current Folio's genre. Origin tolerance is recomputed by §5.4 and a cosmetic native form is applied. Gear is not translated.
-- **Unmoored.** Three Contradiction failures (jams, fizzles, sparks) by one character within 600 ticks apply `st.unmoored` for 300 ticks. While it lasts, Fortune-derived effects (Death's Door, Serendipity procs) are off, and Strained components use the C = 3 row of §5.5. It clears early on entering a Colophon or a seam zone.
+- **Unmoored.** Three Contradiction failures (jams, fizzles, sparks, failed potions) by one character within 600 ticks apply `st.unmoored` for 300 ticks. While it lasts, Fortune-derived effects (Death's Door, Serendipity procs) are off, and Strained components use the C = 3 row of §5.5. It clears early on entering a Colophon or a seam zone.
 
 ---
 ## 6. Attributes and sub-attributes
@@ -768,7 +786,7 @@ All doc-04-owned growth feeds these formulas, and no other document defines a co
 | 26 | Spell complexity budget | `4 + floor_div(LOG, 10)` points | 8 |
 | 27 | Grimoire slots | `2 + floor_div(MEM, 20)` | 4 |
 | 28 | Skill XP multiplier | `10000 + d(MEM) × 50` Bp | ×1.00 |
-| 29 | Spell potency multiplier | `10000 + d(ATN) × 50 + school_skill × 30` Bp, then × the GLYPH term of §5.7 for each glyph | ×1.00 at skill 0 |
+| 29 | Spell potency multiplier | `10000 + d(ATN) × 50 + school_skill × 30` Bp, then × the GLYPH term of §5.7 for each glyph of the stage that produces the effect (doc 06) | ×1.00 at skill 0 |
 | 30 | Cast interruption resistance: chance to keep casting when hit | `clamp(2500 + d(FOC) × 75, 0, 9500)` Bp, keyed `rng.magic` | 25% |
 | 31 | Dark-vision radius | `2 + floor_div(SGT, 20)` m | 4 m |
 | 32 | Visual detection range bonus | `d(SGT) × 50` Bp | +0% |
@@ -852,7 +870,7 @@ Weapon archetype to skill mapping is owned by doc 05. The mapping is by archetyp
 
 - XP to go from skill `s` to `s + 1`: `need(s) = 4000 + 400 × s` milli-XP. Reaching 25 from 0 takes 220,000 milli-XP. Reaching 75 takes 1,410,000. Reaching 100 takes 2,380,000.
 - Every skill XP grant is multiplied by the Skill XP multiplier (§6.4 row 28) before being added.
-- **Combat skill XP is normalized by damage, never granted per hit.** A hit that deals `dmg_mhp` to a hostile with Max HP `target_max_mhp` grants `floor_div(1500 × dmg_mhp, target_max_mhp)` milli-XP to the weapon's skill (capped at 1500 per hit). Draining one standard enemy gives 1.5 skill XP whatever the weapon's fire rate. Flat per-hit combat grants are forbidden.
+- **Combat skill XP is normalized by damage, never granted per hit.** A hit that deals `dmg_mhp` to a hostile grants `floor_div(1500 × dmg_mhp, norm_mhp)` milli-XP to the weapon's skill, capped at 1500 per hit, where `norm_mhp = max(1, floor_div(target_max_mhp × 10000, party_hp_bp))` and `party_hp_bp` is the §17.2 enemy HP multiplier applied to that target (10000 solo). Draining one standard enemy gives 1.5 skill XP whatever the weapon's fire rate. Flat per-hit combat grants are forbidden.
 - **Non-combat XP is proportional to magnitude**: spell base cost, lock difficulty, item value appraised, ingredients combined. Doc 04 owns the table. Zero-effect actions grant 0.
 - **Sub-attribute training.** Each skill level gained adds one training mark to the governing sub-attribute. When marks reach `T(v) = 2 + floor_div(v, 20)`, where `v` is the current base value, the base value rises by 1 and marks reset to 0. Training never raises a base value above 100.
 
@@ -866,14 +884,14 @@ At MEM 40, a Calling major skill used as the main damage source reaches 50 at Fo
 
 - XP to go from level `L` to `L + 1`: `xp_to_next(L) = 50 × L × (L + 3)`. Level 2 needs 200 cumulative. Level 11 needs 27,500. Level 31 needs 542,500.
 - There is no level cap. The design target is level 28 ± 3 on arrival at Folio 25.
-- **Reference unit**: `kill_xp_std(d) = floor_div(7 × e × (e + 3), 5)`, where `e = enemy_level(d)` (§13.8). At 40 units per Folio this gives level 12 after Folio 10, level 29 after Folio 25 and level 47 after Folio 40.
+- **Reference unit**: `kill_xp_std(d) = floor_div(7 × e × (e + 3), 5)`, where `e = enemy_level(d)` (§13.8). At 45 units per Folio this gives level 12 after Folio 10, level 29 on arrival at Folio 25 and level 49 after Folio 40.
 - **Character XP sources**, so stealth, crafting and diplomacy builds level too:
-  - Kills: `mul_bp(mul_bp(kill_xp_std(d), rank_xp_bp), 7000)`, with `rank_xp_bp` from §17.3.
+  - Kills and pacifications: `mul_bp(mul_bp(kill_xp_std(d), rank_xp_bp), 7000)`, with `rank_xp_bp` from §17.3. A pacified enemy (doc 13) pays this once, as if killed, and emits `ev.entity_pacified` instead of `ev.entity_killed`.
   - Skill-ups: each skill level gained grants `2 × kill_xp_std(d_current)`, counting at most 8 skill levels per character per Folio.
   - Folio exit: `ev.folio_exited` grants `4 × kill_xp_std(d)`.
   - Unseen bonus: if no hostile reached `aware.alert` toward any Erratum during the Folio, the exit grants `20 × kill_xp_std(d)` more.
-  - Doc 13 keeps the per-Folio total near 40 units for a combat-typical run, so the level-28 anchor holds.
-- **Co-op split**: for kill XP, every party member present in the Folio gains `floor_div(kill_xp × 10000, enemy_count_bp[n])`, where `n` is party size and `enemy_count_bp` is the §17.2 table.
+  - Doc 13 keeps the kill supply near §17.4's 40 standard-kill equivalents and the total of all sources near 45 units per Folio for a combat-typical run, so the level-28 anchor holds.
+- **Co-op split**: for kill XP, every party member present in the Folio, downed members and ghosts included (Dormant and Departed slots excluded, doc 16), gains `floor_div(kill_xp × 10000, enemy_count_bp[n])`, where `n` is party size and `enemy_count_bp` is the §17.2 table.
 - Each level-up grants 4 attribute points. Each point adds +1 to the base value of any sub-attribute, with at most +2 to the same sub-attribute per level-up and never above 100.
 - Each even level grants 1 talent point. Doc 04 owns talents.
 
@@ -894,7 +912,7 @@ Every creature has one body plan. Each body part is a simulation hitbox capsule.
 | `body.construct` | `bp.core` (2000, 10000, yes), `bp.chassis` (5000, 10000, no), `bp.limb_1` to `bp.limb_4` (750 each, 8500, no) |
 | `body.swarm` | `bp.mass` (10000, 10000, no); area damage against a swarm is × 15000 (§10.5 step 2.10) |
 
-- Mutations, implants and races may add parts such as `bp.tail`, `bp.arm_extra_1` or `bp.horn`. Added parts take their share from `bp.torso`, or from `bp.mass` or `bp.chassis` in plans without a torso.
+- Mutations, implants and races may add parts such as `bp.tail`, `bp.arm_extra_1` or `bp.horn`. Added parts take their share from `bp.torso`; in plans without a torso, from `bp.mass`, `bp.chassis`, `bp.body_front` (serpentine) or `bp.thorax` (insectoid).
 - Bosses may flag extra parts as `bp.weakpoint_N` with `precision = yes`.
 - Default weapon precision multiplier: ranged 15000 Bp, melee 12500 Bp. Each weapon may override (doc 05).
 - **Hitbox poses.** Simulation hitbox capsules are posed only from baked fixed-point pose tables: per animation, per tick, per part, `Fx` endpoints and radius in model space, generated offline and committed as content. Simulation state stores `(animation_id, anim_tick)`. Bevy's skeletal animation never feeds the simulation. The host keeps 32 ticks of pose history for lag compensation (doc 16).
@@ -905,7 +923,7 @@ Every creature has one body plan. Each body part is a simulation hitbox capsule.
 Severing is deterministic and draws no random numbers.
 
 - Severable parts: limbs, tails and wings on every plan, and heads on NPCs. Errata heads never sever.
-- A severable part is severed when its condition pool reaches 0 from a hit whose largest share is `dmg.slash`, or which carries the flag `sever`. Severing an NPC head also requires the attacker's governing weapon skill ≥ 75, and kills single-headed creatures.
+- A severable part is severed by a hit with positive part damage whose largest share is `dmg.slash`, or which carries the flag `sever`, when the part's condition pool is 0 after the hit, including a pool that was already 0. An Erratum's limb severs only if its pool was at most 2500 Bp of its max before the hit (doc 04 `wound.crippled` or worse); a healthy limb never severs, however large the hit (DECISIONS.md item 84). Severing an NPC head also requires the attacker's governing weapon skill ≥ 75, and kills single-headed creatures.
 - **Hand bindings.** `bp.arm_r` holds the active weapon slot. `bp.arm_l` holds `slot.offhand` and the second hand of two-handed weapons. `bp.arm_extra_N` grants `slot.hand_extra_N`, which holds a one-handed weapon or an off-hand item.
 - **Effects.** Losing an arm drops the item in that hand, disables two-handed weapons and disables `slot.implant_arms` for that side. Losing a leg multiplies move speed by 5000 and removes sprint, jump and dodge; a crutch tool restores × 7000.
 - A severed part becomes a `cat.body_part` item that rots after 7200 ticks. It can be reattached by Medicine ≥ 25 (600-tick channel), by a Scriptorium service or by a successful prayer, or replaced by an `aug.prosthetic_*` augment skinned per genre: hook, clockwork arm, cyberarm, silver hand, jade arm.
@@ -922,7 +940,7 @@ Severing is deterministic and draws no random numbers.
 |---|---|---|---|---|---|
 | `dmg.slash` | physical | `#C9CED6` | `st.bleeding` | 10000 | 10000 |
 | `dmg.pierce` | physical | `#E8E2C8` | `st.exposed` | 7500 | 10000 |
-| `dmg.blunt` | physical | `#A68A64` | `st.stunned`; poise damage × 15000 | 5000 | 10000 |
+| `dmg.blunt` | physical | `#A68A64` | `st.stunned`; poise damage × `10000 + floor_div(share_blunt, 2)` Bp, so × 15000 for a pure blunt hit | 5000 | 10000 |
 | `dmg.fire` | elemental | `#FF6A1A` | `st.burning` | 0 | 7500 |
 | `dmg.frost` | elemental | `#9BE7FF` | `st.frozen`; each hit also applies `st.chilled` | 0 | 10000 |
 | `dmg.shock` | elemental | `#FFE14D` | `st.shocked` | 0 | 15000 |
@@ -968,7 +986,7 @@ Errata armor:        AR = base_ar → × T(ilvl) → × rarity power → × qual
 Enemy source:        B = template_dmg_mhp → × T(d) → × rank damage (§17.3)
 ```
 
-Each arrow is one `mul_bp`, in that order. `src_lvl` follows §13.8.1. `material_bp` is `dmg_bp` and `mat_ar_bp` is `ar_bp` of the item's primary material (doc 07), each in `7000..=14000` with `mat.iron` at 10000. Doc 05 derives swing and recovery ticks from `mass_g`, so heavy materials hit harder and swing slower.
+Each arrow is one `mul_bp`, in that order. Before this chain, doc 05's attack factors (move, charge, sweet spot, range falloff, penetration keep, cleave, area falloff and exposure; doc 05 §10.1) multiply `base_mhp` or `template_dmg_mhp`, one `mul_bp` each in doc 05's order. After it, a manufacturer trait stated as "× N" (§5.9) multiplies `B` once, before step 1. `src_lvl` follows §13.8.1. `material_bp` is `dmg_bp` and `mat_ar_bp` is `ar_bp` of the item's primary material (doc 07), each in `7000..=14000` with `mat.iron` at 10000. Doc 05 derives swing and recovery ticks from `mass_g`, so heavy materials hit harder and swing slower.
 
 ### 10.5 The damage pipeline
 
@@ -991,16 +1009,16 @@ Inputs: `B`, type shares `share[t]` in Bp summing to 10000, `pen_bp`, the weapon
    9. the hit part's `hit_mult` (§9);
    10. 15000 if the hit is area damage and the target's body plan is `body.swarm`;
    11. target statuses in ascending status ID order: `st.exposed` `10000 + 800 × stacks`, then `st.knocked_down` 11000;
-   12. attacker statuses in ascending status ID order: `st.berserk` 13000, `st.empowered` 12000, `st.weakened` 7500;
+   12. attacker statuses in ascending status ID order: `st.berserk` 13000, `st.empowered` 12000, `st.taunted` 7500 when the target is not the taunter, `st.weakened` 7500;
    13. difficulty multiplier (doc 14);
    14. party-size enemy damage multiplier (§17.2), when the attacker is an NPC and the target is an Erratum;
    15. friendly fire, when attacker and target are both `fac.errata` (minions included): `FF_DIRECT_BP` for weapon, spell and gadget hits, `FF_AREA_BP` for explosions, fire spread, surfaces, falling blocks and shock chains (§17.5).
 
    The result is `D2`.
 3. **Split by type.** `d[t] = mul_bp(D2, share[t])`. The flooring remainder `D2 - Σ d[t]` goes to the type with the largest share, ties to the earlier row of §10.1.
-   - **3a. Per-type target modifiers:** `d[radiant] × 15000` if the target is tagged undead or fiend. `d[blunt] × 15000` if the target has `st.frozen`, which is then removed.
+   - **3a. Per-type target modifiers:** `d[radiant] × 15000` if the target is tagged undead or fiend. `d[blunt] × 15000` if the target has `st.frozen`, which is then removed. Every `d[t]` × 12500 if the target is `kin.fae` and the hit comes from an item whose primary material is `mat.iron` or `mat.cold_iron` (§16.3).
 4. **Resistance.** For each type, `r = clamp(resist[t], -10000, cap)`. Immune types become 0. Otherwise `d[t] = d[t] - mul_bp(d[t], r)`. `dmg.true` skips this step.
-5. **Armor**, types with armor efficiency above 0 only. A hit flagged `ignore_armor` skips this step (doc 09 grants it to sneak attacks at Sneak 100):
+5. **Armor**, types with armor efficiency above 0 only. A hit flagged `ignore_armor` skips this step (doc 09 grants it to sneak attacks at Sneak 100). For a blocked hit, `AR_part` is the hit part's AR plus the blocking shield's AR, which scales with `T(ilvl)` (§13.8):
 
    ```
    effAR = mul_bp(floor_div(AR_part × eff[t], 10000), 10000 - pen_bp)          // i64
@@ -1012,7 +1030,8 @@ Inputs: `B`, type shares `share[t]` in Bp summing to 10000, `pen_bp`, the weapon
    Example: AR 100, `pen_bp` 0, a 20 HP slash hit (20,000 mHP) gives `DR_bp = floor(10^9 / 180,000) = 5555`, so the hit becomes 8,890 mHP.
 6. **Chip floor.** `total = Σ d[t]`. If at least one type is not immune, `floor = floor_div(D2, 10)` for Erratum targets and `floor_div(D2, 20)` for NPC targets. If `total < floor`, the surplus `floor - total` is added to the non-immune type with the largest share, ties to the earlier §10.1 row.
    - **6b. Block** (§10.7), if the hit was blocked.
-7. **Ward absorption.** The `st.shielded` pool is consumed first, then the ward generator's ward. For each type in §10.1 order with `d[t] > 0` while ward remains: `w = mul_bp(d[t], ward_mult[t])`. If `w <= ward`, then `ward -= w` and `d[t] = 0`. Otherwise `d[t] -= floor_div(ward × 10000, ward_mult[t])` and `ward = 0`, and `ev.ward_broken` is emitted. HP takes the rest.
+   - **6c. Scribe's Mercy** (doc 17): if the target is an Erratum whose slot has `mercy_on`, each `d[t] = d[t] - mul_bp(d[t], mercy_bp)` in §10.1 order. Every other involuntary HP loss of that Erratum outside the pipeline, such as starvation, is reduced the same way. HP the Erratum chooses to pay is never reduced.
+7. **Ward absorption.** The `st.shielded` pool is consumed first, then the ward generator's ward. For a pool, `m[t] = ward_mult[t]` for `st.shielded` and `mul_bp(ward_mult[t], profile[t])` for the generator, where `profile` is the generator's per-type profile (doc 05, 10000 by default); a `counter.ward_breaker` hit multiplies `m[t]` by 30000 for every pool (§17.3a). For each type in §10.1 order with `d[t] > 0` while ward remains: `w = mul_bp(d[t], m[t])`. If `w <= ward`, then `ward -= w` and `d[t] = 0`. Otherwise `d[t] -= floor_div(ward × 10000, m[t])` and `ward = 0`, and `ev.ward_broken` is emitted. HP takes the rest.
 8. **Apply.** Subtract from HP and from the hit part's condition pool. Add poise damage (impact × `S(src_lvl)`, doc 05). Add status buildup (§11.2). Resolve lethal damage (§10.8).
 9. **Emit** `ev.damage_dealt` with the full per-type breakdown. The per-type values sum to the total.
 
@@ -1025,6 +1044,8 @@ Inputs: `B`, type shares `share[t]` in Bp summing to 10000, `pen_bp`, the weapon
 | Fall damage | step 4 as `dmg.blunt` (§4.2) | armor, chip floor, crit | |
 | Environmental hazards not from an item | step 3 with `D2 = base × P(d)` against NPCs or `base × T(d)` against Errata | crit | doc 12 |
 | Reflected damage (thorns) | step 3 | crit, buildup, reflection | |
+| A consumable's damage to its own drinker or injected target (doc 08) | step 3 with `D2 = B` | steps 1 and 2 (additive bucket, crit, friendly fire) | |
+| A lethal takedown (doc 09) | step 7 as `dmg.true` equal to the target's HP plus ward | crit, resistance, armor, chip floor | flag `takedown` |
 
 ### 10.7 Blocking
 
@@ -1036,11 +1057,13 @@ total            = total - to_stamina_mhp
 stamina_loss_mhp = floor_div(to_stamina_mhp × 10000, T(d_current))
 ```
 
+The `total` that remains is split back over the types in proportion to their `d[t]`, one `floor_div` each in §10.1 order, with the remainder to the largest-share type (ties to the earlier §10.1 row), so step 7 sees per-type values.
+
 If stamina reaches 0, the blocker is guard-broken and gains `st.staggered`. Status buildup from a blocked hit is × 5000.
 
 ### 10.8 Lethal damage resolution
 
-Hits in the same tick resolve in ascending (source EntityId, seq). When an entity's HP would reach 0 or below after step 7:
+Hits in the same tick resolve in two batches: actor hits (weapons, spells, gadgets, thrown items) first, then environmental, contact, surface and DoT hits (doc 03 `sys.damage` and `sys.damage_late`). Inside each batch they resolve in ascending (source EntityId, seq). When an entity's HP would reach 0 or below after step 7:
 
 1. **Errata only:** if Death's Door is unused this Folio, roll §6.4 row 43 with keyed `rng.combat`. On success, HP = 1,000 mHP and the Erratum gains `st.deaths_door` for 60 ticks. Death's Door is marked used whether the roll succeeds or fails.
 2. On failure, if at least one other party member is alive and not downed, the Erratum gains `st.downed` with HP 0 and `ev.player_downed` is emitted (doc 16).
@@ -1097,7 +1120,7 @@ Threshold groups `body`, `nerve`, `mind` and `arcane` use §6.4 rows 22 to 25. `
 | `st.dread` | mental | mind | mind | refresh | 6 s | composure −15 on application; composure regeneration 0 | 06 |
 | `st.madness` | mental | special | — | until composure ≥ 25% of max | none | hallucinated entities; aim sway × 20000; whispers | 04 |
 | `st.weakened` | debuff | direct | — | refresh | 6 s | damage dealt × 7500 | 05 |
-| `st.marked` | debuff | direct | — | refresh | 8 s | visible through walls to every hostile of the marker | 09 |
+| `st.marked` | debuff | direct | — | refresh | 8 s | visible through walls to the marker and every ally of the marker | 09 |
 | `st.soaked` | debuff | direct | — | refresh | 10 s | shock buildup × 15000; fire buildup × 5000; ends burning | 08 |
 | `st.oiled` | debuff | direct | — | refresh | 20 s | fire buildup × 20000 | 08 |
 | `st.hungry` | need | special | — | while satiation ≤ 600 | none | stamina regeneration × 8000 | 04 |
@@ -1117,7 +1140,7 @@ Threshold groups `body`, `nerve`, `mind` and `arcane` use §6.4 rows 22 to 25. `
 | `st.levitating` | buff | direct | — | refresh | 10 s | gravity 0; vertical control 1500 mm/s | 06 |
 | `st.blessed` | buff | direct | — | refresh | 30 s | crit chance +1000 Bp; all thresholds × 11000 | 06 |
 | `st.inspired` | buff | direct | — | refresh | 10 s | personal VERVE +2 (§5.8) | 04 |
-| `st.downed` | special | special | — | until revived or bled out | 30 s bleed-out | crawl only; an ally revives in 3 s | 16 |
+| `st.downed` | special | special | — | until revived or bled out | 30 s bleed-out for the first down in a Folio; later downs, damage shortening and revive HP per doc 16 §9.4 | crawl only; an ally revives in 3 s | 16 |
 | `st.deaths_door` | special | special | — | refresh | 60 ticks | invulnerable | 04 |
 | `st.erasure` | special | direct | — | intensity 10 | until Folio exit | §11.6 | 13 |
 | `st.hacked` | control | mind | mind | refresh | 6 s | applies only to `body.construct` and electronic entities; fights for the hacker's faction; constructs are immune to every other mind status | 09 |
@@ -1179,10 +1202,10 @@ While `st.shocked` is active, each hit the bearer takes (except a `no_chain` hit
 
 - From `ERASURE_ONSET` (§17.1), every Erratum gains one stack of `st.erasure` on the same tick, every `ERASURE_STEP`.
 - Each stack makes the bearer 1 dB louder (doc 09) and multiplies healing received by `10000 - 300 × stacks`.
-- When the first Erratum reaches 10 stacks, one Editor hunter spawns for the party with `rank.elite` stats (product-owner decision: softer Erasure). No further Erasure hunters spawn in that Folio. Stacks stay at 10 with their effects until the party leaves.
+- When the first Erratum reaches 10 stacks, one Editor hunter spawns for the party (product-owner decision: softer Erasure). It carries `rank.hunter` for identity, immunities, post-proc protection and presentation, but uses `rank.elite`'s HP, damage, kill XP, DoT-taken and control-duration multipliers and the minion-to-champion row of §17.2. No further Erasure hunters spawn in that Folio. Stacks stay at 10 with their effects until the party leaves.
 - `st.erasure` is removed from every Erratum on `ev.folio_entered`.
 - Erasure accrual and satiation decay pause in boss Folios while the boss lives.
-- Hunters and every `fac.editors` member erase Errata placeables within 1500 mm of them, at one placeable block per 10 ticks.
+- Hunters and every `fac.editors` member except an invader (§17.9) erase Errata placeables within 1500 mm of them, at one placeable block per 10 ticks.
 - Each dose of the `afflict.red_ink` affliction (§16.4) lowers the hunter-spawn threshold by 1, from 10 down to a minimum of 6.
 
 ### 11.7 Multiplier order
@@ -1191,7 +1214,9 @@ When several statuses multiply the same stat, they apply after all non-status fa
 
 ### 11.8 Player-controlled bearers
 
-Input is never synthesized for a player. When the bearer is an Erratum controlled by a player, these rules replace the AI-facing effects:
+Input is never synthesized for a player. When a player's command for a tick is missing, the host applies doc 16's neutral substitute: no movement, every action button released, stance and quickbar index kept. It holds no press edge, so it starts nothing; it is the absence of input, and the replay log records it.
+
+When the bearer is an Erratum controlled by a player, these rules replace the AI-facing effects:
 
 | Status | Effect on a player-controlled bearer |
 |---|---|
@@ -1216,7 +1241,7 @@ Input is never synthesized for a player. When the bearer is an Erratum controlle
 | `res.toxicity` | Milli | `0..=100,000` | raised by potions and stims; −500 per second; at 100,000 applies 3 stacks of `st.poisoned` every 5 s | 08 |
 | `res.poise` | Milli | `0..=poise` | reduced by impact; at 0 applies `st.staggered` and refills | 05 |
 | `res.ward` | Milli | `0..=pool` | the `st.shielded` pool plus the ward generator's ward (§13.2 `slot.ward`); absorbs damage before HP (§10.5 step 7) | 06 |
-| `res.breath` | Milli | `0..=max` | max `10 + floor_div(END, 10)` s, so 14 s at END 40; drains 1000 per s while the eye cell holds liquid or an unbreathable gas; regenerates 5000 per s otherwise; at 0 applies `st.suffocating`; kin that need no breath are exempt; a respirator in `slot.face` makes gases breathable | 04 |
+| `res.breath` | Milli | `0..=max` | max `10 + floor_div(END, 10)` s, so 14 s at END 40; drains 1000 per s while the eye cell holds liquid or an unbreathable gas; regenerates 5000 per s otherwise; at 0 applies `st.suffocating`; kin that need no breath are exempt; a working respirator in `slot.face` makes gases breathable (doc 08 filters) | 04 |
 | `res.favor` | i32 | `-1000..=1000` per patron | run-scoped standing with each genre's patron (§16.5) | 06 |
 
 - **Composure regeneration**: 1 per second while not `in_combat` and `light_at(e) >= 8`.
@@ -1224,7 +1249,7 @@ Input is never synthesized for a player. When the bearer is an Erratum controlle
 
 ### 12.1 Surfaces and reactions
 
-Docs 03, 05, 06 and 08 implement this one table. **Contact** means the feet cell or a body cell holds at least 100 ml of the liquid, or the eye cell holds the gas.
+Docs 03, 05, 06 and 08 implement this one table. **Contact** means the feet cell or a body cell holds at least 100 ml of the liquid, or the eye cell holds the gas at concentration 500 or more (§4.4). A working respirator in `slot.face` blocks every gas contact row; doc 08 owns respirator filters.
 
 Per status pulse while in contact:
 
@@ -1259,11 +1284,11 @@ Every blast enters the damage pipeline as an environmental hazard (§10.6).
 
 ### 12.2 Sight concealment
 
-Every material (doc 07) and gas (doc 08) has `conceal: u8` in `0..=15`. Reference values: glass 0, tall grass 2 (only against crouched targets), leaves and foliage 3, water 2 per block, smoke 4 per cell at full density scaled linearly by density, steam 3, genre fog 1 per 8 m. A sight ray sums `conceal` over the cells it crosses, excluding both endpoint cells. At a sum of 15 or more, sight is blocked. Below that, sight detection is multiplied by `10000 - 667 × sum` Bp (doc 09).
+Every material (doc 07) and gas (doc 08) has `conceal: u8` in `0..=15`. Reference values: glass 0, tall grass 2 (only against crouched or downed targets and corpses), leaves and foliage 3, water 2 per block, smoke 4 per cell at full density scaled linearly by density, steam 3, genre fog 1 per 8 m. A sight ray sums `conceal` over the cells it crosses, excluding both endpoint cells. At a sum of 15 or more, sight is blocked. Below that, sight detection is multiplied by `10000 - 667 × sum` Bp (doc 09).
 
 ### 12.3 Spawn light
 
-Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at most the genre's `spawn_block_max` (§5.9). Placed light sources (`cat.placeable`) are therefore a defense, as in Minecraft.
+Ambient spawns, wave spawns and the initial population (doc 13) occur only in cells whose `light_block` is at most the genre's `spawn_block_max` (§5.9). Placed light sources (`cat.placeable`) are therefore a defense, as in Minecraft.
 
 ---
 ## 13. Items
@@ -1285,12 +1310,12 @@ Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at m
 | `cat.book` | permanent learning: glyph tomes, recipe books, lore | 06, 07 |
 | `cat.food` | satiation items | 04 |
 | `cat.throwable` | grenades, bombs, flasks, throwing knives | 05, 08 |
-| `cat.gadget` | deployables: turrets, drones, traps, mines | 07 |
+| `cat.gadget` | deployables: turrets, drones, snares, mines, charges | 07 |
 | `cat.tool` | pickaxes, lockpicks, hacking decks, rope, bandages | 07, 09 |
 | `cat.material` | crafting materials | 07 |
 | `cat.ingredient` | alchemical ingredients | 08 |
 | `cat.container` | bottles, flasks, bags, satchels | 08, 11 |
-| `cat.placeable` | barricades, bridge spans, ladders, traps, light sources, deployable cover (§4.3) | 07 |
+| `cat.placeable` | barricades, bridge spans, ladders, block traps (spikes, webs), light sources, deployable cover (§4.3) | 07 |
 | `cat.key` | keys and keycards of any skin | 11 |
 | `cat.currency` | Lucre piles | 11 |
 | `cat.quest` | narrative items | 12 |
@@ -1313,9 +1338,9 @@ Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at m
 | `slot.weapon_1`, `slot.weapon_2`, `slot.weapon_3` | any melee or ranged weapon |
 | `slot.offhand` | off-hand items; empty while a two-handed weapon is active |
 | `slot.implant_head`, `slot.implant_torso`, `slot.implant_arms`, `slot.implant_legs` | implants |
-| `slot.ward` | one ward generator: capacity `mul_bp(cap_base_mhp, T(ilvl))`; recharge starts 180 ticks after the bearer last took damage and restores 2500 Bp of capacity per second; dependency from its skin |
+| `slot.ward` | one ward generator: capacity `cap_base_mhp → × T(ilvl) → × rarity power → × quality → × (10000 + 600 × eff_enh) → × Contradiction potency`, one `mul_bp` per arrow, with no material term; recharge starts 180 ticks after the bearer last took damage and restores 2500 Bp of capacity per second; dependency from its skin |
 | `slot.face` | masks, goggles, respirators; respirators make gases breathable; masks serve disguises (doc 09) |
-| `slot.hand_extra_N` | granted by `bp.arm_extra_N` (§9.1): one one-handed weapon or off-hand item |
+| `slot.hand_extra_1`, `slot.hand_extra_2` | granted by `bp.arm_extra_1` and `bp.arm_extra_2` (§9.1, doc 04): one one-handed weapon or off-hand item |
 
 The quickbar has 4 slots without a belt and up to 8 with one.
 
@@ -1328,7 +1353,7 @@ The quickbar has 4 slots without a belt and up to 8 with one.
 | `rar.rare` | Rare | `#3D8BFF` | 2 | none | 600 | 11000 | ×4 |
 | `rar.epic` | Epic | `#A64DFF` | 3 | none | 150 | 11500 | ×8 |
 | `rar.legendary` | Legendary | `#FF9A1F` | 3 | one legendary perk | 45 | 12500 | ×16 |
-| `rar.exotic` | Exotic | `#FFD84A` | 2 | one fixed named intrinsic; at most one Exotic among `slot.weapon_1..3` and `slot.offhand`, at most one among the five armor slots, and at most one among every other slot; Palimpsestic items are exempt | 15 | 12500 | ×32 |
+| `rar.exotic` | Exotic | `#FFD84A` | 2 | one fixed named intrinsic; at most one Exotic among `slot.weapon_1..3`, `slot.offhand` and `slot.hand_extra_1..2`, at most one among the five armor slots, and at most one among every other slot; Palimpsestic items are exempt | 15 | 12500 | ×32 |
 | `rar.palimpsestic` | Palimpsestic | animated prismatic gradient | 4 | immune to Contradiction; re-skins itself to the local genre; effective ilvl `max(ilvl, current Folio index)`, re-evaluated on `ev.folio_entered` | 0 | 13000 | ×64 |
 
 Palimpsestic items come only from Editor bosses, Volume-completion rewards and special secret rooms (doc 11).
@@ -1398,8 +1423,8 @@ Genre skins rename curse states, for example Blessed / — / Hexed, or Signed / 
 
 ### 13.7 Enhancement and Emendations
 
-- Stored `enhancement` is the Emendation-driven level, `0..=15`.
-- `eff_enh = clamp(enhancement + [buc = blessed] - curse_penalty, -3, 15)`. It feeds §10.4 as `10000 + 600 × eff_enh` and every other stat the same way.
+- Stored `enhancement` is the Emendation-driven level, `0..=ENH_CAP`, where `ENH_CAP = 15` in the main run and `15 + floor_div(d_current - 25, 5)` in Marginalia.
+- `eff_enh = clamp(enhancement + [buc = blessed] - curse_penalty, -3, ENH_CAP)`. It feeds §10.4 as `10000 + 600 × eff_enh` and every other stat the same way.
 - An **Emendation** is the consumable that raises enhancement, the analog of Shattered Pixel Dungeon's Scroll of Upgrade. Applying one first sets `ilvl = max(ilvl, current Folio index)`, then adds +1 enhancement. Upgrades therefore never become obsolete as the run deepens.
 - An Emendation used on a cursed item instead sets `buc = uncursed`, `curse_penalty = 0`, removes the curse affix and leaves enhancement unchanged.
 - `EMENDATIONS_PER_VOLUME = 3`, placed with guaranteed distribution by doc 11, so a full run yields 15.
@@ -1417,9 +1442,9 @@ Genre skins rename curse states, for example Blessed / — / Hexed, or Signed / 
 
 | Table | Used for |
 |---|---|
-| `P(d)` | Errata weapon and source damage (§10.4), enemy armor rating, Lucre amounts and item values |
-| `T(d)` | enemy damage, Errata gear armor rating, shield block values and item ward pools |
-| `H(d)` | enemy HP: `template_hp × H(d) × rank HP × party-size HP` |
+| `P(d)` | Errata weapon and source damage (§10.4), enemy armor rating, Lucre amounts and item values, and the break threshold of terrain destructible blocks at `d_current` (doc 03) |
+| `T(d)` | enemy damage, Errata gear armor rating, shield block values and item ward pools, and the HP of Errata-placed blocks at the placing Folio's depth (doc 07) |
+| `H(d)` | enemy HP: `template_hp × H(d) × rank HP × party-size HP × diff_hp_bp` (doc 14; 10000 at Grade 0 before Folio 26) |
 | `S(lvl)` | status power and poise damage of every source (§11.2) |
 
 | d | P(d) | T(d) | H(d) | d | P(d) | T(d) | H(d) |
@@ -1456,7 +1481,7 @@ Every damage, ward or summon-stat magnitude is `base × P(src_lvl)` (or `T` wher
 | Source | `src_lvl` |
 |---|---|
 | Weapon, off-hand or thrown item | its `ilvl` |
-| Spell, prayer or glyph | `ilvl` of the equipped casting implement (focus, wand, staff or tome); with none, `max(1, d_current - 3)` |
+| Spell, prayer or glyph | `ilvl` of the casting implement: the equipped focus, wand, staff or tome, or the text, enchanted item or equipped holy symbol whose own activation casts it; with none, `max(1, d_current - 3)` |
 | Crafted or brewed potion, bomb, gadget, turret, drone, trap or mine | the Folio index where it was made, stored as its `ilvl` |
 | Summon | the summoner's `src_lvl` for the summoning spell |
 | Innate ability or Echo trait | `d_current` |
@@ -1483,7 +1508,7 @@ Doc 19 owns the full schema. Every item instance carries at least:
 | `rarity` | content ID | §13.3 |
 | `quality` | content ID | §13.5 |
 | `ilvl` | i32 | §13.8 |
-| `enhancement` | i32 `0..=15` | §13.7 |
+| `enhancement` | i32 `0..=ENH_CAP` | §13.7 |
 | `buc` | content ID | §13.6 |
 | `curse_penalty` | i8 `0..=3` | §13.6 |
 | `knowledge` | content ID plus flags | §13.6; flags for rarity, enhancement, curse state, each affix, charges |
@@ -1497,20 +1522,20 @@ Doc 19 owns the full schema. Every item instance carries at least:
 | `manufacturer` | content ID or none | `mfr.` (§5.9, doc 11) |
 | `gear_tier` | i8 `1..=5` | `min(5, 1 + floor_div(errata_grade, 5))` at generation (doc 14) |
 | `perk_columns` | list of {column, options (1..=3 perk IDs), chosen} | options per column by gear tier 1/1/2/2/3; choosing is free at a Scriptorium (doc 11) |
-| `illuminated` | bool | cosmetic shiny variant: one keyed `rng.loot` roll at 5 Bp per Legendary-or-better drop; picking one up unlocks its skin account-wide; no stat effect |
+| `illuminated` | bool | cosmetic shiny variant: one `rng.loot` roll at 5 Bp per Legendary-or-better item, keyed at its drop, or at first acquisition for shop stock, floor loot, Engine faces and rewards (doc 11 §2.3); picking one up unlocks its skin account-wide; no stat effect |
 | `finder_slot` | u8 `0..=3` | the party slot whose instanced roll created it |
 
 ---
 
 ## 14. Currencies
 
-There is no premium currency. Real money buys fiat SKUs only (doc 15). No currency below can be bought, traded or gifted.
+There is no premium currency. Real money buys fiat SKUs only (doc 15). No currency below can be bought, or traded or gifted between accounts.
 
 | ID | Name | Scope | Source | Spent on |
 |---|---|---|---|---|
-| `cur.lucre` | Lucre | run | drops, sales | in-run shops, services, Fortune Engines; displayed under the local genre's Lucre skin (§5.2); one shared value across genres; lost when the run ends |
+| `cur.lucre` | Lucre | run, per Erratum | drops, sales | in-run shops, services, Fortune Engines; displayed under the local genre's Lucre skin (§5.2); one shared value across genres; passes between party members only as dropped piles (doc 11 §17); lost when the run ends |
 | `cur.quire` | Quires | account | run score, achievements, Codex tiers | the Margin unlock tree (doc 14) |
-| `cur.ink` | Ink | account | play time, run completion, Codex tiers, achievements | Inkwell pulls (doc 15) |
+| `cur.ink` | Ink | account | a one-time welcome grant, play time, run completion, Codex tiers, achievements | Inkwell pulls (doc 15) |
 | `cur.vellum` | Vellum | account | Inkwell duplicates and unused spark at banner end | the Vellum Archive: past featured Echoes, Scripts and cosmetic tiers (doc 15) |
 
 Entitlements are not currencies. A **Quill** (`ent.quill`) unlocks one Codex premium track. It is obtained by purchasing a Codex or from tier 100 of a premium Codex.
@@ -1557,7 +1582,7 @@ Reputation per faction is an integer `-1000..=1000` and resets each run.
 - **Origin**: the genre an Erratum fell out of. At creation the player picks one of the 12 core genres. Secret genres become Origin options through meta unlocks (doc 14). The Origin sets tolerance (§5.4), sub-attribute modifiers that sum to 0 and stay within ±6 each, +10 to one Origin skill, and one Origin trait (doc 04).
 ### 16.2 Callings and Echoes
 
-- **Calling**: the class. Each Calling sets three major skills to 20 and three minor skills to 10. All other skills start at 0. Doc 04 owns kits and talent trees.
+- **Calling**: the class. Each Calling sets three major skills to 20 and three minor skills to 10. All other skills start at 0. Doc 04 owns kit roles, presets, kit balance and talent trees; doc 14 owns kit records (`run.kit.*`) and their template bindings.
 
 | ID | Identity | Major skills | Minor skills |
 |---|---|---|---|
@@ -1621,10 +1646,10 @@ Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and
 |---|---|
 | `VOLUMES` | 5 |
 | `FOLIOS_PER_VOLUME` | 5 |
-| `BOSS_FOLIOS` | 5, 10, 15, 20, 25 |
+| `BOSS_FOLIOS` | 5, 10, 15, 20, 25, and every Marginalia Folio `f` with `f % 5 == 0` |
 | `FINAL_FOLIO` | 25, always `genre.ur_text` |
 | `MARGINALIA_START` | 26 |
-| `FOLIO_1_GENRE` | Standard mode: the host Erratum's Origin genre. Every seeded mode (Daily, Weekly, Seeded): the first candidate drawn from `rng.lattice` with `folio_index = 0`. |
+| `FOLIO_1_GENRE` | Unseeded runs (Standard, Abridged and every other mode without a seed): the host Erratum's Origin genre, or the core genre doc 12 maps a secret Origin to. Seeded runs (Daily, Weekly and any run with a typed seed): the first candidate drawn from `rng.lattice` with `folio_index = 0`. |
 | `EXIT_OFFERS` | 2; 3 when any party member has ITU ≥ 70 or carries a Lattice Lens |
 | `LATTICE_CANDIDATES` | always exactly 3 drawn at the exit of each Folio, by weighted choice without replacement over eligible core genres using lattice edge weights (doc 12); the first `EXIT_OFFERS` are shown. The draw happens on the tick the exit UI opens. |
 | `GENRE_REPEAT_RULE` | no genre twice in the same Volume; at most 3 appearances per run before Marginalia |
@@ -1638,9 +1663,9 @@ Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and
 
 Secret genres are never lattice candidates. They are reached only through secret exits (doc 12).
 
-**Colophon.** Every Folio ends in a Colophon room (`room.colophon`, docs 12 and 14), the analog of Noita's Holy Mountain, placed before the exits. It offers one full heal, a full aether refresh, a shop, an altar of 3 boons with 1 reroll, and a Scriptorium station. Erasure accrual stops for the rest of the Folio once any Erratum enters it. Damaging its blocks marks the party for the run: an Editor hunter waits in every later Colophon, and after 3 hunter kills it becomes an elite hunter.
+**Colophon.** Every Folio ends in a Colophon room (`room.colophon`, docs 12 and 14), the analog of Noita's Holy Mountain, placed before the exits. It offers one full heal, a full aether refresh, a shop (none in `genre.unwritten`, §5.2), an altar of 3 boons with 1 reroll, and a Scriptorium station. Erasure accrual stops for the rest of the Folio once any Erratum enters it. Damaging its blocks marks the party for the run: an Editor hunter waits in every later Colophon, and after 3 hunter kills it becomes an elite hunter.
 
-**Abridged mode** (`mode.abridged`, owner 14) is the shorter full-story run. It has 5 Volumes of 3 Folios each: two regular Folios plus the boss. Effective depth `d_eff(v, f) = (v - 1) × 5 + [1, 3, 5][f - 1]` feeds `P`, `T`, `H`, `S`, `ilvl` and `enemy_level`. Kill XP and loot quantity per Folio are × 16667 Bp. `EMENDATIONS_PER_VOLUME` stays 3. The final Folio is the Ur-Text at `d_eff = 25`. Target duration is 60 to 75 minutes. The 25-Folio Standard mode remains the full run.
+**Abridged mode** (`mode.abridged`, owner 14) is the shorter full-story run. It has 5 Volumes of 3 Folios each: two regular Folios plus the boss. Effective depth `d_eff(v, f) = (v - 1) × 5 + [1, 3, 5][f - 1]` feeds `P`, `T`, `H`, `S`, `ilvl` and `enemy_level`. Kill XP and loot quantity per Folio are × 16667 Bp, where loot quantity means worldgen chests and floor-loot spots; Reliquaries, Fortune Engines and vendor stock are unchanged. `EMENDATIONS_PER_VOLUME` stays 3. The final Folio is the Ur-Text at `d_eff = 25`. Target duration is 60 to 75 minutes. The 25-Folio Standard mode remains the full run.
 
 ### 17.2 Party-size tables (Bp, for party sizes 1, 2, 3, 4)
 
@@ -1660,23 +1685,23 @@ Enemy count per spawner is `floor_div(n_base × enemy_count_bp + carry, 10000)`,
 | `rank.minion` | 4000 | 6000 | 3000 | 10000 | 10000 | swarm fodder |
 | `rank.standard` | 10000 | 10000 | 10000 | 10000 | 10000 | |
 | `rank.elite` | 30000 | 13000 | 30000 | 5000 | 7500 | one elite modifier (doc 13) |
-| `rank.champion` | 60000 | 15000 | 60000 | 5000 | 5000 | one champion counter type (doc 05) |
+| `rank.champion` | 60000 | 15000 | 60000 | 5000 | 5000 | one champion aspect (§17.3a), countered by its matching counter type (doc 05) |
 | `rank.boss` | 200000 | 16000 | 200000 | 2500 | 2500 | genre mini-boss; immune to charmed, sleeping, confused |
 | `rank.editor` | 400000 | 18000 | 400000 | 2500 | 2500 | Volume boss; same immunities |
-| `rank.hunter` | 120000 | 20000 | 50000 | 2500 | 2500 | Erasure hunter; same immunities |
+| `rank.hunter` | 120000 | 20000 | 50000 | 2500 | 2500 | Erasure hunter identity (its multipliers are `rank.elite`'s, §11.6) and invaders (§17.9); same immunities |
 
 ### 17.3a Champion counters and elite aspects
 
 | ID | Meaning |
 |---|---|
 | `counter.ward_breaker` | hits deal × 30000 to the target's ward; breaking the ward applies `st.stunned` directly |
-| `counter.disruptor` | applies `st.unraveled` and `st.silenced` directly for 180 ticks and stops the champion's regeneration |
+| `counter.disruptor` | applies `st.unraveled` and `st.silenced` directly for exactly 180 ticks, unscaled by §11.4, and stops the champion's regeneration |
 | `counter.staggerer` | deals poise damage × 30000, even against poise-immune targets |
 | `elite.warded` | ward equal to 50% of Max HP; fully regenerates 180 ticks after it last took damage; countered by `counter.ward_breaker` |
 | `elite.surging` | attack and cast speed × 13000; heals 2% Max HP per second unless `st.unraveled` or `st.shocked`; countered by `counter.disruptor` |
 | `elite.unstoppable` | immune to `st.staggered` from poise; countered by `counter.staggerer` |
 
-Every counter type is available from at least one dependency-none source (an ammo type or a throwable) in every genre's shop and loot pool. The Folio exit preview shows the champion aspects of the next Folio. Doc 13 may add more elite modifiers; only these three are champion aspects.
+Every counter type is available from at least one dependency-none source (an ammo type or a throwable) in every genre's loot pool and in every shop; `genre.unwritten`, which has no shops, also gets doc 11's counter caches. The Folio exit preview shows the champion aspects of the next Folio. Doc 13 may add more elite modifiers; only these three are champion aspects.
 
 ### 17.4 Reference anchors
 
@@ -1711,7 +1736,7 @@ Doc 05, doc 11 and doc 13 tune all content against these Folio-1 anchors.
 
 ### 17.7 Mounts
 
-Cut by product-owner decision (DECISIONS.md, item 55). The game has no mounts or vehicles. `cat.mount`, `slot.mount`, `st.mounted`, `arch.mount.`, `ev.mounted`, `ev.dismounted` and `room.no_mount` are retired IDs and must not appear in content.
+Cut by product-owner decision (DECISIONS.md, item 55). The game has no mounts or vehicles. `cat.mount`, `slot.mount`, `st.mounted`, `arch.mount.`, `ev.mounted`, `ev.dismounted`, `room.no_mount`, `npc.vendor.stablemaster`, `shop.stablemaster`, `ai.nav.mounted`, `ai.action.remount`, `ai.set.cavalry` and `enemy.role.cavalry` are retired IDs and must not appear in content. Former cavalry enemies fight on foot as the unmounted role `enemy.role.charger` (doc 13), which replaces `enemy.role.cavalry`.
 
 ### 17.8 The Margin trophies
 
@@ -1725,7 +1750,7 @@ Opt-in PvP by product-owner decision (DECISIONS.md, item 15). Docs 13, 14 and 16
 - **The invader** is a player from another session who joins as a Redactor: `fac.editors`, rank `rank.hunter`, scaled with `H(d)` and `T(d)` at the host's depth and the party-size tables of §17.2. The invader uses a fixed Editor kit chosen from kits unlocked on their account (doc 13), never their own run gear.
 - **Window.** From Folio 3 onward, at most one invader per Folio, never in boss Folios, never earlier than 120 s after entry, never after any Erratum enters the Colophon. An invasion lasts at most 300 s.
 - **Limits.** The invader cannot place or break blocks, open containers or pick up items.
-- **Outcome.** If the invader reduces the last living Erratum to 0 HP, the party is Redacted instead of ending the run: every Erratum loses all Lucre and one random equipped non-weapon item (keyed `rng.loot`, actor = that Erratum, seq 0), then respawns at the Folio entrance with 50% Max HP. If the party kills the invader, every Erratum gets one guaranteed in-run Reliquary roll. Invader rewards are Quires and cosmetic Red Ink marks only.
+- **Outcome.** If the invader reduces the last Erratum that is alive and not downed to 0 HP, the party is Redacted instead of ending the run: every Erratum loses all Lucre and one random equipped non-weapon item (keyed `rng.loot`, actor = that Erratum, seq 0), then respawns at the Folio entrance with 50% Max HP. If the party kills the invader, every Erratum gets one guaranteed in-run Reliquary roll. Invader rewards are Quires and cosmetic Red Ink marks only.
 - **Determinism.** The invader is replay slot 4 (§2.4). Invaders are the one exception to Folio-boundary drop-in: they join and leave mid-Folio.
 - **Safety.** Text and voice chat with an invader require mute, block and report controls (doc 15 compliance).
 
@@ -1733,7 +1758,7 @@ Opt-in PvP by product-owner decision (DECISIONS.md, item 15). Docs 13, 14 and 16
 
 ## 18. Core simulation events
 
-Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
+Doc 03 owns the event bus and the full payload schemas. The IDs below are the canonical core. Doc 03 §14.3 registers every further `ev.` ID another document emits, with its payload; an event exists once doc 03 registers it, with no canon change.
 
 | ID | Emitted when |
 |---|---|
@@ -1898,6 +1923,9 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 42. **Friendly fire.** In default mode, a rifle hit from one Erratum on another whose value before step 2.15 is 10,000 mHP leaves `D2 = 5,000`. A grenade blast with the same value before step 2.15 keeps `D2 = 10,000`.
 43. **Forward vector.** `fwd(8192, 8192).x = -536870913` (negate first). `T[8192] = 759250125`.
 44. **Weekly seed.** `fnv1a64("PALIMPSEST/WEEKLY/2026-W41") = 0x2e7e2bae906b8339`. The date 2026-10-11 falls in ISO week 2026-W41.
+45. **range_incl extremes.** `Rng::from_seed64(42).range_incl(i64::MIN, i64::MAX - 1)` returns `5797906573132458142` without overflow. Three calls of `range_incl(-5, 5)` on a fresh `Rng::from_seed64(42)` return `3, -2, 5`.
+46. **Yaw from direction.** `yaw_from_dir(0, -1 m)` is within 1 Bam of 0, and `yaw_from_dir(-1 m, 0)` is within 1 Bam of 16384, the yaw whose `fwd` is −X.
+47. **Sub-stream.** For run seed `0x0123456789ABCDEF`, `derive(stream_seed(run, "rng.worldgen", 2), fnv1a32("genre.space_opera")) = 0x1c35d41d581f5eaa`, which equals doc 12 §7.2's `gen_seed` example.
 
 ---
 
@@ -1923,12 +1951,29 @@ W! LLM text → cosmetic only                                      N! LLM output
 W! glyph dep := origin_genre.aether_axiom                        W! min L1(core axiom vectors) ≥ 6
 W! type-hidden ⇔ listed by an idc class                          W! sneak eligibility := per (attacker, target)
 W! ∀ counter type: ∃ dep-none source ∈ every genre               N! input synthesized for a player
-N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
+N! skin name ∈ {brands, third-party currency names, cur./ent. names except its own base currency, "Ink"}
 ```
 
 ---
 
 ## 23. Changelog
+
+### canon-1.11 (2026-10-11)
+
+Applied after the canon gap triage (audit/canon_gaps_triage.md).
+
+- Conventions: atan2 convention and yaw_from_dir, mod ID namespace `x_<mod_id>`, JSON integer bound, one-decimal display of small per-second rates.
+- Sessions: named state boundaries for state_hash and snapshots, intents in the replay log, presentation_hash split from content_hash, run_seed carried from commit, saves deferred during an invasion, light overrides in every light read.
+- RNG: range_incl computed in i128, seq allocation, object-keyed draws, rng.check and rng.run, labeled sub-streams, offer generators, explosion draws on sequential streams, account and presentation generators.
+- World: liquid units and gas concentration, the fall-damage and move-speed chains, block.tag.destructible and fixed terrain stopping projectiles.
+- Rules: Somnambule limited to destructible blocks, "Nobles" for Crowns, supernatural alchemy dependency, potion failure and Unmoored, Shock of the New ranks, seam local_genre.
+- Progression: skill XP normalized before party scaling, the 45-unit XP anchor, ghosts and pacification in character XP, Errata limbs severing only from a crippled pool (DECISIONS.md item 84, overriding triage Q5) and added-part donors.
+- Damage: attack factors and manufacturer traits before step 1, st.taunted, fae iron, shield AR on blocks, the 6b split, Scribe's Mercy step 6c, ward profiles, consumable and takedown entry points, blunt poise for mixed hits, two hit batches.
+- Statuses: disruptor duration, downed rules in doc 16, st.marked wording, the Erasure hunter's rank, invaders never erase, substituted commands.
+- Items and run: gas contact 500, tall grass, initial population spawn light, trap categories, ward capacity chain, two extra-hand slots, ENH_CAP, block HP tables, diff_hp_bp, illuminated rolls, Lucre per Erratum, welcome Ink, kit ownership, Unwritten Colophons, FOLIO_1_GENRE, Marginalia boss Folios, Abridged loot, champion aspects, Redaction while downed, events registered by doc 03.
+- Orchestrator decisions (DECISIONS.md): cavalry becomes the unmounted `enemy.role.charger`, and the mount-only IDs `npc.vendor.stablemaster`, `shop.stablemaster`, `ai.nav.mounted`, `ai.action.remount`, `ai.set.cavalry` and `enemy.role.cavalry` are retired (§17.7). The Erasure hunter is one elite-strength enemy that keeps `rank.hunter` identity and immunities and uses `rank.elite` multipliers, with no repeat spawns (§11.6, §17.3).
+- Wording kept in step with the amendments: §4.3 and §4.4 name `block.tag.destructible` and block traps, §5.9 spawn light covers the initial population, the §17.3 `rank.hunter` row points to §11.6, and the §22 skin-name rule exempts a genre's own base currency.
+- Added tests 45, 46 and 47.
 
 ### canon-1.10 (2026-10-11)
 

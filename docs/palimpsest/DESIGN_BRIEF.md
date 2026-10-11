@@ -47,7 +47,8 @@ Twelve core genres, each with an axiom vector [ARCANA, TECHNE, MYTHOS, VERVE] as
 - Folio 5 of each Volume is an **Editor** boss Folio.
 - Target full-run length is 100 to 150 minutes. Target Folio length is 3 to 7 minutes.
 - Genre selection follows a **Genre Lattice**, a weighted graph. Players choose between 2 or 3 exits at the end of each Folio, which previews the next genre, like Hades doors.
-- A hub called **the Margin** holds meta progression, the gacha, the Codex pass, the shop, the bestiary and the item codex.
+- A hub called **the Margin** holds meta progression, the gacha, the Codex pass, the shop, and the Index (the item and bestiary encyclopedia). It is a walkable first-person 3D space whose residents have multi-run story arcs (DECISIONS.md items 77 and 78).
+- An **Abridged** mode runs 15 Folios for shorter sessions (canon §17).
 - Death ends the run. Meta progression is horizontal: new Echoes, new items in the loot pool, cosmetics, codex knowledge. It is never a large raw-power gain.
 
 ## 5. Simulation and technology [FIXED]
@@ -55,10 +56,10 @@ Twelve core genres, each with an axiom vector [ARCANA, TECHNE, MYTHOS, VERVE] as
 - Language and engine: **Rust**. Rendering, audio, input and UI use **Bevy**, at the version the tech research recommends. The simulation lives in a separate pure-Rust crate `palimpsest_sim` with no Bevy dependency, so it can run headless for tests, servers, replays and bot playtesting.
 - Determinism: the simulation is fully deterministic given a seed and an input log. Use fixed-point math for every simulation scalar. Never use platform floats in simulation state. All probabilities are integers in basis points (0 to 10,000). Each subsystem draws from a named RNG stream derived from the run seed.
 - Tick: fixed simulation tick at **60 Hz**. Slower subsystems run on tick dividers. Rendering interpolates between simulation states.
-- World: 1 block = 1 m cube. Chunks are 32 × 32 × 32 blocks. Liquids, gases, temperature, light and sound propagate on this grid. The simulation's light grid and sound grid drive stealth. The renderer has its own lighting, which must agree visually with the simulation light grid.
+- World: 1 block = 1 m cube. Chunks are 32 × 32 × 32 blocks. Each cell carries a 4 × 4 × 4 mask of 250 mm micro-voxels for collision, shapes, rendering and destruction (canon §4.4); the 1 m grid stays the simulation grid. Liquids, gases, temperature, light and sound propagate on this grid. The simulation's light grid and sound grid drive stealth. The renderer has its own lighting, which must agree visually with the simulation light grid.
 - Collision: custom swept capsules against the voxel grid and against hitbox capsules, inside the simulation. Ragdolls and cosmetic physics live in the renderer only and never feed back into the simulation.
 - Multiplayer: host-authoritative with client prediction, server reconciliation and lag-compensated hit detection. Deterministic input logs enable replays and server-side verification of daily-challenge scores.
-- Content: all content is data, in RON or JSON validated by JSON Schema, and hot-reloadable. Modding uses sandboxed WASM.
+- Content: all content is data, in JSON with integers only, validated by JSON Schema 2020-12 (doc 19), and hot-reloadable. Modding uses data packs plus sandboxed WASM.
 - Runtime language model: an optional on-device small language model may write flavor text such as item lore, Folio intros and NPC barks. It uses grammar-constrained JSON output and is cached by seed. It never affects simulation state. A template-grammar fallback must always exist.
 
 ## 6. Attributes [FIXED structure, TUNABLE numbers]
@@ -93,6 +94,9 @@ Fortune and Serendipity affect in-run loot only. They never affect paid gacha od
 | Identification and appraisal | 10 |
 | In-run loot boxes (Reliquaries) and in-run gacha machines (Fortune Engines) | 11 |
 | Meta gacha (Inkwell), account-level Reliquaries, battle pass (Codex), store and compliance | 15 |
+| Content data schemas and validation | 19 |
+| Content catalog | 20 |
+| Implementation roadmap | 21 |
 
 ## 8. Monetization stance [FIXED]
 

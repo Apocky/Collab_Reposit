@@ -37,7 +37,7 @@ From other chapters, checked against every file in `spec/` on 2026-10-11 (docs 0
 
 | Doc | What this chapter consumes |
 |---|---|
-| 03 | system order: `sys.actions` (system 7) runs aether regeneration and casts, `sys.damage` (17) resolves the hit queue, `sys.env_sample` (10) re-evaluates Contradiction; the per-tick action `seq` reset in `sys.tick_begin`; `comp.pools.aether`; payloads of `ev.spell_cast` (with `fizzled`), `ev.healed`, `ev.status_expired` (reason 1 cleansed) and `ev.minion_released` (reasons 0 dismissed, 1 died, 2 folio exit); `raycast_blocks` for line of effect |
+| 03 | system order: `sys.actions` (system 7) runs aether regeneration and casts, `sys.damage` (17) resolves the hit queue, `sys.env_sample` (10) re-evaluates Contradiction; the per-tick action `seq` reset in `sys.tick_begin`; `comp.pools`; payloads of `ev.spell_cast` (with `fizzled`), `ev.healed`, `ev.status_expired` (reason 1 cleansed) and `ev.minion_released` (reasons 0 dismissed, 1 died, 2 folio exit); `raycast_blocks` for line of effect |
 | 04 | mastery perk IDs `skill.<name>.m25` to `.m100` and their effects (§5.3), whose exact hooks §7.3 fixes (doc 04's magic perk texts mirror §7.3); the XP event table (§5.2), whose magic rows mirror §7.4; doc 04 citing the §6.2 cost factor and the glyph tier gates; Spellwright, Oracle and Netrunner talents; `aug.blood_battery`; Origin traits `favored` and `lucid` |
 | 05 | `arch.offhand.focus`; the combat phase and hit queue; `HitRecord`; keyed-draw allocation (seq 0 primary action, `16 + i` hits); stance base speeds and their minimum rule (§1.6); projectiles and sweeps; friendly-fire classes |
 | 08 | `liq.mana`, `alch.eff.restore_aether` and aether potions; `liq.holy_water`; liquid and gas placement |

@@ -93,6 +93,14 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 78 | Margin cast | Kept: each resident has a multi-run arc advanced by run milestones, delivered as text | Docs 14, 18 |
 | 79 | Unlock pace | Kept: about 80 hours of play unlocks every non-cosmetic option without spending money | Docs 14, 15 |
 | 80 | Echo unlocks | Kept: every Echo also unlocks through a bounded Recollection trial, so the Inkwell is never the only path | Docs 14, 15 |
+| 81 | Ghost XP | Kept (triage Q1): ghosts and downed members share kill XP; Dormant and Departed slots do not | Canon §8; docs 04, 14, 16 |
+| 82 | Scribe's Mercy | Kept (triage Q2): Mercy never blocks achievements or Grade unlocks; only ranked leaderboard entries exclude Mercy runs | Docs 14, 17 |
+| 83 | Lucre between players | Kept (triage Q3): dropped piles only, inside one run; nothing transfers between accounts | Canon §14; doc 11 |
+| 84 | Errata limb loss | **Changed (triage Q5): crippled limbs only.** An Erratum's limb severs only when its pool is at or below 25% before the hit; a healthy limb never severs, however large the hit | Canon §9; docs 04, 05 |
+| 85 | Co-op skill growth | Kept (triage Q6): skill XP normalized by the enemy's HP before party scaling, about 112% of solo pace in a party of 4 | Canon §7; doc 04 |
+| 86 | Invader rewards | Kept (triage Q8): cosmetic only (Quires and Red Ink marks), no Codex pass XP | Canon §17.9; docs 14, 15, 16 |
+| 87 | Cosmetic mods in co-op | Kept (triage Q11): presentation_hash split from content_hash; peers may differ in art, audio, VFX, narration, UI and localization | Canon §2; docs 02, 16 |
+| 88 | Somnambule shots | Kept (triage Q4): after 10 m, pass destructible and non-opaque blocks only; fixed terrain stops every projectile | Canon §5.9; docs 05, 11 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 

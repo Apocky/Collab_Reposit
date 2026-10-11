@@ -240,30 +240,30 @@ Kit items are created with `rarity = rar.common`, `quality = q.normal`, `ilvl` =
 |---|---|---|---|
 | `item.food.ration` | 2 | bag | 8 |
 | `item.tool.bandage` | 2 | quickbar 1 | 12 |
-| `item.potion.healing` (type-identified) | 1 | quickbar 2 | 24 |
+| `alch.potion.healing` (type-identified) | 1 | quickbar 2 | 24 |
 | Lucre | `mul_bp(50, P(d))`, 50 at run start | purse | 50 |
 
 Total 94 Lucre of base value at ilvl 1.
 
 #### 2.4.2 Calling kits `run.kit.<calling>` (variant 0)
 
-Armor sets: **light set** = `arch.armor.light_head`, `arch.armor.light_body`, `arch.armor.light_hands`, `arch.armor.light_legs`, `arch.armor.light_feet` (value 80); **medium set** = the same five slots with `medium_` (98); **cloth set** = the same five slots with `cloth_` (52, used only by Script kits). Doc 04's "cloth armor set" is the light set. The first weapon goes to `slot.weapon_1` and any second weapon to `slot.weapon_2`; shields, foci, tomes and lanterns go to `slot.offhand`; armor goes to its slot; accessories go to their slot (`slot.face`, `slot.back`, `slot.belt`); consumables fill the quickbar in table order after the universal kit, then the bag; ammunition, tools, books, apparatus and containers go to the bag. An entry whose slot the Erratum's body plan lacks, or that the plan cannot hold there (doc 04 §13: `body.quadruped` has no `slot.offhand` or `slot.hands` and holds only a one-handed melee weapon or a harness ranged weapon in `slot.weapon_1`; `body.serpentine` has no `slot.legs` or `slot.feet`), goes to the bag instead.
+Armor sets: **light set** = `arch.armor.head_light`, `arch.armor.body_light`, `arch.armor.hands_light`, `arch.armor.legs_light`, `arch.armor.feet_light` (value 80); **medium set** = the same five slots with `medium_` (98); **cloth set** = the same five slots with `cloth_` (52, used only by Script kits). Doc 04's "cloth armor set" is the light set. The first weapon goes to `slot.weapon_1` and any second weapon to `slot.weapon_2`; shields, foci, tomes and lanterns go to `slot.offhand`; armor goes to its slot; accessories go to their slot (`slot.face`, `slot.back`, `slot.belt`); consumables fill the quickbar in table order after the universal kit, then the bag; ammunition, tools, books, apparatus and containers go to the bag. An entry whose slot the Erratum's body plan lacks, or that the plan cannot hold there (doc 04 §13: `body.quadruped` has no `slot.offhand` or `slot.hands` and holds only a one-handed melee weapon or a harness ranged weapon in `slot.weapon_1`; `body.serpentine` has no `slot.legs` or `slot.feet`), goes to the bag instead.
 
 | Calling | doc 04 §2.5 role list | Exact templates | Calling-part value |
 |---|---|---|---|
-| Vanguard | 1H hafted weapon, medium shield, heavy armor (head, body, legs) | `arch.melee.hafted_mace`; `arch.offhand.shield_medium`; `arch.armor.heavy_head`, `arch.armor.heavy_body`, `arch.armor.heavy_legs` | 206 |
-| Duelist | 1H long blade, 6 throwing knives, light armor set | `arch.melee.blade_long`; `item.throwable.knife` ×6; light set | 186 |
-| Gunslinger | sidearm with 60 rounds, 4 throwing blades, light armor set | `arch.ranged.sidearm`; `ammo.light` ×60; `item.throwable.knife` ×4; light set | 182 |
-| Grenadier | heavy ranged weapon with 120 rounds, 4 grenades, medium armor set | `arch.ranged.heavy_auto`; `ammo.heavy` ×120; `item.throwable.frag` ×4; medium set | 314 |
+| Vanguard | 1H hafted weapon, medium shield, heavy armor (head, body, legs) | `arch.melee.mace`; `arch.offhand.shield_heater`; `arch.armor.head_heavy`, `arch.armor.body_heavy`, `arch.armor.legs_heavy` | 206 |
+| Duelist | 1H long blade, 6 throwing knives, light armor set | `arch.melee.blade_long`; `arch.ranged.thrown` ×6; light set | 186 |
+| Gunslinger | sidearm with 60 rounds, 4 throwing blades, light armor set | `arch.ranged.pistol`; `ammo.light` ×60; `arch.ranged.thrown` ×4; light set | 182 |
+| Grenadier | heavy ranged weapon with 120 rounds, 4 grenades, medium armor set | `arch.ranged.rifle_auto`; `ammo.heavy` ×120; `arch.ranged.grenade_frag` ×4; medium set | 314 |
 | Spellwright | casting focus, glyph tome (2 glyphs), light armor set | `arch.offhand.focus`; `item.book.primer_evocation` (teaches `glyph.ess.flame`, `glyph.ess.frost`); light set | 172 |
-| Alchemist | dagger, field alembic, 3 bombs, 4 empty flasks | `arch.melee.dagger`; `apparatus.mortar` tier 1 and `apparatus.alembic` tier 1 (doc 08 requires a mortar to brew); `item.throwable.fire_flask` ×3; `item.container.flask` ×4 | 84 + apparatus |
-| Shade | short blade, 5 lockpicks, light armor set, smoke bomb | `arch.melee.blade_short`; `item.tool.lockpicks` ×5; light set; `item.throwable.smoke` ×1 | 346 |
-| Artificer | sidearm with 60 rounds, toolkit, 1 deployable turret, medium armor | `arch.ranged.sidearm`; `ammo.light` ×60; `item.tool.toolkit`; `gadget.turret_light`; medium set | 248 |
-| Warden | spear, tower shield, medium armor set, 1 healing glyph | `arch.melee.polearm_spear`; `arch.offhand.shield_tower`; medium set; `item.book.primer_abjuration` (teaches `glyph.form.aura`, which with the universally known `glyph.ess.mend` makes an area heal, doc 06 §8.1) | 274 |
+| Alchemist | dagger, field alembic, 3 bombs, 4 empty flasks | `arch.melee.dagger`; `apparatus.mortar` tier 1 and `apparatus.alembic` tier 1 (doc 08 requires a mortar to brew); `alch.bomb.firebomb` ×3; `apparatus.vessel.flask` ×4 | 84 + apparatus |
+| Shade | short blade, 5 lockpicks, light armor set, smoke bomb | `arch.melee.blade_short`; `item.tool.lockpicks` ×5; light set; `arch.ranged.grenade_smoke` ×1 | 346 |
+| Artificer | sidearm with 60 rounds, toolkit, 1 deployable turret, medium armor | `arch.ranged.pistol`; `ammo.light` ×60; `item.tool.toolkit`; `gadget.turret_light`; medium set | 248 |
+| Warden | spear, tower shield, medium armor set, 1 healing glyph | `arch.melee.spear`; `arch.offhand.shield_tower`; medium set; `item.book.primer_abjuration` (teaches `glyph.form.aura`, which with the universally known `glyph.ess.mend` makes an area heal, doc 06 §8.1) | 274 |
 | Oracle | staff, holy symbol (prayer focus), light armor set | `arch.ranged.staff` (two-handed); `item.trinket.holy_symbol` in `slot.trinket`; light set | 180 + symbol |
-| Netrunner | sidearm with 60 rounds, hacking deck, light armor set | `arch.ranged.sidearm`; `ammo.light` ×60; `item.tool.hacking_deck`; light set | 162 + deck |
-| Beastbinder | spear, 1 tamed companion beast, light armor set | `arch.melee.polearm_spear`; light set; one tamed beast of doc 13 template `npc.companion.<origin_suffix>`, spawned beside its owner with a `folio_index = 0` EntityId and bound as a minion (Canon §15.1; the cap at skill 20 is exactly 1) | 138 |
-| Monk | hand wraps (unarmed archetype), cloth armor set | `arch.melee.fist_wraps`; light set | 136 |
+| Netrunner | sidearm with 60 rounds, hacking deck, light armor set | `arch.ranged.pistol`; `ammo.light` ×60; `item.tool.hacking_deck`; light set | 162 + deck |
+| Beastbinder | spear, 1 tamed companion beast, light armor set | `arch.melee.spear`; light set; one tamed beast of doc 13 template `npc.companion.<origin_suffix>`, spawned beside its owner with a `folio_index = 0` EntityId and bound as a minion (Canon §15.1; the cap at skill 20 is exactly 1) | 138 |
+| Monk | hand wraps (unarmed archetype), cloth armor set | `arch.melee.fist`; light set | 136 |
 
 With the universal kit, standard kits total 230 (Monk) to 440 (Shade) Lucre of base value at ilvl 1, before the three values doc 11 has not yet published (`apparatus.*`, `item.trinket.holy_symbol`, `item.tool.hacking_deck`). Base value is a shop price, not power; doc 04 owns kit balance (Canon gaps, item 2).
 
@@ -271,19 +271,19 @@ Alt kits `run.kit.<calling>_alt` (variant 1, Bindery shelf A) change only the li
 
 | Calling | Alt-kit change | Alt value | Difference |
 |---|---|---|---|
-| Vanguard | `arch.melee.hafted_maul` (two-handed) and `item.throwable.javelin` ×4 replace mace and shield | 206 | 0 Bp |
-| Duelist | `arch.melee.fist_wraps` replaces the long blade; `item.throwable.knife` ×10 replaces ×6 | 186 | 0 Bp |
-| Gunslinger | `arch.ranged.longarm` and `ammo.heavy` ×30 replace sidearm, `ammo.light` and knives | 186 | +219 Bp |
-| Grenadier | `arch.ranged.flamer` and `ammo.fuel` ×600 replace heavy weapon and `ammo.heavy`; `item.throwable.frag` ×6 replaces ×4 | 316 | +63 Bp |
+| Vanguard | `arch.melee.warhammer` (two-handed) and `arch.ranged.thrown` ×4 replace mace and shield | 206 | 0 Bp |
+| Duelist | `arch.melee.fist` replaces the long blade; `arch.ranged.thrown` ×10 replaces ×6 | 186 | 0 Bp |
+| Gunslinger | `arch.ranged.rifle_marksman` and `ammo.heavy` ×30 replace sidearm, `ammo.light` and knives | 186 | +219 Bp |
+| Grenadier | `arch.ranged.beam` and `ammo.cell` ×600 replace heavy weapon and `ammo.heavy`; `arch.ranged.grenade_frag` ×6 replaces ×4 | 316 | +63 Bp |
 | Spellwright | primer teaches `glyph.ess.storm` and `glyph.form.chain` instead | 172 | 0 Bp |
-| Alchemist | `arch.ranged.sling` and `ammo.stone` ×40 replace the dagger; `item.throwable.poison_flask` ×4 replace the fire flasks | 80 + apparatus | −477 Bp at most |
-| Shade | `arch.ranged.hand_crossbow` and `ammo.light` ×30 replace the short blade | 360 | +404 Bp |
+| Alchemist | `arch.ranged.thrown` and `arch.ranged.thrown` ×40 replace the dagger; `alch.potion.toxic_gas` ×4 replace the fire flasks | 80 + apparatus | −477 Bp at most |
+| Shade | `arch.ranged.pistol` and `ammo.light` ×30 replace the short blade | 360 | +404 Bp |
 | Artificer | `gadget.drone_scout` replaces the turret | 244 | −162 Bp |
-| Warden | `arch.melee.hafted_mace` and `arch.offhand.shield_medium` replace spear and tower shield; `item.tool.bandage` ×3 added | 274 | 0 Bp |
-| Oracle | `arch.ranged.wand` and `item.potion.clarity` ×1 replace the staff | 176 + symbol | −223 Bp at most |
-| Netrunner | `arch.melee.blade_short` and `item.throwable.disruptor_flask` ×2 replace sidearm and ammo | 160 + deck | −124 Bp at most |
-| Beastbinder | `arch.ranged.sling`, `ammo.stone` ×40 and `arch.offhand.shield_small` replace the spear | 140 | +144 Bp |
-| Monk | `arch.melee.polearm_staff` and `item.throwable.knife` ×4 replace the hand wraps | 138 | +147 Bp |
+| Warden | `arch.melee.mace` and `arch.offhand.shield_heater` replace spear and tower shield; `item.tool.bandage` ×3 added | 274 | 0 Bp |
+| Oracle | `arch.ranged.wand` and `alch.potion.purity` ×1 replace the staff | 176 + symbol | −223 Bp at most |
+| Netrunner | `arch.melee.blade_short` and `item.throwable.counter_disruptor` ×2 replace sidearm and ammo | 160 + deck | −124 Bp at most |
+| Beastbinder | `arch.ranged.thrown`, `arch.ranged.thrown` ×40 and `arch.offhand.shield_buckler` replace the spear | 140 | +144 Bp |
+| Monk | `arch.melee.quarterstaff` and `arch.ranged.thrown` ×4 replace the hand wraps | 138 | +147 Bp |
 
 Script kits `run.kit.<calling>_script` (variant 2, granted by `unlock.kit.<calling>_script` from doc 15's Rubricated `bundle.script.kit_<calling>`, §2.3) are replacements against the standard kit like the alt kits. Values of the swapped templates are doc 11 §3's base values at ilvl 1 (doc 05 §8.1 for ammunition); the difference is `floor_div((added - removed) × 10000, standard Calling-part value)`:
 
@@ -291,8 +291,8 @@ Script kits `run.kit.<calling>_script` (variant 2, granted by `unlock.kit.<calli
 |---|---|---|---|
 | `run.kit.vanguard_script` | `arch.melee.axe` (58) replaces the mace (58); `arch.offhand.shield_buckler` (36), `item.tool.bandage` ×2 (12) and `item.tool.torch` ×2 (4) replace the medium shield (52) | 206 | 0 Bp |
 | `run.kit.duelist_script` | `arch.melee.blade_short` (52) and `item.face.mask` (30) replace the long blade (76) | 192 | +322 Bp |
-| `run.kit.gunslinger_script` | `arch.ranged.pistol_heavy` (84) and `ammo.heavy` ×30 (12) replace the sidearm (70) and `ammo.light` ×60 (12); `arch.armor.light_hands` (10) removed | 186 | +219 Bp |
-| `run.kit.grenadier_script` | `arch.armor.heavy_head`, `arch.armor.heavy_body`, `arch.armor.heavy_legs` (22 + 46 + 28) replace the medium set (98) | 312 | −64 Bp |
+| `run.kit.gunslinger_script` | `arch.ranged.pistol_heavy` (84) and `ammo.heavy` ×30 (12) replace the sidearm (70) and `ammo.light` ×60 (12); `arch.armor.hands_light` (10) removed | 186 | +219 Bp |
+| `run.kit.grenadier_script` | `arch.armor.head_heavy`, `arch.armor.body_heavy`, `arch.armor.legs_heavy` (22 + 46 + 28) replace the medium set (98) | 312 | −64 Bp |
 | `run.kit.spellwright_script` | `arch.offhand.tome` (48) replaces the focus (44); the primer is unchanged | 176 | +232 Bp |
 | `run.kit.alchemist_script` | `arch.melee.quarterstaff` (38) replaces the dagger (40) | 82 + apparatus | −239 Bp at most |
 | `run.kit.shade_script` | `arch.melee.dagger` (40) and `item.tool.rope` ×2 (12) replace the short blade (52) | 346 | 0 Bp |
@@ -311,19 +311,19 @@ At run start each Calling marks two item types `know.classified` for the whole p
 
 | Calling | Known types |
 |---|---|
-| Vanguard | `item.potion.fortify`, `item.text.mending` |
-| Duelist | `item.potion.haste`, `item.text.blink` |
-| Gunslinger | `item.potion.focus`, `item.text.mapping` |
-| Grenadier | `item.potion.fortify`, `item.text.demolition` |
-| Spellwright | `item.potion.aether`, `item.text.appraisal` |
-| Alchemist | `item.potion.antidote`, `item.potion.regeneration` |
-| Shade | `item.potion.invisibility`, `item.text.mapping` |
+| Vanguard | `alch.potion.fortitude`, `item.text.mending` |
+| Duelist | `alch.potion.haste`, `item.text.blink` |
+| Gunslinger | `alch.potion.calm`, `item.text.mapping` |
+| Grenadier | `alch.potion.fortitude`, `item.text.demolition` |
+| Spellwright | `alch.potion.aether`, `item.text.appraisal` |
+| Alchemist | `alch.potion.cure`, `alch.potion.honeyed_healing` |
+| Shade | `alch.potion.invisibility`, `item.text.mapping` |
 | Artificer | `item.text.appraisal`, `item.text.recharge` |
-| Warden | `item.potion.shielding`, `item.text.sanctify` |
-| Oracle | `item.text.appraisal`, `item.potion.clarity` |
+| Warden | `alch.potion.shielding`, `item.text.sanctify` |
+| Oracle | `item.text.appraisal`, `alch.potion.purity` |
 | Netrunner | `item.text.mapping`, `item.text.recharge` |
-| Beastbinder | `item.potion.antidote`, `item.text.summoning` |
-| Monk | `item.potion.haste`, `item.potion.fortify` |
+| Beastbinder | `alch.potion.cure`, `item.text.summoning` |
+| Monk | `alch.potion.haste`, `alch.potion.fortitude` |
 
 With `unlock.option.lens_pocket` a player may trade the second lore entry for one `item.trinket.lattice_lens` in `slot.trinket`.
 
@@ -353,17 +353,17 @@ Kits are not regenerated after Folio 1. A mid-run joiner (§2.5) translates agai
   "variant": 0,
   "lucre": 0,
   "entries": [
-    { "template": "arch.ranged.sidearm", "slot": "slot.weapon_1", "qty": 1 },
+    { "template": "arch.ranged.pistol", "slot": "slot.weapon_1", "qty": 1 },
     { "template": "ammo.light", "slot": "bag", "qty": 60 },
-    { "template": "item.throwable.knife", "slot": "quickbar", "qty": 4 },
-    { "template": "arch.armor.light_head", "slot": "slot.head", "qty": 1 },
-    { "template": "arch.armor.light_body", "slot": "slot.body", "qty": 1 },
-    { "template": "arch.armor.light_hands", "slot": "slot.hands", "qty": 1 },
-    { "template": "arch.armor.light_legs", "slot": "slot.legs", "qty": 1 },
-    { "template": "arch.armor.light_feet", "slot": "slot.feet", "qty": 1 }
+    { "template": "arch.ranged.thrown", "slot": "quickbar", "qty": 4 },
+    { "template": "arch.armor.head_light", "slot": "slot.head", "qty": 1 },
+    { "template": "arch.armor.body_light", "slot": "slot.body", "qty": 1 },
+    { "template": "arch.armor.hands_light", "slot": "slot.hands", "qty": 1 },
+    { "template": "arch.armor.legs_light", "slot": "slot.legs", "qty": 1 },
+    { "template": "arch.armor.feet_light", "slot": "slot.feet", "qty": 1 }
   ],
   "minions": [],
-  "lore": ["item.potion.focus", "item.text.mapping"],
+  "lore": ["alch.potion.calm", "item.text.mapping"],
   "consumable_entries": [2]
 }
 ```
@@ -376,7 +376,7 @@ Kits are not regenerated after Folio 1. A mid-run joiner (§2.5) translates agai
   "base": "run.kit.gunslinger",
   "replace": [
     { "remove": [0, 1, 2],
-      "add": [ { "template": "arch.ranged.longarm", "slot": "slot.weapon_1", "qty": 1 },
+      "add": [ { "template": "arch.ranged.rifle_marksman", "slot": "slot.weapon_1", "qty": 1 },
                { "template": "ammo.heavy", "slot": "bag", "qty": 30 } ] }
   ]
 }
@@ -1546,8 +1546,8 @@ The player picks one of the 4 starter Callings (Vanguard, Duelist, Gunslinger, S
 | L1 Your Story | bleed zone of the chosen Origin | look, move, sprint, jump, interact; a native NPC vignette | the player reaches the far door |
 | L2 The Red Pen | chosen Origin | attack, block, dodge against 3 `rank.minion` Red Ink scrawls (`fac.editors`) | all three die |
 | L3 The Fall | Unwritten | the scripted Editor erases the floor; a 3,000 mm drop onto solid ground, below the 3,200 mm safe-fall height at VERVE 0 (Canon §4.2), so it deals no damage; pick up the `item.tool.pick` lying there, mine 3 blocks, place 2 blocks to bridge a gap | the player reaches the ledge |
-| L4 Blank Pages | Unwritten | a chest (no Lucre) holding one unknown potion of type `item.potion.regeneration` (appearance from the shuffle; healing potions are already known from the universal kit) and one `item.text.appraisal`, whose type the script marks known; quickbar; identification by use or by reading the appraisal text | the player uses the reading stand |
-| L5 A Borrowed Page | bleed zone of `genre.fairy_tale` | pick up a Cyberpunk `arch.ranged.sidearm` (ilvl 1); the HUD shows its Contradiction state (C = 4 for a Cyberpunk Origin per Canon §5.6; Disconnected at C = 6 for Mythic Fantasy and Weird West, C = 5 for Gothic Horror); a native wolf shows Anachronism Edge | the wolf dies |
+| L4 Blank Pages | Unwritten | a chest (no Lucre) holding one unknown potion of type `alch.potion.honeyed_healing` (appearance from the shuffle; healing potions are already known from the universal kit) and one `item.text.appraisal`, whose type the script marks known; quickbar; identification by use or by reading the appraisal text | the player uses the reading stand |
+| L5 A Borrowed Page | bleed zone of `genre.fairy_tale` | pick up a Cyberpunk `arch.ranged.pistol` (ilvl 1); the HUD shows its Contradiction state (C = 4 for a Cyberpunk Origin per Canon §5.6; Disconnected at C = 6 for Mythic Fantasy and Weird West, C = 5 for Gothic Horror); a native wolf shows Anachronism Edge | the wolf dies |
 | L6 Scriptorium | bleed zone of `genre.fairy_tale` (Rewriting translates into the local genre, so the station must stand in Fairy Tale) | a free Rewrite of the sidearm into the Fairy Tale skin; its HUD state becomes Coherent | a Rewrite is committed |
 | L7 The Erasure | Unwritten | on entry the script directly applies 3 stacks of `st.erasure` (a `direct` status, Canon §11.1); `enemy.prologue_hunter` (`fac.editors`) chases the player 60 m to the Colophon | the player's origin enters `room.colophon` |
 
@@ -1643,7 +1643,7 @@ Data constants exported: the §1.1 table, `grade_bp(G)`, `RUN_SCORE_BP = 1460`, 
 | 08 | `apparatus.{mortar, alembic}` at tier 1 |
 | 09 | `aware.alert` for `run.note.silent` |
 | 10 | `appr.reason.kit` for kit and lore type knowledge; boon `run.boon.appraising_eye` raises pickups to `know.appraised` |
-| 11 | every kit item template with its base value; `item.food.ration`; `item.tool.{bandage, pick, lockpicks}`; `item.potion.{healing, haste, focus, fortify, aether, antidote, invisibility, clarity, regeneration, shielding}`; `item.text.{mending, blink, mapping, demolition, appraisal, recharge, sanctify, summoning}`; `item.throwable.{javelin, knife, smoke, frag, fire_flask, poison_flask, disruptor_flask}`; `item.book.{primer_evocation, primer_abjuration}`; `item.container.flask`; `item.trinket.{lattice_lens, holy_symbol}`; Script-kit items `item.face.mask`, `item.back.cloak`, `item.belt.sash`, `item.tool.{rope, torch}` at the doc 11 §3 base values §2.4.2 uses; `item.quest.catchword`; `item.remains`; `loot.volume_reward`; `offer_rng(slot, context_uid, purpose)` with advance-by-one-on-commit (doc 11 §11.2); `loot.pool.<suffix>` tags renormalized inside rarity bands; `lucre_bp`, `shop_price_bp`, `reliq_key_delta` and `run.boon.deep_pockets` hooks; Colophon shop stock |
+| 11 | every kit item template with its base value; `item.food.ration`; `item.tool.{bandage, pick, lockpicks}`; `item.potion.{healing, haste, focus, fortify, aether, antidote, invisibility, clarity, regeneration, shielding}`; `item.text.{mending, blink, mapping, demolition, appraisal, recharge, sanctify, summoning}`; `item.throwable.{javelin, knife, smoke, frag, fire_flask, poison_flask, disruptor_flask}`; `item.book.{primer_evocation, primer_abjuration}`; `apparatus.vessel.flask`; `item.trinket.{lattice_lens, holy_symbol}`; Script-kit items `item.face.mask`, `item.back.cloak`, `item.belt.sash`, `item.tool.{rope, torch}` at the doc 11 §3 base values §2.4.2 uses; `item.quest.catchword`; `item.remains`; `loot.volume_reward`; `offer_rng(slot, context_uid, purpose)` with advance-by-one-on-commit (doc 11 §11.2); `loot.pool.<suffix>` tags renormalized inside rarity bands; `lucre_bp`, `shop_price_bp`, `reliq_key_delta` and `run.boon.deep_pockets` hooks; Colophon shop stock |
 | 12 | `room.{incipit, colophon, interleaf}`, `room.prologue_l1` to `l7`; the Colophon lectern (doc 12's Threshold lectern); `folio_type()` and rest-Folio rules; sanctuary flag; sealed Colophon entrance; Interleaf at `INTERLEAF_PATH_BP`; Rubric draw with weights `[5000, 3000, 2000]`; `generate(seed, f, d, genre, ...)` with depth; `folio_scale_bp`; `ambush_extra`; bleed-zone count hook; `rooms_total`; Illumination vault and rescue flags; lattice draw on demand; secret exits; 3 room variants per `unlock.room.lost_chapter_<g>` |
 | 13 | `boss.editor_v1..=v4`, `boss.ur_editor`, `enemy.prologue_hunter`, `npc.companion.<origin_suffix>`; `keeper` flag; Seal waves; `elite_promote_add_bp`; `champion_extra`; `telegraphed` attack flag; `final_phase_extra`; `sys.erasure` honouring `clock_start` and `colophon_entry_tick`; Colophon desecration hunters; every `template_hp ≤ 400` HP; kill XP × 16667 in Abridged; the hireling type behind each `unlock.hireling.*` ID of §2.3; the Redactor invader and the Redacted outcome of a `mode.invasion_open` run (Canon §17.9) |
 | 15 | Quires `min(400, floor_div(run_score, 50))` per run; achievement grades paid at 10/25/50/100 Quires and 40/80/160/320 Ink; Ink, Codex XP and Reliquaries from `RunSummary`; Folds and kit A/B rule; `cosm.*` catalog entries named in Exports, including `cosm.margin.*` decorations for §5.1a; Apocrypha flag; Inkwell reference of 19.6 hours (slot A) and 13.9 hours (slot B); the §3.1.2 Script catalog granting exactly the 48 `unlock.` IDs of §2.3; the Echo binding of §6.3 with the five public-domain figures in the places §6.3 gives them; `juris.flag.invasion_minor_default` |
@@ -1723,7 +1723,7 @@ Data constants exported: the §1.1 table, `grade_bp(G)`, `RUN_SCORE_BP = 1460`, 
 39. **Script grants.** The launch Script catalog grants exactly the 48 `unlock.` IDs of §2.3: 12 `unlock.room.lost_chapter_<g>`, 12 `unlock.hireling.chapter_<g>`, 6 `unlock.glyph.<family>`, 5 `unlock.hireling.<type>` and 13 `unlock.kit.<calling>_script`. None has a Quire price.
 40. **Invasion overlay.** A Daily, Weekly Gauntlet or Prologue lobby never shows `mode.invasion_open`; a Standard run with it gets no ranked token and is unranked; a solo run with it may be invaded; when the invader reduces the last living Erratum to 0 HP the run does not end; a Suspend requested while the invader is present completes on the tick the invasion ends.
 41. **Trophy alcove.** `margin.plot` holds exactly 32 `margin.slot.*` records (12 trophy, 8 wall, 6 floor, 3 banner, 3 light); 8 are open at `first_run_end`; `margin.slot.trophy_05` opens at 2 achievements and `margin.slot.light_03` at 48; `margin.slot.trophy_05` is centred at `(3040, 0, 5400)`; no slot record has a gameplay stat or a Quire price.
-42. **Public-domain Echoes.** `echo.fenrir` has `body.quadruped` and its standard Monk kit places `arch.armor.light_hands` in the bag; `echo.jormungandr` has `body.serpentine` and places `arch.armor.light_legs` and `arch.armor.light_feet` in the bag; every Calling has 1 to 3 Echoes.
+42. **Public-domain Echoes.** `echo.fenrir` has `body.quadruped` and its standard Monk kit places `arch.armor.hands_light` in the bag; `echo.jormungandr` has `body.serpentine` and places `arch.armor.legs_light` and `arch.armor.feet_light` in the bag; every Calling has 1 to 3 Echoes.
 
 ## Invariants annex
 
