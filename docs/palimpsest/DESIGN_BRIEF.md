@@ -92,18 +92,23 @@ Fortune and Serendipity affect in-run loot only. They never affect paid gacha od
 | Stealth and perception | 09 |
 | Identification and appraisal | 10 |
 | In-run loot boxes (Reliquaries) and in-run gacha machines (Fortune Engines) | 11 |
-| Meta gacha (Inkwell), paid loot boxes (Sealed Folios), battle pass (Codex) | 15 |
+| Meta gacha (Inkwell), account-level Reliquaries, battle pass (Codex), store and compliance | 15 |
 
 ## 8. Monetization stance [FIXED]
 
-- Business model: free to play. All gameplay-affecting content is earnable through play within a stated maximum number of hours.
-- **Inkwell** is the gacha. It draws **Echoes**, which are pre-built Errata with a signature trait, and cosmetics. Duplicate Echoes give sidegrades and cosmetics, never raw stat inflation.
-- **Sealed Folios** are cosmetic loot boxes.
-- **Codex** is the battle pass. Codex Volumes never expire. A premium Volume pays back its premium-currency price across its tiers.
-- Every paid random mechanic shows odds, shows pity counters, and is server-rolled. Fairness is provable through commit-reveal seed hashing.
-- A jurisdiction feature-flag layer enforces the law in each region, such as disabling paid random items in Belgium and blocking them for minors where the law requires it. This is a technical requirement, not a design hedge.
-- In-run Reliquaries and Fortune Engines use in-run currency only and never touch real money.
-- **End-of-service guarantee.** Destiny 2 shipped its final content update on 2026-06-09 (research R2). PALIMPSEST must ship an offline-complete end-of-service mode from day one: owned Echoes, cosmetics, Codex progress and unlocks stay usable locally, verified by signed receipts, and every gameplay system runs without the backend.
+Decision, revised after research R3: **Earned Randomness, Paid Certainty.**
+
+- As of 2026-10-11, PEGI rates any new game with paid random items at PEGI 16 minimum (since June 2026). Brazil's ECA Digital (Lei 15.211/2025, in force since 2026-03-17) bans loot boxes in games likely accessed by minors. Belgium treats paid loot boxes as gambling. Australia requires an M rating for chance-based purchases and R18+ for simulated gambling. The EU Digital Fairness Act proposal is expected in November 2026. Every one of these regimes keys on payment.
+- PALIMPSEST therefore ships gacha, loot boxes and a battle pass as complete, first-class systems, and **every randomized container is funded only by earned, non-purchasable currency**. Real money buys only deterministic goods. One SKU works worldwide with no age-verification vendor.
+- Business model: premium base game, USD 24.99 in Early Access and 29.99 at 1.0; paid Folio Expansions that each add a genre; the Codex premium track at USD 9.99; direct-purchase cosmetics; a supporter pack. There is **no premium currency**. Every purchase is a fiat SKU.
+- **Inkwell** is the gacha. Pulls cost earned Ink. It draws **Echoes**, pre-built Errata with a signature trait, plus Scripts that widen run options and cosmetics. Duplicates give sidegrades and cosmetics, never flat stats.
+- **Reliquaries** are the loot boxes, earned in play, never sold, with per-account bad-luck counters and sealed contents that tie into identification.
+- **Fortune Engines** are in-run capsule machines that take in-run Lucre. Every capsule pays out an item. They have no wagering, no payout multipliers and no casino presentation, so they are not simulated gambling.
+- **Codex** is the battle pass: 100 tiers, flat XP, earned through all play, never expiring, no timers, no sold tier skips, and 100% payback because tier 100 grants a Quill that unlocks the next premium Codex.
+- Every random system shows exact odds and pity counters, is rolled on the server when online, and is provably fair through commit-reveal seed hashing.
+- A jurisdiction feature-flag layer exists. `juris.paid_random_items_enabled` is `false` globally and is never flipped by this design.
+- In-run Reliquaries and Fortune Engines use in-run currency and in-run keys only.
+- **End-of-service guarantee.** Destiny 2 shipped its final content update on 2026-06-09 (research R2). PALIMPSEST ships an offline-complete end-of-service mode from day one: owned Echoes, cosmetics, Codex progress and unlocks stay usable locally, verified by signed receipts, and every gameplay system runs without the backend.
 
 ## 9. Document contract [FIXED]
 
