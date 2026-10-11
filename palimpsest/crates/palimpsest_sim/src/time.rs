@@ -37,6 +37,25 @@ pub const RELIGHT_BUDGET: u32 = 4096;
 /// desync check cadence, every 60 ticks (canon §2.5).
 pub const HASH_PERIOD: u64 = 60;
 
+/// SPEC: canon §2.2 (canon-1.11) named boundaries: boundary `b` is the state
+/// after tick `b - 1` completes and before tick `b` runs. A row that runs on
+/// tick `t` reads boundary `t` and writes boundary `t + 1`, so the snapshot
+/// row publishes boundary `t + 1` for every even `t`.
+#[must_use]
+pub const fn boundary_after(t: Tick) -> Tick {
+    match t.checked_add(1) {
+        Some(b) => b,
+        None => panic!("boundary_after: tick overflow"),
+    }
+}
+
+/// SPEC: canon §2.5 (canon-1.11): the host hashes every boundary `b` with
+/// `b % 60 == 0` and `b >= 60`, and broadcasts that `state_hash`.
+#[must_use]
+pub const fn is_hash_boundary(b: Tick) -> bool {
+    b >= HASH_PERIOD && b.is_multiple_of(HASH_PERIOD)
+}
+
 /// SPEC: canon §2.3 "N s" means exactly `N × 60` ticks. Panics if the result
 /// does not fit `Ticks`.
 #[must_use]
@@ -805,6 +824,21 @@ mod tests {
         };
         assert!(alert.in_combat(200));
         assert!(!CombatTicks::default().in_combat(5));
+    }
+
+    /// Review (canon §2.2, §2.5 (canon-1.11)): boundary arithmetic at the
+    /// ends of `u64`, and exactly one hashed boundary per 60.
+    #[test]
+    fn hash_boundary_extremes() {
+        let top = u64::MAX - u64::MAX % HASH_PERIOD;
+        assert!(is_hash_boundary(top));
+        assert!(!is_hash_boundary(u64::MAX));
+        assert_eq!(boundary_after(u64::MAX - 1), u64::MAX);
+        assert_eq!((0..=600u64).filter(|&b| is_hash_boundary(b)).count(), 10);
+        assert_eq!(
+            (0..=600u64).filter(|&b| is_hash_boundary(b)).min(),
+            Some(60)
+        );
     }
 
     const DIVISORS: [u32; 12] = [1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60];

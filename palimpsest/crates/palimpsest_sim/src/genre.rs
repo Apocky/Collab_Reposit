@@ -162,7 +162,8 @@ pub struct GenreRow {
     pub fall_dmg_bp: i32,
     /// §5.9: multiplies ground deceleration.
     pub ground_friction_bp: i32,
-    /// §5.9: highest block-light level in which ambient and wave spawns occur.
+    /// §5.9: highest block-light level in which ambient spawns, wave spawns and
+    /// the initial population may occur (§12.3).
     pub spawn_block_max: u8,
     /// §5.9 palette as `0xRRGGBB`.
     pub palette: [u32; 3],
@@ -571,7 +572,7 @@ pub static GENRES: [GenreRow; 16] = [
         manufacturers: &[
             m(
                 "mfr.post_apocalypse.rustmaw",
-                "magazine × 20000, durability × 5000",
+                "magazine × 20000, reload time × 13000",
             ),
             m(
                 "mfr.post_apocalypse.lastditch",
@@ -745,7 +746,7 @@ pub static GENRES: [GenreRow; 16] = [
         manufacturers: &[
             m(
                 "mfr.mythic_antiquity.hephaesteum",
-                "no durability loss; immune to st.disarmed",
+                "the wielder is immune to st.disarmed and st.corroded",
             ),
             m(
                 "mfr.mythic_antiquity.argive",
@@ -773,7 +774,7 @@ pub static GENRES: [GenreRow; 16] = [
         materials: &["mat.dreamstuff"],
         manufacturers: &[m(
             "mfr.oneiric.somnambule",
-            "projectiles pass through blocks after 10 m of flight",
+            "after 10 m of flight, projectiles pass through destructible and non-opaque blocks without spending penetration (§4.3)",
         )],
     },
     GenreRow {
@@ -926,6 +927,113 @@ mod tests {
             "mfr.ur_text.first_press"
         );
         assert!(Genre::Unwritten.row().manufacturers.is_empty());
+    }
+
+    /// Cells of a Markdown table row (`| a | b |` gives `["a", "b"]`).
+    fn cells(line: &str) -> Vec<&str> {
+        let t = line.trim();
+        let inner = t.strip_prefix('|').and_then(|r| r.strip_suffix('|'));
+        inner.map_or_else(Vec::new, |r| r.split('|').map(str::trim).collect())
+    }
+
+    /// SPEC: canon §5.2 and §5.9 (canon-1.11): every column this crate copies,
+    /// manufacturer signatures included (backticks and the final period
+    /// dropped), equals the canon text. Skipped when the spec is not next to
+    /// the workspace (a standalone export).
+    #[test]
+    fn genre_tables_match_canon_text() {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../docs/palimpsest/spec/00_CANON.md"
+        );
+        let Ok(canon) = std::fs::read_to_string(path) else {
+            std::eprintln!("skipped: {path} not found");
+            return;
+        };
+        let lines: Vec<&str> = canon.lines().collect();
+        let mut s52 = 0;
+        let mut s59 = 0;
+        let mut mfr = 0;
+        for line in &lines {
+            let c = cells(line);
+            // §5.2: | # | `genre.x` | Display | ARC | TEC | MYT | VRV | aether | gravity | light | Lucre | Aether | Tier |
+            if c.len() == 13 && c[1].starts_with("`genre.") {
+                let id = c[1].trim_matches('`');
+                let g = Genre::from_id(id).expect("canon genre is in the table");
+                let r = g.row();
+                assert_eq!(c[0], (g.index() + 1).to_string(), "{id} #");
+                assert_eq!(c[2], r.display_name, "{id}");
+                for (i, a) in Axiom::ALL.into_iter().enumerate() {
+                    assert_eq!(c[3 + i], r.axioms.get(a).to_string(), "{id} {a:?}");
+                }
+                let aether = r.aether_axiom.map_or("none", |a| match a {
+                    Axiom::Arcana => "arcana",
+                    Axiom::Techne => "techne",
+                    Axiom::Mythos => "mythos",
+                    Axiom::Verve => "verve",
+                });
+                assert_eq!(c[7], aether, "{id}");
+                assert_eq!(c[8], r.gravity_bp.to_string(), "{id}");
+                assert_eq!(c[9], r.ambient_light.to_string(), "{id}");
+                assert_eq!(c[10], r.lucre_skin, "{id}");
+                assert_eq!(c[11], r.aether_skin, "{id}");
+                let tier = if r.tier == Tier::Core {
+                    "core"
+                } else {
+                    "secret"
+                };
+                assert_eq!(c[12], tier, "{id}");
+                s52 += 1;
+            }
+            // §5.9 identity: | suffix | air | fall | friction | spawn | palette | music | themes | materials |
+            if c.len() == 9 && c[5].starts_with("`#") {
+                let g = Genre::ALL
+                    .into_iter()
+                    .find(|g| g.suffix() == c[0])
+                    .expect("canon §5.9 suffix");
+                let r = g.row();
+                assert_eq!(c[1], r.air_accel_bp.to_string(), "{}", c[0]);
+                assert_eq!(c[2], r.fall_dmg_bp.to_string(), "{}", c[0]);
+                assert_eq!(c[3], r.ground_friction_bp.to_string(), "{}", c[0]);
+                assert_eq!(c[4], r.spawn_block_max.to_string(), "{}", c[0]);
+                let palette: Vec<String> = r.palette.iter().map(|p| format!("#{p:06X}")).collect();
+                assert_eq!(c[5].trim_matches('`'), palette.join(" "), "{}", c[0]);
+                assert_eq!(c[6], r.music, "{}", c[0]);
+                assert_eq!(c[7], r.enemy_themes, "{}", c[0]);
+                let mats: Vec<&str> = c[8]
+                    .split_whitespace()
+                    .map(|m| m.trim_matches('`'))
+                    .collect();
+                assert_eq!(mats, r.materials, "{}", c[0]);
+                s59 += 1;
+            }
+            // §5.9 manufacturers: | suffix | `mfr.x.y`: trait. `mfr.x.z`: trait. |
+            if c.len() == 2 && c[1].starts_with("`mfr.") {
+                let g = Genre::ALL
+                    .into_iter()
+                    .find(|g| g.suffix() == c[0])
+                    .expect("canon manufacturer suffix");
+                let parsed: Vec<(String, String)> = c[1]
+                    .split("`mfr.")
+                    .skip(1)
+                    .map(|piece| {
+                        let (name, rest) = piece.split_once("`: ").expect("`mfr.x`: trait");
+                        let text = rest.trim().trim_end_matches('.').replace('`', "");
+                        (format!("mfr.{name}"), text)
+                    })
+                    .collect();
+                let code: Vec<(String, String)> = g
+                    .row()
+                    .manufacturers
+                    .iter()
+                    .map(|m| (m.id.to_string(), m.signature.to_string()))
+                    .collect();
+                assert_eq!(parsed, code, "{}", c[0]);
+                mfr += 1;
+            }
+        }
+        assert_eq!((s52, s59), (16, 16));
+        assert_eq!(mfr, 15, "12 core rows plus oneiric, redacted and ur_text");
     }
 
     /// SPEC: canon §5.2 structure: 16 rows, 12 core, ids unique with the

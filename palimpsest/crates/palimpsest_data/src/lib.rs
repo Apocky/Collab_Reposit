@@ -26,6 +26,9 @@ mod canon_tests;
 mod test_support;
 
 pub use hex::{HexU64Error, format_hex_u64, parse_hex_u64};
-pub use ids::{ContentId, Id32, IdError, is_content_id, namespace_of, validate_content_id};
-pub use registry::{Entry, ID32_COLLISION, IdRegistry, RegistryError};
+pub use ids::{
+    ContentId, Id32, IdError, IdOrigin, ModSegmentError, is_content_id, mod_id_of, namespace_of,
+    validate_content_id, validate_id_origin,
+};
+pub use registry::{Entry, ID32_COLLISION, IdRegistry, MOD_SEGMENT_INVALID, RegistryError};
 pub use text_key::{TextKey, TextKeyError, is_text_key, validate_text_key};

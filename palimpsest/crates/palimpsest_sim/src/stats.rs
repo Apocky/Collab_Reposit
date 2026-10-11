@@ -516,8 +516,10 @@ pub const fn spell_potency_base_bp(atn: i32, school_skill: i32) -> i32 {
     10_000 + d(atn) * 50 + school_skill * 30
 }
 
-/// SPEC: canon §6.4 row 29. Spell potency for one glyph: the base row × that
-/// glyph's §5.7 GLYPH term (`contradiction::glyph_term_bp`).
+/// SPEC: canon §6.4 row 29 (canon-1.11). Spell potency for one glyph: the
+/// base row × that glyph's §5.7 GLYPH term (`contradiction::glyph_term_bp`);
+/// the row applies the GLYPH term for each glyph of the stage that produces
+/// the effect (doc 06), so the caller chains one term per glyph of that stage.
 #[must_use]
 pub const fn spell_potency_bp(atn: i32, school_skill: i32, glyph_term_bp: i32) -> i32 {
     mul_bp_i32(spell_potency_base_bp(atn, school_skill), glyph_term_bp)
@@ -625,8 +627,9 @@ pub const fn curse_resistance_bp(prv: i32) -> i32 {
 /// SPEC: canon §1.5, §10.8. Death's Door leaves HP at 1,000 mHP.
 pub const DEATHS_DOOR_HP_MHP: i64 = 1000;
 
-/// SPEC: doc 04 §12.1. Keyed `seq` reserved for the Death's Door roll.
-pub const DEATHS_DOOR_SEQ: u32 = 0xFFFF;
+/// SPEC: canon §3.3 (canon-1.11), doc 04 §12.1. Keyed `seq` reserved for the
+/// Death's Door roll: `0xFFFF` on `rng.combat`.
+pub const DEATHS_DOOR_SEQ: u32 = palimpsest_math::rng::seq::COMBAT_DEATHS_DOOR;
 
 /// SPEC: canon §6.4 row 43, §6.5, §5.11. Whether a Death's Door roll is made:
 /// Errata only, once per Folio, and never while `st.unmoored` lasts.

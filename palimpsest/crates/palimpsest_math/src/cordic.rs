@@ -62,9 +62,10 @@ pub fn atan2_bam(y: i64, x: i64) -> Bam {
     u16::try_from(bam.rem_euclid(65_536)).expect("wrapped into u16")
 }
 
-/// SPEC: canon §1.9, doc 02 §4.4 `yaw_from_dir(dx, dz) = atan2_bam(-dx.raw(), -dz.raw())`:
-/// the canon §1.9 yaw (0 faces -Z, counter-clockwise seen from above) of a
-/// horizontal direction.
+/// SPEC: canon §1.9, §21 test 46, doc 02 §4.4 `yaw_from_dir(dx, dz) =
+/// atan2_bam(-dx.raw(), -dz.raw())`: the canon §1.9 yaw (0 faces -Z,
+/// counter-clockwise seen from above) that faces the horizontal direction
+/// `(dx, dz)`, the inverse of `fwd`.
 #[inline]
 #[must_use]
 pub fn yaw_from_dir(dx: Fx, dz: Fx) -> Bam {
@@ -185,6 +186,53 @@ mod tests {
             }
             let b = atan2_bam(y, x);
             assert!(within_one_bam(y, x, b), "({x}, {y}) -> {b}");
+        }
+    }
+
+    /// SPEC: canon §21 test 46. `yaw_from_dir(0, -1 m)` is within 1 Bam of 0,
+    /// and `yaw_from_dir(-1 m, 0)` is within 1 Bam of 16384, the yaw whose
+    /// `fwd` is −X (canon §1.9: `atan2_bam(y, x)` is the angle of `(x, y)`
+    /// counter-clockwise from +x, and `yaw_from_dir(dx, dz) = atan2_bam(-dx, -dz)`).
+    #[test]
+    fn canon_t46_yaw_from_dir() {
+        let m = fx_from_milli(1000);
+        let north = yaw_from_dir(Fx::ZERO, -m);
+        let west = yaw_from_dir(-m, Fx::ZERO);
+        assert!(crate::trig::ang_diff(north, 0) <= 1, "north -> {north}");
+        assert!(crate::trig::ang_diff(west, 16_384) <= 1, "west -> {west}");
+        // 16384 is the yaw whose forward vector is −X: fwd(16384, 0) = (-2^30, 0, 0).
+        assert_eq!(crate::trig::fwd(16_384, 0), [-(1 << 30), 0, 0]);
+        // The argument convention: atan2_bam(y, x) measures (x, y) from +x.
+        assert_eq!(atan2_bam(0, 1), 0);
+        assert_eq!(atan2_bam(1, 0), 16_384);
+    }
+
+    /// Review (canon §1.9, §21 test 46): the yaw that faces each cardinal and
+    /// diagonal direction (yaw 0 faces −Z, counter-clockwise from above: −X
+    /// is 16384, +Z 32768, +X 49152), within the ±1 Bam contract, at 1 m and
+    /// at 100 km.
+    #[test]
+    fn canon_t46_cardinals_and_diagonals() {
+        for len in [1_000i64, 100_000_000] {
+            let m = fx_from_milli(len);
+            let z = Fx::ZERO;
+            let cases = [
+                (z, -m, 0u16),
+                (-m, -m, 8_192),
+                (-m, z, 16_384),
+                (-m, m, 24_576),
+                (z, m, 32_768),
+                (m, m, 40_960),
+                (m, z, 49_152),
+                (m, -m, 57_344),
+            ];
+            for (dx, dz, want) in cases {
+                let got = yaw_from_dir(dx, dz);
+                assert!(
+                    crate::trig::ang_diff(got, want) <= 1,
+                    "({len}) {want} -> {got}"
+                );
+            }
         }
     }
 

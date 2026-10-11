@@ -163,6 +163,81 @@ pub fn namespace_of(id: &str) -> Option<&str> {
     }
 }
 
+/// SPEC: canon §1.1. Mod content IDs use `x_<mod_id>` as their second
+/// segment, for example `item.x_frostpack.ice_blade`; base content never uses
+/// a second segment that starts with `x_`.
+pub const MOD_SEGMENT_PREFIX: &str = "x_";
+
+/// SPEC: canon §1.1. Who owns a content ID: the base game or one mod.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum IdOrigin<'a> {
+    /// Base content: the second segment never starts with `x_`.
+    Base,
+    /// Content of the mod `mod_id`: the second segment is `x_<mod_id>`.
+    Mod(&'a str),
+}
+
+/// SPEC: canon §1.1. Why a valid content ID breaks the mod namespace rule.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ModSegmentError {
+    /// Base content whose second segment starts with `x_`.
+    BaseUsesModSegment,
+    /// Mod content whose second segment is not `x_<mod_id>` of its mod.
+    NotOwnModSegment,
+}
+
+impl fmt::Display for ModSegmentError {
+    /// SPEC: canon §1.1 human-readable reason.
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::BaseUsesModSegment => {
+                f.write_str("base content id has a second segment starting with `x_`")
+            }
+            Self::NotOwnModSegment => {
+                f.write_str("mod content id's second segment is not `x_<mod_id>` of its mod")
+            }
+        }
+    }
+}
+
+impl core::error::Error for ModSegmentError {}
+
+/// SPEC: canon §1.1. The second segment of a valid content ID (the segment
+/// after the namespace); `None` when `id` is not a valid content ID.
+#[must_use]
+pub fn second_segment(id: &str) -> Option<&str> {
+    if is_content_id(id) {
+        id.split('.').nth(1)
+    } else {
+        None
+    }
+}
+
+/// SPEC: canon §1.1. The `<mod_id>` of a mod content ID whose second segment
+/// is `x_<mod_id>`; `None` for base-shaped IDs and for non-IDs.
+/// GAP: `x_` alone (an empty `<mod_id>`) counts as a mod segment with an
+/// empty mod ID, which matches no mod; doc 02 §13.1 owns the `mod_id` grammar.
+#[must_use]
+pub fn mod_id_of(id: &str) -> Option<&str> {
+    second_segment(id)?.strip_prefix(MOD_SEGMENT_PREFIX)
+}
+
+/// SPEC: canon §1.1. Check the mod namespace rule for a valid content ID:
+/// base content never uses an `x_` second segment, and a mod's content uses
+/// exactly `x_<mod_id>`. Grammar errors are [`validate_content_id`]'s job;
+/// a string that is not a content ID passes this check unchanged.
+pub fn validate_id_origin(id: &str, origin: IdOrigin<'_>) -> Result<(), ModSegmentError> {
+    if !is_content_id(id) {
+        return Ok(());
+    }
+    match (origin, mod_id_of(id)) {
+        (IdOrigin::Base, Some(_)) => Err(ModSegmentError::BaseUsesModSegment),
+        (IdOrigin::Base, None) => Ok(()),
+        (IdOrigin::Mod(m), Some(found)) if found == m && !m.is_empty() => Ok(()),
+        (IdOrigin::Mod(_), _) => Err(ModSegmentError::NotOwnModSegment),
+    }
+}
+
 /// SPEC: canon §1.1 compact content identifier `id32 = fnv1a32(utf8(id))`,
 /// used in saves and packets. Doc 02 §3.4 gives it a public `u32` field.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -317,6 +392,50 @@ mod tests {
             && segs[0] != "loc"
     }
 
+    /// SPEC: canon §1.1 mod namespace: `item.x_frostpack.ice_blade` is mod
+    /// `frostpack`'s; base content never uses an `x_` second segment.
+    #[test]
+    fn mod_segment_rule() {
+        let modded = "item.x_frostpack.ice_blade";
+        assert!(is_content_id(modded));
+        assert_eq!(second_segment(modded), Some("x_frostpack"));
+        assert_eq!(mod_id_of(modded), Some("frostpack"));
+        assert_eq!(
+            validate_id_origin(modded, IdOrigin::Mod("frostpack")),
+            Ok(())
+        );
+        assert_eq!(
+            validate_id_origin(modded, IdOrigin::Base),
+            Err(ModSegmentError::BaseUsesModSegment)
+        );
+        assert_eq!(
+            validate_id_origin(modded, IdOrigin::Mod("other")),
+            Err(ModSegmentError::NotOwnModSegment)
+        );
+        // A mod record without its x_ segment is refused; base content passes.
+        assert_eq!(
+            validate_id_origin("item.ice_blade", IdOrigin::Mod("frostpack")),
+            Err(ModSegmentError::NotOwnModSegment)
+        );
+        assert_eq!(validate_id_origin("item.ice_blade", IdOrigin::Base), Ok(()));
+        assert_eq!(mod_id_of("item.ice_blade"), None);
+        // `x_` only counts in the second segment; `xx_` and a later `x_` do not.
+        assert_eq!(mod_id_of("item.xx_frost.a"), None);
+        assert_eq!(mod_id_of("item.blade.x_frost"), None);
+        assert_eq!(
+            validate_id_origin("item.blade.x_frost", IdOrigin::Base),
+            Ok(())
+        );
+        // An empty mod ID matches no mod.
+        assert_eq!(
+            validate_id_origin("item.x_.a", IdOrigin::Mod("")),
+            Err(ModSegmentError::NotOwnModSegment)
+        );
+        // Non-IDs are the grammar check's business.
+        assert_eq!(second_segment("Genre.X"), None);
+        assert_eq!(validate_id_origin("Genre.X", IdOrigin::Base), Ok(()));
+    }
+
     /// SPEC: canon §1.1 accepted examples from the canon and §19 namespaces.
     #[test]
     fn content_id_accepts_canon_examples() {
@@ -460,6 +579,42 @@ mod tests {
             prop_assert_eq!(id.id32(), Id32(fnv1a32(s.as_bytes())));
             let round: ContentId = id.to_string().parse().expect("round trip");
             prop_assert_eq!(round, id);
+        }
+
+        /// Review (canon §1.1 (canon-1.11)): `ns.x_<m>.rest` belongs to mod
+        /// `m` alone and never to base content; an ID whose second segment
+        /// does not start with `x_` is base-shaped and no mod's record.
+        #[test]
+        fn mod_segment_property(
+            ns in "[a-z][a-z0-9_]{0,6}", m in "[a-z0-9][a-z0-9_]{0,8}",
+            other in "[a-z0-9][a-z0-9_]{0,8}", seg in "[a-z0-9_]{1,8}",
+        ) {
+            let modded = format!("{ns}.x_{m}.{seg}");
+            prop_assert!(is_content_id(&modded));
+            prop_assert_eq!(mod_id_of(&modded), Some(m.as_str()));
+            prop_assert_eq!(validate_id_origin(&modded, IdOrigin::Mod(&m)), Ok(()));
+            prop_assert_eq!(
+                validate_id_origin(&modded, IdOrigin::Base),
+                Err(ModSegmentError::BaseUsesModSegment)
+            );
+            if other != m {
+                prop_assert_eq!(
+                    validate_id_origin(&modded, IdOrigin::Mod(&other)),
+                    Err(ModSegmentError::NotOwnModSegment)
+                );
+            }
+            let plain = format!("{ns}.{seg}");
+            prop_assert_eq!(second_segment(&plain), Some(seg.as_str()));
+            if seg.starts_with(MOD_SEGMENT_PREFIX) {
+                prop_assert_eq!(mod_id_of(&plain), seg.strip_prefix(MOD_SEGMENT_PREFIX));
+            } else {
+                prop_assert_eq!(mod_id_of(&plain), None);
+                prop_assert_eq!(validate_id_origin(&plain, IdOrigin::Base), Ok(()));
+                prop_assert_eq!(
+                    validate_id_origin(&plain, IdOrigin::Mod(&m)),
+                    Err(ModSegmentError::NotOwnModSegment)
+                );
+            }
         }
     }
 }

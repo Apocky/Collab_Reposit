@@ -31,12 +31,12 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::entity::{EntityAllocator, EntityId, IdCounter, ItemUid, MAX_FOLIO_INDEX, UidAllocator};
 use crate::time::{
-    CombatTicks, HASH_PERIOD, K_PER_TICK, K_STATUS_PULSE, RateAcc, StatusTimer, Subsystem, Tick,
-    Ticks, after_secs_without, runs_on, runs_on_entity, secs,
+    CombatTicks, K_PER_TICK, K_STATUS_PULSE, RateAcc, StatusTimer, Subsystem, Tick, Ticks,
+    after_secs_without, boundary_after, is_hash_boundary, runs_on, runs_on_entity, secs,
 };
 use palimpsest_math::geom::{Fx3, semi_implicit_euler};
 use palimpsest_math::int::{ceil_div, floor_div, floor_div_i128, mul_bp, narrow_i64};
-use palimpsest_math::rng::{stream_rng, streams};
+use palimpsest_math::rng::{seq, stream_rng, streams};
 use palimpsest_math::trig::clamp_pitch;
 use palimpsest_math::{
     Bam, Fx, Rng, blake3_256, cos_bam, dist2, fnv1a32, fx_from_milli, isqrt_u128, keyed_rng,
@@ -85,6 +85,31 @@ pub mod buttons {
     /// SPEC: canon §2.4, doc 02 §5.5 bits 26–31: reserved, must be 0; the replay
     /// validator rejects set bits.
     pub const RESERVED: u32 = 0xFC00_0000;
+    /// SPEC: canon §11.8 (canon-1.11), doc 16 §5.4 `HOLD_MASK`: the held bits
+    /// a neutral substitute keeps, `CROUCH` (bit 4), `WALK` (bit 24) and
+    /// `QUICKBAR_INDEX` (bits 15–17): stance and the selected quickbar index.
+    pub const HOLD_MASK: u32 = (1 << 4) | (1 << 24) | (0b111 << 15);
+}
+
+/// SPEC: canon §11.8 (canon-1.11), doc 16 §5.4. The neutral substitute the
+/// host applies when a slot's command for tick `t` is missing: no movement,
+/// every action button released, stance and quickbar index kept, the last
+/// yaw, pitch and `action_seq`, `view_tick = t`. It holds no press edge (every
+/// bit it holds was already held), so it starts nothing; input is never
+/// synthesized for a player. The replay log records it.
+#[must_use]
+pub const fn neutral_substitute(last: &PlayerCommand, t: Tick) -> PlayerCommand {
+    PlayerCommand {
+        tick: t,
+        slot: last.slot,
+        move_x: 0,
+        move_z: 0,
+        yaw: last.yaw,
+        pitch: last.pitch,
+        buttons: last.buttons & buttons::HOLD_MASK,
+        action_seq: last.action_seq,
+        view_tick: t,
+    }
 }
 
 /// SPEC: canon §1.8. The Folio box spans `x, z ∈ [0, 256)` m; positions clamp
@@ -155,6 +180,29 @@ pub const fn display_milli(x: Milli) -> i64 {
 #[must_use]
 pub const fn display_hp(current_mhp: Milli) -> i64 {
     ceil_div(current_mhp, 1000)
+}
+
+/// SPEC: canon §1.5 (canon-1.11). How a per-second `Milli` rate displays.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum RateDisplay {
+    /// Below 10 display units: one decimal place, as a count of tenths.
+    Tenths(i64),
+    /// Otherwise: whole display units.
+    Whole(i64),
+}
+
+/// SPEC: canon §1.5 (canon-1.11): per-second rates below 10 display units
+/// display with one decimal place as `floor(x / 100)` tenths; others as
+/// `floor(x / 1000)`. Doc 17's example: 673 mHP/s displays "0.6".
+/// GAP: "below 10 display units" is read as `x < 10,000`, so negative rates
+/// also use tenths.
+#[must_use]
+pub const fn display_rate_per_s(x: Milli) -> RateDisplay {
+    if x < 10_000 {
+        RateDisplay::Tenths(floor_div(x, 100))
+    } else {
+        RateDisplay::Whole(floor_div(x, 1000))
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -548,15 +596,49 @@ pub enum CommandError {
     OutOfOrder,
 }
 
-/// SPEC: canon §2.4. The header of every save, replay and lobby handshake.
+/// SPEC: canon §2.4 (canon-1.11). The header of every save and replay:
+/// `sim_version`, `content_hash` and `run_seed`. A lobby handshake carries
+/// only `sim_version` and `content_hash`; a lobby receives `run_seed` in the
+/// run header the host sends when it commits the run (doc 16).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct SessionHeader {
     /// [`SIM_VERSION`] of the writer.
     pub sim_version: u32,
-    /// BLAKE3 over the canonical serialization of all loaded content.
+    /// BLAKE3 over the canonical serialization (doc 02 §11.2) of every
+    /// loaded content record outside the presentation namespaces `art.`,
+    /// `aud.`, `vfx.`, `nar.` and `ui.`, plus the simulation-affecting mods,
+    /// the run's unlock set and the simulation-affecting flags. Peers, saves
+    /// and replays must match it.
     pub content_hash: [u8; 32],
     /// The run seed.
     pub run_seed: u64,
+}
+
+/// SPEC: canon §2.4 (canon-1.11). The content namespaces whose records feed
+/// `presentation_hash` instead of `content_hash`.
+pub const PRESENTATION_NAMESPACES: [&str; 5] = ["art", "aud", "vfx", "nar", "ui"];
+
+/// SPEC: canon §2.4 (canon-1.11). `true` when a content record with this ID
+/// belongs to `presentation_hash` (its namespace is `art.`, `aud.`, `vfx.`,
+/// `nar.` or `ui.`), `false` when it belongs to `content_hash`.
+#[must_use]
+pub fn is_presentation_record(content_id: &str) -> bool {
+    content_id
+        .split_once('.')
+        .is_some_and(|(ns, _)| PRESENTATION_NAMESPACES.contains(&ns))
+}
+
+/// SPEC: canon §2.4 (canon-1.11). Comparing a replay's hashes with the local
+/// ones: `content_hash` and `sim_version` must match; a `presentation_hash`
+/// mismatch only warns.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum ReplayCompat {
+    /// Everything matches.
+    Exact,
+    /// The simulation matches; presentation differs (warn, then play).
+    PresentationMismatch,
+    /// `sim_version` or `content_hash` differs: the replay cannot be played.
+    Incompatible,
 }
 
 impl Canonical for SessionHeader {
@@ -574,22 +656,50 @@ impl Canonical for SessionHeader {
     }
 }
 
-/// SPEC: canon §2.4. A replay log: the session header and the host's applied
-/// commands, strictly ascending by `(tick, slot)`, at most one per pair.
+/// SPEC: canon §2.4. A replay log: the session header, the
+/// `presentation_hash` (canon-1.11), and the host's applied commands,
+/// strictly ascending by `(tick, slot)`, at most one per pair. The skeleton
+/// applies no intents, so the log holds no intent records (the canon §2.4
+/// intent list is not in the slice yet).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ReplayLog {
     /// The session header.
     pub header: SessionHeader,
+    /// Canon §2.4 `presentation_hash`: BLAKE3 over the presentation records,
+    /// the localization tables and the presentation-only mods. Replays record
+    /// it; a mismatch only warns.
+    pub presentation_hash: [u8; 32],
     commands: Vec<PlayerCommand>,
 }
 
 impl ReplayLog {
     /// SPEC: canon §2.4. An empty log for a session.
     #[must_use]
-    pub const fn new(header: SessionHeader) -> ReplayLog {
+    pub const fn new(header: SessionHeader, presentation_hash: [u8; 32]) -> ReplayLog {
         ReplayLog {
             header,
+            presentation_hash,
             commands: Vec::new(),
+        }
+    }
+
+    /// SPEC: canon §2.4 (canon-1.11). Whether this replay plays on a build
+    /// with `sim_version` and the local `content_hash` and
+    /// `presentation_hash`: the simulation hashes must match, presentation
+    /// only warns.
+    #[must_use]
+    pub fn compat(
+        &self,
+        sim_version: u32,
+        content_hash: &[u8; 32],
+        presentation_hash: &[u8; 32],
+    ) -> ReplayCompat {
+        if self.header.sim_version != sim_version || &self.header.content_hash != content_hash {
+            ReplayCompat::Incompatible
+        } else if &self.presentation_hash != presentation_hash {
+            ReplayCompat::PresentationMismatch
+        } else {
+            ReplayCompat::Exact
         }
     }
 
@@ -620,12 +730,13 @@ impl ReplayLog {
         &self.commands[lo..hi]
     }
 
-    /// SPEC: canon §2.4, §2.5. Canonical bytes: header, `u32le` count, then
-    /// each 31-byte command.
+    /// SPEC: canon §2.4, §2.5. Canonical bytes: header, the 32-byte
+    /// `presentation_hash`, `u32le` count, then each 31-byte command.
     #[must_use]
     pub fn encode(&self) -> Vec<u8> {
         let mut out = Vec::new();
         self.header.put(&mut out);
+        self.presentation_hash.put(&mut out);
         self.commands.put(&mut out);
         out
     }
@@ -635,9 +746,10 @@ impl ReplayLog {
     pub fn decode(bytes: &[u8]) -> Result<ReplayLog, DecodeError> {
         let mut r = Reader::new(bytes);
         let header = SessionHeader::read(&mut r)?;
+        let presentation_hash = <[u8; 32]>::read(&mut r)?;
         let cmds = Vec::<PlayerCommand>::read(&mut r)?;
         r.finish()?;
-        let mut log = ReplayLog::new(header);
+        let mut log = ReplayLog::new(header, presentation_hash);
         for c in cmds {
             log.push(c).map_err(|e| match e {
                 CommandError::OutOfOrder => DecodeError::NotAscending("replay commands"),
@@ -1300,13 +1412,32 @@ struct TickCtx {
 }
 
 impl TickCtx {
-    /// Canon §3.3: `seq` is a per-actor action counter that resets each tick.
+    /// Canon §3.3 (canon-1.11): a running per-actor counter is allowed only
+    /// inside a range its document reserves; the skeleton's hit draws use
+    /// doc 05 §1.4's action and hit slots `0x0000..=0x01FF` on `rng.combat`
+    /// and `rng.status`, reset each tick. Panics past the range.
     fn next_seq(&mut self, actor: EntityId) -> u32 {
         let s = self.seq.entry(actor).or_insert(0);
         let v = *s;
+        assert!(
+            seq::ACTION_HIT_SLOTS.contains(&v),
+            "invariant: keyed seq outside the reserved action and hit slots"
+        );
         *s += 1;
         v
     }
+}
+
+/// SPEC: canon §2.5 (canon-1.11). When a save request completes.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum SaveTiming {
+    /// Single player: at any tick boundary.
+    AnyBoundary,
+    /// Single player while replay slot 4 holds an invader: the request
+    /// completes on the tick `ev.invasion_ended` is emitted.
+    AfterInvasion,
+    /// Co-op: only at Folio entry.
+    FolioEntryOnly,
 }
 
 /// SPEC: canon §2, doc 02 §5.5. The deterministic simulation skeleton.
@@ -1562,11 +1693,15 @@ impl Sim {
         Ok(v)
     }
 
-    /// SPEC: canon §2.1-2.4, doc 02 §5.4, doc 03 §2.2. Simulate the current
-    /// tick `t` with the host's applied commands for it (at most one per slot;
-    /// a slot without a command keeps its held state), then advance the
-    /// boundary. Systems run in doc 03 order: input apply, AI think, actions,
-    /// movement, status pulse, resources, status timers, despawn.
+    /// SPEC: canon §2.1-2.4, §11.8, doc 02 §5.4, doc 03 §2.2. Simulate the
+    /// current tick `t` with the host's applied commands for it (at most one
+    /// per slot; an occupied slot without a command gets canon §11.8's neutral
+    /// substitute, which keeps only the stance and quickbar bits of
+    /// [`buttons::HOLD_MASK`] and never moves or presses; a host that logs the
+    /// replay passes [`neutral_substitute`] explicitly, with the same result),
+    /// then advance the boundary. Systems run in doc 03 order: input apply,
+    /// AI think, actions, movement, status pulse, resources, status timers,
+    /// despawn.
     pub fn step(&mut self, commands: &[PlayerCommand]) -> Result<StepOutput, CommandError> {
         let ordered = self.order_commands(commands)?;
         let t = self.tick;
@@ -1579,8 +1714,8 @@ impl Sim {
         self.sys_resources(t, &ctx);
         self.sys_status_timers(t);
         self.sys_despawn();
-        self.tick = t.checked_add(1).expect("tick overflow");
-        let hash = if self.config.hash_at_60 && self.tick.is_multiple_of(HASH_PERIOD) {
+        self.tick = boundary_after(t);
+        let hash = if self.config.hash_at_60 && is_hash_boundary(self.tick) {
             Some(self.state_hash())
         } else {
             None
@@ -1590,7 +1725,26 @@ impl Sim {
 
     /// Doc 03 §2.2 #4: copy each slot's command in slot order, clamp pitch,
     /// map `-128` to `-127`, derive presses against the previous buttons.
+    /// Canon §11.8 (canon-1.11): an occupied slot without a command this tick
+    /// gets the neutral substitute ([`neutral_substitute`]): no movement,
+    /// action buttons released, stance and quickbar index kept, yaw and pitch
+    /// unchanged, no press edge.
     fn sys_input_apply(&mut self, ordered: &[PlayerCommand], ctx: &mut TickCtx) {
+        for s in 0..SLOTS {
+            let slot = u8::try_from(s).expect("slot fits u8");
+            if self.slots[s].entity.is_none() || ordered.iter().any(|c| c.slot == slot) {
+                continue;
+            }
+            let id = self.slots[s].entity.expect("occupied");
+            let held = self.slots[s].prev_buttons & buttons::HOLD_MASK;
+            if let Some(ctrl) = self.world.control.get_mut(id) {
+                ctrl.move_x = 0;
+                ctrl.move_z = 0;
+                ctrl.buttons = held;
+            }
+            ctx.presses[s] = 0;
+            self.slots[s].prev_buttons = held;
+        }
         for c in ordered {
             let s = usize::from(c.slot);
             let Some(id) = self.slots[s].entity else {
@@ -1956,6 +2110,22 @@ impl Sim {
         }
     }
 
+    /// SPEC: canon §2.5 (canon-1.11). When a save request may complete:
+    /// co-op (party size above 1) saves only at Folio entry; single player
+    /// saves at any tick boundary, except while replay slot 4 holds an
+    /// invader, when the request completes on the tick `ev.invasion_ended`
+    /// is emitted. [`Sim::save`] itself serializes whenever it is called.
+    #[must_use]
+    pub fn save_timing(&self) -> SaveTiming {
+        if self.config.party_size > 1 {
+            SaveTiming::FolioEntryOnly
+        } else if self.slots[usize::from(INVADER_SLOT)].entity.is_some() {
+            SaveTiming::AfterInvasion
+        } else {
+            SaveTiming::AnyBoundary
+        }
+    }
+
     /// SPEC: canon §2.5. A save: the §2.4 header followed by the canonical
     /// serialization, taken at the current tick boundary.
     #[must_use]
@@ -2273,11 +2443,14 @@ mod tests {
     /// A fixed command log: every occupied slot sends a command on every
     /// tick, with moves, yaw, pitch and buttons drawn from a test stream.
     fn make_log(seed: u64, ticks: u64, slots: &[u8]) -> ReplayLog {
-        let mut log = ReplayLog::new(SessionHeader {
-            sim_version: SIM_VERSION,
-            content_hash: cfg().content_hash,
-            run_seed: RUN,
-        });
+        let mut log = ReplayLog::new(
+            SessionHeader {
+                sim_version: SIM_VERSION,
+                content_hash: cfg().content_hash,
+                run_seed: RUN,
+            },
+            [7; 32],
+        );
         let mut g = Rng::from_seed64(seed);
         let mut held = [0u32; SLOTS];
         let mut mv = [(0i8, 0i8); SLOTS];
@@ -2939,10 +3112,12 @@ mod tests {
         let bytes = log.encode();
         assert_eq!(
             bytes.len(),
-            HEADER_LEN + 4 + 150 * PlayerCommand::ENCODED_LEN
+            HEADER_LEN + 32 + 4 + 150 * PlayerCommand::ENCODED_LEN
         );
         assert_eq!(ReplayLog::decode(&bytes).unwrap(), log);
-        let mut l2 = ReplayLog::new(log.header);
+        // Canon-1.11 §2.4: the replay records presentation_hash.
+        assert_eq!(&bytes[HEADER_LEN..HEADER_LEN + 32], &[7u8; 32]);
+        let mut l2 = ReplayLog::new(log.header, log.presentation_hash);
         l2.push(PlayerCommand {
             tick: 5,
             slot: 1,
@@ -2968,6 +3143,7 @@ mod tests {
         // An out-of-order encoded log is rejected.
         let mut bad = Vec::new();
         log.header.put(&mut bad);
+        log.presentation_hash.put(&mut bad);
         put_len(&mut bad, 2);
         PlayerCommand {
             tick: 2,
@@ -2983,6 +3159,244 @@ mod tests {
             ReplayLog::decode(&bad),
             Err(DecodeError::NotAscending("replay commands"))
         );
+    }
+
+    /// SPEC: canon §2.4 (canon-1.11): `content_hash` excludes the
+    /// presentation namespaces, which feed `presentation_hash`; replays must
+    /// match `content_hash`, and a `presentation_hash` mismatch only warns.
+    #[test]
+    fn presentation_hash_split() {
+        for id in [
+            "art.post.wuxia",
+            "aud.music.noir",
+            "vfx.sparks",
+            "nar.job.marginalia",
+            "ui.hud.minimap",
+        ] {
+            assert!(is_presentation_record(id), "{id}");
+        }
+        for id in [
+            "item.sword",
+            "genre.wuxia",
+            "loot.chest.plain",
+            "artifact.x",
+        ] {
+            assert!(!is_presentation_record(id), "{id}");
+        }
+        let log = make_log(3, 2, &SLOTS_USED);
+        let ch = cfg().content_hash;
+        assert_eq!(log.compat(SIM_VERSION, &ch, &[7; 32]), ReplayCompat::Exact);
+        assert_eq!(
+            log.compat(SIM_VERSION, &ch, &[8; 32]),
+            ReplayCompat::PresentationMismatch
+        );
+        assert_eq!(
+            log.compat(SIM_VERSION, &[9; 32], &[7; 32]),
+            ReplayCompat::Incompatible
+        );
+        assert_eq!(
+            log.compat(SIM_VERSION + 1, &ch, &[7; 32]),
+            ReplayCompat::Incompatible
+        );
+    }
+
+    /// SPEC: canon §2.2 and §2.5 (canon-1.11): boundary `b` follows tick
+    /// `b - 1`; the host hashes boundaries with `b % 60 == 0` and `b >= 60`.
+    #[test]
+    fn named_boundaries_and_hash_boundaries() {
+        assert_eq!(boundary_after(0), 1);
+        assert_eq!(boundary_after(59), 60);
+        assert!(!is_hash_boundary(0));
+        assert!(!is_hash_boundary(59));
+        assert!(is_hash_boundary(60));
+        assert!(!is_hash_boundary(61));
+        assert!(is_hash_boundary(120));
+        let mut sim = Sim::new(
+            RUN,
+            SimConfig {
+                hash_at_60: true,
+                ..cfg()
+            },
+        )
+        .unwrap();
+        let mut hashed = Vec::new();
+        for _ in 0..121 {
+            let out = sim.step(&[]).unwrap();
+            if out.hash.is_some() {
+                hashed.push(boundary_after(out.tick));
+            }
+        }
+        assert_eq!(hashed, [60, 120]);
+    }
+
+    /// SPEC: canon §2.5 (canon-1.11): single player saves at any boundary,
+    /// except while slot 4 holds an invader (the save waits for the
+    /// invasion's end); co-op saves only at Folio entry.
+    #[test]
+    fn save_timing_rules() {
+        let solo = Sim::new(
+            RUN,
+            SimConfig {
+                party_size: 1,
+                invader: false,
+                ..cfg()
+            },
+        )
+        .unwrap();
+        assert_eq!(solo.save_timing(), SaveTiming::AnyBoundary);
+        let invaded = Sim::new(
+            RUN,
+            SimConfig {
+                party_size: 1,
+                invader: true,
+                ..cfg()
+            },
+        )
+        .unwrap();
+        assert_eq!(invaded.save_timing(), SaveTiming::AfterInvasion);
+        let coop = Sim::new(
+            RUN,
+            SimConfig {
+                party_size: 3,
+                invader: false,
+                ..cfg()
+            },
+        )
+        .unwrap();
+        assert_eq!(coop.save_timing(), SaveTiming::FolioEntryOnly);
+    }
+
+    /// SPEC: canon §11.8 (canon-1.11), doc 16 §5.4: a missing command is
+    /// replaced by the neutral substitute, which never moves, releases every
+    /// action button, keeps stance and quickbar index, and never presses.
+    #[test]
+    fn missing_command_gets_neutral_substitute() {
+        let last = PlayerCommand {
+            tick: 9,
+            slot: 2,
+            move_x: 90,
+            move_z: -127,
+            yaw: 1234,
+            pitch: -500,
+            buttons: buttons::SPRINT | buttons::ATTACK_PRIMARY | (1 << 4) | (0b101 << 15),
+            action_seq: 77,
+            view_tick: 6,
+        };
+        let sub = neutral_substitute(&last, 10);
+        assert_eq!(
+            sub,
+            PlayerCommand {
+                tick: 10,
+                slot: 2,
+                move_x: 0,
+                move_z: 0,
+                yaw: 1234,
+                pitch: -500,
+                buttons: (1 << 4) | (0b101 << 15),
+                action_seq: 77,
+                view_tick: 10,
+            }
+        );
+        assert_eq!(sub.buttons & !last.buttons, 0, "no press edge");
+        assert_eq!(neutral_substitute(&sub, 11).buttons, sub.buttons);
+        // In the skeleton: a sprinting, moving Erratum stops when its command
+        // goes missing, exactly as if the substitute had been sent.
+        let mut a = Sim::new(RUN, cfg()).unwrap();
+        let mut b = Sim::new(RUN, cfg()).unwrap();
+        let go = PlayerCommand {
+            tick: 0,
+            slot: 0,
+            move_z: -127,
+            buttons: buttons::SPRINT,
+            ..PlayerCommand::default()
+        };
+        a.step(&[go]).unwrap();
+        b.step(&[go]).unwrap();
+        a.step(&[]).unwrap();
+        b.step(&[neutral_substitute(&go, 1)]).unwrap();
+        assert_eq!(a.state_hash(), b.state_hash());
+        let id = a.slots[0].entity.unwrap();
+        let ctrl = a.world.control.get(id).unwrap();
+        assert_eq!((ctrl.move_x, ctrl.move_z, ctrl.buttons), (0, 0, 0));
+    }
+
+    /// SPEC: canon §1.5 (canon-1.11): per-second rates below 10 display units
+    /// show one decimal place as `floor(x / 100)` tenths (doc 17 test 13:
+    /// 673 mHP/s displays "0.6").
+    #[test]
+    fn small_rate_display() {
+        assert_eq!(display_rate_per_s(673), RateDisplay::Tenths(6));
+        assert_eq!(display_rate_per_s(9_999), RateDisplay::Tenths(99));
+        assert_eq!(display_rate_per_s(10_000), RateDisplay::Whole(10));
+        assert_eq!(display_rate_per_s(23_000), RateDisplay::Whole(23));
+        assert_eq!(display_rate_per_s(0), RateDisplay::Tenths(0));
+        assert_eq!(display_rate_per_s(-673), RateDisplay::Tenths(-7));
+    }
+
+    /// Review (canon §1.5): the rate-display boundaries and extremes never
+    /// overflow: 9,999 and 10,000 straddle the switch, -1 floors to -1
+    /// tenth, and the `i64` ends stay in range.
+    #[test]
+    fn rate_display_extremes() {
+        assert_eq!(display_rate_per_s(99), RateDisplay::Tenths(0));
+        assert_eq!(display_rate_per_s(100), RateDisplay::Tenths(1));
+        assert_eq!(display_rate_per_s(-1), RateDisplay::Tenths(-1));
+        assert_eq!(display_rate_per_s(10_999), RateDisplay::Whole(10));
+        assert_eq!(
+            display_rate_per_s(i64::MAX),
+            RateDisplay::Whole(i64::MAX / 1000)
+        );
+        assert_eq!(
+            display_rate_per_s(i64::MIN),
+            RateDisplay::Tenths(floor_div(i64::MIN, 100))
+        );
+    }
+
+    /// Review (canon §2.4): only the namespace segment decides; a namespace
+    /// that merely starts with a presentation prefix, or a string without a
+    /// dot, is not a presentation record.
+    #[test]
+    fn presentation_namespace_edges() {
+        for id in ["arts.x", "nar_x.y", "uix.hud", "art", "", "input.attack"] {
+            assert!(!is_presentation_record(id), "{id}");
+        }
+        assert!(is_presentation_record("ui.hud.vitals"));
+        assert!(is_presentation_record("aud.music.wuxia.combat"));
+    }
+
+    /// Review (canon §2.4): a replay log whose 32-byte `presentation_hash`
+    /// is cut short does not decode.
+    #[test]
+    fn replay_log_needs_full_presentation_hash() {
+        let log = make_log(4, 1, &SLOTS_USED);
+        let bytes = log.encode();
+        assert!(ReplayLog::decode(&bytes[..HEADER_LEN + 31]).is_err());
+        assert!(ReplayLog::decode(&bytes[..bytes.len() - 1]).is_err());
+        assert_eq!(ReplayLog::decode(&bytes).unwrap(), log);
+    }
+
+    /// Review (canon §2.2): the boundary after the last representable tick
+    /// does not exist, so `boundary_after` panics instead of wrapping.
+    #[test]
+    #[should_panic(expected = "tick overflow")]
+    fn boundary_after_last_tick_panics() {
+        let _ = boundary_after(u64::MAX);
+    }
+
+    /// Review (canon §3.3): the skeleton's running keyed `seq` stays inside
+    /// doc 05's reserved action and hit slots `0x0000..=0x01FF`; slot 0x01FF
+    /// is the last one handed out, and a further draw in the same tick panics.
+    #[test]
+    fn tick_seq_stays_in_reserved_slots() {
+        let mut ctx = TickCtx::default();
+        let actor = EntityId::new(1, 1);
+        for want in 0..=0x01FFu32 {
+            assert_eq!(ctx.next_seq(actor), want);
+        }
+        // Another actor has its own counter.
+        assert_eq!(ctx.next_seq(EntityId::new(1, 2)), 0);
+        let r = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| ctx.next_seq(actor)));
+        assert!(r.is_err(), "seq 0x0200 is outside the reserved slots");
     }
 
     #[test]
@@ -3048,6 +3462,23 @@ mod tests {
             prop_assert_eq!(PlayerCommand::decode(&c.encode()), Ok(c));
         }
 
+        /// Review (canon §11.8, doc 16 §5.4): the neutral substitute holds
+        /// no press edge, keeps only `HOLD_MASK` bits, moves nowhere, keeps
+        /// the view and `action_seq`, and is idempotent.
+        #[test]
+        fn neutral_substitute_never_presses(c in arb_command(), t in any::<u64>()) {
+            let s = neutral_substitute(&c, t);
+            prop_assert_eq!(s.buttons & !c.buttons, 0);
+            prop_assert_eq!(s.buttons & !buttons::HOLD_MASK, 0);
+            prop_assert_eq!((s.move_x, s.move_z, s.tick, s.view_tick), (0, 0, t, t));
+            prop_assert_eq!(
+                (s.slot, s.yaw, s.pitch, s.action_seq),
+                (c.slot, c.yaw, c.pitch, c.action_seq)
+            );
+            prop_assert_eq!(neutral_substitute(&s, t), s);
+            prop_assert_eq!(s.validate().is_ok(), usize::from(c.slot) < SLOTS);
+        }
+
         #[test]
         fn wish_velocity_never_exceeds_speed(
             mx in any::<i8>(), mz in any::<i8>(), yaw in any::<u16>(), mm in 0i64..20_000,
@@ -3082,6 +3513,51 @@ mod tests {
             drive(&mut b, &log, 1200, &mut hb);
             prop_assert_eq!(a.state_hash(), b.state_hash());
             prop_assert_eq!(ha, hb);
+        }
+
+        /// Review (canon §11.8, §2.4, doc 16 §5.4): a run whose missing
+        /// commands the skeleton substitutes itself equals, tick by tick, the
+        /// run in which the host passes (and could log) the neutral
+        /// substitute built from each slot's last applied command.
+        #[test]
+        fn missing_commands_equal_explicit_substitutes(
+            seed in any::<u64>(), drop_seed in any::<u64>(),
+        ) {
+            let ticks = 240;
+            let log = make_log(seed, ticks, &SLOTS_USED);
+            let mut g = Rng::from_seed64(drop_seed);
+            let mut a = Sim::new(RUN, cfg()).unwrap();
+            let mut b = Sim::new(RUN, cfg()).unwrap();
+            a.enter_folio(1, inputs(1)).unwrap();
+            b.enter_folio(1, inputs(1)).unwrap();
+            let mut last: [PlayerCommand; SLOTS] = core::array::from_fn(|s| PlayerCommand {
+                slot: u8::try_from(s).unwrap(),
+                ..PlayerCommand::default()
+            });
+            for t in 0..ticks {
+                let mut sent = Vec::new();
+                let mut explicit = Vec::new();
+                for c in log.for_tick(t) {
+                    let mut c = *c;
+                    // Stance and quickbar bits, so HOLD_MASK matters.
+                    c.buttons |= (u32::try_from(g.range(2)).unwrap() << 4)
+                        | (u32::try_from(g.range(8)).unwrap() << 15)
+                        | (u32::try_from(g.range(2)).unwrap() << 24);
+                    let i = usize::from(c.slot);
+                    if g.range(4) == 0 {
+                        let sub = neutral_substitute(&last[i], t);
+                        explicit.push(sub);
+                        last[i] = sub;
+                    } else {
+                        sent.push(c);
+                        explicit.push(c);
+                        last[i] = c;
+                    }
+                }
+                a.step(&sent).unwrap();
+                b.step(&explicit).unwrap();
+                prop_assert_eq!(a.state_hash(), b.state_hash(), "tick {}", t);
+            }
         }
     }
 }

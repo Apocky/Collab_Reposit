@@ -148,13 +148,23 @@ pub struct StatusMultiplier<'a> {
     pub bp: i32,
 }
 
-/// SPEC: canon §4.2 final move speed: base speed, then §6.4 row 11, then each
-/// active status multiplier in ascending status ID byte order, one `mul_bp`
-/// each. Panics if `statuses` is not strictly ascending by ID.
+/// SPEC: canon §4.2, doc 04 §8.5. The body factor `body_move_bp` when the
+/// legs are intact (severed legs, a crutch and leg wounds lower it).
+pub const BODY_MOVE_INTACT_BP: i32 = 10_000;
+
+/// SPEC: canon §4.2 (canon-1.11) final move speed: base speed, then §6.4 row
+/// 11, then doc 04's body factor `body_move_bp` (severed legs, crutch, leg
+/// wounds; [`BODY_MOVE_INTACT_BP`] when intact), then each active status
+/// multiplier in ascending status ID byte order, one `mul_bp` each. Base
+/// speed is the §4.2 table ([`base_speed_mm_s`]) or the doc 05 stance base
+/// that replaces it; armor never multiplies speed, and encumbrance enters only
+/// through `st.encumbered` and `st.overburdened`. Panics if `statuses` is not
+/// strictly ascending by ID.
 #[must_use]
 pub fn final_move_speed_mm_s(
     base_mm_s: i64,
     row11_bp: i32,
+    body_move_bp: i32,
     statuses: &[StatusMultiplier<'_>],
 ) -> i64 {
     assert!(
@@ -165,7 +175,9 @@ pub fn final_move_speed_mm_s(
     );
     statuses
         .iter()
-        .fold(mul_bp(base_mm_s, row11_bp), |v, s| mul_bp(v, s.bp))
+        .fold(mul_bp(mul_bp(base_mm_s, row11_bp), body_move_bp), |v, s| {
+            mul_bp(v, s.bp)
+        })
 }
 
 /// SPEC: canon §5.9 `air_accel_bp` multiplies air acceleration (mm/s²).
@@ -303,14 +315,57 @@ pub fn fall_damage_mhp(fall_height: Fx, vrv: u8, max_hp_mhp: i64) -> i64 {
     mul_bp(max_hp_mhp, bp)
 }
 
-/// SPEC: canon §5.9 `fall_dmg_bp`, then §4.2 "Acrobatics (doc 04) multiplies
-/// it afterwards": `later_bps` (Acrobatics and other doc 04 factors, in their
-/// owning order) chain after the genre factor, one `mul_bp` each.
+/// SPEC: canon §4.2 (canon-1.11). One doc 04 fall-damage factor (Acrobatics,
+/// kin, talents), keyed by its source content ID.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct FallFactor<'a> {
+    /// Source content ID, for example `skill.acrobatics`.
+    pub source: &'a str,
+    /// Fall damage multiplier in Bp.
+    pub bp: i32,
+}
+
+/// SPEC: canon §4.2 (canon-1.11), §5.9: fall damage is multiplied by the local
+/// genre's `fall_dmg_bp`, then by each doc 04 fall-damage factor in ascending
+/// source ID byte order, one `mul_bp` each. Panics if `factors` is not
+/// strictly ascending by source ID.
+///
+/// GAP: §4.2 says the fall hit enters the pipeline at step 4 and "is then
+/// multiplied" by these factors; this crate applies them to the amount
+/// before it enters step 4 ([`crate::damage::resolve_fall`]).
 #[must_use]
-pub fn apply_fall_multipliers(damage_mhp: i64, fall_dmg_bp: i32, later_bps: &[i32]) -> i64 {
-    later_bps
+pub fn apply_fall_multipliers(
+    damage_mhp: i64,
+    fall_dmg_bp: i32,
+    factors: &[FallFactor<'_>],
+) -> i64 {
+    assert!(
+        factors
+            .windows(2)
+            .all(|w| w[0].source.as_bytes() < w[1].source.as_bytes()),
+        "invariant: fall-damage factors sorted by ascending source ID"
+    );
+    factors
         .iter()
-        .fold(mul_bp(damage_mhp, fall_dmg_bp), |v, &bp| mul_bp(v, bp))
+        .fold(mul_bp(damage_mhp, fall_dmg_bp), |v, f| mul_bp(v, f.bp))
+}
+
+/// SPEC: canon §4.2 (canon-1.11) fall-damage chain: [`fall_damage_mhp`], then
+/// × `fall_dmg_bp`, then the doc 04 factors in ascending source ID order. The
+/// result is the `dmg.blunt` amount that enters the pipeline at step 4.
+#[must_use]
+pub fn fall_damage_chain_mhp(
+    fall_height: Fx,
+    vrv: u8,
+    max_hp_mhp: i64,
+    fall_dmg_bp: i32,
+    factors: &[FallFactor<'_>],
+) -> i64 {
+    apply_fall_multipliers(
+        fall_damage_mhp(fall_height, vrv, max_hp_mhp),
+        fall_dmg_bp,
+        factors,
+    )
 }
 
 // ---------------------------------------------------------------- dodge
@@ -489,7 +544,25 @@ mod tests {
             Fx::from_int(6)
         );
         // Genre factor, then Acrobatics: Wuxia 5000 then 8000.
-        assert_eq!(apply_fall_multipliers(13_600, 5000, &[8000]), 5440);
+        let acro = FallFactor {
+            source: "skill.acrobatics",
+            bp: 8000,
+        };
+        assert_eq!(apply_fall_multipliers(13_600, 5000, &[acro]), 5440);
+        // Canon-1.11 chain: genre factor first, then doc 04 factors in
+        // ascending source ID order (kin before skill), one mul_bp each.
+        let kin = FallFactor {
+            source: "kin.feline",
+            bp: 7500,
+        };
+        assert_eq!(
+            fall_damage_chain_mhp(Fx::from_int(6), 5, 85_000, 12_500, &[kin, acro]),
+            mul_bp(mul_bp(mul_bp(13_600, 12_500), 7500), 8000)
+        );
+        assert_eq!(
+            fall_damage_chain_mhp(Fx::from_int(6), 5, 85_000, 12_500, &[kin, acro]),
+            10_200
+        );
         assert_eq!(
             apply_fall_multipliers(13_600, Genre::Redacted.row().fall_dmg_bp, &[]),
             20_400
@@ -552,17 +625,29 @@ mod tests {
     fn speed_composition() {
         let row11 = move_speed_bp(60);
         assert_eq!(row11, 10_500);
+        let intact = BODY_MOVE_INTACT_BP;
         assert_eq!(
-            final_move_speed_mm_s(base_speed_mm_s(Gait::Walk, MoveClass::Strafe), row11, &[]),
+            final_move_speed_mm_s(
+                base_speed_mm_s(Gait::Walk, MoveClass::Strafe),
+                row11,
+                intact,
+                &[]
+            ),
             4289
         );
         let fwd = base_speed_mm_s(Gait::Walk, MoveClass::Forward);
-        assert_eq!(final_move_speed_mm_s(fwd, row11, &[]), 4515);
+        assert_eq!(final_move_speed_mm_s(fwd, row11, intact, &[]), 4515);
         let slowed = [StatusMultiplier {
             id: "st.slowed",
             bp: 7000,
         }];
-        assert_eq!(final_move_speed_mm_s(fwd, row11, &slowed), 3160);
+        assert_eq!(final_move_speed_mm_s(fwd, row11, intact, &slowed), 3160);
+        // Canon-1.11: doc 04's body factor sits between row 11 and the
+        // statuses. A severed leg (× 5000, canon §9.1): 4515 → 2257; then
+        // st.slowed: 1579. A crutch restores × 7000: 4515 → 3160.
+        assert_eq!(final_move_speed_mm_s(fwd, row11, 5000, &[]), 2257);
+        assert_eq!(final_move_speed_mm_s(fwd, row11, 5000, &slowed), 1579);
+        assert_eq!(final_move_speed_mm_s(fwd, row11, 7000, &[]), 3160);
         let two = [
             StatusMultiplier {
                 id: "st.encumbered",
@@ -574,7 +659,7 @@ mod tests {
             },
         ];
         assert_eq!(
-            final_move_speed_mm_s(4300, 10_000, &two),
+            final_move_speed_mm_s(4300, 10_000, intact, &two),
             mul_bp(mul_bp(4300, 8500), 12_500)
         );
         assert_eq!(base_speed_mm_s(Gait::Walk, MoveClass::Backpedal), 3440);
@@ -604,7 +689,25 @@ mod tests {
                 bp: 12_500,
             },
         ];
-        let _ = final_move_speed_mm_s(4300, 10_000, &bad);
+        let _ = final_move_speed_mm_s(4300, 10_000, BODY_MOVE_INTACT_BP, &bad);
+    }
+
+    /// SPEC: canon §4.2 (canon-1.11): doc 04 fall factors must arrive in
+    /// ascending source ID order.
+    #[test]
+    #[should_panic(expected = "invariant")]
+    fn unsorted_fall_factors_panic() {
+        let bad = [
+            FallFactor {
+                source: "skill.acrobatics",
+                bp: 8000,
+            },
+            FallFactor {
+                source: "kin.feline",
+                bp: 7500,
+            },
+        ];
+        let _ = apply_fall_multipliers(13_600, 10_000, &bad);
     }
 
     proptest! {
@@ -658,5 +761,59 @@ mod tests {
                 prop_assert_eq!(class, move_class_from_angle(diff));
             }
         }
+
+        /// Review (canon §4.2, doc 04 §8.5): the body factor sits between
+        /// row 11 and the statuses, one `mul_bp` each; an intact body changes
+        /// nothing and a lower `body_move_bp` never speeds anyone up.
+        #[test]
+        fn body_factor_in_speed_chain(
+            base in 0i64..20_000, row11 in 8_000i32..=12_500, body in 2_500i32..=10_000,
+            slowed in any::<bool>(),
+        ) {
+            let st = [StatusMultiplier { id: "st.slowed", bp: 7000 }];
+            let statuses: &[StatusMultiplier<'_>] = if slowed { &st } else { &[] };
+            let v = final_move_speed_mm_s(base, row11, body, statuses);
+            let mut expect = mul_bp(mul_bp(base, row11), body);
+            if slowed {
+                expect = mul_bp(expect, 7000);
+            }
+            prop_assert_eq!(v, expect);
+            prop_assert!(v <= final_move_speed_mm_s(base, row11, BODY_MOVE_INTACT_BP, statuses));
+            if body < 10_000 {
+                prop_assert!(final_move_speed_mm_s(base, row11, body + 1, statuses) >= v);
+            }
+        }
+
+        /// Review (canon §4.2 (canon-1.11), §5.9): the fall chain is
+        /// `fall_damage_mhp`, then `fall_dmg_bp`, then the doc 04 factors in
+        /// ascending source ID order, one `mul_bp` each.
+        #[test]
+        fn fall_chain_order(
+            h_mm in 0i64..60_000, vrv in 0u8..=10, max_hp in 1i64..1_000_000,
+            genre_bp in 2_500i32..=15_000, a in 0i32..=10_000, b in 0i32..=10_000,
+        ) {
+            let h = palimpsest_math::fx_from_milli(h_mm);
+            let f = [
+                FallFactor { source: "aug.spring_tendons", bp: a },
+                FallFactor { source: "skill.acrobatics", bp: b },
+            ];
+            let base = fall_damage_mhp(h, vrv, max_hp);
+            prop_assert_eq!(
+                fall_damage_chain_mhp(h, vrv, max_hp, genre_bp, &f),
+                mul_bp(mul_bp(mul_bp(base, genre_bp), a), b)
+            );
+        }
+    }
+
+    /// Review (canon §4.2): two doc 04 factors from the same source ID are not
+    /// "ascending", so they are refused rather than applied twice.
+    #[test]
+    #[should_panic(expected = "invariant")]
+    fn duplicate_fall_factor_source_panics() {
+        let acro = FallFactor {
+            source: "skill.acrobatics",
+            bp: 8000,
+        };
+        let _ = apply_fall_multipliers(13_600, 10_000, &[acro, acro]);
     }
 }

@@ -4,7 +4,8 @@
 //! RFC 6901 JSON Pointer path (the path form `jsonschema` reports too):
 //!
 //! - any number with a fraction or exponent part (canon §1.6);
-//! - any integer outside `-(2^53 - 1)..=2^53 - 1` (doc 02 §11.1, canon gap G6);
+//! - any integer outside `-(2^53 - 1)..=2^53 - 1` (canon §1.6 since canon-1.11;
+//!   doc 02 §11.1);
 //! - any field declared as a hex `u64` that is not a `"0x"`-prefixed string of
 //!   1 to 16 hex digits (canon §1.6);
 //! - for a content file, the `{ "schema": …, "records": [ … ] }` envelope and
@@ -27,8 +28,9 @@ use alloc::vec::Vec;
 use core::fmt::{self, Write as _};
 use serde_json::{Number, Value};
 
-/// SPEC: canon §1.6; doc 02 §11.1 (canon gap G6): largest integer magnitude allowed in
-/// content, `2^53 - 1`; larger values must be hex strings (canon §1.6).
+/// SPEC: canon §1.6, doc 02 §11.1: every JSON integer in content lies in
+/// `-(2^53 - 1)..=2^53 - 1`; larger values, and every `u64` such as a seed or
+/// a hash, are `"0x"`-prefixed hex strings.
 pub const MAX_SAFE_INTEGER: u64 = (1 << 53) - 1;
 
 /// SPEC: canon §1.6 and doc 02 §11.1 the kind of a content violation.
@@ -36,7 +38,7 @@ pub const MAX_SAFE_INTEGER: u64 = (1 << 53) - 1;
 pub enum ViolationKind {
     /// A number with a fraction or exponent part (canon §1.6), or `-0`.
     NonInteger,
-    /// An integer outside `-(2^53 - 1)..=2^53 - 1` (doc 02 §11.1).
+    /// An integer outside `-(2^53 - 1)..=2^53 - 1` (canon §1.6).
     IntegerOutOfRange,
     /// A field declared as a hex `u64` holds a non-string value.
     HexU64NotString,

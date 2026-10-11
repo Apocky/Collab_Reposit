@@ -6,7 +6,8 @@
 //! Calling skill presets (§16.2). Pure functions over plain integers.
 
 use crate::stats::Sub;
-use palimpsest_math::int::{floor_div, floor_div_i128, mul_bp, narrow_i64};
+use palimpsest_math::int::{floor_div, floor_div_i128, mul_bp, mul_bp_wide, narrow_i64};
+use palimpsest_math::tables::power_h;
 
 /// SPEC: canon §7 `Group` column.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -250,12 +251,30 @@ pub const fn scaled_skill_xp_milli(milli: i64, row28_bp: i32) -> i64 {
 /// SPEC: canon §7.1. Per-hit cap of combat skill XP.
 pub const COMBAT_XP_PER_HIT_CAP_MILLI: i64 = 1500;
 
-/// SPEC: canon §7.1. Combat skill XP for a hit dealing `dmg_mhp` to a hostile
-/// with Max HP `target_max_mhp`: `floor_div(1500 × dmg_mhp, target_max_mhp)`,
-/// capped at 1500 (and 0 for zero-effect hits). Panics if `target_max_mhp <= 0`.
+/// SPEC: canon §7.1 (canon-1.11, DECISIONS item 85). The normalizing HP of a
+/// combat-XP hit: the target's Max HP before party scaling,
+/// `norm_mhp = max(1, floor_div(target_max_mhp × 10000, party_hp_bp))`, where
+/// `party_hp_bp` is the §17.2 enemy HP multiplier applied to that target
+/// (10000 solo). Computed in `i128`. Panics if `party_hp_bp <= 0`.
 #[must_use]
-pub const fn combat_skill_xp_milli(dmg_mhp: i64, target_max_mhp: i64) -> i64 {
-    let v = floor_div_i128(1500 * dmg_mhp as i128, target_max_mhp as i128);
+pub const fn combat_norm_mhp(target_max_mhp: i64, party_hp_bp: i32) -> i64 {
+    let n = narrow_i64(floor_div_i128(
+        target_max_mhp as i128 * 10_000,
+        party_hp_bp as i128,
+    ));
+    if n < 1 { 1 } else { n }
+}
+
+/// SPEC: canon §7.1 (canon-1.11, DECISIONS item 85). Combat skill XP for a hit
+/// dealing `dmg_mhp` to a hostile whose (party-scaled) Max HP is
+/// `target_max_mhp` and whose §17.2 enemy HP multiplier is `party_hp_bp`:
+/// `floor_div(1500 × dmg_mhp, norm_mhp)` with [`combat_norm_mhp`], capped at
+/// 1500 per hit (and 0 for zero-effect hits). Skill XP is thus normalized by
+/// the enemy's HP before party scaling. Panics if `party_hp_bp <= 0`.
+#[must_use]
+pub const fn combat_skill_xp_milli(dmg_mhp: i64, target_max_mhp: i64, party_hp_bp: i32) -> i64 {
+    let norm = combat_norm_mhp(target_max_mhp, party_hp_bp);
+    let v = floor_div_i128(1500 * dmg_mhp as i128, norm as i128);
     if v <= 0 {
         0
     } else if v > COMBAT_XP_PER_HIT_CAP_MILLI as i128 {
@@ -407,16 +426,30 @@ pub const fn enemy_level(d: u32) -> u32 {
 }
 
 /// SPEC: canon §8 `kill_xp_std(d) = floor_div(7 × e × (e + 3), 5)`, `e = enemy_level(d)`.
+/// The reference unit: at 45 units per Folio (canon-1.11 anchor, all
+/// sources) a run reaches level 12 after Folio 10, 29 on arrival at Folio 25
+/// and 49 after Folio 40.
 #[must_use]
 pub const fn kill_xp_std(d: u32) -> i64 {
     let e = enemy_level(d) as i128;
     narrow_i64(floor_div_i128(7 * e * (e + 3), 5))
 }
 
-/// SPEC: canon §8. Kills pay `mul_bp(mul_bp(kill_xp_std(d), rank_xp_bp), 7000)`.
+/// SPEC: canon §8. Kills and pacifications pay
+/// `mul_bp(mul_bp(kill_xp_std(d), rank_xp_bp), 7000)`.
 pub const KILL_XP_FACTOR_BP: i32 = 7000;
 
-/// SPEC: canon §8 kill XP for an enemy of `rank` at depth `d`.
+/// SPEC: canon §8 (canon-1.11) per-Folio XP anchor: the total of all
+/// character-XP sources is kept near 45 `kill_xp_std` units per Folio for a
+/// combat-typical run, the kill supply near §17.4's 40 standard-kill
+/// equivalents.
+pub const XP_UNITS_PER_FOLIO: i64 = 45;
+
+/// SPEC: canon §8 kill XP for an enemy at depth `d` whose multipliers come
+/// from `rank` (pass the multiplier rank: `rank.elite` for the Erasure hunter,
+/// [`ERASURE_HUNTER_MULTIPLIER_RANK`]). A pacified enemy (doc 13) pays this
+/// once, as if killed, and emits `ev.entity_pacified` instead of
+/// `ev.entity_killed`.
 #[must_use]
 pub const fn kill_xp(d: u32, rank: Rank) -> i64 {
     mul_bp(
@@ -572,14 +605,83 @@ pub const fn party_bp(table: PartyTable, n: u8) -> i32 {
     row[n as usize - 1]
 }
 
-/// SPEC: canon §8 co-op split: each party member present gains
-/// `floor_div(kill_xp × 10000, enemy_count_bp[n])`.
+/// SPEC: canon §8 co-op split: each party member present in the Folio
+/// ([`shares_kill_xp`]: downed members and ghosts included, Dormant and
+/// Departed slots excluded) gains `floor_div(kill_xp × 10000,
+/// enemy_count_bp[n])`, where `n` is the party size.
 #[must_use]
 pub const fn coop_kill_xp(kill_xp: i64, party_size: u8) -> i64 {
     narrow_i64(floor_div_i128(
         kill_xp as i128 * 10_000,
         party_bp(PartyTable::EnemyCount, party_size) as i128,
     ))
+}
+
+/// SPEC: canon §8 (canon-1.11, DECISIONS item 81), doc 16. The state of a
+/// party slot when a kill or pacification is credited.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum PartyPresence {
+    /// Alive and not downed.
+    Active,
+    /// Downed (`st.downed`).
+    Downed,
+    /// A ghost (`st.ghost`, §17.6).
+    Ghost,
+    /// A Dormant slot (doc 16).
+    Dormant,
+    /// A Departed slot (doc 16).
+    Departed,
+}
+
+/// SPEC: canon §8 co-op split recipients (canon-1.11, DECISIONS item 81):
+/// every party member present in the Folio shares kill XP, downed members
+/// and ghosts included; Dormant and Departed slots do not.
+#[must_use]
+pub const fn shares_kill_xp(p: PartyPresence) -> bool {
+    matches!(
+        p,
+        PartyPresence::Active | PartyPresence::Downed | PartyPresence::Ghost
+    )
+}
+
+/// SPEC: canon §11.6, §17.3 (canon-1.11, DECISIONS item 91). The Erasure
+/// hunter carries `rank.hunter` for identity, immunities, post-proc
+/// protection and presentation, but takes its HP, damage, kill XP, DoT-taken
+/// and control-duration multipliers from `rank.elite`, and its party HP from
+/// the minion-to-champion row of §17.2. Pass this rank wherever a function
+/// reads multipliers (`kill_xp`, `party_hp_table`, `enemy_max_hp_mhp`).
+pub const ERASURE_HUNTER_MULTIPLIER_RANK: Rank = Rank::Elite;
+
+/// SPEC: canon §11.6, §17.3. The rank whose multiplier columns an enemy uses:
+/// `rank.elite` for the Erasure hunter (identity `rank.hunter`), its own
+/// `identity` rank otherwise.
+#[must_use]
+pub const fn multiplier_rank(identity: Rank, erasure_hunter: bool) -> Rank {
+    if erasure_hunter && matches!(identity, Rank::Hunter) {
+        ERASURE_HUNTER_MULTIPLIER_RANK
+    } else {
+        identity
+    }
+}
+
+/// SPEC: canon §13.8 `H(d)` row, §17.2, §17.3 (canon-1.11). Enemy Max HP:
+/// `template_hp → × H(d) → × rank HP → × party-size HP → × diff_hp_bp`, one
+/// `mul_bp` per arrow in that order, where `rank` is the multiplier rank
+/// ([`multiplier_rank`]), the party row is `rank.party_hp_table()` and
+/// `diff_hp_bp` is doc 14's difficulty HP multiplier (10000 at Grade 0
+/// before Folio 26). Panics if `d == 0` or the party size is outside `1..=4`.
+#[must_use]
+pub const fn enemy_max_hp_mhp(
+    template_hp_mhp: i64,
+    d: u32,
+    rank: Rank,
+    party_size: u8,
+    diff_hp_bp: i32,
+) -> i64 {
+    let hp = mul_bp_wide(template_hp_mhp, power_h(d));
+    let hp = mul_bp(hp, rank.row().hp_bp);
+    let hp = mul_bp(hp, party_bp(rank.party_hp_table(), party_size));
+    mul_bp(hp, diff_hp_bp)
 }
 
 /// SPEC: canon §17.2. Enemy count per spawner
@@ -853,15 +955,115 @@ mod tests {
     }
 
     /// SPEC: canon §7.1 combat XP normalization (doc 04 test 6: 20,000 mHP of a
-    /// 60,000-mHP hostile grants 500; at MEM 50, 525).
+    /// 60,000-mHP hostile grants 500 solo; at MEM 50, 525).
     #[test]
     fn combat_xp() {
-        assert_eq!(combat_skill_xp_milli(20_000, 60_000), 500);
+        assert_eq!(combat_skill_xp_milli(20_000, 60_000, 10_000), 500);
         assert_eq!(scaled_skill_xp_milli(500, skill_xp_bp(50)), 525);
-        assert_eq!(combat_skill_xp_milli(60_000, 60_000), 1500); // one standard enemy drained
-        assert_eq!(combat_skill_xp_milli(500_000, 60_000), 1500);
-        assert_eq!(combat_skill_xp_milli(0, 60_000), 0);
-        assert_eq!(combat_skill_xp_milli(i64::MAX, 1), 1500);
+        assert_eq!(combat_skill_xp_milli(60_000, 60_000, 10_000), 1500); // one standard enemy drained
+        assert_eq!(combat_skill_xp_milli(500_000, 60_000, 10_000), 1500);
+        assert_eq!(combat_skill_xp_milli(0, 60_000, 10_000), 0);
+        assert_eq!(combat_skill_xp_milli(i64::MAX, 1, 10_000), 1500);
+    }
+
+    /// SPEC: canon §7.1 (canon-1.11, DECISIONS item 85): skill XP is
+    /// normalized by the enemy's HP before party scaling. A 60,000-mHP
+    /// template in a party of 4 has `60,000 × 25,500 / 10,000 = 153,000` mHP;
+    /// `norm_mhp = floor_div(153,000 × 10000, 25500) = 60,000`, so a
+    /// 20,000-mHP hit still grants 500, and draining all 153,000 mHP in
+    /// 20,000-mHP hits grants `7 × 500 + 325 = 3,825` milli-XP across the
+    /// party, 2.55 times a solo kill's 1,500 (each player's share of the
+    /// damage earns what the same damage earns solo).
+    #[test]
+    fn combat_xp_normalized_before_party_scaling() {
+        let hp4 = party_bp(PartyTable::EnemyHp, 4);
+        assert_eq!(hp4, 25_500);
+        let scaled = mul_bp(60_000, hp4);
+        assert_eq!(scaled, 153_000);
+        assert_eq!(combat_norm_mhp(scaled, hp4), 60_000);
+        assert_eq!(combat_skill_xp_milli(20_000, scaled, hp4), 500);
+        let drained: i64 = [20_000; 7]
+            .into_iter()
+            .chain([13_000])
+            .map(|d| combat_skill_xp_milli(d, scaled, hp4))
+            .sum();
+        assert_eq!(drained, 3_825);
+        // The canon-1.10 rule (divide by the scaled Max HP) would give 196.
+        assert_eq!(floor_div(1500 * 20_000, scaled), 196);
+        // Boss row at party size 3: 2,000,000 × 28000 = 5,600,000; norm 2,000,000.
+        let boss3 = party_bp(PartyTable::EnemyHpBoss, 3);
+        assert_eq!(combat_norm_mhp(mul_bp(2_000_000, boss3), boss3), 2_000_000);
+        // norm_mhp is at least 1.
+        assert_eq!(combat_norm_mhp(0, 10_000), 1);
+        assert_eq!(combat_skill_xp_milli(1, 0, 10_000), 1500);
+    }
+
+    /// SPEC: canon §7.1: `party_hp_bp` must be positive (floor_div panics).
+    #[test]
+    #[should_panic(expected = "divisor must be > 0")]
+    fn combat_norm_zero_party_bp_panics() {
+        let _ = combat_norm_mhp(60_000, 0);
+    }
+
+    /// SPEC: canon §8 co-op split recipients (DECISIONS item 81): downed
+    /// members and ghosts share kill XP; Dormant and Departed slots do not.
+    #[test]
+    fn kill_xp_recipients() {
+        assert!(shares_kill_xp(PartyPresence::Active));
+        assert!(shares_kill_xp(PartyPresence::Downed));
+        assert!(shares_kill_xp(PartyPresence::Ghost));
+        assert!(!shares_kill_xp(PartyPresence::Dormant));
+        assert!(!shares_kill_xp(PartyPresence::Departed));
+        // Each recipient gets the same split share.
+        let each = coop_kill_xp(kill_xp(10, Rank::Elite), 4);
+        assert_eq!(each, 302);
+        let slots = [
+            PartyPresence::Active,
+            PartyPresence::Ghost,
+            PartyPresence::Downed,
+            PartyPresence::Departed,
+        ];
+        let paid: i64 = slots
+            .iter()
+            .filter(|&&p| shares_kill_xp(p))
+            .map(|_| each)
+            .sum();
+        assert_eq!(paid, 3 * 302);
+        assert_eq!(XP_UNITS_PER_FOLIO, 45);
+    }
+
+    /// SPEC: canon §11.6, §17.3 (DECISIONS item 91): the Erasure hunter keeps
+    /// `rank.hunter` identity but uses `rank.elite` multipliers and the
+    /// minion-to-champion party HP row.
+    #[test]
+    fn erasure_hunter_multipliers() {
+        let m = multiplier_rank(Rank::Hunter, true);
+        assert_eq!(m, Rank::Elite);
+        assert_eq!(multiplier_rank(Rank::Hunter, false), Rank::Hunter);
+        assert_eq!(multiplier_rank(Rank::Champion, true), Rank::Champion);
+        assert_eq!(kill_xp(10, m), kill_xp(10, Rank::Elite));
+        assert_eq!(kill_xp(10, m), 529);
+        assert_eq!(m.party_hp_table(), PartyTable::EnemyHp);
+        assert_eq!(Rank::Hunter.party_hp_table(), PartyTable::EnemyHpBoss);
+    }
+
+    /// SPEC: canon §13.8 `H(d)` row (canon-1.11 adds `diff_hp_bp`): enemy HP =
+    /// `template_hp × H(d) × rank HP × party-size HP × diff_hp_bp`, one
+    /// `mul_bp` each. At d = 1 (`H = 10000`) a 20,000-mHP elite template in a
+    /// party of 2 at Grade 0: `20,000 × 30000 × 16000 = 96,000`; with an
+    /// 11000 difficulty, 105,600.
+    #[test]
+    fn enemy_hp_chain() {
+        assert_eq!(enemy_max_hp_mhp(20_000, 1, Rank::Elite, 2, 10_000), 96_000);
+        assert_eq!(enemy_max_hp_mhp(20_000, 1, Rank::Elite, 2, 11_000), 105_600);
+        // d = 25: H(25) = 202521; a standard 10,000-mHP template solo.
+        assert_eq!(
+            enemy_max_hp_mhp(10_000, 25, Rank::Standard, 1, 10_000),
+            202_521
+        );
+        // The Erasure hunter's HP uses the elite row and the non-boss party row.
+        let hunter = enemy_max_hp_mhp(20_000, 1, multiplier_rank(Rank::Hunter, true), 3, 10_000);
+        assert_eq!(hunter, mul_bp(mul_bp(20_000, 30_000), 21_000));
     }
 
     /// SPEC: canon §7.1 growth (doc 04 test 5: Hacking 49 receiving 23,600
@@ -1043,10 +1245,126 @@ mod tests {
         #[test]
         fn xp_ranges(d in 1u32..400, dmg in 0i64..10_000_000, max in 1i64..10_000_000, n in 1u8..=4) {
             prop_assert!(kill_xp_std(d + 1) >= kill_xp_std(d));
-            let c = combat_skill_xp_milli(dmg, max);
+            let c = combat_skill_xp_milli(dmg, max, party_bp(PartyTable::EnemyHp, n));
             prop_assert!((0..=1500).contains(&c));
+            // Normalizing before party scaling: norm_mhp never exceeds the
+            // template's Max HP (norm_mhp_recovers_template checks the rest).
+            let hp = party_bp(PartyTable::EnemyHp, n);
+            let scaled = mul_bp(max, hp);
+            prop_assert!(combat_norm_mhp(scaled, hp) <= max);
             let k = kill_xp(d, Rank::Standard);
             prop_assert!(coop_kill_xp(k, n) <= k);
         }
+
+        /// Review (canon §7.1, DECISIONS 85): for every §17.2 HP row,
+        /// `norm_mhp` recovers the template's Max HP from the party-scaled
+        /// one to within one flooring step (exactly when solo), so a hit
+        /// dealing the same damage grants the same skill XP solo and in a
+        /// party, within 1 milli-XP.
+        #[test]
+        fn norm_mhp_recovers_template(max in 2_000i64..10_000_000_000, n in 1u8..=4, boss in any::<bool>(), share in 0i32..=10_000) {
+            let table = if boss { PartyTable::EnemyHpBoss } else { PartyTable::EnemyHp };
+            let hp = party_bp(table, n);
+            let scaled = mul_bp(max, hp);
+            let norm = combat_norm_mhp(scaled, hp);
+            prop_assert!(norm == max || norm == max - 1, "{} -> {}", max, norm);
+            if n == 1 {
+                prop_assert_eq!(norm, max);
+            }
+            let dmg = mul_bp(max, share);
+            let solo = combat_skill_xp_milli(dmg, max, 10_000);
+            let party = combat_skill_xp_milli(dmg, scaled, hp);
+            prop_assert!(party >= solo && party - solo <= 1, "solo {} party {}", solo, party);
+        }
+
+        /// Review (canon §13.8 `H(d)` row, §17.2, §17.3): the enemy HP chain
+        /// is one `mul_bp` per factor in the listed order, and never falls
+        /// with party size or the difficulty factor.
+        #[test]
+        fn enemy_hp_chain_order_and_monotone(
+            t in 1i64..1_000_000, d in 1u32..=60, r in 0usize..7, n in 1u8..=3, diff in 10_000i32..=30_000,
+        ) {
+            let rank = Rank::ALL[r];
+            let hp = enemy_max_hp_mhp(t, d, rank, n, diff);
+            let chain = mul_bp(
+                mul_bp(
+                    mul_bp(mul_bp_wide(t, power_h(d)), rank.row().hp_bp),
+                    party_bp(rank.party_hp_table(), n),
+                ),
+                diff,
+            );
+            prop_assert_eq!(hp, chain);
+            prop_assert!(enemy_max_hp_mhp(t, d, rank, n + 1, diff) >= hp);
+            prop_assert!(enemy_max_hp_mhp(t, d, rank, n, diff + 1) >= hp);
+        }
+    }
+
+    /// Review (canon §11.6, §17.3, DECISIONS 91): only a hunter flagged as
+    /// the Erasure hunter is re-ranked, and always to `rank.elite`.
+    #[test]
+    fn multiplier_rank_is_exhaustive() {
+        for r in Rank::ALL {
+            assert_eq!(multiplier_rank(r, false), r);
+            let expect = if r == Rank::Hunter { Rank::Elite } else { r };
+            assert_eq!(multiplier_rank(r, true), expect, "{r:?}");
+        }
+        // The Erasure hunter's HP, damage and kill XP all come from the elite
+        // row; an invader (plain rank.hunter) keeps the hunter row.
+        let e = multiplier_rank(Rank::Hunter, true).row();
+        assert_eq!(
+            (
+                e.hp_bp,
+                e.damage_bp,
+                e.kill_xp_bp,
+                e.dot_taken_bp,
+                e.control_bp
+            ),
+            (30_000, 13_000, 30_000, 5_000, 7_500)
+        );
+        assert_eq!(
+            enemy_max_hp_mhp(20_000, 1, Rank::Hunter, 2, 10_000),
+            mul_bp(mul_bp(20_000, 120_000), 19_000)
+        );
+    }
+
+    /// Review (canon §17.3): this module's rank table and `status::RANKS`
+    /// are the same canon table, and both Erasure-hunter multiplier ranks
+    /// name `rank.elite`.
+    #[test]
+    fn rank_tables_agree_with_status() {
+        for (p, s) in RANKS.iter().zip(crate::status::RANKS.iter()) {
+            assert_eq!(
+                (
+                    p.id,
+                    p.hp_bp,
+                    p.damage_bp,
+                    p.kill_xp_bp,
+                    p.dot_taken_bp,
+                    p.control_bp
+                ),
+                (
+                    s.key,
+                    s.hp_bp,
+                    s.damage_bp,
+                    s.kill_xp_bp,
+                    s.dot_taken_bp,
+                    s.control_bp
+                )
+            );
+        }
+        assert_eq!(
+            ERASURE_HUNTER_MULTIPLIER_RANK.row().id,
+            crate::status::ERASURE_HUNTER_STATS_RANK.row().key
+        );
+    }
+
+    /// Review (canon §8, DECISIONS 81): the recipient rule over every
+    /// presence state.
+    #[test]
+    fn kill_xp_presence_is_exhaustive() {
+        use PartyPresence as P;
+        let all = [P::Active, P::Downed, P::Ghost, P::Dormant, P::Departed];
+        let sharing: Vec<P> = all.into_iter().filter(|&p| shares_kill_xp(p)).collect();
+        assert_eq!(sharing, [P::Active, P::Downed, P::Ghost]);
     }
 }

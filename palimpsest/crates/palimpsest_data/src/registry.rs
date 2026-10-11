@@ -5,9 +5,10 @@
 //! with an `id32` already present, an identical string included, is rejected
 //! with `id32_collision`. An alias's old ID resolves to its new ID's `id32`,
 //! both by name (content files that still say the old ID) and by `id32`
-//! (saves written before the rename).
+//! (saves written before the rename). Base content never uses an `x_` second
+//! segment, and a mod's records use `x_<mod_id>` (canon §1.1).
 
-use crate::ids::{ContentId, Id32};
+use crate::ids::{ContentId, Id32, IdOrigin, ModSegmentError, validate_id_origin};
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 use core::fmt;
@@ -18,6 +19,11 @@ pub const ID32_COLLISION: &str = "id32_collision";
 /// SPEC: canon §1.1 error code for an alias whose new ID is not registered
 /// content. The canon names no code for this case; this one is provisional.
 pub const ALIAS_TARGET_UNKNOWN: &str = "alias_target_unknown";
+/// SPEC: canon §1.1 error code for an ID that breaks the `x_<mod_id>` mod
+/// namespace rule (base content with an `x_` second segment, or a mod record
+/// without its own `x_<mod_id>`). GAP: the canon names no code for this case;
+/// this one is provisional.
+pub const MOD_SEGMENT_INVALID: &str = "mod_segment_invalid";
 
 /// SPEC: canon §1.1 why a registration was refused. The registry is unchanged
 /// after any error.
@@ -41,6 +47,13 @@ pub enum RegistryError {
         /// The alias's new ID.
         new: ContentId,
     },
+    /// The ID breaks the canon §1.1 mod namespace rule.
+    ModSegment {
+        /// The offending content ID (or alias old ID).
+        id: ContentId,
+        /// Which half of the rule it breaks.
+        error: ModSegmentError,
+    },
 }
 
 impl RegistryError {
@@ -51,6 +64,7 @@ impl RegistryError {
         match self {
             Self::Id32Collision { .. } => ID32_COLLISION,
             Self::AliasTargetUnknown { .. } => ALIAS_TARGET_UNKNOWN,
+            Self::ModSegment { .. } => MOD_SEGMENT_INVALID,
         }
     }
 }
@@ -81,6 +95,9 @@ impl fmt::Display for RegistryError {
                 f,
                 "{ALIAS_TARGET_UNKNOWN}: alias `{old}` names `{new}`, which is not registered content"
             ),
+            Self::ModSegment { id, error } => {
+                write!(f, "{MOD_SEGMENT_INVALID}: `{id}`: {error}")
+            }
         }
     }
 }
@@ -130,8 +147,9 @@ impl IdRegistry {
     /// SPEC: canon §1.1 build-time check of base content and aliases. Content
     /// IDs are registered first, in ascending byte order, then aliases in
     /// ascending order of old ID, so the result and the error list do not
-    /// depend on file or record order. Every error is reported, not just the
-    /// first.
+    /// depend on file or record order. Base content and alias old IDs never
+    /// use an `x_` second segment (reserved for mods). Every error is
+    /// reported, not just the first.
     pub fn build<C, A>(content: C, aliases: A) -> Result<Self, Vec<RegistryError>>
     where
         C: IntoIterator<Item = ContentId>,
@@ -144,11 +162,19 @@ impl IdRegistry {
         let mut reg = Self::new();
         let mut errors = Vec::new();
         for id in content {
+            if let Err(error) = validate_id_origin(id.as_str(), IdOrigin::Base) {
+                errors.push(RegistryError::ModSegment { id, error });
+                continue;
+            }
             if let Err(e) = reg.insert_content(id) {
                 errors.push(e);
             }
         }
         for (old, new) in aliases {
+            if let Err(error) = validate_id_origin(old.as_str(), IdOrigin::Base) {
+                errors.push(RegistryError::ModSegment { id: old, error });
+                continue;
+            }
             if let Err(e) = reg.insert_alias(old, &new) {
                 errors.push(e);
             }
@@ -160,8 +186,24 @@ impl IdRegistry {
         }
     }
 
-    /// SPEC: canon §1.1 register one content ID (base content, or a mod record
-    /// at mod load). Fails with `id32_collision` if its `id32` is taken.
+    /// SPEC: canon §1.1 register one mod record of mod `mod_id` at mod load:
+    /// its second segment must be `x_<mod_id>`, and an `id32` already loaded
+    /// is rejected with `id32_collision`. The registry is unchanged on error.
+    pub fn insert_mod_content(
+        &mut self,
+        mod_id: &str,
+        id: ContentId,
+    ) -> Result<Id32, RegistryError> {
+        if let Err(error) = validate_id_origin(id.as_str(), IdOrigin::Mod(mod_id)) {
+            return Err(RegistryError::ModSegment { id, error });
+        }
+        self.insert_content(id)
+    }
+
+    /// SPEC: canon §1.1 register one content ID without the namespace check
+    /// ([`IdRegistry::build`] checks base content and
+    /// [`IdRegistry::insert_mod_content`] mod records). Fails with
+    /// `id32_collision` if its `id32` is taken.
     pub fn insert_content(&mut self, id: ContentId) -> Result<Id32, RegistryError> {
         let id32 = id.id32();
         self.check_free(id32, &id)?;
@@ -428,6 +470,75 @@ mod tests {
             .insert_alias(cid("item.w"), &cid(y))
             .expect_err("hash twin");
         assert_eq!(err.code(), ALIAS_TARGET_UNKNOWN);
+    }
+
+    /// Review (canon §1.1): a mod record that passes the namespace check is
+    /// still refused with `id32_collision` when its `id32` is loaded (here the
+    /// same mod record twice); an empty `<mod_id>` matches no mod; a mod
+    /// record cannot be smuggled in as base content; the registry is
+    /// unchanged after every refusal.
+    #[test]
+    fn mod_records_collide_and_never_partially_register() {
+        let mut reg = IdRegistry::build([cid("item.ice_blade")], []).expect("clean");
+        let id = reg
+            .insert_mod_content("frostpack", cid("item.x_frostpack.ice_blade"))
+            .expect("own segment");
+        let before = reg.clone();
+        let err = reg
+            .insert_mod_content("frostpack", cid("item.x_frostpack.ice_blade"))
+            .expect_err("loaded twice");
+        assert_eq!(err.code(), ID32_COLLISION);
+        let err = reg
+            .insert_mod_content("", cid("item.x_.ice_blade"))
+            .expect_err("empty mod id");
+        assert_eq!(err.code(), MOD_SEGMENT_INVALID);
+        assert_eq!(reg, before);
+        assert_eq!(reg.id_of("item.x_frostpack.ice_blade"), Some(id));
+        // An `x_` record listed as base content is refused at build time.
+        let errs = IdRegistry::build([cid("item.x_.ice_blade")], []).expect_err("x_ base");
+        assert_eq!(errs[0].code(), MOD_SEGMENT_INVALID);
+    }
+
+    /// SPEC: canon §1.1 mod namespace: base content and alias old IDs never
+    /// use an `x_` second segment; a mod's records use its own `x_<mod_id>`.
+    #[test]
+    fn mod_segment_rule_in_registry() {
+        let errs = IdRegistry::build(
+            [cid("item.ice_blade"), cid("item.x_frostpack.ice_blade")],
+            [(cid("item.x_old.blade"), cid("item.ice_blade"))],
+        )
+        .expect_err("x_ in base content");
+        assert_eq!(errs.len(), 2);
+        assert!(errs.iter().all(|e| e.code() == MOD_SEGMENT_INVALID));
+        assert_eq!(
+            errs[0],
+            RegistryError::ModSegment {
+                id: cid("item.x_frostpack.ice_blade"),
+                error: ModSegmentError::BaseUsesModSegment,
+            }
+        );
+        let mut reg = IdRegistry::build([cid("item.ice_blade")], []).expect("clean");
+        let before = reg.clone();
+        let err = reg
+            .insert_mod_content("frostpack", cid("item.ice_blade_2"))
+            .expect_err("missing x_ segment");
+        assert_eq!(err.code(), MOD_SEGMENT_INVALID);
+        let err = reg
+            .insert_mod_content("frostpack", cid("item.x_other.ice_blade"))
+            .expect_err("another mod's segment");
+        assert_eq!(
+            err,
+            RegistryError::ModSegment {
+                id: cid("item.x_other.ice_blade"),
+                error: ModSegmentError::NotOwnModSegment,
+            }
+        );
+        assert_eq!(reg, before);
+        let id = reg
+            .insert_mod_content("frostpack", cid("item.x_frostpack.ice_blade"))
+            .expect("own segment");
+        assert_eq!(reg.id_of("item.x_frostpack.ice_blade"), Some(id));
+        assert!(err.to_string().starts_with("mod_segment_invalid: "));
     }
 
     /// SPEC: canon §1.1 build reports every collision among base content and

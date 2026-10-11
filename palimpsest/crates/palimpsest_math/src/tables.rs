@@ -120,6 +120,9 @@ const fn idx(d: u32) -> usize {
 
 /// SPEC: canon §13.8 `P(d)` in Bp: committed literal rows 1 to 40, then
 /// `P(d) = mul_bp(P(d-1), 10600)`, with `d_pow = min(d, 300)`. Panics if `d == 0`.
+/// Used for Errata weapon and source damage (§10.4), enemy armor rating,
+/// Lucre amounts and item values, and the break threshold of terrain
+/// destructible blocks at `d_current` (doc 03).
 #[inline]
 #[must_use]
 #[track_caller]
@@ -129,6 +132,9 @@ pub const fn power_p(d: u32) -> i64 {
 
 /// SPEC: canon §13.8 `T(d)` in Bp: committed literal rows 1 to 40, then
 /// `T(d) = mul_bp(T(d-1), 10400)`, with `d_pow = min(d, 300)`. Panics if `d == 0`.
+/// Used for enemy damage, Errata gear armor rating, shield block values and
+/// item ward pools (§13.2 `slot.ward`), and the HP of Errata-placed blocks at
+/// the placing Folio's depth (doc 07).
 #[inline]
 #[must_use]
 #[track_caller]
@@ -138,7 +144,9 @@ pub const fn power_t(d: u32) -> i64 {
 
 /// SPEC: canon §13.8 `H(d) = mul_bp(P(d), 10000 + 650 × (min(d, 25) - 1) + 250 × max(0, d - 25))`
 /// in Bp, with `d_pow = min(d, 300)`. Rows 1 to 40 come from the committed
-/// literals (which equal the formula). Panics if `d == 0`.
+/// literals (which equal the formula). Panics if `d == 0`. Used for enemy
+/// HP: `template_hp × H(d) × rank HP × party-size HP × diff_hp_bp`
+/// (`palimpsest_sim::progression::enemy_max_hp_mhp`).
 #[inline]
 #[must_use]
 #[track_caller]

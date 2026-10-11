@@ -5,7 +5,7 @@
 use crate::content_check::{
     CheckError, HexU64Fields, Violation, ViolationKind, check_content_file, parse_and_check,
 };
-use crate::ids::{ContentId, Id32, IdError, validate_content_id};
+use crate::ids::{ContentId, Id32, IdError, mod_id_of, validate_content_id};
 use crate::registry::{ID32_COLLISION, IdRegistry, RegistryError};
 use crate::test_support::first_brute_force_collision;
 use crate::text_key::{TextKey, validate_text_key};
@@ -195,8 +195,10 @@ fn id_tokens(span: &str) -> impl Iterator<Item = &str> {
 }
 
 /// SPEC: canon §1.1, §19 and §22: every content-ID token written in the canon
-/// (in a namespace §19 assigns) has a unique `fnv1a32`. Skipped when the spec
-/// is not next to the workspace (a standalone export).
+/// (in a namespace §19 assigns) has a unique `fnv1a32`. Base IDs are built as
+/// base content; the canon's mod examples (`x_<mod_id>` second segment, canon
+/// §1.1) are then loaded as their mods' records. Skipped when the spec is not
+/// next to the workspace (a standalone export).
 #[test]
 fn canon_spec_ids_are_collision_free() {
     let path = concat!(
@@ -227,8 +229,23 @@ fn canon_spec_ids_are_collision_free() {
         .collect();
     assert!(ids.len() > 300, "only {} ids found", ids.len());
     assert!(ids.contains(&ContentId::new("genre.cyberpunk").expect("valid")));
-    if let Err(errors) = IdRegistry::build(ids, []) {
-        panic!("canon ids collide: {errors:?}");
+    let (mods, base): (Vec<ContentId>, Vec<ContentId>) = ids
+        .into_iter()
+        .partition(|id| mod_id_of(id.as_str()).is_some());
+    assert!(
+        mods.iter()
+            .any(|id| id.as_str() == "item.x_frostpack.ice_blade"),
+        "the canon §1.1 mod example is found"
+    );
+    let mut reg = match IdRegistry::build(base, []) {
+        Ok(reg) => reg,
+        Err(errors) => panic!("canon ids collide: {errors:?}"),
+    };
+    for id in mods {
+        let mod_id = mod_id_of(id.as_str()).expect("partitioned").to_string();
+        if let Err(e) = reg.insert_mod_content(&mod_id, id) {
+            panic!("canon mod example rejected: {e}");
+        }
     }
     // The t29 counter-examples are in the canon text and are not IDs.
     assert!(canon.contains("`Genre.Cyberpunk`") && canon.contains("`genre..x`"));

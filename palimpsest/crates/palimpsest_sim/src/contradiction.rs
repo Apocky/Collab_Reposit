@@ -7,6 +7,7 @@
 //! Unmoored rule (§5.11). Everything is a pure function of typed inputs.
 
 use crate::genre::{Axiom, Axioms, Genre};
+use crate::status::Rank;
 use palimpsest_math::int::{clamp_i64, floor_div, mul_bp};
 use palimpsest_math::{Rng, fnv1a32};
 
@@ -68,21 +69,9 @@ impl DepSet {
     }
 }
 
-/// SPEC: canon §5.3 "Mounts other than beasts": the dependency comes from the skin.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub enum MountSkin {
-    /// A vehicle: techne.
-    Vehicle,
-    /// A broom or carpet: arcana.
-    BroomOrCarpet,
-    /// A divine steed: mythos.
-    DivineSteed,
-    /// A cloud: verve.
-    Cloud,
-}
-
-/// SPEC: canon §5.3 component kinds of the default-dependency table. The kind
-/// comes from the genre skin, never from the archetype.
+/// SPEC: canon §5.3 (canon-1.11) component kinds of the default-dependency
+/// table. The kind comes from the genre skin, never from the archetype.
+/// Mounts are cut (canon §17.7), so no mount kind exists.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum ComponentKind {
     /// Mundane melee and armor bases, bows, slings, thrown blades, food, raw
@@ -91,13 +80,14 @@ pub enum ComponentKind {
     /// Firearms, energy weapons, gadgets, drones, turrets, implants,
     /// electronic tools, hacking, tech consumables: techne.
     Tech,
-    /// Spell glyphs, wands, staves, magic texts: the origin genre's
-    /// `aether_axiom`, or arcana when it is none.
+    /// Spell glyphs, wands, staves, magic texts, supernatural alchemical
+    /// effects: the origin genre's `aether_axiom`, or arcana when it is none.
     Casting,
-    /// Enchantment affixes, grafts, supernatural alchemical effects: arcana.
+    /// Enchantment affixes, doc 04 body grafts: arcana.
     Enchantment,
     /// Prayers, relics, holy or unholy affixes, curse effects, undead-bane,
-    /// divine favors, mutations of supernatural origin: mythos.
+    /// divine favors, mutations of supernatural origin, and holy, unholy and
+    /// curse alchemical effects (which keep mythos): mythos.
     Sacred,
     /// Cinematic techniques (wall-run, double jump, qinggong glide, gun-kata,
     /// "rule of cool" exotic perks): verve.
@@ -105,15 +95,18 @@ pub enum ComponentKind {
     /// Mundane alchemical effects (healing, poison, stamina, acid, fire,
     /// smoke): none.
     MundaneAlchemy,
-    /// Kin passive traits, tamed beasts, beast mounts: none.
+    /// Kin passive traits, tamed beasts: none.
     KinOrBeast,
     /// Summons: the summoning glyph's dependency.
     Summon {
         /// Dependency of the summoning glyph.
         glyph_dep: DepSet,
     },
-    /// Mounts other than beasts: from the skin.
-    Mount(MountSkin),
+    /// Licensed grafts (`cat.part`): the dependency of their gimmick (doc 11).
+    LicensedGraft {
+        /// Dependency of the graft's gimmick.
+        gimmick_dep: DepSet,
+    },
 }
 
 /// SPEC: canon §5.3 default `dep` of a component kind skinned in `origin`.
@@ -132,12 +125,7 @@ pub const fn default_dep(kind: ComponentKind, origin: Genre) -> DepSet {
         ComponentKind::Sacred => DepSet::single(Axiom::Mythos),
         ComponentKind::Cinematic => DepSet::single(Axiom::Verve),
         ComponentKind::Summon { glyph_dep } => glyph_dep,
-        ComponentKind::Mount(skin) => DepSet::single(match skin {
-            MountSkin::Vehicle => Axiom::Techne,
-            MountSkin::BroomOrCarpet => Axiom::Arcana,
-            MountSkin::DivineSteed => Axiom::Mythos,
-            MountSkin::Cloud => Axiom::Verve,
-        }),
+        ComponentKind::LicensedGraft { gimmick_dep } => gimmick_dep,
     }
 }
 
@@ -304,12 +292,24 @@ impl LocalGenre {
         }
     }
 
-    /// SPEC: canon §5.7 AETHER row: "the local genre's aether_axiom". In a
-    /// seam this crate uses the Folio genre's (canon is silent; see the
-    /// module's reported spec issues).
+    /// SPEC: canon §5.8 (canon-1.11) `local_genre(pos)`: the plain genre, or
+    /// in a seam zone the Folio's genre. Genre-keyed rules (the §5.5
+    /// overrides, the §5.7 AETHER row) read this; axioms, Laws and
+    /// nativeness use the seam's own rules.
+    #[must_use]
+    pub const fn genre(self) -> Genre {
+        match self {
+            LocalGenre::Plain(g) => g,
+            LocalGenre::Seam { folio, .. } => folio,
+        }
+    }
+
+    /// SPEC: canon §5.7 AETHER row: "the local genre's aether_axiom", where
+    /// `local_genre(pos)` is the Folio's genre inside a seam zone (§5.8,
+    /// canon-1.11).
     #[must_use]
     pub const fn aether_axiom(self) -> Option<Axiom> {
-        self.skin_genre().aether_axiom()
+        self.genre().aether_axiom()
     }
 }
 
@@ -584,18 +584,22 @@ pub const fn edge_multiplier_bp(e: u8, target_native: bool) -> i32 {
     }
 }
 
-/// SPEC: canon §5.6 Shock of the New: the first hit from a base-function
-/// component with `E >= 3` on each native non-boss target applies
-/// `st.staggered`. `first_hit` means the `(item uid, target)` pair is not yet
-/// in the Folio's tracking set.
+/// SPEC: canon §5.6 (canon-1.11) Shock of the New: the first hit from a
+/// base-function component with `E >= 3` on each native target whose rank is
+/// not `rank.boss`, `rank.editor` or `rank.hunter` applies `st.staggered`
+/// regardless of poise. `target_rank` is the target's identity rank (`None`
+/// for Errata and rankless entities; the Erasure hunter is `rank.hunter`).
+/// `first_hit` means the `(item uid, target)` pair is not yet in the Folio's
+/// tracking set.
 #[must_use]
 pub const fn shock_of_the_new(
     e: u8,
     target_native: bool,
-    target_is_boss: bool,
+    target_rank: Option<Rank>,
     first_hit: bool,
 ) -> bool {
-    e >= 3 && target_native && !target_is_boss && first_hit
+    let excluded = matches!(target_rank, Some(Rank::Boss | Rank::Editor | Rank::Hunter));
+    e >= 3 && target_native && !excluded && first_hit
 }
 
 /// SPEC: canon §5.5 formula given final tolerances (World Law grants and the
@@ -609,10 +613,12 @@ pub fn evaluate(component: &Component, local: LocalGenre, tol: [u8; 4]) -> Contr
         gap: [0; 4],
         basis,
     };
-    if local.includes(Genre::UrText) {
+    // Canon-1.11 §5.8: inside a seam zone `local_genre(pos)` is the Folio's
+    // genre, so the genre overrides read `local.genre()`.
+    if matches!(local.genre(), Genre::UrText) {
         return zero(ContradictionBasis::UrText);
     }
-    if component.innate && local.includes(Genre::Unwritten) {
+    if component.innate && matches!(local.genre(), Genre::Unwritten) {
         return zero(ContradictionBasis::UnwrittenInnate);
     }
     if component.palimpsestic {
@@ -705,7 +711,9 @@ pub const fn failure_roll_due(
 
 // ---------------------------------------------------------------- §5.11
 
-/// SPEC: canon §5.11. Failures that trigger `st.unmoored`.
+/// SPEC: canon §5.11. Failures that trigger `st.unmoored`: Contradiction
+/// failures of any kind (jams, fizzles, sparks and, since canon-1.11, failed
+/// potions, doc 08).
 pub const UNMOORED_FAILURES: usize = 3;
 /// SPEC: canon §5.11. Window, in ticks, in which those failures must fall.
 pub const UNMOORED_WINDOW_TICKS: u64 = 600;
@@ -835,7 +843,7 @@ mod tests {
             edge_multiplier_bp(k.e, true),
         );
         assert_eq!(factor, 7440);
-        assert!(shock_of_the_new(k.e, true, false, true));
+        assert!(shock_of_the_new(k.e, true, None, true));
     }
 
     /// SPEC: canon §21 test 15: a Fairy Tale wand (`dep = {arcana}`, `Req = 8`)
@@ -909,18 +917,27 @@ mod tests {
             default_dep(ComponentKind::Summon { glyph_dep: glyph }, g),
             glyph
         );
-        let mounts = [
-            (MountSkin::Vehicle, Axiom::Techne),
-            (MountSkin::BroomOrCarpet, Axiom::Arcana),
-            (MountSkin::DivineSteed, Axiom::Mythos),
-            (MountSkin::Cloud, Axiom::Verve),
-        ];
-        for (skin, axis) in mounts {
-            assert_eq!(
-                default_dep(ComponentKind::Mount(skin), g).only(),
-                Some(axis)
-            );
-        }
+        // Canon-1.11: supernatural alchemical effects are Casting (the origin
+        // genre's aether axiom: Steampunk's is techne); licensed grafts take
+        // their gimmick's dependency.
+        assert_eq!(
+            default_dep(ComponentKind::Casting, g).only(),
+            Some(Axiom::Techne)
+        );
+        assert_eq!(
+            default_dep(ComponentKind::Casting, Genre::UrText).only(),
+            Some(Axiom::Arcana)
+        );
+        let gimmick = DepSet::single(Axiom::Verve);
+        assert_eq!(
+            default_dep(
+                ComponentKind::LicensedGraft {
+                    gimmick_dep: gimmick
+                },
+                g
+            ),
+            gimmick
+        );
     }
 
     /// SPEC: canon §5.3 requirement floor of 1 and the worldgen roll rule.
@@ -1119,6 +1136,30 @@ mod tests {
         assert!(seam.is_native(Genre::Cyberpunk) && seam.is_native(Genre::FairyTale));
         assert!(!seam.is_native(Genre::Wuxia));
         assert_eq!(seam.skin_genre(), Genre::Cyberpunk);
+        // Canon-1.11: local_genre(pos) in a seam is the Folio's genre, so the
+        // AETHER row uses Cyberpunk's techne (TEC 9 in the seam's axioms).
+        assert_eq!(seam.genre(), Genre::Cyberpunk);
+        assert_eq!(seam.aether_axiom(), Some(Axiom::Techne));
+        assert_eq!(aether_regen_term_bp(seam), 14_000);
+        // The genre overrides follow local_genre: a seam whose Folio genre is
+        // the Ur-Text zeroes C; one that only stitches the Ur-Text in does not.
+        let tol = [0u8; 4];
+        let ur = LocalGenre::Seam {
+            folio: Genre::UrText,
+            other: Genre::FairyTale,
+        };
+        assert_eq!(
+            evaluate(&smart_pistol(), ur, tol).basis,
+            ContradictionBasis::UrText
+        );
+        let stitched = LocalGenre::Seam {
+            folio: Genre::FairyTale,
+            other: Genre::UrText,
+        };
+        assert_eq!(
+            evaluate(&smart_pistol(), stitched, tol).basis,
+            ContradictionBasis::Formula
+        );
         // Both toolsets work at full strength: the pistol is Coherent.
         let tol = TolInputs::default();
         let k = evaluate_for(&smart_pistol(), seam, &tol, &[]);
@@ -1143,11 +1184,18 @@ mod tests {
         assert_eq!(edge_bp(6), 2400);
         assert_eq!(edge_multiplier_bp(6, true), 12_400);
         assert_eq!(edge_multiplier_bp(6, false), 10_000);
-        assert!(shock_of_the_new(3, true, false, true));
-        assert!(!shock_of_the_new(2, true, false, true));
-        assert!(!shock_of_the_new(6, false, false, true));
-        assert!(!shock_of_the_new(6, true, true, true));
-        assert!(!shock_of_the_new(6, true, false, false));
+        assert!(shock_of_the_new(3, true, None, true));
+        assert!(!shock_of_the_new(2, true, None, true));
+        assert!(!shock_of_the_new(6, false, None, true));
+        assert!(!shock_of_the_new(6, true, None, false));
+        // Canon-1.11: boss, editor and hunter ranks are excluded; champions
+        // and elites are not.
+        for r in [Rank::Boss, Rank::Editor, Rank::Hunter] {
+            assert!(!shock_of_the_new(6, true, Some(r), true), "{r:?}");
+        }
+        for r in [Rank::Minion, Rank::Standard, Rank::Elite, Rank::Champion] {
+            assert!(shock_of_the_new(6, true, Some(r), true), "{r:?}");
+        }
         // Edge is capped at 6 even when raw_gap is 8.
         let wand = Component::new(DepSet::single(Axiom::Arcana), Genre::FairyTale);
         let tol = TolInputs {
@@ -1308,6 +1356,78 @@ mod tests {
             prop_assert!(t.total(gear).iter().all(|&v| v <= TOL_CAP));
             prop_assert!(attune_tol(atn) <= 3);
             prop_assert!(attune_tol(atn + 1) >= attune_tol(atn));
+        }
+    }
+
+    /// Review (canon §5.8 (canon-1.11), §5.5, §5.7): in every possible seam,
+    /// `local_genre(pos)` is the Folio's genre: the AETHER row reads the
+    /// Folio genre's aether axiom, and the Ur-Text and Unwritten overrides
+    /// fire exactly when the Folio's genre is that genre, never for a genre
+    /// that is only stitched in. Nativeness and Laws still cover both genres.
+    #[test]
+    fn seam_local_genre_is_the_folio_genre() {
+        let tol = [0u8; 4];
+        let pistol = smart_pistol();
+        let innate = Component {
+            innate: true,
+            ..pistol
+        };
+        for folio in Genre::ALL {
+            assert_eq!(LocalGenre::Plain(folio).genre(), folio);
+            for other in Genre::ALL {
+                let seam = LocalGenre::Seam { folio, other };
+                assert_eq!(seam.genre(), folio);
+                assert_eq!(seam.aether_axiom(), folio.aether_axiom());
+                assert!(seam.is_native(folio) && seam.is_native(other));
+                assert!(law_active(folio, seam) && law_active(other, seam));
+                let k = evaluate(&pistol, seam, tol);
+                assert_eq!(
+                    k.basis == ContradictionBasis::UrText,
+                    folio == Genre::UrText,
+                    "{folio:?} + {other:?}"
+                );
+                let k = evaluate(&innate, seam, tol);
+                let zeroed = matches!(
+                    k.basis,
+                    ContradictionBasis::UrText | ContradictionBasis::UnwrittenInnate
+                );
+                assert_eq!(
+                    zeroed,
+                    matches!(folio, Genre::UrText | Genre::Unwritten),
+                    "{folio:?} + {other:?}"
+                );
+            }
+        }
+    }
+
+    /// Review (canon §5.6 (canon-1.11)): Shock of the New needs `E >= 3`, a
+    /// native target, a first hit and a rank outside boss, editor and hunter
+    /// (Errata and rankless targets have none).
+    #[test]
+    fn shock_of_the_new_truth_table() {
+        let ranks = [
+            None,
+            Some(Rank::Minion),
+            Some(Rank::Standard),
+            Some(Rank::Elite),
+            Some(Rank::Champion),
+            Some(Rank::Boss),
+            Some(Rank::Editor),
+            Some(Rank::Hunter),
+        ];
+        for e in 0..=6u8 {
+            for native in [false, true] {
+                for first in [false, true] {
+                    for r in ranks {
+                        let excluded = matches!(r, Some(Rank::Boss | Rank::Editor | Rank::Hunter));
+                        assert_eq!(
+                            shock_of_the_new(e, native, r, first),
+                            e >= 3 && native && first && !excluded,
+                            "{e} {native} {first} {r:?}"
+                        );
+                    }
+                }
+            }
         }
     }
 }

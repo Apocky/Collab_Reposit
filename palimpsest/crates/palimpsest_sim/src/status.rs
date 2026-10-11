@@ -99,7 +99,6 @@ pub enum StatusId {
     Levitating,
     Madness,
     Marked,
-    Mounted,
     Oiled,
     Overburdened,
     Poisoned,
@@ -123,8 +122,9 @@ pub enum StatusId {
     Withering,
 }
 
-/// SPEC: canon §11.1. Number of statuses in the canon table.
-pub const STATUS_COUNT: usize = 62;
+/// SPEC: canon §11.1. Number of statuses in the canon table (61; `st.mounted`
+/// is retired, canon §17.7).
+pub const STATUS_COUNT: usize = 61;
 
 /// SPEC: canon §11.1 "Category" column.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -186,12 +186,11 @@ pub enum Condition {
     WhileComponentContradicted,
     /// `st.hidden`: while no hostile holds awareness `aware.alert` or higher.
     WhileUnnoticed,
-    /// `st.downed`: until revived or bled out.
+    /// `st.downed`: until revived or bled out (30 s bleed-out for the first
+    /// down in a Folio; later downs per doc 16 §9.4).
     UntilRevivedOrBledOut,
     /// `st.suffocating`: while `res.breath` = 0.
     WhileBreathZero,
-    /// `st.mounted`: while riding.
-    WhileRiding,
     /// `st.bound`: while a minion is bound to its owner.
     WhileMinionBound,
     /// `st.ghost`: until resurrected.
@@ -678,16 +677,6 @@ pub static CATALOG: [StatusDef; STATUS_COUNT] = {
             Refresh,
             T(480),
             9,
-        ),
-        row(
-            Id::Mounted,
-            "st.mounted",
-            C::Indicator,
-            G::Special,
-            None,
-            Conditional(Cond::WhileRiding),
-            BaseDuration::None,
-            5,
         ),
         row(
             Id::Oiled,
@@ -1214,11 +1203,16 @@ impl Thresholds {
     }
 }
 
-/// SPEC: canon §11.1, §11.4, §11.8, §17.3. Bearer facts that status rules read.
+/// SPEC: canon §11.1, §11.4, §11.6, §11.8, §17.3. Bearer facts that status rules read.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
 pub struct Bearer {
-    /// Enemy rank; `None` for Errata and rankless entities.
+    /// Enemy rank (its identity: immunities, post-proc protection,
+    /// presentation); `None` for Errata and rankless entities.
     pub rank: Option<Rank>,
+    /// The Erasure hunter (canon-1.11 §11.6, DECISIONS item 91): identity
+    /// `rank.hunter` (set `rank: Some(Rank::Hunter)`), but the DoT-taken and
+    /// control-duration multipliers of `rank.elite` ([`Bearer::multiplier_rank`]).
+    pub erasure_hunter: bool,
     /// Body plan `body.construct`.
     pub construct: bool,
     /// An electronic entity (`st.hacked` applies to it).
@@ -1228,11 +1222,32 @@ pub struct Bearer {
 }
 
 impl Bearer {
-    /// SPEC: canon §11.4, §17.3. Boss, editor or hunter.
+    /// SPEC: canon §11.6 (canon-1.11). The Erasure hunter: `rank.hunter`
+    /// identity with `rank.elite` multipliers.
+    pub const ERASURE_HUNTER: Bearer = Bearer {
+        rank: Some(Rank::Hunter),
+        erasure_hunter: true,
+        construct: false,
+        electronic: false,
+        player_controlled: false,
+    };
+
+    /// SPEC: canon §11.4, §17.3. Boss, editor or hunter (by identity, so the
+    /// Erasure hunter keeps the hunter's immunities and post-proc protection).
     pub const fn is_boss_class(self) -> bool {
         match self.rank {
             Some(r) => r.is_boss_class(),
             None => false,
+        }
+    }
+
+    /// SPEC: canon §11.6, §17.3 (canon-1.11). The rank whose multiplier
+    /// columns (DoT taken, control duration) apply: `rank.elite` for the
+    /// Erasure hunter, the identity rank otherwise.
+    pub const fn multiplier_rank(self) -> Option<Rank> {
+        match self.rank {
+            Some(Rank::Hunter) if self.erasure_hunter => Some(ERASURE_HUNTER_STATS_RANK),
+            r => r,
         }
     }
 }
@@ -1338,7 +1353,7 @@ pub const fn direct_duration(
         None => None,
     };
     let control = if status.is_control() {
-        rank_control_bp(bearer.rank)
+        rank_control_bp(bearer.multiplier_rank())
     } else {
         10_000
     };
@@ -1367,7 +1382,7 @@ pub const fn proc_duration(status: StatusId, bearer: Bearer) -> Option<u32> {
         None => return None,
     };
     let control = if status.is_control() && bearer.is_boss_class() {
-        rank_control_bp(bearer.rank)
+        rank_control_bp(bearer.multiplier_rank())
     } else {
         10_000
     };
@@ -1805,6 +1820,8 @@ pub struct DotPulse {
 /// `t`: returns `None` unless `t` is a pulse tick, the instance is active on
 /// `t` ("a pulse at tick `t` affects only statuses active on `t`") and the
 /// status deals damage over time. Max HP is read at the pulse tick.
+/// `bearer_rank` is the bearer's multiplier rank ([`Bearer::multiplier_rank`]:
+/// `rank.elite` for the Erasure hunter).
 pub fn dot_pulse(
     inst: &mut StatusInst,
     t: u64,
@@ -1850,12 +1867,15 @@ pub const ERASURE_MAX_STACKS: u8 = 10;
 pub const HUNTER_THRESHOLD: u8 = 10;
 /// SPEC: canon §11.6 lowest hunter-spawn threshold under Red Ink.
 pub const HUNTER_THRESHOLD_MIN: u8 = 6;
-/// SPEC: canon §11.6 (canon-1.6): the Erasure hunter spawns with
-/// `rank.elite` stats, and at most one spawns per Folio.
+/// SPEC: canon §11.6 (canon-1.11, DECISIONS item 91): the Erasure hunter
+/// carries `rank.hunter` for identity, immunities, post-proc protection and
+/// presentation, but uses `rank.elite`'s HP, damage, kill XP, DoT-taken and
+/// control-duration multipliers and the minion-to-champion row of §17.2.
 pub const ERASURE_HUNTER_STATS_RANK: Rank = Rank::Elite;
-/// SPEC: canon §11.6 (canon-1.6): "No further Erasure hunters spawn in that Folio."
+/// SPEC: canon §11.6: "No further Erasure hunters spawn in that Folio."
 pub const ERASURE_HUNTERS_PER_FOLIO: u64 = 1;
-/// SPEC: canon §11.6 Editors erase Errata placeables within 1500 mm ...
+/// SPEC: canon §11.6 hunters and every `fac.editors` member except an invader
+/// (§17.9) erase Errata placeables within 1500 mm ...
 pub const PLACEABLE_ERASE_RADIUS_MM: i64 = 1_500;
 /// SPEC: canon §11.6 ... at one placeable block per 10 ticks.
 pub const PLACEABLE_ERASE_PERIOD_TICKS: u64 = 10;
@@ -1910,11 +1930,12 @@ pub const fn hunter_threshold(red_ink_doses: u32) -> u8 {
     }
 }
 
-/// SPEC: canon §11.6 (canon-1.6, softer Erasure). Erasure hunters due by
-/// tick `t` when the first Erratum reached the hunter threshold on
-/// `first_reach_tick`: exactly one, for the party, from that tick on (with
-/// [`ERASURE_HUNTER_STATS_RANK`] stats); none before it, and never more in
-/// that Folio, however long the threshold is held.
+/// SPEC: canon §11.6 (softer Erasure). Erasure hunters due by tick `t` when
+/// the first Erratum reached the hunter threshold on `first_reach_tick`:
+/// exactly one, for the party, from that tick on ([`Bearer::ERASURE_HUNTER`]:
+/// `rank.hunter` identity, [`ERASURE_HUNTER_STATS_RANK`] multipliers); none
+/// before it, and never more in that Folio, however long the threshold is
+/// held (no repeat spawns).
 pub const fn hunters_due(first_reach_tick: u64, t: u64) -> u64 {
     if t < first_reach_tick {
         0
@@ -1922,6 +1943,28 @@ pub const fn hunters_due(first_reach_tick: u64, t: u64) -> u64 {
         ERASURE_HUNTERS_PER_FOLIO
     }
 }
+
+/// SPEC: canon §11.6 (canon-1.11). Whether an entity erases Errata
+/// placeables near it: hunters and every `fac.editors` member, except an
+/// invader (§17.9), which never erases placeables.
+#[must_use]
+pub const fn erases_placeables(hunter_or_editor: bool, invader: bool) -> bool {
+    hunter_or_editor && !invader
+}
+
+/// SPEC: canon §17.3a (canon-1.11) `counter.disruptor`: applies `st.unraveled`
+/// and `st.silenced` directly for exactly 180 ticks, unscaled by §11.4.
+pub const DISRUPTOR_TICKS: u32 = 180;
+
+/// SPEC: canon §17.3a (canon-1.11). The direct applications of a
+/// `counter.disruptor` hit, in ascending status ID order, each lasting exactly
+/// [`DISRUPTOR_TICKS`] whatever the bearer's thresholds and rank (no §11.4
+/// scaling, no rank control multiplier). It also stops the champion's
+/// regeneration (the caller's job).
+pub const DISRUPTOR_APPLIES: [(StatusId, u32); 2] = [
+    (StatusId::Silenced, DISRUPTOR_TICKS),
+    (StatusId::Unraveled, DISRUPTOR_TICKS),
+];
 
 // ---------------------------------------------------------------------------
 // Shock chains (canon §11.5)
@@ -1989,6 +2032,106 @@ mod tests {
     // proc overflow discarded; protection covers the proc tick's remainder;
     // decay uses the effective threshold; pool reapplication keeps the max;
     // refresh keeps `applied`; corroded DoT scales with stacks.
+
+    /// SPEC: canon §11.1 (canon-1.11): the catalog has exactly the canon's
+    /// rows (no retired `st.mounted`), with the same category, threshold
+    /// group, scaling, stacking, base duration and owner. Skipped when the
+    /// spec is not next to the workspace (a standalone export).
+    #[test]
+    fn catalog_matches_canon_text() {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../docs/palimpsest/spec/00_CANON.md"
+        );
+        let Ok(canon) = std::fs::read_to_string(path) else {
+            std::eprintln!("skipped: {path} not found");
+            return;
+        };
+        let mut seen = std::vec::Vec::new();
+        for line in canon.lines() {
+            let Some(inner) = line.trim().strip_prefix("| `st.") else {
+                continue;
+            };
+            let c: std::vec::Vec<&str> = inner.split('|').map(str::trim).collect();
+            // `x` | category | threshold | scaling | stacking | base | effect | owner | (trailing)
+            if c.len() != 9 {
+                continue;
+            }
+            let key = std::format!("st.{}", c[0].trim_end_matches('`'));
+            let id = StatusId::from_key(&key).unwrap_or_else(|| panic!("{key} missing"));
+            let d = id.def();
+            let cat = match d.category {
+                Category::Dot => "DoT",
+                Category::Debuff => "debuff",
+                Category::Control => "control",
+                Category::Mental => "mental",
+                Category::Buff => "buff",
+                Category::Need => "need",
+                Category::Indicator => "indicator",
+                Category::Special => "special",
+            };
+            assert_eq!(c[1], cat, "{key} category");
+            let thr = match d.threshold {
+                ThresholdGroup::Body => "body",
+                ThresholdGroup::Nerve => "nerve",
+                ThresholdGroup::Mind => "mind",
+                ThresholdGroup::Arcane => "arcane",
+                ThresholdGroup::Poise => "poise",
+                ThresholdGroup::Direct => "direct",
+                ThresholdGroup::Special => "special",
+            };
+            assert_eq!(c[2], thr, "{key} threshold");
+            let scal = match d.scaling {
+                None => "—",
+                Some(ScalingGroup::Body) => "body",
+                Some(ScalingGroup::Nerve) => "nerve",
+                Some(ScalingGroup::Mind) => "mind",
+                Some(ScalingGroup::Arcane) => "arcane",
+            };
+            assert_eq!(c[3], scal, "{key} scaling");
+            match d.stacking {
+                Stacking::Refresh => assert_eq!(c[4], "refresh", "{key}"),
+                Stacking::Pool => assert_eq!(c[4], "pool", "{key}"),
+                Stacking::Intensity(n) => {
+                    assert_eq!(c[4], std::format!("intensity {n}"), "{key}");
+                }
+                Stacking::Conditional(_) => assert!(
+                    !matches!(c[4], "refresh" | "pool") && !c[4].starts_with("intensity"),
+                    "{key} stacking {}",
+                    c[4]
+                ),
+            }
+            let words: std::vec::Vec<&str> = c[5].split_whitespace().collect();
+            match d.base {
+                BaseDuration::Ticks(t) => {
+                    let n: u32 = words[0]
+                        .parse()
+                        .unwrap_or_else(|_| panic!("{key} base {}", c[5]));
+                    let ticks = match words[1] {
+                        "s" => n * 60,
+                        "ticks" => n,
+                        u => panic!("{key} unit {u}"),
+                    };
+                    assert_eq!(t, ticks, "{key} base duration");
+                }
+                BaseDuration::None => assert_eq!(c[5], "none", "{key}"),
+                BaseDuration::UntilFolioExit => assert_eq!(c[5], "until Folio exit", "{key}"),
+            }
+            assert_eq!(c[7].parse::<u8>().ok(), Some(d.owner_doc), "{key} owner");
+            seen.push(id);
+        }
+        seen.sort();
+        seen.dedup();
+        assert_eq!(
+            seen.len(),
+            STATUS_COUNT,
+            "every catalog row appears in canon §11.1"
+        );
+        assert!(
+            StatusId::from_key("st.mounted").is_none(),
+            "retired (canon §17.7)"
+        );
+    }
 
     #[test]
     fn catalog_is_ascending_and_round_trips() {
@@ -2134,11 +2277,147 @@ mod tests {
         assert_eq!(rank_control_bp(Some(Rank::Champion)), 5_000);
     }
 
+    /// SPEC: canon §11.6, §17.3 (canon-1.11, DECISIONS item 91): the Erasure
+    /// hunter keeps `rank.hunter` identity (immune to charm, sleep,
+    /// confusion, hacking and polymorph; × 20000 post-proc protection) but
+    /// uses `rank.elite`'s DoT-taken (5000) and control (7500) multipliers.
+    #[test]
+    fn erasure_hunter_identity_and_multipliers() {
+        let h = Bearer::ERASURE_HUNTER;
+        assert!(h.is_boss_class());
+        assert_eq!(h.multiplier_rank(), Some(Rank::Elite));
+        assert!(!can_receive(StatusId::Charmed, h));
+        assert!(!can_receive(StatusId::Polymorphed, h));
+        assert_eq!(rank_dot_bp(h.multiplier_rank()), 5_000);
+        // A direct stun at baseline thresholds: 90 ticks × elite 7500 = 67,
+        // where a plain rank.hunter gets 90 × 2500 = 22.
+        assert_eq!(
+            direct_duration(StatusId::Stunned, Thresholds::BASELINE, h),
+            Some(67)
+        );
+        assert_eq!(
+            direct_duration(StatusId::Stunned, Thresholds::BASELINE, npc(Rank::Hunter)),
+            Some(22)
+        );
+        // Buildup procs: boss-class bearers use the control multiplier, elite's here.
+        assert_eq!(proc_duration(StatusId::Stunned, h), Some(67));
+        assert_eq!(npc(Rank::Hunter).multiplier_rank(), Some(Rank::Hunter));
+        // The flag only re-ranks a hunter.
+        let odd = Bearer {
+            rank: Some(Rank::Boss),
+            erasure_hunter: true,
+            ..Bearer::default()
+        };
+        assert_eq!(odd.multiplier_rank(), Some(Rank::Boss));
+        // DoT pulse multiplier: elite's 5000 halves a pulse.
+        assert_eq!(
+            dot_per_second(85_000, 100, 1, 10_000, rank_dot_bp(h.multiplier_rank())),
+            425
+        );
+        // One hunter per Folio, never a repeat spawn.
+        assert_eq!(hunters_due(1_000, 999), 0);
+        assert_eq!(hunters_due(1_000, 1_000), 1);
+        assert_eq!(hunters_due(1_000, 1_000_000), 1);
+        // Invaders never erase placeables; other hunters and editors do.
+        assert!(erases_placeables(true, false));
+        assert!(!erases_placeables(true, true));
+        assert!(!erases_placeables(false, false));
+    }
+
+    /// SPEC: canon §17.3a (canon-1.11): `counter.disruptor` applies
+    /// `st.silenced` and `st.unraveled` for exactly 180 ticks, unscaled.
+    #[test]
+    fn disruptor_is_unscaled() {
+        assert_eq!(
+            DISRUPTOR_APPLIES,
+            [(StatusId::Silenced, 180), (StatusId::Unraveled, 180)]
+        );
+        assert!(DISRUPTOR_APPLIES[0].0 < DISRUPTOR_APPLIES[1].0);
+        // §11.4 scaling would have changed it: a champion's silence lasts
+        // mul_bp(240, 5000) = 120 by direct application, but 180 here.
+        assert_eq!(
+            direct_duration(
+                StatusId::Silenced,
+                Thresholds::BASELINE,
+                npc(Rank::Champion)
+            ),
+            Some(120)
+        );
+    }
+
     fn npc(rank: Rank) -> Bearer {
         Bearer {
             rank: Some(rank),
             ..Bearer::default()
         }
+    }
+
+    /// Review (canon §11.6, §17.3, DECISIONS 91): the flag re-ranks only a
+    /// hunter, always to `rank.elite`; identity (and so boss-class
+    /// immunities) never changes.
+    #[test]
+    fn bearer_multiplier_rank_is_exhaustive() {
+        for r in RANKS.iter().map(|row| row.rank) {
+            for flag in [false, true] {
+                let b = Bearer {
+                    rank: Some(r),
+                    erasure_hunter: flag,
+                    ..Bearer::default()
+                };
+                let expect = if flag && r == Rank::Hunter {
+                    Rank::Elite
+                } else {
+                    r
+                };
+                assert_eq!(b.multiplier_rank(), Some(expect), "{r:?} {flag}");
+                assert_eq!(b.is_boss_class(), r.is_boss_class());
+            }
+        }
+        let errata = Bearer {
+            erasure_hunter: true,
+            ..Bearer::default()
+        };
+        assert_eq!(errata.multiplier_rank(), None);
+    }
+
+    /// Review (canon §11.4, §11.6): every status the Erasure hunter can
+    /// receive directly lasts exactly as long as on a plain elite (elite
+    /// control multiplier 7500), while its identity keeps the hunter's
+    /// immunities; buildup control procs use the multiplier too, since the
+    /// hunter is boss-class by identity.
+    #[test]
+    fn erasure_hunter_durations_match_elite() {
+        let h = Bearer::ERASURE_HUNTER;
+        let elite = npc(Rank::Elite);
+        for st in StatusId::ALL {
+            match direct_duration(st, Thresholds::BASELINE, h) {
+                Some(t) => assert_eq!(
+                    Some(t),
+                    direct_duration(st, Thresholds::BASELINE, elite),
+                    "{st:?}"
+                ),
+                None => assert!(!can_receive(st, h) || st.base_ticks().is_none(), "{st:?}"),
+            }
+            if st.is_control()
+                && can_receive(st, h)
+                && let Some(base) = st.base_ticks()
+            {
+                assert_eq!(
+                    proc_duration(st, h),
+                    Some(core::cmp::max(1, mul_bp(i64::from(base), 7_500)) as u32),
+                    "{st:?}"
+                );
+            }
+        }
+    }
+
+    /// Review (canon §11.6): the placeable-erasing truth table.
+    #[test]
+    fn erases_placeables_truth_table() {
+        assert!(erases_placeables(true, false));
+        assert!(!erases_placeables(true, true));
+        assert!(!erases_placeables(false, false));
+        assert!(!erases_placeables(false, true));
     }
 
     /// Canon §21 test 28 and the §11.4 boss stun example.

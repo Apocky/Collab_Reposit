@@ -3,9 +3,11 @@
 //! The rarity table (§13.3) and the generic rarity roll (§13.4), quality
 //! multipliers (§13.5), item categories (§13.1), unknown-appearance classes,
 //! type hiding and knowledge states, curse states (§13.6), the enhancement factor with
-//! blessing and curse penalty, Emendations and the Marginalia cap (§13.7),
-//! Palimpsestic effective item level (§13.3), and Marginalia armor HP
-//! `gear_hp` (§13.8.2). Pure functions; the roll takes a keyed generator.
+//! blessing and curse penalty, Emendations and `ENH_CAP` (§13.7),
+//! Palimpsestic effective item level and the Exotic limit over the §13.2
+//! equipment slots (§13.3), the `slot.ward` capacity chain and recharge
+//! (§13.2), and Marginalia armor HP `gear_hp` (§13.8.2). Pure functions; the
+//! roll takes a keyed generator.
 
 use palimpsest_math::int::{clamp_i32, floor_div, floor_div_i128, mul_bp, mul_bp_wide, narrow_i64};
 use palimpsest_math::rng::streams;
@@ -201,7 +203,8 @@ pub const fn effective_ilvl(rarity: Rarity, ilvl: u32, folio_index: u32) -> u32 
 /// SPEC: canon §13.3 Exotic limit groups.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum ExoticGroup {
-    /// `slot.weapon_1..3` and `slot.offhand`.
+    /// `slot.weapon_1..3`, `slot.offhand` and (canon-1.11)
+    /// `slot.hand_extra_1..2`.
     WeaponsAndOffhand,
     /// The five armor slots.
     Armor,
@@ -221,6 +224,159 @@ pub fn exotic_loadout_valid(exotics: &[ExoticGroup]) -> bool {
     ]
     .iter()
     .all(|g| exotics.iter().filter(|e| *e == g).count() <= 1)
+}
+
+/// SPEC: canon §13.2 equipment slots, in table order.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[allow(missing_docs)]
+pub enum EquipSlot {
+    Head,
+    Body,
+    Hands,
+    Legs,
+    Feet,
+    Back,
+    Neck,
+    RingL,
+    RingR,
+    Belt,
+    Trinket,
+    Weapon1,
+    Weapon2,
+    Weapon3,
+    Offhand,
+    ImplantHead,
+    ImplantTorso,
+    ImplantArms,
+    ImplantLegs,
+    Ward,
+    Face,
+    HandExtra1,
+    HandExtra2,
+}
+
+impl EquipSlot {
+    /// SPEC: canon §13.2. Every slot in table order (23; canon-1.11 names
+    /// `slot.hand_extra_1` and `slot.hand_extra_2`).
+    pub const ALL: [EquipSlot; 23] = [
+        EquipSlot::Head,
+        EquipSlot::Body,
+        EquipSlot::Hands,
+        EquipSlot::Legs,
+        EquipSlot::Feet,
+        EquipSlot::Back,
+        EquipSlot::Neck,
+        EquipSlot::RingL,
+        EquipSlot::RingR,
+        EquipSlot::Belt,
+        EquipSlot::Trinket,
+        EquipSlot::Weapon1,
+        EquipSlot::Weapon2,
+        EquipSlot::Weapon3,
+        EquipSlot::Offhand,
+        EquipSlot::ImplantHead,
+        EquipSlot::ImplantTorso,
+        EquipSlot::ImplantArms,
+        EquipSlot::ImplantLegs,
+        EquipSlot::Ward,
+        EquipSlot::Face,
+        EquipSlot::HandExtra1,
+        EquipSlot::HandExtra2,
+    ];
+
+    /// SPEC: canon §13.2. The slot's content ID, for example `slot.ward`.
+    #[must_use]
+    pub const fn id(self) -> &'static str {
+        match self {
+            EquipSlot::Head => "slot.head",
+            EquipSlot::Body => "slot.body",
+            EquipSlot::Hands => "slot.hands",
+            EquipSlot::Legs => "slot.legs",
+            EquipSlot::Feet => "slot.feet",
+            EquipSlot::Back => "slot.back",
+            EquipSlot::Neck => "slot.neck",
+            EquipSlot::RingL => "slot.ring_l",
+            EquipSlot::RingR => "slot.ring_r",
+            EquipSlot::Belt => "slot.belt",
+            EquipSlot::Trinket => "slot.trinket",
+            EquipSlot::Weapon1 => "slot.weapon_1",
+            EquipSlot::Weapon2 => "slot.weapon_2",
+            EquipSlot::Weapon3 => "slot.weapon_3",
+            EquipSlot::Offhand => "slot.offhand",
+            EquipSlot::ImplantHead => "slot.implant_head",
+            EquipSlot::ImplantTorso => "slot.implant_torso",
+            EquipSlot::ImplantArms => "slot.implant_arms",
+            EquipSlot::ImplantLegs => "slot.implant_legs",
+            EquipSlot::Ward => "slot.ward",
+            EquipSlot::Face => "slot.face",
+            EquipSlot::HandExtra1 => "slot.hand_extra_1",
+            EquipSlot::HandExtra2 => "slot.hand_extra_2",
+        }
+    }
+
+    /// SPEC: canon §13.3 (canon-1.11) Exotic limit group of the slot: the
+    /// weapon slots, `slot.offhand` and `slot.hand_extra_1..2` share one
+    /// group, the five armor slots another, and every other slot the third.
+    #[must_use]
+    pub const fn exotic_group(self) -> ExoticGroup {
+        match self {
+            EquipSlot::Weapon1
+            | EquipSlot::Weapon2
+            | EquipSlot::Weapon3
+            | EquipSlot::Offhand
+            | EquipSlot::HandExtra1
+            | EquipSlot::HandExtra2 => ExoticGroup::WeaponsAndOffhand,
+            EquipSlot::Head
+            | EquipSlot::Body
+            | EquipSlot::Hands
+            | EquipSlot::Legs
+            | EquipSlot::Feet => ExoticGroup::Armor,
+            _ => ExoticGroup::Other,
+        }
+    }
+}
+
+/// SPEC: canon §13.2 (canon-1.11) `slot.ward` capacity: `cap_base_mhp → ×
+/// T(ilvl) → × rarity power → × quality → × (10000 + 600 × eff_enh) → ×
+/// Contradiction potency`, one `mul_bp` per arrow in that order, with no
+/// material term. Panics if `ilvl == 0` or `eff_enh < -3`.
+#[must_use]
+pub const fn ward_capacity_mhp(
+    cap_base_mhp: i64,
+    ilvl: u32,
+    rarity: Rarity,
+    quality: Quality,
+    eff_enh: i32,
+    potency_bp: i32,
+) -> i64 {
+    assert!(eff_enh >= EFF_ENH_MIN, "eff_enh below -3");
+    let c = mul_bp_wide(cap_base_mhp, power_t(ilvl));
+    let c = mul_bp(c, rarity.row().power_bp);
+    let c = mul_bp(c, quality.multiplier_bp());
+    let c = mul_bp(c, enhancement_factor_bp(eff_enh));
+    mul_bp(c, potency_bp)
+}
+
+/// SPEC: canon §13.2. Ward recharge starts 180 ticks after the bearer last took damage.
+pub const WARD_RECHARGE_DELAY_TICKS: u64 = 180;
+/// SPEC: canon §13.2. Ward recharge restores 2500 Bp of capacity per second.
+pub const WARD_RECHARGE_BP_PER_S: i32 = 2_500;
+
+/// SPEC: canon §13.2. Whether the generator recharges on tick `t`: at least
+/// 180 ticks after the bearer last took damage (always, if it never did).
+#[must_use]
+pub const fn ward_recharging(t: u64, last_damage_tick: Option<u64>) -> bool {
+    match last_damage_tick {
+        None => true,
+        Some(l) => t >= l && t - l >= WARD_RECHARGE_DELAY_TICKS,
+    }
+}
+
+/// SPEC: canon §13.2, §2.3. The recharge rate `mul_bp(capacity, 2500)` mHP
+/// per second, applied through the §2.3 rate accumulator.
+#[must_use]
+pub const fn ward_recharge_per_s(capacity_mhp: i64) -> i64 {
+    mul_bp(capacity_mhp, WARD_RECHARGE_BP_PER_S)
 }
 
 // ---------------------------------------------------------------- §13.5
@@ -306,7 +462,7 @@ impl Buc {
 pub const BLESSED_CONSUMABLE_BP: i32 = 12_500;
 /// SPEC: canon §13.6. Highest `curse_penalty`.
 pub const CURSE_PENALTY_MAX: i32 = 3;
-/// SPEC: canon §13.7. Stored enhancement cap before Marginalia.
+/// SPEC: canon §13.7 `ENH_CAP` in the main run.
 pub const ENHANCEMENT_MAIN_CAP: i32 = 15;
 /// SPEC: canon §13.7. Lower clamp of `eff_enh`.
 pub const EFF_ENH_MIN: i32 = -3;
@@ -317,8 +473,9 @@ pub const EMENDATIONS_PER_VOLUME: u32 = 3;
 /// SPEC: canon §13.8 `ITEM_MULT_MAX` for Folios 1 to 25, Bp.
 pub const ITEM_MULT_MAX_BP: i64 = 51_870;
 
-/// SPEC: canon §13.7. Enhancement cap: 15, and `15 + floor_div(d_current - 25, 5)`
-/// in Marginalia (`d_current >= 26`).
+/// SPEC: canon §13.7 (canon-1.11) `ENH_CAP`: 15 in the main run and
+/// `15 + floor_div(d_current - 25, 5)` in Marginalia (`d_current >= 26`).
+/// Stored `enhancement` is `0..=ENH_CAP` (§13.9).
 #[must_use]
 pub const fn enhancement_cap(d_current: u32) -> i32 {
     if d_current >= MARGINALIA_START {
@@ -328,9 +485,9 @@ pub const fn enhancement_cap(d_current: u32) -> i32 {
     }
 }
 
-/// SPEC: canon §13.7 `eff_enh = clamp(enhancement + [buc = blessed] - curse_penalty, -3, 15)`,
-/// with the upper bound generalized to `cap` ([`enhancement_cap`]; 15 before
-/// Marginalia, per doc 11 Canon gap 2). `curse_penalty` counts only when cursed.
+/// SPEC: canon §13.7 (canon-1.11) `eff_enh = clamp(enhancement + [buc =
+/// blessed] - curse_penalty, -3, ENH_CAP)`, with `cap` = `ENH_CAP`
+/// ([`enhancement_cap`]). `curse_penalty` counts only when cursed.
 #[must_use]
 pub const fn eff_enh(enhancement: i32, buc: Buc, curse_penalty: i32, cap: i32) -> i32 {
     let bless = if matches!(buc, Buc::Blessed) { 1 } else { 0 };
@@ -354,7 +511,7 @@ pub const fn enhancement_factor_bp(eff_enh: i32) -> i32 {
 pub struct EnhanceState {
     /// Item level.
     pub ilvl: u32,
-    /// Stored enhancement.
+    /// Stored enhancement, `0..=ENH_CAP` (§13.9).
     pub enhancement: i32,
     /// Curse state.
     pub buc: Buc,
@@ -362,13 +519,16 @@ pub struct EnhanceState {
     pub curse_penalty: i32,
     /// Carries the curse affix (doc 10).
     pub curse_affix: bool,
+    /// Canon §13.6 (canon-1.9) pact curse: the curse affix is welded to a
+    /// matching pact boon (`curse.pact.<name>`, doc 10).
+    pub pact_boon: bool,
 }
 
 /// SPEC: canon §13.7. Result of using an Emendation.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Emendation {
-    /// On a cursed item: uncursed, penalty 0, curse affix removed,
-    /// enhancement and ilvl unchanged.
+    /// On a cursed item: uncursed, penalty 0, curse affix (and a pact
+    /// item's boon, canon §13.6) removed, enhancement and ilvl unchanged.
     Uncursed(EnhanceState),
     /// Otherwise: `ilvl = max(ilvl, current Folio index)`, then +1 enhancement.
     Enhanced(EnhanceState),
@@ -385,6 +545,7 @@ pub const fn apply_emendation(s: EnhanceState, folio_index: u32, d_current: u32)
             buc: Buc::Uncursed,
             curse_penalty: 0,
             curse_affix: false,
+            pact_boon: false,
             ..s
         });
     }
@@ -446,7 +607,6 @@ pub enum Category {
     Quest,
     Part,
     WardGen,
-    Mount,
     Seed,
     Corpse,
     BodyPart,
@@ -454,8 +614,8 @@ pub enum Category {
 
 impl Category {
     /// SPEC: canon §13.1. Every category, with each accessory kind listed
-    /// separately (32 entries).
-    pub const ALL: [Category; 32] = [
+    /// separately (31 entries; `cat.mount` is retired, canon §17.7).
+    pub const ALL: [Category; 31] = [
         Category::WeaponMelee,
         Category::WeaponRanged,
         Category::Wand,
@@ -484,7 +644,6 @@ impl Category {
         Category::Quest,
         Category::Part,
         Category::WardGen,
-        Category::Mount,
         Category::Seed,
         Category::Corpse,
         Category::BodyPart,
@@ -518,7 +677,6 @@ impl Category {
             Category::Quest => "cat.quest",
             Category::Part => "cat.part",
             Category::WardGen => "cat.ward_gen",
-            Category::Mount => "cat.mount",
             Category::Seed => "cat.seed",
             Category::Corpse => "cat.corpse",
             Category::BodyPart => "cat.body_part",
@@ -912,6 +1070,7 @@ mod tests {
             buc: Buc::Uncursed,
             curse_penalty: 0,
             curse_affix: false,
+            pact_boon: false,
         };
         let up = apply_emendation(base, 9, 9);
         assert_eq!(
@@ -943,6 +1102,21 @@ mod tests {
                 buc: Buc::Uncursed,
                 curse_penalty: 0,
                 curse_affix: false,
+                ..base
+            })
+        );
+        // Canon §13.6 pact curse: uncursing removes both the curse and the boon.
+        let pact = EnhanceState {
+            pact_boon: true,
+            ..cursed
+        };
+        assert_eq!(
+            apply_emendation(pact, 9, 9),
+            Emendation::Uncursed(EnhanceState {
+                buc: Buc::Uncursed,
+                curse_penalty: 0,
+                curse_affix: false,
+                pact_boon: false,
                 ..base
             })
         );
@@ -988,6 +1162,56 @@ mod tests {
             E::WeaponsAndOffhand,
             E::Other
         ]));
+        // Canon-1.11: the extra-hand slots share the weapon group, so an
+        // Exotic in slot.hand_extra_1 and one in slot.weapon_2 is too many.
+        assert_eq!(EquipSlot::HandExtra1.exotic_group(), E::WeaponsAndOffhand);
+        assert_eq!(EquipSlot::HandExtra2.exotic_group(), E::WeaponsAndOffhand);
+        assert!(!exotic_loadout_valid(&[
+            EquipSlot::HandExtra1.exotic_group(),
+            EquipSlot::Weapon2.exotic_group()
+        ]));
+        assert_eq!(EquipSlot::Feet.exotic_group(), E::Armor);
+        assert_eq!(EquipSlot::Ward.exotic_group(), E::Other);
+        assert_eq!(EquipSlot::ImplantArms.exotic_group(), E::Other);
+        for (i, s) in EquipSlot::ALL.iter().enumerate() {
+            assert!(s.id().starts_with("slot."));
+            assert!(!EquipSlot::ALL[i + 1..].iter().any(|o| o.id() == s.id()));
+        }
+        assert_eq!(EquipSlot::HandExtra2.id(), "slot.hand_extra_2");
+    }
+
+    /// SPEC: canon §13.2 (canon-1.11) `slot.ward` capacity chain, one
+    /// `mul_bp` per arrow, no material term; recharge after 180 ticks at 2500
+    /// Bp of capacity per second.
+    #[test]
+    fn ward_capacity_chain() {
+        // ilvl 1, Common, Normal, +0, Coherent: the base.
+        assert_eq!(
+            ward_capacity_mhp(50_000, 1, Rarity::Common, Quality::Normal, 0, 10_000),
+            50_000
+        );
+        // ilvl 25 (T = 36145), Rare (11000), Good (11000), +2 (11200), potency 9000.
+        let expect = mul_bp(
+            mul_bp(
+                mul_bp(mul_bp(mul_bp_wide(50_000, 36_145), 11_000), 11_000),
+                11_200,
+            ),
+            9_000,
+        );
+        assert_eq!(
+            ward_capacity_mhp(50_000, 25, Rarity::Rare, Quality::Good, 2, 9_000),
+            expect
+        );
+        assert_eq!(expect, 220_425);
+        // A Disconnected generator has no capacity.
+        assert_eq!(
+            ward_capacity_mhp(50_000, 25, Rarity::Rare, Quality::Good, 2, 0),
+            0
+        );
+        assert!(!ward_recharging(1_179, Some(1_000)));
+        assert!(ward_recharging(1_180, Some(1_000)));
+        assert!(ward_recharging(0, None));
+        assert_eq!(ward_recharge_per_s(220_425), 55_106);
     }
 
     proptest! {
@@ -1014,7 +1238,7 @@ mod tests {
             let e = eff_enh(enh, buc, pen, cap);
             prop_assert!((EFF_ENH_MIN..=cap).contains(&e));
             prop_assert!(enhancement_factor_bp(e + 1) > enhancement_factor_bp(e));
-            let s = EnhanceState { ilvl, enhancement: enh, buc, curse_penalty: pen, curse_affix: buc == Buc::Cursed };
+            let s = EnhanceState { ilvl, enhancement: enh, buc, curse_penalty: pen, curse_affix: buc == Buc::Cursed, pact_boon: false };
             match apply_emendation(s, f, d) {
                 Emendation::Enhanced(n) => {
                     prop_assert!(n.ilvl >= s.ilvl && n.ilvl >= f && n.enhancement == enh + 1 && n.enhancement <= cap);
@@ -1040,5 +1264,99 @@ mod tests {
             let total = gear_hp_mhp(&set);
             prop_assert!(total >= floors && total - floors <= 4);
         }
+
+        /// Review (canon §13.2 (canon-1.11)): the ward capacity is one
+        /// `mul_bp` per arrow in the listed order (no material term), and
+        /// never falls as Contradiction potency rises.
+        #[test]
+        fn ward_capacity_chain_order(
+            base in 0i64..10_000_000, ilvl in 1u32..=400, r in 0usize..7, q in 0usize..7,
+            enh in -3i32..=70, pot in 0i32..=10_000,
+        ) {
+            let (rar, qual) = (Rarity::ALL[r], Quality::ALL[q]);
+            let expect = mul_bp(
+                mul_bp(
+                    mul_bp(mul_bp(mul_bp_wide(base, power_t(ilvl)), rar.row().power_bp), qual.multiplier_bp()),
+                    enhancement_factor_bp(enh),
+                ),
+                pot,
+            );
+            let cap = ward_capacity_mhp(base, ilvl, rar, qual, enh, pot);
+            prop_assert_eq!(cap, expect);
+            if pot < 10_000 {
+                prop_assert!(ward_capacity_mhp(base, ilvl, rar, qual, enh, pot + 1) >= cap);
+            }
+        }
+
+        /// Review (canon §13.2, §2.3): recharge starts exactly 180 ticks
+        /// after the last damage, and never on a tick before that damage.
+        #[test]
+        fn ward_recharge_boundary(last in 0u64..1_000_000_000, dt in 0u64..400) {
+            prop_assert_eq!(ward_recharging(last + dt, Some(last)), dt >= 180);
+            prop_assert!(!ward_recharging(last, Some(last + 1 + dt)));
+        }
+
+        /// Review (canon §13.6 (canon-1.9), §13.7): an Emendation on a cursed
+        /// pact item removes the boon with the curse and keeps enhancement.
+        #[test]
+        fn pact_boon_leaves_with_the_curse(ilvl in 1u32..30, enh in 0i32..=15, pen in 1i32..=3, f in 1u32..30) {
+            let s = EnhanceState { ilvl, enhancement: enh, buc: Buc::Cursed, curse_penalty: pen, curse_affix: true, pact_boon: true };
+            prop_assert_eq!(
+                apply_emendation(s, f, f),
+                Emendation::Uncursed(EnhanceState { buc: Buc::Uncursed, curse_penalty: 0, curse_affix: false, pact_boon: false, ..s })
+            );
+        }
+    }
+
+    /// Review (canon §13.2, §13.3 (canon-1.11)): `EquipSlot::ALL` is canon
+    /// §13.2's slot list in table order, and the Exotic limit groups hold 6
+    /// (weapons, off-hand, extra hands), 5 (armor) and 12 slots. The text
+    /// check is skipped when the spec is not next to the workspace.
+    #[test]
+    fn equip_slots_match_canon_text() {
+        let count = |g: ExoticGroup| {
+            EquipSlot::ALL
+                .iter()
+                .filter(|s| s.exotic_group() == g)
+                .count()
+        };
+        assert_eq!(
+            (
+                count(ExoticGroup::WeaponsAndOffhand),
+                count(ExoticGroup::Armor),
+                count(ExoticGroup::Other)
+            ),
+            (6, 5, 12)
+        );
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../docs/palimpsest/spec/00_CANON.md"
+        );
+        let Ok(canon) = std::fs::read_to_string(path) else {
+            std::eprintln!("skipped: {path} not found");
+            return;
+        };
+        let ids: Vec<String> = canon
+            .lines()
+            .filter(|l| l.starts_with("| `slot."))
+            .flat_map(|l| {
+                l.split('|')
+                    .nth(1)
+                    .unwrap_or_default()
+                    .split(',')
+                    .map(|t| t.trim().trim_matches('`').to_string())
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        let code: Vec<&str> = EquipSlot::ALL.iter().map(|s| s.id()).collect();
+        assert_eq!(ids, code);
+    }
+
+    /// Review (canon §13.2): `ilvl` 0 is not an item level, so the chain
+    /// refuses it (`T(0)` panics).
+    #[test]
+    #[should_panic(expected = "d must be >= 1")]
+    fn ward_capacity_rejects_ilvl_zero() {
+        let _ = ward_capacity_mhp(50_000, 0, Rarity::Common, Quality::Normal, 0, 10_000);
     }
 }

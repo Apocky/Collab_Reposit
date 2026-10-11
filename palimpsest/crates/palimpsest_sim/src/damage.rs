@@ -3,12 +3,16 @@
 //! healing; §17.2 party damage; §17.5 friendly fire; doc 05 §10 and §12.
 //!
 //! Every function is pure over explicit input structs. [`resolve_hit`] runs
-//! canon §10.5 steps 1 to 7 in the exact canonical order and returns a
-//! [`DamageBreakdown`] whose per-type values sum to the total (step 9).
-//! Step 8 (HP, condition pool, poise, buildup, lethal) is split into the
-//! helpers [`apply_hp`], [`apply_part_pool`], [`poise_damage_base_mp`], the
-//! breakdown's `buildup` column and [`resolve_lethal`], because each needs
-//! state that the caller owns. The §10.6 entry points are separate functions.
+//! canon §10.5 steps 1 to 7 in the exact canonical order (canon-1.11: the
+//! fae-iron factor in step 3a, the shield's AR in step 5 for blocked hits,
+//! the 6b split-back and Scribe's Mercy step 6c, per-pool ward multipliers in
+//! step 7) and returns a [`DamageBreakdown`] whose per-type values sum to the
+//! total (step 9). Step 8 (HP, condition pool, poise, buildup, severing,
+//! lethal) is split into the helpers [`apply_hp`], [`apply_part_pool`],
+//! [`poise_damage_base_mp`], the breakdown's `buildup` column, [`severs`] and
+//! [`resolve_lethal`], because each needs state that the caller owns. The
+//! §10.6 entry points are separate functions, and [`HitKey`] orders a tick's
+//! hits in the two §10.8 batches.
 //!
 //! Interpretations of canon gaps are marked `GAP:` in the doc comments.
 
@@ -276,10 +280,37 @@ impl DamageType {
     }
 }
 
-/// SPEC: canon §10.1 `dmg.blunt`: poise damage × 15000 (doc 05 §12.4 pro rata).
+/// SPEC: canon §10.1 `dmg.blunt`: poise damage × 15000 for a pure blunt hit.
 pub const BLUNT_POISE_BP: i32 = 15_000;
+
+/// SPEC: canon §10.1 (canon-1.11) `dmg.blunt` poise factor for mixed hits:
+/// `10000 + floor_div(share_blunt, 2)` Bp, so × 15000 for a pure blunt hit
+/// (doc 05 §12.4). Panics unless `share_blunt` is in `0..=10000`.
+#[must_use]
+pub const fn blunt_poise_bp(share_blunt: i32) -> i32 {
+    assert!(
+        share_blunt >= 0 && share_blunt <= 10_000,
+        "share_blunt outside 0..=10000"
+    );
+    10_000 + floor_div(share_blunt as i64, 2) as i32
+}
 /// SPEC: canon §10.1 `dmg.radiant`: × 15000 against undead and fiends (step 3a).
 pub const RADIANT_UNHOLY_BP: i32 = 15_000;
+/// SPEC: canon §10.5 step 3a (canon-1.11), §16.3: every `d[t]` × 12500 when
+/// the target is `kin.fae` and the hit comes from an item whose primary
+/// material is `mat.iron` or `mat.cold_iron`.
+pub const FAE_IRON_BP: i32 = 12_500;
+
+/// SPEC: canon §10.5 step 3a, §16.3. Primary materials that trigger the fae
+/// factor: `mat.iron` and `mat.cold_iron`.
+pub const FAE_BANE_MATERIALS: [&str; 2] = ["mat.cold_iron", "mat.iron"];
+
+/// SPEC: canon §10.5 step 3a. `true` when `material` (an item's primary
+/// material ID) is `mat.iron` or `mat.cold_iron`.
+#[must_use]
+pub fn is_fae_bane_material(material: &str) -> bool {
+    FAE_BANE_MATERIALS.contains(&material)
+}
 /// SPEC: canon §10.1 `dmg.sonic` noise base: `60 + floor_div(d_mhp, 1000)` dB.
 pub const SONIC_NOISE_BASE_DB: i32 = 60;
 
@@ -448,16 +479,39 @@ impl TypeSet {
 // ---------------------------------------------------------------------------
 
 /// SPEC: canon §13.7, §10.4 enhancement factor `10000 + 600 × eff_enh`, with
-/// `eff_enh` in `-3..=15`. Panics outside that range.
+/// `eff_enh` in `-3..=ENH_CAP` (canon-1.11: `ENH_CAP` is 15 in the main run
+/// and `15 + floor_div(d_current - 25, 5)` in Marginalia, so there is no
+/// fixed upper bound here; `loot::eff_enh` applies the cap). Panics if
+/// `eff_enh < -3` or the factor overflows.
 pub const fn enhancement_bp(eff_enh: i32) -> i32 {
-    assert!(eff_enh >= -3 && eff_enh <= 15, "eff_enh outside -3..=15");
+    assert!(eff_enh >= -3, "eff_enh below -3");
     10_000 + 600 * eff_enh
+}
+
+/// SPEC: canon §10.4 (canon-1.11). Before the step-0 chain, doc 05's attack
+/// factors (move, charge, sweet spot, range falloff, penetration keep,
+/// cleave, area falloff and exposure; doc 05 §10.1) multiply `base_mhp` or
+/// `template_dmg_mhp`, one `mul_bp` each in doc 05's order.
+#[must_use]
+pub fn apply_attack_factors(base_mhp: i64, factors_bp: &[i32]) -> i64 {
+    factors_bp.iter().fold(base_mhp, |v, &f| mul_bp(v, f))
+}
+
+/// SPEC: canon §10.4 (canon-1.11). After the step-0 chain, a manufacturer
+/// trait stated as "× N" (§5.9) multiplies `B` once, before step 1; `None`
+/// when the item has no such trait.
+#[must_use]
+pub const fn apply_manufacturer_trait(b_mhp: i64, trait_bp: Option<i32>) -> i64 {
+    match trait_bp {
+        Some(bp) => mul_bp(b_mhp, bp),
+        None => b_mhp,
+    }
 }
 
 /// SPEC: canon §10.4. Inputs of an Errata item source.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct ItemSource {
-    /// Archetype `base_mhp` after doc 05 attack factors.
+    /// Archetype `base_mhp` after doc 05 attack factors ([`apply_attack_factors`]).
     pub base_mhp: i64,
     /// `src_lvl` (§13.8.1).
     pub src_lvl: u32,
@@ -465,7 +519,7 @@ pub struct ItemSource {
     pub rarity_bp: i32,
     /// Quality multiplier (§13.5), Bp.
     pub quality_bp: i32,
-    /// Effective enhancement (§13.7), `-3..=15`.
+    /// Effective enhancement (§13.7), `-3..=ENH_CAP`.
     pub eff_enh: i32,
     /// Primary material `dmg_bp` (doc 07), `7000..=14000`.
     pub material_bp: i32,
@@ -473,7 +527,8 @@ pub struct ItemSource {
 
 /// SPEC: canon §10.4 Errata item source: `B = base_mhp → × P(src_lvl) →
 /// × rarity → × quality → × (10000 + 600 × eff_enh) → × material_bp`, one
-/// `mul_bp` per arrow in that order. Panics if the material is outside `7000..=14000`.
+/// `mul_bp` per arrow in that order; a "× N" manufacturer trait follows with
+/// [`apply_manufacturer_trait`]. Panics if the material is outside `7000..=14000`.
 pub fn errata_item_source_mhp(s: &ItemSource) -> i64 {
     assert!(
         (7_000..=14_000).contains(&s.material_bp),
@@ -497,7 +552,7 @@ pub struct ArmorSource {
     pub rarity_bp: i32,
     /// Quality multiplier, Bp.
     pub quality_bp: i32,
-    /// Effective enhancement, `-3..=15`.
+    /// Effective enhancement, `-3..=ENH_CAP`.
     pub eff_enh: i32,
     /// Primary material `ar_bp`, `7000..=14000`.
     pub mat_ar_bp: i32,
@@ -517,7 +572,10 @@ pub fn errata_armor_ar(s: &ArmorSource) -> i64 {
     mul_bp(a, s.mat_ar_bp)
 }
 
-/// SPEC: canon §10.4 enemy source: `B = template_dmg_mhp → × T(d) → × rank damage`.
+/// SPEC: canon §10.4 enemy source: `B = template_dmg_mhp → × T(d) → × rank
+/// damage`. Pass the multiplier rank: the Erasure hunter keeps `rank.hunter`
+/// identity but uses `rank.elite`'s damage (canon §11.6, §17.3;
+/// [`status::Bearer::multiplier_rank`]), so 13000, not 20000.
 pub fn enemy_source_mhp(template_dmg_mhp: i64, d: u32, rank: Rank) -> i64 {
     mul_bp(
         mul_bp_wide(template_dmg_mhp, power_t(d)),
@@ -552,7 +610,9 @@ pub enum SourceLevel {
         /// Item level.
         ilvl: u32,
     },
-    /// Spell, prayer or glyph: the casting implement's `ilvl`, or
+    /// Spell, prayer or glyph: the `ilvl` of the casting implement (the
+    /// equipped focus, wand, staff or tome, or the text, enchanted item or
+    /// equipped holy symbol whose own activation casts it; canon-1.11), or
     /// `max(1, d_current - 3)` without one.
     Spell {
         /// `ilvl` of the equipped casting implement, if any.
@@ -916,9 +976,12 @@ pub struct HitBuildup {
     pub attacker_buildup_bp: i32,
 }
 
-/// SPEC: canon §10.7, §6.4 row 19. A blocked hit's guard.
+/// SPEC: canon §10.5 steps 5 and 6b, §10.7, §6.4 row 19. A blocked hit's guard.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct BlockInput {
+    /// The blocking shield's AR, which scales with `T(ilvl)` (§13.8); step 5
+    /// adds it to the hit part's AR for a blocked hit (canon-1.11).
+    pub shield_ar: i64,
     /// Block stability (§6.4 row 19, doc 05 §12.2), `0..=10000`.
     pub stability_bp: i32,
     /// Current depth for `T(d_current)`.
@@ -946,6 +1009,9 @@ pub struct Hit<'a> {
     pub ignore_armor: bool,
     /// Doc 05 `counter.ward_breaker`: every ward pool's multiplier × 30000.
     pub ward_breaker: bool,
+    /// The hit comes from an item whose primary material is `mat.iron` or
+    /// `mat.cold_iron` ([`is_fae_bane_material`]; step 3a fae factor).
+    pub fae_bane: bool,
     /// §6.4 row 12 (weapon attacks by Errata only), Bp.
     pub weapon_scaling_bp: i32,
     /// Step 1 "+% damage" sources.
@@ -988,6 +1054,7 @@ impl Hit<'_> {
             ff_class: FfClass::Direct,
             ignore_armor: false,
             ward_breaker: false,
+            fae_bane: false,
             weapon_scaling_bp: 0,
             bonuses: &[],
             spell_potency_bp: None,
@@ -1106,6 +1173,8 @@ pub struct Defender {
     pub native: bool,
     /// MYTHOS and step 3a tags.
     pub tags: CreatureTags,
+    /// `kin.fae` (step 3a: × 12500 from iron and cold-iron items, §16.3).
+    pub fae: bool,
     /// Body plan `body.swarm` (step 2.10).
     pub swarm: bool,
     /// The hit part.
@@ -1116,11 +1185,15 @@ pub struct Defender {
     pub resist_bp: [i32; TYPE_COUNT],
     /// Immune types.
     pub immune: TypeSet,
-    /// AR of the hit part after §10.3 status multipliers, plus the shield's
-    /// AR when blocked (doc 05 §12.2).
+    /// AR of the hit part after §10.3 status multipliers. A blocked hit adds
+    /// the shield's AR from [`BlockInput::shield_ar`] (step 5).
     pub ar_part: i64,
     /// Ward pools.
     pub wards: Wards,
+    /// Step 6c Scribe's Mercy (doc 17 §13.1): `Some(mercy_bp)` when the target
+    /// is an Erratum whose slot has `mercy_on`; `None` otherwise. Read only for
+    /// Erratum targets.
+    pub mercy_bp: Option<i32>,
 }
 
 impl Defender {
@@ -1138,6 +1211,7 @@ impl Defender {
                 divine: false,
                 eldritch: false,
             },
+            fae: false,
             swarm: false,
             part: HitPart::TORSO,
             statuses: DefenderStatuses {
@@ -1152,6 +1226,7 @@ impl Defender {
             immune: TypeSet::EMPTY,
             ar_part: 0,
             wards: Wards::NONE,
+            mercy_bp: None,
         }
     }
 
@@ -1314,6 +1389,12 @@ pub enum Entry {
     Environmental,
     /// Reflected damage (thorns, step 3).
     Reflected,
+    /// A consumable's damage to its own drinker or injected target (doc 08,
+    /// step 3 with `D2 = B`; canon-1.11).
+    Consumable,
+    /// A lethal takedown (doc 09, step 7 as `dmg.true`), flag `takedown`
+    /// (canon-1.11).
+    Takedown,
 }
 
 /// SPEC: canon §10.5 step 9 `ev.damage_dealt` flags.
@@ -1333,6 +1414,8 @@ pub struct DamageFlags {
     pub dot: bool,
     /// A shock-chain hit (never chains further).
     pub no_chain: bool,
+    /// A lethal takedown (doc 09).
+    pub takedown: bool,
     /// The target was invulnerable (`st.deaths_door`); nothing applied.
     pub nullified: bool,
 }
@@ -1410,6 +1493,8 @@ pub struct DamageBreakdown {
     pub after_chip: [i64; TYPE_COUNT],
     /// Step 6b block, if blocked.
     pub block: Option<BlockOutcome>,
+    /// Step 6c Scribe's Mercy: the damage it removed, mHP (0 when off).
+    pub mercy_mhp: i64,
     /// Step 7 wards.
     pub ward: WardOutcome,
     /// HP damage per type after step 7.
@@ -1452,6 +1537,7 @@ impl DamageBreakdown {
             chip_added: 0,
             after_chip: [0; TYPE_COUNT],
             block: None,
+            mercy_mhp: 0,
             ward: WardOutcome {
                 shielded_before: wards.shielded_mhp,
                 shielded_after: wards.shielded_mhp,
@@ -1475,6 +1561,7 @@ impl DamageBreakdown {
                 area: false,
                 dot: false,
                 no_chain: false,
+                takedown: false,
                 nullified: true,
             },
         }
@@ -1502,9 +1589,12 @@ pub fn split_by_type(d2: i64, shares: &Shares) -> [i64; TYPE_COUNT] {
     d
 }
 
-/// SPEC: canon §10.5 step 3a. `d[radiant] × 15000` if the target is undead
-/// or fiend; `d[blunt] × 15000` if the target has `st.frozen`, which is then
-/// removed. Returns true when `st.frozen` is consumed.
+/// SPEC: canon §10.5 step 3a, in the listed order: `d[radiant] × 15000` if
+/// the target is undead or fiend; `d[blunt] × 15000` if the target has
+/// `st.frozen`, which is then removed; then (canon-1.11) every `d[t]` × 12500
+/// if `fae_iron` (the target is `kin.fae` and the hit comes from an item whose
+/// primary material is `mat.iron` or `mat.cold_iron`, §16.3). One `mul_bp`
+/// per factor. Returns true when `st.frozen` is consumed.
 ///
 /// GAP: frozen is consumed by a hit that carries a blunt share, or a sonic
 /// share (§10.1 "ends `st.frozen` like blunt"); sonic gets no × 15000.
@@ -1513,17 +1603,24 @@ pub fn per_type_target_mods(
     shares: &Shares,
     tags: CreatureTags,
     frozen: bool,
+    fae_iron: bool,
 ) -> bool {
     if tags.unholy() {
         let i = DamageType::Radiant.index();
         d[i] = mul_bp(d[i], RADIANT_UNHOLY_BP);
     }
-    if !frozen {
-        return false;
+    let mut consumed = false;
+    if frozen {
+        let i = DamageType::Blunt.index();
+        d[i] = mul_bp(d[i], status::FROZEN_BLUNT_BP);
+        consumed = shares.get(DamageType::Blunt) > 0 || shares.get(DamageType::Sonic) > 0;
     }
-    let i = DamageType::Blunt.index();
-    d[i] = mul_bp(d[i], status::FROZEN_BLUNT_BP);
-    shares.get(DamageType::Blunt) > 0 || shares.get(DamageType::Sonic) > 0
+    if fae_iron {
+        for v in d.iter_mut() {
+            *v = mul_bp(*v, FAE_IRON_BP);
+        }
+    }
+    consumed
 }
 
 /// SPEC: canon §10.5 step 4. For each type: `r = clamp(resist[t], -10000,
@@ -1621,10 +1718,13 @@ pub fn block_stamina_loss_mst(to_stamina_mhp: i64, d_current: u32) -> i64 {
 
 /// SPEC: canon §10.7 blocking (step 6b): `to_stamina = mul_bp(total,
 /// stability)`, `total -= to_stamina`, stamina loss normalized by
-/// `T(d_current)`; stamina reaching 0 guard-breaks. The remaining HP damage
-/// is spread per doc 05 §12.3: `d[t] = floor_div(d[t] × new_total, total)`,
-/// remainder to the largest-share type (GAP: among types that carried
-/// damage). A `guard_break` hit's stamina loss is × 20000 (doc 05).
+/// `T(d_current)`; stamina reaching 0 guard-breaks. Canon-1.11: the `total`
+/// that remains is split back over the types in proportion to their `d[t]`,
+/// one `floor_div` each in §10.1 order (`d[t] = floor_div(d[t] × new_total,
+/// total)`), with the remainder to the largest-share type, ties to the
+/// earlier §10.1 row, so step 7 sees per-type values (GAP: the largest share
+/// among types that still carry damage, so the remainder never lands on an
+/// immune type). A `guard_break` hit's stamina loss is × 20000 (doc 05).
 pub fn apply_block(d: &mut [i64; TYPE_COUNT], shares: &Shares, b: &BlockInput) -> BlockOutcome {
     assert!(
         (0..=10_000).contains(&b.stability_bp),
@@ -1734,19 +1834,66 @@ struct Post<'a> {
     on_hit: bool,
     block: Option<BlockInput>,
     ward_breaker: bool,
+    fae_iron: bool,
     buildup: Option<(HitBuildup, i32, i32)>,
+}
+
+/// SPEC: canon §10.5 step 6c (canon-1.11), doc 17 §13.1. Scribe's Mercy on a
+/// per-type array: each `d[t] = d[t] - mul_bp(d[t], mercy_bp)` in §10.1
+/// order. Returns the damage removed. Panics unless `mercy_bp` is in
+/// `0..=10000`.
+pub fn apply_mercy(d: &mut [i64; TYPE_COUNT], mercy_bp: i32) -> i64 {
+    assert!(
+        (0..=10_000).contains(&mercy_bp),
+        "mercy_bp outside 0..=10000"
+    );
+    let mut removed = 0;
+    for ty in DamageType::ALL {
+        let i = ty.index();
+        let cut = mul_bp(d[i], mercy_bp);
+        d[i] -= cut;
+        removed += cut;
+    }
+    removed
+}
+
+/// SPEC: canon §10.5 step 6c (canon-1.11), doc 17 §13.1. Every other
+/// involuntary HP loss of a Mercy bearer outside the pipeline, such as
+/// starvation, is reduced the same way: `loss - mul_bp(loss, mercy_bp)`
+/// (`mercy_bp = None` when Mercy is off). HP the Erratum chooses to pay is
+/// never reduced, so callers do not pass voluntary costs here.
+#[must_use]
+pub const fn mercy_reduce_mhp(loss_mhp: i64, mercy_bp: Option<i32>) -> i64 {
+    match mercy_bp {
+        Some(m) => {
+            assert!(m >= 0 && m <= 10_000, "mercy_bp outside 0..=10000");
+            loss_mhp - mul_bp(loss_mhp, m)
+        }
+        None => loss_mhp,
+    }
 }
 
 fn finish(d2: i64, split: [i64; TYPE_COUNT], def: &Defender, p: &Post<'_>) -> DamageBreakdown {
     let mut d = split;
-    let frozen_consumed =
-        p.type_mods && per_type_target_mods(&mut d, p.shares, def.tags, def.statuses.frozen);
+    let frozen_consumed = p.type_mods
+        && per_type_target_mods(
+            &mut d,
+            p.shares,
+            def.tags,
+            def.statuses.frozen,
+            p.fae_iron && def.fae,
+        );
     let after_type_mods = d;
     apply_resistance(&mut d, def);
     let after_resist = d;
     let mut dr_bp = [0; TYPE_COUNT];
     if p.armor {
-        apply_armor(&mut d, def.ar_part, p.pen_bp, &mut dr_bp);
+        // Canon-1.11 step 5: a blocked hit adds the blocking shield's AR.
+        let ar = match p.block {
+            Some(b) => def.ar_part + b.shield_ar,
+            None => def.ar_part,
+        };
+        apply_armor(&mut d, ar, p.pen_bp, &mut dr_bp);
     }
     let after_armor = d;
     let chip_added = if p.chip {
@@ -1756,6 +1903,10 @@ fn finish(d2: i64, split: [i64; TYPE_COUNT], def: &Defender, p: &Post<'_>) -> Da
     };
     let after_chip = d;
     let block = p.block.map(|b| apply_block(&mut d, p.shares, &b));
+    let mercy_mhp = match (def.kind, def.mercy_bp) {
+        (TargetKind::Erratum, Some(m)) => apply_mercy(&mut d, m),
+        _ => 0,
+    };
     let ward = absorb_wards(&mut d, &def.wards, p.ward_breaker);
     let total = sum(&d);
 
@@ -1805,6 +1956,7 @@ fn finish(d2: i64, split: [i64; TYPE_COUNT], def: &Defender, p: &Post<'_>) -> Da
         chip_added,
         after_chip,
         block,
+        mercy_mhp,
         ward,
         per_type: d,
         total,
@@ -1821,6 +1973,7 @@ fn finish(d2: i64, split: [i64; TYPE_COUNT], def: &Defender, p: &Post<'_>) -> Da
             area: false,
             dot: matches!(p.entry, Entry::Dot),
             no_chain: matches!(p.entry, Entry::ShockChain),
+            takedown: false,
             nullified: false,
         },
     }
@@ -1909,9 +2062,10 @@ pub fn chain_trace(hit: &Hit<'_>, def: &Defender, rules: &Rules) -> ChainTrace {
 
 /// SPEC: canon §10.5 steps 1 to 7 (and the step 8 buildup column), in the
 /// canonical order: additive bucket, the 2.1 to 2.15 chain, split with the
-/// remainder rule, 3a, resistance, armor (unless `ignore_armor`), chip
-/// floor, block (§10.7), wards. An invulnerable target (`st.deaths_door`)
-/// takes nothing.
+/// remainder rule, 3a (radiant, frozen blunt, fae iron), resistance, armor
+/// (unless `ignore_armor`; part AR plus the shield's AR when blocked), chip
+/// floor, 6b block with the split-back (§10.7), 6c Scribe's Mercy, wards. An
+/// invulnerable target (`st.deaths_door`) takes nothing.
 pub fn resolve_hit(hit: &Hit<'_>, def: &Defender, rules: &Rules) -> DamageBreakdown {
     assert!(hit.b_mhp >= 0, "resolve_hit: negative B");
     if def.statuses.invulnerable {
@@ -1934,6 +2088,7 @@ pub fn resolve_hit(hit: &Hit<'_>, def: &Defender, rules: &Rules) -> DamageBreakd
         on_hit: true,
         block: hit.block,
         ward_breaker: hit.ward_breaker,
+        fae_iron: hit.fae_bane,
         buildup: hit.buildup.map(|b| (b, hit.base_potency_bp, hit.edge_bp)),
     };
     let mut out = finish(d2, split_by_type(d2, &hit.shares), def, &post);
@@ -1959,8 +2114,8 @@ fn single(ty: DamageType, amount: i64) -> [i64; TYPE_COUNT] {
 }
 
 /// SPEC: canon §10.6 DoT pulse: enters at step 4 (`dmg.true` skips 4);
-/// skips armor, chip floor, crit, buildup and `st.exposed`; wards still
-/// absorb; flag `dot`.
+/// skips armor, chip floor, crit, buildup and `st.exposed`; step 6c Mercy
+/// and the wards still apply; flag `dot`.
 pub fn resolve_dot(q_mhp: i64, ty: DamageType, def: &Defender) -> DamageBreakdown {
     assert!(q_mhp >= 0, "resolve_dot: negative amount");
     if def.statuses.invulnerable {
@@ -1977,13 +2132,16 @@ pub fn resolve_dot(q_mhp: i64, ty: DamageType, def: &Defender) -> DamageBreakdow
         on_hit: false,
         block: None,
         ward_breaker: false,
+        fae_iron: false,
         buildup: None,
     };
     finish(q_mhp, single(ty, q_mhp), def, &post)
 }
 
 /// SPEC: canon §10.6 and §4.2 fall damage: a `dmg.blunt` hit entering at
-/// step 4; skips armor, chip floor and crit.
+/// step 4; skips armor, chip floor and crit. `dmg_mhp` is the amount after
+/// `fall_dmg_bp` and the doc 04 factors
+/// ([`crate::movement::fall_damage_chain_mhp`]).
 pub fn resolve_fall(dmg_mhp: i64, def: &Defender) -> DamageBreakdown {
     assert!(dmg_mhp >= 0, "resolve_fall: negative amount");
     if def.statuses.invulnerable {
@@ -2000,6 +2158,7 @@ pub fn resolve_fall(dmg_mhp: i64, def: &Defender) -> DamageBreakdown {
         on_hit: false,
         block: None,
         ward_breaker: false,
+        fae_iron: false,
         buildup: None,
     };
     finish(dmg_mhp, single(DamageType::Blunt, dmg_mhp), def, &post)
@@ -2038,6 +2197,7 @@ pub fn resolve_shock_chain(
         on_hit: false,
         block: None,
         ward_breaker: false,
+        fae_iron: false,
         buildup: None,
     };
     finish(d2, split_by_type(d2, &shares), def, &post)
@@ -2089,6 +2249,7 @@ pub fn resolve_environmental(h: &Hazard, def: &Defender, rules: &Rules) -> Damag
         on_hit: true,
         block: h.block,
         ward_breaker: false,
+        fae_iron: false,
         buildup: h.buildup.map(|b| (b, 10_000, 0)),
     };
     let mut out = finish(d2, split_by_type(d2, &h.shares), def, &post);
@@ -2113,23 +2274,139 @@ pub fn resolve_reflected(d2_mhp: i64, shares: &Shares, def: &Defender) -> Damage
         on_hit: true,
         block: None,
         ward_breaker: false,
+        fae_iron: false,
         buildup: None,
     };
     finish(d2_mhp, split_by_type(d2_mhp, shares), def, &post)
+}
+
+/// SPEC: canon §10.6 (canon-1.11), §11.2, doc 08 §7: a consumable's damage
+/// to its own drinker or injected target (doc 08) enters at step 3 with
+/// `D2 = B` and skips steps 1 and 2 (additive bucket, crit, friendly fire);
+/// steps 3 to 7 run, including 6c. `buildup` carries the consumable's status
+/// powers, if any; doc 08's `buildup` effects enter "§11.2 (× `S(src_lvl)`
+/// and the rest of that chain)", so they take the consumable's base-component
+/// Contradiction potency `potency_bp` and, against a native target, its
+/// Anachronism `edge_bp` (§5.6), as a hit does.
+pub fn resolve_consumable(
+    b_mhp: i64,
+    shares: &Shares,
+    def: &Defender,
+    buildup: Option<HitBuildup>,
+    potency_bp: i32,
+    edge_bp: i32,
+) -> DamageBreakdown {
+    assert!(b_mhp >= 0, "resolve_consumable: negative B");
+    if def.statuses.invulnerable {
+        return DamageBreakdown::empty(Entry::Consumable, &def.wards);
+    }
+    let post = Post {
+        entry: Entry::Consumable,
+        shares,
+        pen_bp: 0,
+        type_mods: true,
+        armor: true,
+        chip: true,
+        on_hit: true,
+        block: None,
+        ward_breaker: false,
+        fae_iron: false,
+        buildup: buildup.map(|b| (b, potency_bp, edge_bp)),
+    };
+    finish(b_mhp, split_by_type(b_mhp, shares), def, &post)
+}
+
+/// SPEC: canon §10.6 (canon-1.11): a lethal takedown (doc 09) enters at step 7
+/// as `dmg.true` equal to the target's HP plus ward (both pools), skipping
+/// crit, resistance, armor and chip floor (and 6b and 6c, which precede step
+/// 7); flag `takedown`. Step 7 then runs with the usual pool multipliers.
+///
+/// GAP: with the canonical `dmg.true` multiplier (10000) the wards absorb
+/// exactly their amount and HP takes `hp_mhp`; a generator whose doc 05
+/// profile scales `dmg.true` below 10000 would absorb more, and the canon
+/// does not say whether a takedown then still kills. This follows step 7
+/// literally.
+pub fn resolve_takedown(hp_mhp: i64, def: &Defender) -> DamageBreakdown {
+    assert!(hp_mhp >= 0, "resolve_takedown: negative HP");
+    if def.statuses.invulnerable {
+        let mut out = DamageBreakdown::empty(Entry::Takedown, &def.wards);
+        out.flags.takedown = true;
+        return out;
+    }
+    let amount = hp_mhp + def.wards.shielded_mhp + def.wards.generator_mhp;
+    let mut d = single(DamageType::True, amount);
+    let ward = absorb_wards(&mut d, &def.wards, false);
+    let total = sum(&d);
+    let mut out = DamageBreakdown::empty(Entry::Takedown, &def.wards);
+    out.d1 = amount;
+    out.d2 = amount;
+    out.split = single(DamageType::True, amount);
+    out.after_type_mods = out.split;
+    out.after_resist = out.split;
+    out.after_armor = out.split;
+    out.after_chip = out.split;
+    out.ward = ward;
+    out.per_type = d;
+    out.total = total;
+    out.flags.takedown = true;
+    out.flags.nullified = false;
+    out
 }
 
 // ---------------------------------------------------------------------------
 // Step 8 helpers and lethal resolution (canon §10.5 step 8, §10.8)
 // ---------------------------------------------------------------------------
 
-/// SPEC: canon §10.8 "Hits in the same tick resolve in ascending (source
-/// EntityId, seq)". Sort hits by this key.
+/// SPEC: canon §10.8 (canon-1.11). The two batches a tick's hits resolve in
+/// (doc 03 `sys.damage` and `sys.damage_late`); the derived `Ord` puts actor
+/// hits first.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum HitBatch {
+    /// Actor hits: weapons, spells, gadgets, thrown items (`sys.damage`), and
+    /// the other hits doc 03 queues before `sys.damage` runs (fall hits from
+    /// `sys.movement`).
+    Actor,
+    /// Environmental, contact, surface and DoT hits, and every hit queued
+    /// while `sys.damage` runs (shock chains, thorns) (`sys.damage_late`).
+    Late,
+}
+
+/// SPEC: canon §10.8 (canon-1.11): hits in the same tick resolve in two
+/// batches, actor hits first, then environmental, contact, surface and DoT
+/// hits; inside each batch in ascending (source EntityId, seq). Sort hits by
+/// this key (the derived `Ord` compares `batch`, then `source`, then `seq`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct HitKey {
+    /// The batch.
+    pub batch: HitBatch,
     /// Source EntityId.
     pub source: u64,
     /// Per-actor action sequence.
     pub seq: u32,
+}
+
+impl HitBatch {
+    /// SPEC: canon §10.8 (canon-1.11), doc 03 §2.2 rows 17 and 26, doc 03 §5
+    /// and §5.15, doc 05 §1.3. The batch of a damage instance by its entry
+    /// point: weapon, spell, gadget and thrown-item hits are actor hits; DoT
+    /// pulses and environmental hazards go to the late batch.
+    /// GAP: the canon names only the two groups; canon §2.2 gives doc 03 the
+    /// tick order, and doc 03 decides by when a hit is queued. Shock chains
+    /// and reflected damage are queued while `sys.damage` runs, so they
+    /// resolve late (doc 03 row 26 "environment, contact, DoT, chains"; doc 05
+    /// C6 "shock chains, thorns"). A fall hit is queued by `sys.movement` (#8)
+    /// "for `sys.damage`" (doc 03 §5, §5.15), so it resolves in the first
+    /// batch. A consumable's damage to its drinker and a takedown are the
+    /// actor's own actions (`sys.actions`, #7) and resolve in the first batch.
+    #[must_use]
+    pub const fn of(entry: Entry) -> HitBatch {
+        match entry {
+            Entry::Dot | Entry::Environmental | Entry::ShockChain | Entry::Reflected => {
+                HitBatch::Late
+            }
+            Entry::Hit | Entry::Fall | Entry::Consumable | Entry::Takedown => HitBatch::Actor,
+        }
+    }
 }
 
 /// SPEC: canon §10.5 step 8. HP after subtracting `total`, and whether the
@@ -2158,10 +2435,10 @@ pub const fn apply_part_pool(pool_mhp: i64, total: i64) -> i64 {
     if after > 0 { after } else { 0 }
 }
 
-/// SPEC: canon §10.5 step 8 and doc 05 §12.4 base poise damage:
-/// `pd = mul_bp(impact_mp, S(src_lvl))`, then × `(10000 + mul_bp(5000,
-/// share_blunt))` (blunt × 15000 pro rata), 0 if blocked or parried. Counter,
-/// mount, hyperarmor and affix factors are applied by the caller (doc 05).
+/// SPEC: canon §10.5 step 8, §10.1 (canon-1.11) and doc 05 §12.4 base poise
+/// damage: `pd = mul_bp(impact_mp, S(src_lvl))`, then × [`blunt_poise_bp`]
+/// `(10000 + floor_div(share_blunt, 2))`, 0 if blocked or parried. Counter,
+/// hyperarmor and affix factors are applied by the caller (doc 05).
 pub fn poise_damage_base_mp(
     impact_mp: i64,
     src_lvl: u32,
@@ -2172,8 +2449,92 @@ pub fn poise_damage_base_mp(
         return 0;
     }
     let pd = mul_bp_wide(impact_mp, power_s(src_lvl));
-    let blunt = mul_bp(i64::from(BLUNT_POISE_BP - 10_000), blunt_share_bp);
-    mul_bp(pd, 10_000 + i32::try_from(blunt).expect("blunt factor"))
+    mul_bp(pd, blunt_poise_bp(blunt_share_bp))
+}
+
+/// SPEC: canon §9.1. A severable kind of body part.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum SeverPart {
+    /// An arm, leg or other limb.
+    Limb,
+    /// A tail.
+    Tail,
+    /// A wing.
+    Wing,
+    /// A head (severable on NPCs only; Errata heads never sever).
+    Head,
+}
+
+/// SPEC: canon §9.1. The facts one hit's severing check reads.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub struct SeverInput {
+    /// The hit part's kind, `None` when the part is not severable (torso,
+    /// core and the other non-severable parts).
+    pub part: Option<SeverPart>,
+    /// The target is an Erratum.
+    pub target_erratum: bool,
+    /// Part damage this hit dealt (step 8), mHP.
+    pub part_damage_mhp: i64,
+    /// The hit's largest share is `dmg.slash` (ties to the earlier §10.1 row).
+    pub slash_largest: bool,
+    /// The hit carries the flag `sever`.
+    pub sever_flag: bool,
+    /// The part's condition pool before the hit, mHP.
+    pub pool_before_mhp: i64,
+    /// The part's condition pool after the hit, mHP.
+    pub pool_after_mhp: i64,
+    /// The part's pool max, mHP (`mul_bp(max_hp_mhp, share)`).
+    pub pool_max_mhp: i64,
+    /// The attacker's governing weapon skill (NPC heads need 75).
+    pub attacker_weapon_skill: i32,
+}
+
+/// SPEC: canon §9.1. An Erratum part severs only from at most 2500 Bp of its
+/// pool's max before the hit (DECISIONS.md item 84).
+pub const ERRATUM_SEVER_POOL_MAX_BP: i64 = 2_500;
+/// SPEC: canon §9.1. Severing an NPC head needs governing weapon skill ≥ 75.
+pub const HEAD_SEVER_SKILL: i32 = 75;
+
+/// SPEC: canon §9.1 (canon-1.11, DECISIONS.md item 84). Severing is
+/// deterministic and draws nothing. A severable part is severed by a hit
+/// with positive part damage whose largest share is `dmg.slash`, or which
+/// carries the flag `sever`, when the part's condition pool is 0 after the
+/// hit (a pool already at 0 included). An Erratum's limb severs only if its
+/// pool was at most 2500 Bp of its max before the hit (doc 04
+/// `wound.crippled` or worse, `floor_div(pool × 10000, max) <= 2500`); a
+/// healthy limb never severs, however large the hit. Errata heads never
+/// sever; an NPC head also needs the attacker's governing weapon skill ≥ 75
+/// (and kills a single-headed creature, which the caller resolves).
+///
+/// GAP: the canon says "an Erratum's limb"; this applies the crippled-pool
+/// rule to every severable Erratum part (limbs, tails and wings), as doc 04
+/// §8.2 `on_part_damage` does.
+///
+/// GAP: "at most 2500 Bp of its max" is read through doc 04 §8.2's
+/// `wound.crippled` test `floor_div(pool × 10000, max) <= 2500`, which the
+/// canon names. The floor admits pools a little above an exact quarter: at
+/// max 10,625 the pool 2,657 (25.007%) has `frac` 2500 and counts as
+/// crippled, where the exact `pool × 10000 <= 2500 × max` would stop at 2,656.
+#[must_use]
+pub fn severs(i: &SeverInput) -> bool {
+    let Some(part) = i.part else {
+        return false;
+    };
+    if i.part_damage_mhp <= 0 || !(i.slash_largest || i.sever_flag) || i.pool_after_mhp > 0 {
+        return false;
+    }
+    match (i.target_erratum, part) {
+        (true, SeverPart::Head) => false,
+        (true, _) => {
+            i.pool_max_mhp > 0
+                && floor_div_i128(
+                    i128::from(i.pool_before_mhp) * 10_000,
+                    i128::from(i.pool_max_mhp),
+                ) <= i128::from(ERRATUM_SEVER_POOL_MAX_BP)
+        }
+        (false, SeverPart::Head) => i.attacker_weapon_skill >= HEAD_SEVER_SKILL,
+        (false, _) => true,
+    }
 }
 
 /// SPEC: canon §10.8. Facts the lethal decision reads.
@@ -2189,6 +2550,9 @@ pub struct LethalInput {
     pub other_member_up: bool,
     /// At least one other Erratum lives (downed counts as alive).
     pub other_erratum_alive: bool,
+    /// Downs this Erratum already took this Folio (doc 16 §9.4 `downs_folio`
+    /// before this one); sets the bleed-out of a new down.
+    pub prior_downs_folio: u8,
 }
 
 /// SPEC: canon §10.8. The three outcomes.
@@ -2236,15 +2600,31 @@ pub struct LethalDecision {
 pub const DEATHS_DOOR_HP_MHP: i64 = 1_000;
 /// SPEC: canon §10.8 `st.deaths_door` duration: 60 ticks.
 pub const DEATHS_DOOR_TICKS: u32 = 60;
-/// SPEC: canon §11.1 `st.downed` bleed-out: 30 s.
+/// SPEC: canon §11.1 `st.downed` bleed-out for the first down in a Folio: 30 s.
 pub const BLEED_OUT_TICKS: u32 = 1_800;
+
+/// SPEC: canon §11.1 (canon-1.11) `st.downed` base duration: 30 s bleed-out
+/// for the first down in a Folio; later downs per doc 16 §9.4:
+/// `bleed_left = max(600, 1800 - 600 × (downs_folio - 1))`, so 1,800, 1,200
+/// and then 600 ticks. `prior_downs` is the number of earlier downs this Folio.
+#[must_use]
+pub const fn downed_bleed_out_ticks(prior_downs: u8) -> u32 {
+    let cut = 600 * prior_downs as u32;
+    if cut >= BLEED_OUT_TICKS - 600 {
+        600
+    } else {
+        BLEED_OUT_TICKS - cut
+    }
+}
 
 /// SPEC: canon §10.8 lethal resolution, in order:
 /// 1. Errata only: if Death's Door is unused this Folio, call `roll` (§6.4
 ///    row 43 with keyed `rng.combat`); success sets HP to 1000 and applies
 ///    `st.deaths_door` for 60 ticks; Death's Door is marked used either way.
 /// 2. On failure, if another party member is alive and not downed:
-///    `st.downed` with HP 0 and `ev.player_downed`.
+///    `st.downed` with HP 0 and `ev.player_downed`; its bleed-out is
+///    [`downed_bleed_out_ticks`] (30 s for the first down in a Folio, doc 16
+///    §9.4 for later downs).
 /// 3. Otherwise `ev.entity_killed` (NPCs go straight here); a dying Erratum
 ///    emits `ev.player_died`, and `ev.player_ghosted` if another Erratum lives.
 ///
@@ -2273,7 +2653,10 @@ pub fn resolve_lethal(i: LethalInput, roll: impl FnOnce() -> bool) -> LethalDeci
             hp_mhp: 0,
             deaths_door_rolled: rolled,
             deaths_door_used: used,
-            apply: Some((StatusId::Downed, Some(BLEED_OUT_TICKS))),
+            apply: Some((
+                StatusId::Downed,
+                Some(downed_bleed_out_ticks(i.prior_downs_folio)),
+            )),
             events: LethalEvents {
                 player_downed: true,
                 ..LethalEvents::default()
@@ -3326,7 +3709,8 @@ mod tests {
 
     /// E6, blocked NPC hit on an Erratum with a heater shield, party of 2.
     /// `B = 10000 × T(1) × standard = 10,000`; × 11000 (party 2) = 11,000.
-    /// AR torso 20 + heater 25 = 45: `DR = 4.5×10^8/89,000 = 5056` → 5,439.
+    /// Canon-1.11 step 5: a blocked hit's AR is the part's AR plus the
+    /// shield's, torso 20 + heater 25 = 45: `DR = 4.5×10^8/89,000 = 5056` → 5,439.
     /// Chip floor 1,100 does not bind. Block stability 5000 + 2500 + 600 =
     /// 8100: `to_stamina = mul_bp(5439, 8100) = 4,405`, HP 1,034, stamina
     /// `floor_div(4405 × 10000, T(1)) = 4,405` mst. Unblocked (AR 20): DR
@@ -3337,6 +3721,7 @@ mod tests {
         let mut hit = Hit::basic(b0, Shares::single(DamageType::Slash));
         hit.attacker.is_npc = true;
         hit.block = Some(BlockInput {
+            shield_ar: 25,
             stability_bp: 8_100,
             d_current: 1,
             stamina_mst: 90_000,
@@ -3346,7 +3731,7 @@ mod tests {
             party_size: 2,
             ff_mode: FfMode::Default,
         };
-        let b = resolve_hit(&hit, &erratum(45), &duo);
+        let b = resolve_hit(&hit, &erratum(20), &duo);
         assert_eq!((b.d2, b.dr_bp[0], b.after_chip[0]), (11_000, 5_056, 5_439));
         let blk = b.block.unwrap();
         assert_eq!(
@@ -3371,7 +3756,7 @@ mod tests {
             }),
             ..hit
         };
-        let wb = resolve_hit(&weak, &erratum(45), &duo).block.unwrap();
+        let wb = resolve_hit(&weak, &erratum(20), &duo).block.unwrap();
         assert_eq!((wb.stamina_after_mst, wb.guard_broken), (0, true));
     }
 
@@ -3653,22 +4038,452 @@ mod tests {
         assert_eq!(poise_damage_base_mp(34_000, 1, 8_500, true), 0);
     }
 
+    /// SPEC: canon §10.1 (canon-1.11) blunt poise for mixed hits:
+    /// `10000 + floor_div(share_blunt, 2)`: pure blunt 15000, 85% blunt 14250,
+    /// 33.33% blunt `10000 + 1666 = 11666`, no blunt 10000.
+    #[test]
+    fn blunt_poise_for_mixed_hits() {
+        assert_eq!(blunt_poise_bp(10_000), BLUNT_POISE_BP);
+        assert_eq!(blunt_poise_bp(8_500), 14_250);
+        assert_eq!(blunt_poise_bp(3_333), 11_666);
+        assert_eq!(blunt_poise_bp(1), 10_000);
+        assert_eq!(blunt_poise_bp(0), 10_000);
+        assert_eq!(
+            poise_damage_base_mp(10_000, 1, 3_333, false),
+            mul_bp(10_000, 11_666)
+        );
+    }
+
     #[test]
     fn same_tick_hits_order_by_source_then_seq() {
+        let a = HitBatch::Actor;
         let mut hits = [
-            HitKey { source: 7, seq: 0 },
-            HitKey { source: 5, seq: 1 },
-            HitKey { source: 5, seq: 0 },
+            HitKey {
+                batch: a,
+                source: 7,
+                seq: 0,
+            },
+            HitKey {
+                batch: a,
+                source: 5,
+                seq: 1,
+            },
+            HitKey {
+                batch: a,
+                source: 5,
+                seq: 0,
+            },
         ];
         hits.sort();
         assert_eq!(
             hits,
             [
-                HitKey { source: 5, seq: 0 },
-                HitKey { source: 5, seq: 1 },
-                HitKey { source: 7, seq: 0 }
+                HitKey {
+                    batch: a,
+                    source: 5,
+                    seq: 0
+                },
+                HitKey {
+                    batch: a,
+                    source: 5,
+                    seq: 1
+                },
+                HitKey {
+                    batch: a,
+                    source: 7,
+                    seq: 0
+                }
             ]
         );
+    }
+
+    /// SPEC: canon §10.8 (canon-1.11): two batches per tick, actor hits first
+    /// (`sys.damage`), then environmental, contact, surface and DoT hits
+    /// (`sys.damage_late`); ascending (source, seq) inside each batch.
+    #[test]
+    fn same_tick_hits_resolve_in_two_batches() {
+        let dot = HitKey {
+            batch: HitBatch::of(Entry::Dot),
+            source: 1,
+            seq: 0,
+        };
+        let swing = HitKey {
+            batch: HitBatch::of(Entry::Hit),
+            source: 9,
+            seq: 3,
+        };
+        let lava = HitKey {
+            batch: HitBatch::of(Entry::Environmental),
+            source: 0,
+            seq: 0,
+        };
+        let mut hits = [dot, lava, swing];
+        hits.sort();
+        assert_eq!(hits, [swing, lava, dot]);
+        assert_eq!(HitBatch::of(Entry::ShockChain), HitBatch::Late);
+        assert_eq!(HitBatch::of(Entry::Takedown), HitBatch::Actor);
+        assert_eq!(HitBatch::of(Entry::Consumable), HitBatch::Actor);
+    }
+
+    /// Review (canon §10.8, doc 03 §2.2 rows 17 and 26, §5.15, doc 05 §1.3):
+    /// every entry point's batch. Hits queued before `sys.damage` (#17) run
+    /// in the first batch, so a fall hit queued by `sys.movement` (#8) is
+    /// resolved there; chains and thorns, queued while #17 runs, and
+    /// environmental, contact and DoT hits run in `sys.damage_late` (#26).
+    #[test]
+    fn every_entry_has_its_doc03_batch() {
+        let expect = [
+            (Entry::Hit, HitBatch::Actor),
+            (Entry::Fall, HitBatch::Actor),
+            (Entry::Consumable, HitBatch::Actor),
+            (Entry::Takedown, HitBatch::Actor),
+            (Entry::Dot, HitBatch::Late),
+            (Entry::Environmental, HitBatch::Late),
+            (Entry::ShockChain, HitBatch::Late),
+            (Entry::Reflected, HitBatch::Late),
+        ];
+        for (entry, batch) in expect {
+            assert_eq!(HitBatch::of(entry), batch, "{entry:?}");
+        }
+        // The fall (source 3) follows the swing (source 2) inside the first
+        // batch and precedes the late batch's DoT pulse (source 1).
+        let fall = HitKey {
+            batch: HitBatch::of(Entry::Fall),
+            source: 3,
+            seq: 0,
+        };
+        let swing = HitKey {
+            batch: HitBatch::of(Entry::Hit),
+            source: 2,
+            seq: 0,
+        };
+        let dot = HitKey {
+            batch: HitBatch::of(Entry::Dot),
+            source: 1,
+            seq: 0,
+        };
+        let mut hits = [dot, fall, swing];
+        hits.sort();
+        assert_eq!(hits, [swing, fall, dot]);
+    }
+
+    /// SPEC: canon §9.1 (canon-1.11, DECISIONS.md item 84): an Erratum's limb
+    /// severs only from a pool at or below 25% of its max before the hit; a
+    /// healthy limb never severs, however large the hit. NPC limbs sever when
+    /// the pool reaches 0; NPC heads need weapon skill 75; Errata heads never.
+    #[test]
+    fn severing_rules() {
+        // A humanoid arm at Max HP 85,000: max = mul_bp(85,000, 1250) = 10,625.
+        let base = SeverInput {
+            part: Some(SeverPart::Limb),
+            target_erratum: true,
+            part_damage_mhp: 10_625,
+            slash_largest: true,
+            sever_flag: false,
+            pool_before_mhp: 10_625,
+            pool_after_mhp: 0,
+            pool_max_mhp: 10_625,
+            attacker_weapon_skill: 0,
+        };
+        // Healthy Erratum limb, one huge slash: no sever.
+        assert!(!severs(&base));
+        // Crippled before the hit: floor_div(2656 × 10000, 10625) = 2499 <= 2500.
+        let crippled = SeverInput {
+            pool_before_mhp: 2_656,
+            part_damage_mhp: 2_656,
+            ..base
+        };
+        assert!(severs(&crippled));
+        // 2657 is 25.007% of the max, but doc 04 §8.2's floored frac is
+        // floor_div(2657 × 10^4, 10625) = 2500, so it is still crippled (GAP
+        // on `severs`).
+        assert!(severs(&SeverInput {
+            pool_before_mhp: 2_657,
+            ..crippled
+        }));
+        // 2658 gives frac 2501: wounded, not crippled.
+        assert!(!severs(&SeverInput {
+            pool_before_mhp: 2_658,
+            ..crippled
+        }));
+        // A pool already at 0 severs on a positive slash hit.
+        assert!(severs(&SeverInput {
+            pool_before_mhp: 0,
+            part_damage_mhp: 1,
+            ..crippled
+        }));
+        // No positive part damage, or a pool left above 0: no sever.
+        assert!(!severs(&SeverInput {
+            part_damage_mhp: 0,
+            ..crippled
+        }));
+        assert!(!severs(&SeverInput {
+            pool_after_mhp: 1,
+            ..crippled
+        }));
+        // Not slash-dominant and no sever flag: no sever; the flag allows it.
+        let blunt = SeverInput {
+            slash_largest: false,
+            ..crippled
+        };
+        assert!(!severs(&blunt));
+        assert!(severs(&SeverInput {
+            sever_flag: true,
+            ..blunt
+        }));
+        // Errata heads never sever.
+        assert!(!severs(&SeverInput {
+            part: Some(SeverPart::Head),
+            ..crippled
+        }));
+        // NPC limb: any pool before the hit.
+        let npc_limb = SeverInput {
+            target_erratum: false,
+            ..base
+        };
+        assert!(severs(&npc_limb));
+        // NPC head: weapon skill 75.
+        let npc_head = SeverInput {
+            part: Some(SeverPart::Head),
+            attacker_weapon_skill: 74,
+            ..npc_limb
+        };
+        assert!(!severs(&npc_head));
+        assert!(severs(&SeverInput {
+            attacker_weapon_skill: 75,
+            ..npc_head
+        }));
+        // Non-severable parts never sever.
+        assert!(!severs(&SeverInput {
+            part: None,
+            ..npc_limb
+        }));
+    }
+
+    /// SPEC: canon §10.5 step 3a (canon-1.11): every `d[t]` × 12500 against a
+    /// `kin.fae` target from an iron or cold-iron item, after the radiant and
+    /// frozen-blunt factors.
+    #[test]
+    fn step_3a_fae_iron() {
+        assert!(is_fae_bane_material("mat.iron") && is_fae_bane_material("mat.cold_iron"));
+        assert!(!is_fae_bane_material("mat.steel"));
+        let mut hit = Hit::basic(
+            10_000,
+            shares(&[(DamageType::Slash, 5_000), (DamageType::Radiant, 5_000)]),
+        );
+        hit.fae_bane = true;
+        let fae = Defender {
+            fae: true,
+            tags: CreatureTags {
+                fiend: true,
+                ..CreatureTags::default()
+            },
+            ..npc(0)
+        };
+        let b = resolve_hit(&hit, &fae, &Rules::SOLO);
+        // Radiant: 5000 × 15000 = 7500, then × 12500 = 9375; slash 5000 × 12500 = 6250.
+        assert_eq!(b.after_type_mods[DamageType::Slash.index()], 6_250);
+        assert_eq!(b.after_type_mods[DamageType::Radiant.index()], 9_375);
+        // Not fae, or not an iron item: no factor.
+        let plain = resolve_hit(&hit, &Defender { fae: false, ..fae }, &Rules::SOLO);
+        assert_eq!(plain.after_type_mods[DamageType::Slash.index()], 5_000);
+        let steel = resolve_hit(
+            &Hit {
+                fae_bane: false,
+                ..hit
+            },
+            &fae,
+            &Rules::SOLO,
+        );
+        assert_eq!(steel.after_type_mods[DamageType::Slash.index()], 5_000);
+        // Frozen blunt then fae: 10,000 × 15000 × 12500 = 18,750.
+        let mut d = [0; TYPE_COUNT];
+        d[DamageType::Blunt.index()] = 10_000;
+        let consumed = per_type_target_mods(
+            &mut d,
+            &Shares::single(DamageType::Blunt),
+            CreatureTags::default(),
+            true,
+            true,
+        );
+        assert!(consumed);
+        assert_eq!(d[DamageType::Blunt.index()], 18_750);
+    }
+
+    /// SPEC: doc 17 acceptance test 2 (canon §10.5 step 6c, canon-1.11): a
+    /// 10,000-mHP pure-slash hit after step 6b on an Erratum at 2000 Bp
+    /// leaves 8,000 for step 7; at 2600 a 12,345 hit leaves 9,136; at 8000 a
+    /// 10,000 hit leaves 2,000; with Mercy off, 10,000.
+    #[test]
+    fn doc17_t02_mercy_damage() {
+        let cases = [
+            (10_000, Some(2_000), 8_000),
+            (12_345, Some(2_600), 9_136),
+            (10_000, Some(8_000), 2_000),
+            (10_000, None, 10_000),
+        ];
+        for (amount, mercy, left) in cases {
+            let mut d = [0; TYPE_COUNT];
+            d[DamageType::Slash.index()] = amount;
+            if let Some(m) = mercy {
+                assert_eq!(apply_mercy(&mut d, m), amount - left);
+            }
+            assert_eq!(d.iter().sum::<i64>(), left, "{amount} at {mercy:?}");
+            assert_eq!(mercy_reduce_mhp(amount, mercy), left);
+        }
+        // Through the pipeline: an unarmored Erratum target, no chip binding.
+        let def = Defender {
+            mercy_bp: Some(2_000),
+            ..erratum(0)
+        };
+        let b = resolve_hit(
+            &Hit::basic(10_000, Shares::single(DamageType::Slash)),
+            &def,
+            &Rules::SOLO,
+        );
+        assert_eq!(
+            (b.after_chip[0], b.mercy_mhp, b.total),
+            (10_000, 2_000, 8_000)
+        );
+        // NPC targets never use Mercy, even if the field is set.
+        let npc_t = Defender {
+            mercy_bp: Some(2_000),
+            ..npc(0)
+        };
+        assert_eq!(
+            resolve_hit(
+                &Hit::basic(10_000, Shares::single(DamageType::Slash)),
+                &npc_t,
+                &Rules::SOLO
+            )
+            .total,
+            10_000
+        );
+    }
+
+    /// SPEC: doc 17 acceptance test 3 (canon §10.5 steps 6c and 7): a ward of
+    /// 10,000 mHP and a 10,000-mHP shock hit at Mercy 2000: step 6c gives
+    /// 8,000; step 7 gives `w = 12,000 > 10,000`, so HP takes
+    /// `8,000 - floor_div(10^8, 15000) = 1,334` and the ward breaks.
+    #[test]
+    fn doc17_t03_mercy_and_wards() {
+        let def = Defender {
+            mercy_bp: Some(2_000),
+            wards: Wards {
+                shielded_mhp: 10_000,
+                ..Wards::NONE
+            },
+            ..erratum(0)
+        };
+        let b = resolve_dot(10_000, DamageType::Shock, &def);
+        assert_eq!((b.mercy_mhp, b.total), (2_000, 1_334));
+        assert!(b.ward.broken());
+        let hit = resolve_hit(
+            &Hit::basic(10_000, Shares::single(DamageType::Shock)),
+            &def,
+            &Rules::SOLO,
+        );
+        assert_eq!(
+            (hit.mercy_mhp, hit.total, hit.ward.shielded_after),
+            (2_000, 1_334, 0)
+        );
+    }
+
+    /// SPEC: canon §10.6 (canon-1.11): a consumable's damage to its drinker
+    /// enters at step 3 with `D2 = B`, skipping steps 1 and 2 (no additive
+    /// bucket, crit or friendly fire); resistance, armor and the chip floor
+    /// still apply.
+    #[test]
+    fn entry_consumable() {
+        let def = Defender {
+            resist_bp: resist(&[(DamageType::Toxin, 5_000)]),
+            ..erratum(0)
+        };
+        let b = resolve_consumable(
+            8_000,
+            &Shares::single(DamageType::Toxin),
+            &def,
+            None,
+            10_000,
+            0,
+        );
+        assert_eq!(b.entry, Entry::Consumable);
+        assert_eq!(
+            (b.d1, b.d2, b.chain, b.total),
+            (8_000, 8_000, ChainTrace::NEUTRAL, 4_000)
+        );
+        // Step 6c applies to a Mercy bearer.
+        let m = Defender {
+            mercy_bp: Some(2_000),
+            ..def
+        };
+        assert_eq!(
+            resolve_consumable(
+                8_000,
+                &Shares::single(DamageType::Toxin),
+                &m,
+                None,
+                10_000,
+                0
+            )
+            .total,
+            3_200
+        );
+    }
+
+    /// SPEC: canon §10.6 (canon-1.11): a lethal takedown enters at step 7 as
+    /// `dmg.true` equal to the target's HP plus ward, skipping crit,
+    /// resistance, armor and chip floor; flag `takedown`. The ward absorbs
+    /// its amount and HP takes exactly the target's HP.
+    #[test]
+    fn entry_takedown() {
+        let def = Defender {
+            ar_part: 5_000,
+            resist_bp: [9_000; TYPE_COUNT],
+            wards: Wards {
+                shielded_mhp: 3_000,
+                generator_mhp: 7_000,
+                ..Wards::NONE
+            },
+            ..npc(0)
+        };
+        let b = resolve_takedown(42_000, &def);
+        assert_eq!(b.entry, Entry::Takedown);
+        assert!(b.flags.takedown && !b.flags.crit);
+        assert_eq!(b.d2, 52_000);
+        assert_eq!(b.total, 42_000);
+        assert_eq!(b.per_type[DamageType::True.index()], 42_000);
+        assert_eq!((b.ward.shielded_after, b.ward.generator_after), (0, 0));
+        assert!(per_type_sums(&b));
+        // Mercy is step 6c, before the takedown's entry: never applied.
+        let err = Defender {
+            mercy_bp: Some(8_000),
+            ..erratum(0)
+        };
+        assert_eq!(resolve_takedown(30_000, &err).total, 30_000);
+    }
+
+    /// SPEC: canon §10.4 (canon-1.11): doc 05 attack factors multiply the base
+    /// before the step-0 chain, one `mul_bp` each, and a "× N" manufacturer
+    /// trait multiplies `B` once after it.
+    #[test]
+    fn step_0_attack_factors_and_manufacturer_trait() {
+        let base = apply_attack_factors(10_000, &[11_000, 9_000]);
+        assert_eq!(base, mul_bp(mul_bp(10_000, 11_000), 9_000));
+        assert_eq!(apply_attack_factors(10_000, &[]), 10_000);
+        let b = errata_item_source_mhp(&ItemSource {
+            base_mhp: base,
+            src_lvl: 1,
+            rarity_bp: 10_000,
+            quality_bp: 10_000,
+            eff_enh: 0,
+            material_bp: 10_000,
+        });
+        // Rainslick's "× 12000 against staggered targets" (§5.9) once, before step 1.
+        assert_eq!(apply_manufacturer_trait(b, Some(12_000)), mul_bp(b, 12_000));
+        assert_eq!(apply_manufacturer_trait(b, None), b);
+        // ENH_CAP above 15 in Marginalia: eff_enh 17 is a valid factor.
+        assert_eq!(enhancement_bp(17), 20_200);
     }
 
     #[test]
@@ -3679,6 +4494,7 @@ mod tests {
             unmoored: false,
             other_member_up: true,
             other_erratum_alive: true,
+            prior_downs_folio: 0,
         };
         let dd = resolve_lethal(base, || true);
         assert_eq!(
@@ -3692,6 +4508,21 @@ mod tests {
             (LethalOutcome::Downed, true, true)
         );
         assert!(down.events.player_downed && !down.events.entity_killed);
+        assert_eq!(down.apply, Some((StatusId::Downed, Some(1_800))));
+        // Canon-1.11 §11.1, doc 16 §9.4: later downs in a Folio bleed out in
+        // 1,200 and then 600 ticks.
+        let second = resolve_lethal(
+            LethalInput {
+                prior_downs_folio: 1,
+                deaths_door_used: true,
+                ..base
+            },
+            || panic!("used"),
+        );
+        assert_eq!(second.apply, Some((StatusId::Downed, Some(1_200))));
+        assert_eq!(downed_bleed_out_ticks(2), 600);
+        assert_eq!(downed_bleed_out_ticks(9), 600);
+        assert_eq!(downed_bleed_out_ticks(255), 600);
         // Death's Door already used: no roll at all.
         let used = resolve_lethal(
             LethalInput {
@@ -3800,6 +4631,193 @@ mod tests {
         );
     }
 
+    /// Review (canon §10.1): `share_blunt` above 10000 is rejected.
+    #[test]
+    #[should_panic(expected = "share_blunt outside 0..=10000")]
+    fn blunt_poise_rejects_share_above_10000() {
+        let _ = blunt_poise_bp(10_001);
+    }
+
+    /// Review (canon §10.1): a negative `share_blunt` is rejected.
+    #[test]
+    #[should_panic(expected = "share_blunt outside 0..=10000")]
+    fn blunt_poise_rejects_negative_share() {
+        let _ = blunt_poise_bp(-1);
+    }
+
+    /// Review (canon §10.5 step 6c): `mercy_bp` above 10000 is rejected.
+    #[test]
+    #[should_panic(expected = "mercy_bp outside 0..=10000")]
+    fn mercy_above_full_panics() {
+        let mut d = [1_000; TYPE_COUNT];
+        let _ = apply_mercy(&mut d, 10_001);
+    }
+
+    /// Review (canon §13.7, §10.4): `eff_enh` below -3 is rejected, and a
+    /// Marginalia `ENH_CAP` at the depth-300 cap (`15 + floor_div(275, 5) =
+    /// 70`) is a valid factor.
+    #[test]
+    fn enhancement_factor_bounds() {
+        assert_eq!(enhancement_bp(-3), 8_200);
+        assert_eq!(enhancement_bp(70), 52_000);
+        assert!(std::panic::catch_unwind(|| enhancement_bp(-4)).is_err());
+    }
+
+    /// Review: doc 17 test 45 (canon §10.5 step 6c). At Mercy 2000,
+    /// starvation's 1% of Max HP 85,000 per 5 s removes `850 - mul_bp(850,
+    /// 2000) = 680` mHP; a grimhallow reload's 3% of Max HP is HP the Erratum
+    /// chooses to pay, never passed through Mercy, so it removes 2,550.
+    #[test]
+    fn doc17_t45_mercy_exemptions() {
+        assert_eq!(mercy_reduce_mhp(mul_bp(85_000, 100), Some(2_000)), 680);
+        assert_eq!(mul_bp(85_000, 300), 2_550);
+        assert_eq!(mercy_reduce_mhp(850, None), 850);
+        assert_eq!(mercy_reduce_mhp(850, Some(0)), 850);
+        assert_eq!(mercy_reduce_mhp(850, Some(10_000)), 0);
+    }
+
+    /// Review (canon §10.5 step 5): the shield's AR joins the part's AR only
+    /// on a blocked hit, and `ignore_armor` skips step 5 for both.
+    #[test]
+    fn shield_ar_only_on_blocked_hits() {
+        let block = BlockInput {
+            shield_ar: 80,
+            stability_bp: 0,
+            d_current: 1,
+            stamina_mst: 90_000,
+            guard_break: false,
+        };
+        let mut hit = Hit::basic(20_000, Shares::single(DamageType::Slash));
+        let open = resolve_hit(&hit, &erratum(20), &Rules::SOLO);
+        hit.block = Some(block);
+        let blocked = resolve_hit(&hit, &erratum(20), &Rules::SOLO);
+        assert_eq!(open.dr_bp[0], armor_dr_bp(20, 20_000));
+        // Part 20 + shield 80 = canon test 17's AR 100: DR 5555.
+        assert_eq!(blocked.dr_bp[0], 5_555);
+        assert_eq!(blocked.after_armor[0], 8_890);
+        hit.ignore_armor = true;
+        let ignored = resolve_hit(&hit, &erratum(20), &Rules::SOLO);
+        assert_eq!(ignored.dr_bp, [0; TYPE_COUNT]);
+        assert_eq!(ignored.after_armor, ignored.after_resist);
+    }
+
+    /// Review (canon §10.4, §11.6, §17.3): the Erasure hunter's source
+    /// magnitude uses `rank.elite`'s damage through its multiplier rank.
+    #[test]
+    fn erasure_hunter_source_uses_elite_damage() {
+        let m = status::Bearer::ERASURE_HUNTER
+            .multiplier_rank()
+            .expect("ranked");
+        assert_eq!(m, Rank::Elite);
+        assert_eq!(enemy_source_mhp(10_000, 1, m), 13_000);
+        assert_eq!(enemy_source_mhp(10_000, 1, Rank::Hunter), 20_000);
+        assert_eq!(enemy_source_mhp(10_000, 25, m), mul_bp(36_145, 13_000));
+    }
+
+    /// Review (canon §10.6, §10.5 step 7): the takedown follows step 7
+    /// literally (GAP on `resolve_takedown`). A generator profile that halves
+    /// `dmg.true` absorbs twice its amount: 49,000 true against 7,000 ward
+    /// at `m = 5000` leaves `49,000 - floor_div(7,000 × 10^4, 5000) = 35,000`,
+    /// less than the target's 42,000 HP. An invulnerable target takes nothing.
+    #[test]
+    fn takedown_edges() {
+        let mut profile = [10_000; TYPE_COUNT];
+        profile[DamageType::True.index()] = 5_000;
+        let def = Defender {
+            wards: Wards {
+                generator_mhp: 7_000,
+                generator_profile_bp: profile,
+                ..Wards::NONE
+            },
+            ..npc(0)
+        };
+        let b = resolve_takedown(42_000, &def);
+        assert_eq!((b.d2, b.total), (49_000, 35_000));
+        assert!(b.ward.generator_broken);
+        let inv = Defender {
+            statuses: DefenderStatuses {
+                invulnerable: true,
+                ..DefenderStatuses::default()
+            },
+            ..npc(0)
+        };
+        let n = resolve_takedown(42_000, &inv);
+        assert_eq!(n.total, 0);
+        assert!(n.flags.takedown && n.flags.nullified);
+        assert_eq!(resolve_takedown(0, &npc(0)).total, 0);
+    }
+
+    /// Review (canon §10.6): a consumable against an invulnerable target
+    /// applies nothing; `dmg.true` ignores resistance and armor; no friendly
+    /// fire scales an Erratum's own dose.
+    #[test]
+    fn consumable_edges() {
+        let inv = Defender {
+            statuses: DefenderStatuses {
+                invulnerable: true,
+                ..DefenderStatuses::default()
+            },
+            ..erratum(0)
+        };
+        let b = resolve_consumable(
+            8_000,
+            &Shares::single(DamageType::Toxin),
+            &inv,
+            None,
+            10_000,
+            0,
+        );
+        assert!(b.flags.nullified && b.total == 0);
+        let tough = Defender {
+            resist_bp: [9_000; TYPE_COUNT],
+            ..erratum(500)
+        };
+        let t = resolve_consumable(
+            8_000,
+            &Shares::single(DamageType::True),
+            &tough,
+            None,
+            10_000,
+            0,
+        );
+        assert_eq!((t.d2, t.total), (8_000, 8_000));
+    }
+
+    /// Review (canon §11.2, doc 08 §7): a consumable's status power runs the
+    /// whole §11.2 chain: × `S(src_lvl)`, × the base component's potency,
+    /// × `10000 + edge_bp` against a native target, × row 41, × `10000 - r`.
+    /// 100 points of poison at `S(1)`: Coherent 100, Strained (9000) 90,
+    /// Edge 1200 against a native drinker 112, against a non-native 100.
+    #[test]
+    fn consumable_buildup_takes_potency_and_edge() {
+        let mut power = [0; TYPE_COUNT];
+        power[DamageType::Toxin.index()] = 100;
+        let hb = HitBuildup {
+            power,
+            src_lvl: 1,
+            attacker_buildup_bp: 10_000,
+        };
+        let s = Shares::single(DamageType::Toxin);
+        let i = DamageType::Toxin.index();
+        let def = erratum(0);
+        let native = Defender {
+            native: true,
+            ..def
+        };
+        let pts = |d: &Defender, pot: i32, edge: i32| {
+            resolve_consumable(1_000, &s, d, Some(hb), pot, edge).buildup[i]
+        };
+        assert_eq!(pts(&def, 10_000, 0), 100);
+        assert_eq!(pts(&def, 9_000, 0), 90);
+        assert_eq!(pts(&native, 10_000, 1_200), 112);
+        assert_eq!(pts(&def, 10_000, 1_200), 100);
+        // Damage itself is D2 = B: neither factor touches it.
+        assert_eq!(
+            resolve_consumable(1_000, &s, &native, Some(hb), 9_000, 1_200).total,
+            1_000
+        );
+    }
+
     // ---------------- Properties ----------------
 
     fn arb_type() -> impl Strategy<Value = DamageType> {
@@ -3825,8 +4843,9 @@ mod tests {
             0i64..60_000,
             0i64..60_000,
             any::<bool>(),
+            prop::option::of(0i32..=8_000),
         )
-            .prop_map(|(is_erratum, ar, res, imm, sh, gen_w, frozen)| {
+            .prop_map(|(is_erratum, ar, res, imm, sh, gen_w, frozen, mercy_bp)| {
                 let kind = if is_erratum {
                     TargetKind::Erratum
                 } else {
@@ -3845,6 +4864,7 @@ mod tests {
                         frozen,
                         ..DefenderStatuses::default()
                     },
+                    mercy_bp,
                     ..Defender::new(9, kind)
                 }
             })
@@ -3872,7 +4892,7 @@ mod tests {
             let carries = DamageType::ALL.iter().any(|&t| s.get(t) > 0 && !def.is_immune(t));
             let floor = if def.kind == TargetKind::Erratum { floor_div(out.d2, 10) } else { floor_div(out.d2, 20) };
             if carries { prop_assert!(out.after_chip.iter().sum::<i64>() >= floor); }
-            for e in [resolve_dot(b, s.largest(), &def), resolve_fall(b, &def), resolve_shock_chain(b, false, &def, &Rules::SOLO), resolve_reflected(b, &s, &def)] {
+            for e in [resolve_dot(b, s.largest(), &def), resolve_fall(b, &def), resolve_shock_chain(b, false, &def, &Rules::SOLO), resolve_reflected(b, &s, &def), resolve_consumable(b, &s, &def, None, 10_000, 0), resolve_takedown(b, &def)] {
                 prop_assert!(per_type_sums(&e));
                 prop_assert!(e.per_type.iter().all(|&v| v >= 0));
             }
@@ -3902,7 +4922,7 @@ mod tests {
             let s = Shares::single(DamageType::Slash);
             let mut d = t;
             let before: i64 = t.iter().sum();
-            let out = apply_block(&mut d, &s, &BlockInput { stability_bp: stab, d_current: dcur, stamina_mst: 1_000_000, guard_break: false });
+            let out = apply_block(&mut d, &s, &BlockInput { shield_ar: 0, stability_bp: stab, d_current: dcur, stamina_mst: 1_000_000, guard_break: false });
             prop_assert_eq!(d.iter().sum::<i64>() + out.to_stamina_mhp, before);
             // Each type keeps at most its own damage plus the flooring remainder (< 15).
             prop_assert!(d.iter().zip(t.iter()).all(|(a, b)| *a >= 0 && *a <= *b + 15));
@@ -3921,6 +4941,127 @@ mod tests {
         fn prop_pipeline_deterministic(b in 0i64..1_000_000, s in arb_shares(), def in arb_defender()) {
             let h = Hit::basic(b, s);
             prop_assert_eq!(resolve_hit(&h, &def, &Rules::SOLO), resolve_hit(&h, &def, &Rules::SOLO));
+        }
+    }
+
+    // ---------------- Review properties (canon-1.11 rules) ----------------
+
+    proptest! {
+        /// Review (canon §9.1, DECISIONS 84, doc 04 §8.2): a part severs only
+        /// when it is severable, the hit is positive and slash-dominant or
+        /// flagged, and the pool is 0 after it; an Erratum part also needs a
+        /// floored `frac <= 2500` before the hit and is never the head; an NPC
+        /// head needs weapon skill 75, and any other NPC part always severs.
+        #[test]
+        fn prop_severing_invariants(
+            erratum_target in any::<bool>(), kind in 0usize..5, dmg in -10i64..20_000,
+            slash in any::<bool>(), flag in any::<bool>(), max in 0i64..20_000,
+            before_frac in 0i32..=10_000, after in 0i64..2, skill in 0i32..=100,
+        ) {
+            let part = [None, Some(SeverPart::Limb), Some(SeverPart::Tail), Some(SeverPart::Wing), Some(SeverPart::Head)][kind];
+            let before = mul_bp(max, before_frac);
+            let i = SeverInput {
+                part, target_erratum: erratum_target, part_damage_mhp: dmg, slash_largest: slash,
+                sever_flag: flag, pool_before_mhp: before, pool_after_mhp: after, pool_max_mhp: max,
+                attacker_weapon_skill: skill,
+            };
+            let eligible = part.is_some() && dmg > 0 && after == 0 && (slash || flag);
+            if severs(&i) {
+                prop_assert!(eligible);
+                if erratum_target {
+                    prop_assert!(part != Some(SeverPart::Head));
+                    prop_assert!(max > 0 && floor_div(before * 10_000, max) <= 2_500);
+                } else if part == Some(SeverPart::Head) {
+                    prop_assert!(skill >= HEAD_SEVER_SKILL);
+                }
+            } else if eligible && !erratum_target {
+                prop_assert!(part == Some(SeverPart::Head) && skill < HEAD_SEVER_SKILL);
+            }
+        }
+
+        /// Review (canon §11.1, doc 16 §9.4): `bleed_left = max(600, 1800 -
+        /// 600 × (downs_folio - 1))`, never increasing with more downs.
+        #[test]
+        fn prop_downed_bleed_out(prior in any::<u8>()) {
+            let t = downed_bleed_out_ticks(prior);
+            prop_assert_eq!(i64::from(t), (1_800 - 600 * i64::from(prior)).max(600));
+            if prior < u8::MAX {
+                prop_assert!(downed_bleed_out_ticks(prior + 1) <= t);
+            }
+        }
+
+        /// Review (canon §10.1): the blunt poise factor is `10000 +
+        /// floor_div(share_blunt, 2)`, in `10000..=15000` and non-decreasing.
+        #[test]
+        fn prop_blunt_poise(share in 0i32..=10_000) {
+            let f = blunt_poise_bp(share);
+            prop_assert!((10_000..=BLUNT_POISE_BP).contains(&f));
+            prop_assert_eq!(f, 10_000 + share / 2);
+            if share < 10_000 {
+                prop_assert!(blunt_poise_bp(share + 1) >= f);
+            }
+        }
+
+        /// Review (canon §10.5 step 6c): Mercy conserves damage (kept plus
+        /// removed equals the input), never adds to a type, matches
+        /// `mercy_reduce_mhp` per type, and is the identity at 0.
+        #[test]
+        fn prop_mercy_conserves(t in prop::array::uniform15(0i64..10_000_000), m in 0i32..=10_000) {
+            let mut d = t;
+            let removed = apply_mercy(&mut d, m);
+            prop_assert_eq!(d.iter().sum::<i64>() + removed, t.iter().sum::<i64>());
+            prop_assert!(d.iter().zip(t.iter()).all(|(a, b)| *a >= 0 && *a <= *b));
+            for i in 0..TYPE_COUNT {
+                prop_assert_eq!(d[i], mercy_reduce_mhp(t[i], Some(m)));
+            }
+            if m == 0 {
+                prop_assert_eq!(d, t);
+            }
+        }
+
+        /// Review (canon §10.4): the attack factors are one `mul_bp` each in
+        /// the given order, and a "× N" trait is one more.
+        #[test]
+        fn prop_step0_factors(
+            base in 0i64..10_000_000, f in prop::collection::vec(0i32..=30_000, 0..6),
+            tr in prop::option::of(0i32..=30_000),
+        ) {
+            let mut v = base;
+            for &x in &f {
+                v = mul_bp(v, x);
+            }
+            prop_assert_eq!(apply_attack_factors(base, &f), v);
+            prop_assert_eq!(apply_manufacturer_trait(v, tr), tr.map_or(v, |t| mul_bp(v, t)));
+            prop_assert_eq!(apply_manufacturer_trait(v, Some(10_000)), v);
+        }
+
+        /// Review (canon §10.6): with the default profile a takedown always
+        /// empties both ward pools and leaves exactly the target's HP.
+        #[test]
+        fn prop_takedown_default_profile(hp in 0i64..10_000_000, sh in 0i64..1_000_000, gen_w in 0i64..1_000_000) {
+            let def = Defender {
+                wards: Wards { shielded_mhp: sh, generator_mhp: gen_w, ..Wards::NONE },
+                ..npc(0)
+            };
+            let b = resolve_takedown(hp, &def);
+            prop_assert_eq!(b.total, hp);
+            prop_assert_eq!((b.ward.shielded_after, b.ward.generator_after), (0, 0));
+            prop_assert!(b.flags.takedown && !b.flags.nullified && per_type_sums(&b));
+        }
+
+        /// Review (canon §10.5 step 5): a blocked hit's DR is computed from
+        /// the part's AR plus the shield's, so the shield never lets more
+        /// damage through.
+        #[test]
+        fn prop_shield_ar_never_hurts(b in 1i64..1_000_000, ar in 0i64..500, shield in 0i64..500) {
+            let guard = BlockInput { shield_ar: 0, stability_bp: 0, d_current: 1, stamina_mst: 1_000_000, guard_break: false };
+            let mut hit = Hit::basic(b, Shares::single(DamageType::Slash));
+            hit.block = Some(guard);
+            let bare = resolve_hit(&hit, &erratum(ar), &Rules::SOLO);
+            hit.block = Some(BlockInput { shield_ar: shield, ..guard });
+            let shielded = resolve_hit(&hit, &erratum(ar), &Rules::SOLO);
+            prop_assert!(shielded.after_armor[0] <= bare.after_armor[0]);
+            prop_assert_eq!(shielded.dr_bp[0], armor_dr_bp(effective_armor(ar + shield, DamageType::Slash, 0), b));
         }
     }
 }
