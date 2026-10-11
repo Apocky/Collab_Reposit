@@ -214,6 +214,21 @@ mod tests {
         assert_eq!(sin_bam(49_152), -(1 << 30));
     }
 
+    /// SPEC: canon §21 test 43 and §1.9. `fwd(8192, 8192).x = -536870913`
+    /// (negate first: `((-sin) × cos) >> 30`; shift-first would give
+    /// -536870912), and `T[8192] = 759250125`.
+    #[test]
+    fn canon_t43_forward_vector() {
+        assert_eq!(SIN_T[8192], 759_250_125);
+        let v = fwd(8192, 8192);
+        assert_eq!(v[0], -536_870_913);
+        assert_eq!(v[2], -536_870_913);
+        assert_eq!(v[1], 759_250_125);
+        // The shift-first reading differs by one raw unit here.
+        let shift_first = -((i64::from(sin_bam(8192)) * i64::from(cos_bam(8192))) >> 30);
+        assert_eq!(shift_first, -536_870_912);
+    }
+
     #[test]
     fn folding_rule_quadrants() {
         assert_eq!(sin_bam(32_768), 0);

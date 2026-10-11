@@ -122,11 +122,12 @@ Doc 17 owns the bindings and doc 02 §5 the bit layout. This chapter reads these
 |---|---|---|
 | `input.attack` | 0 `ATTACK_PRIMARY` | light attack, trigger, draw, beam |
 | `input.alt` | 1 `ATTACK_SECONDARY` | guard, ADS, off-hand attack |
-| `input.reload` | 2 | reload, clear a jam |
+| `input.reload` | 2 | reload, clear a jam; taunt while guarding with a shield (§19.2) |
 | `input.jump`, `input.crouch`, `input.sprint`, `input.dodge` | 3, 4, 5, 6 | jump attack, crouch stance and underhand throw, sprint attack and hold breath, dodge cancel |
 | `input.interact` | 7 | struggle while grappled (§19.3) |
 | `input.heavy` | 8 `MELEE_QUICK` | heavy charge; shove or shield bash while guarding; quick melee with a ranged weapon |
 | `input.throw` | 10 | cook and throw the quickbar throwable |
+| `input.weapon_next`, `input.weapon_prev`, weapon select | 11, 12, 13–14 | swap weapons (§4.8, §6.1) |
 | `input.lean_l`, `input.lean_r` | 21, 22 | lean (§6.8) |
 | `input.mount` | 25 `MOUNT_TOGGLE` | summon, mount and dismount (§17.2) |
 
@@ -177,9 +178,9 @@ fn seg_capsule(p0, p1, rb, cap) -> Option<Fx /*s*/> {
 }
 ```
 
-`div128(n, d) = Fx(floor_div(n << 32, d) as i64)` for Q64.64 numerator and positive denominator (negate both first when `d < 0`); `div256` is the same over the two-limb `i256` helper. Doc 02 ships both in the fixed-point module; `clamp01` clamps to `0..=Fx::from_int(1)`. The entry parameter of a swept sphere into a capsule is `s_hit = max(0, s - sqrt_fx(rr² - d²) / |p1 - p0|)`, computed with `sqrt_fx` and `div_fx`; when `|p1 - p0| = 0`, `s_hit = 0`.
+`seg_seg_params` is doc 02 §4.6's `closest_seg_seg` `(s, t)` result, shown here for reading; the simulation calls doc 02's one implementation (doc 02 rule "one formula, one function"). `div128(n, d) = Fx(floor_div(n << 32, d) as i64)` for Q64.64 numerator and positive denominator (negate both first when `d < 0`); `div256` is the same over the two-limb `I256` helper. `clamp01` clamps to `0..=Fx::from_int(1)`. Where an entry parameter of a swept sphere into a capsule is needed, it is `s_hit = max(0, s - div_fx(Fx(isqrt_u128(rr² - d²)), dist(p0, p1)))`, with `d² = dist2(pa, pb)` and `rr²` both raw Q64.64; when `dist(p0, p1) = 0`, `s_hit = 0`.
 
-**Voxel traversal** is Amanatides–Woo over integer block coordinates. From `p0` toward `p1`, step the axis with the smallest `t_max`; ties step X, then Y, then Z. The walk visits cells in strictly increasing entry parameter and stops at the first cell for which the caller's predicate returns true, or when the entry parameter exceeds 1. Cells outside the Folio read as `block.void_bedrock` (Canon §1.8).
+**Voxel traversal** is doc 03 §5.18's `raycast_blocks` over doc 02's `dda` (Amanatides–Woo; ties step X, then Y, then Z; partial boxes tested by slabs). The walk visits cells in strictly increasing entry parameter and stops at the first cell for which the caller's predicate returns true, or at the segment's end. Cells outside the Folio read as `block.void_bedrock` (Canon §1.8).
 
 ### 2.3 Melee traces
 
@@ -197,7 +198,7 @@ A swing sweeps a **blade segment** through the active ticks of its move.
 | `move.shape_overhead` | `Y` | `Pt + av - floor_div(2 × av × (j + 1), N)`, `av = max(arc, 5461)`, clamped to ±16000 | `reach` |
 | `move.shape_thrust` | `Y` | `Pt` | `r0 + floor_div((reach - r0) × (j + 1), N)`, `r0 = mul_bp(reach, 4000)` |
 
-- **Blocks and clang.** At each sample, traverse voxels from `hilt` to `tip` with the predicate `solid`. If a solid cell is entered at distance `s_blk` from the pivot, the effective blade ends there. For every shape except thrust, if `s_blk < mul_bp(reach, 6000)` the swing **clangs**: this sample and all later samples produce no entity hits, the active phase ends, recovery gains 8 ticks, the block takes the swing's block damage once (§7.3), and `emit_noise(point, 70)` fires. A thrust stops at the block without clanging and damages it once.
+- **Blocks and clang.** At each sample, traverse voxels from `hilt` to `tip` with the predicate `solid`. If a solid cell is entered at distance `s_blk` from the pivot, the effective blade ends there. For every shape except thrust, if `s_blk < mul_bp(reach, 6000)` the swing **clangs**: this sample and all later samples produce no entity hits, the active phase ends, recovery gains 8 ticks, the block takes the swing's block damage once (§7.3), and `emit_noise` fires `noise.melee.clang` (70 dB, doc 09) at the contact point. A thrust stops at the block without clanging and damages it once.
 - **Entity hits.** At each sample, every capsule within `blade_r + rc` of the effective blade is a candidate. An entity already hit by this swing is skipped. New entities are ordered by sample `j`, then distance from the hilt to the closest-approach point, then `EntityId`. For each new entity the hit part is its intersecting capsule whose closest-approach point is nearest the hilt; ties prefer a precision part, then the lower part index.
 - **Cleave.** Each new entity consumes one of the archetype's `cleave` slots. When the slots are spent the swing stops producing hits. The `k`-th entity hit (1-based) takes cleave factor 10000, 7500, 5000 for `k` = 1, 2, 3.
 - **Allies.** Allied Errata and minions are valid candidates and consume cleave slots; their hits apply friendly fire (Canon §17.5).
@@ -214,7 +215,7 @@ Doc 03 §5.19 owns the geometry: each step it tests the step segment against hit
 
 ### 2.6 Lag compensation hook (doc 16)
 
-- `LAGCOMP_MAX_TICKS = 16` (doc 16's `LAGCOMP_MAX_REWIND` equals it). The host first clamps the command's `view_tick` per doc 16 §5.5 (at most the measured lag plus 4 ticks, never more than 16 ticks back). For a command applied at tick `t`, `rewind = min(t - view_tick, LAGCOMP_MAX_TICKS)` and `t_r = t - rewind`.
+- `LAGCOMP_MAX_TICKS = 16` (doc 16's `LAGCOMP_MAX_REWIND` equals it). The host first clamps the command's `view_tick` per doc 16 §5.5 and §8 (at most the measured lag plus 4 ticks, never more than 16 ticks back). For a command applied at tick `t`, `rewind = min(t - view_tick, LAGCOMP_MAX_TICKS)` and `t_r = t - rewind`.
 - **Who is rewound.** Every player-controlled attacker: party slots 0 to 3 and the invader in slot 4 (Canon §17.9). NPC attacks, minions, turrets and mounts never rewind.
 - A player's melee samples and hitscan rays test every other entity's capsules posed at `t_r`, reconstructed from doc 03 §5.16's 32-record pose history. Blocks are never rewound. A target whose `spawn_tick` is later than `t_r` cannot be hit by a rewound test (doc 16 G6).
 - A player's projectile spawned at tick `t` has `catchup = rewind` (doc 03 §5.19). On its spawn tick it takes `catchup` catch-up steps, step `i` (0-based) against poses at `t_r + i + 1`, so the last one tests the poses of `t`; it then takes its normal step against the poses of `t`, and one step per tick afterwards. Every other projectile has `catchup = 0` and takes exactly its normal step on its spawn tick. Example: fired on tick 1000 with `view_tick` 994, the projectile steps against poses 995, 996, 997, 998, 999, 1000 and then 1000 again: 7 steps on its spawn tick.
@@ -314,7 +315,7 @@ All melee archetypes have `pen_bp` 0; penetration on melee comes only from affix
 | halberd | 3200 | 18/6/22 | rl 10000, overhead 13000 | 5000 | 52 | 16000→26000 | 9/6/24 | 16000 | overhead; guard_break; sever |
 | quarterstaff | 1800 | 9/5/11 | rl 10000, lr 10000, thrust 10000, overhead 12500 | 3000 | 36 | 15000→22000 | 5/5/14 | 9000 | overhead; guard_break |
 | fist | 600 | 5/3/7 | thrust 10000 ×3, thrust 13000 | 1900 | 28 | 15000→22000 | 4/3/12 | 6000 | thrust; grapple at full (§19.3) |
-| whip | 700 | 14/4/16 | rl 10000, lr 10000, overhead 12500 | 4000 | 40 | 15000→22000 | 6/4/18 | 12000 | overhead; `counter.disruptor` at full; pull 1500 mm at full |
+| whip | 700 | 14/4/16 | rl 10000, lr 10000, overhead 12500 | 4000 | 40 | 15000→22000 | 6/4/18 | 12000 | overhead; `counter.disruptor` at full; pull at full |
 | chain | 2200 | 14/6/16 | rl 10000, lr 10000, overhead 12500 | 4000 | 44 | 15000→25000 | 7/6/20 | 14000 | overhead; guard_break; grapple at full (entangle) |
 | unarmed | 0 | 5/3/8 | thrust 10000 ×3, thrust 12000 | 2000 | 28 | 15000→20000 | 4/3/12 | 5000 | thrust; grapple at full |
 
@@ -343,6 +344,7 @@ Light stamina is set so a full light-combo cycle (finisher recovery included) sp
 Every archetype's scaling coefficients total 12000 Bp, so no archetype gains more from sub-attributes than another. Archetype-specific rules:
 
 - **Whip sweet spot.** A whip hit whose closest-approach point lies within `mul_bp(reach, 5000)` of the pivot takes attack factor 6000.
+- **Whip pull.** A full whip heavy that lands (not blocked or parried) calls doc 03 `apply_knockback(target, d, 6000 mm/s)` after step 8, where `d` is the horizontal unit vector from the target toward the attacker; doc 03 scales it by the target's mass, so a 75 kg target is pulled at 6000 mm/s and a 300 kg one at 1500 mm/s.
 - **Chain wrap.** When a chain-weapon hit is blocked, the blocker's block stability (Canon §6.4 row 19) is multiplied by 5000 for that hit.
 - **Spear heavy** has cleave 2 and passes through the first target.
 - **Fist pair.** Fist weapons in both hands alternate hands visually. They share one combo and gain no damage from the second weapon; the off-hand fist weapon adds its block stability and nothing else.
@@ -375,7 +377,7 @@ charge_full' = max(20, charge_full')
 stamina' = mul_bp(stamina, stamina_bp);  impact' = mul_bp(impact, impact_bp)
 ```
 
-`mass_g` is the instance's mass from doc 07 (volume × density) and `material_bp` its primary material's `dmg_bp` (Canon §10.4). Ranged weapons apply `time_bp` to `swap_ticks` and `ads_ticks`, and multiply recoil by `clamp(10000 - floor_div((mass_ratio_bp - 10000) × 2000, 10000), 8000, 12000)`.
+`mass_g` is the instance's mass from doc 07 (volume × density) and `material_bp` its primary material's `dmg_bp` (Canon §10.4). `arch.melee.unarmed` has no instance and no reference mass, so §3.3 never applies to it (every factor is 10000). Ranged weapons apply `time_bp` to `swap_ticks` and `ads_ticks`, and multiply recoil by `clamp(10000 - floor_div((mass_ratio_bp - 10000) × 2000, 10000), 8000, 12000)`.
 
 **Material speed floor.** `material_bp` already multiplies damage at Canon §10.4. Without the `ceil_div` term a light material with a high `dmg_bp` would multiply damage per second by up to `14000 × 10000 / 8500 = 16470` Bp, above the 14000 material slot of `ITEM_MULT_MAX` (Canon §13.8). The term keeps `material_bp × 10000 / time_bp ≤ 14000` before tick rounding, so a material's whole contribution to damage per second stays inside its canon slot. Heavy materials are unaffected, since their `time_mass_bp` already exceeds 10000.
 
@@ -422,7 +424,7 @@ move_bp  = clamp(14000 + 1000 × floor_div(fall_mm - 1000, 1000), 14000, 20000)
 impact factor 20000; landing adds recovery R + 10
 ```
 
-Maces and warhammers also emit a **landing shockwave**: an area query of radius 1500 mm around the landing point with `base_mhp × 5000` blunt, impact factor 15000, never precision, excluding any entity the jump attack itself hit. The warhammer's jump attack carries `counter.staggerer`.
+Maces and warhammers also emit a **landing shockwave**: an area hit of radius 1500 mm around the landing point with `base_mhp × 5000` blunt, impact factor 15000, never precision, excluding any entity the jump attack itself hit. It uses §9.4 step 2's target selection and exposure samples with `inner_mm = radius_mm` (no falloff); it is queued directly in C3, is not a doc 03 explosion, breaks no blocks and applies no knockback. The warhammer's jump attack carries `counter.staggerer`. The jump attack's active phase lasts until the landing tick, at most 40 ticks; that count is its `A`.
 
 ### 4.5 Parry and riposte
 
@@ -442,12 +444,12 @@ Guard mechanics are in §12. A **parry** happens when a hit flagged `PARRYABLE` 
 
 ### 4.7 Quick melee and dual wielding
 
-- **Quick melee** (`move.quick_melee`): `input.heavy` with a ranged weapon active. Base 9000 mHP, blunt 10000, reach 1100, arc 4551, `move.shape_thrust`, W 6 / A 3 / R 18, 6 stamina, impact 15, skill `skill.unarmed`, scaling as `arch.melee.unarmed`. It uses the held weapon's `ilvl`, rarity, quality, enhancement and material for Canon §10.4.
+- **Quick melee** (`move.quick_melee`): `input.heavy` with a ranged weapon active. Base 9000 mHP, blunt 10000, reach 1100, arc 4551, `move.shape_thrust`, W 6 / A 3 / R 18, 6 stamina, impact 15, `block_bp` 1000, skill `skill.unarmed`, scaling as `arch.melee.unarmed`. It uses the held weapon's `ilvl`, rarity, quality, enhancement and material for Canon §10.4.
 - **Dual wielding.** A one-handed melee weapon in the main hand and a dagger, short blade, axe, mace or fist weapon in `slot.offhand` turns `input.alt` into off-hand light attacks with their own combo index at `move_bp` 8500. The off-hand cannot block, charge a heavy or parry. A pistol, heavy pistol or thrown weapon in `slot.offhand` fires with `input.alt` from the hip only, with spread × 12500.
 
 ### 4.8 Melee state machine
 
-States: `Holstered`, `Drawing(k)`, `Idle`, `Windup(m, k)`, `Active(m, k)`, `Recovery(m, k)`, `Charging(c)`, `GuardRaising(k)`, `Guarding(k)`, `Lowering(k)`, `Staggered`, `Disarmed`. `m` is the move and `k` the tick within the state. "Disabling status" means `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping` or `st.downed`, or `st.grappled` while a two-handed weapon is active.
+States: `Holstered`, `Drawing(k)`, `Idle`, `Windup(m, k)`, `Active(m, k)`, `Recovery(m, k)`, `Charging(c)`, `GuardRaising(k)`, `Guarding(k)`, `Lowering(k)`, `Staggered`, `Disarmed`. `m` is the move and `k` the tick within the state. "Disabling status" means `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping` or `st.downed`, a `st.shocked` micro-stun (§13), or `st.grappled` while a two-handed weapon is active.
 
 | From | Event (first match wins) | To |
 |---|---|---|
@@ -460,7 +462,7 @@ States: `Holstered`, `Drawing(k)`, `Idle`, `Windup(m, k)`, `Active(m, k)`, `Reco
 | `Disarmed` | `st.disarmed` ended | `Idle` |
 | `Idle` | `input.attack` or `input.heavy` pressed while a riposte window is open (§4.5) | `Windup(riposte, 0)` |
 | `Idle` | `input.alt` held, no off-hand weapon, stamina > 0, no guard lockout (§12.3) | `GuardRaising(0)` |
-| `Idle` | `input.heavy` pressed, stamina > 0, no `st.exhausted` | `Charging(0)` |
+| `Idle` | `input.heavy` pressed, stamina > 0, no `st.exhausted` | `Windup(jump attack, 0)` if §4.4 holds, else `Charging(0)` |
 | `Idle` | `input.attack` pressed, stamina > 0 | `Windup(jump attack, 0)` if §4.4 holds; else `Windup(sprint attack, 0)` if §4.3 holds; else `Windup(light step, 0)` |
 | `Charging(c)` | `input.heavy` released, or `c = charge_full + 60` | `Windup(heavy, 0)` |
 | `Charging(c)` | `input.dodge` | dodge (Canon §4.2); charge lost; `Idle` |
@@ -475,6 +477,7 @@ States: `Holstered`, `Drawing(k)`, `Idle`, `Windup(m, k)`, `Active(m, k)`, `Reco
 | `Guarding(k)` | stamina reaches 0 from a blocked hit | `Staggered` (guard broken, §12.3) |
 | `Guarding(k)` | `input.attack` or `input.heavy` pressed while a riposte window is open | `Windup(riposte, 0)` |
 | `Guarding(k)` | `input.heavy` pressed | `Windup(shield bash, 0)` with a shield, else `Windup(shove, 0)` |
+| `Guarding(k)` | `input.reload` pressed with a shield, stamina ≥ 15, taunt cooldown over | `Windup(taunt, 0)` with W 20 / A 1 / R 9; the guard drops; the taunt applies on its active tick (§19.2) |
 | `Guarding(k)` | `input.attack` pressed, stamina > 0 | `Windup(light step 1, 0)`; the guard drops |
 | `Guarding(k)` | `input.alt` released | `Lowering(0)` |
 | `Lowering(k)` | `k + 1 = 4` | `Idle`; a new raise cannot start until 20 ticks after the previous raise started |
@@ -667,7 +670,7 @@ Doc 02 §16 runs 100,000 duels per Calling against `enemy.role.soldier` (60 HP, 
 | `calling.artificer` | `arch.ranged.pistol` | 30.2 | | | |
 
 - **Starting state.** A melee duel starts in `Idle` with the target inside reach. A ranged duel starts at a phase drawn uniformly from `0..cycle` of the weapon's REF cycle (§1.1) with the harness's own seed, so a duel can begin mid-magazine or mid-reload; every projectile hits the torso.
-- **Expected results** (integer pipeline, crits at 500 Bp): melee mean time to kill 1.84 s (mace) to 2.20 s (dagger); pistol 1.93 s; auto rifle 2.07 s. A ranged weapon that starts on a full magazine kills in 1.15 to 1.17 s, because one magazine holds 1.5 to 2 kills by design; sustained fire over many kills returns to the REF DPS.
+- **Expected results** (integer pipeline, crits at 500 Bp, every swing connecting on its first active tick and every shot hitting): melee mean time to kill 1.84 s (mace) to 2.20 s (dagger); pistol 1.93 s; auto rifle 2.07 s. A ranged weapon that starts on a full magazine kills in 1.15 to 1.17 s, because one magazine holds 1.5 to 2 kills by design; sustained fire over many kills returns to the REF DPS.
 
 ---
 
@@ -690,6 +693,7 @@ States: `Holstered`, `Drawing(k)`, `Ready`, `SprintLock(k)`, `Charging(c)`, `Bea
 | `SprintLock(k)` | sprint ended and `k >= sprint_to_fire` | `Ready` |
 | `Ready` | `input.reload`, magazine < capacity, reserve > 0, `cool_mt <= 0` | `Reloading(0)` |
 | `Ready` | charge mode: `input.attack` pressed, a round loaded | `Charging(0)` |
+| `Ready` | throw mode (thrown weapon): `input.attack` pressed, `cool_mt <= 0`, at least one item in the held stack | `Charging(0)` (the wind) |
 | `Ready` | beam mode: `input.attack` held, magazine ≥ 1000 mu | `Beaming(0)`; the first pulse fires this tick |
 | `Ready` | trigger condition met (§6.2), `cool_mt <= 0`, magazine ≥ `ammo_per_shot` | the Contradiction cadence (§16.2) runs first: on a jam `Jammed` with no shot and no ammunition spent; otherwise fire; burst mode enters `Burst(1, 0)` |
 | `Ready` | trigger condition met, `cool_mt <= 0`, magazine < `ammo_per_shot` | `Reloading(0)` if reserve > 0; else a dry-fire click (`emit_noise` 30 dB) and `Ready` |
@@ -698,6 +702,8 @@ States: `Holstered`, `Drawing(k)`, `Ready`, `SprintLock(k)`, `Charging(c)`, `Bea
 | `Charging(c)` | `input.dodge` or `input.sprint` | `Ready`; nothing spent |
 | `Charging(c)` | release with `c < 15` | `Ready`; nothing spent |
 | `Charging(c)` | release with `c >= 15`, or a forced release (§5.3) | the failure roll: on a misfire `Ready` with the round still loaded; otherwise fire and enter `Reloading(0)` with total 18 (the nock) when reserve > 0, else `Ready` |
+| `Charging(c)`, throw mode | release with `c < 12` | `Ready`; nothing thrown |
+| `Charging(c)`, throw mode | release with `c >= 12` | the failure roll (a dud still throws, §16.3); throw one item from the stack with `cool_mt = 18000`; `Ready`. The 12-tick wind and the 18-tick cooldown make the 30-tick cycle that the table's `rpm` 120 states |
 | `Beaming(k)` | `input.attack` released, or magazine < 1000 mu | `Ready` |
 | `Beaming(k)` | a due failure roll fails (§16.2) | `Stalled(0)` |
 | `Beaming(k)` | `(k + 1) % 6 == 0` | pulse (§7.6); `Beaming(k + 1)` |
@@ -720,8 +726,9 @@ interval_mt = if rpm == 0 { 0 } else { ceil_div(3_600_000 × 10000, rpm × atk_s
 atk_speed_bp: 10000, then × shortfall factor (Canon §6.3), then × 13000 for an NPC with elite.surging (Canon §17.3a),
               then statuses in ascending ID: st.chilled 8000, st.hasted 11500        // non-status factors first, Canon §11.7
 in C1:  if trigger_met && cool_mt <= 0 { fire(); cool_mt += interval_mt }
-in C8:  cool_mt -= 1000
-        if !trigger_held { cool_mt = max(cool_mt, 0) }              // no banking while idle
+in C8:  cool_mt = if cool_mt > 0 { cool_mt - 1000 } else { 0 }
+        // a running cooldown may end slightly negative: that sub-tick carry keeps a continuous string exact;
+        // a weapon that could fire but did not (idle, reloading, jammed, drawing, staggered) holds 0, so nothing banks
 ```
 
 Shot `n` (0-based) of a continuous string that starts on tick `t0` fires on tick `t0 + ceil_div(n × interval_mt, 1000)`. At 900 RPM `interval_mt = 4000`, so shots land every 4 ticks. At 750 RPM `interval_mt = 4800`, so shots land on ticks 0, 5, 10, 15, 20, 24, … and shot 750 lands on tick 3,600.
@@ -730,7 +737,7 @@ Shot `n` (0-based) of a continuous string that starts on tick `t0` fires on tick
 |---|---|
 | `move.fire_semi` | a press; a press during cooldown is buffered 6 ticks |
 | `move.fire_auto` | held |
-| `move.fire_burst` | a press fires `burst_n` (default 3) shots `burst_ticks` (default 3) apart, then the normal interval; used only by doc 11 overrides |
+| `move.fire_burst` | a press fires `burst_n` (default 3) shots `burst_ticks` (default 3) apart (§6.1 `Burst`); each later burst shot sets `cool_mt = interval_mt`, so the normal interval follows the last one; used only by doc 11 overrides |
 | `move.fire_bolt` | a press; the interval includes the cycling action; ADS persists |
 | `move.fire_charge` | release after a draw (§5.3) |
 | `move.fire_beam` | held; pulses every 6 ticks |
@@ -819,13 +826,14 @@ aim_pitch = clamp(cmd.pitch + rec_pitch + sway_pitch, -16000, 16000)
 - ADS is allowed when the weapon has `ads.ticks > 0`, is not harness-carried, and the wielder is not sprinting, not in `SprintLock`, not swimming and not the driver of `arch.mount.hover`.
 - ADS changes the stance base speed (§1.6), spread (§6.3), recoil (§6.5) and sway (§6.7). The renderer's zoom is presentation only.
 - After sprint ends, the weapon cannot fire or raise ADS for `sprint_to_fire` ticks.
+- Doc 04 Heavy Arms 100 exempts the heavy_arms archetypes (auto rifle, shotgun, launcher, beam) from `SprintLock`: they fire from the hip while sprinting, at Table 6.3's walking multiplier.
 
 ### 6.7 Aim sway
 
 Sway is a deterministic Lissajous drift with no random draws:
 
 ```
-amp = 9 + floor_div((ads_sway - 9) × ads_frac, ads_ticks)
+amp = if ads_ticks == 0 { 9 } else { 9 + floor_div((ads_sway - 9) × ads_frac, ads_ticks) }
 amp = mul_bp(amp, breath_bp)      // 2500 while holding breath, 15000 while exhaling, else 10000
 statuses, ascending ID: st.focused 5000, st.madness 20000
 sway_yaw   = (amp × sin_bam((t × 364) as u16)) >> 30
@@ -848,7 +856,8 @@ eye_lean  = eye + right × offset_mm
 - **Wall clamp.** If any solid box lies strictly closer than 100 mm to `eye_lean` (a sphere of radius 100 mm overlapping it), `|offset_mm|` becomes `max(0, |offset_mm| - 50)` and the test repeats until it passes or the offset is 0. The clamp is recomputed every tick from `lean_k`, and `lean_k` itself keeps moving toward its target, so the eye never oscillates. This rule replaces doc 03 §5.8's point test (Canon gaps).
 - The capsule stays put. `bp.head` translates with the eye; no other part moves.
 - Shots and melee pivots originate from the leaned eye. ADS works while leaning.
-- Lean is unavailable while sprinting, climbing, swimming, mounted, downed or during a melee swing. Lean offsets by `|lean_k|`: 1 → 38 mm, 5 → 194 mm, 9 → 350 mm.
+- Lean is unavailable while sprinting, climbing, swimming, mounted, downed or during a melee swing; while unavailable, `lean_k` moves 1 toward 0 per tick. Lean offsets by `|lean_k|`: 1 → 38 mm, 5 → 194 mm, 9 → 350 mm.
+- Doc 03 §5.8 advances `lean_k` inside `sys.movement` by this rule and poses the head capsule from the clamped offset; doc 05 owns the offset formula and the wall clamp.
 
 ---
 
@@ -856,34 +865,49 @@ eye_lean  = eye + right × offset_mm
 
 ### 7.1 Per-tick projectile integration
 
+Doc 03 §5.19 owns integration, geometry, catch-up and lifetime; doc 05 owns the projectile's combat fields, the four contact hooks and `after_step`, so the two chapters never disagree about where a projectile is.
+
 ```rust
-pub struct Projectile {
-    id: EntityId, owner: EntityId, item_uid: Option<u64>, arch: Id32,
-    pos: V3, vel: V3, spawn_y: Fx, traveled_mm: i64, age: u32,
-    pierce_left: u8, wallpen0: i32, wallpen_left: i32, keep_bp: i32, ricochets: u8,
+pub struct ProjCombat {             // doc 03 Projectile.combat
+    arch: Id32, spawn_y: Fx, traveled_mm: i64,
+    pierce_left: u8,                // = the archetype's pierce count at spawn: entities it may still hit
+    wallpen0: i32, wallpen_left: i32, keep_bp: i32, ricochets: u8, max_ricochets: u8,
     attack_bp: i32,                 // charge_bp or 10000
     hit_set: BTreeSet<EntityId>,    // entities already hit
-    counters: u8, flags: u32,
+    owner_hittable: bool,           // false until the first ricochet
+    counters: u8, flags: u32, block_bp: i32,
 }
-// spawn (C2): pos = eye_lean; vel = mul_fx(dir_fx, fx_from_milli(speed_mm_s)); dir_fx = Q2.30 forward << 2
-// each tick (C4), ascending id:
-let g = mul_bp(local_gravity_mm_s2(pos), arch.gravity_bp);          // GRAVITY_BASE × genre gravity_bp (doc 12)
-vel.y = max(vel.y - mul_fx(fx_from_milli(g), DT), -fx_from_milli(TERMINAL_VELOCITY));
-let p_new = pos + mul_fx(vel, DT);                                  // semi-implicit Euler (Canon §2.1)
-let end = sweep_and_resolve(&mut proj, pos, p_new);                  // §7.2–§7.5; returns the stop or end point
-proj.traveled_mm += mm(sqrt_fx(dist2(pos, end)));
-proj.pos = end; proj.age += 1;
-let limit = arch.max_range_mm + max(0, mm(proj.spawn_y - proj.pos.y));   // Canon §10.5 step 2.4a range rule
-if proj.traveled_mm > limit || proj.age >= 600 { despawn(proj) }      // ev.entity_despawned
+// spawn, requested in C1 and applied after doc 03 #7:
+//   p = eye_lean (start-of-tick position); v = mul_fx(dir_fx, fx_from_milli(speed_mm_s)),
+//   dir_fx = fwd(shot_yaw, shot_pitch) in Q2.30 × 4 (a checked shift to Q32.32, Canon §1.3);
+//   radius = fx_from_milli(radius_mm); gravity_bp = the archetype's; drag_bp = 0; bounce_bp = 0
+//   (4000 for fused grenades, §9.2); end_tick = t + 600; catchup per §2.6; spawn_y = p.y;
+//   keep_bp = 10000; wallpen_left = wallpen0 = wallpen; pierce_left = pierce count;
+//   max_ricochets = 1 (2 with a doc 11 perk); the owner's velocity is never added.
+// each step, doc 03 §5.19 applies gravity (GRAVITY_BASE × genre gravity_bp × gravity_bp, toward the local
+//   gravity sign, the speed along gravity capped at TERMINAL_VELOCITY), moves along the step and calls,
+//   in contact order:
+fn on_body_hit(pr, target, part, point) -> Continue | Stop        // §7.2
+fn on_liquid_enter(pr, cell)                                       // §7.3 "Liquids"
+fn on_block_enter(pr, cell, face, point) -> Penetrate | Ricochet | Bounce | Stop   // §7.3, §7.5, §9.2
+fn on_stop(pr, point)                                              // stick, detonate or vanish (§7.2, §9.2, §9.4)
+fn after_step(pr, moved_mm) {                                      // doc 03 passes the distance moved this step
+    pr.traveled_mm += moved_mm;
+    let limit = arch.max_range_mm + max(0, mm(pr.spawn_y - pr.p.y));   // Canon §10.5 step 2.4a range rule
+    if pr.traveled_mm > limit { on_stop(pr, pr.p); despawn(pr) }       // ev.entity_despawned; rockets detonate
+}
 ```
 
-The owner's velocity is never added to a projectile. A projectile ignores its owner's capsules until its first ricochet. `mm(x)` converts `Fx` meters to integer mm with `floor_div(x.raw × 1000, 2^32)`.
+The hit distance for range falloff is `dist_mm = traveled_mm + mm(dist(p_step, point))`, where `p_step` is the projectile's position at the start of the current step (doc 03 moves `p` only when the step ends) and `dist` is doc 02's `Fx(isqrt_u128(dist2))`. `mm(x)` converts `Fx` meters to integer mm with `floor_div(x.raw × 1000, 2^32)`. A projectile ignores its owner's capsules until `owner_hittable` is set by its first ricochet. A projectile whose `end_tick` passes is removed by doc 03; a rocket then detonates where it is.
 
 ### 7.2 Entity hits and body penetration
 
-- The sweep reports the earliest capsule (§2.4). If the target's guard is raised and the incoming direction is inside its arc (§12.2), the hit is blocked and the projectile stops.
-- The hit's attack factors (§10.1) are `attack_bp`, range falloff at `dist_mm = traveled_mm + mm(|hit point − pos|)`, and `keep_bp`.
-- **Body penetration.** If `pierce_left > 1`, the projectile continues through the target from the exit side with `pierce_left -= 1` and `keep_bp = mul_bp(keep_bp, 6000)`, adding the target to `hit_set`. Otherwise it stops. Stopped arrows, bolts and thrown weapons stick (§9.2); bullets vanish.
+`on_body_hit` runs in this order:
+
+- If the target's guard is raised and the incoming direction is inside its arc (§12.2), the hit is queued as blocked and the hook returns `Stop`.
+- Otherwise it queues one `HitRecord` whose attack factors (§10.1) are `attack_bp`, range falloff at `dist_mm` (§7.1) and `keep_bp`, then sets `pierce_left -= 1`.
+- **Body penetration.** If `pierce_left > 0`, it sets `keep_bp = mul_bp(keep_bp, 6000)` and returns `Continue`; doc 03 adds the target to `hit_set` and continues from the contact point. Otherwise it returns `Stop`.
+- `on_stop`: arrows, bolts and thrown weapons that stop in an entity stick to it (§9.2); those that stop in a block without having pierced or ricocheted become a ground item at the contact point (a 1-unit `ammo.draw` pickup for arrows and bolts, the item itself for thrown weapons); bullets, pellets and beam pulses vanish; rockets detonate (§9.4).
 
 Falloff:
 
@@ -897,15 +921,16 @@ Example: a pistol hit at 30,000 mm gives `10000 - floor_div(5000 × 15000, 20000
 
 ### 7.3 Block penetration and block damage
 
-When the sweep enters a solid cell of material `m`:
+`on_block_enter(pr, cell, face, point)` for a solid cell of material `m`:
 
-1. **Penetrate** if `wallpen_left >= m.pen_cost` (doc 07; reference values glass 2, leaves 1, wood 40, dirt 60, stone 120, brick 150, iron 300, `block.void_bedrock` unbounded): `wallpen_left -= m.pen_cost`, `keep_bp = mul_bp(keep_bp, 10000 - floor_div(5000 × m.pen_cost, wallpen0))`, and the projectile continues through the cell.
-2. Otherwise **ricochet** if §7.5 allows.
-3. Otherwise **stop** at the entry point.
+1. **Penetrable cells.** A cell is penetrable only when doc 03's `destructible_at(cell)` is true (Canon §4.3) or the block is not opaque (glass, leaves, webs, foliage). Every other worldgen block, and `block.void_bedrock`, has unbounded `pen_cost`. Fixed terrain is never shot through, so nobody kills through a wall of the level.
+2. **Penetrate** (returns `Penetrate`) if the cell is penetrable and `wallpen_left >= m.pen_cost` (doc 07; reference values glass 2, leaves 1, wood 40, dirt 60, stone 120, brick 150, iron 300): `wallpen_left -= m.pen_cost`, `keep_bp = mul_bp(keep_bp, 10000 - floor_div(5000 × m.pen_cost, wallpen0))`, and the projectile continues through the cell.
+3. Otherwise **ricochet** (returns `Ricochet`) if §7.5 allows; fused grenades return `Bounce` (§9.2).
+4. Otherwise **stop** (returns `Stop`) at the entry point.
 
-Each cell the projectile enters, penetrated or not, takes `damage_block(cell, mul_bp(B_proj, block_bp), shares)` where `B_proj` is the projectile's Canon §10.4 magnitude times its current attack factors. `block_bp`: bullets and pellets 2500, arrows and bolts 1000, launcher direct hits 10000, thrown weapons 2500, beam pulses 1000, melee swings 5000 (once per swing). Doc 03 decides breakage.
+Hits owned by the invader (slot 4) never damage blocks (Canon §17.9). Each destructible cell the projectile enters, penetrated or not, takes block damage through doc 03 §13.2: `mul_bp(B_proj, block_bp)`, where `B_proj` is the projectile's Canon §10.4 magnitude times its current attack factors and `block_bp` comes from §5.2 (projectiles) or Table 3.2d (melee, once per swing). The tool tier is the firing weapon's (Table 3.2d note). Doc 03 decides breakage. Non-destructible cells take no damage.
 
-Example: a sniper bullet (`wallpen0` 160) passing one wood block (`pen_cost` 40) keeps `10000 - floor_div(200000, 160) = 8750` and has 120 wallpen left.
+Example: a sniper bullet (`wallpen0` 160) passing one destructible wood crate (`pen_cost` 40) keeps `10000 - floor_div(200000, 160) = 8750` and has 120 wallpen left. The same bullet against a fixed-terrain stone wall (`pen_cost` 120, not destructible) stops or ricochets; against a destructible cracked stone wall it penetrates with 40 wallpen left and keep `10000 - floor_div(600000, 160) = 6250`.
 
 **Liquids.** A projectile entering a liquid cell triggers the Canon §12.1 reaction for its largest-share elemental type once per cell. Physical projectiles continue with velocity × 3000 per liquid cell. Beams stop at the first liquid cell.
 
@@ -922,7 +947,7 @@ vn  = the velocity component along the face's axis (raw i64)
 grazing = 4 × (vn as i128)² < Σ (v_i as i128)²        // incidence more than 60° from the normal
 if grazing:
     v_axis = -v_axis;  vel = mul_bp_fx(vel, 6000) per component;  keep_bp = mul_bp(keep_bp, 6000);  ricochets += 1
-    continue from the contact point; the owner becomes hittable
+    continue from the contact point; owner_hittable = true
 else: stop
 ```
 
@@ -930,7 +955,7 @@ Example: velocity `(100000, −20000, 0)` mm/s onto a stone floor: `4 × 20000²
 
 ### 7.6 Hitscan beams
 
-Each pulse casts a ray from the leaned eye along the pulse direction (spread applied per pulse) to `max_range_mm`. The voxel walk stops at the first cell that is solid and opaque; non-opaque solids (glass, leaves) take block damage and are passed. Capsules are tested along the ray (rewound for Errata). The first entity hit receives the pulse. `beam_streak` counts consecutive pulses on the same target, resetting when a pulse hits nothing or another target; from streak 11 each pulse carries `counter.disruptor`. A fire beam that hits one flammable block for 10 consecutive pulses ignites it (doc 03).
+Each pulse casts a ray from the leaned eye along the pulse direction (spread applied per pulse) to `max_range_mm`. The voxel walk (doc 03 `raycast_blocks`) stops at the first cell that is solid and opaque; non-opaque solids (glass, leaves) are passed and take the pulse's block damage when destructible. Capsules are tested along the ray, rewound for player attackers (§2.6). The first entity hit receives the pulse. `beam_streak` counts consecutive pulses on the same target, resetting when a pulse hits nothing or another target; from streak 11 each pulse carries `counter.disruptor`. A fire beam that hits one flammable block for 10 consecutive pulses ignites it (doc 03).
 
 ---
 
@@ -940,30 +965,34 @@ Each pulse casts a ray from the leaned eye along the pulse direction (spread app
 
 Ammunition is family-generic: any weapon of a family fires any `ammo.` item of that family, and skins rename it (arrows, ferro slugs and lightning motes are all `ammo.draw`). Every ammunition item has an empty dependency set; Contradiction comes from the weapon.
 
-| ID | Used by | Carry cap | Mass per unit (g) | Pickup size |
-|---|---|---|---|---|
-| `ammo.light` | pistol, SMG | 240 | 8 | 32 |
-| `ammo.heavy` | heavy pistol, auto rifle | 180 | 15 | 24 |
-| `ammo.rifle` | marksman rifle, sniper | 60 | 25 | 8 |
-| `ammo.shell` | shotgun | 48 | 40 | 8 |
-| `ammo.cell` | beam | 300 units | 10 | 60 |
-| `ammo.ordnance` | launcher | 8 | 1500 | 1 |
-| `ammo.draw` | charge rifle, crossbow | 60 | 30 | 10 |
-| `ammo.charge_breaker`, `ammo.charge_disruptor`, `ammo.charge_staggerer`, `ammo.charge_sunder`, `ammo.charge_anchor` | any weapon (§15.3) | 5 each | 100 | 1 |
+| ID | Used by | Carry cap | Mass per unit (g) | Pickup size | Value per 100 units (Lucre, ilvl 1) | REF units per standard kill |
+|---|---|---|---|---|---|---|
+| `ammo.light` | pistol, SMG | 240 | 8 | 96 | 20 | pistol 7.45, SMG 16.65 |
+| `ammo.heavy` | heavy pistol, auto rifle | 180 | 15 | 64 | 40 | heavy pistol 2.83, auto rifle 11.88 |
+| `ammo.rifle` | marksman rifle, sniper | 60 | 25 | 28 | 300 | marksman 5.14, sniper 1.36 |
+| `ammo.shell` | shotgun | 48 | 40 | 10 | 200 | 1.40 |
+| `ammo.cell` | beam | 300 units | 10 | 60 | 20 | 14.93 (plus §8.4 recharge) |
+| `ammo.ordnance` | launcher | 8 | 1500 | 2 | 1500 | 0.91 |
+| `ammo.draw` | charge rifle, crossbow | 60 | 30 | 12 | 100 | charge rifle 1.91, crossbow 1.59 |
+| `ammo.charge_breaker`, `ammo.charge_disruptor`, `ammo.charge_staggerer`, `ammo.charge_sunder`, `ammo.charge_anchor` | any weapon (§15.3) | 5 each | 100 | 1 | 1400 | — |
+
+Doc 11 copies these values; a stack's value is `floor_div(units × value_per_100, 100)`, scaled by `P(ilvl)` like every value (doc 11 §13.1). "REF units per standard kill" is `60,000 mHP` divided by the archetype's expected REF damage per projectile or pulse (all hits on the torso, crit expectation included).
 
 ```json
-{ "id": "ammo.rifle", "category": "cat.ammo", "carry_cap": 60, "mass_g": 25, "pickup": 8, "value_lucre": 3 }
+{ "id": "ammo.rifle", "category": "cat.ammo", "carry_cap": 60, "mass_g": 25, "pickup": 28, "value_per_100": 300 }
 ```
 
 Ammunition mass counts toward carried mass (Canon §11.1 `load_bp`). Ammunition in a magazine stays with the weapon.
 
 ### 8.2 Pickups
 
-An Erratum within 1000 mm of an ammunition pickup collects it automatically when its reserve for that family is below the cap: it takes `min(pickup, cap - reserve)` and the rest stays as a smaller pickup. Example: reserve 230 `ammo.light` and a 32-round pickup leave reserve 240 and a 22-round pickup.
+An Erratum within 1000 mm of an ammunition pickup collects it automatically when its reserve for that family is below the cap: it takes `min(pickup, cap - reserve)` and the rest stays as a smaller pickup. Example: reserve 230 `ammo.light` and a 96-round pickup leave reserve 240 and an 86-round pickup.
+
+**Coated ammunition** (doc 08 §10.3). A coat applied to ammunition covers `N = min(coat_units, magazine + reserve)` rounds of the active weapon's family: the magazine's first `min(N, magazine)` rounds, then reserve units, become coated. Coated rounds are a separate sub-stack `{family, coat}` that counts toward the family cap, loads before uncoated rounds and fires first. Each coated round's hits run the doc 08 coat hook (§10.2); for ammunition the coat's charge count is the number of coated rounds.
 
 ### 8.3 Drop need (doc 11 interface)
 
-Doc 11 owns drop rolls (keyed `rng.loot`). For each family `f` used by the receiving player's `slot.weapon_1..3`, `need_bp(f) = 10000 - floor_div(reserve_f × 10000, cap_f)`. An ammunition drop picks its family with `weighted(need_bp)`; when every need is 0, no ammunition drops. Doc 05's target supply is one pickup per 4 standard kills, which keeps every weapon fed at REF DPS.
+Doc 11 owns drop rolls (keyed `rng.loot`). For each family `f` used by the receiving player's `slot.weapon_1..3`, `need_bp(f) = 10000 - floor_div(reserve_f × 10000, cap_f)`. An ammunition drop picks its family with `weighted(need_bp)`; when every need is 0, no ammunition drops. Doc 05's target supply is one pickup per 4 standard kills (doc 11's standard-rank ammunition line at 2500 Bp). Pickup sizes are set so one pickup covers at least 4 standard kills at 75% accuracy for the hungriest archetype of each family: `pickup ≥ 4 × units_per_kill × 10000 / 7500` gives SMG 88.8 → 96, auto rifle 63.4 → 64, marksman 27.4 → 28, shotgun 7.5 → 10, charge rifle 10.2 → 12 (arrow recovery, §7.2, adds more). The launcher is deliberately ammunition-limited (2 rockets per pickup, cap 8), and the beam lives on its recharge (§8.4). The earlier sizes (32, 24, 8) starved the SMG, auto rifle and marksman rifle at REF accuracy.
 
 ### 8.4 Energy recharge
 
@@ -990,58 +1019,85 @@ Example: PWR 60 gives row 20 = 11000, `throw_v_bp = isqrt(110,000,000) = 10488`,
 
 ### 9.2 Throw actions
 
-- `input.throw` with a throwable on the quickbar enters `Cooking(c)` (`move.cook`); `c = 0` on the press tick. The fuse of a fused grenade counts from the press. Release at `c >= 12` throws (`move.throw`); recovery is 18 ticks. A two-handed weapon is lowered during the throw and cannot fire.
+- `input.throw` with a throwable on the quickbar enters `Cooking(c)` (`move.cook`); `c = 0` on the press tick. The fuse of a fused grenade counts from the press. Release at `c >= 12` throws (`move.throw`); recovery is 18 ticks. From the press through the end of recovery the main-hand weapon accepts no action, and a two-handed weapon is lowered (§4.8a). A throw is a `seq` 0 action start (§1.4).
 - A fuse reaching 0 in the hand detonates at `eye + (0, −300 mm, 0)`.
 - Thrown weapons that hit an entity stick to it and drop as ground items where it dies. Those that hit a block stop and become ground items at the contact point; walking over one returns it to its stack. Each throw costs 1 durability (doc 07). Items that fall into lava or leave the Folio are destroyed.
-- Fused grenades bounce: on a block contact the normal velocity component reverses and is multiplied by 4000 and the tangential components by 8000; the grenade rests when its speed falls below 500 mm/s. An entity contact stops horizontal motion.
+- Fused grenades bounce: `on_block_enter` returns `Bounce` and doc 03 §5.19 reverses the normal velocity component × `bounce_bp` 4000 and multiplies the tangential components by 8000; the grenade rests when its speed falls below 500 mm/s. An entity contact (`on_body_hit` returns `Continue` without queuing a hit) stops horizontal motion. Contact grenades (incendiary) detonate on their first body or block contact.
 
 ### 9.3 Grenade archetypes
 
 All throwables use skill `skill.throwing`, scaling SLT 5000, PRC 4000, PWR 3000, base speed 16000 mm/s, gravity 10000, radius 50 mm, precision never, and count as weapon attacks for Canon §6.4 row 12.
 
-| Archetype | Detonation | Fuse (ticks) | `base_mhp` at center | Shares | Radius / inner (mm) / edge Bp | Impact | Status power | `block_bp` | Mass (g) |
+| Archetype | Detonation | Fuse (ticks) | `base_mhp` at center | Shares | Radius / inner (mm) / edge Bp | Impact | Status power | `block_power_milli` | Mass (g) |
 |---|---|---|---|---|---|---|---|---|---|
-| `arch.ranged.grenade_frag` | fuse | 150 | 48000 | pierce 6000, blunt 3000, fire 1000 | 4500 / 1000 / 2000 | 40 | default | 10000 | 400 |
-| `arch.ranged.grenade_incendiary` | first contact | — | 20000 | fire 10000 | 3000 / 3000 / 10000 | 0 | burning 60 | 2500 | 500 |
-| `arch.ranged.grenade_concussion` | fuse | 90 | 15000 | blunt 10000 | 4000 / 1500 / 3000 | 80 | stunned 50 | 5000 | 400 |
+| `arch.ranged.grenade_frag` | fuse | 150 | 48000 | pierce 6000, blunt 3000, fire 1000 | 4500 / 1000 / 2000 | 40 | default | 3000 | 400 |
+| `arch.ranged.grenade_incendiary` | first contact | — | 20000 | fire 10000 | 3000 / 3000 / 10000 | 0 | burning 60 | 0 | 500 |
+| `arch.ranged.grenade_concussion` | fuse | 90 | 15000 | blunt 10000 | 4000 / 1500 / 3000 | 80 | stunned 50 | 1000 | 400 |
 | `arch.ranged.grenade_flash` | fuse | 90 | 2000 | radiant 5000, sonic 5000 | 6000 / 2000 / 5000 | 0 | blinded 150, deafened 150 | 0 | 300 |
-| `arch.ranged.grenade_smoke` | fuse | 60 | 0 | — | releases `gas.smoke` in the 27 cells around the center at full density for 600 ticks (doc 08) | 0 | — | 0 | 300 |
+| `arch.ranged.grenade_smoke` | fuse | 60 | 0 | — | releases `gas.smoke` at concentration 10000 into each of the 27 cells of the 3 × 3 × 3 cube around the center cell, ascending `Gidx`, each capped by the cell's free room (doc 03 §7); doc 08's dissipation removes it | 0 | — | 0 | 300 |
 | `arch.ranged.grenade_counter` | fuse | 90 | 12000 | blunt 10000 | 3000 / 3000 / 10000 | 20 | default | 0 | 400 |
 
 - Incendiary grenades also ignite flammable blocks within 2000 mm (doc 03) and place a burning surface. Flash blinding power is multiplied by 10000 when `ang_diff(target.yaw, bearing from target to center) <= 10923`, else by 3000.
-- `grenade_counter` carries exactly one counter bit set by its item template (doc 11), chosen from §15.1.
-- Each throwable is one `cat.throwable` item; doc 08 owns alchemical flasks that reuse these archetypes with liquid payloads.
+- `grenade_counter` carries exactly one counter bit set by its item template (doc 11 `item.throwable.counter_*`), chosen from §15.1.
+- Each throwable is one `cat.throwable` item; doc 08 owns alchemical flasks and bombs that reuse these archetypes with liquid payloads. Doc 08 bombs (`alch.bomb.*`) are area hits with `NO_CRIT`; doc 04's `volatile_mix` adds +1500 Bp to their step 1 and `catalyst` multiplies their status power by 13000.
+- Throwables deal no block damage on contact; their block damage is the blast's, through doc 03 §12.2 with the `block_power_milli` column (§9.4 step 1).
+
+**Table 9.3b — explosion parameters** (doc 03 `ExplosionSpec`; `env_base_mhp` 0 and `drop_bp` 3000 for every row).
+
+| Source | `radius_mm` | `inner_mm` | `edge_bp` | `block_power_milli` | `knockback_mm_s` | `smoke_conc` | `heat_decic` | Ignition | `noise` (doc 09) |
+|---|---|---|---|---|---|---|---|---|---|
+| `grenade_frag` | 4500 | 1000 | 2000 | 3000 | 8000 | 0 | 0 | none | `noise.explosion.grenade` |
+| `grenade_incendiary` | 3000 | 3000 | 10000 | 0 | 0 | 0 | 400 | every flammable block within 2000 mm (`ignite_radius_mm` 2000, `ignite_bp` 10000) | `noise.explosion.incendiary` |
+| `grenade_concussion` | 4000 | 1500 | 3000 | 1000 | 14000 | 0 | 0 | none | `noise.explosion.concussion` |
+| `grenade_flash` | 6000 | 2000 | 5000 | 0 | 0 | 0 | 0 | none | `noise.explosion.flash` |
+| `grenade_smoke` | 1500 | 1500 | 10000 | 0 | 0 | 27-cell rule above | 0 | none | `noise.explosion.smoke` |
+| `grenade_counter` | 3000 | 3000 | 10000 | 0 | 4000 | 0 | 0 | none | `noise.explosion.grenade` |
+| `launcher` blast | 3500 | 1000 | 2500 | 4000 | 10000 | 0 | 200 | none | `noise.explosion.grenade` |
 
 ```json
 { "id": "arch.ranged.grenade_frag", "category": "cat.throwable", "skill": "skill.throwing",
   "fuse_ticks": 150, "base_mhp": 48000, "shares": { "dmg.pierce": 6000, "dmg.blunt": 3000, "dmg.fire": 1000 },
-  "radius_mm": 4500, "inner_mm": 1000, "edge_bp": 2000, "impact": 40, "block_bp": 10000,
+  "radius_mm": 4500, "inner_mm": 1000, "edge_bp": 2000, "impact": 40, "block_power_milli": 3000,
+  "knockback_mm_s": 8000, "drop_bp": 3000, "noise": "noise.explosion.grenade",
   "speed_mm_s": 16000, "gravity_bp": 10000, "mass_g": 400,
   "scaling": { "sub.sleight": 5000, "sub.precision": 4000, "sub.power": 3000 } }
 ```
 
 ### 9.4 Explosion resolution and AoE falloff
 
-Every explosion (grenades, launcher blasts, doc 07 gadgets, doc 08 flasks) resolves in C5 in ascending source `EntityId`:
+Every doc 05 explosion (grenades, launcher blasts; doc 07 gadgets and doc 08 flasks and bombs use the same path) is a doc 03 §12 explosion. Doc 05 queues it with `queue_explosion(Explosion { center, spec, source: Item { uid, b_mhp }, instigator: owner, due_tick: t })`:
+
+- `center`: the contact point moved 50 mm back along the projectile's reverse velocity, so it lies in the cell the projectile came from; a fused grenade detonates at its own position; a grenade whose fuse ends in the hand at `eye + (0, −300 mm, 0)`.
+- `b_mhp`: the archetype's `base_mhp` × attack factors 1 and 2 (§10.1). Canon §10.4 applies when the hit resolves.
+- `spec`: Table 9.3b, with `shares` from Table 9.3.
+
+`sys.explosions` (doc 03 #16) resolves at most 4 due explosions per tick in queue order; a later one waits for the next tick.
 
 ```
-1. Blocks: for every block whose center lies within radius (ascending block index):
-       damage_block(b, mul_bp(mul_bp(B, falloff(dist_to_block_center)), block_bp), shares)
-   Doc 03 breaks blocks and draws debris variation from rng.physics.
-2. Entities, ascending EntityId, over entities with any capsule within radius:
-       tp   = closest point to the center on the axis of the target's largest-share part capsule
-       dist = mm(sqrt_fx(dist2(center, tp)))
-       if dist > radius: skip
-       if voxel walk center → tp meets a cell that is solid and opaque (after step 1): skip
-       falloff_bp = if dist <= inner { 10000 }
-                    else { 10000 - floor_div((10000 - edge_bp) × (dist - inner), radius - inner) }
-       push HitRecord { kind: Area, part: largest-share part, flags: AREA, attack factor falloff_bp,
-                        impact × falloff_bp, status powers × falloff_bp, incoming = center - tp }
+1. Blocks: doc 03 §12.2's ray method with the spec's block_power_milli (rng.physics, doc 03's draw count);
+   only destructible blocks break (Canon §4.3). block_power_milli = 0 skips this step and draws nothing.
+2. Entities: doc 03 §12.4 selects every live non-ghost body (and every container or gadget with pools)
+   whose center point q = p + (0, h/2, 0) lies within radius_mm, in ascending EntityId, and computes
+   exposure = 2000 × (exposure samples that raycast_blocks reaches from center), five samples.
+   Doc 05's curve replaces doc 03's:
+       dist_mm    = mm(dist(center, q))
+       falloff_bp = if dist_mm <= inner_mm { 10000 }
+                    else { 10000 - floor_div((10000 - edge_bp) × (dist_mm - inner_mm), radius_mm - inner_mm) }
+       if exposure == 0: no hit
+       B_eff = mul_bp(mul_bp(b_mhp, falloff_bp), exposure)                 // attack factor 8 (§10.1); b_mhp already
+                                                                           // carries factors 1 and 2, and factors 3 to 7 never apply to blasts
+       push HitRecord { kind: Area, part: largest-share part (ties: first listed), base_mhp: B_eff,
+                        flags: AREA (+ SEVER for a launcher blast with dist_mm <= inner_mm) (+ NO_CRIT for bombs),
+                        impact × falloff_bp × exposure, status powers × falloff_bp × exposure,
+                        incoming = center − q, counters: the item's }
+       apply_knockback(e, normalize(q − center + (0, 500 mm, 0)), mul_bp(mul_bp(knockback_mm_s, falloff_bp), exposure))
 3. The owner and allies are included. Friendly fire applies FF_AREA_BP at step 2.15 (Canon §17.5),
    so self-damage is full by default and halved in mode.ff_off.
 ```
 
-Area hits roll crits (one draw each, §1.4) and never count as precision. They take step 2.10's × 15000 against `body.swarm`. Only tower shields block area hits (§12.1). A launcher blast within its inner radius carries `SEVER`.
+With `inner_mm = floor_div(radius_mm, 4)` and `edge_bp = 2500` this curve equals doc 03 §12.4's exactly; those are the defaults for an `ExplosionSpec` that omits the two fields (doc 03's powder keg carries them explicitly). When `inner_mm = radius_mm` the second branch is unreachable, because targets beyond `radius_mm` are never selected.
+
+Area hits roll crits (one draw each, §1.4; a `NO_CRIT` hit draws and ignores it) and never count as precision. They take step 2.10's × 15000 against `body.swarm`. Only tower shields block area hits (§12.1). A launcher blast within its inner radius carries `SEVER`.
 
 ---
 
@@ -1060,35 +1116,41 @@ A hit's `base_mhp` is the archetype's `base_mhp` (NPCs: the template's `template
 5. range falloff (§7.2);
 6. `keep_bp` from walls, bodies and ricochets (§7.3–§7.5);
 7. cleave factor 10000 / 7500 / 5000 (§2.3);
-8. area falloff (§9.4).
+8. area falloff, then exposure (§9.4).
 
-The result then enters Canon §10.4 (`× P(src_lvl) × rarity × quality × enhancement × material` for Errata items; `× T(d) × rank damage` for enemies). Impact uses factors 1, 2, 3 (× 20000 instead of 12500) and 8; status power uses factors 1, 2 and 8.
+The result then enters Canon §10.4 (`× P(src_lvl) × rarity × quality × enhancement × material` for Errata items; `× T(d) × rank damage` for enemies).
+
+- **Impact** uses the move's impact factor in place of factor 1 (combo steps and heavies: their `move_bp` or `heavy_bp`; sprint attack 15000; jump attack 20000; riposte 0; off-hand 8500; `charge_bp` for the charge rifle replaces factor 2), then factors 4 to 8. It never takes factor 3: the mounted charge's poise × 20000 is applied once, in §12.4.
+- **Status power** (§13) uses factors 1, 2 and 4 to 8, so buildup per second stays proportional to damage per second at every range and cleave position. It never takes factor 3.
 
 ### 10.2 Reference implementation
 
 ```rust
 fn resolve_hit(h: &HitRecord, w: &mut World) -> Option<DamageEvent> {
     let (att, tgt) = (w.ent(h.owner), w.ent_mut(h.target));
-    if tgt.dead || tgt.has(st_deaths_door) || tgt.dodge_invulnerable(w.t) { return None; }
-    // Parry and block are decided first from target state at tick t (§2.6, §12.2)
+    if tgt.dead { return None; }                        // discarded with no event (§1.3 C6)
+    // Canon §3.4: every non-sneak hit draws exactly one crit roll, whatever happens next
+    let sneak = doc09::sneak_eligible(att, tgt, w.t);   // per (attacker, target) on the impact tick
+    let crit = !sneak && keyed_rng("rng.combat", folio, h.source, w.t, h.seq).roll_bp(crit_chance(att))
+               && !h.flags.no_crit();                   // a NO_CRIT hit draws and ignores the roll
+    if tgt.has(st_deaths_door) || tgt.dodge_invulnerable(w.t) { return Some(emit_negated(h)); }  // flag negated
+    // Parry and block are decided from target state at tick t (§2.6, §12.2)
     let guard = guard_outcome(h, tgt, w.t);            // None | Blocked | Parried
-    if guard == Parried { apply_parry(h, w); return None; }
+    if guard == Parried { apply_parry(h, w); return Some(emit_parried(h)); }    // ev.damage_dealt, every type 0, flag parried
     let b = source_magnitude(h);                        // §10.1 then Canon §10.4
     // Step 1: additive bucket
     let mut add = if h.is_weapon_attack() && att.is_erratum() { row12(att, h.item) } else { 0 };
     add += Σ mul_bp(bonus_i, potency_i);  add = max(add, -9000);
     let mut x = mul_bp(b, 10000 + add);
     // Step 2: chain, each one mul_bp, in canonical order
-    let sneak = doc09::sneak_eligible(att, tgt, w.t);
     if !h.area() && tgt.part(h.part).precision { x = mul_bp(x, h.precision_bp); }            // 2.2
-    if !sneak { let mut r = keyed_rng("rng.combat", folio, h.source, w.t, h.seq);
-                if r.roll_bp(crit_chance(att)) { x = mul_bp(x, crit_mult(att)); } }          // 2.3
-    if sneak { x = mul_bp(x, doc09::sneak_mult(att, h.sneak_tier)); }                        // 2.4
+    if crit { x = mul_bp(x, crit_mult(att)); }                                               // 2.3
+    if sneak { x = mul_bp(x, doc09::sneak_mult(att, tgt, h.sneak_tier)); }                  // 2.4
     x = mul_bp(x, elevation_bp(att, tgt));                                                   // 2.4a §10.3
     x = mul_bp(x, flank_bp(att, tgt));                                                       // 2.4b §10.3
     x = mul_bp(x, potency(h.item_uid, att));                                                 // 2.5
     if is_native(tgt) { x = mul_bp(x, 10000 + edge_bp(h.item_uid, att)); }                   // 2.6
-    if tagged_mythic(att) || tagged_mythic(tgt) { x = mul_bp(x, 10000 + (myt - 5) * 300); } // 2.7
+    if tagged_mythic(att) || tagged_mythic(tgt) { x = mul_bp(x, 10000 + (myt - 5) * 300); } // 2.7, myt = local MYTHOS at att.pos
     x = mul_bp(x, shortfall_bp(att, h.item));                                                // 2.8
     x = mul_bp(x, tgt.part(h.part).hit_mult);                                                // 2.9
     if h.area() && tgt.plan == body_swarm { x = mul_bp(x, 15000); }                          // 2.10
@@ -1110,7 +1172,8 @@ fn resolve_hit(h: &HitRecord, w: &mut World) -> Option<DamageEvent> {
     let ward_lost = apply_ward(&mut d, h, tgt);                                              // step 7, §15.4
     let total: i64 = d.iter().sum();
     apply_hp_condition_poise_buildup(h, tgt, total, guard, w);                               // step 8, §12.4, §12.5, §13
-    shock_of_the_new(h, tgt, w);                                                             // Canon §5.6
+    if total + ward_lost > 0 { doc08::coat_on_hit(h, tgt, w); }                             // doc 08 §10.3: landed hits only
+    shock_of_the_new(h, tgt, w);                                                             // Canon §5.6; never ranks boss, editor, hunter
     apply_counters(h, tgt, ward_lost, w);                                                    // §15.1
     check_sever(h, tgt, w);                                                                  // §19.1
     resolve_lethal(tgt, w);                                                                  // Canon §10.8
@@ -1121,7 +1184,13 @@ fn resolve_hit(h: &HitRecord, w: &mut World) -> Option<DamageEvent> {
 - **Step 2.12 and `st.taunted`.** The attacker statuses in ascending ID order are `st.berserk` 13000, `st.empowered` 12000, `st.taunted` 7500 (only when the target is not the taunter) and `st.weakened` 7500.
 - **Step 2.11.** `st.exposed` `10000 + 800 × stacks`, then `st.knocked_down` 11000.
 - **Crit chance and multiplier** are Canon §6.4 rows 13 and 14 for Errata. NPCs use row 13 without gear and multiplier 15000.
-- **Step 9.** `ev.damage_dealt` carries per-type HP damage, `ward_lost`, `stamina_loss_mst` (blocked hits), `crit`, `precision`, `sneak`, `blocked`, `kind`, `counters`, and the hit part.
+- **Step 9.** `ev.damage_dealt` carries per-type HP damage, `ward_lost`, `stamina_loss_mst` (blocked hits), `d_armor` (doc 04 Armor XP), `crit`, `precision`, `sneak`, `blocked`, `parried`, `negated`, `kind`, `counters`, and the hit part.
+- **Parried hits** emit `ev.damage_dealt` with every type 0 and `parried = true`, so docs 04 (Shield XP), 17 and 18 see the parry; they apply nothing else.
+- **Negated hits** (dodge invulnerability, `st.deaths_door`) emit `ev.damage_dealt` with every type 0 and `negated = true`; doc 04's Acrobatics XP sums their `base_mhp`. Parried and negated hits draw their crit roll and no on-hit component rolls.
+- **`NO_CRIT`** hits still draw their crit roll (Canon §3.4) and ignore the result. Doc 04's Marksmanship 100 ("the first shot after 60 ticks without firing crits") likewise draws and replaces the result.
+- **Sonic hits** emit `ev.noise` at `60 + floor_div(d_mhp, 1000)` dB at the impact point and end `st.frozen` without the step 3a × 15000, which Canon §10.5 grants to blunt only.
+- **Law terms.** Doc 12's `law.weird_west.high_noon` standoff bonus (+5000 Bp) enters step 1 as a "+% damage" term whose potency is 10000; its direct `st.staggered` applies after step 8.
+- **Shock of the New** (Canon §5.6) never applies to ranks `rank.boss`, `rank.editor` and `rank.hunter`, which are the canon's "boss" targets.
 
 ### 10.3 Elevation and flanking
 
@@ -1165,11 +1234,11 @@ The first hit on each native non-boss target applies `st.staggered` (Shock of th
 
 Armor removes 61% of each SMG bullet at AR 40 and 8% of the sniper shot; against armored enemies the sniper overtakes the SMG.
 
-**E6 — Blocked hit (NPC on an Erratum with a heater shield).** REF enemy hit `template_dmg_mhp` 10,000 slash at Folio 1, party of 2 (× 11000): D2 = 11,000. Torso AR 20 plus heater AR 25 = 45: `DR = floor(4.5 × 10^8 / 89,000) = 5056`, leaving 5,439. Block stability `5000 + 0 (BRN 40) + 2500 (heater) + 600 (Shield 20, §12.2) = 8100`: `to_stamina = mul_bp(5439, 8100) = 4,405`, **HP loss 1,034**, stamina loss `floor_div(4405 × 10000, T(1)) = 4,405` mst. Unblocked, the same hit deals 7,563.
+**E6 — Blocked hit (NPC on an Erratum with a heater shield, no ward generator).** REF enemy hit `template_dmg_mhp` 10,000 slash at Folio 1, party of 2 (× 11000): D2 = 11,000. Torso AR 20 plus heater AR 25 = 45: `DR = floor(4.5 × 10^8 / 89,000) = 5056`, leaving 5,439. Block stability `5000 + 0 (BRN 40) + 2500 (heater) + 600 (Shield 20, §12.2) = 8100`: `to_stamina = mul_bp(5439, 8100) = 4,405`, **HP loss 1,034**, stamina loss `floor_div(4405 × 10000, T(1)) = 4,405` mst. Unblocked, the same hit deals 7,563.
 
 **E7 — Warded champion and `counter.ward_breaker`.** A Folio-1 champion with template HP 60: Max HP `60,000 × H(1) × 60000 / 10000 = 360,000` mHP; `elite.warded` gives ward 180,000. A Common sniper torso shot with a breaker charge: after armor 42,939 pierce. Step 7 uses `ward_mult_eff = mul_bp(10000, 30000) = 30000`: `w = 128,817 <= 180,000`, so the ward drops to 51,183 and HP takes 0. Second shot: `w = 128,817 > 51,183`, HP takes `42,939 - floor_div(51,183 × 10000, 30000) = 25,878`, `ev.ward_broken` fires and the counter applies `st.stunned` directly: `mul_bp(90, clamp(floor_div(10^6, 100), 2500, 15000)) = 90` ticks, × champion control 5000 = **45 ticks**. Without the counter the first shot leaves ward 137,061 and the ward needs 5 shots.
 
-**E8 — Frag grenade and friendly fire.** Center 48,000; radius 4,500, inner 1,000, edge 2000. An NPC at 2,500 mm: `falloff = 10000 - floor_div(8000 × 1500, 3500) = 6572`, base 31,545, D1 = 33,437, split pierce 20,063 / blunt 10,031 / fire 3,343; after AR 10, **30,717 mHP**. An allied Erratum at 3,500 mm in medium armor (AR 20): falloff 4286, base 20,572, D1 21,806, `FF_AREA_BP` 10000, after armor **17,084 mHP**; in `mode.ff_off` (5000) it takes 7,104.
+**E8 — Frag grenade and friendly fire.** Center 48,000; radius 4,500, inner 1,000, edge 2000; every target has all five exposure samples visible (exposure 10000). An NPC whose center point is 2,500 mm from the blast: `falloff = 10000 - floor_div(8000 × 1500, 3500) = 6572`, base 31,545, D1 = 33,437, split pierce 20,063 / blunt 10,031 / fire 3,343; after AR 10, **30,717 mHP**. An allied Erratum at 3,500 mm in a full Normal medium set (AR 20, fire resistance +1000 from Table 11.1c): falloff 4286, base 20,572, D1 21,806, `FF_AREA_BP` 10000, split pierce 13,085 / blunt 6,541 / fire 2,180; resistance leaves fire 1,962; armor leaves pierce 10,171 and blunt 4,733: **16,866 mHP**. In `mode.ff_off` (5000) D2 is 10,903 and it takes 6,995.
 
 **E9 — Elevation and flanking (pistol, 30 m, 3 m above, from the flank).** Falloff 6250: base 5,375; D1 = 5,697; elevation × 11000 → 6,266; flanking × 11500 → 7,205; AR 10 with `pen_bp` 1000 gives effAR `mul_bp(7, 9000) = 6`, DR 1,723. **Total 5,964 mHP.**
 
@@ -1205,12 +1274,16 @@ Twenty archetypes `arch.armor.<slot>_<class>` cover slots `head`, `body`, `hands
 
 **Table 11.1c — resistances per piece** (Bp, added linearly before the cap, Canon §10.2): cloth arcane +300, psychic +300; light frost +200, toxin +200; medium fire +200, acid +200; heavy fire +300, frost +300, shock −300. A full heavy set gives fire and frost +1500 and shock −1500.
 
+**Insulation** (doc 04 comfort band, DeciC per piece, every slot alike): cloth `insul_cold` 10, `insul_heat` 10; light 20, 0; medium 25, −5; heavy 30, −10. A full heavy set lowers the cold bound by 150 (15.0 °C) and lowers the heat bound by 50 (5.0 °C), because doc 04 adds `insul_heat` to the upper bound.
+
 ```json
 { "id": "arch.armor.body_medium", "category": "cat.armor", "slot": "slot.body", "weight_class": 2,
   "base_ar": { "bp.torso": 20, "bp.arm_l": 8, "bp.arm_r": 8 },
-  "poise": 6, "mass_g": 8000, "noise_db": 2,
+  "poise": 6, "mass_g": 8000, "noise_db": 2, "insul_cold": 25, "insul_heat": -5,
   "resist": { "dmg.fire": 200, "dmg.acid": 200 } }
 ```
+
+Masks, goggles and respirators for `slot.face` are not armor archetypes: doc 08 owns respirators (`apparatus.respirator.*`) and doc 11 the face accessories.
 
 Parts added by kin or mutation (Canon §9) take `floor_div(AR(bp.torso), 2)`. Example: a medium body piece at ilvl 10, Rare, Good, +1, iron gives torso AR `20 → 32 → 35 → 38 → 40 → 40`.
 
@@ -1238,7 +1311,7 @@ At Armor 20 a full heavy set gives `score_eff = 27`, sprint 5,960 and swim 1,590
 
 - Armor poise × `10000 + 50 × skill.armor` (§11.2) and weight score × `10000 - 50 × skill.armor` (§11.3).
 - Armor noise: each piece's `noise_db` minus `floor_div(skill.armor, 25)`, minimum 0.
-- Skill XP (doc 04 table): each hit taken grants `min(1000, floor_div(1000 × mitigated_mhp, max_hp_mhp))` milli-XP to `skill.armor`, where `mitigated_mhp` is the step-5 reduction. Only hostile-sourced hits count.
+- Skill XP: doc 04 §5.2 owns the row. Each hostile hit taken on a part with AR > 0 grants `min(1000, floor_div(2000 × d_armor, own_max))` milli-XP to `skill.armor`, where `d_armor` is the hit's share of armor-affected types (slash, pierce, blunt, sonic) after step 4 and `own_max` the bearer's Max HP in mHP. Doc 05 reports `d_armor` in the `ev.damage_dealt` payload.
 
 ---
 
@@ -1253,10 +1326,13 @@ At Armor 20 a full heavy set gives `score_eff = 27`, sprint 5,960 and swim 1,590
 | `arch.offhand.shield_tower` | 45 | +4000 | 13653 | 10 | 0 (cannot parry) | 9000 | 35 / 6000 | yes |
 | `arch.offhand.lantern` | — | — | — | — | — | 1200 | — | — |
 | `arch.offhand.focus` | — | — | — | — | — | 600 | — | — |
+| `arch.offhand.tome` (§5.4) | — | — | — | — | — | 900 | — | — |
 
 - Shield AR uses the armor chain with `T(ilvl)` (Canon §13.8 "shield block values").
+- Off-hand items that cannot block (lantern, focus, tome) leave `input.alt` free for ADS with a one-handed ranged weapon. A crutch (`item.tool.crutch`, doc 11) also occupies `slot.offhand`, cannot block, and blocks two-handed weapons; doc 04 applies its leg factor.
 - The lantern emits `light_block` 13 at its holder (doc 03 propagation) and cannot block. `arch.offhand.focus` is the casting focus whose casting behavior doc 06 owns; it cannot block.
-- **Shield bash** (`move.shield_bash`, `input.heavy` while guarding with a shield): W 5 / A 3 / R 16, 10 stamina, blunt 10000, reach 1000, arc 4551, skill `skill.shield`, taunt power 40 (§19.2). Heater and tower bashes carry `counter.staggerer`.
+- **Shield bash** (`move.shield_bash`, `input.heavy` while guarding with a shield): W 5 / A 3 / R 16, 10 stamina, blunt 10000, reach 1000, arc 4551, `block_bp` 5000, skill `skill.shield`, scaling BRN 6000, PWR 4000, GRP 2000, taunt power 40 (§19.2). Heater and tower bashes carry `counter.staggerer`.
+- **Parryable projectiles.** Melee hits carry `PARRYABLE` unless an NPC template marks the move unparryable; projectile and hitscan hits carry it only against a bearer at doc 04 Shield 100, whose parry returns the hit's damage to the shooter through the Canon §10.6 thorns entry.
 
 ### 12.2 Guard outcome
 
@@ -1269,6 +1345,9 @@ blockable = melee | projectile | hitscan | (area && tower shield);  never DoT, s
 outcome = Parried  if in_arc && blockable && PARRYABLE && k < parry_ticks
         = Blocked  if in_arc && blockable
         = None     otherwise
+guard_arc   = archetype arc (+4096 at doc 04 Shield 75, shields only)
+parry_ticks = archetype parry ticks + floor_div(skill.shield, 25) for bucklers and heaters (doc 04 Shield);
+              + 3 for blade weapon guards at doc 04 Blade 50; the tower shield stays 0
 stability_bp = clamp(5000 + d(BRN) × 50 + shield_stab, 0, 10000)       // Canon §6.4 row 19
 shield_stab  = shield stability + 30 × skill.shield   (shields) | weapon block stability (Table 3.2c)
 stability_bp = mul_bp(stability_bp, 5000) if the attack is a chain weapon
@@ -1277,13 +1356,13 @@ AR used at step 5 = AR(part) + AR(shield)  (weapon guards add 0)
 
 ### 12.3 Step 6b distribution
 
-Canon §10.7 converts `to_stamina = mul_bp(total, stability_bp)` into stamina loss `floor_div(to_stamina × 10000, T(d_current))`. Doc 05 distributes the remaining HP damage over types: `new_total = total - to_stamina`, `d[t] = floor_div(d[t] × new_total, total)` per type, remainder to the largest-share type. A `GUARD_BREAK` hit multiplies the stamina loss by 20000. Blocked hits deal no poise damage and half buildup (Canon §11.2). When the blocker's stamina reaches 0 it is guard-broken: `st.staggered` (30 ticks) and no new raise for 60 ticks. NPC guards (doc 13 templates supply stamina, `block_stability_bp` and arc) follow the same rules with `T(d_current)`.
+Canon §10.7 converts `to_stamina = mul_bp(total, stability_bp)` into stamina loss `floor_div(to_stamina × 10000, T(d_current))`. Doc 05 distributes the remaining HP damage over types: `new_total = total - to_stamina`, `d[t] = floor_div(d[t] × new_total, total)` per type, remainder to the largest-share type. A `GUARD_BREAK` hit multiplies the stamina loss by 20000. Blocked hits deal no poise damage and half buildup (Canon §11.2). When the blocker's stamina reaches 0 it is guard-broken: `st.staggered` (30 ticks) and a guard lockout of 60 ticks during which no raise starts. Stamina lost to a blocked hit counts as spending for doc 04's regeneration delay (60 ticks without spending), so a raised guard does not regenerate stamina while it is being hit. Doc 04's Shield 25 multiplies this stamina loss by 8500 after the `GUARD_BREAK` factor. NPC guards (doc 13 templates supply stamina, `block_stability_bp` and arc) follow the same rules with `T(d_current)`.
 
 ### 12.4 Poise damage (step 8)
 
 ```
 pd = impact_mp                                     // impact × 1000 × §10.1 factors
-pd = mul_bp(pd, S(src_lvl))                        // Canon §10.5 step 8; enemies S(d)
+pd = mul_bp(pd, S(src_lvl))                        // Canon §10.5 step 8; enemies S(d); S's argument capped at 300 (canon-1.5)
 pd = mul_bp(pd, 10000 + mul_bp(5000, share_blunt)) // dmg.blunt "poise damage × 15000" (Canon §10.1) pro rata
 pd = mul_bp(pd, 30000)          if counter.staggerer
 pd = mul_bp(pd, 20000)          if MOUNTED_CHARGE
@@ -1317,7 +1396,7 @@ Examples against a REF NPC (poise 40,000 mp): a warhammer light step 1 deals `mu
 Each hit carries a status power per type it holds (Canon §11.2 consumes it):
 
 ```
-p_t = floor_div(POWER10[t] × base_mhp_status × share[t], 10000 × 10000)    // base_mhp after §10.1 factors 1, 2, 8
+p_t = floor_div(POWER10[t] × base_mhp_status × share[t], 10000 × 10000)    // base_mhp after §10.1 factors 1, 2 and 4 to 8
 p_t = mul_bp(p_t, archetype status_bp for that status)                      // Tables 3.2c, 5.2d; default 10000
 then Canon §11.2: × S(src_lvl) × potency × edge (native) × row 41 × (10000 - r) × 5000 if blocked
 ```
@@ -1335,7 +1414,16 @@ then Canon §11.2: × S(src_lvl) × potency × edge (native) × row 41 × (10000
 
 Because power is proportional to hit size, fire rate never changes buildup per second: at REF DPS every archetype applies the same power per second per 100% share. Example: a long blade step-1 light hit gives bleeding power `floor_div(20 × 14700 × 8000, 10^8) = 23`, so the fifth hit fills a threshold of 100. Every `dmg.frost` hit also applies `st.chilled` directly (Canon §10.1). Explicit status powers (flash grenade, shield bash taunt) replace the default for their status.
 
-Doc-05 status behavior beyond Canon §11.1: `st.disarmed` puts the active weapon into `Disarmed` (§4.8) without dropping it; `st.slowed` and `st.chilled` multiply stance base speed through the status step; `st.corroded` multiplies AR per Canon §10.3; `st.exposed` stacks at step 2.11.
+Doc-05 status behavior beyond Canon §11.1:
+
+- `st.disarmed` puts the active weapon into `Disarmed` (§4.8, §6.1) without dropping it.
+- `st.slowed` and `st.chilled` multiply stance base speed through the status step; `st.chilled` also multiplies `atk_speed_bp` (§6.2).
+- `st.corroded` multiplies AR per Canon §10.3; `st.exposed` stacks at step 2.11; `st.knocked_down` applies × 11000 at step 2.11 and is a disabling status.
+- `st.shocked`: on each active tick where `(t - a) % 30 == 0` the bearer is micro-stunned for 6 ticks, during which it counts as carrying a disabling status (§4.8): a swing in progress ends and both weapon machines enter `Staggered` for those ticks. Each hit it takes chains per Canon §11.5.
+- `st.stunned`, `st.frozen`, `st.staggered` are disabling statuses; the next blunt hit on a frozen bearer takes × 15000 at step 3a and ends the freeze; a sonic hit ends it without the multiplier (§10.2).
+- `st.burning` ignites flammable blocks in the bearer's feet and body cells through doc 03 fire on each status pulse, and ends when the bearer is in contact with `liq.water` (Canon §12.1).
+- `st.blinded`: spread × 20000 (§6.3); doc 09 owns its perception effects.
+- `st.bleeding` ends on a bandage or on a single heal of at least 10% of Max HP (Canon §11.1); doc 04 owns bandages.
 
 ---
 
@@ -1352,7 +1440,7 @@ Each NPC keeps `threat: BTreeMap<EntityId, i64>`. Doc 13 selects targets from it
 | Healing or ward granted to an ally | `mul_bp(amount_mhp, 5000)` to every NPC whose table already holds that ally |
 | `st.taunted` applied | `max(table) + 1` for the taunter |
 
-Every AI think (6 ticks) each entry loses `floor_div(entry × 30, 10000)`. Target choice (doc 13): switch when a challenger's threat exceeds the current target's × 11000, comparing entries within 3000 mm × 13000 and downed Errata × 2500; ghosts are excluded. A minion's threat is credited to the minion. Example: 10,000 mHP of melee damage at MEN 50 adds `mul_bp(mul_bp(10000, 11000), 12000) = 13,200`.
+Every AI think (6 ticks) each positive entry loses `max(1, floor_div(entry × 30, 10000))`; an entry that reaches 0 is removed. Target choice (doc 13 owns it, with this hysteresis): `eff(e) = threat(e)`, then × 13000 when `e` is within 3000 mm of the NPC, then × 2500 when `e` is downed, one `mul_bp` each in that order; ghosts are excluded. The NPC switches from its current target `c` to the entry with the largest `eff` (ties to the lower EntityId) only when that `eff > mul_bp(eff(c), 11000)`. A minion's threat is credited to the minion. Example: 10,000 mHP of melee damage at MEN 50 adds `mul_bp(mul_bp(10000, 11000), 12000) = 13,200`.
 
 ### 14.2 Friendly fire (Canon §17.5)
 
@@ -1362,8 +1450,8 @@ Every AI think (6 ticks) each entry loses `floor_div(entry × 30, 10000)`. Targe
 
 ### 14.3 Downed and death hooks
 
-- Canon §10.8 step 2 applies `st.downed`. While downed, an Erratum crawls at 600 mm/s base, cannot attack, block or use items, and keeps its capsules.
-- Damage to a downed Erratum runs the full pipeline; each resolved hit shortens the remaining bleed-out by `ceil_div(total_mhp × 1800, max_hp_mhp)` ticks (17,000 mHP at Max HP 85,000 removes 360 ticks). At 0 remaining ticks Canon §10.8 step 3 runs.
+- Canon §10.8 step 2 applies `st.downed`; doc 16 §9.4 owns the state. While downed, an Erratum crawls at 800 mm/s base (doc 03 §5.12, doc 16), keeps its capsules, and cannot attack, block, cast, reload, use items, interact, sprint, jump, dodge or mount (§4.8a). Its bleed-out `bleed_left` starts at `max(600, 1800 − 600 × (downs_folio − 1))` ticks (doc 16).
+- Damage to a downed Erratum runs the full pipeline with HP held at 0; each resolved hit, DoT pulses included, shortens `bleed_left` by `ceil_div(total_mhp × 1800, max_hp_mhp)` ticks (17,000 mHP at Max HP 85,000 removes 360 ticks). At 0 remaining ticks Canon §10.8 step 3 runs.
 - `ev.entity_killed` drops stuck thrown weapons and arrows as ground items (`floor_div(n, 2)` of `n` arrows survive; thrown weapons always survive) and releases grapples and taunts the entity held.
 
 ---
@@ -1382,6 +1470,8 @@ Every AI think (6 ticks) each entry loses `floor_div(entry × 30, 10000)`. Targe
 | 3 | `counter.sunder` | apply one stack of `st.corroded` directly, bypassing corrosion immunity; at 5 stacks a target with `elite.armored` loses that modifier for 300 ticks |
 | 4 | `counter.anchor` | apply `st.rooted` directly for 120 ticks; a target with `elite.phasing` cannot phase for 300 ticks |
 
+Counters act on any target that a hit carrying them reaches, Errata included: NPC templates and the invader's Editor kits (doc 13) may carry counter bits, and a ward-broken Erratum is stunned like a champion. Counter effects never draw random numbers.
+
 ### 15.2 Elite aspects (Canon §17.3a) and two elite modifiers
 
 | Aspect or modifier | Exact behavior | Counter |
@@ -1389,8 +1479,10 @@ Every AI think (6 ticks) each entry loses `floor_div(entry × 30, 10000)`. Targe
 | `elite.warded` (champion aspect) | NPC ward pool = `mul_bp(max_hp_mhp, 5000)`; refills fully 180 ticks after the champion last took damage; depletes per Canon §10.5 step 7 | `counter.ward_breaker` |
 | `elite.surging` (champion aspect) | attack and cast speed × 13000; regenerates 200 Bp of Max HP per second (accumulator `k = 60`) unless it has `st.unraveled` or `st.shocked` | `counter.disruptor` |
 | `elite.unstoppable` (champion aspect) | immune to `st.staggered` and `st.knocked_down` from poise | `counter.staggerer` |
-| `elite.armored` (doc 13 elite modifier, requested) | every part's AR × 25000; immune to `st.corroded` buildup | `counter.sunder` |
-| `elite.phasing` (doc 13 elite modifier, requested) | every 240 ticks becomes intangible for 60 ticks (no capsule tests) and blinks up to 6000 mm | `counter.anchor` |
+| `elite.armored` (doc 13 §7.2 elite modifier) | every part's AR × 25000; immune to `st.corroded` buildup | `counter.sunder` |
+| `elite.phasing` (doc 13 §7.2 elite modifier) | every 240 ticks becomes intangible for 60 ticks (no capsule tests, so every query of §2.1 skips it) and blinks up to 6000 mm to a walkable cell behind its target after a 30-tick telegraph (doc 13) | `counter.anchor` |
+
+**What each elite requires of the party.** Warded: deplete a ward of half the champion's Max HP before HP moves, or break it at once with ward-breaker hits (× 30000 depletion) and gain a stun. Surging: land a disruptor hit, or keep it `st.shocked`, to stop its 2% Max HP per second regeneration. Unstoppable: only staggerer hits (× 30000 poise, ignoring its immunity) stagger it. Armored: its AR is 2.5 times normal; five sunder hits strip the modifier for 300 ticks, and every sunder stack also corrodes 10% of its AR. Phasing: an anchor hit roots it for 120 ticks and blocks phasing for 300 ticks, so attacks connect.
 
 ### 15.3 Delivery channels
 
@@ -1409,6 +1501,8 @@ Doc 11 stocks at least one counter charge of every type and one `grenade_counter
 capacity_mhp = cap_base_mhp → × T(ilvl) → × rarity → × quality → × (10000 + 600 × eff_enh) → × potency
 recharge: starts 180 ticks after the bearer last took damage (any ev.damage_dealt with the bearer as target,
           DoT included, ward_lost or HP > 0); restores mul_bp(capacity, 2500) per second (accumulator k = 60)
+flicker:  when the generator's base function has a failure chance, the tick the recharge would start draws one
+          roll_bp at seq 3 (§1.4); a failure delays the start by another 180 ticks, then rolls again
 ```
 
 Step 7 for the generator pool uses `ward_mult_eff[t] = mul_bp(ward_mult[t], profile[t])`; the `st.shielded` pool always uses the canonical `ward_mult`.
@@ -1434,7 +1528,20 @@ Examples: an aegis at ilvl 10 holds `mul_bp(20000, 16190) = 32,380` mHP and rech
 
 ### 16.1 Scope
 
-Only the base-function component rolls (Canon §5.5). Its dependency comes from the skin, so a longbow (dependency none) never fails while a railgun skin of the same archetype can. Potency always multiplies damage, buildup, ward, AR, poise and mount speed. A **Disconnected** weapon (C ≥ 6) cannot fire or swing; `input.attack` then performs `arch.melee.unarmed` attacks.
+Only the base-function component rolls (Canon §5.5). Its dependency comes from the skin, so a longbow (dependency none) never fails while a railgun skin of the same archetype can. Potency always multiplies damage, buildup, ward, AR, poise and mount speed.
+
+- **Failure chance.** `failure_bp` is the Canon §5.5 table value for the component's `C`, except that a bearer with `st.unmoored` treats a Strained component (C = 1 or 2) as C = 3 (500 Bp; Canon §5.11). An item made by `mfr.redacted.bureau` has `failure_bp = 0` and keeps its potency loss (Canon §5.9).
+- **Unmoored count.** Every failure in §16.3 is a Contradiction failure for Canon §5.11: it calls the bearer's shared `note_contradiction_failure(t)` (the same counter doc 06 fizzles and doc 07 sparks use); the third failure within 600 ticks applies `st.unmoored` for 300 ticks.
+- **Disconnected** components (C ≥ 6) do nothing:
+
+| Item | While Disconnected |
+|---|---|
+| melee or ranged weapon | cannot swing, fire, guard or reload; `input.attack` performs `arch.melee.unarmed` attacks and `input.alt` raises an unarmed guard |
+| shield | cannot be raised; its AR is 0 |
+| armor piece | AR, poise, insulation and resistances 0; mass still counts |
+| ward generator | capacity 0; no recharge |
+| mount token | cannot summon; a summoned mount stops and its rider dismounts in 15 ticks |
+| throwable | cannot be thrown |
 
 ### 16.2 Cadence
 
@@ -1442,7 +1549,7 @@ Only the base-function component rolls (Canon §5.5). Its dependency comes from 
 fn failure_due(w: &mut WeaponState, mode: Mode, t: u64, trigger_held_prev: bool) -> bool {
     if w.failure_bp == 0 { return false; }
     match mode {
-        Semi | Bolt | Charge | Throw | Burst | MeleeSwing | Summon | GuardRaise => true, // once per activation
+        Semi | Bolt | Charge | Throw | Burst | MeleeSwing | Summon | ShieldRaise => true, // once per activation
         Auto | Beam => {
             if !trigger_held_prev || t - w.last_fail_roll >= 30 { w.last_fail_roll = t; true } else { false }
         }
@@ -1451,7 +1558,7 @@ fn failure_due(w: &mut WeaponState, mode: Mode, t: u64, trigger_held_prev: bool)
 // due → keyed_rng("rng.combat", folio, wielder, t, seq).roll_bp(failure_bp), the first draw at that seq (§1.4)
 ```
 
-A burst rolls on its first shot only. A melee swing rolls on its Windup→Active transition. Example: an SMG held for 90 ticks fires on ticks 0, 4, …, 88 and rolls on ticks 0, 32 and 64; at failure 1000 Bp the chance of no jam is `0.9³ = 72.9%`.
+A burst rolls on its first shot only. A melee swing rolls on its Windup→Active transition. A shield whose skin has a dependency rolls on each raise at `seq` 1; a weapon guard never rolls, because the weapon's failure is its falter. A mount rolls at summon (`seq` 0) and every 300 ticks while it moves (`seq` 2, §17.4); a ward generator rolls as §15.4 states (`seq` 3). Example: an SMG held for 90 ticks fires on ticks 0, 4, …, 88 and rolls on ticks 0, 32 and 64; at failure 1000 Bp the chance of no jam is `0.9³ = 72.9%`.
 
 ### 16.3 Failure outcomes
 
@@ -1461,7 +1568,7 @@ A burst rolls on its first shot only. A melee swing rolls on its Windup→Active
 | Beam | **Stall**: no pulses for 60 ticks | automatic |
 | Charge rifle | **Misfire**: the draw is lost; the round stays loaded | draw again |
 | Melee weapon | **Falter**: the swing produces no hits; recovery +12 ticks; stamina spent | automatic |
-| Throwable | **Dud**: lands and does not detonate; becomes a ground item | pick it up and throw again |
+| Throwable: grenade, flask or thrown weapon | **Dud**: the throw happens; a grenade or flask never detonates or shatters, and a thrown weapon deals no damage and no status; the item becomes a ground item where it stops | pick it up and throw again |
 | Mount | **Stall**: speed 0 for 60 ticks (§17.4) | automatic |
 | Ward generator | **Flicker**: the recharge start is delayed another 180 ticks | automatic |
 | Shield with a dependent skin | **Slip**: that raise produces no guard | release and raise again |
@@ -1475,6 +1582,7 @@ A burst rolls on its first shot only. A melee swing rolls on its Windup→Active
 | Field | `arch.mount.runner` | `arch.mount.hover` | `arch.mount.glider` |
 |---|---|---|---|
 | Body plan | `body.quadruped` | `body.construct` | `body.avian` |
+| Collision capsule radius / height (mm) | 600 / 1800 | 700 / 900 | 500 / 1000 |
 | Template HP (× `H(d_current)` at summon) | 70 | 55 | 45 |
 | Natural AR per part (× `T(token ilvl)`) | 10 | 15 | 5 |
 | Poise | 60 | 80 | 40 |
@@ -1492,29 +1600,36 @@ A burst rolls on its first shot only. A melee swing rolls on its Windup→Active
 
 ```json
 { "id": "arch.mount.runner", "category": "cat.mount", "body": "body.quadruped", "template_hp": 70, "natural_ar": 10,
+  "radius_mm": 600, "height_mm": 1800,
   "poise": 60, "walk_mm_s": 6000, "gallop_mm_s": 12000, "accel_mm_s2": 20000, "turn_bam": 546, "turn_gallop_bam": 273,
   "stamina": 100, "gallop_drain": 20, "stamina_regen": 25, "jump_mm": 1500, "saddle_mm": 1500, "seats": 1,
   "trample_mhp": 6000, "trample_impact": 40, "mass_g": 450000 }
 ```
 
+- **Control.** Doc 03 §5.12 moves mounts and reads this table's speeds, acceleration and turn rate. The rider's command steers: each tick the mount's yaw turns toward `cmd.yaw` by at most the turn rate (after the Handling factor, §17.4), `move_x` and `move_z` form the wish velocity in the mount's frame, and `input.sprint` gallops a runner while its stamina lasts. The rider's own yaw and pitch stay free for aiming.
+- **Glider flap.** `input.jump` while airborne with at least 40 mount stamina spends 40 and sets the vertical speed to `sqrt_fx(2 × g × 4000 mm) + g × DT / 2` against gravity (the Canon §4.2 launch rule), once per airborne period.
+- **NPC cavalry.** Doc 13's cavalry templates build their mounts from these archetypes with their own template HP (80) and rank and party multipliers; §17.3's combat rules apply to NPC riders unchanged.
+
 ### 17.2 Summoning and dismounting
 
-- `input.mount` with a token in `slot.mount` channels 30 ticks (`move.summon` rolls Contradiction at `seq` 0). It needs 2600 mm of free vertical clearance in a 600 mm-radius column at the summon point and a room without `room.no_mount`. The mount appears beside the rider, the rider mounts, `st.mounted` applies and `ev.mounted` fires.
+- `input.mount` with a token in `slot.mount` channels 30 ticks (`move.summon`, a `seq` 0 action start that rolls Contradiction, §1.4). It needs a 2600 mm tall capsule of the mount's radius free of penetration at the summon point (doc 03 §5.12) and a room without `room.no_mount`. On success the mount appears beside the rider, the rider mounts, `st.mounted` applies and `ev.mounted` fires. On a failed roll the channel's 30 ticks are spent, nothing appears, and the token can be used again at once.
 - `input.mount` while riding dismounts in 15 ticks (`ev.dismounted`). A dismounted mount stays where it is; summoning again moves it.
+- **Thrown.** The rider dismounts at once, with `ev.dismounted`, when it gains `st.knocked_down`, `st.grappled`, `st.downed`, `st.sleeping` or `st.polymorphed`, or when its origin enters a `room.no_mount` room (doc 12); the mount stays where it is.
 - When the mount reaches 0 HP, the rider gains `st.knocked_down` and `ev.dismounted` fires. The token is inert until the next `ev.folio_entered`, when the mount returns at full HP.
+- On `ev.folio_exited` a summoned mount despawns (`ev.entity_despawned`) and its rider dismounts; the token keeps its state.
 
 ### 17.3 Mounted combat
 
 - Rider eye height is `saddle_mm + 900`. Riders' melee reach grows by 400 mm.
 - `st.mounted` multiplies spread by 13000 at the status step (§6.3); a mounted Erratum cannot be `st.hidden`, cannot place blocks and cannot lean or dodge.
 - **Mounted charge** (`move.mounted_charge`): any melee hit landed while the mount's horizontal speed is at least 8000 mm/s carries `MOUNTED_CHARGE`: attack factor 12500 (§10.1) and poise × 20000 (§12.4). A long blade step-1 hit rises from 14,700 to 18,375 base.
-- **Couched lance**: holding `input.heavy` with a spear or halberd at ≥ 8000 mm/s keeps a thrust active (up to 180 ticks, no extra stamina) that hits the first entity at full `heavy_bp` with `MOUNTED_CHARGE`, then recovers.
+- **Couched lance** (`move.couched_lance`): holding `input.heavy` with a spear or halberd at ≥ 8000 mm/s keeps a thrust active (up to 180 ticks, no extra stamina) that hits the first entity at full `heavy_bp` with `MOUNTED_CHARGE`, then recovers.
 - **Trample** (`move.trample`): the mount's capsule touching a non-flying entity of lower mass at ≥ 8000 mm/s makes a melee-kind hit (source the mount, owner the rider, `src_lvl` the token's ilvl) once per target per 60 ticks. Friendly fire applies.
 - Rider and mount have separate capsules. Single-target hits damage whichever capsule they find; area hits test both. NPC threat earned against the mount is credited to the rider.
 
 ### 17.4 Contradiction and handling
 
-The mount's base function takes its dependency from the skin (beasts none, vehicles techne, carpets arcana, divine steeds mythos, clouds verve). Potency multiplies every mount speed and trample damage. A stall roll (`seq` 2) runs at summon and every 300 ticks while the mount moves. `skill.handling` multiplies gallop drain by `10000 - 50 × handling` and turn rate by `10000 + 30 × handling`.
+The mount's base function takes its dependency from the skin (beasts none, vehicles techne, carpets arcana, divine steeds mythos, clouds verve). Potency multiplies every mount speed and trample damage. The summon roll is the `seq` 0 action roll (§17.2). While the mount moves (horizontal speed above 0), a stall roll at `seq` 2 runs on every tick where `(t - summon_tick) % 300 == 0`; a failure is a Stall: speed 0 for 60 ticks (§16.3). `skill.handling` multiplies gallop drain by `10000 - 50 × handling` and turn rate by `10000 + 30 × handling`.
 
 ---
 
@@ -1536,11 +1651,15 @@ Everything here is derived by the renderer from simulation events and never feed
 
 ### 19.1 Severing hits (Canon §9.1)
 
-After step 8, if the hit part is severable and its condition pool is at most 0, the part is severed when the hit's largest share is `dmg.slash` or it carries `SEVER`. NPC heads also need the owner's governing skill ≥ 75. `SEVER` comes from great blade, great axe and halberd heavies and from launcher blasts within their inner radius. The part becomes a `cat.body_part` item at its capsule's midpoint and `ev.part_severed` fires; doc 13 removes template attacks bound to the part. Example: a REF NPC's arm pool is `mul_bp(60000, 1250) = 7,500` mHP, so any slash-dominant hit dealing at least 7,500 mHP to an arm with 0 condition left after it severs that arm.
+After step 8, `resolve_hit` calls doc 04's `on_part_damage`, whose severing branch applies this rule: if the hit part is severable and its condition pool is at most 0 after a hit with positive part damage, the part is severed when the hit's largest share is `dmg.slash` or it carries `SEVER`. Severable parts are limbs, tails and wings on every plan and heads on NPCs; Errata heads never sever. An NPC head also needs the owner's governing skill ≥ 75, and severing it kills a single-headed creature (Canon §10.8 step 3). `SEVER` comes from great blade, great axe and halberd heavies and from launcher blasts within their inner radius. Severing draws no random numbers. The part becomes a `cat.body_part` item at its capsule's midpoint and `ev.part_severed` fires; doc 13 removes template attacks bound to the part.
+
+- **Weapon consequences** (Canon §9.1 hand bindings). Losing `bp.arm_r` drops the active weapon as a ground item and leaves the weapon slots unusable until the arm is restored; losing `bp.arm_l` drops the `slot.offhand` item and makes two-handed weapons unusable (they enter `Staggered` and stay there); losing `bp.arm_extra_N` drops the item in `slot.hand_extra_N`.
+
+Example: a REF NPC's arm pool is `mul_bp(60000, 1250) = 7,500` mHP. A slash-dominant hit on a full-condition arm severs it when it deals at least 7,500 mHP to that arm after `hit_mult` and mitigation; a blunt-dominant hit without `SEVER` only empties the pool.
 
 ### 19.2 `st.taunted`
 
-- Buildup in the mind group. Sources: shield bash (power 40) and `move.taunt` (`input.alt` + `input.reload` while guarding with a shield): 30 ticks, 15 stamina, 600-tick cooldown, taunt power 60 to every hostile within 10000 mm with line of sight. Power scales with `S(shield ilvl)` and the Canon §11.2 chain.
+- Buildup in the mind group. Sources: shield bash (power 40) and `move.taunt` (`input.reload` pressed while guarding with a shield): 30 ticks, 15 stamina, 600-tick cooldown, taunt power 60 to every hostile within 10000 mm whose torso sample `raycast_blocks` reaches from the taunter's eye, in ascending EntityId. The taunt is buildup through the Canon §11.2 chain with no hit record, no damage and no crit draw; power scales with `S(shield ilvl)`.
 - Effect on NPCs: `ai_target` is forced to the taunter while active (doc 13), threat jumps per §14.1, and damage dealt to anyone else is × 7500 at step 2.12. Player-controlled bearers follow Canon §11.8.
 
 ### 19.3 `st.grappled`
@@ -1548,7 +1667,18 @@ After step 8, if the hit part is severable and its condition pool is at most 0, 
 - Applied directly (Canon §11.4, nerve scaling, base 3 s, × rank control) by `move.grapple` (full heavy of a fist weapon or unarmed), by a full chain heavy (entangle at reach), and by NPC grabs (doc 13). It requires a target that is not boss, editor or hunter, is not already grappled, and whose mass (body plus carried) is at most `mul_bp(grappler mass, 12500)`.
 - The target cannot move and can use only one-handed actions; a two-handed weapon enters `Staggered` until release. The grappler moves at stance base 2000 mm/s; a fist or unarmed grappler's light attacks hit the target's torso automatically.
 - It ends at expiry, when the grappler has taken at least 10% of its Max HP since the grapple began, when the grappler is staggered, knocked down or downed, or when the two are more than `reach + 500` mm apart.
-- A grappled player presses `input.interact` to struggle: each press removes 10 ticks of remaining duration, at most once per 6 ticks. Input is never synthesized (Canon §11.8).
+- A grappled player presses `input.interact` to struggle (`move.struggle`): each press removes 10 ticks of remaining duration, at most once per 6 ticks. Input is never synthesized (Canon §11.8).
+
+### 19.4 Law-bound techniques (Canon §5.10, doc 12)
+
+Doc 12 names doc 05 as the owner of the duel and qinggong techniques that its Laws bind. Each technique is a component with `dep = {verve}` and `law_bound` set, so outside its Law's genre (or a seam zone that includes it) it is Disconnected (C = 6) and cannot start; inside, it follows Canon §5.5 like any component.
+
+| Move | `law_bound` | Trigger | Effect |
+|---|---|---|---|
+| `move.quickdraw` | `law.weird_west.high_noon` | `input.attack` while a one-handed ranged weapon is holstered in a weapon slot and the active weapon is any other | swaps to that weapon and fires one hip shot on the 4th tick of `Drawing`, with spread × 5000 and the normal recoil; a `seq` 0 action start; cooldown 300 ticks |
+| `move.qinggong_strike` | `law.wuxia.qinggong` | `input.attack` or `input.heavy` during a doc 03 wall-run or glide | a jump attack (§4.4) that needs no 800 mm air probe and uses `move_bp` 17000 whatever the fall height |
+
+The High Noon standoff itself (doc 12: +5000 Bp and a direct `st.staggered` on the next shot within 60 ticks) is a Law effect, applied at step 1 and after step 8 as §10.2 states; `move.quickdraw` fired inside the standoff takes it.
 
 ---
 
@@ -1559,61 +1689,73 @@ All IDs below sit in namespaces Canon §19 assigns to doc 05.
 | Namespace | IDs |
 |---|---|
 | `arch.melee.` | `dagger`, `blade_short`, `blade_long`, `blade_great`, `axe`, `axe_great`, `mace`, `warhammer`, `spear`, `halberd`, `quarterstaff`, `fist`, `whip`, `chain`, `unarmed` |
-| `arch.ranged.` | `pistol`, `pistol_heavy`, `smg`, `rifle_auto`, `rifle_marksman`, `shotgun`, `sniper`, `launcher`, `beam`, `charge_rifle`, `crossbow`, `thrown`, `grenade_frag`, `grenade_incendiary`, `grenade_concussion`, `grenade_flash`, `grenade_smoke`, `grenade_counter` |
+| `arch.ranged.` | `pistol`, `pistol_heavy`, `smg`, `rifle_auto`, `rifle_marksman`, `shotgun`, `sniper`, `launcher`, `beam`, `charge_rifle`, `crossbow`, `thrown`, `grenade_frag`, `grenade_incendiary`, `grenade_concussion`, `grenade_flash`, `grenade_smoke`, `grenade_counter`, `staff`, `wand` (§5.4; casting owned by doc 06) |
 | `arch.armor.` | `head_cloth`, `head_light`, `head_medium`, `head_heavy`, `body_cloth`, `body_light`, `body_medium`, `body_heavy`, `hands_cloth`, `hands_light`, `hands_medium`, `hands_heavy`, `legs_cloth`, `legs_light`, `legs_medium`, `legs_heavy`, `feet_cloth`, `feet_light`, `feet_medium`, `feet_heavy` |
-| `arch.offhand.` | `shield_buckler`, `shield_heater`, `shield_tower`, `lantern`, `focus` (casting behavior owned by doc 06) |
+| `arch.offhand.` | `shield_buckler`, `shield_heater`, `shield_tower`, `lantern`, `focus`, `tome` (casting behavior of focus and tome owned by doc 06) |
 | `arch.ward.` | `aegis`, `kinetic`, `reflector`, `bulwark` |
 | `arch.mount.` | `runner`, `hover`, `glider` (names from Canon §17.7; mechanics defined here) |
 | `ammo.` | `light`, `heavy`, `rifle`, `shell`, `cell`, `ordnance`, `draw`, `charge_breaker`, `charge_disruptor`, `charge_staggerer`, `charge_sunder`, `charge_anchor` |
-| `move.` | `light`, `heavy`, `sprint_attack`, `jump_attack`, `riposte`, `shove`, `guard`, `shield_bash`, `quick_melee`, `grapple`, `taunt`, `mounted_charge`, `trample`, `summon`, `imbue`, `ads`, `hold_breath`, `fire_semi`, `fire_auto`, `fire_burst`, `fire_bolt`, `fire_charge`, `fire_beam`, `throw`, `cook`, `reload`, `clear_jam`, `lean_l`, `lean_r`, `shape_thrust`, `shape_rl`, `shape_lr`, `shape_overhead` |
+| `move.` | `light`, `heavy`, `sprint_attack`, `jump_attack`, `riposte`, `shove`, `guard`, `shield_bash`, `quick_melee`, `grapple`, `struggle`, `taunt`, `mounted_charge`, `couched_lance`, `trample`, `summon`, `imbue`, `ads`, `hold_breath`, `fire_semi`, `fire_auto`, `fire_burst`, `fire_bolt`, `fire_charge`, `fire_beam`, `throw`, `cook`, `reload`, `clear_jam`, `lean_l`, `lean_r`, `quickdraw`, `qinggong_strike`, `shape_thrust`, `shape_rl`, `shape_lr`, `shape_overhead` |
 | `counter.` | `ward_breaker`, `disruptor`, `staggerer` (Canon §17.3a), `sunder`, `anchor` (new) |
 
-Constants exported: `LAGCOMP_MAX_TICKS = 16`; `POWER10` table (§13); recoil string reset 30 ticks; Errata poise reset 480 ticks; parry re-raise lockout 20 ticks; riposte window 30 ticks.
+Constants exported: `LAGCOMP_MAX_TICKS = 16`; `POWER10` table (§13); recoil string reset 30 ticks; Errata poise reset 480 ticks; parry re-raise lockout 20 ticks; guard-break lockout 60 ticks; riposte window 30 ticks; firing stance 20 ticks; projectile lifetime 600 ticks; material speed floor `ceil_div(material_bp × 10000, 14000)` (§3.3); ammunition caps, pickups and values (§8.1); Calling reference weapons (§5.5).
+
+Functions exported to other chapters: `resolve_hit` (§10.2) for doc 03's `sys.damage` and `sys.damage_late`; the projectile hooks `on_body_hit`, `on_liquid_enter`, `on_block_enter`, `on_stop`, `after_step` (§7.1) for doc 03 §5.19; `guard_outcome` (§12.2); `failure_due` (§16.2); `spread_offset` (§6.3) and the recoil step (§6.5) for doc 16's client prediction; `threat_add` and `eff` (§14.1) for doc 13.
 
 ## Interface assumptions
 
 | Doc | Assumed to provide |
 |---|---|
-| 02 | `div128`, `div256` (two-limb `i256`), `isqrt_u64`, and the `mm(Fx)` conversion in the fixed-point module |
-| 03 | the combat phase slot after movement and collision and before the status-timer step; `solid`, `opaque`, `material_at`; `damage_block(b, mhp, shares)` with breakage and `rng.physics` debris; `emit_noise(pos, db)`; fire ignition; event emission in creation order |
-| 04 | stamina regeneration after 1 s without spending; `st.exhausted` blocks heavies and dodges; the XP table accepts §11.4's Armor XP; mastery perks write the hook fields of §11.4 and §12.2; Calling kits give two pickups per ammunition family used |
-| 06 | `arch.offhand.focus` casting; the `st.shielded` pool; one-handed casting while grappled |
-| 07 | per material `dmg_bp`, `ar_bp`, density, `pen_cost`, `ricochet`, `flammable`; instance `mass_g`; durability per throw and swing |
-| 08 | `gas.smoke` emission API; alchemical flasks reusing `arch.ranged.grenade_*` with liquid payloads |
-| 09 | `sneak_eligible(att, tgt, t)`; `sneak_mult(att, tier)` with tier 1 = 30000, tier 2 = 22500, tier 3 = 15000 (E3 uses tier 1); `IGNORE_ARMOR` at Sneak 100; noise propagation |
-| 11 | item templates and overridable fields (fire mode, `sig`, `innate_counter`, `max_ricochets`); ammunition drops using §8.3 need weights at one pickup per 4 standard kills; counter charges and counter grenades of every type in every genre's shops and loot |
-| 12 | `room.no_mount`; local gravity per genre and bleed zone |
-| 13 | NPC templates: `template_dmg_mhp`, impact, natural AR per part, BRN, TGH, stamina, `block_stability_bp`, guard arc, unparryable and unblockable move flags, `poise_immune`, weapon-like attack geometry; `ai_target(e)`; forced targeting under `st.taunted`; threat-based selection with the §14.1 hysteresis; the requested modifiers `elite.armored` and `elite.phasing` |
-| 14 | `difficulty_bp(att, tgt)`, 10000 at the default difficulty |
-| 16 | transform and pose history of at least 32 ticks; prediction of recoil, sway and spread; `st.downed` crawl and revive flow accepting §14.3 bleed-out shortening |
-| 17 | the input IDs of §1.7; hit markers and damage numbers per §18; accessibility toggles |
+| 02 | `div128`, `div256` (two-limb `I256`), `isqrt_u64`, `isqrt_u128`, `dist(p, q)` and the `mm(Fx)` conversion in the fixed-point module; `closest_seg_seg` (§4.6), which is §2.2's `seg_seg_params`; `atan2_bam` within ±1 Bam (canon-1.5); the §16 balance harness runs §5.5's duels with §5.5's starting state |
+| 03 | the system order of §1.3 (`sys.actions` #7 through `sys.status_timers` #33); `solid`, `opaque`, `material_at`, `destructible_at`; §5.19's projectile loop calling the five hooks of §7.1 with the catch-up rule of §2.6; §12's explosion queue, ray-method block damage and exposure samples, with the falloff taken from `inner_mm` and `edge_bp` (§9.4); §13.2 block damage from `block_bp` and the weapon's tool tier; `apply_knockback`; `emit_gas`; fire ignition; `emit_noise(pos, db)`; event emission in creation order; §5.12's mount mover reading §17.1's speeds, acceleration and turn rate; §5.8's lean using §6.8's sphere clamp (Canon gaps 27) |
+| 04 | stamina regeneration after 60 ticks without spending, with block stamina loss counted as spending (§12.3); `st.exhausted` blocks heavies, sprint attacks and dodges; the §5.2 XP rows (weapon skills, Shield with parries, Armor with `d_armor`, Acrobatics with negated hits); mastery hooks read by this chapter (Blade 50 parry +3, Shield parry ticks, arc +4096 and stamina × 8500, Heavy Arms 50 removes the firing stance and Heavy Arms 100 lets heavy weapons fire while sprinting, Marksmanship 100 crit replacement); `on_part_damage` with its severing branch; `BodyMove`, the crutch and `harness` mouth slots; the comfort band reading §11.1's insulation; Death's Door at `rng.combat` `seq` 0xFFFF; talents `volatile_mix` and `catalyst` (§9.3) |
+| 06 | casting through `arch.offhand.focus`, `arch.offhand.tome`, `arch.ranged.staff` and `arch.ranged.wand` (§5.4); casts win the `seq` 0 action slot (§1.4); the `st.shielded` pool; one-handed casting while grappled; the casting stances of §1.6; `note_contradiction_failure` shared with §16.1 |
+| 07 | per material `dmg_bp`, `ar_bp`, density, `pen_cost`, `ricochet`, `flammable`, `blast_res_milli`, tier; instance `mass_g`; durability per throw and swing; gadget deploys as `seq` 0 action starts; turret shots keyed on the gadget |
+| 08 | `emit_gas` for smoke; flasks and bombs reusing `arch.ranged.grenade_*` with `NO_CRIT`; `coat_on_hit` (§10.2) and coated ammunition (§8.2); the sickened toxicity band (§6.3); `st.focused`; respirators as `apparatus.respirator.*` |
+| 09 | `sneak_eligible(att, tgt, t)`; `sneak_mult(att, tgt, tier)` with tier 1 = 30000, tier 2 = 22500, tier 3 = 15000 before doc 09's terms (E3 uses tier 1 at Sneak 0); `IGNORE_ARMOR` at Sneak 100; the noise IDs and levels for shots, clang (70), block, parry, jam (40), dry fire (30) and explosions (Table 9.3b) |
+| 11 | item templates and overridable fields (fire mode, `sig`, `innate_counter`, `max_ricochets`); ammunition values copied from §8.1; the standard-rank ammunition line at 2500 Bp with §8.3's need weights; counter charges and `item.throwable.counter_*` of every type in every genre's shops and loot; per-shot and per-swing chance components drawn at `seq` 0 (§1.4); its kit-rebinding table, which maps doc 14's provisional IDs onto this chapter's exports |
+| 12 | `room.no_mount`, entered by a rider → immediate dismount (§17.2); local gravity per genre, bleed zone and flip volume; `law.weird_west.high_noon` and `law.wuxia.qinggong` binding §19.4's techniques |
+| 13 | NPC templates: `template_dmg_mhp`, impact, natural AR per part, BRN, TGH, stamina, `block_stability_bp`, guard arc, unparryable and unblockable move flags, `poise_immune`, weapon-like attack geometry, counter bits; `ai_target(e)`; forced targeting under `st.taunted`; target selection with §14.1's `eff` hysteresis; `elite.armored` and `elite.phasing` as adopted in its §7.2; cavalry mounts built from §17.1 with template HP 80 |
+| 14 | `difficulty_bp(att, tgt)`, 10000 at the default difficulty; Calling kits rebound to this chapter's IDs per doc 11's table |
+| 16 | `view_tick` clamping (§5.5) and `LAGCOMP_MAX_REWIND = 16`; the 32-record pose history; prediction of recoil, sway and spread with the host's keys; `st.downed` entry, crawl 800 mm/s and `bleed_left`, accepting §14.3's shortening; the invader in slot 4; its §8 projectile sentence must read "then takes its normal step at `t`" to match doc 03 §5.19 and §2.6 |
+| 17 | the input IDs and bits of §1.7; `aim_assist_bp` (§5.2c); hit markers and damage numbers per §18; accessibility toggles |
 | 18 | skin names and presentation for every archetype and event here |
 
 ## Canon gaps
 
-1. **Attack factors have no pipeline slot.** Canon §10.5 lists no step for combo, heavy charge, sprint, jump, riposte, charge, range falloff, penetration keep, cleave, area falloff or the Canon §17.7 mounted-charge × 12500. Assumed: they define the hit's `base_mhp` before Canon §10.4 (§10.1).
-2. **`st.taunted` at step 2.12.** Canon step 2.12 lists berserk, empowered and weakened. Assumed: the Canon §11.1 effect "damage dealt to others × 7500" applies at step 2.12 in ascending status ID order.
-3. **Shield AR on blocked hits.** Assumed: step 5 uses `AR_part + AR_shield`, reading Canon §13.8's "shield block values" scaling with `T` as shield AR.
-4. **Step 6b per-type split.** Canon §10.7 reduces only the total. Assumed: proportional per-type scaling with the remainder to the largest-share type (§12.3).
+1. **Attack factors have no pipeline slot.** Canon §10.5 lists no step for combo, heavy charge, sprint, jump, riposte, charge, range falloff, penetration keep, cleave, area falloff or the Canon §17.7 mounted-charge × 12500. Decided: they define the hit's `base_mhp` before Canon §10.4 (§10.1).
+2. **`st.taunted` at step 2.12.** Canon step 2.12 lists berserk, empowered and weakened. Decided: the Canon §11.1 effect "damage dealt to others × 7500" applies at step 2.12 in ascending status ID order.
+3. **Shield AR on blocked hits.** Decided: step 5 uses `AR_part + AR_shield`, reading Canon §13.8's "shield block values" scaling with `T` as shield AR.
+4. **Step 6b per-type split.** Canon §10.7 reduces only the total. Decided: proportional per-type scaling with the remainder to the largest-share type (§12.3).
 5. **Guard-break extensions.** `GUARD_BREAK` multiplies Canon §10.7 stamina loss by 20000; shove removes a flat 35 stamina.
-6. **Per-generator ward depletion.** Assumed: step 7 uses `ward_mult_eff = mul_bp(ward_mult, profile)` for the generator pool only; `counter.ward_breaker` multiplies that by 30000. With profile 10000 the result equals Canon §21 test 41.
-7. **Ward capacity chain.** Canon §13.2 gives `mul_bp(cap_base_mhp, T(ilvl))`. Assumed: rarity, quality, enhancement and potency follow, as for armor.
-8. **Counter durations.** Assumed: `counter.disruptor`'s 180 ticks are exact (no Canon §11.4 scaling); the ward-break stun uses Canon §11.4.
-9. **Armored and Phasing.** Canon §17.3a fixes three champion aspects. Champions keep exactly those three. Doc 05 adds `counter.sunder` and `counter.anchor` and requests `elite.armored` and `elite.phasing` from doc 13 as non-champion elite modifiers.
-10. **Stance base speeds.** Canon §4.2 defines base speeds but no combat stances. Assumed: §1.6 stance values and the armor sprint and swim values replace the base speed before row 11; armor never multiplies speed.
-11. **Keyed `seq` allocation.** Canon §3.3 describes `seq` as a per-actor counter. Assumed: fixed slots 0, 1, 2, 3 and `16 + i` (§1.4), with projectiles as their own actors.
-12. **Blunt poise factor and poise reset.** Canon §10.1 says blunt poise damage × 15000 without saying how mixed shares apply. Assumed: `10000 + share_blunt / 2`. Poise reset timings (480 ticks for Errata, the NPC formula from R5 §7.3) are not in the canon.
-13. **Mount scaling depth.** Assumed: mount HP uses `H(d_current)` at summon and mount AR uses `T(token ilvl)`.
+6. **Per-generator ward depletion.** Decided: step 7 uses `ward_mult_eff = mul_bp(ward_mult, profile)` for the generator pool only; `counter.ward_breaker` multiplies that by 30000. With profile 10000 the result equals Canon §21 test 41.
+7. **Ward capacity chain.** Canon §13.2 gives `mul_bp(cap_base_mhp, T(ilvl))`. Decided: rarity, quality, enhancement and potency follow, as for armor.
+8. **Counter durations.** Decided: `counter.disruptor`'s 180 ticks are exact (no Canon §11.4 scaling); the ward-break stun uses Canon §11.4.
+9. **Armored and Phasing.** Canon §17.3a fixes three champion aspects. Champions keep exactly those three. Doc 05 adds `counter.sunder` and `counter.anchor`; doc 13 §7.2 adopted `elite.armored` and `elite.phasing` as non-champion elite modifiers with the §15.2 behavior. Proposed canon addition: list both counters in §17.3a so the "dependency-none source in every genre" rule covers them by name (doc 11 already stocks them).
+10. **Stance base speeds.** Canon §4.2 defines base speeds but no combat stances. Decided: §1.6 stance values and the armor sprint and swim values replace the base speed before row 11; armor never multiplies speed.
+11. **Keyed `seq` allocation.** Canon §3.3 describes `seq` as a per-actor counter. Decided: fixed slots 0, 1, 2, 3 and `16 + i` (§1.4), with projectiles as their own actors.
+12. **Blunt poise factor and poise reset.** Canon §10.1 says blunt poise damage × 15000 without saying how mixed shares apply. Decided: `10000 + share_blunt / 2`. Poise reset timings (480 ticks for Errata, the NPC formula from R5 §7.3) are not in the canon.
+13. **Mount scaling depth.** Decided: mount HP uses `H(d_current)` at summon and mount AR uses `T(token ilvl)`.
 14. **Throw speed.** Canon row 20 is a range multiplier; speed uses its square root (§9.1).
 15. **Default status powers** per damage type are not in the canon (§13).
-16. **Downed details.** Canon §11.1 gives "crawl only" and a 30 s bleed-out. Assumed: crawl base 600 mm/s and damage shortens the bleed-out (§14.3); doc 16 confirms.
-17. **Canon §5.9** (genre identity, manufacturers, `spawn_block_max`) is referenced by the canon but absent. Doc 05 reads nothing from it.
+16. **Downed details.** Canon §11.1 gives "crawl only" and a 30 s bleed-out. Doc 16 owns `st.downed` and fixes crawl 800 mm/s and a shrinking bleed-out per repeated down; doc 05 adds only the damage shortening of §14.3, which doc 16 adopted.
+17. **Manufacturer traits that touch doc 05 mechanics** (Canon §5.9): `mfr.redacted.bureau` sets `failure_bp = 0` (§16.1); `mfr.post_apocalypse.lastditch` draws at `seq` 0 (§1.4); `mfr.space_opera.umbra` replaces the magazine with doc 11's heat rule; `mfr.wuxia.jade_lotus` adds the §9.2 throw action to melee weapons. Doc 11 owns the full trait mechanics; doc 05 provides the hooks.
 18. **Sneak and power.** R2 recommends Oblivion's `max(sneak, power)`. The canon chain multiplies sneak with everything; doc 05 keeps the canon and bounds heavy factors at ×2.8.
+19. **Shooting through terrain.** Canon §4.3 says projectiles damage only destructible blocks but not whether they pass through fixed terrain. Decided (§7.3): only destructible or non-opaque cells are penetrable, so wall penetration never crosses the level's fixed walls.
+20. **Unmoored counting.** Canon §5.11 counts jams, fizzles and sparks across docs 05, 06 and 07 but names no shared counter or event. Doc 05 calls doc 06's `note_contradiction_failure(t)` on the bearer (§16.1). Proposed canon addition: a per-character ring of failure ticks in §5.11.
+21. **Parried and negated hits.** Canon §18 has no parry or negation event. Decided: such hits emit `ev.damage_dealt` with every type 0 and the flag `parried` or `negated`, and draw their crit roll so Canon §3.4's count holds.
+22. **`NO_CRIT`.** Canon §3.4 requires one crit draw per hit, and doc 08 declares its bombs non-crit. Decided: a `NO_CRIT` hit draws and ignores the roll.
+23. **Sonic and frozen.** Canon §10.1 says sonic "ends `st.frozen` like blunt", while step 3a grants × 15000 to blunt only. Decided: sonic ends the freeze without the multiplier.
+24. **Elevation range for projectiles.** Canon §10.5 step 2.4a extends ranged range by `max(0, dy)` between origins; a projectile in flight has no target yet, so doc 05 measures its drop below its spawn height (§7.1).
+25. **"Boss" in Shock of the New.** Canon §5.6 says "non-boss"; doc 05 reads it as every rank except `rank.boss`, `rank.editor` and `rank.hunter`.
+26. **Material speed floor.** Canon §10.4 lets doc 05 derive timing from `mass_g`; the §3.3 floor keeps a light material's damage-per-second contribution inside the 14000 material slot of `ITEM_MULT_MAX`.
+27. **Definitions in other chapters' namespaces**, each owned elsewhere and listed so the owner can confirm: the `ExplosionSpec` fields `inner_mm` and `edge_bp` (doc 03 §12.1; its powder keg already carries them, its §12.4 curve must read them); the lean sphere clamp, which replaces doc 03 §5.8's point test because Canon §4.2 gives the lean to doc 05; armor `insul_cold` and `insul_heat` read by doc 04; ammunition values copied by doc 11; `elite.armored` and `elite.phasing` (doc 13, adopted); explosion and weapon `noise.` levels (doc 09); `item.tool.crutch` (doc 11); the `input.` IDs and bits (docs 02, 17).
+28. **Projectile spawn tick.** Doc 03 §5.19 gives every projectile a normal step on its spawn tick, after any catch-up steps; doc 16 §8 still says normal integration resumes at `t + 1`. Doc 05 follows doc 03 (§2.6), which treats NPC and player projectiles alike.
 
 ## Acceptance tests
 
 1. **Melee calibration.** Simulating each melee archetype's light-combo cycle against the REF target (expected crit 500 Bp × 15000) reproduces Table 3.2a's REF DPS within ±0.2 HP/s, and the full-heavy cycle reproduces §3.2's heavy DPS list within ±0.2.
-2. **Ranged calibration.** Each ranged archetype's full magazine-plus-reload cycle reproduces Table 5.2a's REF DPS within ±0.2, and the AR 40 list in §5.2 within ±0.2.
+2. **Ranged calibration.** Each ranged archetype's REF cycle (§1.1) reproduces Table 5.2a's REF DPS within ±0.2, and the AR 40 list in §5.2 within ±0.2: launcher 26.3 and 23.0 with its 150-tick cycle, crossbow 28.0 with its 81-tick cycle, sniper 24.0 on the torso and 48.4 on the head.
 3. **E1.** Long blade finisher with a successful crit against AR 10 deals 26,761 mHP (slash 22,043, pierce 4,718); without the crit 16,871.
 4. **E2.** The marksman headshot deals 47,817 mHP; the torso shot 26,643.
 5. **E3.** The dagger sneak heavy deals 84,899 mHP and makes no `rng.combat` draw at `seq` 16.
@@ -1621,23 +1763,23 @@ Constants exported: `LAGCOMP_MAX_TICKS = 16`; `POWER10` table (§13); recoil str
 7. **E5.** SMG per bullet 3,490 at AR 10 and 1,855 at AR 40; sniper 42,939 and 40,222.
 8. **E6.** The blocked hit removes 1,034 mHP and 4,405 mst; unblocked it removes 7,563 mHP.
 9. **E7.** After shot 1 the ward is 51,183 and HP is unchanged; shot 2 deals 25,878 HP, emits `ev.ward_broken` and applies `st.stunned` for 45 ticks. Without the counter shot 1 leaves 137,061.
-10. **E8.** Frag: NPC at 2,500 mm takes 30,717; ally at 3,500 mm takes 17,084; with `mode.ff_off` 7,104.
+10. **E8.** Frag, all five exposure samples visible: NPC at 2,500 mm takes 30,717; the ally at 3,500 mm in a full Normal medium set takes 16,866 (fire 1,962 after its +1000 resistance); with `mode.ff_off` 6,995.
 11. **E9.** The elevated flanking pistol hit at 30 m deals 5,964 mHP.
 12. **Spread sample.** Run seed `0x0123456789ABCDEF`, `keyed_rng("rng.combat", 3, (3 << 40) | 5, 1000, 0)`, Coherent auto rifle, cone 546, jitter 18: jitter draw gives +14, `az` 38984, `u` 11749, `rad` 231, `dyaw` −192, `dpitch` −130.
 13. **Recoil pattern.** Auto rifle with `jitter_bam` 0, 10 shots, hip, GRP 40: `rec_pitch` 670, `rec_yaw` −72.
 14. **Cadence.** 750 RPM shots land on ticks 0, 5, 10, 15, 20, 24 and shot 750 on tick 3,600; 900 RPM fires every 4 ticks.
 15. **Jam cadence.** An SMG with failure 1000 held 90 ticks rolls on ticks 0, 32 and 64 only.
 16. **Draw counts.** A Coherent shotgun shot makes 17 draws at `seq` 0; with a failure roll due and no jam 18; a jam makes exactly 1.
-17. **Mass timing.** Long blade at 700 g: W 8, R 10, `charge_full` 34, stamina 2,250 mst, impact 9; at 3,430 g: W 13, R 16, `charge_full` 52; active ticks stay 5.
+17. **Mass timing.** Long blade at 700 g with material `dmg_bp` 9000: W 8, R 10, `charge_full` 34, stamina 2,250 mst, impact 9; at 700 g with `dmg_bp` 13000: `time_bp` 9286, W 9, R 11, `charge_full` 37; at 3,430 g: W 13, R 16, `charge_full` 52; active ticks stay 5. Across every material in doc 07's table and every mass from 5000 to 20000 Bp of `ref_mass_g`, `material_bp × 10000 / time_bp ≤ 14000`.
 18. **Heavy charge.** Long blade release at `c = 25` gives base 28,665; at `c = 5` `heavy_bp` = 15000; at `c = 40` 24000.
 19. **Falloff.** Pistol hits at 10,000, 30,000 and 40,000 mm use 10000, 6250 and 5000.
-20. **Wall penetration.** A sniper bullet through one wood block keeps 8750 with wallpen 120 left; a pistol bullet (wallpen 20) stops at a non-grazing stone face.
+20. **Wall penetration.** A sniper bullet through one destructible wood crate keeps 8750 with wallpen 120 left; through a destructible cracked stone wall it keeps 6250 with 40 left; against a fixed-terrain stone wall it stops (non-grazing) and the wall takes no damage; a pistol bullet (wallpen 20) stops at a non-grazing stone face.
 21. **Ricochet.** Velocity (100000, −20000, 0) mm/s onto stone becomes (60000, 12000, 0) with keep 6000; (100000, −80000, 0) stops.
 22. **Elevation and flanking.** `dy` 2,500 → 11000; 2,499 → 10000; −2,500 → 9500. `ang_diff` 10,923 → 10000; 10,924 with the target not targeting the attacker → 11500; 10,924 with the target targeting the attacker → 10000.
 23. **Lean.** `|lean_k|` 1, 5, 9 give 38, 194, 350 mm. With a wall 200 mm to the right of the eye, full right lean clamps to 100 mm and the head capsule moves 100 mm.
 24. **Throw speed.** PWR 60 gives `throw_v_bp` 10488 and grenade speed 16,780 mm/s.
-25. **Explosion.** Frag falloff at 1,000, 2,500 and 4,500 mm is 10000, 6572 and 2000; at 4,501 mm no hit; with an opaque stone block between center and target no hit.
-26. **Ammo pickup.** Reserve 230 `ammo.light` plus a 32 pickup gives 240 and leaves a 22 pickup.
+25. **Explosion.** Frag falloff at 1,000, 2,500 and 4,500 mm (center to the target's center point) is 10000, 6572 and 2000; at 4,501 mm no hit; with all five exposure samples blocked no hit and no crit draw; with four of five exposed the base is × 8000. A spec without `inner_mm` and `edge_bp` reproduces doc 03 §12.4's example (`R` 4000, 2500 mm, 4 of 5 samples: 20,000 mHP from 40,000).
+26. **Ammo pickup.** Reserve 230 `ammo.light` plus a 96 pickup gives 240 and leaves an 86 pickup. For every family, one pickup covers at least 4 standard kills at 75% accuracy for the family's hungriest archetype, except `ammo.ordnance` and `ammo.cell` (§8.3).
 27. **Energy recharge.** After 120 idle ticks a techne-skinned beam at TEC 9 regains 8,400 mu per 60 ticks; an arcana-skinned beam regains 6,000.
 28. **Ward generators.** Kinetic ward 10,000 hit by 8,000 shock passes 3,556 and breaks; aegis passes 1,334. An aegis at ilvl 10 holds 32,380 and recharges 8,095 per 60 ticks after 180 ticks without damage.
 29. **Poise.** Warhammer light step 1 on a REF NPC staggers (48,450 mp); a full warhammer heavy knocks down (135,660 mp). Against `elite.unstoppable` neither staggers and poise refills; with `counter.staggerer` the light hit staggers.
@@ -1646,19 +1788,31 @@ Constants exported: `LAGCOMP_MAX_TICKS = 16`; `POWER10` table (§13); recoil str
 32. **Armor speed.** Full heavy at Armor 20: sprint 5,960, swim 1,590; full medium 6,140; full heavy at Armor 100: 6,200.
 33. **Status power.** Long blade step-1 light gives bleeding power 23; the fifth consecutive hit applies `st.bleeding` at threshold 100.
 34. **Threat.** 10,000 mHP of melee damage at MEN 50 adds 13,200 threat.
-35. **Downed.** A 17,000 mHP hit on a downed Erratum with Max HP 85,000 removes 360 bleed-out ticks.
+35. **Downed.** A 17,000 mHP hit on a downed Erratum with Max HP 85,000 removes 360 bleed-out ticks; a DoT pulse also shortens it; the downed Erratum crawls at 800 mm/s base and every weapon, guard, reload and mount input is ignored.
 36. **Parry and riposte.** A melee hit inside the parry window deals 0 damage and staggers a standard attacker for 30 ticks (a champion for 15); a long blade riposte has base 36,750; a tower shield never parries.
 37. **Shove.** A shove against a guarding target with 30 stamina empties it and applies `st.staggered`.
 38. **Mounted charge.** A long blade step-1 hit at mount speed 8,000 mm/s has base 18,375; at 7,999 mm/s 14,700.
 39. **Disruptor.** A hit on an `elite.surging` champion applies `st.unraveled` and `st.silenced` for exactly 180 ticks; its 2% per second regeneration is 0 during them and resumes after.
 40. **Friendly fire.** An ally's rifle hit with 10,000 mHP before step 2.15 gives D2 5,000 by default and 10,000 in `mode.ff_full`; the thrower's own frag at its feet applies `FF_AREA_BP` 10000.
-41. **Lag compensation.** An Erratum hitscan with `view_tick = t - 20` tests poses at `t - 16`; an NPC shot tests poses at `t`; a target in `Guarding` at `t` blocks a rewound hit even though it was not guarding at `t - 16`.
+41. **Lag compensation.** An Erratum hitscan with `view_tick = t - 20` tests poses at `t - 16`; an NPC shot tests poses at `t`; a target in `Guarding` at `t` blocks a rewound hit even though it was not guarding at `t - 16`; a target spawned at `t - 3` cannot be hit by a test rewound to `t - 10`. An Erratum projectile fired at tick 1000 with `view_tick` 994 steps against poses 995 to 1000 and then 1000 again (7 steps); an NPC projectile takes 1 step on its spawn tick. The invader (slot 4) is rewound like an Erratum.
 42. **Same-tick order.** Two lethal hits on one target from sources with EntityIds 5 and 7 in one tick: source 5's hit kills; source 7's hit is discarded with no `ev.damage_dealt`.
 43. **Charge rifle.** Release at `c = 30` gives `charge_bp` 7000, speed 70,000 mm/s, spread factor 15000; release at `c = 14` fires nothing and spends no ammunition.
 44. **Severing.** A slash-dominant hit that empties a REF NPC's arm pool (7,500 mHP) severs it and spawns a `cat.body_part`; a blunt-dominant hit without `SEVER` does not.
 45. **Grapple mass.** A grappler of 95,000 g total can grapple a target of 118,750 g and not one of 118,751 g.
 46. **Disconnected.** With C = 6, `input.attack` on a held pistol performs `arch.melee.unarmed` attacks and no shot.
 47. **Determinism.** A 600-tick combat scenario with fixed inputs yields the same `state_hash` on two runs and across a save and load at tick 300.
+48. **Calling duels.** With §5.5's weapons and starting state, 100,000 duels per Calling against `enemy.role.soldier` give mean time to kill 1.84 s (mace) to 2.20 s (dagger) for melee, 1.93 s (pistol) and 2.07 s (auto rifle), all inside 2.0 ± 0.3 s; a fresh-magazine pistol duel gives 1.16 s.
+49. **State machine closure.** For 1,000,000 random input and status sequences, the §4.8 and §6.1 machines make at most one transition per tick (plus C7 interrupts), never leave their state sets, never fire with `cool_mt > 0`, and never start a reload while `cool_mt > 0`.
+50. **Reload gating.** Holding the trigger from tick 0: the pistol fires on ticks 0, 10, …, 110 and next on 192; the launcher on 0 and 150, ignoring a reload press on tick 30; the crossbow on 0 and 81; the charge rifle released at `c = 45` on ticks 45 and 108.
+51. **One action start.** A cast press, a throw press and a trigger press on the same tick start only the cast; the next tick's trigger press fires. An off-hand pistol shot and a main-hand swing may start on the same tick and use `seq` 1 and 0.
+52. **Per-shot draws.** A pistol with `affix.frugal` makes 4 draws at `seq` 0 per shot (jitter, 2 spread, frugal) and 5 with a failure roll due; a jam makes 1.
+53. **Crit draw count.** A parried hit, a hit on a dodging target and a `NO_CRIT` bomb hit each make exactly one `rng.combat` draw at their `16 + i` slot; a sneak hit makes none.
+54. **Unmoored.** Three jams within 600 ticks apply `st.unmoored` for 300 ticks; a Strained (C = 1) pistol then rolls at 500 Bp; a `mfr.redacted.bureau` pistol at C = 4 never rolls and deals × 6000.
+55. **Coated ammunition.** A coat of 12 units on a weapon with 8 rounds loaded and 50 in reserve coats the 8 magazine rounds and 4 reserve units; the first 12 shots carry the coat hook and the 13th does not.
+56. **Mount dismount.** A rider gaining `st.knocked_down`, or whose origin enters a `room.no_mount` room, dismounts on that tick with `ev.dismounted`; a failed summon roll spends the 30 ticks and summons nothing; `ev.folio_exited` despawns the mount.
+57. **Techniques.** `move.quickdraw` outside Weird West (and outside a seam zone including it) cannot start; inside it fires on the 4th draw tick with spread × 5000. `move.qinggong_strike` in Wuxia from a wall-run uses `move_bp` 17000.
+58. **Threat decay.** An entry of 333 loses 1 per think and reaches 0 after 333 thinks, when it is removed; an entry of 10,000 loses 30.
+59. **JSON examples.** Every JSON block in this chapter parses, contains only integers, strings, booleans, arrays and objects, and validates against the chapter's schemas.
 
 ## Invariants annex
 
@@ -1672,7 +1826,7 @@ W! pipeline order := Canon §10.5                               W! attack factor
 W! mechanics := archetype                                      N! skin changes a mechanic field
 W! skill mapping := by archetype                               N! skill by skin
 W! Σ scaling = 12000 ∀ base archetype                          N! Σ scaling > 15000
-W! light stamina ≤ 7/s per full combo cycle                   W! REF DPS ∈ 30 ± 3 ∀ primary archetype
+W! light stamina ≤ 7/s per full combo cycle                   W! REF DPS ∈ 27.0..=30.5 ∀ archetype ∖ {sniper 24.0, launcher 26.3, unarmed 22.2}
 W! recoil, spread, sway ∈ sim ∧ deterministic                  N! hitstop|camera kick|markers → sim
 W! lag comp: poses rewound ≤ 16 ∧ state read at t              N! blocks rewound
 W! jam roll := base component ∧ Canon §5.5 cadence             N! jam roll for dependency-none skins
@@ -1683,4 +1837,10 @@ W! ward gen profile ⇒ generator pool only                      N! profile on s
 W! FF := step 2.15 ∧ self-blast = area FF                      N! friendly hit → threat | XP | Shock of the New
 W! severing deterministic                                      N! Errata head severed
 W! mount HP ∝ H(d) ∧ mount AR ∝ T(ilvl)                        N! mounted ∧ hidden
+W! ≤ 1 action start per actor per tick at seq 0                 W! every non-sneak hit draws 1 crit (parried, negated, NO_CRIT too)
+N! projectile passes a non-destructible opaque cell             N! block damage to a non-destructible cell
+W! time_bp ≥ ceil_div(material_bp × 10000, 14000)               W! one magazine pickup covers ≥ 4 REF kills at 75% (light, heavy, rifle, shell, draw)
+W! explosion falloff defaults ≡ doc 03 §12.4                    W! projectile geometry := doc 03 §5.19 ∧ contact effects := doc 05 hooks
+W! reload start ⇒ cool_mt ≤ 0                                   W! state machines: 1 transition per tick (+ C7 interrupts)
+W! counter effects draw nothing                                 W! failure count → note_contradiction_failure (Canon §5.11)
 ```

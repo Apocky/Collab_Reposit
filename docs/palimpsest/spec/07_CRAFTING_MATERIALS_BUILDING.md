@@ -1,7 +1,7 @@
 # 07 — Crafting, Materials and Building
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.2.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.5.
 
-This chapter owns the one material table (Canon §13.8a), crafting quality, stations, recipes, assembly and parts, durability, mining and gathering, blocks and Errata building, gadgets and cooking. It was also checked against canon-1.4: limited building (Canon §4.3), `skill.fieldcraft` in place of Delving, and Margin trophies. Where 1.2 and 1.4 differ, 1.4 wins (Canon gaps 1).
+This chapter owns the one material table (Canon §13.8a), crafting quality, stations, recipes, assembly and parts, durability, mining and gathering, blocks and Errata building, gadgets and cooking. It carries the canon-1.2 additions assigned to this chapter (every Canon §5.9 material, `cat.part` loose parts and licensed grafts, `cat.seed` farming, `block.ice`, `block.web`, the Delving hooks and Hacking-free gadgets) under canon-1.5, which limits building to placeables (Canon §4.3), replaces Delving with `skill.fieldcraft` and turns the hub plot into Margin trophies (Canon §17.8). Where an older canon text differs, canon-1.5 wins (Canon gaps 1).
 
 ## Imports
 
@@ -16,16 +16,17 @@ This chapter owns the one material table (Canon §13.8a), crafting quality, stat
 | Canon | §7, §9.1, §10.3–§10.5, §11.1, §11.4, §11.6 | skills, severed parts, armor and source magnitude (`material_bp`, `mat_ar_bp`), damage pipeline, statuses, direct application, Editor erasure |
 | Canon | §12.1–§12.3 | surfaces (`block.ice`, `block.web`), `conceal`, spawn light |
 | Canon | §13.1, §13.3, §13.5, §13.7, §13.8, §13.8.1, §13.9 | categories, rarity, quality, enhancement, `P`, `T`, `S`, `src_lvl`, item instance contract |
-| Canon | §16.3, §17.1, §17.5, §18, §19 | kin fae and construct, Colophon, friendly fire, events, namespace ownership |
+| Canon | §5.11, §16.3, §17.1, §17.5, §17.7, §17.9, §18, §19 | Unmoored failure count, kin fae and construct, Colophon, friendly fire, mounted and invader placement limits, events, namespace ownership |
 | Doc 03 | §4.2–§4.7, §12, §13 | `BlockState`, shapes, block registry schema, explosions, `set_block`, mining progress, block damage, placement checks, `timed_revert` |
-| Doc 04 | §1.2, §5.1–§5.3, §7, §8.6, §11.2 | modifier kinds, skill XP events and mastery perks, Artificer talents, body-part butchery, food values |
+| Doc 04 | §1.2, §2 (`self_repair`), §5.1–§5.3, §7, §8.6, §9.3, §11.2 | modifier kinds, skill XP events and mastery perks (Smithing, Tinkering, Fieldcraft, Survival), Artificer talents, construct self-repair, body-part butchery, augment installation, food values |
 | Doc 05 | §3.2, §3.3, §5.2, §7, §11, §12, §15 | archetype stats and `ref_mass_g`, mass-driven timing, `block_bp`, wallpen, ricochet, armor and shield tables, ward generators |
 | Doc 06 | §9, §13, §16 | enchant capacity from arcane affinity, conjured walls, `shape_power`, offering altars |
 | Doc 08 | §5, §8.1, §8.4, §9 | liquids, ingredient schema and tags, `ing.seed_*`, `station.alchemy` apparatus |
+| Doc 09 | §2.3, §2.4, §7.2, §7.3, §7.6, §13.1, §13.4, §13.6 | `lightsrc` classes and light manipulation, acoustic surface classes, the `suppressor` part rule, `noise.gadget.noisemaker`, lock tiers `lock.t1`…`lock.t6` and `door_locked`, device Seize, Security-50 trap recovery |
 | Doc 10 | §2, §7 | crafted items known; `curse.brittle` |
-| Doc 11 | §2.3, §3.6, §5, §13.1, §14, §15, §16 | generation step 7, gadget loot stats, manufacturers and the 22 loose parts, value, stacking, Rewrite, reforging, salvage |
-| Doc 12 | §2.1, §2.2, §2.4, §15 | `hard_bp`, `fixture_level`, genre material pools, craft rooms |
-| Doc 13 | §4.13, §10.6 | navigation links, `break_ticks`, `dig_ticks`, Errata-block erasure |
+| Doc 11 | §2.3, §3.5, §3.6, §5, §12.3, §13.1, §14, §15, §16 | generation step 7, tool and food templates (`item.tool.*`, `item.food.*`), gadget loot stats, manufacturers, classes, tendency letters and the loot placement of loose parts, shop restock, value, stacking, Rewrite, reforging, salvage |
+| Doc 12 | §2.1, §2.2, §2.4, §3.3, §5 (Laws), §9.2, §11.2, §15 | `hard_bp`, `fixture_level`, genre material pools, `node_w`, `law.post_apocalypse.scarcity`, lock doors, resource-node placement, craft rooms |
+| Doc 13 | §4.13, §5.7, §10.6 | navigation links (doors, climb, dig), `break_ticks`, `dig_ticks`, `sabot` and `short_circuit` disabling, Errata-block erasure |
 | Doc 14 | §5, §9.3 | `unlock.loot.recipes_2`, `unlock.loot.gadgets_2`, `run.marg.brittle_kit`, `d_eff` |
 
 ## 1. Conventions, constants and owned state
@@ -41,11 +42,11 @@ This chapter owns the one material table (Canon §13.8a), crafting quality, stat
 | `tooltier.t0` … `tooltier.t5` | tool tiers (§9.1) | 6 |
 | `station.<name>` | crafting stations (§5) | 9 |
 | `recipe.kind.<kind>` | `shaped`, `shapeless`, `assembly`, `process`, `disassembly` | 5 |
-| `recipe.<group>.<name>` | recipes (§6.6, §7.2, §8.5, §11.2, §12.2) | 114 |
-| `part.<slot>.<name>` | loose parts (§7.2) | 28 |
+| `recipe.<group>.<name>` | recipes (§6.6, §7.2, §8.5, §11.2, §12.2) | 127 |
+| `part.<slot>.<name>` | loose parts (§7.2) | 29 |
 | `part.graft.<genre_suffix>.<mfr_name>` | licensed grafts (§7.5) | 38 |
 | `block.<…>`, `block.tag.<tag>` | blocks (§10.1) and block tags | §10.1 |
-| `gadget.<name>` | gadgets and deployables (§11) | 12 |
+| `gadget.<name>` | gadgets and deployables (§11) | 13 |
 
 `q.*` stays the Canon §13.5 core list. This chapter adds no quality ID.
 
@@ -55,7 +56,7 @@ This chapter owns the one material table (Canon §13.8a), crafting quality, stat
 |---|---|---|
 | `LIGHT_DENSITY_MAX` | 1600 kg/m³ | materials at or below it come in 1000 ml units, others in 250 ml units (§2.5) |
 | `UNIT_ML_DENSE`, `UNIT_ML_LIGHT` | 250, 1000 | material unit volumes |
-| `DUR_BASE` | weapons, armor, shields, ward generators, lanterns 10000; tools 5000; reusable gadgets 4000; thrown 40; wands, foci, tomes 0 (no durability) | §8.1 |
+| `DUR_BASE` | weapons, armor, shields, ward generators, lanterns 10000; tools 5000 (pick, toolkit, hacking deck, surgical kit); lockpicks 1 per pick; reusable gadgets 4000; thrown 40; wands, foci, tomes 0 (no durability) | §8.1 |
 | `WEAR_RATE` | 25 durability per second of attack cycle | §8.2 |
 | `CROSS_MFR_BP` | 7500 | part delta on an item of another manufacturer (§7.4) |
 | `GRAFT_BP` | 7500 | licensed graft gimmick strength (§7.5) |
@@ -67,6 +68,10 @@ This chapter owns the one material table (Canon §13.8a), crafting quality, stat
 | `MEAL_BUFF_TICKS` | 18000 | meal buff duration (§12) |
 | `TORCH_TICKS` | 18000 | placed torch burn time |
 | `CROP_STAGE_TICKS` | 1200 | base ticks per crop stage (§9.7) |
+| `CROP_CAP_PER_PLAYER` | 4 | live crops per party slot (§9.7) |
+| `REPAIR_KIT_USE` | 250 | toolkit wear spent by one doc 04 `self_repair` use (§8.2) |
+| `SPARK_BP` | 500 | gadget failure spark, Bp of the user's Max HP as `dmg.shock` (Canon §5.5; §11.1) |
+| `NODE_BLAST_RES` | 1000000 | `blast_res_milli` of every `block.node.*`, above any explosion's block power, so blasts never break nodes (§9.3) |
 
 ### 1.3 Random draws
 
@@ -75,12 +80,13 @@ This chapter owns the one material table (Canon §13.8a), crafting quality, stat
 | Crafting quality and crafted perk seed (§4) | keyed `rng.craft` | actor = crafter, tick = job start tick, seq = output index | 4 per quality-rolling output: 3 `range(141)`, 1 `next_u64`; 0 for outputs that do not roll |
 | Mining bonus unit (§9.3) | keyed `rng.craft` | actor = miner, tick = break tick, seq = 0 | 1 `roll_bp` per node broken |
 | Crop seed return below Survival 25 (§9.7) | keyed `rng.craft` | actor = harvester, tick = harvest tick, seq = 0 | 1 `roll_bp` |
-| Gadget Contradiction failure (§11.1) | keyed `rng.combat` | actor = deployer, tick, seq | 1 `roll_bp` per deploy while failure chance > 0 |
-| Turret and drone shots (§11.4) | keyed `rng.combat` | actor = gadget EntityId, tick, seq = shot index that tick | 2 spread + 1 crit per projectile hit, as Canon §3.4 |
+| Gadget Contradiction failure (§11.1) | keyed `rng.combat` | actor = deployer, tick = the deploy action's start tick, seq 0 (doc 05's one action start per tick, so the key never collides with a shot) | 1 `roll_bp` per deploy while failure chance > 0, rolled when the channel completes |
+| Turret, drone and coil shots (§11.4) | keyed `rng.combat` | actor = gadget EntityId, tick = firing tick, seq 0 (one shot per gadget per tick) | 2 spread per projectile and 1 crit per hit, as Canon §3.4; the coil and the flame turret draw 1 crit per target hit from the same generator, targets in ascending EntityId |
+| Vein kind and size (§9.4) | `rng.worldgen` (doc 12's sequential stream, in doc 12's placement order) | — | 1 `weighted` + 1 `range_incl(2, 4)` per mineral vein |
 | Salvage loose part (§8.5) | keyed `rng.loot` | doc 11 §16.4 | doc 11 |
 | Forge reforge offers (§8.6) | `rng.offer.p<slot>` | doc 11 §16.3 | doc 11 |
 
-Every other mechanic in this chapter is deterministic.
+Every other mechanic in this chapter is deterministic. The gadget spark (§11.1) draws nothing beyond its failure roll.
 
 ### 1.4 Owned simulation state (saved, Canon §2.5)
 
@@ -89,12 +95,13 @@ Every other mechanic in this chapter is deterministic.
 | `known_recipes: BTreeSet<Id32>` | per Erratum, run | learned recipes with `learn: 1` (§6.5) |
 | `craft_job: Option<CraftJob>` | per Erratum | the active channel (§6.4) |
 | `meal_buff: Option<(Id32 dish, Tick expiry)>` | per Erratum | §12.1 |
-| `placed_meta: BTreeMap<Gidx, PlacedMeta>` | Folio | owner slot, `hp`, `hp_max`, expiry tick, patron, span, conjured flag (§10.4) |
+| `placed_meta: BTreeMap<Gidx, PlacedMeta>` | Folio | owner slot, `hp`, `hp_max`, expiry tick (or remaining lit ticks while a torch is snuffed), patron, span, `trap_bp`, conjured flag (§10.3, §10.4) |
 | `stations: BTreeMap<Gidx, StationState>` | Folio | tier, fuel ticks, job queue, output slots (§5.3) |
 | `crops: BTreeMap<Gidx, CropState>` | Folio | seed, stage, next stage tick (§9.7) |
-| gadget entities | Folio | §11.3 |
+| gadget entities and props | Folio | `cooldown`, `target`, `disabled_until`, expiry (§11.3, §11.4) |
+| gadget item state | per item, run | `charges`, `progress`, `target` (§11.3) |
 
-Folio-scoped state is discarded on `ev.folio_exited`. Doc 07 runs one system, `sys.crafting` (period 1, phase 0), placed by doc 03 after `sys.actions` and before `sys.block_updates`; it advances craft channels, station queues, crops, torch expiry and gadget timers, each in ascending `Gidx` or `EntityId`.
+Folio-scoped state is discarded on `ev.folio_exited`. Doc 07 runs one system, `sys.crafting` (period 1, phase 0), placed by doc 03 after `sys.actions` and before `sys.block_updates`; it advances craft channels, station queues, crops, torch expiry, gadget firing (§11.4), gadget recharge and gadget timers, each in ascending `Gidx`, `EntityId` or item `uid`.
 
 ## 2. Materials
 
@@ -107,14 +114,14 @@ Folio-scoped state is discarded on `ev.folio_exited`. Doc 07 runs one system, `s
   "flammability_bp": 0, "melt_decic": 15380, "conceal": 15, "pen_cost": 300,
   "tier": 1, "min_d": 1, "max_d": 20,
   "value_per_kg": 3, "value_bp": 10000, "dmg_bp": 10000, "ar_bp": 10000,
-  "arcane_affinity": 2, "tech_affinity": 5,
+  "arcane_affinity": 2, "tech_affinity": 5, "acoustic": "noise.surface.metal",
   "genres": ["genre.weird_west"], "universal": 1,
   "roles": ["mat.role.blade", "mat.role.head", "mat.role.frame", "mat.role.plate", "mat.role.block"],
   "tags": ["mat.tag.metal", "mat.tag.ricochet", "mat.tag.fae_bane"]
 }
 ```
 
-Validation: `dmg_bp` and `ar_bp` in `7000..=14000`; `mat.iron` has `dmg_bp = ar_bp = value_bp = 10000`; `hardness`, `toughness`, `sharpness`, `conductivity`, `arcane_affinity`, `tech_affinity` in `0..=10`; `conceal` in `0..=15`; `melt_decic` absent means the material never melts. Every material has dependency none (Canon §5.3 raw materials).
+Validation: `dmg_bp` and `ar_bp` in `7000..=14000`; `mat.iron` has `dmg_bp = ar_bp = value_bp = 10000`; `unit_ml`, `unit_g` and `unit_lucre` equal the §2.5 formulas; the tag `flammable` is present exactly when `flammability_bp >= 500`; every Canon §5.9 material lists each genre whose §5.9 row names it; `hardness`, `toughness`, `sharpness`, `conductivity`, `arcane_affinity`, `tech_affinity` in `0..=10`; `conceal` in `0..=15`; `melt_decic` absent means the material never melts. Every material has dependency none (Canon §5.3 raw materials).
 
 Properties: **density** (kg/m³, equal to g/l) gives mass; **hardness** gives mining time, block hardness and tool tier; **toughness** gives durability, blast resistance and armor poise; **sharpness** gives bleed power on edged weapons; **conductivity** gives heat conductance and armor shock resistance; **arcane affinity** gives enchant capacity (doc 06 §9.1) and casting cost; **tech affinity** gives reload and gadget recharge; **flammability** feeds fire (doc 03 §8); **melt point** gates smelting stations; **value per kg** prices material units; **tier** and **band** gate loot and stations.
 
@@ -124,7 +131,7 @@ All 69 materials, one row each, with every property. The block is CSV so tools c
 
 ```csv
 id,density,unit_ml,unit_g,hard,tough,sharp,cond,flam_bp,melt_decic,conceal,pen_cost,tier,band,lucre_kg,unit_lucre,value_bp,dmg_bp,ar_bp,arc,tech,genres,roles,tags
-copper,8960,250,2240,3,5,3,10,0,10850,15,250,1,1..=20,4,8,8000,8000,8000,4,6,*,bl+hd+fr+pl,metal+ricochet
+copper,8960,250,2240,3,5,3,10,0,10850,15,250,1,1..=20,4,8,8000,8000,8000,4,6,SP+*,bl+hd+fr+pl,metal+ricochet
 tin,7290,250,1822,2,3,1,6,0,2320,15,200,1,1..=20,4,7,7000,7000,7000,2,4,*,-,metal+ricochet+alloying
 zinc,7140,250,1785,3,3,1,6,0,4200,15,210,1,1..=20,3,5,7000,7000,7000,1,4,*,-,metal+ricochet+alloying
 bronze,8800,250,2200,4,6,5,6,0,9500,15,260,1,1..=20,3,6,9000,9000,9000,4,4,WX+MA,bl+hd+fr+pl,metal+ricochet
@@ -169,7 +176,7 @@ rad_glass,2700,250,675,3,1,8,2,0,14000,1,3,2,4..,10,6,10000,11500,7000,1,6,PA,bl
 psi_crystal,2650,250,662,7,3,7,4,0,17000,2,160,4,14..,150,99,36000,12500,9000,10,8,SO,bl+fo,brittle+arcane_reagent+luminous
 bone,1900,250,475,3,4,4,1,0,-,15,90,1,1..=20,2,1,7000,8500,8500,5,1,GH+*,bl+hd+li,ricochet
 dragonbone,1500,1000,1500,8,8,7,1,0,-,15,300,4,14..,70,105,36000,13500,13500,8,1,MF,bl+hd+li+pl,arcane_reagent
-chitin,1300,1000,1300,4,5,5,1,500,-,15,80,2,4..,8,10,10000,10000,11000,3,2,CH,bl+li+pl+so,acid_soluble
+chitin,1300,1000,1300,4,5,5,1,500,-,15,80,2,4..,8,10,10000,10000,11000,3,2,CH,bl+li+pl+so,flammable+acid_soluble
 hide,1100,1000,1100,1,5,0,1,2000,-,15,25,0,1..=8,4,4,6000,7000,8500,2,1,*,so,flammable+acid_soluble
 leather,860,1000,860,2,5,0,1,1500,-,15,30,1,1..=20,8,6,8000,9000,10000,3,2,WW+*,so+ha,flammable+acid_soluble
 linen,1500,1000,1500,1,3,0,1,6000,-,15,10,0,1..=8,3,4,6000,7000,10000,3,1,*,so,fabric+flammable+acid_soluble
@@ -178,15 +185,15 @@ silk,1300,1000,1300,1,6,0,1,5000,-,15,10,2,4..,12,15,16000,7500,11000,6,2,WX,so+
 rubber,1100,1000,1100,2,6,0,0,4000,-,15,40,1,1..=20,6,6,8000,7000,9500,0,6,PA,so+ha,flammable+fuel
 polymer,1200,1000,1200,3,6,1,0,3000,2500,15,60,2,4..,8,9,10000,9000,10000,0,9,CP+SO+RD+PA,fr+ha+so+bk,flammable+fuel
 carbon_fiber,1600,1000,1600,6,8,4,7,1000,-,15,200,3,9..,25,40,18000,11500,12500,1,10,CP,fr+ha+li+pl,flammable
-nanoweave,1000,1000,1000,4,9,0,1,500,-,15,150,4,14..,100,100,30000,12000,13000,2,10,CP,so,fabric
+nanoweave,1000,1000,1000,4,9,0,1,500,-,15,150,4,14..,100,100,30000,12000,13000,2,10,CP,so,fabric+flammable
 coral,1400,1000,1400,3,3,5,1,0,-,15,70,2,4..,10,14,12000,9500,9000,6,1,CH,bl+hd+fo,stone
-flesh,1060,1000,1060,1,2,0,2,500,-,15,15,0,1..,1,1,2000,7000,7000,1,0,*,-,edible+fat+acid_soluble+terrain
+flesh,1060,1000,1060,1,2,0,2,500,-,15,15,0,1..,1,1,2000,7000,7000,1,0,*,-,edible+fat+flammable+acid_soluble+terrain
 web,1300,1000,1300,1,3,0,0,9000,-,3,1,0,1..,6,7,6000,7000,7000,4,0,*,so,flammable+acid_soluble+terrain
 paper,800,1000,800,1,1,0,0,9000,-,15,8,0,1..=8,2,1,5000,7000,7000,6,1,RD+UW+*,so+fo,flammable+fuel+acid_soluble
-vellum,900,1000,900,5,7,2,0,2000,-,15,200,5,20..,150,135,50000,13000,13000,10,3,UW+UT,so+fo+pl,arcane_reagent
-dreamstuff,400,1000,400,4,6,6,3,1000,-,6,100,5,20..,350,140,50000,13000,12500,10,5,ON,bl+hd+fr+pl+so+fo,arcane_reagent+luminous
+vellum,900,1000,900,5,7,2,0,2000,-,15,200,5,20..,150,135,50000,13000,13000,10,3,UW+UT,so+fo+pl,flammable+arcane_reagent
+dreamstuff,400,1000,400,4,6,6,3,1000,-,6,100,5,20..,350,140,50000,13000,12500,10,5,ON,bl+hd+fr+pl+so+fo,flammable+arcane_reagent+luminous
 air,1,1000,1,0,0,0,0,0,-,0,0,0,1..,0,0,0,7000,7000,0,0,*,-,nonsolid+terrain
-void,99999,250,24999,10,10,0,0,0,-,15,inf,0,1..,0,0,0,7000,7000,0,0,*,-,unbreakable+terrain
+void,99999,250,24999,10,10,0,0,0,-,15,-1,0,1..,0,0,0,7000,7000,0,0,*,-,unbreakable+terrain
 soil,1500,1000,1500,1,2,0,1,0,-,15,60,0,1..,0,0,0,7000,7000,1,0,*,bk,absorbent+tillable+terrain
 sand,1600,1000,1600,1,1,0,1,0,17000,15,50,0,1..,0,0,0,7000,7000,0,1,*,bk,absorbent+terrain
 ice,917,1000,917,2,2,3,2,0,10,2,20,0,1..,0,0,0,9000,7500,2,0,*,bl,brittle+ricochet+terrain
@@ -197,7 +204,7 @@ slag,2800,250,700,4,2,1,3,0,13000,15,140,0,1..,0,0,1000,8000,8000,0,2,*,bk,stone
 
 ### 2.3 Column legend
 
-`density` kg/m³; `unit_ml` and `unit_g` are the unit volume and mass (§2.5); `hard`, `tough`, `sharp`, `cond` are hardness, toughness, sharpness and conductivity `0..=10`; `flam_bp` flammability; `melt_decic` melt point (`-` never melts); `conceal` Canon §12.2; `pen_cost` doc 05 §7 wall penetration (`inf` for `mat.void`); `tier` 0 to 5; `band` is `min_d..=max_d` for loot and node placement (`min_d..` has no upper bound); `lucre_kg` value per kg and `unit_lucre` unit value, both at `P(1)`; `value_bp` doc 10 and doc 11 value factor; `dmg_bp` and `ar_bp` Canon §10.4 factors; `arc` and `tech` arcane and tech affinity `0..=10`.
+`density` kg/m³; `unit_ml` and `unit_g` are the unit volume and mass (§2.5); `hard`, `tough`, `sharp`, `cond` are hardness, toughness, sharpness and conductivity `0..=10`; `flam_bp` flammability; `melt_decic` melt point (`-` never melts); `conceal` Canon §12.2; `pen_cost` doc 05 §7 wall penetration (`-1` for `mat.void` means impenetrable; doc 05 treats any negative cost as a stop); `tier` 0 to 5; `band` is `min_d..=max_d` for loot (both ends) and node placement (lower end only, §9.4) (`min_d..` has no upper bound); `lucre_kg` value per kg and `unit_lucre` unit value, both at `P(1)`; `value_bp` doc 10 and doc 11 value factor; `dmg_bp` and `ar_bp` Canon §10.4 factors; `arc` and `tech` arcane and tech affinity `0..=10`.
 
 Genres: MF mythic_fantasy, GH gothic_horror, CH cosmic_horror, SO space_opera, CP cyberpunk, PA post_apocalypse, WW weird_west, HN hardboiled_noir, WX wuxia, SP steampunk, FT fairy_tale, MA mythic_antiquity, ON oneiric, RD redacted, UW unwritten, UT ur_text; `*` marks a universal material (§2.7). Roles: bl blade, hd head, ha haft, li limb, fr frame, pl plate, so soft, fo focus, bk block (`mat.role.<name>`). Tags are `mat.tag.<name>`.
 
@@ -219,6 +226,25 @@ Roles say which item component a material may form. Reference materials sit at 1
 | `edible`, `fat` | `mat.flesh` is raw meat (doc 04 §11.2) and an alchemy fat |
 | `absorbent`, `acid_soluble`, `tillable` | doc 08 §2 and §5; planting (§9.7) |
 | `terrain`, `nonsolid`, `unbreakable` | never loot, never a crafted primary; `air` is non-solid; `void` is unbreakable |
+
+**Acoustic class** (doc 09 §7.2 surface and break noise). Every material has exactly one `acoustic` value, written here so doc 09 never has to guess; doc 09's table agrees on every material it names.
+
+| `acoustic` | Materials |
+|---|---|
+| `noise.surface.metal` | copper, tin, zinc, bronze, iron, cold_iron, scrap_iron, cast_iron, steel, brass, silver, hexed_silver, gold, chrome, titanium, moonsilver, plasteel, orichalcum, star_metal, aetherium, redacted_alloy, gold_leaf |
+| `noise.surface.glass` | glass, rad_glass, psi_crystal |
+| `noise.surface.stone` | granite, sandstone, slate, basalt, marble, obsidian, jade, brick, concrete, terracotta, coral, slag, void |
+| `noise.surface.ice` | ice |
+| `noise.surface.bone` | bone, dragonbone, chitin |
+| `noise.surface.wood` | pine, birch, cedar, bamboo, oak, thornwood, blackwood, elderwood |
+| `noise.surface.synthetic` | polymer, carbon_fiber |
+| `noise.surface.soft` | hide, leather, rubber, flesh |
+| `noise.surface.cloth` | linen, tweed, silk, nanoweave, dreamstuff, web |
+| `noise.surface.paper` | paper, vellum |
+| `noise.surface.foliage` | leaves |
+| `noise.surface.sand` | sand |
+| `noise.surface.dirt` | soil, coal |
+| none | air |
 
 ### 2.5 Units, value and block defaults
 
@@ -244,6 +270,10 @@ Block registry defaults that doc 03 §4.5 marks "mat":
 | `sound_atten_ddb` | `clamp(100 + floor_div(density, 10), 100, 600)` |
 | `conceal` | `conceal` |
 | `light_emit` | 7 if `luminous`, else 0 |
+| `tool_tier` | `tooltier.t0`, except resource nodes, which use their §9.3 `Req` |
+| `acoustic` | the material's acoustic class (§2.4) |
+
+Doc 03 §4.5 loader rule 2 overrides three of these for every block without `block.tag.destructible`: `flammability_bp` 0, `burn_runs` 0 and no `melt_*` fields, so a fixed-terrain wall of `mat.oak` or `mat.paper` never burns. Block records may override any default; every override is listed in §10.1.
 
 ### 2.6 Raw ores
 
@@ -269,7 +299,7 @@ fn pick_material(g: GenreId, tmpl: &Template, ilvl: i32, rng: &mut Rng) -> MatId
 }
 ```
 
-The secondary component never draws: it is the highest-weight entry of the same procedure for the secondary role, ties to the lower ID. Example, Weird West frame at ilvl 7: `[copper 6000, hexed_silver 9000, iron 18000, steel 3000]`; the haft pool is `[birch 2000, leather 18000, oak 6000, pine 2000]`, so the secondary is `mat.leather`. In Marginalia (`ilvl >= 26`) every band test passes for materials with `max_d = 0`.
+The secondary component never draws: it is the highest-weight entry of the same procedure for the secondary role, ties to the lower ID. Example, Weird West frame at ilvl 7: `[copper 6000, hexed_silver 9000, iron 18000, steel 3000]`; the haft pool is `[birch 2000, leather 18000, oak 6000, pine 2000]`, so the secondary is `mat.leather`. In Marginalia (`ilvl >= 26`) every band test passes for materials with `max_d = 0`. Doc 11 §20's two-entry Weird West pool (`hexed_silver` 1500, `iron` 7000) is an illustration only; the generator always runs `pick_material` as written here.
 
 ### 2.8 Material equivalence for Rewrite
 
@@ -298,47 +328,49 @@ Doc 12 §2.4 named pool IDs before Canon §5.9 existed. Canon §5.9 wins. Doc 12
 
 ### 3.1 Component volumes
 
-Each archetype has a primary and an optional secondary component. Volumes give the doc 05 `ref_mass_g` with reference materials. `Cells` is the unit count a recipe consumes (§6.6).
+Each archetype has a primary and an optional secondary component. Volumes are chosen so that the archetype built from its reference materials (§2.4) weighs exactly doc 05's `ref_mass_g`, which makes doc 05 §3.3's `mass_ratio_bp` exactly 10000 for a reference-material item. `Cells` is the unit count a recipe consumes (§6.6); `cells × unit_ml` of the reference material always covers the volume.
 
 | Archetype | Primary role, ml | Secondary role, ml | Mass at reference (g) | Cells |
 |---|---|---|---|---|
-| `arch.melee.dagger` | blade 47 | haft 40 | 399 | 1 + 1 |
-| `arch.melee.blade_short` | blade 109 | haft 60 | 902 | 1 + 1 |
-| `arch.melee.blade_long` | blade 170 | haft 80 | 1397 | 2 + 1 |
+| `arch.melee.dagger` | blade 47 | haft 42 | 400 | 1 + 1 |
+| `arch.melee.blade_short` | blade 109 | haft 58 | 900 | 1 + 1 |
+| `arch.melee.blade_long` | blade 170 | haft 84 | 1400 | 2 + 1 |
 | `arch.melee.blade_great` | blade 367 | haft 150 | 3000 | 3 + 1 |
-| `arch.melee.axe` | blade 133 | haft 600 | 1496 | 1 + 1 |
-| `arch.melee.axe_great` | blade 292 | haft 1200 | 3198 | 2 + 2 |
-| `arch.melee.mace` | head 181 | haft 500 | 1799 | 1 + 2 |
-| `arch.melee.warhammer` | head 375 | haft 1400 | 4001 | 4 + 1 |
-| `arch.melee.spear` | blade 57 | haft 1800 | 1798 | 1 + 2 |
-| `arch.melee.halberd` | blade 140 | haft 2800 | 3201 | 2 + 2 |
+| `arch.melee.axe` | blade 133 | haft 606 | 1500 | 1 + 1 |
+| `arch.melee.axe_great` | blade 292 | haft 1203 | 3200 | 2 + 2 |
+| `arch.melee.mace` | head 181 | haft 502 | 1800 | 1 + 2 |
+| `arch.melee.warhammer` | head 413 | haft 1000 | 4000 | 4 + 1 |
+| `arch.melee.spear` | blade 57 | haft 1803 | 1800 | 1 + 2 |
+| `arch.melee.halberd` | blade 217 | haft 1991 | 3200 | 2 + 2 |
 | `arch.melee.quarterstaff` | haft 2400 | — | 1800 | 3 |
-| `arch.melee.fist` | head 60 | soft 150 | 601 | 1 + 1 |
-| `arch.melee.whip` | soft 683 | haft 150 | 699 | 2 + 1 |
-| `arch.melee.chain` | head 269 | soft 100 | 2203 | 2 + 1 |
-| `arch.ranged.pistol` | frame 118 | haft 100 | 1003 | 1 + 1 |
-| `arch.ranged.pistol_heavy` | frame 189 | haft 150 | 1599 | 1 + 1 |
-| `arch.ranged.smg` | frame 327 | haft 300 | 2798 | 2 + 1 |
-| `arch.ranged.rifle_auto` | frame 343 | haft 1200 | 3599 | 2 + 2 |
-| `arch.ranged.rifle_marksman` | frame 381 | haft 1600 | 4198 | 2 + 2 |
+| `arch.melee.fist` | head 60 | soft 149 | 600 | 1 + 1 |
+| `arch.melee.whip` | soft 683 | haft 151 | 700 | 2 + 1 |
+| `arch.melee.chain` | head 269 | soft 97 | 2200 | 2 + 1 |
+| `arch.ranged.pistol` | frame 118 | haft 97 | 1000 | 1 + 1 |
+| `arch.ranged.pistol_heavy` | frame 189 | haft 151 | 1600 | 1 + 1 |
+| `arch.ranged.smg` | frame 327 | haft 303 | 2800 | 2 + 1 |
+| `arch.ranged.rifle_auto` | frame 343 | haft 1202 | 3600 | 2 + 2 |
+| `arch.ranged.rifle_marksman` | frame 381 | haft 1603 | 4200 | 2 + 2 |
 | `arch.ranged.shotgun` | frame 340 | haft 1500 | 3800 | 2 + 2 |
-| `arch.ranged.sniper` | frame 635 | haft 2000 | 6497 | 3 + 2 |
-| `arch.ranged.launcher` | frame 794 | haft 1000 | 6998 | 4 + 1 |
-| `arch.ranged.beam` | frame 553 | focus 200 | 4502 | 3 + 1 |
-| `arch.ranged.charge_rifle` | limb 1966 | soft 30 | 1499 | 2 + 1 |
+| `arch.ranged.sniper` | frame 636 | haft 1994 | 6500 | 3 + 2 |
+| `arch.ranged.launcher` | frame 795 | haft 993 | 7000 | 4 + 1 |
+| `arch.ranged.beam` | frame 553 | focus 198 | 4500 | 3 + 1 |
+| `arch.ranged.charge_rifle` | limb 1967 | soft 30 | 1500 | 2 + 1 |
 | `arch.ranged.crossbow` | limb 1567 | haft 3100 | 3500 | 2 + 4 |
 | `arch.ranged.thrown` | blade 38 | — | 299 | 2 per 3 |
 | `arch.ranged.staff` | haft 2000 | focus 40 | 1530 | 2 + 1 |
 | `arch.ranged.wand` | focus 400 | — | 300 | 1 |
-| `arch.offhand.shield_buckler` / `_heater` / `_tower` | plate 172 / 480 / 1105 | haft 200 / 300 / 400 | 1503 / 4002 / 8996 | 1+1 / 2+1 / 5+1 |
-| `arch.offhand.lantern` | frame 152 | — | 1196 | 1 + 1 glass |
+| `arch.offhand.shield_buckler` / `_heater` / `_tower` | plate 172 / 480 / 1105 | haft 197 / 298 / 406 | 1500 / 4000 / 9000 | 1+1 / 2+1 / 5+1 |
+| `arch.offhand.lantern` | frame 151 | focus 5 (`mat.glass`) | 1200 | 1 + 1 glass |
 | `arch.offhand.focus` | focus 800 | — | 600 | 1 |
-| `arch.offhand.tome` | soft 959 | focus 100 | 899 | 1 + 1 |
-| `arch.ward.aegis` / `kinetic` / `reflector` / `bulwark` | frame 34 / 147 / 96 / 372 | focus 40 / 60 / 60 / 100 | 297 / 1201 / 800 / 3002 | 1+1 / 1+1 / 1+1 / 2+1 |
-| `item.tool.pick` | head 203 | haft 1200 | 2497 | 3 + 2 |
-| `item.tool.toolkit` | frame 30 | haft 80 | 296 | 1 + 1 |
+| `arch.offhand.tome` | soft 960 | focus 100 | 900 | 1 + 1 |
+| `arch.ward.aegis` / `kinetic` / `reflector` / `bulwark` | frame 34 / 147 / 96 / 372 | focus 44 / 59 / 60 / 98 | 300 / 1200 / 800 / 3000 | 1+1 / 1+1 / 1+1 / 2+1 |
+| `item.tool.pick` | head 203 | haft 1204 | 2500 | 3 + 2 |
+| `item.tool.toolkit` | frame 150 | haft 427 | 1500 | 1 + 1 |
 
-Armor has one component. Its volume is `ceil_div(ref_mass_g × 1000, ref_density)` with doc 05 Table 11.1b masses and reference materials cloth `mat.linen`, light `mat.leather`, medium and heavy `mat.iron`. Cells (head, body, hands, legs, feet): cloth 1/1/1/1/1, light 1/5/1/3/2, medium 1/5/1/3/1, heavy 2/8/1/4/2. Example: medium body is `ceil_div(8000000, 7870) = 1017` ml.
+`arch.ranged.thrown` is the one archetype whose reference mass misses doc 05's 300 g, because no whole-millilitre iron blade weighs 300 g (38 ml is 299 g, 39 ml is 306 g). Doc 05 §3.3 then gives `mass_ratio_bp` 9966, `time_bp` 9989 and `stamina_bp = impact_bp = 9983`; `time_bp` 9989 leaves every tick count up to 454 unchanged, so thrown timing is exact. `item.tool.pick` and `item.tool.toolkit` match doc 11 §3.5's template masses.
+
+Armor has one component. Its volume is `ceil_div(ref_mass_g × 1000, ref_density)` with doc 05 Table 11.1b masses and reference materials cloth `mat.linen`, light `mat.leather`, medium and heavy `mat.iron`. Cells (head, body, hands, legs, feet): cloth 1/1/1/1/1, light 1/5/1/3/2, medium 1/5/1/3/1, heavy 2/8/1/4/2. Example: medium body is `ceil_div(8000000, 7870) = 1017` ml and weighs 8,003 g. Rounding up puts a reference armor piece at most 7 g above Table 11.1b (medium hands, 1,007 g); armor mass feeds only encumbrance (doc 04 §11.6) and never doc 05 §3.3 timing.
 
 ```
 mass_g = Σ components floor_div(vol_ml × density(material), 1000)
@@ -352,6 +384,7 @@ mass_g = Σ components floor_div(vol_ml × density(material), 1000)
 4. **Banes.** `silvered` primaries add `DmgAdd +2000` against targets tagged undead or fiend. `fae_bane` primaries add `DmgAdd +2500` against NPCs tagged fae; Erratum `kin.fae` targets use Canon §16.3 instead.
 5. **Material tendencies**, applied with the manufacturer tendencies (§7.3): casting items (`staff`, `wand`, `focus`, `tome`, `beam`) take aether cost `C = -150 × (arcane_affinity(primary or focus) - 4)`; firearms and gadgets take reload `L = -100 × (tech_affinity(primary) - 5)` and gadget recharge rate `+200 × (tech_affinity - 5)`.
 6. **Enchant capacity** uses the primary's `arcane_affinity` (doc 06 §9.1).
+7. **Crafter material bonus.** A weapon crafted by a crafter with Smithing 100 stores `mat_bonus_bp = 500` at Done (doc 04 Smithing 100), and its Canon §10.4 factor becomes `material_bp = min(14000, dmg_bp(primary) + mat_bonus_bp)`. The bonus is a stored instance field, so the item keeps it after the crafter's skill changes, and Recast (§8.6) recomputes it from the recaster. The 14000 cap keeps the material slot of `ITEM_MULT_MAX` (Canon §13.8) intact.
 
 ### 3.3 Armor and shields
 
@@ -359,6 +392,7 @@ mass_g = Σ components floor_div(vol_ml × density(material), 1000)
 2. **Poise.** `poise' = mul_bp(poise, 10000 + 400 × (toughness - ref_toughness))`, with `ref_toughness` 3 (cloth), 5 (light), 6 (medium, heavy, shields).
 3. **Resistances per piece**, added before the cap (Canon §10.2): conductivity ≥ 8 gives `dmg.shock` −200; conductivity ≤ 1 with density ≤ 1600 gives `dmg.shock` +200; flammability ≥ 5000 gives `dmg.fire` −200; `silvered` gives `dmg.umbral` +300.
 4. **Mass** is `vol × density`; doc 04 §11.6 counts it.
+5. **Crafter material bonus.** Crafted armor and shields store `mat_bonus_bp` = 500 if the crafter has Smithing 100, plus 500 if the crafter has the Artificer talent `reinforced` (both doc 04); `mat_ar_bp = min(14000, ar_bp(primary) + mat_bonus_bp)`. Example: steel heavy armor from a Smithing-100 crafter with `reinforced` has `mat_ar_bp = min(14000, 11000 + 1000) = 12000`.
 
 Example: a medium body piece in `mat.bronze`, ilvl 4, Common, Normal, +0: torso AR `20 → × T(4) = 23 → 23 → 23 → 23 → × 9000 = 20`; mass `floor_div(1017 × 8800, 1000) = 8949` g; poise 6 (bronze toughness 6).
 
@@ -366,7 +400,7 @@ Example: a medium body piece in `mat.bronze`, ilvl 4, Common, Normal, +0: torso 
 
 ### 4.1 Which outputs roll
 
-Weapons, armor, off-hands, ward generators, tools, gadgets and parts roll quality. Material units, placeables, food and other consumables are `q.normal` and draw nothing.
+Weapons, armor, off-hands, ward generators, tools, gadgets and parts roll quality. Material units, placeables, ammunition, food and other consumables are `q.normal` and draw nothing. An output entry with `count > 1` of a quality-rolling template (3 thrown weapons, 5 lockpicks, 2 or 3 mines) rolls once for the whole stack, so its units stack; an `output index` (the `seq` of §1.3) counts output entries, not units.
 
 ### 4.2 Roll
 
@@ -379,7 +413,7 @@ fn craft_quality(c: &Crafter, st: &Station, r: &Recipe, mat_tier: u8, helpers: &
         + 30 * (st.tier as i32 - 1)                                 // station.hand counts as tier 1
         + TOOL_TERM[c.toolkit_tier() as usize]
         + 15 * min(2, st.tier as i32 - mat_tier as i32)             // st.tier >= mat_tier is required
-        + helpers.iter().take(2).map(|h| min(25, floor_div(*h, 4))).sum::<i32>()   // two highest helper skills
+        + helpers.iter().take(2).map(|h| min(25, floor_div(*h, 4))).sum::<i32>()   // helpers sorted descending: two highest skills
         + clamp(c.sub(r.skill.governing()) - 40, -20, 40);
     let noise = rng.bell3(141) as i32 - 210;                        // 3 draws, mean 0, s.d. 70.5
     let score = center + noise;
@@ -414,9 +448,9 @@ Percentages, before the Smithing 50 and talent shifts. Peerless needs skill 75 a
 
 ### 4.4 Crafted item fields
 
-`rarity = rar.common`; `buc = buc.uncursed`; `ilvl` = current Folio index (`d_eff` in Abridged mode), which is also its `src_lvl` (Canon §13.8.1); `origin_genre` = the local genre at the crafter, or the Folio's genre in a seam zone; knowledge fully identified (doc 10); `finder_slot` = crafter's slot; `crafted = 1`; manufacturer per §7.4; `gear_tier` per doc 11. Weapons get perk columns 1 to `n`, where `n` is 1 at Normal or below, 2 at Good or Excellent, 3 at Masterwork, 4 at Peerless; the fourth `rng.craft` draw (`next_u64`) seeds doc 11 `roll_perks(sub(seed, "loot.perk"))`, and column 5 holds the genre trait. Other outputs ignore the fourth draw, so the count stays 4.
+`rarity = rar.common`; `buc = buc.uncursed`; `ilvl` = current Folio index (`d_eff` in Abridged mode), which is also its `src_lvl` (Canon §13.8.1); `origin_genre` = the local genre at the crafter, or the Folio's genre in a seam zone; knowledge fully identified (doc 10); `finder_slot` = crafter's slot; `crafted = 1`; manufacturer per §7.4; `gear_tier` per doc 11. Weapons get perk columns 1 to `n`, where `n` is 1 at Normal or below, 2 at Good or Excellent, 3 at Masterwork, 4 at Peerless; with the Artificer talent `modular` (doc 04) each column offers one more option, at most 3; the fourth `rng.craft` draw (`next_u64`) seeds doc 11 `roll_perks(sub(seed, "loot.perk"))`, and column 5 holds the genre trait. Other outputs ignore the fourth draw, so the count stays 4.
 
-Skill XP per completed craft (doc 04 §5.2): `1000 × input_units + 2000 × recipe_tier`, × 15000 if quality ≥ Excellent. Process recipes have `recipe_tier` 0.
+Skill XP per completed craft (doc 04 §5.2): `1000 × input_units + 2000 × recipe_tier`, × 15000 if quality ≥ Excellent. Process recipes have `recipe_tier` 0. Consumable gadget recipes completed at Tinkering ≥ 25 yield one more unit, and reusable gadgets hold one more charge while their owner has Tinkering ≥ 25 (doc 04 Tinkering 25; §11.1 rule 9). Ammunition crafted by an Erratum with the Artificer talent `smart_rounds` is flagged `smart` (§6.6).
 
 ## 5. Stations
 
@@ -426,15 +460,15 @@ Skill XP per completed craft (doc 04 §5.2): `1000 × input_units + 2000 × reci
 |---|---|---|---|---|---|
 | `station.hand` | 3×3 grid; recipes marked hand; quality cap Normal | — | always available | — | no |
 | `station.campfire` | cooking tier 1; smelting with melt cap 12000; charcoal | 1 | yes, `block.campfire` (a light source, Canon §4.3) | `room.campfire` service | yes |
-| `station.workbench` | 3×3 grid; assembly; fabrication; Tinkering repair; salvage; graft extraction; implants (doc 04 Tinkering 75) | 1–5 | no | `room.workshop`, Colophon | no |
+| `station.workbench` | 3×3 grid; assembly; fabrication; ammunition; Tinkering repair; salvage; graft extraction; implant crafting (doc 04 Tinkering 75); the doc 04 §9.3 augment station (300-tick install) | 1–5 | no | `room.workshop`, Colophon | no |
 | `station.forge` | smelting and alloying with melt cap; 3×3 smithing grid; shields; Smithing repair; forge reforge; recast | 1–5 | no | `room.forge` | yes |
 | `station.loom` | tanning, weaving, cloth and light armor | 1–5 | no | `room.workshop`, `room.stable` | no |
 | `station.kitchen` | every cooking recipe | 1–5 | no | `room.larder` | yes |
-| `station.alchemy` | doc 08 brewing with installed apparatus | 1–5 | no | `room.alchemy_lab` | no |
+| `station.alchemy` | doc 08 brewing; five apparatus slots, one per doc 08 §9.1 kind (mortar, retort, alembic, calcinator, vaporizer); worldgen installs a mortar, retort, alembic and calcinator of the station's tier | 1–5 | no | `room.alchemy_lab` | no |
 | `station.enchanting` | doc 06 §9 enchanting; ritual processes | 1–5 | no | `room.shrine`, `room.library` | no |
 | `station.scriptorium` | doc 11 Rewrite and reforge; doc 10 services | 1 | no | `room.scriptorium`, Colophon | no |
 
-Forge melt caps by tier: 16000, 18000, 20000, 32000, 40000 DeciC. A smelting, alloying or glass recipe requires `melt_cap >= melt_decic(output)`.
+Forge melt caps by tier: 16000, 18000, 20000, 32000, 40000 DeciC; the campfire's cap is 12000. A smelting, alloying or glass recipe requires `melt_cap >= melt_decic(output)`. **Pour mode:** a `recipe.smelt.*` job queued while its owner holds an empty `apparatus.vessel.crucible` (doc 08) delivers each output unit as 250 ml of `liq.molten_metal` into that crucible instead of a metal unit; the job stalls (no tick consumed) while the crucible is full.
 
 Tier at worldgen: `clamp(1 + floor_div(d_eff - 1, 5), 1, 5)`, plus 1 (maximum 5) when doc 12's `room_bias` for that room kind in that genre is at least 15000 (Steampunk forge and workshop, Post-Apocalypse workshop). Marginalia stations are tier 5. The Colophon workbench takes the Folio's tier. Stations are world fixtures with dependency none and never Contradict.
 
@@ -458,6 +492,27 @@ Tier at worldgen: `clamp(1 + floor_div(d_eff - 1, 5), 1, 5)`, plus 1 (maximum 5)
 | The Redaction | Form Desk | Shredder Furnace | Binding Press | Break Room | Incinerator |
 | The Unwritten | Margin Desk | Blank Forge | Blank Loom | Blank Table | Blank Fire |
 | The Ur-Text | First Bench | First Forge | First Loom | First Table | First Fire |
+
+`station.alchemy` skins are doc 08 §9.1's station column. Enchanting and Scriptorium skins:
+
+| Genre | Enchanting | Scriptorium |
+|---|---|---|
+| Mythic Fantasy | Rune Altar | Scriptorium |
+| Gothic Horror | Black Chapel Lectern | Parish Records Room |
+| Cosmic Horror | Star-Chart Table | Restricted Stacks |
+| Space Opera | Psi Resonator | Data Archive |
+| Cyberpunk | Glitch Shrine | Data Broker Booth |
+| Post-Apocalypse | Radio Altar | Library Ruin |
+| Weird West | Hex Table | Land Office |
+| Hardboiled Noir | Fortune-Teller's Table | Records Office |
+| Wuxia | Talisman Desk | Sutra Pavilion |
+| Steampunk | Aetheric Bench | Patent Office |
+| Fairy Tale | Wishing Well | Storyteller's Nook |
+| Mythic Antiquity | Temple Brazier | Library of Echoes |
+| Oneiric | Dream Loom | Dream Diary |
+| The Redaction | Classified Terminal | Archive Desk |
+| The Unwritten | Blank Altar | Margin Desk |
+| The Ur-Text | First Altar | First Scriptorium |
 
 ### 5.3 Station state and process queue
 
@@ -523,11 +578,21 @@ Grid matching (§6.3) covers shaped and shapeless recipes without variants. Reci
     "recipe_tier": 1, "ticks": 360, "pool": "base", "learn": 0, "fuel": 0,
     "components": { "primary": { "role": "mat.role.frame", "count": 1 }, "secondary": { "role": "mat.role.haft", "count": 1 } },
     "slots": ["barrel", "feed", "optic", "stock", "graft"],
-    "output": { "template": "arch.ranged.pistol", "count": 1 } }
+    "output": { "template": "arch.ranged.pistol", "count": 1 } },
+  { "id": "recipe.hand.bandage", "kind": "recipe.kind.shapeless",
+    "station": "station.hand", "station_tier": 0, "skill": "skill.medicine", "skill_min": 0,
+    "recipe_tier": 0, "ticks": 30, "pool": "base", "learn": 0, "fuel": 0,
+    "keys": { "T": { "tag": "mat.tag.fabric" } }, "counts": { "T": 1 },
+    "output": { "template": "item.tool.bandage", "count": 3 } },
+  { "id": "recipe.disassemble.extract_graft", "kind": "recipe.kind.disassembly",
+    "station": "station.workbench", "station_tier": 3, "skill": "skill.tinkering", "skill_min": 50,
+    "alt_skill": "skill.smithing", "recipe_tier": 0, "ticks": 600, "pool": "recipes_2", "learn": 1, "fuel": 0,
+    "input": { "rarity_min": "rar.rare", "needs_manufacturer": 1 },
+    "output": { "kind": "graft_of_input_manufacturer", "count": 1 } }
 ]
 ```
 
-Key kinds: `{"mat"}`, `{"role"}`, `{"tag"}`, `{"template"}`, `{"liquid", "ml"}` (drawn from held containers, doc 08). Every cell bound to one key letter must hold the same template. Station `S` with tier `t` runs a recipe when `S` is the recipe's station (a `station.hand` recipe runs anywhere; a campfire cooking recipe also runs at a kitchen; a campfire smelting or charcoal recipe also runs at a forge) and `t >= station_tier`.
+Key kinds: `{"mat"}`, `{"role"}`, `{"tag"}`, `{"template"}`, `{"liquid", "ml"}` (drawn from held containers, doc 08); process `inputs` use the same key kinds. `pool` is `base`, `recipes_2` (the recipe enters the content set with `unlock.loot.recipes_2`), `gadgets_2` (with `unlock.loot.gadgets_2`) or `craft` (base content, never in a loot pool). `alt_skill`, when present, may stand in for `skill`; the crafter uses the higher of the two. `station.hand` has a 3×3 grid like every grid station. Every cell bound to one key letter must hold the same template. Station `S` with tier `t` runs a recipe when `S` is the recipe's station (a `station.hand` recipe runs anywhere; a campfire cooking recipe also runs at a kitchen; a campfire smelting or charcoal recipe also runs at a forge) and `t >= station_tier`.
 
 ### 6.3 Matching
 
@@ -548,7 +613,7 @@ fn match_shaped(grid: &Grid, r: &Recipe) -> Option<BTreeMap<char, Id32>> {
 }
 ```
 
-Lookup tries recipes in ascending ID among those the crafter knows and the station runs; the first match wins. The content loader rejects two shaped recipes whose masks (or a mirror) are equal while every cell pair's accepted material sets intersect (`recipe_overlap`), so at most one recipe ever matches.
+Lookup tries recipes in ascending ID among those the crafter knows and the station runs; the first match wins. The content loader rejects two shaped recipes whose masks (or a mirror) are equal while every cell pair's accepted material sets intersect, and two shapeless recipes runnable at one station whose key counts admit a one-to-one pairing of equal counts with intersecting accepted sets (`recipe_overlap`), so at most one recipe ever matches.
 
 ### 6.4 Craft channel state machine
 
@@ -564,7 +629,8 @@ Lookup tries recipes in ascending ID among those the crafter knows and the stati
 Checks: recipe known (§6.5); station within `CRAFT_REACH_MM` and of sufficient tier and melt cap; `skill >= skill_min`; for quality-rolling outputs, station tier at least the highest input material tier; genre legality (§5.4); inputs present (they stay reserved while channeling).
 
 ```
-needed = ceil_div(ticks × count × 10000, min(30000, 10000 + 50 × skill + 1000 × (station_tier - recipe.station_tier) + 1500 × helpers))
+needed = ceil_div(ticks × count × 10000, min(30000, 10000 + 50 × skill + 1000 × (st.tier - recipe.station_tier) + 1500 × helpers))
+// st.tier: the station's tier, station.hand counting as tier 1 as in §4.2; helpers: the number counted, 0..=2
 ```
 
 ### 6.5 Knowledge
@@ -599,12 +665,27 @@ Keys: B blade, D head, H haft, L limb, F frame, P plate, S soft, O focus (roles)
 | `recipe.kiln.glass` | forge 1 | smithing 0 | 2 sand → 1 `mat.glass` | 300 | F |
 | `recipe.kiln.brick` | forge 1 | smithing 0 | 2 soil → 2 `mat.brick` | 300 | F |
 | `recipe.kiln.charcoal` | campfire | survival 0 | 2 W → 1 `mat.coal` | 300 | — |
+| `recipe.kiln.alch_charcoal` | campfire | survival 0 | 1 W → 2 `ing.charcoal` (doc 08 §8.2) | 300 | — |
 | `recipe.loom.tan_leather` | loom 1 | survival 0 | 1 `mat.hide` → 1 `mat.leather` | 600 | — |
 | `recipe.loom.weave_silk` | loom 2 | survival 20 | 3 web → 1 `mat.silk` | 600 | — |
 | `recipe.fab.polymer` | workbench 2 | tinkering 25 | 1 rubber + 1 coal → 2 `mat.polymer` | 600 | — |
 | `recipe.fab.carbon_fiber` | workbench 3 | tinkering 50 | 2 polymer + 1 coal → 1 `mat.carbon_fiber` | 900 | L |
 | `recipe.fab.plasteel` | workbench 3 | tinkering 50 | 1 steel + 1 polymer → 1 `mat.plasteel` | 900 | L |
 | `recipe.fab.nanoweave` | workbench 4 | tinkering 75 | 1 carbon fiber + 1 silk → 1 `mat.nanoweave` | 1200 | L r2 |
+
+**Ammunition recipes** (`recipe.kind.process` at a workbench, doc 05 §8.1 families; quality never rolls; M is any `metal` material, B any blade-role material)
+
+| ID | Station | Skill | Inputs → output | Ticks | Flags |
+|---|---|---|---|---|---|
+| `recipe.bench.ammo_light` | workbench 1 | tinkering 0 | 1 M + 1 coal → 24 `ammo.light` | 240 | — |
+| `recipe.bench.ammo_heavy` | workbench 1 | tinkering 10 | 1 M + 1 coal → 16 `ammo.heavy` | 240 | — |
+| `recipe.bench.ammo_shell` | workbench 1 | tinkering 10 | 1 M + 1 coal → 5 `ammo.shell` | 240 | — |
+| `recipe.bench.ammo_draw` | workbench 1 | tinkering 0 | 1 W + 1 B → 6 `ammo.draw` | 180 | — |
+| `recipe.bench.ammo_rifle` | workbench 2 | tinkering 25 | 2 M + 2 coal → 7 `ammo.rifle` | 300 | — |
+| `recipe.bench.ammo_cell` | workbench 2 | tinkering 25 | 1 copper + 1 coal → 30 `ammo.cell` | 300 | — |
+| `recipe.bench.ammo_ordnance` | workbench 3 | tinkering 50 | 2 M + 2 coal → 1 `ammo.ordnance` | 600 | L |
+
+With `mat.iron` as M, every ammunition output is worth at most 1.75 times its inputs at doc 05 §8.1 values (rifle: 7 rounds = 21 Lucre against 12; light: 24 rounds = 4.8 against 6), so even at doc 11 §12.2's 5500 Bp sell cap a sale returns less than the inputs are worth (rifle 11.55 against 12); with the cheapest metal (`mat.scrap_iron`, 1 Lucre) a craft can sell for a few Lucre more than its inputs, which is bounded by node and salvage supply because shops never restock materials (doc 11 §12.3). Ammunition crafted by an Erratum with `smart_rounds` is flagged `smart`; doc 05 keeps a family's smart and plain units as two reserve counters, fires smart units first, and each smart shot carries `DmgAdd +1000` (doc 04).
 
 **Shaped and shapeless recipes** (quality rolls for gear and tools only)
 
@@ -627,7 +708,10 @@ Keys: B blade, D head, H haft, L limb, F frame, P plate, S soft, O focus (roles)
 | `recipe.forge.thrown` | forge 1 | throwing 0 | `B/B` → 3 `arch.ranged.thrown` | 240 | 1 | |
 | `recipe.forge.pick` | forge 1 | smithing 0 | `DDD/.H./.H.` → `item.tool.pick` | 240 | 1 | |
 | `recipe.bench.toolkit` | workbench 1 | tinkering 0 | shapeless 1 F + 1 H → `item.tool.toolkit` | 180 | 1 | |
+| `recipe.bench.lockpicks` | workbench 1 | tinkering 0 | shapeless 1 M → 5 `item.tool.lockpicks` | 120 | 1 | |
+| `recipe.bench.hacking_deck` | workbench 2 | tinkering 25 | shapeless 1 F + 2 copper + 1 G → 1 `item.tool.hacking_deck` | 360 | 2 | |
 | `recipe.hand.torch` | hand | fieldcraft 0 | `C/W` → 4 `item.tool.torch` | 30 | 0 | |
+| `recipe.hand.wall_torch` | hand | fieldcraft 0 | shapeless 1 `item.tool.torch` → 1 `block.torch` | 10 | 0 | |
 | `recipe.hand.bandage` | hand | medicine 0 | shapeless 1 T → 3 `item.tool.bandage` | 30 | 0 | |
 | `recipe.hand.barricade_wood` | hand | fieldcraft 0 | `WWW/WWW` → 4 `block.barricade.wood` | 120 | 0 | |
 | `recipe.hand.barricade_stone` | hand | fieldcraft 0 | `KK/KK` → 2 `block.barricade.stone` | 120 | 0 | |
@@ -635,6 +719,7 @@ Keys: B blade, D head, H haft, L limb, F frame, P plate, S soft, O focus (roles)
 | `recipe.forge.barricade_metal` | forge 1 | fieldcraft 10 | `MMM/M.M/MMM` → 4 `block.barricade.metal` | 300 | 1 | |
 | `recipe.hand.ladder_wood` | hand | fieldcraft 0 | `W.W/WWW/W.W` → 4 `block.ladder.wood` | 60 | 0 | |
 | `recipe.loom.ladder_rope` | loom 1 | fieldcraft 10 | `T.T/TTT/T.T` → 4 `block.ladder.rope` | 120 | 0 | |
+| `recipe.hand.rope_ladder` | hand | fieldcraft 0 | shapeless 1 `item.tool.rope` → 1 `block.ladder.rope` | 30 | 0 | |
 | `recipe.forge.ladder_metal` | forge 1 | fieldcraft 10 | `M.M/MMM/M.M` → 4 `block.ladder.metal` | 120 | 1 | |
 | `recipe.hand.bridge_plank` | hand | fieldcraft 0 | `WWW/W.W` → 4 `block.bridge.plank` | 90 | 0 | |
 | `recipe.forge.bridge_metal` | forge 1 | fieldcraft 10 | `MMM/M.M` → 4 `block.bridge.metal` | 180 | 1 | |
@@ -650,7 +735,7 @@ Keys: B blade, D head, H haft, L limb, F frame, P plate, S soft, O focus (roles)
 | `recipe.forge.armor_medium` | forge 1 | smithing 15 | shapeless P × (1/5/1/3/1) → `arch.armor.<slot>_medium` | 480 | 1 | |
 | `recipe.forge.armor_heavy` | forge 2 | smithing 30 | shapeless P × (2/8/1/4/2) → `arch.armor.<slot>_heavy` | 600 | 2 | |
 
-Armor counts are head/body/hands/legs/feet; the player picks the slot. The torch, bandage and pick outputs are doc 11 templates whose instance carries the materials used.
+Armor counts are head/body/hands/legs/feet; the player picks the slot. The torch, bandage, lockpick, hacking-deck, toolkit and pick outputs are doc 11 `item.tool.*` templates whose instance carries the materials used; lockpicks and the hacking deck roll quality, which sets doc 09's `TOOL_Q`. Every `block.*` output is a `cat.placeable` item whose template is that block ID (Canon §4.3). A held `item.tool.torch` is a doc 11 light tool and never places a block; `recipe.hand.wall_torch` turns it into a placeable `block.torch`.
 
 **Assembly recipes** (components, then optional part slots of §7.1)
 
@@ -675,7 +760,7 @@ Armor counts are head/body/hands/legs/feet; the player picks the slot. The torch
 | `recipe.bench.ward` | workbench 2 | tinkering 25 | aegis, kinetic, reflector F1 O1; bulwark F2 O1 → `arch.ward.*` | 480 | 2 | |
 | `recipe.bench.modify` | workbench or forge 1 | item's governing skill (§8.4) | install or remove parts on any compatible item | 60 per part | 0 | |
 
-Gadget assembly recipes are in §11.2, part recipes in §7.2, disassembly in §8.5 and cooking in §12.2.
+Gadget assembly recipes (`recipe.bench.<gadget suffix>`, 13) are in §11.2, part recipes in §7.2, disassembly in §8.5 and cooking in §12.2.
 
 ## 7. Assembly and parts
 
@@ -696,22 +781,45 @@ Thrown weapons, wands, lanterns, tools and consumable gadgets take no parts.
 
 ### 7.2 Part catalog
 
-Doc 11 §5.4 fixes the 22 loot parts and their modifiers: `part.barrel.{short,long,heavy,rifled}` → barrel, `part.feed.{extended,quick,drum}` → feed, `part.optic.{iron,scope,reflex}` → optic, `part.edge.{keen,heavy,serrated}` → edge, `part.haft.{long,light}` → haft, `part.grip.{wrapped,guarded}` → grip, `part.focus.{crystal,conduit}` → focus, `part.plate.reinforced` → plate, `part.lining.padded` → lining, `part.coil.capacitor` → coil. This chapter adds six crafted-only parts:
+This chapter owns every `part.` ID (Canon §19). Doc 11 §5.4 mirrors the 22 loot rows (its two-letter codes, the manufacturer part lists of doc 11 §5.2 and the drop rules); the seven crafted-only rows always carry `mfr.errata.marginal_press`. Letters are doc 11 §5.1's tendency letters: D damage `base_mhp`, S attack speed, P spread, M magazine, L reload ticks, R range, H handling (swap and ADS ticks), T stamina cost, O poise damage (impact), U durability, W mass, A AR, X precision multiplier, C aether cost, V value. A "× N" modifier is the delta `N - 10000` on that stat. Every part has dependency none.
 
-| ID | Slot | Modifiers |
-|---|---|---|
-| `part.stock.braced` | stock | recoil −1500, H +500 |
-| `part.stock.folding` | stock | H −2000, recoil +1000 |
-| `part.module.battery` | module | gadget duration +5000 |
-| `part.module.plating` | module | gadget Max HP +3000 |
-| `part.module.targeting` | module | gadget spread −3000, gadget range +2000 |
-| `part.module.payload` | module | gadget damage (D) +2000 |
+| ID | Code | Slot | Modifiers | Source |
+|---|---|---|---|---|
+| `part.barrel.short` | bs | barrel | H −2000, R −1500 | loot, crafted |
+| `part.barrel.long` | bl | barrel | R +2500, H +1000 | loot, crafted |
+| `part.barrel.heavy` | bh | barrel | D +600, S −500 | loot, crafted |
+| `part.barrel.rifled` | br | barrel | P −1500 | loot, crafted |
+| `part.feed.extended` | fe | feed | M +3000 | loot, crafted |
+| `part.feed.quick` | fq | feed | L −1500 | loot, crafted |
+| `part.feed.drum` | fd | feed | M +5000, H +2000 | loot, crafted |
+| `part.optic.iron` | oi | optic | X +500 | loot, crafted |
+| `part.optic.scope` | os | optic | X +1500, H +1500 | loot, crafted |
+| `part.optic.reflex` | or | optic | P −800 | loot, crafted |
+| `part.edge.keen` | ek | edge | pen +800 | loot, crafted |
+| `part.edge.heavy` | eh | edge | O +3000, S −400 | loot, crafted |
+| `part.edge.serrated` | es | edge | +20 `st.bleeding` power | loot, crafted |
+| `part.haft.long` | hl | haft | reach +200 mm, S −300 | loot, crafted |
+| `part.haft.light` | hg | haft | S +500, D −300 | loot, crafted |
+| `part.grip.wrapped` | gw | grip | T −1200 | loot, crafted |
+| `part.grip.guarded` | gg | grip | +800 Bp shield stability while blocking | loot, crafted |
+| `part.focus.crystal` | fc | focus | +600 Bp spell damage | loot, crafted |
+| `part.focus.conduit` | fn | focus | cast ticks × 9000 | loot, crafted |
+| `part.plate.reinforced` | pr | plate | AR × 11500, W +1000 | loot, crafted |
+| `part.lining.padded` | lp | lining | +400 Bp resist blunt | loot, crafted |
+| `part.coil.capacitor` | cc | coil | ward capacity × 11500 | loot, crafted |
+| `part.barrel.suppressor` | — | barrel | R −1000, D −200; tag `suppressor` (doc 09 §7.3: powered skins only; muzzle flash 12 → 4) | crafted |
+| `part.stock.braced` | — | stock | recoil −1500, H +500 | crafted |
+| `part.stock.folding` | — | stock | H −2000, recoil +1000 | crafted |
+| `part.module.battery` | — | module (either module slot) | gadget duration +5000 | crafted |
+| `part.module.plating` | — | module | gadget Max HP +3000 | crafted |
+| `part.module.targeting` | — | module | gadget spread −3000, gadget range +2000 | crafted |
+| `part.module.payload` | — | module | gadget damage (D) +2000 | crafted |
 
-`recoil` multiplies doc 05 `recoil.v_bam` and `recoil.h_bam`. Letters follow doc 11 §5.1. A crafted part has `mfr.errata.marginal_press`, a rolled quality, value `mul_bp(25, P(ilvl))` and mass 300 g.
+`recoil` multiplies doc 05 `recoil.v_bam` and `recoil.h_bam`. A crafted part has `mfr.errata.marginal_press`, a rolled quality, value `mul_bp(25, P(ilvl))`, mass 300 g and stack 5; parts stack only with instances of equal template, manufacturer and quality (doc 11 §14.2).
 
 | Part recipe | Station | Skill | Variants and inputs | Ticks | Tier |
 |---|---|---|---|---|---|
-| `recipe.bench.part_gun` | workbench 1 | tinkering 15 | barrel (4) F1; feed (3) F1 + 1 M; optic iron F1; optic scope, reflex F1 + 1 G; stock (2) H1 | 240 | 1 |
+| `recipe.bench.part_gun` | workbench 1 | tinkering 15 | barrel short, long, heavy, rifled F1; barrel suppressor F1 + 1 S; feed (3) F1 + 1 M; optic iron F1; optic scope, reflex F1 + 1 G; stock (2) H1 | 240 | 1 |
 | `recipe.forge.part_melee` | forge 1 | smithing 15 | edge (3) B1; haft (2) H1; grip wrapped S1; grip guarded P1 | 240 | 1 |
 | `recipe.forge.part_armor` | forge 1 | smithing 15 | plate reinforced P2; lining padded S1 | 300 | 1 |
 | `recipe.bench.part_arcane` | enchanting 1 | inscription 20 | focus crystal 1 G + 1 `arcane_reagent`; focus conduit O1 + 1 M; coil capacitor 1 copper + 1 G | 300 | 1 |
@@ -762,7 +870,7 @@ Example: Coffin Creek on a Rustmaw shotgun ricochets `mul_bp(5000, 7500) = 3750`
 ### 7.6 Compatibility
 
 1. The slot must be in the family list (§7.1); one part per slot.
-2. `part.edge.keen` and `part.edge.serrated` need a `dmg.slash` share of at least 4000; haft parts need a haft secondary; plate parts need medium or heavy armor or a shield.
+2. `part.edge.keen` and `part.edge.serrated` need a `dmg.slash` share of at least 4000; haft parts need a haft secondary; plate parts need medium or heavy armor or a shield; `part.barrel.suppressor` fits the gun family only, never draw-and-bolt weapons.
 3. A part with no stat present on the item, or whose every change rounds to nothing, is refused (`no_effect`).
 4. Palimpsestic items take no parts.
 5. Install and removal use `recipe.bench.modify`: at a workbench for guns, draw and bolt, casting, wards and gadgets; at a forge for melee, armor and shields. Removal returns the part intact. Neither changes `ilvl`, rarity, quality or affixes.
@@ -787,8 +895,10 @@ Each arrow is one `mul_bp`; `U` is the manufacturer tendency (doc 11). Rustmaw's
 | Armor piece covering a part hit | `max(1, floor_div(mitigated_mhp × 40, T(d_current)))`, `mitigated_mhp` = the step-5 reduction |
 | Shield block | `max(1, floor_div(blocked_mhp × 20, T(d_current)))` |
 | Ward break | 500 |
-| Pick, per node broken | `10 × hardness`; × 2 when one tier above via Fieldcraft 50 |
-| Toolkit | 10 per quality-rolling craft; 20 per repair |
+| Pick, per node broken | `10 × hardness` of the node |
+| Toolkit | 10 per quality-rolling craft; 20 per repair; `REPAIR_KIT_USE` (250) per doc 04 `self_repair` use |
+| Lockpicks | a doc 09 snap destroys one pick of the stack (each pick has durability 1) |
+| Hacking deck | 100 per doc 09 hack attempt, success or failure |
 | Reusable gadget | 500 on expiry or recall; 2500 when destroyed |
 
 Then `wear → × (10000 + m)` for `curse.brittle` (doc 10) → `× (10000 + 2500 × r)` for `run.marg.brittle_kit` (doc 14) → `× 5000` for Dunwold; each a `mul_bp`, then `max(1, …)`. Examples: a long blade light swing (10 + 5 + 12 ticks) wears 12; an SMG shot (4 ticks) 2; a sniper shot (80 ticks) 34; a 5,000 mHP mitigation at Folio 1 wears 20.
@@ -805,7 +915,7 @@ An item whose primary carries `brittle` shatters at 0: it is destroyed and its s
 
 ### 8.4 Repair
 
-Governing skill: Smithing for melee, thrown, charge rifles, armor, shields, staves and picks; Tinkering for guns, crossbows, beams, ward generators, lanterns, gadgets, toolkits and implants; Inscription for foci and tomes.
+Governing skill: Smithing for melee, thrown, charge rifles, armor, shields, staves and picks; Tinkering for guns, crossbows, beams, ward generators, lanterns, gadgets, toolkits, hacking decks and implants; Inscription for foci and tomes. Lockpicks are never repaired.
 
 ```
 restore = mul_bp(dur_max, 2500) → × (10000 + 50 × skill) → × 15000 if Smithing-governed and Smithing ≥ 25
@@ -813,7 +923,7 @@ restore = mul_bp(dur_max, 2500) → × (10000 + 50 × skill) → × 15000 if Smi
 cur = min(cap, cur + restore)    // cap = dur_max at a station, mul_bp(dur_max, 7500) in the field
 ```
 
-A repair consumes 1 unit of the primary material and takes 120 ticks at the matching station or 240 ticks in the field with a toolkit. Example: the 12,485 longsword at Smithing 40 restores `3121 → 3745 → 5617`. A `kin.construct` Erratum is repaired the same way with 1 metal unit: it heals `mul_bp(max_hp_mhp, 1000 + 20 × tinkering)` (Canon §16.3).
+A repair consumes 1 unit of the primary material and takes 120 ticks at the matching station or 240 ticks in the field with a toolkit. Example: the 12,485 longsword at Smithing 40 restores `3121 → 3745 → 5617`. A `kin.construct` Erratum repairs itself through doc 04's `self_repair` (Canon §16.3 "Tinkering repair heals"): one use of a `repair_kit` tool costs `REPAIR_KIT_USE` = 250 durability of the toolkit and no material, so a Normal iron toolkit (5,000) holds 20 uses; the heal of `mul_bp(max_hp_mhp, 1000 + 20 × tinkering)` is doc 04's.
 
 ### 8.5 Salvage and disassembly
 
@@ -823,7 +933,7 @@ A repair consumes 1 unit of the primary material and takes 120 ticks at the matc
 | `recipe.disassemble.strip` | workbench or forge | 0 | removes every part intact | 60 |
 | `recipe.disassemble.extract_graft` | workbench 3 | Tinkering or Smithing 50 | destroys a Rare-or-better item and yields 1 graft of its manufacturer | 600 (L r2) |
 
-Example: a steel longsword (1,334 g steel, 60 g oak) salvages `mul_bp(1334, 6000) = 800` g of steel, `round_half_even(800, 1962) = 0`, raised to 1 because 800 ≥ 490; the oak gives 36 g, below 187, so 0.
+Example: a steel longsword (1,334 g steel, 63 g oak) salvages `mul_bp(1334, 6000) = 800` g of steel, `round_half_even(800, 1962) = 0`, raised to 1 because 800 ≥ 490; the oak gives `mul_bp(63, 6000) = 37` g, below 187, so 0.
 
 ### 8.6 Reforging
 
@@ -834,27 +944,34 @@ Example: a steel longsword (1,334 g steel, 60 g oak) salvages `mul_bp(1334, 6000
 
 ### 9.1 Tool tiers
 
-A pick's tier is its head material's tier (minimum `tooltier.t1`); bare hands are `tooltier.t0`. Speed `TOOL_SPEED` (Bp): t0 3000, t1 10000, t2 13000, t3 16000, t4 20000, t5 25000. Class factor: a pick on stone, metal and crystal nodes, an `arch.melee.axe` or `axe_great` (tier of its primary) on timber and wooden blocks, and anything on soft nodes give 10000; any other tool gives 5000. Only resource nodes and `block.tag.destructible` blocks can be mined (Canon §4.3).
+A pick's tier is its head material's tier (minimum `tooltier.t1`); bare hands are `tooltier.t0`. Speed `TOOL_SPEED` (Bp): t0 3000, t1 10000, t2 13000, t3 16000, t4 20000, t5 25000. Class factor: a pick on stone, metal and crystal nodes, an `arch.melee.axe` or `axe_great` (tier of its primary) on timber and wooden blocks, and anything on soft nodes give 10000; any other tool gives 5000. Every other item's tool tier is its primary material's tier (doc 05 Table 3.2d), which doc 03 §13.2 compares with a block's `tool_tier` for weapon damage to blocks. Only resource nodes and `block.tag.destructible` blocks can be mined (Canon §4.3); a resource node is an interactable prop block, mined in place and never dug out of the terrain.
 
 ### 9.2 Mining time
 
 ```rust
 fn mining_ticks(node: &Block, tool_tier: u8, class_bp: i32, fieldcraft: i32, hard_bp: i32) -> Option<u32> {
-    let req = node.req_tier;                                         // §9.3
-    let slow = if tool_tier >= req { 10000 }
-               else if fieldcraft >= 50 && tool_tier + 1 == req { 5000 }   // doc 04 Fieldcraft 50
-               else { return None };
-    let t1 = mul_bp(break_ticks(node.material_hardness()), hard_bp);      // 30 × hardness; doc 12 GPV hard_bp
-    let speed = mul_bp(mul_bp(TOOL_SPEED[tool_tier as usize], class_bp), slow) as i64;
-    Some(max(1, ceil_div(t1 as i64 * 100_000_000, speed * (10000 + 100 * fieldcraft as i64))) as u32)
+    if !node.destructible() || tool_tier < node.tool_tier { return None; }   // §9.3 Req; doc 03 §13.2
+    let h = floor_div(node.hardness_milli, 1000);                        // §9.3 Hardness column for nodes
+    let t1 = mul_bp(30 * h, hard_bp) as i64;                             // break_ticks; doc 12 GPV hard_bp
+    let speed = mul_bp(TOOL_SPEED[tool_tier as usize], class_bp) as i64;
+    Some(max(1, ceil_div(t1 * 100_000_000, speed * (10000 + 50 * fieldcraft as i64))) as u32)
 }
 ```
 
-Examples: an iron vein (hardness 5) with a steel pick at Fieldcraft 30 in Mythic Fantasy takes `ceil_div(150 × 10^8, 13000 × 13000) = 89` ticks; with an iron pick at Fieldcraft 0, 150; the same in Space Opera (`hard_bp` 15000), 225; oak timber with a tier-1 axe, 90, and with a pick, 180; clay by hand, 100.
+The Fieldcraft term `10000 + 50 × skill` is doc 04's Fieldcraft factor on melee and tool work against destructible blocks; doc 04 grants no mining-tier perk, so a tool below a node's `Req` never mines it. Examples: an iron vein (hardness 5) with a steel pick at Fieldcraft 30 in Mythic Fantasy takes `ceil_div(150 × 10^8, 13000 × 11500) = 101` ticks; with an iron pick at Fieldcraft 0, 150; the same in Space Opera (`hard_bp` 15000), 225; at Fieldcraft 75 with the steel pick, 84; oak timber with a tier-1 axe, 90, and with a pick, 180; clay by hand, 100.
 
 ### 9.3 Resource nodes
 
-Nodes are full-shape blocks tagged `block.tag.node` and `block.tag.destructible`. Breaking one turns the cell into `block.node_spent` (unbreakable), so the terrain keeps its shape. Yield = base + 1 if Fieldcraft ≥ 25 and hardness ≥ 3 (doc 04 Delving 25 hook) + 1 on a keyed `rng.craft` `roll_bp(1000 + 50 × fieldcraft)` (1 draw). Ore veins use hardness `max(4, metal hardness)` and `req_tier = max(1, tier - 1)`; soft piles (timber, sand, clay, salvage, bone) have `req_tier = 0`. Fieldcraft XP is `100 × hardness` per node (doc 04).
+Nodes are full-shape prop blocks tagged `block.tag.node` and `block.tag.destructible`, with `hardness_milli = 1000 × Hardness`, `tool_tier = tooltier.t<Req>` and `blast_res_milli = NODE_BLAST_RES`, so explosions never break them: doc 03 §12.2 subtracts `floor_div((1000000 + 300) × 300, 1000) = 300,090` from a ray whose intensity never exceeds `mul_bp(8000, 13000) = 10,400`, so a node is never marked. Breaking one by the mining action (cause `grid.cause.mined`) or by weapon or spell damage (`grid.cause.broken`, doc 03 §13.2; doc 06 bolt removal) turns the cell into `block.node_spent` (unbreakable; doc 03 writes the record's `break_result`), so the terrain keeps its shape, and drops the node's yield to the breaking actor:
+
+```
+yield = base
+      + 1   if actor's Fieldcraft >= 75 and the node is a mineral or salvage node   // doc 04 Fieldcraft 75
+      + 1   if keyed rng.craft (actor, break tick, seq 0).roll_bp(1000 + 50 × fieldcraft)   // always 1 draw
+yield = floor_div(yield × 15000, 10000)   when law.post_apocalypse.scarcity is active at the node (doc 12)
+```
+
+Mineral nodes are every row below except timber, sand, clay and bone; salvage nodes are `block.node.salvage`. Ore veins use hardness `max(4, metal hardness)` and `req_tier = max(1, tier - 1)`; soft piles (timber, sand, clay, salvage, bone) have `req_tier = 0`. Each node broken by an Erratum grants doc 04's Fieldcraft XP (500 milli-XP for an ore vein or salvage pile, 300 for any other destructible block, inside doc 04's 40,000 per-Folio cap). Doc 08 §8.2 lists the M-source ingredients a mineral node yields in addition to the units here. Example: base 2, Fieldcraft 30, bonus draw failed: 2 units; the same node under `law.post_apocalypse.scarcity`: `floor_div(2 × 15000, 10000) = 3`.
 
 | Node | Yield | Base | Hardness | Req |
 |---|---|---|---|---|
@@ -873,11 +990,11 @@ Nodes are full-shape blocks tagged `block.tag.node` and `block.tag.destructible`
 | `block.node.salvage` | the genre salvage pair | 3 | 3 | t0 |
 | `block.node.bone` | `mat.bone` | 3 | 3 | t0 |
 
-Genre stone / wood / salvage pair (first unit, second unit, third unit): MF granite / oak / —; GH slate / pine (blackwood from d 9) / —; CH basalt / pine / scrap_iron, scrap_iron, copper; SO basalt / bamboo / plasteel, polymer, polymer; CP concrete / bamboo / polymer, polymer, copper; PA concrete / pine / scrap_iron, scrap_iron, rubber; WW sandstone / pine / —; HN brick / oak / steel, glass, glass; WX granite / bamboo (cedar from d 4) / —; SP brick / oak / brass, brass, copper; FT granite / birch (thornwood from d 4) / —; MA marble / cedar / —; ON dreamstuff / elderwood / —; RD concrete / pine / polymer, paper, paper; UW vellum / paper / —; UT marble / oak / —.
+Genre stone / wood / salvage pair (first unit, second unit, third unit): MF granite / oak / —; GH slate / pine (blackwood from d 9) / —; CH basalt / pine / scrap_iron, scrap_iron, copper; SO basalt / bamboo / plasteel, polymer, polymer; CP concrete / bamboo / polymer, polymer, copper; PA concrete / pine / scrap_iron, scrap_iron, rubber; WW sandstone / pine / —; HN brick / oak / steel, glass, glass; WX granite / bamboo (cedar from d 4) / —; SP brick / oak / brass, brass, copper; FT granite / birch (thornwood from d 4) / —; MA marble / cedar / —; ON granite (dreamstuff from d 20) / pine (elderwood from d 9) / —; RD concrete / pine / polymer, paper, paper; UW paper (vellum from d 20) / paper / —; UT marble / oak / —. Every "from d N" gate is at or above that material's `min_d`, so a stone or timber node never yields a material before its band opens, and early Oneiric or Unwritten Folios cannot be farmed for tier-5 units. A salvage unit whose material has `min_d > d_eff` (Space Opera plasteel before d 9; Hardboiled Noir steel, Steampunk brass and Cyberpunk polymer before d 4) yields `mat.scrap_iron` instead.
 
 ### 9.4 Veins per genre
 
-Doc 12 places `6 + floor_div(d_eff, 5)` veins per Folio, each 2 to 4 node blocks of one kind, drawing the kind with these weights (a node is skipped while `d_eff` is below its yield material's `min_d`):
+Doc 12 §11.2 owns how many mineral (M) resource nodes a Folio gets and which rooms hold them; this chapter owns what each one is. Every M node doc 12 places is one vein: its kind is one `weighted` draw over the zone genre's row below, in the listed order, after dropping metal, coal, crystal, obsidian, coral, dreamstuff and vellum kinds whose yield material has `min_d > d_eff` (stone, timber, sand, clay, salvage and bone kinds are never dropped, so every row keeps a positive total); then `range_incl(2, 4)` node blocks of that kind fill the socket's cells in ascending `Gidx`. Both draws come from doc 12's `rng.worldgen` placement sequence. This chapter asks doc 12 for at least `6 + floor_div(d_eff, 5)` veins per Folio (Canon gaps 13). Weights:
 
 | Genre | Node weights |
 |---|---|
@@ -900,11 +1017,11 @@ Doc 12 places `6 + floor_div(d_eff, 5)` veins per Folio, each 2 to 4 node blocks
 
 ### 9.5 Harvesting
 
-Plant blocks (doc 08 H and F sources) take a 30-tick interact (× 5000 at Survival 50) and yield `1 + floor_div(survival, 50)` units of their ingredient; the cell becomes air. No draws. Survival XP 500 per harvest (doc 04).
+Plant blocks (doc 08 H and F sources) take a 30-tick interact (× 5000 at Survival 50) and yield `1 + floor_div(survival, 50)` units of their ingredient; the cell becomes air. No draws. Survival XP 500 per harvest (doc 04). Harvesting is an interaction, not a block break, so it needs no tool and no `tool_tier`.
 
 ### 9.6 Butchery
 
-A `cat.corpse` other than Errata Remains is butchered in 240 ticks with Survival and destroyed. Flesh `min(12, floor_div(mass_g, 4000))` units, primary `min(8, floor_div(mass_g, 10000))`, secondary `min(4, floor_div(mass_g, 20000))`; each nonzero count gains 1 at Survival 25. Doc 04 §8.6 owns severed-part butchery and uses the same materials. A doc 13 template `materials` list overrides this table:
+A `cat.corpse` other than Errata Remains is butchered in 240 ticks with Survival and destroyed. Flesh `min(12, floor_div(mass_g, 4000))` units, primary `min(8, floor_div(mass_g, 10000))`, secondary `min(4, floor_div(mass_g, 20000))`; each nonzero count gains 1 at Survival 25. Doc 04 §8.6 owns severed-part butchery and uses the same materials. A doc 13 template `materials` list overrides this table. A butchered material whose `min_d` exceeds `d_eff` (dragonbone before d 14, chitin before d 4) yields `mat.bone` instead, so early kills never hand out high-tier units:
 
 | Body plan or tag | Primary | Secondary | Flesh |
 |---|---|---|---|
@@ -916,15 +1033,17 @@ A `cat.corpse` other than Errata Remains is butchered in 240 ticks with Survival
 | tag dragon | `mat.dragonbone` | `mat.hide` | yes |
 | tag undead | `mat.bone` | — | no |
 
-Butchering a sapient corpse costs composure 15 unless the butcher has `afflict.hunger` (doc 04 §11.3).
+Butchering a sapient corpse costs composure 15 unless the butcher has `afflict.hunger` (doc 04 §11.3). Each output unit grants doc 04's 800 Survival milli-XP, at most 4,000 per corpse. Example: a 60,000 g quadruped at Survival 0 yields `min(12, 15) = 12` flesh, `min(8, 6) = 6` hide and `min(4, 3) = 3` bone, and grants 4,000 milli-XP (21 units, capped).
 
 ### 9.7 Planting and farming (`cat.seed`)
 
-- **Plant**: a 30-tick action places `block.crop` (age 0) in the air cell above a full `tillable` block. The crop is Errata-placed (owner slot; Editors erase it) and adds `crops[cell] = {seed, stage 0, next}`.
+- **Plant**: a 30-tick action places `block.crop` (age 0) in the air cell above a full `tillable` block. The crop is Errata-placed (owner slot; Editors erase it), counts toward `CROP_CAP_PER_PLAYER` (not the placeable caps) and adds `crops[cell] = {seed, stage 0, next}`. A seed returned by a harvest is marked spent for the current Folio and cannot be planted again until the next `ev.folio_entered`, when the mark clears and its stack merges back.
 - **Grow**: `stage_ticks = ceil_div(1200 × 10000, 10000 + 50 × survival + 3000 × [liquid water within 2 taxicab cells])`. While `light_at(cell) < 8`, `next` moves 1 tick later each tick. At `next` the stage advances and the props become age 2, 4, 7 for stages 1, 2, 3 (cause `grid.cause.grew`). Random block ticks never drive crops.
 - **Harvest** at stage 3 (30 ticks): `3 + floor_div(survival, 34)` units of the seed's plant (doc 08 §8.4) and the seed back at Survival ≥ 25, else on a keyed `rng.craft` `roll_bp(5000)`; the cell becomes air. Harvesting earlier returns only the seed.
 
 Example: Survival 20 beside water in light 12: `ceil_div(12000000, 14000) = 858` ticks per stage, 2,574 to maturity, 3 units at harvest.
+
+**Balance.** Seeds never multiply (a harvest returns at most the one seed), so the limit is cycles. Without the cap and the spent mark, ten seeds beside water at Survival 20 would complete `floor_div(25200, 2574 + 60) = 9` plant-grow-harvest cycles in a 420-second Folio and yield `10 × 9 × 3 = 270` plants, several times the plant nodes doc 12 places; with them, a player harvests at most 4 crops of `3 + floor_div(survival, 34)` plants per Folio (12 units at Survival 0, 20 at Survival 100), comparable to one room of harvest nodes.
 
 ## 10. Blocks and building
 
@@ -935,12 +1054,12 @@ Block tags: `block.tag.destructible`, `block.tag.errata_placeable`, `block.tag.n
 | Block | Material | Shape | `hardness_milli` | Notes |
 |---|---|---|---|---|
 | `block.air`, `block.void_bedrock`, `block.reinforced` | air, void, granite | none, full, full | −1 | doc 03, doc 12 shells |
-| `block.masonry.<m>` for granite, slate, basalt, sandstone, marble, brick, concrete, plasteel, dreamstuff, vellum | that material | full | −1 | genre walls (§9.3 stone list) |
+| `block.masonry.<m>` for every wall and floor material of doc 18 §3.4's block sets: granite, slate, basalt, sandstone, marble, brick, concrete, terracotta, coral, plasteel, titanium, polymer, scrap_iron, cast_iron, oak, pine, birch, cedar, bamboo, blackwood, thornwood, dreamstuff, paper, vellum (24) | that material | full | −1 | fixed genre walls and floors; never burn (§2.5) |
 | `block.soil`, `block.sand` | soil, sand | full | −1 | soil is `tillable` |
 | `block.cracked_wall` | granite | full | 2000 | destructible; hides secrets |
 | `block.planks` | oak | full | 3000 | destructible wooden structures |
 | `block.glass_pane` | glass | pane | 1000 | destructible |
-| `block.door.wood`, `block.door.iron` | oak, iron | door | 3000, 6000 | destructible |
+| `block.door.wood`, `block.door.iron` | oak, iron | door | 3000, 6000 | destructible; lock and HP rules §10.7 |
 | `block.light_fixture.<genre_suffix>` (16) | iron | fixture | 500 | `light_emit` = doc 12 `fixture_level` |
 | `block.leaves` | leaves | cross | 0 | destructible, conceal 3 |
 | `block.ice` | ice | full | 2000 | §10.2 |
@@ -959,33 +1078,43 @@ Block tags: `block.tag.destructible`, `block.tag.errata_placeable`, `block.tag.n
 | `block.torch`, `block.lantern` | oak, iron | fixture | 500, 2000 | light 14 (burns `TORCH_TICKS`), 15 |
 | `block.campfire`, `block.campfire_out` | granite | slab (bottom) | 2000 | light 15 / 0; `hearth`; heat 1000 DeciC while lit; `station.campfire` |
 | `block.shrine_lamp` | gold | fixture | 2000 | light 12; `altar` (doc 06 offering) |
+| `block.torch_out`, `block.lantern_out`, `block.shrine_lamp_out`, `block.light_fixture_out.<genre_suffix>` (16) | as the lit block | as the lit block | as the lit block | unlit states, `light_emit` 0 (§10.6) |
+| `block.crate` | oak | full | 2000 | destructible; doc 11 container that drops its contents when broken |
+| `block.barrel` | oak | full | 2000 | destructible; `hide: enclosed` (doc 09 §10) |
+| `block.powder_keg` | oak | full | 1000 | destructible; `flammability_bp` 6000, `burn_runs` 5 and the `explosive` record exactly as doc 03 §4.5 shows |
+| `block.wardrobe` | oak | full | 3000 | destructible; `hide: enclosed`; skins closet, locker, sarcophagus, dumpster |
+| `block.bed`, `block.table` | oak | slab (bottom) | 2000 | destructible; `hide: under` |
+| `block.tall_grass` | leaves | cross | 0 | destructible; conceal 2 with `conceal_crouch_only` 1 (Canon §12.2) |
+| `block.vine` | leaves | ladder | 0 | destructible; climbable (doc 13 climb link) |
+| `block.light_switch` | iron | fixture | 500 | destructible; toggles its room's electric fixtures (doc 09 §2.4) |
+| `block.fuse_box` | iron | fixture | 3000 | destructible; doc 09 power cut |
 
-Every placeable and `block.conjured` carries `errata_placeable` and `destructible`.
+Every placeable and `block.conjured` carries `errata_placeable` and `destructible`. `hide` (`enclosed` or `under`) and `conceal_crouch_only` are block-record fields doc 09 reads; every block not listed with them has neither.
 
 ### 10.2 `block.ice` and `block.web`
 
 - **Ice** forms from frost on liquids (doc 03 `timed_revert`, 1200 ticks), doc 06 frost walls and `gadget.mine_cryo`. Fields: `friction_bp` 1500 (Canon §12.1), `light_filter` 2, conceal 2, `melt_decic` 10 → 1000 units `liq.water`, ricochet. Mining it yields 1 `mat.ice`.
-- **Web** forms from doc 06 bind walls, doc 13 spinners, `recipe.hand.web_trap` and worldgen dressing. It has no collision. An entity whose capsule overlaps a web cell holds `st.rooted` for as long as it overlaps, without threshold scaling, ending 1 tick after it leaves (Canon §12.1); entities tagged `web_walker` are exempt. Each tick with movement input adds 1 struggle point; at `max(20, 120 - BRN)` points the web breaks (cause `grid.cause.broken`, drops 1 `mat.web`). Its 5,000 block HP (`250 × 20`) also breaks to one 10,000 mHP melee hit (`block_bp` 5000). Fire burns it out in 60 ticks (`burn_runs` 5 at fire period 12).
+- **Web** forms from doc 06 bind walls, doc 13 spinners, `recipe.hand.web_trap` and worldgen dressing. It has no collision. An entity whose capsule overlaps a web cell holds `st.rooted` for as long as it overlaps (an Errata-placed web roots only entities outside `fac.errata`), without threshold scaling, ending 1 tick after it leaves (Canon §12.1); entities tagged `web_walker` are exempt. Each tick with movement input adds 1 struggle point; at `max(20, 120 - BRN)` points the web breaks (cause `grid.cause.broken`, drops 1 `mat.web`). Its 5,000 block HP (`250 × 20`) also breaks to one 10,000 mHP melee hit (`block_bp` 5000). Fire burns it out in 60 ticks (`burn_runs` 5 at fire period 12).
 
 ### 10.3 Placement rules
 
 Doc 03 §13.3 checks apply first. Then:
 
-1. Only `cat.placeable` items (template = block ID) and `item.tool.torch` place blocks. The placer is not mounted, downed or a ghost, and not inside `room.colophon`.
+1. Only `cat.placeable` items (template = block ID) place blocks (Canon §4.3); a held `item.tool.torch` never does (§6.6 `recipe.hand.wall_torch`). The placer is an Erratum in party slots 0 to 3 (the invader never places, Canon §17.9), not mounted (Canon §17.7), downed or a ghost, and not inside `room.colophon`.
 2. The placer's live placed blocks stay under `PLACED_CAP_PER_PLAYER` and the Folio's under `PLACED_CAP_PER_FOLIO`; at a cap the placement is refused.
 3. Channel `place_ticks = max(1, ceil_div(base × 10000, 10000 + 100 × fieldcraft))` with base: barricade and gate 60, bridge 40, ladder 20, cover 45, trap 30, torch 10, lantern 20, campfire 60, shrine lamp 120. It cancels like a craft channel (§6.4). Fieldcraft 100 makes every placement 1 tick.
 4. Anchors: barricades, cover, traps and the campfire need a sturdy face below; torches, lanterns and shrine lamps attach to any sturdy face; ladders follow doc 03 attach; a rope ladder placed on a ledge top unrolls downward through up to 8 air cells. A bridge cell needs a horizontal neighbor that is a solid non-placed block (`span` 0) or a bridge, and takes `span = 1 + min(neighbor span)`; `span` above 5 is refused.
-5. The cell gets the `placed_by_errata` bit (doc 13) and `placed_meta = {owner_slot, hp, hp_max, expires, patron, span}`. The owner can dismantle it in 30 ticks; at `hp >= mul_bp(hp_max, 5000)` the item returns, otherwise nothing.
+5. The cell gets the `placed_by_errata` bit (doc 13) and `placed_meta = {owner_slot, uid, hp, hp_max, expires, patron, span, trap_bp}`, where `trap_bp` is 13000 when the placer has Fieldcraft ≥ 50 (doc 04) and 10000 otherwise. Doc 04 grants 300 Fieldcraft milli-XP for the first placement of each placeable uid in a run. The owner can dismantle it in 30 ticks; at `hp >= mul_bp(hp_max, 5000)` the item returns with its original `uid`, so placing it again grants no second placement XP; otherwise nothing returns.
 
 ### 10.4 Placed block HP
 
 ```
-hp_max = mul_bp(mul_bp(hardness_milli × 20, T(d_place)), if fieldcraft >= 75 { 15000 } else { 10000 })   // doc 04 Delving 75 hook
+hp_max = mul_bp(mul_bp(hardness_milli × 20, T(d_place)), if fieldcraft >= 25 { 12500 } else { 10000 })   // doc 04 Fieldcraft 25
 ```
 
-Doc 03 §13.2 block damage to a placed cell reduces `placed_meta.hp` instead of the decaying `block_damage` map; at 0 the block breaks (cause `grid.cause.broken`) and drops nothing. A wooden barricade has 60,000 at Folio 1, 108,120 at Folio 12 (162,180 with Fieldcraft 75) and 216,870 at Folio 25, so a reference enemy melee hit (`block_bp` 5000: 5,000 at Folio 1, 18,072 at Folio 25) needs 12 hits at either depth. Repair: Fieldcraft, 60 ticks, 1 unit of the block's material, `hp += mul_bp(hp_max, mul_bp(2500, 10000 + 100 × fieldcraft))`, capped at `hp_max`.
+Doc 03 §13.2 block damage to a placed cell reduces `placed_meta.hp` instead of the decaying `block_damage` map; at 0 the block breaks (cause `grid.cause.broken`) and drops nothing. Placed blocks scale with `T`, the enemy-damage table, because enemies are what break them; worldgen destructibles scale with `P` against Errata weapons (doc 03 §13.2). A wooden barricade has 60,000 at Folio 1, 108,120 at Folio 12 (135,150 with Fieldcraft 25) and 216,870 at Folio 25, so a reference enemy melee hit (`block_bp` 5000: `mul_bp(10000, 5000) = 5,000` at Folio 1, `mul_bp(36145, 5000) = 18,072` at Folio 25) needs 12 hits at Folio 1 and 13 at Folio 25 (12 hits leave 6 mHP). Repair: Fieldcraft, a `max(1, ceil_div(60 × 10000, 10000 + 100 × fieldcraft))`-tick channel, 1 unit of the block's material, `hp += mul_bp(mul_bp(hp_max, mul_bp(2500, 10000 + 100 × fieldcraft)), if fieldcraft >= 75 { 15000 } else { 10000 })` (doc 04 Fieldcraft 75), capped at `hp_max`; doc 04 grants 300 Fieldcraft milli-XP per 1000 Bp of `hp_max` restored.
 
-Specifics: the gate toggles for `fac.errata` and is a locked door to everyone else; spikes hit each non-`fac.errata` entity entering the cell, at most once per 60 ticks, for `B = mul_bp(mul_bp(8000, P(d_place)), dmg_bp(mat.iron))` `dmg.pierce` with 40 `st.bleeding` power (item source, `src_lvl = d_place`); torches burn out after `TORCH_TICKS` (cause `grid.cause.decayed`); a shrine lamp stores the patron chosen at placement, one per player.
+Specifics: the gate toggles for `fac.errata` and is a locked door to everyone else; spikes hit each non-`fac.errata` entity entering the cell, at most once per 60 ticks, for `B = mul_bp(mul_bp(mul_bp(8000, P(d_place)), dmg_bp(mat.iron)), trap_bp)` `dmg.pierce` with `mul_bp(40, trap_bp)` `st.bleeding` power (item source, `src_lvl = d_place`; doc 04 Fieldcraft 50); torches burn out after `TORCH_TICKS` lit ticks and become air (cause `grid.cause.decayed`), and a snuffed torch keeps its remaining burn time until relit; a shrine lamp stores the patron chosen at placement, one per player. A worldgen mechanical trap (spike, blade or dart trap) disarmed by an Erratum with Security ≥ 50 (doc 09 §13.6) yields one `block.trap.spikes` placeable item at its `ilvl` = current Folio index; arcane wards, alarms, electronic tripwires and explosive traps yield nothing.
 
 ### 10.5 AI and Errata-built blocks
 
@@ -996,18 +1125,55 @@ Specifics: the gate toggles for `fac.errata` and is a locked door to everyone el
 5. Hostile AI ignores Errata traps until a squad member sees one trigger; that squad then costs the cell × 3 (hazard) for the rest of the Folio.
 6. Placed lights count for spawn light (Canon §12.3) and the undead and fiend light cost. Cover maps rebuild on `ev.block_changed`. AI never selects a block as a threat target.
 
+### 10.6 Light sources, switches and props
+
+Every light block has an unlit twin; snuffing, dousing, switching and relighting (doc 09 §2.4, doc 13 `ai.action.relight`) swap the pair through `set_block` with cause `grid.cause.toggled`. `lightsrc` is the doc 09 class.
+
+| Lit block | `light_emit` | `lightsrc` | Unlit twin |
+|---|---|---|---|
+| `block.torch` | 14 | flame | `block.torch_out` |
+| `block.lantern` | 15 | flame | `block.lantern_out` |
+| `block.campfire` | 15 | flame | `block.campfire_out` (also when its fuel runs out, §5.3) |
+| `block.shrine_lamp` | 12 | arcane | `block.shrine_lamp_out` |
+| `block.light_fixture.<genre_suffix>` | doc 12 `fixture_level` | arcane in Oneiric, the Unwritten and the Ur-Text; electric where the genre's TECHNE ≥ 5 (Cosmic Horror, Space Opera, Cyberpunk, Post-Apocalypse, Hardboiled Noir, Steampunk, the Redaction); flame elsewhere | `block.light_fixture_out.<genre_suffix>` |
+
+Electric fixtures belong to their room's circuit; `block.light_switch` and `block.fuse_box` act on that circuit as doc 09 §2.4 rows 4 and 6 say. Hiding props (`block.barrel`, `block.wardrobe` with `hide: enclosed`; `block.bed`, `block.table` with `hide: under`) hold the occupants doc 09 §10 allows; breaking one ejects them into the cell.
+
+### 10.7 Doors
+
+Worldgen doors (`block.door.wood`, `block.door.iron`, skinned per genre) and the placeable `block.barricade.gate` are the door blocks. Doc 12 §9.2 places worldgen doors and doc 09 §13.1 attaches locks (`lock.t1` to `lock.t6`).
+
+| State | Event | Next |
+|---|---|---|
+| Closed | interact by an entity allowed to open it (Errata, ghosts per Canon §17.6, AI per doc 13 §4.13; the gate only for `fac.errata`) | Open (doc 03 §13.4 toggle, cause `grid.cause.toggled`) |
+| Open | interact | Closed; refused while a body overlaps the closing boxes |
+| Locked | interact without the key | Locked; refused |
+| Locked | key holder interacts, or doc 09 pick, hack or Security 100 succeeds | Closed with the lock removed |
+| Closed, Open or Locked | accumulated block damage reaches `block_hp(cell)` | Broken: the cell becomes air (cause `grid.cause.broken`), drops nothing, and its lock is gone |
+| any | the cell carries doc 12 `protect` (exit doors, sealed arenas) | unchanged: protected doors take no damage |
+
+```
+door_lock_bp(cell) = 10000 + 5000 × lock_tier(cell)                     // lock_tier 0 without a doc 09 lock, else 1..=6
+block_hp(cell)     = mul_bp(mul_bp(block_hp_mhp, door_lock_bp(cell)), P(d_current))   // every block without placed_meta; non-doors use 10000
+break_ticks(cell)  = mul_bp(30 × floor_div(hardness_milli, 1000), door_lock_bp(cell))   // doc 13 breaker link cost
+```
+
+Examples: an unlocked wooden door at Folio 1 has `block_hp` 60,000 mHP: 10 swings of a 12,000 mHP axe (`block_bp` 5000), as doc 03 §13.2 states, or 25 swings of a long blade (`block_bp` 2000). An iron `lock.t3` door at Folio 11 has `mul_bp(mul_bp(120000, 25000), 23673) = 710,190` mHP: 20 swings of a Common Normal +0 iron mace (`mul_bp(15600, 23673) = 36,929` mHP, `block_bp` 10000) at Fieldcraft 0, and `break_ticks` 450 for doc 13's breaker cost. Breaking a lock is always possible and always slower and louder than picking it at the Security doc 09 §13.2 expects for that depth.
+
 ## 11. Gadgets and deployables
 
 ### 11.1 Rules (Hacking-free)
 
-1. **No Hacking.** No gadget action requires or reads `skill.hacking`. Tinkering sets crafting quality and repair; Fieldcraft sets deploy ticks of ground gadgets (mines, snares, charges, barrier projector); reusable gadgets deploy in `ceil_div(base × 10000, row 17)` ticks (Canon §6.4).
-2. **Not hackable.** Errata gadgets are immune to `st.hacked` and every mind status. Hostile disabling effects (doc 13 `sabot`, `short_circuit`) set `disabled_until` and never change faction. An Erratum's hack of a hostile turret or drone is doc 09's and leaves it a hostile device.
-3. **Dependency.** Reusable gadgets take the skin dependency `techne` in CH, SO, CP, PA, HN, SP, RD; `arcana` in MF, FT, ON; `mythos` in GH, MA, WW; none in WX, UW, UT. Consumable gadgets have dependency none everywhere.
-4. **Contradiction** is evaluated at the deployer. One keyed `rng.combat` failure roll per deploy when the failure chance is above 0; a failure is a spark dealing 5% of the user's Max HP as `dmg.shock` (Canon §5.5), consumes a consumable and starts a reusable gadget's recharge. Potency multiplies damage, healing, duration and status power, never HP.
-5. **Entities.** Turrets, drones, beacons, coils and decoys are `fac.errata` entities with `owner_slot`, counted in `ACTIVE_ACTOR_CAP` but not as minions; mines, snares and charges are props. Gadget hits use `FF_DIRECT_BP` (Canon §17.5) and never target `fac.errata`. Kills credit the owner; gadget hits grant Tinkering XP (doc 04).
-6. **Magnitudes.** `src_lvl` = the gadget's `ilvl` (Canon §13.8.1). `B = base_mhp → P(src_lvl) → 10000 → quality → 10000 → dmg_bp(chassis)`; `hp_max = base × 1000 → T(src_lvl) → quality → modules and talents`; `AR = base → T(src_lvl) → ar_bp(chassis)`. The chassis is the primary F material.
-7. **Recharge.** Per tick `progress += mul_bp(mul_bp(10000 + (TEC - 5) × 1000, 10000 + 200 × (tech_affinity - 5)), talent_bp)`, `TEC` at the owner's position (Canon §5.7), `talent_bp` = 15000 at Tinkering 100 then × 12000 with `overclock`; ready at `recharge × 10000`. A recall (30-tick interact within 3000 mm) needs half the recharge.
-8. **Limits per player.** Turrets 1 (+1 `turret_tech`, +2 `legion`), drones 1 (+2 `legion`), beacons 1, coils 1, barrier 1, decoys 2, mines and snares 6 together, charges 3.
+1. **No Hacking.** No gadget action requires or reads `skill.hacking`. Tinkering sets crafting quality, repair and the Tinkering perks below; Fieldcraft sets the deploy channel of ground gadgets (mines, snares, demolition charges, noisemakers, barrier projector) through doc 04's `max(1, ceil_div(base × 10000, 10000 + 100 × fieldcraft))`; every other gadget deploys in `max(1, ceil_div(base × 10000, row 17))` ticks (Canon §6.4 row 17).
+2. **Not hackable.** Errata gadgets are immune to `st.hacked` and every mind status, and doc 09's hack verbs never target them. Hostile disabling effects (doc 13 `sabot`, `short_circuit`) set `disabled_until` and never change faction. A hostile turret or drone that an Erratum seizes with doc 09's hack gains `st.hacked` and fights for the hacker's faction for the status's duration, as Canon §11.1 says; it stays a doc 13 device, never becomes an Errata gadget, never uses these rules and never counts toward rule 8.
+3. **Dependency** comes from the genre skin (Canon §5.3). Reusable gadgets take `techne` in CH, SO, CP, PA, HN, SP, RD; `arcana` in MF, FT, ON; `mythos` in GH, MA, WW; none in WX, UW, UT, where the skins are mundane mechanisms (repeating-crossbow turrets, kites, clockwork). Consumable gadgets are mundane devices (spring traps, black-powder and frost-salt mines, noisemakers) with dependency none everywhere, like the throwables of Canon §17.3a. A dependency-none gadget never Contradicts and never earns Anachronism Edge, the same trade a bow makes; that keeps the Wuxia skin from dominating.
+4. **Contradiction** is evaluated at the deployer. One keyed `rng.combat` failure roll per deploy (Canon §5.5 "use action") when the failure chance is above 0. A failure is a **spark**: one hit on the user with `D2 = mul_bp(max_hp_mhp, SPARK_BP)`, 100% `dmg.shock`, entering Canon §10.5 at step 3 like the §10.6 reflected row (no crit, no buildup, no friendly-fire step, flag `no_chain`); it then calls the shared `note_contradiction_failure(t)` that counts toward `st.unmoored` (Canon §5.11; doc 05 §16.1). The spark consumes a consumable and spends a reusable gadget's charge. Example: Max HP 85 gives a 4,250 mHP shock spark before resistance. Potency multiplies damage, healing, duration and status power, never HP.
+5. **Entities.** Turrets, drones, beacons, coils and decoys are `fac.errata` entities with `owner_slot`, counted in `ACTIVE_ACTOR_CAP` but not as minions; mines, snares, charges and noisemakers are props. Gadgets never target `fac.errata`. Direct gadget hits (turret, drone and coil shots) that strike an Erratum use `FF_DIRECT_BP`; gadget explosions (mines, demolition charges, the `self_destruct` blast) use `FF_AREA_BP` (Canon §10.5 step 2.15, §17.5). Kills credit the owner; gadget hits grant Tinkering XP (doc 04).
+6. **Magnitudes.** `src_lvl` = the gadget's `ilvl` (Canon §13.8.1). `B = base_mhp → P(src_lvl) → rarity power → quality → (10000 + 600 × eff_enh) → dmg_bp(chassis)` (Canon §10.4; a crafted gadget is Common +0, so the third and fifth steps are 10000); `hp_max = base × 1000 → T(src_lvl) → quality → 13000 per plating module → 12500 for a turret whose owner has Tinkering ≥ 50 → 12500 with hardlight` (`part.module.plating`; doc 04 Tinkering 50 and `hardlight`); `AR = base → T(src_lvl) → ar_bp(chassis)`. Each arrow is one `mul_bp`. The chassis is the primary F material; a found gadget uses `mat.iron`.
+7. **Recharge.** Per tick `progress += mul_bp(mul_bp(10000 + (TEC - 5) × 1000, 10000 + 200 × (tech_affinity - 5)), talent_bp)`, `TEC` at the owner's position (Canon §5.7, applied to every gadget whatever its dependency), `talent_bp` = 15000 at Tinkering 100 (doc 04) then × 12000 with `overclock`; a charge is restored when `progress >= target`, where `target = recharge × 10000` (× 15000 after destruction, × 5000 after a recall, §11.3).
+8. **Limits per player.** Turrets 1 (+1 `turret_tech`, +2 `legion`), drones 1 (+2 `legion`), beacons 1, coils 1, barrier 1, decoys 2, noisemakers 2, mines and snares 6 together, charges 3. A deploy at a limit is refused.
+9. **Charges.** A reusable gadget holds `charges.max = 1`, or 2 while its owner has Tinkering ≥ 25 (doc 04 "gadgets +1 charge"); a deploy spends one charge and the item is Ready while it holds a charge and no deployment of it is Active. A consumable gadget recipe completed by a crafter with Tinkering ≥ 25 yields one more unit (`×2` becomes 3, a single output becomes 2).
+10. **Fieldcraft and talents.** Mines, snares and demolition charges deployed by an Erratum with Fieldcraft ≥ 50 deal damage and status power × 13000, stored at deploy (doc 04 Fieldcraft 50); a demolition charge deployed at Fieldcraft 100 has radius and block-breaking radius +1000 mm (doc 04 Fieldcraft 100). With `drone_companion` (doc 04), each `ev.folio_entered` spawns a `gadget.drone_scout` Active for its full duration at the owner (`src_lvl = d_current`, `q.normal`, chassis `mat.iron`, no item spent, counted toward the drone limit, gone when it ends). `self_destruct` and `legion` act exactly as doc 04 states.
 
 ### 11.2 Catalog
 
@@ -1027,8 +1193,9 @@ Recipes are workbench assembly recipes `recipe.bench.<gadget suffix>` with Tinke
 | `gadget.barrier_projector` | reusable | 30 | — | 900 | 3 × 2 cells of `block.cover.barrier` facing the placer's view, each `hp_max = mul_bp(mul_bp(20000, T(src_lvl)), quality)` | 1800 | 2, 35, F1 + 2 G | gadgets_2 |
 | `gadget.tesla_coil` | reusable | 60 | 50 / 10 | 1200 | every 60 ticks hits up to 3 hostiles within 5000 mm (nearest first) for base 6 HP shock, 30 `st.shocked` power, flag `no_chain` | 2400 | 3, 50, F1 + 2 copper | gadgets_2 |
 | `gadget.demolition_charge` | consumable | 60 | — | fuse 120 | doc 03 explosion: radius 2500, `block_power_milli` 6000, base 40 HP blunt 5000 fire 5000, `drop_bp` 5000; breaks only destructible blocks | — | 1, Fieldcraft 25, M1 + 2 coal + 1 S | gadgets_2 |
+| `gadget.noisemaker` | consumable ×2 | 30 | — | 600 | emits `noise.gadget.noisemaker` (70 dB, doc 09 §7.6) at its cell every 60 ticks; AI investigates it (doc 09 §12) | — | 1, 10, F1 + 1 copper | craft |
 
-The first six match doc 11 §3.6 loot stats. Statuses use Canon §11.4 durations and `S(src_lvl)` power. Explosions enter doc 03 §12 as item sources.
+The first six match doc 11 §3.6 loot stats; the next six enter the loot pool with `unlock.loot.gadgets_2` (doc 14); `gadget.noisemaker` is crafted only and appears in no loot pool. Statuses use Canon §11.4 durations and `S(src_lvl)` power. Explosions enter doc 03 §12 as item sources.
 
 ```json
 { "id": "gadget.turret_light", "category": "cat.gadget", "reusable": 1, "deploy_ticks": 60,
@@ -1040,32 +1207,45 @@ The first six match doc 11 §3.6 loot stats. Statuses use Canon §11.4 durations
 
 ### 11.3 Deployment state machine
 
+Per reusable gadget item: `charges` (0..=`charges.max`), `progress`, `target`. Per deployment: the spawned entity or prop. Consumables use only the rows marked C.
+
 | State | Event | Next |
 |---|---|---|
-| Ready | deploy input, limit free, durability > 0, not disabled | Deploying (channel) |
-| Deploying | channel cancelled (§6.4 rules) | Ready |
-| Deploying | channel done, failure roll succeeds | Spark: consumable consumed, reusable → Recharging |
-| Deploying | channel done, no failure | Active (entity or prop spawned, `ev.entity_spawned`) |
-| Active | duration ends | Recharging (wear 500); consumables end |
-| Active | HP reaches 0 | Recharging with recharge × 15000 (wear 2500); `self_destruct` talent blast (doc 04) |
-| Active | owner recall | Recharging with recharge × 5000 (wear 500) |
-| Recharging | progress complete | Ready |
-| any | durability 0 | Broken until repaired (§8.4) |
+| Ready (charges ≥ 1 and no deployment of this item Active) | deploy input; rule 8 limit free; durability > 0; `disabled_until` passed | Deploying (rule 1 channel) |
+| Deploying (C) | channel cancelled (§6.4 cancel rules) | Ready; nothing spent |
+| Deploying (C) | channel done, failure roll succeeds | Spark (rule 4): a consumable is consumed; a reusable spends 1 charge → Ready if `charges ≥ 1`, else Recharging |
+| Deploying (C) | channel done, no failure roll or roll fails | Active: entity or prop spawned (`ev.entity_spawned`, `noise.gadget.deploy`); a consumable is consumed, a reusable spends 1 charge |
+| Active (C) | duration ends | a consumable ends; a reusable takes wear 500, `target = recharge × 10000` → Ready if `charges ≥ 1`, else Recharging |
+| Active | HP reaches 0 | wear 2500, `target = recharge × 15000`, `self_destruct` blast if owned (doc 04) → Ready if `charges ≥ 1`, else Recharging |
+| Active | owner recall (30-tick interact within 3000 mm) | wear 500, `target = recharge × 5000` → Ready if `charges ≥ 1`, else Recharging |
+| Recharging (charges = 0) | `progress >= target` | `charges = 1`, `progress = 0` → Ready |
+| Ready with `charges < charges.max` | `progress >= target` (progress accrues only while no deployment is Active) | `charges += 1`, `progress = 0` |
+| any | durability reaches 0 | Broken until repaired (§8.4); `charges` and `progress` are kept |
+
+A Folio exit ends every deployment and keeps each item's `charges` and `progress`; props and gadget entities never cross Folios.
 
 ### 11.4 Turret and drone think
 
 ```rust
-fn gadget_think(g: &mut Gadget, w: &World, t: Tick) {           // every 6 ticks at the entity phase (Canon §2.2)
+fn gadget_tick(g: &mut Gadget, w: &World, t: Tick) {           // sys.crafting, every tick, ascending EntityId
+    if g.cooldown > 0 { g.cooldown -= 1; }
     if g.disabled_until > t || g.expired(t) { return; }
-    let tgt = w.hostiles_within(g.pos, g.range_mm)              // ascending EntityId
-        .filter(|h| w.line_of_sight(g.muzzle(), h.center()))
-        .min_by_key(|h| (!h.has(ST_MARKED), dist2(g.pos, h.pos), h.id));
-    if let (Some(h), 0) = (tgt, g.cooldown) {
-        w.fire_projectile(g, h, g.shot);                        // 2 spread draws, keyed rng.combat, actor = g.id
-        g.cooldown = g.shot.interval_ticks;
+    if (t + g.phase) % 6 == 0 {                                 // retarget at the Canon §2.2 AI-think phase
+        g.target = w.hostiles_within(g.pos, g.range_mm)         // ascending EntityId
+            .filter(|h| w.line_of_sight(g.muzzle(), h.center()))
+            .min_by_key(|h| (!h.has(ST_MARKED), dist2(g.pos, h.pos), h.id))
+            .map(|h| h.id);
+    }
+    if g.cooldown == 0 {
+        if let Some(h) = g.target.filter(|&h| w.alive(h) && w.line_of_sight(g.muzzle(), w.center(h))) {
+            w.fire_projectile(g, h, g.shot, keyed_rng("rng.combat", folio, g.id, t, 0));   // 2 spread draws
+            g.cooldown = g.shot.interval_ticks;
+        }
     }
 }
 ```
+
+Firing is checked every tick, so the stated intervals hold exactly (a 20-tick drone fires every 20 ticks, not every 24). `g.phase = (g.id & 0xFF_FFFF_FFFF) % 6` (Canon §1.11). The flame turret's cone pulse and the coil's arcs hit instantly with no projectile and no spread draws; each target hit draws one crit roll from that tick's generator, targets in ascending EntityId. The combat drone targets the owner's last target instead of running the search; the scout drone and the beacon never fire.
 
 Each hit draws one crit roll at `clamp(500 + (vrv - 5) × 100, 0, 7500)` Bp (0 where VERVE is 0) with multiplier 15000. Example: a Good turret with a brass chassis made in Folio 5 fires `4000 → 5646 → 5646 → 6210 → 6210 → 5589` mHP shots and has `hp_max = mul_bp(mul_bp(40000, 12388), 11000) = 54,507` mHP (68,133 at Tinkering 50).
 
@@ -1073,7 +1253,7 @@ Each hit draws one crit roll at `clamp(500 + (vrv - 5) × 100, 0, 7500)` Bp (0 w
 
 ### 12.1 Rules
 
-Cooking is a process at a campfire (recipes of tier 1) or kitchen (any), governed by Survival, ticks × 5000 at Survival 50 (doc 04). Outputs are doc 11 `item.food.meal` instances carrying `dish` = the recipe ID, or `item.food.ration`. Satiation, freshness and the meal's composure gain follow doc 04 §11.2. Eating a dish with a buff sets `meal_buff = (dish, t + MEAL_BUFF_TICKS)`, replacing any previous buff; the buff applies doc 04 §1.2 modifiers and ends at expiry or on `st.ghost`. Survival XP is `1000 × input_units` per cook (doc 04).
+Cooking recipes are `recipe.kind.process` jobs (§5.3 queue, fueled) at a campfire (recipes listed for the campfire) or a kitchen (any cooking recipe), governed by Survival; doc 04 Survival 50 multiplies their base ticks by 5000 before the §5.3 `ticks_each` formula. Outputs are doc 11 `item.food.meal` instances (500 g, 900 satiation) carrying `dish` = the recipe ID, or `item.food.ration` (300 g, 600 satiation, never rots); doc 04 scales satiation by the eater's `10000 + 20 × survival`. Satiation, freshness and the meal's composure gain follow doc 04 §11.2. Eating a dish with a buff sets `meal_buff = (dish, t + MEAL_BUFF_TICKS)`, replacing any previous buff; the buff applies doc 04 §1.2 modifiers and ends at expiry or on `st.ghost`. Survival XP is `1000 × input_units` per cook (doc 04).
 
 ### 12.2 Recipes and buffs
 
@@ -1093,7 +1273,18 @@ Cooking is a process at a campfire (recipes of tier 1) or kitchen (any), governe
 
 ## 13. Fieldcraft hooks (the canon-1.2 Delving hooks)
 
-Doc 04's Delving perks apply to `skill.fieldcraft` (governed by END): mining and placing speed × `10000 + 100 × skill` (§9.2, §10.3); 25: +1 unit from nodes of hardness ≥ 3 (§9.3); 50: mine one tool tier above at half speed and double wear (§9.2, §8.2); 75: placed blocks × 15000 HP (§10.4); 100: placement takes 1 tick (§10.3). Fieldcraft also sets ground-gadget deploy time (§11.1) and placeable repair (§10.4). XP: `100 × hardness` per node, 50 per placement, at most 40,000 per Folio together (doc 04 §5.2); dismantled or own-broken blocks give 0.
+Canon-1.2 gave this chapter hooks for a Delving skill; canon-1.4 replaced Delving with `skill.fieldcraft` (governed by END, Canon §7) and doc 04 §5.3 owns its perks. Every hook this chapter exposes, and the perk or XP row that drives it:
+
+| Fieldcraft | Effect in this chapter | Where |
+|---|---|---|
+| every point | placing, repairing and arming placeables take `max(1, ceil_div(base × 10000, 10000 + 100 × skill))` ticks | §10.3, §10.4, §11.1 rule 1 |
+| every point | mining, and melee or tool damage to destructible blocks, × `10000 + 50 × skill` | §9.2; doc 03 §13.2 |
+| 25 | placeables you place have `hp_max` × 12500 | §10.4 |
+| 50 | traps (`block.trap.spikes`, mines, snares) and demolition charges you set deal damage and status power × 13000 | §10.4 `trap_bp`, §11.1 rule 10 |
+| 75 | mineral and salvage nodes you break yield +1 unit; your placeable repairs restore × 15000 | §9.3, §10.4 |
+| 100 | placing a placeable takes 1 tick; your demolition charges gain +1000 mm radius | §10.3, §11.1 rule 10 |
+
+Fieldcraft XP (doc 04 §5.2): 300 per placeable uid placed (once per run), 300 per 1000 Bp of placeable `hp_max` repaired, 300 per destructible block broken, 500 per ore vein or salvage pile harvested, and trap or charge hits as doc 04 lists; at most 40,000 milli-XP per Folio together. Dismantling or breaking your own placeable grants 0. Example: Fieldcraft 30 places a 60-tick barricade in `ceil_div(600000, 13000) = 47` ticks and mines an iron vein with a steel pick in 101 ticks (§9.2).
 
 ## 14. Worked examples
 
@@ -1108,25 +1299,26 @@ Folio 7, Mythic Fantasy, forge tier 2 (`1 + floor_div(6, 5)`). The crafter (Enti
 3. **Channel.** `needed = ceil_div(360 × 10000, 10000 + 2000 + 1000) = 277` ticks.
 4. **Quality.** `center = 200 + 100 + 30 + 0 + 0 + 0 + 8 = 338`. Keyed `rng.craft` (Folio 7, the crafter, start tick 50000, seq 0) gives `range(141)` = 116, 34, 32: noise −28, score 310, so `q.good` (cap Excellent). The fourth draw seeds two perk columns.
 5. **Damage.** `14700 → × P(7) 16771 = 24653 → × 10000 → × 11000 = 27118 → × 10000 → × steel 11000 = 29829` mHP per light hit at `move_bp` 10000.
-6. **Mass and timing.** `floor_div(170 × 7850, 1000) + floor_div(80 × 750, 1000) = 1334 + 60 = 1394` g; `mass_ratio_bp = 9957`, `time_bp = 9987`; light W/R stay 10/12, `charge_full` 40, light stamina `mul_bp(3000, 9978) = 2993` mst, impact 11,973 mp.
+6. **Mass and timing** (doc 05 §3.3). `floor_div(170 × 7850, 1000) + floor_div(84 × 750, 1000) = 1334 + 63 = 1397` g; `mass_ratio_bp = floor_div(13,970,000, 1400) = 9978`; `time_mass_bp = 10000 + floor_div(−22 × 3000, 10000) = 9993` and the floor term `ceil_div(110,000,000, 14000) = 7858` is lower, so `time_bp = 9993`; light W/R stay 10/12 and `charge_full` 40; `stamina_bp = impact_bp = 10000 + floor_div(−22 × 5000, 10000) = 9989`, so light stamina is `mul_bp(3000, 9989) = 2996` mst and impact `mul_bp(12000, 9989) = 11,986` mp.
 7. **Other.** Durability `10000 → 11350 → 12485`; bleed multiplier 10800; enchant capacity `floor_div(4 × 6, 4) = 6`; value `76 → 127 → 127 → 139 → 139 → × 13000 = 180`; Smithing XP `1000 × 3 + 2000 × 1 = 5000` milli-XP before row 28.
 
 ### 14.2 Assemble a pistol from parts
 
-Folio 9, Weird West, workbench tier 2. The crafter (`(9 << 40) | 5`) has Tinkering 45, LOG 52, a steel toolkit (t2) and one helper with Tinkering 30. Components: 1 `mat.iron` frame, 1 `mat.oak` grip. Parts: `part.barrel.long` and `part.feed.quick` (Coffin Creek), `part.optic.reflex` (Ghostline), a Normal crafted `part.stock.braced` (Marginal Press).
+Folio 9, Weird West, workbench tier 2. The crafter (`(9 << 40) | 5`) has Tinkering 45, LOG 52, a steel toolkit (t2) and one helper with Tinkering 30; the job starts on tick 61000. Components: 1 `mat.iron` frame (118 ml), 1 `mat.oak` grip (97 ml). Parts, all `q.normal`: `part.barrel.rifled` and `part.feed.quick` stamped Coffin Creek (both on its doc 11 §5.2 part list), `part.optic.reflex` stamped Ghostline, and a crafted `part.stock.braced` (Marginal Press).
 
 1. **Channel.** `ceil_div(360 × 10000, 10000 + 2250 + 1000 + 1500) = 245` ticks.
-2. **Quality.** `center = 200 + 112 + 30 + 10 + 15 + 7 + 12 = 386`; draws 74, 59, 93 give noise +16, score 402: `q.excellent` (cap Excellent).
-3. **Manufacturer.** Coffin Creek holds 2 parts and makes class RG, so the pistol is `mfr.weird_west.coffin_creek`: tendencies D+500, M−2000, L+1000 and the crit-ricochet gimmick (dependency verve).
-4. **Stats.** `base_mhp 8600 → 9030`. Magazine `round_half_even(12 × 8000, 10000) = 10`. Reload `72 → 79` (tendency) `→ 67` (quick feed). Range 60000 → 75000; falloff 18750 / 43750. Swap `18 → 20 → 21`, ADS `9 → 10 → 10`. The reflex optic is cross-manufacturer, `−800 → −600`: hip 364 → 342, ADS spread 73 → 68, bloom 64 → 60, bloom max 364 → 342. Recoil 182 / 36 → 154 / 30. Iron tech affinity 5 adds no reload tendency.
-5. **Chain.** `9030 → × P(9) 19925 = 17992 → 17992 → × 12000 = 21590 → 21590 → × iron 10000 = 21590` mHP per shot. Mass `928 + 75 = 1003` g. Durability `10000 → 10000 → 12000`.
+2. **Quality.** `center = 200 + 112 + 30 + 10 + 15 + 7 + 12 = 386`; keyed `rng.craft` (Folio 9, the crafter, tick 61000, seq 0) gives `range(141)` = 74, 59, 93: noise +16, score 402, `q.excellent` (cap Excellent from skill 45 and tier 2). The fourth draw seeds two perk columns.
+3. **Manufacturer.** Coffin Creek holds 2 non-graft parts and makes class RG, so the pistol is `mfr.weird_west.coffin_creek`: tendencies D+500, M−2000, L+1000 and the crit-ricochet gimmick (dependency verve).
+4. **Stats** (§7.3 order: manufacturer tendencies, material tendencies, then barrel, feed, optic, stock). `base_mhp 8600 → 9030`. Magazine `round_half_even(12 × 8000, 10000) = 10`. Reload `72 → 79` (tendency) `→ 67` (quick feed, same manufacturer, full −1500). Range 60000 and falloff 15000 / 35000 are unchanged. Spread takes the rifled barrel's −1500 in full, then the reflex optic's −800, which is cross-manufacturer and becomes `−mul_bp(800, 7500) = −600`: hip 364 → 309 → 290, ADS spread 73 → 62 → 58, bloom 64 → 54 → 50, bloom max 364 → 309 → 290. The braced stock gives recoil 182 / 36 → 154 / 30, swap `round_half_even(18 × 10500, 10000) = 19` and ADS `round_half_even(9 × 10500, 10000) = 9`. Iron tech affinity 5 adds no reload tendency.
+5. **Mass.** `floor_div(118 × 7870, 1000) + floor_div(97 × 750, 1000) = 928 + 72 = 1000` g, exactly doc 05's `ref_mass_g`, so doc 05 §3.3 gives `mass_ratio_bp` 10000 and every value in step 4 stands.
+6. **Chain.** `9030 → × P(9) 19925 = 17992 → 17992 → × 12000 = 21590 → 21590 → × iron 10000 = 21590` mHP per shot. Durability `10000 → 10000 → 12000`.
 
 ### 14.3 Mine and smelt iron
 
 Folio 3, Mythic Fantasy. The Erratum (`(3 << 40) | 2`) has a steel pick (t2), Fieldcraft 30, Smithing 20.
 
-1. **Mine.** An iron vein (hardness 5, req t1): `ceil_div(150 × 10^8, 13000 × 13000) = 89` ticks. At break tick 12000 the keyed bonus roll draws 9498 against 2500: no bonus. Yield `2 + 1 (Fieldcraft 25) = 3` `mat.iron.ore`; the cell becomes `block.node_spent`; pick wear 50; Fieldcraft XP 500.
-2. **Smelt.** Forge tier 1 (melt cap 16000 ≥ 15380). `ticks_each = ceil_div(240 × 10000, 11000) = 219`; a batch of 3 takes 657 ticks and burns 1 coal (1200 fuel ticks). Output 3 `mat.iron`; Smithing XP 3 × 1000.
+1. **Mine.** An iron vein (hardness 5, Req t1): `ceil_div(150 × 10^8, 13000 × 11500) = 101` ticks. At break tick 12000 the keyed bonus roll (Folio 3, the miner, tick 12000, seq 0) draws 9498 against `1000 + 50 × 30 = 2500`: no bonus. Fieldcraft 30 is below the 75 perk. Yield 2 `mat.iron.ore`; the cell becomes `block.node_spent`; pick wear `10 × 5 = 50`; Fieldcraft XP 500 milli-XP (doc 04).
+2. **Smelt.** Forge tier 1 (melt cap 16000 ≥ 15380). `ticks_each = ceil_div(240 × 10000, 10000 + 50 × 20) = 219`; the batch of 2 takes 438 ticks and burns 1 coal (1200 fuel ticks, 762 left in `fuel_ticks`). Output 2 `mat.iron`; Smithing XP `2 × 1000 = 2000` milli-XP before row 28.
 
 ## Exports
 
@@ -1135,98 +1327,133 @@ Folio 3, Mythic Fantasy. The Erratum (`(3 << 40) | 2`) has a steel pick (t2), Fi
 | `mat.` | the 69 materials of §2.2; `mat.<metal>.ore` for copper, tin, zinc, iron, silver, gold, titanium, orichalcum, star_metal, aetherium; `mat.role.{blade, head, haft, limb, frame, plate, soft, focus, block}`; `mat.tag.{absorbent, acid_soluble, alloying, arcane_reagent, brittle, edible, fabric, fae_bane, fat, flammable, fuel, luminous, metal, nonsolid, ricochet, silvered, stone, terrain, tillable, unbreakable, wood}` |
 | `tooltier.` | `t0` … `t5` |
 | `station.` | `hand`, `campfire`, `workbench`, `forge`, `loom`, `kitchen`, `alchemy`, `enchanting`, `scriptorium` |
-| `recipe.` | `recipe.kind.{shaped, shapeless, assembly, process, disassembly}`; every recipe of §6.6, §7.2, §8.5, §11.2 and §12.2 (the 12 `r2` recipes form `loot.pool.recipes_2`) |
-| `part.` | the 22 doc 11 parts; `part.stock.{braced, folding}`; `part.module.{battery, plating, targeting, payload}`; `part.graft.<genre_suffix>.<name>` for the 38 manufacturers of doc 11 §5.2 other than First Press and Marginal Press |
-| `block.` | every block of §10.1, including `block.masonry.*`, `block.light_fixture.<genre_suffix>`, 23 `block.node.*`, `block.node_spent`; `block.tag.{destructible, errata_placeable, node, hearth, altar}` |
-| `gadget.` | the 12 gadgets of §11.2 (the last six form `loot.pool.gadgets_2`) |
+| `recipe.` | `recipe.kind.{shaped, shapeless, assembly, process, disassembly}`; the 127 recipes of §6.6 (process, ammunition, shaped and shapeless, assembly), §7.2, §8.5, §11.2 and §12.2; the 12 `r2` recipes form `loot.pool.recipes_2` |
+| `part.` | the 29 parts of §7.2; `part.graft.<genre_suffix>.<name>` for the 38 manufacturers of doc 11 §5.2 other than First Press and Marginal Press |
+| `block.` | every block of §10.1: `block.masonry.<m>` (24), `block.light_fixture.<genre_suffix>` and `block.light_fixture_out.<genre_suffix>` (16 each), 23 `block.node.*`, `block.node_spent`, the placeables, their unlit twins, the props (`crate`, `barrel`, `powder_keg`, `wardrobe`, `bed`, `table`), `tall_grass`, `vine`, `light_switch`, `fuse_box`; `block.tag.{destructible, errata_placeable, node, hearth, altar}` |
+| `gadget.` | the 13 gadgets of §11.2: six base, six in `loot.pool.gadgets_2`, and the crafted-only `gadget.noisemaker` |
+| Record fields | material `acoustic`; block `hide`, `conceal_crouch_only`, `lightsrc` (§10.6); instance fields `crafted`, `mat_bonus_bp`, `dish`, ammunition `smart`; gadget state `charges`, `progress`, `target` |
 
-Functions exported to other docs: `pick_material`, `equivalent`, `break_ticks`, `mining_ticks`, `block_hp(cell)`, `unit_mass_g`, `salvage_units`, `dur_max`, `wear`.
+Functions exported to other docs: `pick_material`, `equivalent`, `break_ticks(material)`, `break_ticks(cell)`, `door_lock_bp(cell)`, `mining_ticks`, `block_hp(cell)`, `block_drops(state, cause, actor)`, `on_block_changed`, `unit_mass_g`, `salvage_units`, `dur_max`, `wear`.
 
 ## Interface assumptions
 
 | Doc | Assumed to provide |
 |---|---|
-| 02 | content validation of the §2.1 and §6.2 schemas, including `recipe_overlap` |
-| 03 | an optional `tags` field on block records; `sys.crafting` in the tick order (§1.4); saved `placed_meta`, `stations` and `crops` maps cleared when another cause changes the cell; calls to `doc07::mining_ticks`, `doc07::block_hp` and node drops; placed-cell damage routed to `placed_meta.hp`; gadget entity kinds |
-| 04 | the Smithing, Tinkering, Survival and Delving (applied to Fieldcraft) mastery perks quoted here; Artificer talents `overclock`, `field_repair`, `scrap_savant`, `turret_tech`, `modular`, `hardlight`, `masterwork`, `self_destruct`, `legion`; an XP row granting Tinkering `min(750, floor_div(750 × dmg, max))` per gadget hit; the Fieldcraft XP row taking over Delving's; food values; meal-buff modifiers |
-| 05 | `ref_mass_g` 1530 for `arch.ranged.staff` and 900 for `arch.offhand.tome`; the §3.2 bleed multiplier on `status_bp`; `pen_cost` and `ricochet` read from materials; turret projectiles using `rifle_auto` ballistics |
-| 06 | `arcane_affinity`, `mat.tag.arcane_reagent`, `station.enchanting`, `block.conjured`, web and ice walls, the shrine lamp as an altar |
-| 08 | `ing.seed_*` as `cat.seed`, plant tags, `liq.water` withdrawal from containers, mineral ingredient extras on nodes |
-| 11 | `item.book.schematic` with `teaches`; instance fields `crafted`, `dish`, and part entries `{slot, part_id, mfr, quality}`; reusable gadgets with `stack_max` 1; graft loot; doc 05 archetype IDs replacing its older ones |
-| 12 | station rooms and tiers (§5.1); vein counts and kinds (§9.4); genre stone, wood and `block.light_fixture.<suffix>`; walls without `destructible` |
-| 13 | `ai.action.breach`; climb links on placed ladders; trap knowledge per squad; `disabled_until` for disabling abilities; the template `materials` list |
+| 02 | content validation of the §2.1 and §6.2 schemas, including both `recipe_overlap` rules and the §2.1 validation list |
+| 03 | `block.tag.*` tags on block records (§4.5); a `break_result` block field, default `block.air`, that its mining and damage breaks write (resource nodes set `block.node_spent`); `sys.crafting` in the tick order (§1.4); saved `placed_meta`, `stations` and `crops` maps cleared when another cause changes the cell; calls to `doc07::mining_ticks`, `doc07::block_hp` for every cell without `placed_meta` (doors included) and `doc07::block_drops`; placed-cell damage routed to `placed_meta.hp`; `hide`, `conceal_crouch_only` and `lightsrc` carried in the compiled block tables; its §13.3 placement accepting only `cat.placeable` items (its mention of `item.tool.torch` reads as the `block.torch` item); gadget entity kinds with the §11.3 fields |
+| 04 | the Smithing (25, 50, 75, 100), Tinkering (25, 50, 75, 100), Fieldcraft (every tier) and Survival (25, 50) perks as quoted in §3, §4, §8, §9, §10, §11 and §13; Artificer talents `overclock`, `field_repair`, `scrap_savant`, `turret_tech`, `modular`, `drone_companion`, `reinforced`, `hardlight`, `masterwork`, `self_destruct`, `smart_rounds`, `legion`; `self_repair` spending `REPAIR_KIT_USE`; the XP rows quoted here (crafting, repair, salvage, Fieldcraft, Survival, a Tinkering row of `min(750, floor_div(750 × dmg, max))` per gadget hit); food values; meal-buff modifiers; augment installation at `station.workbench` |
+| 05 | `ref_mass_g` equal to §3.1's reference masses (staff 1530, tome 900); the §3.2 bleed multiplier on `status_bp`; `pen_cost` (negative means stop) and `ricochet` read from materials; turret projectiles using `rifle_auto` ballistics; a smart and a plain reserve counter per ammunition family, smart fired first with `DmgAdd +1000`; the shared `note_contradiction_failure(t)` |
+| 06 | `arcane_affinity`, `mat.tag.arcane_reagent`, `station.enchanting`, `block.conjured`, web and ice walls, the shrine lamp as an altar; bolt removal of nodes drops as §9.3 |
+| 08 | `ing.seed_*` as `cat.seed`, plant tags, `liq.water` withdrawal from containers, M-source ingredients on mineral nodes, `ing.charcoal` from `recipe.kiln.alch_charcoal`, `apparatus.vessel.crucible` and `liq.molten_metal` for pour mode, the §9.1 apparatus kinds and alchemy-station skins |
+| 09 | reading `acoustic`, `lightsrc`, the unlit twins, `hide` and `conceal_crouch_only`; the `suppressor` tag on `part.barrel.suppressor`; `noise.gadget.noisemaker` for `gadget.noisemaker`; lockpick snaps (durability 1 per pick) and hacking-deck wear 100 per attempt; `TOOL_Q` from crafted quality; Security-50 disarm yielding `block.trap.spikes` (§10.4); Seize applying `st.hacked` to hostile devices only |
+| 11 | mirroring §7.2's 22 loot parts and the graft loot; `item.book.schematic` with `teaches`; instance fields `crafted`, `mat_bonus_bp`, `dish` and part entries `{slot, part_id, mfr, quality}`; reusable gadgets with `stack_max` 1 and the §11.1 charges; doc 11 §3.6's "gadgets have dependency techne" read as §11.1 rule 3's skin rows; `gadget.noisemaker` in no loot pool; `item.tool.lockpicks`, `item.tool.hacking_deck`, `item.tool.rope`, `item.tool.torch`, `item.tool.toolkit` and `item.tool.pick` templates; doc 05 archetype IDs replacing its older ones |
+| 12 | station rooms and tiers (§5.1); the count and rooms of mineral (M) resource nodes, with an M weight in `node_w` (Canon gaps 13), and the §9.4 kind and size draws on `rng.worldgen`; `law.post_apocalypse.scarcity`; lock tiers on doors; genre stone, wood and `block.light_fixture.<suffix>`; walls without `destructible`; `block.masonry.<m>` for doc 18's wall and floor materials |
+| 13 | `ai.action.breach`; climb links on placed ladders, rope ladders and `block.vine`; door links using `break_ticks(cell)`; trap knowledge per squad; `disabled_until` for disabling abilities; the template `materials` list; its `block.dirt` read as `block.soil` |
 | 14 | `unlock.loot.recipes_2`, `unlock.loot.gadgets_2`, `run.marg.brittle_kit` rank `r`, `d_eff` |
-| 16, 17, 18 | host-authoritative crafting with instanced station outputs; grid, assembly and station UI; skin names and localization keys |
+| 16, 17, 18 | host-authoritative crafting with instanced station outputs; grid, assembly and station UI with a 3 × 3 grid at `station.hand` (doc 17's 2 × 2 hand grid cannot hold the barricade, ladder and bridge patterns); skin names and localization keys |
 
 ## Canon gaps
 
-1. **Version.** The contract line names canon-1.2; the canon is now 1.4. Canon-1.4 replaced Delving with `skill.fieldcraft` and limited building. Assumed: the canon-1.2 Delving hooks apply to Fieldcraft (§13), and building is the 1.4 placeable list.
-2. **`destructible`.** Canon §4.3 names a block tag; doc 03's schema has none. Assumed: `block.tag.destructible` exists, and a block without it has `hardness_milli = -1`, so doc 03's unbreakable path enforces fixed terrain. Doc 12 §8's "every other wall is breakable" yields to the canon.
+1. **Version.** This chapter conforms to canon-1.5. Canon-1.2 assigned it Delving hooks; canon-1.4 replaced Delving with `skill.fieldcraft`, whose perks doc 04 owns. §13 maps every hook to doc 04's Fieldcraft perks; the earlier Delving perk set (+1 node unit at 25, mining one tier above at 50, placed HP × 15000 at 75) no longer exists.
+2. **`destructible`.** Canon §4.3 names a block tag. Resolved with doc 03 §4.5: `block.tag.destructible` exists, a block without it has `hardness_milli = -1`, and doc 03's loader forbids it to burn, melt, fall or explode; doc 12 §9.2 agrees.
 3. **Tags and roles as IDs.** Other docs write material tags bare (`flammable`, `absorbent`). Assumed: they mean `mat.tag.<name>`.
-4. **§13.9 `parts`** lists `{slot, part_id}`. Assumed extension `{slot, part_id, mfr, quality}` plus an instance flag `crafted`.
+4. **§13.9 instance fields.** Canon §13.9 lists `parts` as `{slot, part_id}` and no crafting fields. This chapter uses `{slot, part_id, mfr, quality}` plus `crafted`, `mat_bonus_bp`, `dish` and ammunition `smart`; doc 19 owns the full schema.
 5. **Grafts.** Canon §5.3 gives grafts dependency arcana. Assumed: that row means doc 04 body grafts; licensed grafts use their gimmick's doc 11 dependency.
-6. **Stream uses.** Canon §3.3 lists `rng.craft` for crafting quality only. Proposed: add crafted perk seeds, mining bonus units and seed returns (§1.3).
+6. **Stream uses.** Canon §3.3 lists `rng.craft` for crafting quality only. Requested: add crafted perk seeds, mining bonus units and seed returns (§1.3). Vein draws stay on doc 12's `rng.worldgen`.
 7. **Meal buffs** have no status ID; assumed a per-Erratum `meal_buff` field using doc 04 modifiers.
-8. **`st.rooted` in webs** is applied while overlapping, without threshold scaling (Canon §12.1 "while inside").
+8. **`st.rooted` in webs** is applied while overlapping, without threshold scaling (Canon §12.1 "while inside"); an Errata-placed web never roots `fac.errata`.
 9. **Ward capacity** has no material term in Canon §13.2; materials change ward generators only through mass, durability and value.
-10. **Archetype IDs.** Docs 05 and 11 list different melee, shield and ward IDs; Canon §19 gives `arch.` to doc 05, so this chapter uses doc 05's.
+10. **Archetype IDs.** Canon §19 gives `arch.` to doc 05, so this chapter uses doc 05's melee, shield and ward IDs.
 11. **Doc 12 pool IDs** predate Canon §5.9; §2.9 maps them.
 12. **Gadget failure** is rolled per deploy only; turret shots are not activations.
+13. **Resource-node count.** Canon §4.3 names resource nodes but no count. Doc 12 §11.2 places `6 + floor_div(rooms, 3)` nodes by `node_w`, whose table has no M (mineral) weight. Requested: doc 12 adds an M weight per genre so a Folio holds at least `6 + floor_div(d_eff, 5)` mineral veins; this chapter's §9.4 rules apply to every M node doc 12 places.
+14. **Torch placement.** Doc 03 §13.3 lets `item.tool.torch` place blocks; Canon §4.3 allows only `cat.placeable`. The canon wins: `recipe.hand.wall_torch` turns a held torch into a placeable `block.torch`.
+15. **Part namespace.** Doc 11 §5.4 lists `part.` rows; Canon §19 gives `part.` to this chapter. §7.2 is the source of truth and doc 11 mirrors it as loot.
+16. **Seized devices.** The old §11.1 rule 2 left a hacked hostile turret hostile; Canon §11.1 says `st.hacked` makes it fight for the hacker. The canon wins (doc 09 gap G14 is closed).
+17. **Traps in two categories.** Canon §13.1 lists traps under both `cat.gadget` and `cat.placeable`. Resolved: block traps (`block.trap.spikes`, `block.web`) are `cat.placeable`; snares, mines and charges are `cat.gadget` props.
+18. **Block HP tables.** Canon §13.8 lists neither block-HP use. Placed blocks scale with `T(d_place)` against enemy damage; terrain destructibles with `P(d_current)` against Errata weapons (doc 03 G27). Requested: Canon §13.8 adds both rows.
+19. **Door HP by lock tier.** Doc 12 §9.2 asks this chapter for it; §10.7 defines `door_lock_bp`.
+20. **`block.dirt`.** Doc 13 names `block.dirt`; this chapter's block is `block.soil`.
 
 ## Acceptance tests
 
-1. **Materials.** The table loads 69 materials; all 38 Canon §5.9 materials exist; every `dmg_bp` and `ar_bp` is in `7000..=14000`; `mat.iron` has 10000 for `dmg_bp`, `ar_bp` and `value_bp`; `mat.star_metal.dmg_bp = 14000`; `mat.redacted_alloy.ar_bp = 14000`.
-2. **Units.** `unit_mass_g`: steel 1962, oak 750, leather 860, gold 4825. `unit_value`: steel 11, gold 19, iron 5. `mat.iron.ore` unit mass 1376.
+1. **Materials.** The table loads 69 materials; all 38 Canon §5.9 materials exist and each lists every genre whose §5.9 row names it (`mat.copper` lists SP); every `dmg_bp` and `ar_bp` is in `7000..=14000`; `mat.iron` has 10000 for `dmg_bp`, `ar_bp` and `value_bp`; `mat.star_metal.dmg_bp = 14000`; `mat.redacted_alloy.ar_bp = 14000`.
+2. **Units.** `unit_mass_g`: steel 1962, oak 750, leather 860, gold 4825. `unit_value`: steel 11, gold 19, iron 5. `mat.iron.ore` unit mass 1376. Every row's `unit_ml`, `unit_g` and `unit_lucre` equal the §2.5 formulas.
 3. **Durability factor.** `dur_mat_bp`: iron 10000, steel 11350, glass 5050, star_metal 13900.
-4. **Block defaults.** A destructible iron block has `hardness_milli` 5000, `blast_res_milli` 5500, `heat_cond_bp` 6400; `block.masonry.granite` has −1.
+4. **Block defaults.** A destructible iron block has `hardness_milli` 5000, `blast_res_milli` 5500, `heat_cond_bp` 6400; `block.masonry.granite` has −1; `block.masonry.oak` has `flammability_bp` 0 and `burn_runs` 0.
 5. **Pools.** `pick_material(weird_west, pistol, ilvl 7)` weights `[copper 6000, hexed_silver 9000, iron 18000, steel 3000]`; the haft secondary is `mat.leather`.
 6. **Equivalence.** `equivalent(moonsilver, cyberpunk) = titanium`; `equivalent(jade, mythic_fantasy) = moonsilver`; `equivalent(dragonbone, hardboiled_noir) = dragonbone`.
-7. **Quality vector.** §14.1 inputs give draws 116, 34, 32, score 310, `q.good`; §14.2 gives draws 74, 59, 93, score 402, `q.excellent`.
-8. **Distribution.** Center 250, cap Good, over all 2,803,221 noise outcomes: Awful 37,820, Poor 653,710, Normal 1,407,750, Good 703,941. Center 630, cap Peerless: Excellent 88,560, Masterwork 1,601,345, Peerless 1,113,316.
+7. **Quality vector.** For run seed `0x0123456789ABCDEF`, keyed `rng.craft` at (Folio 7, `(7 << 40) | 3`, tick 50000, seq 0) gives `range(141)` = 116, 34, 32 and §14.1's score 310, `q.good`; at (Folio 9, `(9 << 40) | 5`, tick 61000, seq 0) it gives 74, 59, 93 and §14.2's score 402, `q.excellent`.
+8. **Distribution.** Center 250, cap Good, over all 2,803,221 noise outcomes: Awful 37,820, Poor 653,710, Normal 1,407,750, Good 703,941. Center 630, cap Peerless: Excellent 88,560, Masterwork 1,601,345, Peerless 1,113,316. Every row of §4.3 matches enumeration to two decimals.
 9. **Caps.** Skill 100 at `station.hand` never exceeds `q.normal`; skill 24 at a tier-5 station never exceeds `q.good`.
-10. **Draw count.** A quality-rolling craft draws exactly 3 `range(141)` and 1 `next_u64`; a material or placeable craft draws 0.
-11. **Longsword.** §14.1 yields B 29,829 mHP, mass 1,394 g, W 10, R 12, durability 12,485, value 180, needed 277 ticks.
-12. **Pistol.** §14.2 yields manufacturer Coffin Creek, magazine 10, reload 67, range 75,000, hip spread 342, recoil 154 / 30, B 21,590 mHP, 245 ticks.
+10. **Draw count.** A quality-rolling craft draws exactly 3 `range(141)` and 1 `next_u64`; a material, placeable or ammunition craft draws 0.
+11. **Longsword.** §14.1 yields B 29,829 mHP, mass 1,397 g, `time_bp` 9993, W 10, R 12, `charge_full` 40, light stamina 2,996 mst, impact 11,986 mp, durability 12,485, value 180, needed 277 ticks.
+12. **Pistol.** §14.2 yields manufacturer Coffin Creek, magazine 10, reload 67, range 60,000, hip spread 290, ADS spread 58, bloom 50 / 290, recoil 154 / 30, swap 19, ADS 9, mass 1,000 g, B 21,590 mHP, 245 ticks.
 13. **Parts math.** A −800 delta from another manufacturer becomes −600; a graft's "+1500 Bp" becomes 1125 and "× 15000" becomes 13750.
-14. **Mining.** Iron vein: steel pick Fieldcraft 30 → 89; iron pick Fieldcraft 0 → 150; with `hard_bp` 15000 → 225. A t1 pick on a titanium vein returns `None` at Fieldcraft 49 and 280 ticks at Fieldcraft 50.
-15. **Yield.** §14.3 gives 3 ore with bonus draw 9498.
-16. **Smelting.** 3 iron ore at forge tier 1, Smithing 20: 219 ticks each, 657 total, 1 coal.
+14. **Mining.** Iron vein: steel pick Fieldcraft 30 → 101; iron pick Fieldcraft 0 → 150; with `hard_bp` 15000 → 225; steel pick Fieldcraft 75 → 84. A t1 pick on a titanium vein returns `None` at every Fieldcraft value.
+15. **Yield.** §14.3 gives 2 ore with bonus draw 9498; the same draw at Fieldcraft 75 gives 3; 2 units under `law.post_apocalypse.scarcity` become 3.
+16. **Smelting.** 2 iron ore at forge tier 1, Smithing 20: 219 ticks each, 438 total, 1 coal, 762 fuel ticks left.
 17. **Salvage.** A steel longsword yields 1 steel and 0 oak.
-18. **Wear.** Long-blade light swing 12, SMG shot 2, sniper shot 34, 5,000 mHP mitigation at Folio 1 → 20; the swing with `curse.brittle` m 5000 → 18.
+18. **Wear.** Long-blade light swing 12, SMG shot 2, sniper shot 34, 5,000 mHP mitigation at Folio 1 → 20; the swing with `curse.brittle` m 5000 → 18; one `self_repair` use costs a toolkit 250.
 19. **Repair.** 12,485-max longsword at Smithing 40, station: +5,617; in the field: +2,808, capped at 9,363.
 20. **Shatter.** An obsidian dagger reaching durability 0 is destroyed and drops its salvage.
-21. **Placed HP.** Wooden barricade 60,000 at Folio 1, 108,120 at Folio 12, 162,180 at Folio 12 with Fieldcraft 75, 216,870 at Folio 25. Its HP never decays.
-22. **Caps on placing.** A player's 49th live placed block is refused; a bridge cell needing span 6 is refused.
-23. **Placement time.** A barricade at Fieldcraft 0 takes 60 ticks, at Fieldcraft 50 takes 40, at Fieldcraft 100 takes 1.
-24. **Web.** BRN 40 breaks free after 80 movement ticks; BRN 110 after 20; a web-walker is never rooted.
-25. **Crops.** Survival 20 with water and light 12: 858 ticks per stage; in light 7 the stage never advances.
+21. **Placed HP.** Wooden barricade 60,000 at Folio 1, 108,120 at Folio 12, 135,150 at Folio 12 with Fieldcraft 25, 216,870 at Folio 25. A reference enemy melee hit breaks it in 12 hits at Folio 1 and 13 at Folio 25. Its HP never decays.
+22. **Caps on placing.** A player's 49th live placed block is refused; a bridge cell needing span 6 is refused; placement is refused while mounted, for the invader, and for a held `item.tool.torch`.
+23. **Placement time.** A barricade at Fieldcraft 0 takes 60 ticks, at Fieldcraft 30 takes 47, at Fieldcraft 50 takes 40, at Fieldcraft 100 takes 1.
+24. **Web.** BRN 40 breaks free after 80 movement ticks; BRN 110 after 20; a web-walker is never rooted; an Errata-placed web never roots an Erratum.
+25. **Crops.** Survival 20 with water and light 12: 858 ticks per stage; in light 7 the stage never advances; a fifth live crop is refused; a seed returned by a harvest cannot be replanted until the next Folio.
 26. **Turret.** Good brass turret from Folio 5: shot 5,589 mHP, HP 54,507 mHP, 68,133 at Tinkering 50.
 27. **Recharge.** A tech-5 chassis in Fairy Tale (TEC 1) recharges at 6000 Bp per tick: 1800-tick recharge takes 3000 ticks.
-28. **Hacking-free.** No gadget path reads `skill.hacking`; `st.hacked` applied to an Errata turret is rejected; `short_circuit` sets `disabled_until` only.
-29. **Recipe overlap.** Adding a shaped recipe `B/H` with keys blade and haft beside `recipe.forge.dagger` fails `recipe_overlap`; `recipe.hand.torch` (`C/W`) coexists with the dagger.
+28. **Hacking-free.** No gadget path reads `skill.hacking`; `st.hacked` applied to an Errata turret is rejected; `short_circuit` sets `disabled_until` only; a hostile turret seized by doc 09 gains `st.hacked`, fights for the hacker's faction and does not count toward the hacker's turret limit.
+29. **Recipe overlap.** Adding a shaped recipe `B/H` with keys blade and haft beside `recipe.forge.dagger` fails `recipe_overlap`; `recipe.hand.torch` (`C/W`) coexists with the dagger; adding a workbench or hand shapeless recipe "1 M" beside `recipe.bench.lockpicks` fails (hand recipes run at every station), while a loom-only one passes.
 30. **Mirror.** `B./.H` matches `recipe.forge.blade_short`.
 31. **Genre legality.** In `genre.unwritten`, `recipe.bench.pistol` is refused.
 32. **Butchery.** A 60,000 g quadruped corpse yields 12 flesh, 6 hide, 3 bone; 13, 7 and 4 at Survival 25.
 33. **Erasure.** A hunter standing 1000 mm from a placed barricade erases it on its next erasure tick with no drop; the cell's `placed_meta` is removed.
 34. **Meal buff.** Eating `hearty_stew` then `herb_bread` leaves only the bread buff, expiring 18,000 ticks after the bread.
+35. **Reference masses.** Every two-component row of §3.1 built from its reference materials weighs exactly doc 05's `ref_mass_g`; `arch.ranged.thrown` weighs 299 g and keeps every doc 05 tick count.
+36. **Flammable tag.** `mat.chitin`, `mat.nanoweave`, `mat.flesh`, `mat.vellum` and `mat.dreamstuff` carry `flammable`; a material carries it exactly when `flammability_bp >= 500`.
+37. **Acoustic.** Every material has exactly one acoustic class; every material doc 09 §7.2 names gets the same class here.
+38. **Spark.** A failed deploy by an Erratum with Max HP 85 applies a 4,250 mHP `dmg.shock` hit at Canon §10.5 step 3 and counts one Contradiction failure; three sparks within 600 ticks apply `st.unmoored`.
+39. **Charges.** With Tinkering 25 the owner's turret holds 2 charges and redeploys at once after the first deployment ends; at Tinkering 24 it enters Recharging.
+40. **Friendly fire.** A frag-mine blast on an Erratum uses `FF_AREA_BP` 10000; a turret bullet on an Erratum uses `FF_DIRECT_BP` 5000.
+41. **Trap skill.** Spikes placed at Folio 1 by a Fieldcraft-50 Erratum deal `B` 10,400 mHP with 52 `st.bleeding` power; at Fieldcraft 49, 8,000 and 40.
+42. **Doors.** An unlocked wooden door at Folio 1 has `block_hp` 60,000; an iron `lock.t3` door at Folio 11 has 710,190 and `break_ticks` 450; a door with `protect` takes no damage.
+43. **Lights.** Snuffing `block.torch` writes `block.torch_out` (light 0) with cause `grid.cause.toggled`; relighting restores light 14; a torch snuffed with 600 lit ticks left burns out 600 lit ticks after relighting.
+44. **Nodes.** A demolition charge (block power 8000) never breaks `block.node.iron`; a weapon that breaks one by damage yields §9.3's units to the attacker and leaves `block.node_spent`.
+45. **Ammunition.** `recipe.bench.ammo_light` turns 1 `mat.iron` and 1 `mat.coal` into 24 `ammo.light`; with `smart_rounds` the stack is flagged `smart`.
+46. **Smithing 100.** A steel longsword crafted at Smithing 100 has `material_bp` 11500; a star_metal one stays at 14000.
+47. **Gadget cadence.** A `gadget.drone_combat` with a valid target fires on consecutive ticks 20 apart, and retargets only on its 6-tick phase.
+48. **Suppressor.** `part.barrel.suppressor` installs on a pistol and is refused on a crossbow.
+49. **Veins.** Each M node doc 12 places draws exactly 1 `weighted` and 1 `range_incl(2, 4)` from its placement sequence and fills that many cells with one node kind.
+50. **Noisemaker.** A deployed `gadget.noisemaker` emits `noise.gadget.noisemaker` 10 times, once every 60 ticks of its 600 active ticks.
 
 ## Invariants annex
 
 ```
-Σ doc07: materials ⊗ quality ⊗ stations ⊗ recipes ⊗ parts ⊗ durability ⊗ nodes ⊗ placeables ⊗ gadgets ⊗ meals
+Σ doc07: materials ⊗ quality ⊗ stations ⊗ recipes ⊗ parts ⊗ durability ⊗ nodes ⊗ placeables ⊗ doors ⊗ gadgets ⊗ meals
 W! ∀ mat: dmg_bp, ar_bp ∈ 7000..=14000 ∧ mat.iron = 10000           N! float ∈ material | recipe | block content
-W! mass_g = Σ floor_div(vol_ml × density, 1000)                      W! material_bp := dmg_bp(primary)
+W! flammable ⇔ flammability_bp ≥ 500                                  W! ∀ §5.9 material: genres ⊇ its §5.9 rows
+W! mass_g = Σ floor_div(vol_ml × density, 1000)                      W! ref-material mass = doc05 ref_mass_g (thrown 299)
+W! material_bp := min(14000, dmg_bp(primary) + mat_bonus_bp)          N! material_bp | mat_ar_bp > 14000
 W! quality draws := keyed rng.craft, exactly 4 per rolling output      N! quality draw from sequential stream
 W! quality ≤ min(skill_cap, station_cap) before talent shifts          N! station.hand output > q.normal
-W! ∀ shaped pair: ¬ambiguous (recipe_overlap)                         W! inputs consumed only at Done
+W! ∀ shaped | shapeless pair: ¬ambiguous (recipe_overlap)             W! inputs consumed only at Done
 W! stats rebuilt from base on every part change                        N! compounding part or tendency deltas
 W! cross-mfr part delta × 7500 ∧ graft numbers × 7500                  N! graft on Palimpsestic | Exotic | same mfr
-W! ¬destructible ⇒ hardness_milli = −1                                 N! Errata edit of fixed terrain
-W! node broken ⇒ block.node_spent                                       W! placed block ⇒ placed_by_errata ∧ placed_meta
-W! placed hp ∝ T(d_place) ∧ never decays                               N! placed blocks > 48 per player | 160 per Folio
+W! ¬destructible ⇒ hardness_milli = −1 ∧ never burns                   N! Errata edit of fixed terrain
+W! node broken ⇒ block.node_spent ∧ yield → actor                      N! explosion breaks a node
+W! place ⇐ cat.placeable ∧ placer ∈ party slots 0..=3                  N! mounted | invader | ghost | held torch places
+W! placed block ⇒ placed_by_errata ∧ placed_meta                       N! placed blocks > 48 per player | 160 per Folio
+W! placed hp ∝ T(d_place) ∧ never decays                               W! door hp = block_hp_mhp × door_lock_bp × P(d_current)
+W! Fieldcraft perks := doc 04 (25 hp ×12500, 50 traps ×13000, 75 +1 unit ∧ repair ×15000, 100 1 tick)
 W! gadget dep := genre skin ∧ failure rolled once per deploy           N! gadget reads skill.hacking | accepts st.hacked
-W! turret target order := marked, dist2, EntityId                      N! gadget targets fac.errata
+W! spark ⇒ shock hit at step 3 ∧ note_contradiction_failure            W! seized hostile device ∉ Errata gadget limits
+W! gadget fire check every tick ∧ retarget on 6-tick phase             N! gadget targets fac.errata
+W! gadget blast ⇒ FF_AREA_BP ∧ gadget shot ⇒ FF_DIRECT_BP              W! turret target order := marked, dist2, EntityId
 W! wear ≥ 1 unless dur_max = 0                                         W! brittle primary at 0 ⇒ shatter + salvage
 W! iteration ascending Gidx | EntityId | content ID                    N! HashMap | HashSet ∈ doc07 state
 W! one meal_buff per Erratum                                           W! Folio-scoped doc07 state cleared at ev.folio_exited
+W! live crops ≤ 4 per player ∧ harvested seed spent until next Folio   N! node, salvage or butchery unit with min_d > d_eff
+W! dismantled placeable keeps its uid                                  N! placement XP twice for one uid
 ```

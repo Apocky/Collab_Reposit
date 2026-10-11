@@ -3,7 +3,7 @@
 //! Every function here is total on its documented domain and panics (in every
 //! Cargo profile) outside it. No function wraps silently.
 
-/// Basis-point denominator: 10000 Bp = 100% = x1.0 (canon §1.2).
+/// SPEC: canon §1.2. Basis-point denominator: 10000 Bp = 100% = x1.0.
 pub const BP_ONE: i32 = 10_000;
 
 /// SPEC: canon §1.3 `floor_div`. Floor division `a.div_euclid(b)`.

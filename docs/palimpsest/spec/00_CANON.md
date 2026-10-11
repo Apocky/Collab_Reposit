@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.5 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.7 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -455,6 +455,17 @@ Building is limited (DECISIONS.md, item 16).
 - **Placeables.** Errata place only `cat.placeable` items: barricades, bridge spans, ladders, traps, light sources and deployable cover. Doc 07 owns placement rules, anchors, block HP and costs. Placing takes ticks scaled by `skill.fieldcraft`.
 - **Resource nodes.** Materials come from resource nodes (ore veins, plants, salvage piles) that are interactable props, not from digging terrain.
 - Liquids, gases, fire, light and sound still simulate on the block grid (doc 03).
+
+### 4.4 Micro-voxels
+
+Higher-resolution geometry by product-owner decision (DECISIONS.md, item 37). Docs 02, 03, 07, 12 and 18 own the details.
+
+- Every 1 m cell carries a **micro-voxel occupancy mask**: a `u64` covering 4 × 4 × 4 micro-voxels of 250 mm. Bit index is `mx + 4 × (mz + 4 × my)` for `mx, my, mz ∈ 0..=3`. A full cell is `u64::MAX`; an empty cell is 0.
+- Storage is sparse: a cell's block state names its material and a **shape**. The shape is either a predefined mask (full, slab, stairs, pillar, fence, pane and the other doc 03 shapes) or an index into a per-chunk table of custom masks for authored detail.
+- **Collision** tests capsules against the occupied 250 mm micro-voxel boxes, replacing per-shape collision boxes. The 550 mm step-up climbs two micro-voxel steps.
+- **The 1 m cell grid stays the simulation grid** for liquids, gases, fire, temperature, light, sound, navigation, stealth and spawning. Each cell's fill fraction is `popcount(mask) / 64`. Liquid capacity is `floor_div(1000 × (64 - popcount(mask)), 64)` units. A cell blocks light and sight when `popcount(mask) >= 48`. Otherwise its opacity and its concealment are scaled by the fill fraction. Sound attenuation through a cell scales the same way.
+- **Destruction** removes micro-voxels, not whole cells. Damage to a `destructible` cell removes micro-voxels inside the damage volume, nearest the impact first, at 250 mm granularity. A cell whose mask reaches 0 becomes air. Removed micro-voxels emit render-only debris, which never feeds the simulation. Terrain stays indestructible (§4.3).
+- Rendering meshes micro-voxels with binary greedy meshing over the masks and textures them with world-space triplanar mapping at 64 texels per meter (doc 02, doc 18).
 
 ---
 
@@ -1168,7 +1179,7 @@ While `st.shocked` is active, each hit the bearer takes (except a `no_chain` hit
 
 - From `ERASURE_ONSET` (§17.1), every Erratum gains one stack of `st.erasure` on the same tick, every `ERASURE_STEP`.
 - Each stack makes the bearer 1 dB louder (doc 09) and multiplies healing received by `10000 - 300 × stacks`.
-- When the first Erratum reaches 10 stacks, one Editor hunter (`rank.hunter`) spawns for the party. Another spawns every 90 s while any Erratum holds 10 stacks.
+- When the first Erratum reaches 10 stacks, one Editor hunter spawns for the party with `rank.elite` stats (product-owner decision: softer Erasure). No further Erasure hunters spawn in that Folio. Stacks stay at 10 with their effects until the party leaves.
 - `st.erasure` is removed from every Erratum on `ev.folio_entered`.
 - Erasure accrual and satiation decay pause in boss Folios while the boss lives.
 - Hunters and every `fac.editors` member erase Errata placeables within 1500 mm of them, at one placeable block per 10 ticks.
@@ -1567,7 +1578,7 @@ Reputation per faction is an integer `-1000..=1000` and resets each run.
 
 There are 13 Callings.
 
-- **Echo**: a pre-built Erratum. An Echo fixes a kin, an Origin, a Calling, a signature trait and cosmetics. It is acquired through the Inkwell (doc 15) or through its Recollection trial (doc 14). Launch roster: 24 Echoes, 2 per core genre. ID pattern `echo.<name>`.
+- **Echo**: a pre-built Erratum. An Echo fixes a kin, an Origin, a Calling, a signature trait and cosmetics. It is acquired through the Inkwell (doc 15) or through its Recollection trial (doc 14). Launch roster: 24 Echoes, 2 per core genre, mixing original characters with public-domain mythic and literary figures (product-owner decision). Required: `echo.sun_wukong` (Wuxia), `echo.loki` (Mythic Antiquity), `echo.lilith` (Gothic Horror), `echo.fenrir` (Mythic Fantasy, `body.quadruped`) and `echo.jormungandr` (Cosmic Horror, `body.serpentine`). Figures are drawn from public-domain myth and literature only, never from a modern copyrighted adaptation. Non-humanoid Echoes use natural-weapon archetypes and the slot rules doc 04 defines for their body plan. ID pattern `echo.<name>`.
 
 ### 16.3 Kin
 
@@ -1618,9 +1629,10 @@ Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and
 | `EXIT_OFFERS` | 2; 3 when any party member has ITU ≥ 70 or carries a Lattice Lens |
 | `LATTICE_CANDIDATES` | always exactly 3 drawn at the exit of each Folio, by weighted choice without replacement over eligible core genres using lattice edge weights (doc 12); the first `EXIT_OFFERS` are shown. The draw happens on the tick the exit UI opens. |
 | `GENRE_REPEAT_RULE` | no genre twice in the same Volume; at most 3 appearances per run before Marginalia |
-| `ERASURE_ONSET` | 420 s after Folio entry |
-| `ERASURE_STEP` | 30 s; stack `k >= 1` is granted on tick `folio_entry_tick + 25200 + 1800 × (k - 1)` |
+| `ERASURE_ONSET` | 720 s after Folio entry |
+| `ERASURE_STEP` | 30 s; stack `k >= 1` is granted on tick `folio_entry_tick + 43200 + 1800 × (k - 1)`, so the tenth stack lands 990 s after entry |
 | `PARTY_MAX` | 4 |
+| `GLYPH_LIBRARY_START` | 2: every glyph an Erratum learns in any run joins the account's permanent Glyph Library (horizontal meta, doc 14); at run start each Erratum pre-learns 2 glyphs chosen from it (doc 06) |
 | Loot | instanced per player |
 | Target Folio duration | 180 to 420 s |
 | Target full-run duration | 100 to 150 min |
@@ -1930,6 +1942,20 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ---
 
 ## 23. Changelog
+
+### canon-1.7 (2026-10-11)
+
+Applied after the third product-owner question round (DECISIONS.md).
+
+- Added §4.4 micro-voxels: a 4 × 4 × 4 occupancy mask of 250 mm per 1 m cell for collision, shapes, rendering and destruction, while the 1 m grid stays the simulation grid.
+
+### canon-1.6 (2026-10-11)
+
+Applied after the second product-owner question round (DECISIONS.md).
+
+- Softer Erasure: onset 720 s, one elite-strength hunter per Folio at 10 stacks, no repeat spawns.
+- Echo roster mixes originals with public-domain figures; Sun Wukong, Loki, Lilith, Fenrir and Jörmungandr are required, with non-humanoid bodies for Fenrir and Jörmungandr.
+- Hybrid glyph learning: a permanent Glyph Library with 2 glyphs chosen at run start.
 
 ### canon-1.5 (2026-10-11)
 

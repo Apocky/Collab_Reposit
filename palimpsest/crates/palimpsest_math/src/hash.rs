@@ -1,4 +1,4 @@
-//! SPEC: canon §1.1 FNV-1a, canon §2.4-2.5 BLAKE3 wrapper
+//! SPEC: canon §1.1 FNV-1a, canon §2.4-2.5 BLAKE3 wrappers
 
 /// SPEC: canon §1.1 fnv1a32 offset basis.
 pub const FNV32_OFFSET: u32 = 0x811C_9DC5;
@@ -72,6 +72,23 @@ pub fn blake3_256(parts: &[&[u8]]) -> [u8; 32] {
     *h.finalize().as_bytes()
 }
 
+/// SPEC: canon §2.5 "Any other hash over several variable-length fields
+/// prefixes each field with its byte length as a little-endian `u32`":
+/// BLAKE3 of `u32le(len(f0)) ++ f0 ++ u32le(len(f1)) ++ f1 ++ ...`. Use this,
+/// not [`blake3_256`], whenever the parts are separate fields, so that
+/// `["ab", "c"]` and `["a", "bc"]` hash differently. Panics if a field is
+/// longer than `u32::MAX` bytes.
+#[must_use]
+pub fn blake3_fields(fields: &[&[u8]]) -> [u8; 32] {
+    let mut h = blake3::Hasher::new();
+    for f in fields {
+        let len = u32::try_from(f.len()).expect("blake3_fields: field longer than u32::MAX bytes");
+        h.update(&len.to_le_bytes());
+        h.update(f);
+    }
+    *h.finalize().as_bytes()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -119,6 +136,18 @@ mod tests {
         );
     }
 
+    /// SPEC: canon §2.5 length-prefixed multi-field hashing.
+    #[test]
+    fn blake3_fields_length_prefixed() {
+        assert_ne!(blake3_fields(&[b"ab", b"c"]), blake3_fields(&[b"a", b"bc"]));
+        assert_eq!(
+            blake3_fields(&[b"ab", b"c"]),
+            blake3_256(&[&[2, 0, 0, 0], b"ab", &[1, 0, 0, 0], b"c"])
+        );
+        assert_eq!(blake3_fields(&[]), blake3_256(&[]));
+        assert_eq!(blake3_fields(&[b""]), blake3_256(&[&[0, 0, 0, 0]]));
+    }
+
     proptest! {
         #[test]
         fn fnv_extend_is_concatenation(a in proptest::collection::vec(any::<u8>(), 0..64), b in proptest::collection::vec(any::<u8>(), 0..64)) {
@@ -133,6 +162,17 @@ mod tests {
             let cut = cut.min(v.len());
             let (x, y) = v.split_at(cut);
             prop_assert_eq!(blake3_256(&[x, y]), blake3_256(&[&v]));
+        }
+
+        /// SPEC: canon §2.5: with length prefixes, two different splits of
+        /// the same bytes never collide (the encoding is injective).
+        #[test]
+        fn blake3_fields_split_sensitive(v in proptest::collection::vec(any::<u8>(), 1..128), a in 0usize..128, b in 0usize..128) {
+            let (a, b) = (a.min(v.len()), b.min(v.len()));
+            prop_assume!(a != b);
+            let (x1, y1) = v.split_at(a);
+            let (x2, y2) = v.split_at(b);
+            prop_assert_ne!(blake3_fields(&[x1, y1]), blake3_fields(&[x2, y2]));
         }
     }
 }

@@ -104,7 +104,11 @@ impl Axioms {
         let mut out = [0u8; 4];
         let mut i = 0;
         while i < 4 {
-            out[i] = if self.0[i] >= o.0[i] { self.0[i] } else { o.0[i] };
+            out[i] = if self.0[i] >= o.0[i] {
+                self.0[i]
+            } else {
+                o.0[i]
+            };
             i += 1;
         }
         Axioms(out)
@@ -423,7 +427,10 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "orcs, dragons, wyverns",
         materials: &["mat.steel", "mat.moonsilver", "mat.oak", "mat.dragonbone"],
         manufacturers: &[
-            m("mfr.mythic_fantasy.deepanvil", "poise damage × 15000, attack speed × 9000"),
+            m(
+                "mfr.mythic_fantasy.deepanvil",
+                "poise damage × 15000, attack speed × 9000",
+            ),
             m("mfr.mythic_fantasy.silverbough", "attack noise −20 dB"),
         ],
     },
@@ -446,8 +453,14 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "vampires, werewolves, ghouls",
         materials: &["mat.silver", "mat.blackwood", "mat.bone"],
         manufacturers: &[
-            m("mfr.gothic_horror.vesper_sons", "2000 Bp of each hit converted to dmg.radiant"),
-            m("mfr.gothic_horror.grimhallow", "instant reload for 3% Max HP"),
+            m(
+                "mfr.gothic_horror.vesper_sons",
+                "2000 Bp of each hit converted to dmg.radiant",
+            ),
+            m(
+                "mfr.gothic_horror.grimhallow",
+                "instant reload for 3% Max HP",
+            ),
         ],
     },
     GenreRow {
@@ -469,7 +482,10 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "cultists, deep things, formless spawn",
         materials: &["mat.obsidian", "mat.star_metal", "mat.chitin"],
         manufacturers: &[
-            m("mfr.cosmic_horror.hollow_lantern", "hits apply st.marked for 4 s"),
+            m(
+                "mfr.cosmic_horror.hollow_lantern",
+                "hits apply st.marked for 4 s",
+            ),
             m(
                 "mfr.cosmic_horror.outer_choir",
                 "2500 Bp dmg.psychic share, +1500 Bp damage, costs 1 composure per shot",
@@ -495,7 +511,10 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "boarders, xeno hives, war droids",
         materials: &["mat.plasteel", "mat.titanium", "mat.psi_crystal"],
         manufacturers: &[
-            m("mfr.space_opera.perihelion", "a 30-tick charged shot deals × 15000"),
+            m(
+                "mfr.space_opera.perihelion",
+                "a 30-tick charged shot deals × 15000",
+            ),
             m(
                 "mfr.space_opera.umbra",
                 "no magazine; heat; overheating locks the weapon for 90 ticks",
@@ -525,7 +544,10 @@ pub static GENRES: [GenreRow; 16] = [
                 "mfr.cyberpunk.ghostline",
                 "projectiles home on st.marked targets at 16384 Bam/s",
             ),
-            m("mfr.cyberpunk.neon_saint", "charged shots pierce 1000 mm of blocks"),
+            m(
+                "mfr.cyberpunk.neon_saint",
+                "charged shots pierce 1000 mm of blocks",
+            ),
         ],
     },
     GenreRow {
@@ -547,8 +569,14 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "raiders, mutants, scrap golems, rad-cults",
         materials: &["mat.scrap_iron", "mat.rubber", "mat.rad_glass"],
         manufacturers: &[
-            m("mfr.post_apocalypse.rustmaw", "magazine × 20000, durability × 5000"),
-            m("mfr.post_apocalypse.lastditch", "2000 Bp chance per shot to use no ammo"),
+            m(
+                "mfr.post_apocalypse.rustmaw",
+                "magazine × 20000, durability × 5000",
+            ),
+            m(
+                "mfr.post_apocalypse.lastditch",
+                "2000 Bp chance per shot to use no ammo",
+            ),
         ],
     },
     GenreRow {
@@ -599,7 +627,10 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "mobsters, crooked cops, hired killers",
         materials: &["mat.steel", "mat.brass", "mat.tweed"],
         manufacturers: &[
-            m("mfr.hardboiled_noir.midnight_avenue", "shot noise capped at 50 dB"),
+            m(
+                "mfr.hardboiled_noir.midnight_avenue",
+                "shot noise capped at 50 dB",
+            ),
             m(
                 "mfr.hardboiled_noir.rainslick",
                 "× 12000 against staggered or knocked-down targets",
@@ -625,7 +656,10 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "rival sects, jiangshi, fox spirits",
         materials: &["mat.jade", "mat.bronze", "mat.silk"],
         manufacturers: &[
-            m("mfr.wuxia.jade_lotus", "thrown weapons return after 30 ticks"),
+            m(
+                "mfr.wuxia.jade_lotus",
+                "thrown weapons return after 30 ticks",
+            ),
             m(
                 "mfr.wuxia.iron_crane",
                 "a block within 6 ticks of impact reflects 5000 Bp of the damage",
@@ -651,7 +685,10 @@ pub static GENRES: [GenreRow; 16] = [
         enemy_themes: "automata, sky pirates, clockwork beasts",
         materials: &["mat.brass", "mat.copper", "mat.aetherium"],
         manufacturers: &[
-            m("mfr.steampunk.brassworth", "+200 Bp per consecutive hit, maximum +3000"),
+            m(
+                "mfr.steampunk.brassworth",
+                "+200 Bp per consecutive hit, maximum +3000",
+            ),
             m(
                 "mfr.steampunk.aetherline",
                 "every 4th hit chains 3000 Bp of its damage as dmg.shock to 2 targets within 5 m",
@@ -681,7 +718,10 @@ pub static GENRES: [GenreRow; 16] = [
                 "mfr.fairy_tale.thimbleweald",
                 "× 13000 against targets with a larger capsule radius than the wielder",
             ),
-            m("mfr.fairy_tale.thornwood", "1000 Bp chance per hit to apply st.rooted"),
+            m(
+                "mfr.fairy_tale.thornwood",
+                "1000 Bp chance per hit to apply st.rooted",
+            ),
         ],
     },
     GenreRow {
@@ -877,8 +917,14 @@ mod tests {
         assert_eq!(Genre::Oneiric.row().fall_dmg_bp, 2500);
         assert_eq!(Genre::PostApocalypse.row().ground_friction_bp, 9000);
         assert_eq!(Genre::Redacted.row().spawn_block_max, 15);
-        assert_eq!(Genre::MythicFantasy.row().palette, [0x3B6E3B, 0xC9A227, 0x8FB3D9]);
-        assert_eq!(Genre::UrText.row().manufacturers[0].id, "mfr.ur_text.first_press");
+        assert_eq!(
+            Genre::MythicFantasy.row().palette,
+            [0x3B6E3B, 0xC9A227, 0x8FB3D9]
+        );
+        assert_eq!(
+            Genre::UrText.row().manufacturers[0].id,
+            "mfr.ur_text.first_press"
+        );
         assert!(Genre::Unwritten.row().manufacturers.is_empty());
     }
 

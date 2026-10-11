@@ -6,7 +6,9 @@
 //! Per-second rates are returned per second; callers feed them to the canon
 //! §2.3 accumulator. `Milli` pools are returned already × 1000 (canon §1.5).
 
-use crate::contradiction::{LocalGenre, aether_regen_term_bp, verve_crit_term_bp, verve_deaths_door_term_bp, vrv};
+use crate::contradiction::{
+    LocalGenre, aether_regen_term_bp, verve_crit_term_bp, verve_deaths_door_term_bp, vrv,
+};
 use crate::genre::Axiom;
 use palimpsest_math::int::{ceil_div, clamp_i32, floor_div, floor_div_i32, mul_bp, mul_bp_i32};
 use palimpsest_math::keyed_rng;
@@ -201,7 +203,11 @@ pub const HUMAN_BASELINE: i32 = 40;
 /// SPEC: canon §6.2. Effective value: base plus modifiers, clamped to `1..=150`.
 #[must_use]
 pub const fn effective_sub(base: i32, modifiers: i32) -> i32 {
-    clamp_i32(base.saturating_add(modifiers), SUB_EFFECTIVE_MIN, SUB_EFFECTIVE_MAX)
+    clamp_i32(
+        base.saturating_add(modifiers),
+        SUB_EFFECTIVE_MIN,
+        SUB_EFFECTIVE_MAX,
+    )
 }
 
 /// SPEC: canon §6.2 `d(x) = x - 40`.
@@ -356,7 +362,10 @@ pub struct ScalingTerm {
 /// Spells never use this row.
 #[must_use]
 pub fn weapon_scaling_bp(terms: &[ScalingTerm], governing_skill: i32) -> i32 {
-    let sum: i64 = terms.iter().map(|t| floor_div(t.coef_bp as i64 * d(t.value) as i64, 100)).sum();
+    let sum: i64 = terms
+        .iter()
+        .map(|t| floor_div(t.coef_bp as i64 * d(t.value) as i64, 100))
+        .sum();
     let v = sum + governing_skill as i64 * 30;
     (if v < -5000 { -5000 } else { v }) as i32
 }
@@ -629,8 +638,22 @@ pub const fn deaths_door_can_roll(is_erratum: bool, unmoored: bool, used_this_fo
 /// SPEC: canon §3.3 (`rng.combat` draws Death's Door), doc 04 §12.1: one
 /// `roll_bp` on `keyed_rng("rng.combat", folio, erratum_id, tick, 0xFFFF)`.
 #[must_use]
-pub fn roll_deaths_door(run_seed: u64, folio: u32, erratum_id: u64, tick: u64, chance_bp: i32) -> bool {
-    keyed_rng(run_seed, streams::COMBAT, folio, erratum_id, tick, DEATHS_DOOR_SEQ).roll_bp(chance_bp)
+pub fn roll_deaths_door(
+    run_seed: u64,
+    folio: u32,
+    erratum_id: u64,
+    tick: u64,
+    chance_bp: i32,
+) -> bool {
+    keyed_rng(
+        run_seed,
+        streams::COMBAT,
+        folio,
+        erratum_id,
+        tick,
+        DEATHS_DOOR_SEQ,
+    )
+    .roll_bp(chance_bp)
 }
 
 // ---------------------------------------------------------------- §6.5
@@ -639,7 +662,9 @@ pub fn roll_deaths_door(run_seed: u64, folio: u32, erratum_id: u64, tick: u64, c
 pub const ROW_COUNT: u8 = 44;
 
 /// SPEC: canon §6.5. The rows NPCs use (row 13 without its gear term).
-pub const NPC_ROWS: [u8; 18] = [11, 13, 15, 16, 17, 18, 22, 23, 24, 25, 30, 31, 32, 33, 34, 35, 39, 41];
+pub const NPC_ROWS: [u8; 18] = [
+    11, 13, 15, 16, 17, 18, 22, 23, 24, 25, 30, 31, 32, 33, 34, 35, 39, 41,
+];
 
 /// SPEC: canon §6.5. True when NPCs use §6.4 row `row`; NPCs never use rows
 /// 1–10, 12, 14, 19–21, 26–29, 36–38, 40 or 42–44.
@@ -758,7 +783,10 @@ pub const fn derive_erratum(i: &ErratumInputs) -> ErratumStats {
         stamina_regen_milli_per_s: stamina_regen_milli_per_s(s.get(Sub::Endurance)),
         sprint_drain_milli_per_s: sprint_drain_milli_per_s(s.get(Sub::Endurance)),
         max_aether_milli: max_aether_milli(s.get(Sub::Focus), i.level),
-        aether_regen_milli_per_s: aether_regen_milli_per_s(s.get(Sub::Attunement), aether_regen_term_bp(i.local)),
+        aether_regen_milli_per_s: aether_regen_milli_per_s(
+            s.get(Sub::Attunement),
+            aether_regen_term_bp(i.local),
+        ),
         max_composure_milli: max_composure_milli(s.get(Sub::Resolve)),
         carry_capacity_g: carry_capacity_g(s.get(Sub::Power)),
         move_speed_bp: move_speed_bp(s.get(Sub::Agility)),
@@ -844,7 +872,13 @@ pub const fn derive_npc(i: &NpcInputs) -> NpcStats {
     let v = vrv(i.local, i.inspired);
     NpcStats {
         move_speed_bp: move_speed_bp(s.get(Sub::Agility)),
-        crit_chance_bp: crit_chance_bp(s.get(Sub::Fate), s.get(Sub::Precision), i.local.axiom(Axiom::Verve), v, 0),
+        crit_chance_bp: crit_chance_bp(
+            s.get(Sub::Fate),
+            s.get(Sub::Precision),
+            i.local.axiom(Axiom::Verve),
+            v,
+            0,
+        ),
         spread_bp: spread_bp(s.get(Sub::Precision)),
         recoil_bp: recoil_bp(s.get(Sub::Grip)),
         action_speed_bp: action_speed_bp(s.get(Sub::Sleight)),
@@ -903,9 +937,21 @@ mod tests {
         assert_eq!(st.sprint_drain_milli_per_s, 12_000);
         assert_eq!(st.aether_regen_milli_per_s, 1300); // 1.3 per s at aether axiom 5 / none
         assert_eq!(st.move_speed_bp, 10_000);
-        assert_eq!(weapon_scaling_bp(&[ScalingTerm { coef_bp: 10_000, value: 40 }], 0), 0);
+        assert_eq!(
+            weapon_scaling_bp(
+                &[ScalingTerm {
+                    coef_bp: 10_000,
+                    value: 40
+                }],
+                0
+            ),
+            0
+        );
         assert_eq!(st.crit_damage_bp, 15_000);
-        assert_eq!((st.spread_bp, st.recoil_bp, st.action_speed_bp), (10_000, 10_000, 10_000));
+        assert_eq!(
+            (st.spread_bp, st.recoil_bp, st.action_speed_bp),
+            (10_000, 10_000, 10_000)
+        );
         assert_eq!(st.poise_milli, 40_000);
         assert_eq!(st.block_stability_bp, 5000);
         assert_eq!((st.throw_range_bp, st.climb_speed_bp), (10_000, 10_000));
@@ -920,7 +966,10 @@ mod tests {
         assert_eq!(st.trap_detection_bp, 500);
         assert_eq!(st.curse_sense_bp, 1000);
         assert_eq!((st.buy_price_bp, st.sell_share_bp), (10_000, 3000));
-        assert_eq!((st.threat_bp, st.disguise_bp, st.buildup_bp), (10_000, 10_000, 10_000));
+        assert_eq!(
+            (st.threat_bp, st.disguise_bp, st.buildup_bp),
+            (10_000, 10_000, 10_000)
+        );
         assert_eq!(st.loot_rarity_shift, 0);
         assert_eq!(st.deaths_door_bp, 1000);
         assert_eq!(st.curse_resistance_bp, 0);
@@ -995,7 +1044,11 @@ mod tests {
             .with(Sub::Agility, 44)
             .with(Sub::Hearing, 43)
             .with(Sub::Menace, 36);
-        let i = ErratumInputs { subs, awareness: 10, ..baseline(LocalGenre::Plain(Genre::Cyberpunk)) };
+        let i = ErratumInputs {
+            subs,
+            awareness: 10,
+            ..baseline(LocalGenre::Plain(Genre::Cyberpunk))
+        };
         let st = derive_erratum(&i);
         assert_eq!(st.max_hp_mhp, 85_000);
         assert_eq!(st.hp_regen_mhp_per_s, 408);
@@ -1066,12 +1119,39 @@ mod tests {
     /// SPEC: canon §6.4 row 12 and its schema rule.
     #[test]
     fn weapon_scaling() {
-        let terms = [ScalingTerm { coef_bp: 10_000, value: 60 }, ScalingTerm { coef_bp: 5000, value: 50 }];
+        let terms = [
+            ScalingTerm {
+                coef_bp: 10_000,
+                value: 60,
+            },
+            ScalingTerm {
+                coef_bp: 5000,
+                value: 50,
+            },
+        ];
         assert_eq!(weapon_scaling_bp(&terms, 20), 2000 + 500 + 600);
-        let weak = [ScalingTerm { coef_bp: 10_000, value: 1 }, ScalingTerm { coef_bp: 5000, value: 1 }];
+        let weak = [
+            ScalingTerm {
+                coef_bp: 10_000,
+                value: 1,
+            },
+            ScalingTerm {
+                coef_bp: 5000,
+                value: 1,
+            },
+        ];
         assert_eq!(weapon_scaling_bp(&weak, 0), -5000);
         // floor_div of a negative product rounds toward minus infinity.
-        assert_eq!(weapon_scaling_bp(&[ScalingTerm { coef_bp: 333, value: 39 }], 0), -4);
+        assert_eq!(
+            weapon_scaling_bp(
+                &[ScalingTerm {
+                    coef_bp: 333,
+                    value: 39
+                }],
+                0
+            ),
+            -4
+        );
         assert!(scaling_coeffs_valid(&[10_000, 5000]));
         assert!(!scaling_coeffs_valid(&[10_000, 5001]));
         assert!(!scaling_coeffs_valid(&[10_001]));
@@ -1094,8 +1174,10 @@ mod tests {
     /// SPEC: canon §6.5. NPC rows and Errata-only rows partition 1..=44.
     #[test]
     fn npc_row_partition() {
-        let never: [u8; 26] =
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 19, 20, 21, 26, 27, 28, 29, 36, 37, 38, 40, 42, 43, 44];
+        let never: [u8; 26] = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 19, 20, 21, 26, 27, 28, 29, 36, 37, 38, 40, 42,
+            43, 44,
+        ];
         for row in 1..=ROW_COUNT {
             assert_ne!(npc_uses_row(row), never.contains(&row), "row {row}");
         }
@@ -1122,13 +1204,21 @@ mod tests {
             assert_eq!(s.code().len(), 3);
             assert!(s.primary().subs().contains(&s));
         }
-        assert_eq!(Primary::Will.subs(), [Sub::Focus, Sub::Resolve, Sub::Attunement]);
+        assert_eq!(
+            Primary::Will.subs(),
+            [Sub::Focus, Sub::Resolve, Sub::Attunement]
+        );
         assert_eq!(Sub::Attunement.code(), "ATN");
         assert_eq!(Primary::Fortune.id(), "attr.fortune");
         assert_eq!(effective_sub(100, 80), 150);
         assert_eq!(effective_sub(5, -20), 1);
         assert_eq!(effective_sub(40, 3), 43);
-        assert_eq!(SubAttrs::uniform(1).with(Sub::Power, 3).primary(Primary::Might), 1);
+        assert_eq!(
+            SubAttrs::uniform(1)
+                .with(Sub::Power, 3)
+                .primary(Primary::Might),
+            1
+        );
     }
 
     /// SPEC: doc 04 §12.1 Death's Door roll uses one keyed `rng.combat` draw.

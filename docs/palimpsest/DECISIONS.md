@@ -33,6 +33,39 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 23 | UI | Kept: per-genre manuscript skins | Doc 17 |
 | 24 | Deliverables | Spec, data and validator, **plus a Rust code vertical slice** (math, RNG, simulation core with canon test vectors passing) | `docs/palimpsest/`, `palimpsest/` workspace |
 
+## 2026-10-11 — Product owner answers, round 2
+
+| # | System | Decision | Lands in |
+|---|---|---|---|
+| 25 | Hunger | Kept: satiation from full to starving in about 40 minutes | Canon §12, doc 04 |
+| 26 | Erasure | **Changed: softer.** Onset 12 minutes; one elite-strength Editor hunter per Folio at 10 stacks; no repeat spawns | Canon §11.6, §17.1, docs 13, 14 |
+| 27 | Character creation | Kept: custom Errata and Echoes both | Docs 04, 14 |
+| 28 | Echo cast | **Changed: mix of original and public-domain figures, with Sun Wukong, Loki, Lilith, Fenrir and Jörmungandr required.** Fenrir and Jörmungandr are playable non-humanoid bodies. | Canon §16.2, docs 04, 14, 15, 18 |
+| 29 | Gunplay | Kept: arcade looter-shooter | Doc 05 |
+| 30 | Melee | Kept: souls-lite depth | Doc 05 |
+| 31 | Friendly fire | Kept: 50% direct, 100% area by default | Canon §17.5 |
+| 32 | Invasion stakes | Kept: Redacted outcome, cosmetic-only invader rewards | Canon §17.9 |
+| 33 | Glyph learning | **Changed: hybrid.** Glyphs learned in any run join a permanent account Glyph Library; each run starts with 2 chosen from it | Canon §17.1, docs 06, 14 |
+| 34 | Cross-run knowledge | Kept: appearances and ingredient effects re-learned every run | Docs 08, 10 |
+| 35 | Crafting access | Kept: stations in rooms and Colophons, plus field kits | Doc 07 |
+| 36 | Companions | Kept: generic hirelings and tamed beasts | Doc 13 |
+| 37 | Visual fidelity | **Changed: higher-resolution voxels.** 250 mm micro-voxels (4×4×4 per 1 m cell) for collision, shapes, rendering and destruction; the 1 m grid stays the simulation grid | Canon §4.4; docs 02, 03, 07, 12, 18 |
+| 38 | Narrator | **Changed: text-only narration.** No voiced Narrator; narration appears as manuscript marginalia. The optional on-device model still writes flavor text | Docs 17, 18 |
+| 39 | Music | Kept: original adaptive score with per-genre stems | Doc 18 |
+| 40 | Launch languages | Kept: 15 locales | Doc 17 |
+| 41 | Early Access scope | Kept: 6 genres at Early Access (Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West, Wuxia, Steampunk), the rest by 1.0 | Docs 14, 21 |
+| 42 | Pricing | **Changed: base game USD 19.99** at Early Access and 1.0. Folio Expansions 9.99 to 14.99, Codex premium 9.99 and cosmetics 1.99 to 9.99 unchanged | Brief §8, doc 15 |
+| 43 | Modding | Kept: JSON data packs plus sandboxed WASM scripts, Workshop at 1.0 | Doc 02 |
+| 44 | Code license | Kept: proprietary, all rights reserved | `palimpsest/Cargo.toml` |
+| 45 | Editors | Kept: literary-bureaucrat Volume bosses that adapt to the local genre | Doc 13 |
+| 46 | Ending | **Changed: procedural ending.** The Ur-Text ending is assembled from the run's genres, Echo or Origin, notable choices and Folio story fragments, rendered as a closing manuscript | Docs 12, 14, 18 |
+| 47 | Difficulty | Kept: Errata Grades 0 to 20 plus Scribe's Mercy | Docs 14, 17 |
+| 48 | Replays | Kept: full deterministic replays, shareable, with a killcam | Canon §2.4, docs 14, 16, 17 |
+| 49 | Madness | Kept: deceptive hallucinations, with Mercy and accessibility options able to mark them | Docs 04, 17 |
+| 50 | Co-op death | Kept: Barony-style ghosts and next-Folio resurrection | Canon §17.6 |
+| 51 | Dailies | Kept: daily ranked seed plus weekly mutator run | Doc 14 |
+| 52 | Achievements | Kept: standard set of 40 or more | Doc 14 |
+
 ## 2026-10-11 — Orchestrator decisions from research
 
 | Decision | Source | Lands in |

@@ -1,7 +1,8 @@
-//! SPEC: canon §13.3-13.7 rarity roll, quality, enhancement
+//! SPEC: canon §13.1-13.8 rarity roll, quality, type hiding, enhancement
 //!
 //! The rarity table (§13.3) and the generic rarity roll (§13.4), quality
-//! multipliers (§13.5), curse states (§13.6), the enhancement factor with
+//! multipliers (§13.5), item categories (§13.1), unknown-appearance classes,
+//! type hiding and knowledge states, curse states (§13.6), the enhancement factor with
 //! blessing and curse penalty, Emendations and the Marginalia cap (§13.7),
 //! Palimpsestic effective item level (§13.3), and Marginalia armor HP
 //! `gear_hp` (§13.8.2). Pure functions; the roll takes a keyed generator.
@@ -176,14 +177,25 @@ pub fn roll_rarity(rng: &mut Rng, d: u32, ser: i32) -> Rarity {
 /// player's party slot.
 #[must_use]
 pub fn loot_rng(run_seed: u64, folio: u32, source_id: u64, tick: u64, player_slot: u8) -> Rng {
-    keyed_rng(run_seed, streams::LOOT, folio, source_id, tick, u32::from(player_slot))
+    keyed_rng(
+        run_seed,
+        streams::LOOT,
+        folio,
+        source_id,
+        tick,
+        u32::from(player_slot),
+    )
 }
 
 /// SPEC: canon §13.3. Palimpsestic effective ilvl `max(ilvl, current Folio
 /// index)`; every other rarity keeps its `ilvl`.
 #[must_use]
 pub const fn effective_ilvl(rarity: Rarity, ilvl: u32, folio_index: u32) -> u32 {
-    if matches!(rarity, Rarity::Palimpsestic) && folio_index > ilvl { folio_index } else { ilvl }
+    if matches!(rarity, Rarity::Palimpsestic) && folio_index > ilvl {
+        folio_index
+    } else {
+        ilvl
+    }
 }
 
 /// SPEC: canon §13.3 Exotic limit groups.
@@ -202,9 +214,13 @@ pub enum ExoticGroup {
 /// exempt and never listed).
 #[must_use]
 pub fn exotic_loadout_valid(exotics: &[ExoticGroup]) -> bool {
-    [ExoticGroup::WeaponsAndOffhand, ExoticGroup::Armor, ExoticGroup::Other]
-        .iter()
-        .all(|g| exotics.iter().filter(|e| *e == g).count() <= 1)
+    [
+        ExoticGroup::WeaponsAndOffhand,
+        ExoticGroup::Armor,
+        ExoticGroup::Other,
+    ]
+    .iter()
+    .all(|g| exotics.iter().filter(|e| *e == g).count() <= 1)
 }
 
 // ---------------------------------------------------------------- §13.5
@@ -237,7 +253,15 @@ impl Quality {
     /// SPEC: canon §13.5. Content ID, for example `q.normal`.
     #[must_use]
     pub const fn id(self) -> &'static str {
-        ["q.awful", "q.poor", "q.normal", "q.good", "q.excellent", "q.masterwork", "q.peerless"][self as usize]
+        [
+            "q.awful",
+            "q.poor",
+            "q.normal",
+            "q.good",
+            "q.excellent",
+            "q.masterwork",
+            "q.peerless",
+        ][self as usize]
     }
 
     /// SPEC: canon §13.5 multiplier on an item's base stats.
@@ -310,7 +334,11 @@ pub const fn enhancement_cap(d_current: u32) -> i32 {
 #[must_use]
 pub const fn eff_enh(enhancement: i32, buc: Buc, curse_penalty: i32, cap: i32) -> i32 {
     let bless = if matches!(buc, Buc::Blessed) { 1 } else { 0 };
-    let curse = if matches!(buc, Buc::Cursed) { curse_penalty } else { 0 };
+    let curse = if matches!(buc, Buc::Cursed) {
+        curse_penalty
+    } else {
+        0
+    };
     clamp_i32(enhancement + bless - curse, EFF_ENH_MIN, cap)
 }
 
@@ -363,8 +391,256 @@ pub const fn apply_emendation(s: EnhanceState, folio_index: u32, d_current: u32)
     if s.enhancement >= enhancement_cap(d_current) {
         return Emendation::RefusedAtCap;
     }
-    let ilvl = if folio_index > s.ilvl { folio_index } else { s.ilvl };
-    Emendation::Enhanced(EnhanceState { ilvl, enhancement: s.enhancement + 1, ..s })
+    let ilvl = if folio_index > s.ilvl {
+        folio_index
+    } else {
+        s.ilvl
+    };
+    Emendation::Enhanced(EnhanceState {
+        ilvl,
+        enhancement: s.enhancement + 1,
+        ..s
+    })
+}
+
+// ---------------------------------------------------------------- §13.1, §13.6 type hiding
+
+/// SPEC: canon §13.1, §13.6. Kinds of `cat.accessory` item; rings, amulets
+/// and trinkets each have their own unknown-appearance class.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[allow(missing_docs)]
+pub enum AccessoryKind {
+    Ring,
+    Amulet,
+    Trinket,
+    Belt,
+    Back,
+}
+
+/// SPEC: canon §13.1 item categories (`cat.`), in table order. A
+/// `cat.accessory` item also names its [`AccessoryKind`].
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[allow(missing_docs)]
+pub enum Category {
+    WeaponMelee,
+    WeaponRanged,
+    Wand,
+    Armor,
+    Offhand,
+    Accessory(AccessoryKind),
+    Implant,
+    Ammo,
+    Potion,
+    Text,
+    Book,
+    Food,
+    Throwable,
+    Gadget,
+    Tool,
+    Material,
+    Ingredient,
+    Container,
+    Placeable,
+    Key,
+    Currency,
+    Quest,
+    Part,
+    WardGen,
+    Mount,
+    Seed,
+    Corpse,
+    BodyPart,
+}
+
+impl Category {
+    /// SPEC: canon §13.1. Every category, with each accessory kind listed
+    /// separately (32 entries).
+    pub const ALL: [Category; 32] = [
+        Category::WeaponMelee,
+        Category::WeaponRanged,
+        Category::Wand,
+        Category::Armor,
+        Category::Offhand,
+        Category::Accessory(AccessoryKind::Ring),
+        Category::Accessory(AccessoryKind::Amulet),
+        Category::Accessory(AccessoryKind::Trinket),
+        Category::Accessory(AccessoryKind::Belt),
+        Category::Accessory(AccessoryKind::Back),
+        Category::Implant,
+        Category::Ammo,
+        Category::Potion,
+        Category::Text,
+        Category::Book,
+        Category::Food,
+        Category::Throwable,
+        Category::Gadget,
+        Category::Tool,
+        Category::Material,
+        Category::Ingredient,
+        Category::Container,
+        Category::Placeable,
+        Category::Key,
+        Category::Currency,
+        Category::Quest,
+        Category::Part,
+        Category::WardGen,
+        Category::Mount,
+        Category::Seed,
+        Category::Corpse,
+        Category::BodyPart,
+    ];
+
+    /// SPEC: canon §13.1. The category's content ID, for example `cat.wand`.
+    #[must_use]
+    pub const fn id(self) -> &'static str {
+        match self {
+            Category::WeaponMelee => "cat.weapon_melee",
+            Category::WeaponRanged => "cat.weapon_ranged",
+            Category::Wand => "cat.wand",
+            Category::Armor => "cat.armor",
+            Category::Offhand => "cat.offhand",
+            Category::Accessory(_) => "cat.accessory",
+            Category::Implant => "cat.implant",
+            Category::Ammo => "cat.ammo",
+            Category::Potion => "cat.potion",
+            Category::Text => "cat.text",
+            Category::Book => "cat.book",
+            Category::Food => "cat.food",
+            Category::Throwable => "cat.throwable",
+            Category::Gadget => "cat.gadget",
+            Category::Tool => "cat.tool",
+            Category::Material => "cat.material",
+            Category::Ingredient => "cat.ingredient",
+            Category::Container => "cat.container",
+            Category::Placeable => "cat.placeable",
+            Category::Key => "cat.key",
+            Category::Currency => "cat.currency",
+            Category::Quest => "cat.quest",
+            Category::Part => "cat.part",
+            Category::WardGen => "cat.ward_gen",
+            Category::Mount => "cat.mount",
+            Category::Seed => "cat.seed",
+            Category::Corpse => "cat.corpse",
+            Category::BodyPart => "cat.body_part",
+        }
+    }
+}
+
+/// SPEC: canon §13.6 unknown-appearance classes (`idc.`), in table order.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[allow(missing_docs)]
+pub enum AppearanceClass {
+    Potion,
+    Text,
+    Ring,
+    Amulet,
+    Wand,
+    Implant,
+    Relic,
+}
+
+impl AppearanceClass {
+    /// SPEC: canon §13.6. The seven classes in table order.
+    pub const ALL: [AppearanceClass; 7] = [
+        AppearanceClass::Potion,
+        AppearanceClass::Text,
+        AppearanceClass::Ring,
+        AppearanceClass::Amulet,
+        AppearanceClass::Wand,
+        AppearanceClass::Implant,
+        AppearanceClass::Relic,
+    ];
+
+    /// SPEC: canon §13.6 appearance shuffle: the classes "in ascending ID
+    /// byte order".
+    pub const SHUFFLE_ORDER: [AppearanceClass; 7] = [
+        AppearanceClass::Amulet,
+        AppearanceClass::Implant,
+        AppearanceClass::Potion,
+        AppearanceClass::Relic,
+        AppearanceClass::Ring,
+        AppearanceClass::Text,
+        AppearanceClass::Wand,
+    ];
+
+    /// SPEC: canon §13.6. The class's content ID, for example `idc.ring`.
+    #[must_use]
+    pub const fn id(self) -> &'static str {
+        match self {
+            AppearanceClass::Potion => "idc.potion",
+            AppearanceClass::Text => "idc.text",
+            AppearanceClass::Ring => "idc.ring",
+            AppearanceClass::Amulet => "idc.amulet",
+            AppearanceClass::Wand => "idc.wand",
+            AppearanceClass::Implant => "idc.implant",
+            AppearanceClass::Relic => "idc.relic",
+        }
+    }
+}
+
+/// SPEC: canon §13.6 the `idc` class that lists an item type: every
+/// `cat.potion`, `cat.text`, `cat.wand` and `cat.implant` type, and the ring,
+/// amulet and trinket types of `cat.accessory`. `None` for every other item.
+#[must_use]
+pub const fn appearance_class(cat: Category) -> Option<AppearanceClass> {
+    match cat {
+        Category::Potion => Some(AppearanceClass::Potion),
+        Category::Text => Some(AppearanceClass::Text),
+        Category::Accessory(AccessoryKind::Ring) => Some(AppearanceClass::Ring),
+        Category::Accessory(AccessoryKind::Amulet) => Some(AppearanceClass::Amulet),
+        Category::Wand => Some(AppearanceClass::Wand),
+        Category::Implant => Some(AppearanceClass::Implant),
+        Category::Accessory(AccessoryKind::Trinket) => Some(AppearanceClass::Relic),
+        _ => None,
+    }
+}
+
+/// SPEC: canon §13.6 knowledge states (`know.`), in ascending order of what
+/// the player knows.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Knowledge {
+    /// `know.unknown`: appearance only.
+    Unknown,
+    /// `know.classified`: item type.
+    Classified,
+    /// `know.appraised`: rarity and a value range.
+    Appraised,
+    /// `know.identified`: everything.
+    Identified,
+}
+
+impl Knowledge {
+    /// SPEC: canon §13.6. Content ID, for example `know.classified`.
+    #[must_use]
+    pub const fn id(self) -> &'static str {
+        match self {
+            Knowledge::Unknown => "know.unknown",
+            Knowledge::Classified => "know.classified",
+            Knowledge::Appraised => "know.appraised",
+            Knowledge::Identified => "know.identified",
+        }
+    }
+}
+
+/// SPEC: canon §13.6. An item type is type-hidden if and only if an `idc`
+/// class lists it.
+#[must_use]
+pub const fn is_type_hidden(cat: Category) -> bool {
+    appearance_class(cat).is_some()
+}
+
+/// SPEC: canon §13.6. A generated item's starting knowledge: type-hidden
+/// items start at `know.unknown`; every other item (staves, belts, weapons,
+/// armor, tools, materials, blocks) at `know.classified`, because only its
+/// magic is hidden. Type knowledge already learned this run (doc 10) is
+/// applied on top by the caller.
+#[must_use]
+pub const fn initial_knowledge(cat: Category) -> Knowledge {
+    if is_type_hidden(cat) {
+        Knowledge::Unknown
+    } else {
+        Knowledge::Classified
+    }
 }
 
 // ---------------------------------------------------------------- §13.8.2
@@ -386,7 +662,13 @@ pub enum ArmorSlot {
 
 impl ArmorSlot {
     /// SPEC: canon §13.2. The five armor slots.
-    pub const ALL: [ArmorSlot; 5] = [ArmorSlot::Head, ArmorSlot::Body, ArmorSlot::Hands, ArmorSlot::Legs, ArmorSlot::Feet];
+    pub const ALL: [ArmorSlot; 5] = [
+        ArmorSlot::Head,
+        ArmorSlot::Body,
+        ArmorSlot::Hands,
+        ArmorSlot::Legs,
+        ArmorSlot::Feet,
+    ];
 
     /// SPEC: canon §13.8.2 `hp_base[slot]` in HP.
     #[must_use]
@@ -460,11 +742,89 @@ mod tests {
         assert_eq!(gear_hp_mhp(&[]), 0);
         assert_eq!(ArmorSlot::ALL.iter().map(|s| s.hp_base()).sum::<i64>(), 70);
         // Per-piece floors (the prose reading) fall 2 mHP short of the canon numbers.
-        let per_piece = |ilvl: u32| ArmorSlot::ALL.iter().map(|&s| gear_hp_piece_mhp(s, ilvl)).sum::<i64>();
+        let per_piece = |ilvl: u32| {
+            ArmorSlot::ALL
+                .iter()
+                .map(|&s| gear_hp_piece_mhp(s, ilvl))
+                .sum::<i64>()
+        };
         assert_eq!(per_piece(100), 4_538_770);
         assert_eq!(per_piece(60), 745_141);
         // Mixed levels: a body at ilvl 100 alone.
-        assert_eq!(gear_hp_mhp(&[(ArmorSlot::Body, 100), (ArmorSlot::Head, 20)]), gear_hp_piece_mhp(ArmorSlot::Body, 100));
+        assert_eq!(
+            gear_hp_mhp(&[(ArmorSlot::Body, 100), (ArmorSlot::Head, 20)]),
+            gear_hp_piece_mhp(ArmorSlot::Body, 100)
+        );
+    }
+
+    /// SPEC: canon §21 test 37. A generated trinket, ring and wand start at
+    /// `know.unknown`; a staff (`cat.weapon_ranged`), a belt and a longsword
+    /// (`cat.weapon_melee`) start at `know.classified`.
+    #[test]
+    fn canon_t37_type_hiding() {
+        use AccessoryKind as A;
+        for hidden in [
+            Category::Accessory(A::Trinket),
+            Category::Accessory(A::Ring),
+            Category::Wand,
+        ] {
+            assert_eq!(initial_knowledge(hidden), Knowledge::Unknown, "{hidden:?}");
+        }
+        for plain in [
+            Category::WeaponRanged,
+            Category::Accessory(A::Belt),
+            Category::WeaponMelee,
+        ] {
+            assert_eq!(initial_knowledge(plain), Knowledge::Classified, "{plain:?}");
+        }
+        assert_eq!(Knowledge::Unknown.id(), "know.unknown");
+        assert_eq!(Knowledge::Classified.id(), "know.classified");
+    }
+
+    /// SPEC: canon §13.6: exactly the seven `idc` classes hide types, each
+    /// listed by exactly one category; the shuffle order is ascending ID.
+    #[test]
+    fn appearance_classes_exhaustive() {
+        let hidden: Vec<AppearanceClass> = Category::ALL
+            .iter()
+            .filter_map(|&c| appearance_class(c))
+            .collect();
+        assert_eq!(hidden.len(), 7);
+        for class in AppearanceClass::ALL {
+            assert_eq!(hidden.iter().filter(|&&h| h == class).count(), 1);
+            assert!(class.id().starts_with("idc."));
+        }
+        assert_eq!(
+            appearance_class(Category::Accessory(AccessoryKind::Back)),
+            None
+        );
+        assert_eq!(appearance_class(Category::Armor), None);
+        assert_eq!(
+            appearance_class(Category::Potion),
+            Some(AppearanceClass::Potion)
+        );
+        assert_eq!(
+            appearance_class(Category::Accessory(AccessoryKind::Trinket)),
+            Some(AppearanceClass::Relic)
+        );
+        let ids: Vec<&str> = AppearanceClass::SHUFFLE_ORDER
+            .iter()
+            .map(|c| c.id())
+            .collect();
+        let mut sorted = ids.clone();
+        sorted.sort_unstable();
+        assert_eq!(ids, sorted);
+        let mut all: Vec<AppearanceClass> = AppearanceClass::SHUFFLE_ORDER.to_vec();
+        all.sort();
+        assert_eq!(all, AppearanceClass::ALL.to_vec());
+        for c in Category::ALL {
+            assert!(c.id().starts_with("cat."));
+            assert_eq!(
+                is_type_hidden(c),
+                initial_knowledge(c) == Knowledge::Unknown
+            );
+        }
+        assert!(Knowledge::Unknown < Knowledge::Identified);
     }
 
     /// SPEC: canon §13.4: one `weighted` call, exactly one `range` draw, and a
@@ -508,7 +868,10 @@ mod tests {
     fn item_mult_max() {
         let best_enh = enhancement_factor_bp(eff_enh(15, Buc::Uncursed, 0, 15));
         assert_eq!(best_enh, 19_000);
-        let m = mul_bp_chain(Rarity::Palimpsestic.row().power_bp.into(), &[Quality::Peerless.multiplier_bp(), best_enh, 14_000]);
+        let m = mul_bp_chain(
+            Rarity::Palimpsestic.row().power_bp.into(),
+            &[Quality::Peerless.multiplier_bp(), best_enh, 14_000],
+        );
         assert_eq!(m, ITEM_MULT_MAX_BP);
     }
 
@@ -543,25 +906,66 @@ mod tests {
     /// refusal at the cap.
     #[test]
     fn emendations() {
-        let base = EnhanceState { ilvl: 3, enhancement: 2, buc: Buc::Uncursed, curse_penalty: 0, curse_affix: false };
+        let base = EnhanceState {
+            ilvl: 3,
+            enhancement: 2,
+            buc: Buc::Uncursed,
+            curse_penalty: 0,
+            curse_affix: false,
+        };
         let up = apply_emendation(base, 9, 9);
-        assert_eq!(up, Emendation::Enhanced(EnhanceState { ilvl: 9, enhancement: 3, ..base }));
+        assert_eq!(
+            up,
+            Emendation::Enhanced(EnhanceState {
+                ilvl: 9,
+                enhancement: 3,
+                ..base
+            })
+        );
         // Never lowers ilvl.
         let high = EnhanceState { ilvl: 12, ..base };
-        assert_eq!(apply_emendation(high, 9, 9), Emendation::Enhanced(EnhanceState { enhancement: 3, ..high }));
-        let cursed = EnhanceState { buc: Buc::Cursed, curse_penalty: 2, curse_affix: true, ..base };
+        assert_eq!(
+            apply_emendation(high, 9, 9),
+            Emendation::Enhanced(EnhanceState {
+                enhancement: 3,
+                ..high
+            })
+        );
+        let cursed = EnhanceState {
+            buc: Buc::Cursed,
+            curse_penalty: 2,
+            curse_affix: true,
+            ..base
+        };
         assert_eq!(
             apply_emendation(cursed, 9, 9),
-            Emendation::Uncursed(EnhanceState { buc: Buc::Uncursed, curse_penalty: 0, curse_affix: false, ..base })
+            Emendation::Uncursed(EnhanceState {
+                buc: Buc::Uncursed,
+                curse_penalty: 0,
+                curse_affix: false,
+                ..base
+            })
         );
-        let capped = EnhanceState { enhancement: 15, ..base };
+        let capped = EnhanceState {
+            enhancement: 15,
+            ..base
+        };
         assert_eq!(apply_emendation(capped, 25, 25), Emendation::RefusedAtCap);
         assert_eq!(
             apply_emendation(capped, 30, 30),
-            Emendation::Enhanced(EnhanceState { ilvl: 30, enhancement: 16, ..capped })
+            Emendation::Enhanced(EnhanceState {
+                ilvl: 30,
+                enhancement: 16,
+                ..capped
+            })
         );
-        let blessed = EnhanceState { buc: Buc::Blessed, ..base };
-        assert!(matches!(apply_emendation(blessed, 1, 1), Emendation::Enhanced(s) if s.buc == Buc::Blessed));
+        let blessed = EnhanceState {
+            buc: Buc::Blessed,
+            ..base
+        };
+        assert!(
+            matches!(apply_emendation(blessed, 1, 1), Emendation::Enhanced(s) if s.buc == Buc::Blessed)
+        );
         assert_eq!(EMENDATIONS_PER_VOLUME * 5, 15);
     }
 
@@ -573,9 +977,17 @@ mod tests {
         assert_eq!(effective_ilvl(Rarity::Exotic, 4, 11), 4);
         use ExoticGroup as E;
         assert!(exotic_loadout_valid(&[]));
-        assert!(exotic_loadout_valid(&[E::WeaponsAndOffhand, E::Armor, E::Other]));
+        assert!(exotic_loadout_valid(&[
+            E::WeaponsAndOffhand,
+            E::Armor,
+            E::Other
+        ]));
         assert!(!exotic_loadout_valid(&[E::Armor, E::Armor]));
-        assert!(!exotic_loadout_valid(&[E::Other, E::WeaponsAndOffhand, E::Other]));
+        assert!(!exotic_loadout_valid(&[
+            E::Other,
+            E::WeaponsAndOffhand,
+            E::Other
+        ]));
     }
 
     proptest! {

@@ -117,13 +117,11 @@ const fn crockford_value(c: u8) -> Option<u64> {
     None
 }
 
-/// SPEC: canon §3.6 decode: strip hyphens and spaces, uppercase, map `O -> 0`
-/// and `I`, `L -> 1`, then require exactly 13 characters; reject a first
-/// character above `F` and any `U`. Any other character outside the alphabet
-/// is rejected as well.
-///
-/// Check order: length, then per character (U, then alphabet), then the
-/// first-character range.
+/// SPEC: canon §3.6 decode: strip `-` and ASCII space only, uppercase, map
+/// `O -> 0` and `I`, `L -> 1`, then require exactly 13 characters. Errors are
+/// checked in the canon's order over the whole input: length, then any `U`,
+/// then any character outside the alphabet, then a first character above
+/// `F`. Each error reports the first offending index.
 pub fn decode_seed(text: &str) -> Result<u64, SeedParseError> {
     let mut buf = ['\0'; SEED_CHARS];
     let mut n = 0usize;
@@ -132,42 +130,43 @@ pub fn decode_seed(text: &str) -> Result<u64, SeedParseError> {
             continue;
         }
         if n < SEED_CHARS {
-            buf[n] = ch;
+            buf[n] = match ch.to_ascii_uppercase() {
+                'O' => '0',
+                'I' | 'L' => '1',
+                c => c,
+            };
         }
         n += 1;
     }
     if n != SEED_CHARS {
         return Err(SeedParseError::WrongLength { found: n });
     }
-    let mut v: u64 = 0;
-    for (index, &ch) in buf.iter().enumerate() {
-        let up = ch.to_ascii_uppercase();
-        let norm = match up {
-            'O' => '0',
-            'I' | 'L' => '1',
-            c => c,
-        };
-        if norm == 'U' {
-            return Err(SeedParseError::ContainsU { index });
-        }
+    if let Some(index) = buf.iter().position(|&c| c == 'U') {
+        return Err(SeedParseError::ContainsU { index });
+    }
+    let mut vals = [0u64; SEED_CHARS];
+    for (index, &norm) in buf.iter().enumerate() {
         let val = if norm.is_ascii() {
             crockford_value(u8::try_from(norm).expect("ascii"))
         } else {
             None
         };
         let Some(val) = val else {
+            // Report the character as given (before uppercasing and aliasing).
+            let ch = text
+                .chars()
+                .filter(|&c| c != '-' && c != ' ')
+                .nth(index)
+                .expect("invariant: index < 13 stripped characters");
             return Err(SeedParseError::InvalidChar { index, ch });
         };
-        if index == 0 {
-            if val > 15 {
-                return Err(SeedParseError::FirstCharAboveF);
-            }
-            v = val;
-        } else {
-            v = (v << 5) | val;
-        }
+        vals[index] = val;
     }
-    Ok(v)
+    if vals[0] > 15 {
+        return Err(SeedParseError::FirstCharAboveF);
+    }
+    // 4 + 12 × 5 = 64 bits: the shifts below never drop a set bit.
+    Ok(vals.iter().fold(0u64, |v, &x| (v << 5) | x))
 }
 
 /// SPEC: canon §3.6. Why a daily date or weekly ISO-week string was rejected.
@@ -392,6 +391,49 @@ mod tests {
         assert_eq!(
             decode_seed("G28T-5CY4-TQKFF"),
             Err(SeedParseError::FirstCharAboveF)
+        );
+    }
+
+    /// SPEC: canon §21 test 44. `fnv1a64("PALIMPSEST/WEEKLY/2026-W41") =
+    /// 0x2e7e2bae906b8339`, and 2026-10-11 falls in ISO week 2026-W41.
+    #[test]
+    fn canon_t44_weekly_seed() {
+        assert_eq!(
+            fnv1a64(b"PALIMPSEST/WEEKLY/2026-W41"),
+            0x2e7e_2bae_906b_8339
+        );
+        assert_eq!(iso_week(2026, 10, 11), Ok((2026, 41)));
+        assert_eq!(weekly_seed("2026-W41"), Ok(0x2e7e_2bae_906b_8339));
+        assert_eq!(
+            weekly_seed_for_date(2026, 10, 11),
+            Ok(0x2e7e_2bae_906b_8339)
+        );
+    }
+
+    /// SPEC: canon §3.6 error order over the whole input: length, then any
+    /// `U`, then any character outside the alphabet, then a first character
+    /// above `F`.
+    #[test]
+    fn decode_error_order() {
+        // A U anywhere beats an out-of-range first character.
+        assert_eq!(
+            decode_seed("G28T-5CY4-TQKUF"),
+            Err(SeedParseError::ContainsU { index: 11 })
+        );
+        // A U anywhere beats an earlier character outside the alphabet.
+        assert_eq!(
+            decode_seed("!28T-5CY4-TQKUF"),
+            Err(SeedParseError::ContainsU { index: 11 })
+        );
+        // Outside the alphabet beats an out-of-range first character.
+        assert_eq!(
+            decode_seed("G28T-5CY4-TQK!F"),
+            Err(SeedParseError::InvalidChar { index: 11, ch: '!' })
+        );
+        // Length beats everything.
+        assert_eq!(
+            decode_seed("GU!"),
+            Err(SeedParseError::WrongLength { found: 3 })
         );
     }
 

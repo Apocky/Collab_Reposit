@@ -79,7 +79,12 @@ pub struct SkillRow {
 }
 
 const fn sk(id: &'static str, name: &'static str, governing: Sub, group: SkillGroup) -> SkillRow {
-    SkillRow { id, name, governing, group }
+    SkillRow {
+        id,
+        name,
+        governing,
+        group,
+    }
 }
 
 use SkillGroup as G;
@@ -92,7 +97,12 @@ pub static SKILLS: [SkillRow; 36] = [
     sk("skill.polearm", "Polearm", S::Grip, G::Combat),
     sk("skill.unarmed", "Unarmed", S::Power, G::Combat),
     sk("skill.shield", "Shield", S::Brawn, G::Combat),
-    sk("skill.marksmanship", "Marksmanship", S::Precision, G::Combat),
+    sk(
+        "skill.marksmanship",
+        "Marksmanship",
+        S::Precision,
+        G::Combat,
+    ),
     sk("skill.heavy_arms", "Heavy Arms", S::Grip, G::Combat),
     sk("skill.throwing", "Throwing", S::Sleight, G::Combat),
     sk("skill.armor", "Armor", S::Toughness, G::Defense),
@@ -272,7 +282,10 @@ pub const fn grant_skill_xp(track: SkillTrack, milli: i64) -> (SkillTrack, u32) 
     if milli <= 0 || track.value >= SKILL_MAX {
         return (track, 0);
     }
-    let mut t = SkillTrack { value: track.value, progress_milli: track.progress_milli + milli };
+    let mut t = SkillTrack {
+        value: track.value,
+        progress_milli: track.progress_milli + milli,
+    };
     let mut levels = 0;
     while t.value < SKILL_MAX && t.progress_milli >= skill_need_milli(t.value) {
         t.progress_milli -= skill_need_milli(t.value);
@@ -287,7 +300,9 @@ pub const fn grant_skill_xp(track: SkillTrack, milli: i64) -> (SkillTrack, u32) 
 
 /// SPEC: canon §7. Mastery tiers reached by going from `old` to `new`.
 pub fn mastery_tiers_reached(old: i32, new: i32) -> impl Iterator<Item = i32> {
-    MASTERY_TIERS.into_iter().filter(move |&t| old < t && t <= new)
+    MASTERY_TIERS
+        .into_iter()
+        .filter(move |&t| old < t && t <= new)
 }
 
 /// SPEC: canon §7.1 `T(v) = 2 + floor_div(v, 20)` training marks to raise base `v`.
@@ -314,7 +329,10 @@ pub const fn add_training_mark(t: Training) -> Training {
         let base = if t.base < 100 { t.base + 1 } else { t.base };
         Training { base, marks: 0 }
     } else {
-        Training { base: t.base, marks }
+        Training {
+            base: t.base,
+            marks,
+        }
     }
 }
 
@@ -379,7 +397,7 @@ pub const fn can_allocate_point(base: i32, points_this_level: u32) -> bool {
 /// SPEC: canon §8. Each even level grants 1 talent point.
 #[must_use]
 pub const fn talent_points_at(level: u32) -> u32 {
-    if level % 2 == 0 { 1 } else { 0 }
+    if level.is_multiple_of(2) { 1 } else { 0 }
 }
 
 /// SPEC: canon §13.8 `enemy_level(d) = d + floor_div(d, 5)`.
@@ -401,7 +419,10 @@ pub const KILL_XP_FACTOR_BP: i32 = 7000;
 /// SPEC: canon §8 kill XP for an enemy of `rank` at depth `d`.
 #[must_use]
 pub const fn kill_xp(d: u32, rank: Rank) -> i64 {
-    mul_bp(mul_bp(kill_xp_std(d), rank.row().kill_xp_bp), KILL_XP_FACTOR_BP)
+    mul_bp(
+        mul_bp(kill_xp_std(d), rank.row().kill_xp_bp),
+        KILL_XP_FACTOR_BP,
+    )
 }
 
 /// SPEC: canon §8. Skill-up XP counts at most 8 skill levels per character per Folio.
@@ -457,8 +478,22 @@ pub struct RankRow {
     pub control_bp: i32,
 }
 
-const fn rk(id: &'static str, hp_bp: i32, damage_bp: i32, kill_xp_bp: i32, dot_taken_bp: i32, control_bp: i32) -> RankRow {
-    RankRow { id, hp_bp, damage_bp, kill_xp_bp, dot_taken_bp, control_bp }
+const fn rk(
+    id: &'static str,
+    hp_bp: i32,
+    damage_bp: i32,
+    kill_xp_bp: i32,
+    dot_taken_bp: i32,
+    control_bp: i32,
+) -> RankRow {
+    RankRow {
+        id,
+        hp_bp,
+        damage_bp,
+        kill_xp_bp,
+        dot_taken_bp,
+        control_bp,
+    }
 }
 
 /// SPEC: canon §17.3 table, indexed by `Rank as usize`.
@@ -474,8 +509,15 @@ pub static RANKS: [RankRow; 7] = [
 
 impl Rank {
     /// SPEC: canon §17.3. All ranks in table order.
-    pub const ALL: [Rank; 7] =
-        [Rank::Minion, Rank::Standard, Rank::Elite, Rank::Champion, Rank::Boss, Rank::Editor, Rank::Hunter];
+    pub const ALL: [Rank; 7] = [
+        Rank::Minion,
+        Rank::Standard,
+        Rank::Elite,
+        Rank::Champion,
+        Rank::Boss,
+        Rank::Editor,
+        Rank::Hunter,
+    ];
 
     /// SPEC: canon §17.3. The table row.
     #[must_use]
@@ -493,7 +535,11 @@ impl Rank {
     /// SPEC: canon §17.2. The party-size HP table this rank uses.
     #[must_use]
     pub const fn party_hp_table(self) -> PartyTable {
-        if self.is_boss_tier() { PartyTable::EnemyHpBoss } else { PartyTable::EnemyHp }
+        if self.is_boss_tier() {
+            PartyTable::EnemyHpBoss
+        } else {
+            PartyTable::EnemyHp
+        }
     }
 }
 
@@ -530,7 +576,10 @@ pub const fn party_bp(table: PartyTable, n: u8) -> i32 {
 /// `floor_div(kill_xp × 10000, enemy_count_bp[n])`.
 #[must_use]
 pub const fn coop_kill_xp(kill_xp: i64, party_size: u8) -> i64 {
-    narrow_i64(floor_div_i128(kill_xp as i128 * 10_000, party_bp(PartyTable::EnemyCount, party_size) as i128))
+    narrow_i64(floor_div_i128(
+        kill_xp as i128 * 10_000,
+        party_bp(PartyTable::EnemyCount, party_size) as i128,
+    ))
 }
 
 /// SPEC: canon §17.2. Enemy count per spawner
@@ -575,19 +624,71 @@ use Skill as K;
 
 /// SPEC: canon §16.2 table: ID, three major skills, three minor skills.
 pub static CALLINGS: [(&str, [Skill; 3], [Skill; 3]); 13] = [
-    ("calling.vanguard", [K::Hafted, K::Armor, K::Shield], [K::Athletics, K::Leadership, K::Smithing]),
-    ("calling.duelist", [K::Blade, K::Acrobatics, K::Speech], [K::Sneak, K::Throwing, K::Unarmed]),
-    ("calling.gunslinger", [K::Marksmanship, K::Acrobatics, K::Throwing], [K::Tinkering, K::Speech, K::Security]),
-    ("calling.grenadier", [K::HeavyArms, K::Throwing, K::Armor], [K::Tinkering, K::Fieldcraft, K::Medicine]),
-    ("calling.spellwright", [K::Evocation, K::Spellcraft, K::Alteration], [K::Abjuration, K::Inscription, K::Divination]),
-    ("calling.alchemist", [K::Alchemy, K::Throwing, K::Medicine], [K::Survival, K::Restoration, K::Appraisal]),
-    ("calling.shade", [K::Sneak, K::Blade, K::Security], [K::Pickpocket, K::Acrobatics, K::Illusion]),
-    ("calling.artificer", [K::Tinkering, K::Smithing, K::Marksmanship], [K::Security, K::Inscription, K::Appraisal]),
-    ("calling.warden", [K::Shield, K::Abjuration, K::Restoration], [K::Polearm, K::Devotion, K::Leadership]),
-    ("calling.oracle", [K::Divination, K::Devotion, K::Conjuration], [K::Appraisal, K::Illusion, K::Speech]),
-    ("calling.netrunner", [K::Hacking, K::Tinkering, K::Sneak], [K::Security, K::Awareness, K::Illusion]),
-    ("calling.beastbinder", [K::Handling, K::Conjuration, K::Survival], [K::Polearm, K::Leadership, K::Restoration]),
-    ("calling.monk", [K::Unarmed, K::Acrobatics, K::Athletics], [K::Alteration, K::Medicine, K::Awareness]),
+    (
+        "calling.vanguard",
+        [K::Hafted, K::Armor, K::Shield],
+        [K::Athletics, K::Leadership, K::Smithing],
+    ),
+    (
+        "calling.duelist",
+        [K::Blade, K::Acrobatics, K::Speech],
+        [K::Sneak, K::Throwing, K::Unarmed],
+    ),
+    (
+        "calling.gunslinger",
+        [K::Marksmanship, K::Acrobatics, K::Throwing],
+        [K::Tinkering, K::Speech, K::Security],
+    ),
+    (
+        "calling.grenadier",
+        [K::HeavyArms, K::Throwing, K::Armor],
+        [K::Tinkering, K::Fieldcraft, K::Medicine],
+    ),
+    (
+        "calling.spellwright",
+        [K::Evocation, K::Spellcraft, K::Alteration],
+        [K::Abjuration, K::Inscription, K::Divination],
+    ),
+    (
+        "calling.alchemist",
+        [K::Alchemy, K::Throwing, K::Medicine],
+        [K::Survival, K::Restoration, K::Appraisal],
+    ),
+    (
+        "calling.shade",
+        [K::Sneak, K::Blade, K::Security],
+        [K::Pickpocket, K::Acrobatics, K::Illusion],
+    ),
+    (
+        "calling.artificer",
+        [K::Tinkering, K::Smithing, K::Marksmanship],
+        [K::Security, K::Inscription, K::Appraisal],
+    ),
+    (
+        "calling.warden",
+        [K::Shield, K::Abjuration, K::Restoration],
+        [K::Polearm, K::Devotion, K::Leadership],
+    ),
+    (
+        "calling.oracle",
+        [K::Divination, K::Devotion, K::Conjuration],
+        [K::Appraisal, K::Illusion, K::Speech],
+    ),
+    (
+        "calling.netrunner",
+        [K::Hacking, K::Tinkering, K::Sneak],
+        [K::Security, K::Awareness, K::Illusion],
+    ),
+    (
+        "calling.beastbinder",
+        [K::Handling, K::Conjuration, K::Survival],
+        [K::Polearm, K::Leadership, K::Restoration],
+    ),
+    (
+        "calling.monk",
+        [K::Unarmed, K::Acrobatics, K::Athletics],
+        [K::Alteration, K::Medicine, K::Awareness],
+    ),
 ];
 
 impl Calling {
@@ -678,7 +779,10 @@ mod tests {
     /// (`K(1) = 5`, `K(10) = 252`, `K(25) = 1386`).
     #[test]
     fn kill_xp_by_rank() {
-        assert_eq!((kill_xp_std(1), kill_xp_std(10), kill_xp_std(25)), (5, 252, 1386));
+        assert_eq!(
+            (kill_xp_std(1), kill_xp_std(10), kill_xp_std(25)),
+            (5, 252, 1386)
+        );
         let table: [(Rank, [i64; 3]); 7] = [
             (Rank::Minion, [0, 52, 290]),
             (Rank::Standard, [3, 176, 970]),
@@ -689,7 +793,11 @@ mod tests {
             (Rank::Hunter, [17, 882, 4851]),
         ];
         for (rank, xp) in table {
-            assert_eq!([kill_xp(1, rank), kill_xp(10, rank), kill_xp(25, rank)], xp, "{rank:?}");
+            assert_eq!(
+                [kill_xp(1, rank), kill_xp(10, rank), kill_xp(25, rank)],
+                xp,
+                "{rank:?}"
+            );
         }
         assert_eq!(enemy_level(25), 30);
         assert_eq!(enemy_level(4), 4);
@@ -760,21 +868,63 @@ mod tests {
     /// milli-XP becomes 50; one LOG mark; at LOG 66 the fifth mark raises it to 67).
     #[test]
     fn skill_growth_and_training() {
-        let (t, n) = grant_skill_xp(SkillTrack { value: 49, progress_milli: 0 }, 23_600);
-        assert_eq!((t, n), (SkillTrack { value: 50, progress_milli: 0 }, 1));
+        let (t, n) = grant_skill_xp(
+            SkillTrack {
+                value: 49,
+                progress_milli: 0,
+            },
+            23_600,
+        );
+        assert_eq!(
+            (t, n),
+            (
+                SkillTrack {
+                    value: 50,
+                    progress_milli: 0
+                },
+                1
+            )
+        );
         assert_eq!(mastery_tiers_reached(49, 50).collect::<Vec<_>>(), [50]);
         assert_eq!(Skill::Hacking.governing(), Sub::Logic);
         let t = add_training_mark(Training { base: 66, marks: 4 });
         assert_eq!(t, Training { base: 67, marks: 0 });
         assert_eq!(training_threshold(66), 5);
-        assert_eq!(add_training_mark(Training { base: 66, marks: 0 }), Training { base: 66, marks: 1 });
+        assert_eq!(
+            add_training_mark(Training { base: 66, marks: 0 }),
+            Training { base: 66, marks: 1 }
+        );
         // Never above 100.
-        assert_eq!(add_training_mark(Training { base: 100, marks: 6 }), Training { base: 100, marks: 0 });
+        assert_eq!(
+            add_training_mark(Training {
+                base: 100,
+                marks: 6
+            }),
+            Training {
+                base: 100,
+                marks: 0
+            }
+        );
         // Zero grants nothing; skill 100 stops and clears progress.
-        let s = SkillTrack { value: 10, progress_milli: 7 };
+        let s = SkillTrack {
+            value: 10,
+            progress_milli: 7,
+        };
         assert_eq!(grant_skill_xp(s, 0), (s, 0));
-        let (top, _) = grant_skill_xp(SkillTrack { value: 99, progress_milli: 0 }, 1_000_000);
-        assert_eq!(top, SkillTrack { value: 100, progress_milli: 0 });
+        let (top, _) = grant_skill_xp(
+            SkillTrack {
+                value: 99,
+                progress_milli: 0,
+            },
+            1_000_000,
+        );
+        assert_eq!(
+            top,
+            SkillTrack {
+                value: 100,
+                progress_milli: 0
+            }
+        );
         let (from0, n) = grant_skill_xp(SkillTrack::default(), 220_000);
         assert_eq!((from0.value, n), (25, 25));
     }
@@ -792,9 +942,10 @@ mod tests {
         assert_eq!(level_for_xp(492_999), 29);
         assert_eq!(level_for_xp(493_000), 30);
         assert_eq!(level_for_xp(542_500), 31);
-        assert_eq!(level_for_xp(i64::MAX), level_for_xp(i64::MAX));
+        // The top level for i64::MAX XP is still representable.
         let top = level_for_xp(i64::MAX);
-        assert!(cumulative_level_xp(top) <= i64::MAX);
+        assert!(cumulative_level_xp(top) > cumulative_level_xp(top - 1));
+        assert!(cumulative_level_xp_wide(top + 1) > i128::from(i64::MAX));
     }
 
     /// SPEC: canon §8 level-up grants.
@@ -818,7 +969,11 @@ mod tests {
         assert_eq!(Skill::Awareness.governing(), Sub::Hearing);
         assert_eq!(Skill::Fieldcraft.group(), SkillGroup::Craft);
         // FAT and SER govern no skill.
-        assert!(Skill::ALL.iter().all(|s| s.governing() != Sub::Fate && s.governing() != Sub::Serendipity));
+        assert!(
+            Skill::ALL
+                .iter()
+                .all(|s| s.governing() != Sub::Fate && s.governing() != Sub::Serendipity)
+        );
         assert_eq!(Calling::ALL.len(), 13);
         for c in Calling::ALL {
             let all: Vec<Skill> = c.majors().into_iter().chain(c.minors()).collect();

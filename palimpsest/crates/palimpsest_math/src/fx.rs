@@ -11,7 +11,7 @@ use core::ops::{Add, AddAssign, Neg, Sub, SubAssign};
 
 use crate::int::{floor_div, floor_div_i128, mul_bp, narrow_i64, round_half_even_i128};
 
-/// Number of fractional bits of `Fx`.
+/// SPEC: canon §1.4. Number of fractional bits of `Fx` (Q32.32).
 pub const FX_FRAC_BITS: u32 = 32;
 
 /// SPEC: canon §1.4. Signed Q32.32 fixed point; raw `r` represents `r / 2^32`.

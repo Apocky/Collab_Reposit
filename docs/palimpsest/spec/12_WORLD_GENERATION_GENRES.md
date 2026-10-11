@@ -1,7 +1,7 @@
 # 12 — World Generation and Genres
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.2.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.5.
 
-This chapter owns everything that turns a run seed into a playable Folio: the full Genre Parameter Vector (GPV) of all 16 genres, the World Laws, the Genre Lattice and its exit offers, Folio types, the generation pipeline from mission graph to validated voxel blueprint, bleed and seam zones, the room catalog, secrets, hazards, events, Folio story fragments, boss arenas, Marginalia modifiers and the Abridged layout. Generation is one pure function in `crate.gen` (doc 02). The canon on disk is canon-1.4, and every rule here was checked against it, including fixed terrain, Canon §5.9 identity, World Laws, seams, `st.unmoored`, the Colophon and invasions (Canon gaps G1).
+This chapter owns everything that turns a run seed into a playable Folio: the full Genre Parameter Vector (GPV) of all 16 genres, the World Laws, the Genre Lattice and its exit offers, Folio types, the generation pipeline from mission graph to validated voxel blueprint, bleed and seam zones, the room catalog, secrets, hazards, events, Folio story fragments, boss arenas, Marginalia modifiers and the Abridged layout. Generation is one pure function in `crate.gen` (doc 02). Every rule here was checked against canon-1.5, including fixed terrain, Canon §5.9 identity, spawn light, World Laws, seams, `st.unmoored`, the Colophon, Abridged mode and invasions (Canon gaps G1).
 
 ## Imports
 
@@ -13,12 +13,15 @@ This chapter owns everything that turns a run seed into a playable Folio: the fu
 | Canon §5.2–§5.11 | genre table (copied in §3.2); `dep` and the zero-axis ban; Contradiction; TEC ≤ 2 rule; `local_genre`; seam zones; Canon §5.9 identity (copied in §2); World Laws (listed in §4); Going Native; Unmoored |
 | Canon §6.4 row 35, §10.6, §11, §12 | passive detection; environmental hazards; `st.contradicted`, `st.unmoored`, Erasure; surfaces, concealment, spawn light |
 | Canon §13, §15–§19 | `P`/`T`, Palimpsestic sources; factions, patrons; run constants, Colophon, Abridged, aspects, mounts, invasions; events; this chapter's namespaces |
-| Doc 02 §3 | `crate.gen`, `generate_folio(input, db, par)`, `OrderedMap` |
-| Doc 03 §4.7, §5, §10 | `protect` and `open_tag` bits, sky and block light channels, `gsign`, `ambient_decic` |
-| Doc 08 | `liquid_viscosity_bp`, `gas_dissipation_bp`, H/F/M nodes, font basins, red-ink pools |
-| Doc 11 §9.6–§9.10, §10 | chest count, floor loot, guarded spots, secret loot tables, Reliquary spots, counter caches |
+| Doc 02 §3, §8, perf table | `crate.gen`, `generate_folio(input, db, par)`, `OrderedMap`; `FolioView.bleed` holds at most 4 bleed slots (entry plus drift); `perf.deck.gen.folio_*` budgets |
+| Doc 03 §4.7, §5, §10 | `protect`, `open_tag` and `flip` bits, sky and block light channels and their propagation (§10.3), `gsign`, `ambient_decic`, `climbable` ladders |
+| Doc 07 §9.3, §9.4, §10.1 | resource-node blocks `block.node.*` and the per-genre vein weights; `block.light_fixture.<genre_suffix>`, `block.masonry.<stone>`, `block.torch`, `block.door.*`, `block.cracked_wall`, `block.planks`; placed-block rules; mining time reads GPV `hard_bp` |
+| Doc 08 §3, §8.1, §12.5 | `liquid_viscosity_bp`, `gas_dissipation_bp`, H (plant) and F (fungus) harvest nodes by biome, `liq.blood`, `liq.wellspring` font basins, red-ink pools |
+| Doc 09 §2.2, §2.4 | light bands, light manipulation, `lock.*`, disarming |
+| Doc 11 §9.6–§9.11, §10, §11.1, §12.1 | chest kinds, floor loot (9 per slot, 15 in Abridged), guarded spots, secret loot tables `loot.secret.*`, Reliquary spots, counter caches, Fortune Engine and vendor counts per Folio type, `item.tool.torch` |
 | Doc 13 §2.5, §7.3, §8, §9, §10, §12 | `damage_affinity`, the aspect set, rosters, boss arenas, Director placement, territory, war fronts, dynamic bleed zones |
-| Doc 14 §3, §5.3, §7, §8 | positions, Incipit, Rubric, Colophon, Interleaf, Endpaper, exit vote, room unlocks, `folio_scale_bp`, `gp.ambush_extra`, bleed-count hooks |
+| Doc 14 §3, §5.3, §7, §8, §9 | positions, Incipit, Rubric (none in rest and boss Folios), Colophon, Interleaf, Endpaper, exit vote and door order, room unlocks, `folio_scale_bp`, `gp.ambush_extra`, bleed-count hooks (`run.mut.wild_bleed`, `run.marg.bleeding_genres`), Marginalia boss positions |
+| Doc 18 §7, §8.7 | name grammars for story seeds, story retelling grammars per §20.2 template, hazard and event skin names |
 | R6 §7–§11; R4 §7, §14; R1 §5.9; R2 §5 | GPV, Noita modifiers, Torg Laws; WFC in rooms, Dormans cycles; Qud sultans; Minecraft light |
 
 ## 1. Vocabulary and namespaces
@@ -32,7 +35,11 @@ This chapter owns everything that turns a run seed into a playable Folio: the fu
 | Zone | cells sharing one zone record: plain (Folio genre), bleed, seam or dynamic (§14) |
 | Feet cell | an air cell with solid or slab-top support below and 2 air cells above (§15.1) |
 | Path distance | breadth-first step count between feet cells on the §15.1 navigation graph × 1000 mm |
-| `d`, `pos` | depth and structural position of a Folio (doc 14 §3.1) |
+| `d`, `pos` | depth and structural position of a Folio (doc 14 §3.1); `d` is a `u32` of at least 1 (Canon §13.8) |
+| `n` | the Folio index that keys streams and `EntityId`s (Canon §1.11, §3.2); equal to `d` except in Abridged |
+| Block linear index | `bx + 256 × (bz + 256 × by)` for a block of the Folio box, range `0..=4194303` (the doc 02 `Gidx` order) |
+| Pit depth | every worldgen pit (spike pit, collapsing floor) is 2 blocks deep, which every Erratum leaves with a jump and a mantle: the VERVE-0 apex of 1100 mm plus doc 03 §5.9's 1600 mm mantle reach is 2700 mm (§18.1) |
+| `rooms_total` | the count of non-secret mission-graph nodes after stage `graph` (Incipit and Colophon included) |
 
 This chapter owns full `genre.` vectors and the namespaces `gpv.`, `lattice.`, `room.`, `biome.`, `hazard.`, `secret.`, `law.` and `zone.` (Canon §19), plus the behavior of `rng.lattice`, `rng.worldgen`, `rng.event`, `st.contradicted`, `st.unmoored` (§24.3) and `cat.quest` items placed by worldgen (§20.5).
 
@@ -83,50 +90,71 @@ Doc 03 applies the physics columns; `spawn_block_max` gates ambient, wave and in
 
 ### 2.3 Identity extensions owned here
 
-`fixture_level`: `light_emit` of a worldgen fixture. `protect_r = fixture_level - spawn_block_max - 1`: radius one fixture makes spawn-proof (— where `spawn_block_max = 15`). `fog`: concealment per 8 m (Canon §12.2). `ambient_decic`: temperature (doc 03). Viscosity and gas dissipation feed doc 08; `damage_affinity` adds to native NPC resistances (doc 13 §2.5).
+`fixture_level`: `light_emit` of the genre's worldgen fixture block `block.light_fixture.<genre_suffix>` (doc 07 §10.1). `protect_r = fixture_level - spawn_block_max - 1`: the taxicab radius one fixture makes spawn-proof (— where `spawn_block_max = 15`). `fog`: concealment per 8 m (Canon §12.2). `ambient_decic`: temperature (doc 03). Viscosity and gas dissipation feed doc 08; `damage_affinity` adds to native NPC resistances (doc 13 §2.5). `hard_bp` multiplies doc 07 §9.2 mining time of resource nodes (alloys and concrete mine slower, rot and dream-stuff faster).
 
-| Genre | fixture_level | protect_r | fog | ambient_decic | liquid_viscosity_bp | gas_dissipation_bp | damage_affinity (Bp) |
-|---|---|---|---|---|---|---|---|
-| MF | 14 | 13 | 0 | 150 | 10000 | 10000 | arcane +1500, fire +1000 |
-| GH | 12 | 4 | 1 | 80 | 9000 | 8000 | umbral +2000, radiant −1500 |
-| CH | 12 | 4 | 1 | 60 | 7000 | 7000 | psychic +2500, umbral +1000 |
-| SO | 15 | 14 | 0 | 210 | 10000 | 15000 | radiation +1500, shock −1000 |
-| CP | 13 | 12 | 0 | 220 | 11000 | 10000 | toxin +1000, shock −1500 |
-| PA | 12 | 11 | 0 | 350 | 8000 | 12000 | radiation +2500, acid +1000 |
-| WW | 13 | 12 | 0 | 320 | 7000 | 13000 | fire +1000, umbral +1000 |
-| HN | 12 | 11 | 1 | 120 | 12000 | 9000 | pierce +1000, psychic −1000 |
-| WX | 12 | 11 | 0 | 170 | 12000 | 11000 | slash +1000, sonic −1000 |
-| SP | 14 | 13 | 0 | 260 | 10000 | 8000 | fire +1500, shock −1000 |
-| FT | 11 | 10 | 1 | 160 | 10000 | 10000 | arcane +2000, slash −500 |
-| MA | 13 | 12 | 0 | 290 | 10000 | 12000 | radiant +1000, blunt +1000 |
-| ON | 10 | 9 | 1 | 200 | 15000 | 10000 | psychic +2000, arcane +1000 |
-| RD | 15 | — | 0 | 210 | 10000 | 15000 | psychic +2000, sonic +1000 |
-| UW | 8 | — | 0 | 200 | 10000 | 10000 | none |
-| UT | 14 | 13 | 0 | 200 | 10000 | 10000 | none |
+| Genre | fixture_level | protect_r | fog | ambient_decic | liquid_viscosity_bp | gas_dissipation_bp | damage_affinity (Bp) | hard_bp |
+|---|---|---|---|---|---|---|---|---|
+| MF | 14 | 13 | 0 | 150 | 10000 | 10000 | arcane +1500, fire +1000 | 10000 |
+| GH | 12 | 4 | 1 | 80 | 9000 | 8000 | umbral +2000, radiant −1500 | 10000 |
+| CH | 12 | 4 | 1 | 60 | 7000 | 7000 | psychic +2500, umbral +1000 | 12000 |
+| SO | 15 | 14 | 0 | 210 | 10000 | 15000 | radiation +1500, shock −1000 | 15000 |
+| CP | 13 | 12 | 0 | 220 | 11000 | 10000 | toxin +1000, shock −1500 | 13000 |
+| PA | 12 | 11 | 0 | 350 | 8000 | 12000 | radiation +2500, acid +1000 | 9000 |
+| WW | 13 | 12 | 0 | 320 | 7000 | 13000 | fire +1000, umbral +1000 | 10000 |
+| HN | 12 | 11 | 1 | 120 | 12000 | 9000 | pierce +1000, psychic −1000 | 11000 |
+| WX | 12 | 11 | 0 | 170 | 12000 | 11000 | slash +1000, sonic −1000 | 10000 |
+| SP | 14 | 13 | 0 | 260 | 10000 | 8000 | fire +1500, shock −1000 | 12000 |
+| FT | 11 | 10 | 1 | 160 | 10000 | 10000 | arcane +2000, slash −500 | 9000 |
+| MA | 13 | 12 | 0 | 290 | 10000 | 12000 | radiant +1000, blunt +1000 | 11000 |
+| ON | 10 | 9 | 1 | 200 | 15000 | 10000 | psychic +2000, arcane +1000 | 8000 |
+| RD | 15 | — | 0 | 210 | 10000 | 15000 | psychic +2000, sonic +1000 | 15000 |
+| UW | 8 | — | 0 | 200 | 10000 | 10000 | none | 10000 |
+| UT | 14 | 13 | 0 | 200 | 10000 | 10000 | none | 10000 |
 
 Abbreviations in Canon §5.2 order: MF, GH, CH, SO, CP, PA, WW, HN, WX, SP, FT, MA, ON, RD (Redaction), UW (Unwritten), UT (Ur-Text).
 
 ### 2.4 Placed light as defense
 
 1. **Sky light** (doc 03 §10.2) comes only from sky-exposed cells and rooms tagged open (`open_tag`) at the local `ambient_light`, falling 1 per step; enclosed rooms are lit by fixtures, which shape the stealth gradient.
-2. **Fixtures** (`block.light_fixture`, `light_emit = fixture_level`) are `destructible` (Canon §4.3); breaking one makes its cells spawn-eligible on the next relight.
+2. **Fixtures** (`block.light_fixture.<genre_suffix>`, `light_emit = fixture_level` of the zone genre, doc 07 §10.1) are `destructible` (Canon §4.3); breaking or snuffing one (doc 09 §2.4) makes its cells spawn-eligible as soon as doc 03's relight lowers them to `spawn_block_max` or below.
 3. **Protection:** a cell at taxicab distance `k` is spawn-proof when `fixture_level - k > spawn_block_max`, i.e. `k <= protect_r`. Mythic Fantasy `14 - 0 - 1 = 13`: a fixture 2 blocks above the feet layer covers `|dx| + |dz| <= 11`, `2 × 11 × 12 + 1 = 265` cells. Gothic Horror `12 - 7 - 1 = 4` covers 13: candlelight barely holds the dark.
 4. **No light is safe** in the Redaction and the Unwritten (`spawn_block_max = 15`); only `no_spawn` (§12) clears their safe rooms.
-5. **Placeable light** (Canon §4.3) protects the same way; `fac.editors` members erase Errata placeables within 1500 mm (Canon §11.6).
+5. **Placeable light** (Canon §4.3, §12.3) protects the same way with its own `light_emit`: `block.torch` 14, `block.lantern` 15, `block.campfire` 15, `block.shrine_lamp` 12 (doc 07 §10.1). A torch therefore protects taxicab radius `14 - spawn_block_max - 1`: 13 in every genre with `spawn_block_max` 0 and 6 in Gothic Horror and Cosmic Horror; a lantern 14 and 7. `fac.editors` members erase Errata placeables within 1500 mm (Canon §11.6), so light is no defense against Editor squads and hunters, and none at all in the Redaction and the Unwritten. Held lights (doc 03 §10.4 dynamic emitters, capped at 10) never protect where `spawn_block_max >= 10`, and protect radius `9 - spawn_block_max` elsewhere: 9 where it is 0, 2 in Gothic and Cosmic Horror.
 6. **Safe rooms** carry `no_spawn` and, where `spawn_block_max <= 14`, keep every feet cell above it (§11.3).
+7. **Balance.** Light is a strong defense in the ten core genres with `spawn_block_max` 0 (a single torch clears a 2 × 2-cell hall's floor within radius 13) and a weak one in the two horror genres, where the dark is the genre's identity (Canon §5.9). Light removes spawn cells and wave anchors only (doc 13 §10.1 skips lit spawn cells, and a qualifying wave anchor needs `light_block <= spawn_block_max`, doc 13 §10.4); it never moves the Keeper, the mini-boss, Erasure hunters (doc 13 §10.5 picks hunter anchors by distance alone) or invaders, and members that already spawned walk into lit cells freely. Torch spam is bounded by doc 07's `PLACED_CAP_PER_PLAYER`, `PLACED_CAP_PER_FOLIO` and `TORCH_TICKS` burn-out, and the initial population spawns at Folio entry before any Erratum can place light. At depth the reference numbers hold their shape: a Folio-25 crusher deals `mul_bp(25000, 36145) = 90,362` mHP before armor, 34% of a level-28 Erratum's 268 HP (TGH 60), against 29% of 85 HP at Folio 1 (§18.1).
 
 ## 3. Genre Parameter Vector (GPV)
 
 ### 3.1 Dimensions
 
-A GPV is one content record `genre.<suffix>` with 64 dimensions. All are simulation inputs (integers or IDs) except those marked P (presentation only).
+A GPV is one content record `genre.<suffix>` with 65 dimensions. All are simulation inputs (integers or IDs) except those marked P (presentation only).
 
 - **A, Canon §5.2 (12):** 1 `id`; 2 `display` (P); 3–6 `arc`, `tec`, `myt`, `vrv`; 7 `aether_axiom`; 8 `gravity_bp`; 9 `ambient_light`; 10–11 `lucre_skin`, `aether_skin` (P); 12 `tier`.
 - **B, Canon §5.9 (9):** 13 `air_accel_bp`; 14 `fall_dmg_bp`; 15 `ground_friction_bp`; 16 `spawn_block_max`; 17 `palette` (P); 18 `music` (P); 19 `enemy_themes` (P); 20 `materials`; 21 `manufacturers`.
-- **C, identity extensions (10, §2.3):** 22 `family` (P); 23 `era_tl` (P, `0..=12`); 24 `render_style` (P); 25 `fixture_level`; 26 `fog`; 27 `ambient_decic`; 28 `liquid_viscosity_bp`; 29 `gas_dissipation_bp`; 30 `damage_affinity`; 31 `patron`.
-- **D, structure (19):** 32 `layout`; 33–35 `fp_w`, `fp_d`, `storeys`; 36–37 `rooms_min`, `rooms_max`; 38 `loop_bp`; 39 `vert_bp`; 40 `corridor_w`; 41 `cover_bp`; 42–43 `bright_bp`, `dark_bp`; 44 `secret_bp`; 45 `trap_bp`; 46 `liquids`; 47 `tilesets`; 48 `cycle_w`; 49 `room_bias`; 50 `node_w` (H, F, M resource-node weights).
-- **E, population and play (7):** 51 `roster` and 52 `factions` (references to doc 13 §8); 53 `density_bp`; 54 `verbs` (10 × Bp: shoot, melee, cast, pray, sneak, talk, hack, craft, build, traverse); 55 `hazards`; 56 `events`; 57 `event_bp`.
-- **F, bleed, Laws and story (7):** 58 `bleed_ok`; 59 `drift_bp`; 60 `bleed_in_bp`; 61 `seam_bp`; 62 `secret_exits`; 63 `laws` (§4); 64 `story_domains`.
+- **C, identity extensions (11, §2.3):** 22 `family` (P); 23 `era_tl` (P, `0..=12`); 24 `render_style` (P); 25 `fixture_level`; 26 `fog`; 27 `ambient_decic`; 28 `liquid_viscosity_bp`; 29 `gas_dissipation_bp`; 30 `damage_affinity`; 31 `patron`; 32 `hard_bp`.
+- **D, structure (19):** 33 `layout`; 34–36 `fp_w`, `fp_d`, `storeys`; 37–38 `rooms_min`, `rooms_max`; 39 `loop_bp`; 40 `vert_bp`; 41 `corridor_w`; 42 `cover_bp`; 43–44 `bright_bp`, `dark_bp`; 45 `secret_bp`; 46 `trap_bp`; 47 `liquids`; 48 `tilesets`; 49 `cycle_w`; 50 `room_bias`; 51 `node_w` (H plant and F fungus harvest-node weights, doc 08).
+- **E, population and play (7):** 52 `roster` (the template prefix `enemy.<suffix>`, doc 13 §8) and 53 `factions` (the native factions `fac.native.<suffix>.<group>` of doc 13 §12.1 in ascending ID; empty for the Unwritten); 54 `density_bp`; 55 `verbs` (10 × Bp: shoot, melee, cast, pray, sneak, talk, hack, craft, build, traverse); 56 `hazards`; 57 `events`; 58 `event_bp`.
+- **F, bleed, Laws and story (7):** 59 `bleed_ok`; 60 `drift_bp`; 61 `bleed_in_bp`; 62 `seam_bp`; 63 `secret_exits`; 64 `laws` (§4); 65 `story_domains`.
+
+**Where each genre's values live.** Every dimension is given for all 16 genres in exactly one table or list of this chapter; the content record copies it field for field, and lint L2 compares Blocks A and B against the canon.
+
+| Dimensions | Values for all 16 genres |
+|---|---|
+| 1–12 | §3.2 (Canon §5.2 verbatim) |
+| 13–20 | §2.1 (Canon §5.9 verbatim) |
+| 21 | §2.2 (Canon §5.9 verbatim); `genre.unwritten` has `[]` |
+| 22–24, 31 | the paragraph below |
+| 25–30, 32 | §2.3 |
+| 33–36, 37–38, 39–46, 48 | §3.3 |
+| 47, 65 | §3.5 lists |
+| 49, 51 | §3.3 lists |
+| 50 | §16.2 room-bias list |
+| 52–53 | `enemy.<suffix>`; doc 13 §12.1 faction table |
+| 54, 58, 55, 59–62 | §3.5 table |
+| 56 | §18.2 |
+| 57 | §19.2 |
+| 63 | §5.3 (core genres); `[]` for the four secret genres, which never hold a secret exit (§17.4) |
+| 64 | §4 |
 
 `family`/`era_tl`/`render_style`: MF fantasy/3/painterly, GH horror/5/painterly, CH horror/6/ink, SO sf/11/pbr, CP sf/9/pbr, PA sf/8/pbr, WW historical/5/toon, HN crime/6/ink, WX historical/3/ink, SP historical/5/pbr, FT fantasy/2/toon, MA mythic/1/painterly, ON meta/6/xerox_collage, RD meta/8/pixel_dither, UW meta/0/ink, UT meta/6/painterly. `patron` is `patron.<suffix>`.
 
@@ -174,7 +202,7 @@ A GPV is one content record `genre.<suffix>` with 64 dimensions. All are simulat
 
 `cycle_w` (§8.2 order lock_key, hidden_shortcut, gauntlet_return, two_key_hub, flooded_detour, collapsing_bridge, patrol_loop, foreshadowed_vault): MF 20 10 10 15 10 10 10 15; GH 15 20 10 10 5 10 15 15; CH 10 25 5 10 20 10 10 10; SO 25 10 10 20 5 5 20 5; CP 20 15 5 15 5 5 25 10; PA 10 15 15 5 15 25 10 5; WW 15 10 15 5 5 25 15 10; HN 15 20 5 15 10 5 25 5; WX 10 15 20 10 15 20 5 5; SP 20 10 10 20 10 15 10 5; FT 15 20 10 10 15 10 5 15; MA 15 10 25 10 10 10 5 15; ON 10 25 10 10 15 15 5 10; RD 25 10 5 25 0 0 30 5; UW 30 20 0 0 0 30 20 0; UT 13 13 12 12 12 12 13 13.
 
-`node_w` (H plant, F fungus, M ore; doc 08): MF 40 20 40; GH 20 50 30; CH 10 60 30; SO 10 10 80; CP 10 20 70; PA 20 20 60; WW 30 10 60; HN 20 30 50; WX 50 20 30; SP 10 20 70; FT 60 30 10; MA 40 10 50; ON 40 40 20; RD 0 20 80; UW 0 0 100; UT 34 33 33.
+`node_w` (H plant, F fungus; doc 08 harvest nodes, §11.2): MF 40 20; GH 20 50; CH 10 60; SO 10 10; CP 10 20; PA 20 20; WW 30 10; HN 20 30; WX 50 20; SP 10 20; FT 60 30; MA 40 10; ON 40 40; RD 0 20; UW 0 0; UT 34 33. Mineral (M) sources are the doc 07 ore veins of §11.2, whose kinds come from doc 07 §9.4, so `node_w` carries no M weight. The Unwritten places no harvest nodes.
 
 ### 3.4 Layout styles (`gpv.layout.*`)
 
@@ -230,23 +258,28 @@ Story domains (§20): MF flame, oath, star, wyrm. GH blood, moon, crypt, mirror.
 
 ```json
 {
-  "id": "genre.gothic_horror", "tier": 0,
+  "id": "genre.gothic_horror", "display": "Gothic Horror", "tier": 0,
   "arc": 5, "tec": 3, "myt": 9, "vrv": 3, "aether_axiom": "ax.mythos", "gravity_bp": 10000, "ambient_light": 2,
+  "lucre_skin": "Shillings", "aether_skin": "Sanguine",
   "air_accel_bp": 10000, "fall_dmg_bp": 10000, "ground_friction_bp": 10000, "spawn_block_max": 7,
   "palette": [3809067, 7998996, 13157300],
+  "music": ["organ", "string quartet", "harpsichord"], "enemy_themes": ["vampires", "werewolves", "ghouls"],
   "materials": ["mat.silver", "mat.blackwood", "mat.bone"],
   "manufacturers": ["mfr.gothic_horror.vesper_sons", "mfr.gothic_horror.grimhallow"],
   "family": 1, "era_tl": 5, "render_style": 1, "fixture_level": 12, "fog": 1, "ambient_decic": 80,
   "liquid_viscosity_bp": 9000, "gas_dissipation_bp": 8000,
   "damage_affinity": [{"dmg": "dmg.umbral", "bp": 2000}, {"dmg": "dmg.radiant", "bp": -1500}],
-  "patron": "patron.gothic_horror",
+  "patron": "patron.gothic_horror", "hard_bp": 10000,
   "layout": "gpv.layout.manor", "fp_w": 9, "fp_d": 9, "storeys": 3, "rooms_min": 15, "rooms_max": 19,
   "loop_bp": 2000, "vert_bp": 2500, "corridor_w": 3, "cover_bp": 2500, "bright_bp": 2000, "dark_bp": 5000,
   "secret_bp": 2000, "trap_bp": 2000,
   "liquids": [{"liq": "liq.water", "w": 40}, {"liq": "liq.blood", "w": 50}, {"liq": "liq.alcohol", "w": 10}],
   "tilesets": ["biome.gothic_horror.manor", "biome.gothic_horror.catacomb"],
-  "cycle_w": [15, 20, 10, 10, 5, 10, 15, 15], "node_w": [20, 50, 30],
+  "cycle_w": [15, 20, 10, 10, 5, 10, 15, 15],
   "room_bias": [{"room": "room.crypt", "bp": 20000}, {"room": "room.prison", "bp": 12000}, {"room": "room.garden", "bp": 5000}],
+  "node_w": [20, 50],
+  "roster": "enemy.gothic_horror",
+  "factions": ["fac.native.gothic_horror.hollow_village", "fac.native.gothic_horror.inquisition", "fac.native.gothic_horror.night_court"],
   "density_bp": 9000, "verbs": [7000, 11000, 9000, 15000, 14000, 9000, 3000, 8000, 6000, 8000],
   "hazards": ["hazard.spike_pit", "hazard.curse_glyph", "hazard.blade_trap", "hazard.falling_debris", "hazard.miasma_bog", "hazard.alarm"],
   "events": ["gpv.evt.light_failure", "gpv.evt.whispers", "gpv.evt.ambush", "gpv.evt.weather_front", "gpv.evt.plea", "gpv.evt.lore_echo"],
@@ -257,7 +290,7 @@ Story domains (§20): MF flame, oath, star, wyrm. GH blood, moon, crypt, mirror.
 }
 ```
 
-Encodings: `tier` core 0, secret 1; `family` fantasy 0, horror 1, sf 2, historical 3, crime 4, mythic 5, meta 6; `render_style` pbr 0, painterly 1, toon 2, ink 3, pixel_dither 4, xerox_collage 5; `palette` entries are the canon `#RRGGBB` values as decimal integers; booleans are 0 or 1; `hazards` and `events` take their weights from list position (§18.2, §19.2).
+Encodings: `tier` core 0, secret 1; `family` fantasy 0, horror 1, sf 2, historical 3, crime 4, mythic 5, meta 6; `render_style` pbr 0, painterly 1, toon 2, ink 3, pixel_dither 4, xerox_collage 5; `palette` entries are the canon `#RRGGBB` values as decimal integers; booleans are 0 or 1; `hazards` and `events` take their weights from list position (§18.2, §19.2); `display`, `lucre_skin`, `aether_skin`, `music` and `enemy_themes` are the canon strings, which doc 18 localizes through `loc.genre.<suffix>.*`. The record has one key per dimension, 65 in all.
 
 ### 3.7 Lints (content load fails the build)
 
@@ -268,6 +301,9 @@ Encodings: `tier` core 0, secret 1; `family` fantasy 0, horror 1, sf 2, historic
 - **L5** `protect_r >= 4` wherever `spawn_block_max <= 14`.
 - **L6** `bright_bp + dark_bp <= 10000`.
 - **L7** every genre lists 1 to 3 Laws, includes every Law Canon §5.10 requires of it, and at most one Law with `changes_constant = 1`.
+- **L8** every tileset prototype has weight `w >= 1`; the expanded tileset (rotations and mirrors, §10.2) has at most 256 variants; every pinned shell class of every template has at least one variant; every `fallback_fill` satisfies every face constraint.
+- **L9** `cycle_w` sums to more than 0; `node_w` sums to more than 0 in every genre except the Unwritten; `liquids` weights sum to more than 0; `secret_exits` is empty for the four secret genres.
+- **L10** every room template's footprint list lies inside its kind's §16.1 `fp` range and storeys inside `st`; every kind that typing can draw has at least one template per genre's primary tileset.
 
 ## 4. World Laws (`law.*`, Canon §5.10)
 
@@ -283,13 +319,13 @@ A Law is active where the local genre is its genre and in seams that include it.
 | `law.cosmic_horror.non_euclidean` | structural | 2 relink door pairs, period 3600 ticks (§9.4) |
 | `law.cosmic_horror.forbidden_knowledge` | additive | reading a lore object costs the reader 5 composure (Canon §5.7 MYTHOS factor applies); the Folio story is solved at 2 distinct events instead of 3 (§20.4) |
 | `law.space_opera.shipboard_systems` | structural | doors here are electronic; locked ones are hackable (doc 09) |
-| `law.space_opera.hull` | structural | worldgen places at least `floor_div(rooms, 4)` `hazard.hull_breach` panels |
+| `law.space_opera.hull` | structural | after stage `hazard`, while the Space Opera zones hold fewer than `floor_div(rooms_total, 4)` `hazard.hull_breach` panels, one panel goes to the first free hazard socket of the lowest-`NodeId` non-safe Space Opera room without one; no draws |
 | `law.cyberpunk.netrun` | additive | electronic hazards, locks and doors here are hackable (doc 09); hacking a camera disables its room's cameras for 1800 ticks |
 | `law.cyberpunk.corporate_response` | structural | each camera alarm makes doc 13's Director spawn a wave at once (ignoring its 900-tick spacing), at most 2 per Folio |
 | `law.post_apocalypse.scavenge` | additive | destroyed crates and barrels here drop 1 material of the genre's Canon §5.9 pool (doc 07) |
-| `law.post_apocalypse.scarcity` | structural | resource-node yields × 15000 (doc 07); +2 nodes per 4 rooms |
+| `law.post_apocalypse.scarcity` | structural | resource-node yields × 15000 (doc 07); `2 × floor_div(rooms_total, 4)` extra ore veins (§11.2) |
 | `law.weird_west.high_noon` | binding | `law_bound` target of duel techniques (doc 05). Standoff: aiming within 1024 Bam of a hostile ≤ 20,000 mm away while both move < 100 mm for 90 ticks gives the next shot within 60 ticks +5000 Bp and a direct `st.staggered` |
-| `law.hardboiled_noir.void_rules` | clock | complication rolls at a fixed 500 Bp, never escalating or resetting |
+| `law.hardboiled_noir.void_rules` | clock | keeps no meter: its complication checks roll a constant `dread_bp = 500`, which never escalates or resets |
 | `law.hardboiled_noir.leads` | structural | solving the Folio story (§20.4) also discovers the Folio's secret exit, if one exists |
 | `law.wuxia.qinggong` | binding | `law_bound` target of qinggong techniques (wall-run, glide; docs 04, 05); no other effect |
 | `law.wuxia.honor_duel` | structural | during an accepted `gpv.evt.duel_challenge`, other NPCs in the duel room never target the duelist (doc 13) |
@@ -297,7 +333,7 @@ A Law is active where the local genre is its genre and in seams that include it.
 | `law.steampunk.clockwork` | structural | every puzzle room here uses the lever variant (§16.3) |
 | `law.fairy_tale.rule_of_three` | structural | after 2 failed attempts at a lever puzzle, the correct order glows on the levers |
 | `law.fairy_tale.cold_iron` | additive | Errata hits with a weapon of primary material `mat.cold_iron` on fae-tagged NPCs add +2500 Bp |
-| `law.mythic_antiquity.hubris` | structural | after 40 party kills in a Folio without a shrine prayer, the Director spawns one Nemesis (a `rank.champion` with the Folio's whole aspect set) at the anchor farthest from every Erratum; once per Folio |
+| `law.mythic_antiquity.hubris` | structural | on the tick the party's 40th kill in the Folio lands, if no Erratum has yet prayed at a `room.shrine` or `secret.room.shrine` altar in this Folio (doc 06 "made at a shrine"), the Director spawns one Nemesis (a `rank.champion` with the Folio's whole aspect set) at the anchor farthest from every Erratum; once per Folio. Doc 13 §10.1's budget yields 38 enemies in its reference Folio, so a party that clears that and the Folio's waves without praying meets the Nemesis near the end |
 | `law.mythic_antiquity.favor` | additive | each Erratum's first prayer per Folio at a `room.shrine` gains +50 favor before Canon §16.5 scaling (doc 06) |
 | `law.oneiric.gravity_flip` | structural | 2..=4 gravity-flip volumes (§9.5) |
 | `law.oneiric.dream_doors` | structural | 1 relink door pair, period 1800 ticks |
@@ -306,7 +342,22 @@ A Law is active where the local genre is its genre and in seams that include it.
 | `law.unwritten.editors_only` | structural | roster is `fac.editors` only; no shop and no Lucre containers (Canon §5.2) |
 | `law.ur_text.pure_reading` | structural | records the Canon §5.5 override `C = 0`, `E = 0` |
 
-**Dread meter** (Cypher Horror Mode, R6 §11): Folio state `dread_bp`, 0 at entry, gains `step` on each tick with `(t - entry) % 360 == 0` while an Erratum is `in_combat`, on each tick with `(t - entry) % 7200 == 0`, and on each Erratum Contradiction failure; capped at `cap`; reset when the Colophon services open (doc 14 §3.9). **Complication rolls** on `rng.event` at `(t - entry) % 600 == 0`, `t - entry >= 600`, Colophon closed, an Erratum where the Law is active: `roll_bp(dread_bp)`; on success `weighted(light_failure 30, door_slam 25, whispers 25, ambush 20)`, then `range` over Law-active rooms holding or adjoining an Erratum (1 + 1 + 1 draws; ambush 2 more). Example: Gothic Horror in combat from entry reaches `250 × 4 = 1000` at tick 1080, a 10% roll.
+**Dread meter** (Cypher Horror Mode, R6 §11). Folio state `dread_bp: i32`, 0 at Folio entry, one per Folio. The **governing clock Law** is the Folio genre's clock Law when it has one, else the first clock Law among the bleed zones in zone order (entry, then drift in draw order, §14.1); a Folio with none keeps no meter and makes no complication checks. On each tick `t > entry` it gains `step` once if `(t - entry) % 360 == 0` and any Active Erratum is `in_combat` (Canon §2.3), once more if `(t - entry) % 7200 == 0`, and once per Contradiction failure (jam, fizzle or spark, Canon §5.5) by an Erratum standing where the Law is active; after all gains of the tick, `dread_bp = min(dread_bp, cap)`. When the Colophon services open (doc 14 §3.9) it resets to 0 and gains nothing more in the Folio. `step` and `cap` are the governing Law's. When the governing Law is `law.hardboiled_noir.void_rules`, the meter is never kept and `dread_bp` reads 500 at every check.
+
+**Complication checks.** On every tick with `t - entry >= 600` and `(t - entry) % 600 == 0`, while the Colophon services are closed and at least one Active Erratum stands where any clock Law is active, the host draws on `rng.event` after the §19.3 event check of the same tick:
+
+```rust
+fn complication_check(r: &mut Rng, f: &FolioState) {
+    if !r.roll_bp(f.dread_bp()) { return; }                                  // 1 draw
+    let k = r.weighted(&[30, 25, 25, 20]);                                   // 1 draw: light_failure, door_slam, whispers, ambush
+    let rooms = f.law_active_rooms_holding_or_adjoining_errata();            // ascending NodeId, never empty here
+    let room = rooms[r.range(rooms.len() as u64) as usize];                  // 1 draw
+    if k == 3 { ambush_anchors(r, f, room); }                                // 0 or 2 draws (§19.1 gpv.evt.ambush)
+    fire_complication(k, room, f);
+}
+```
+
+A check draws 1, 3 or 5 values. `whispers` needs MYT ≥ 1 in the room, which every clock genre has (GH 9, CH 10, HN 1, RD 8). Example: Gothic Horror with an Erratum `in_combat` on every 360-tick mark: `dread_bp` is 250 at `entry + 360`, 750 at `entry + 1080` and 1000 at `entry + 1440`; the check at `entry + 600` rolls `roll_bp(250)`, the one at `entry + 1800` rolls `roll_bp(1250)` (5 gains), and the meter reaches its cap of 2500 at `entry + 3600` (10 gains). A complication fires on average once per `600 / 0.125 = 4800` ticks at 1250 Bp, and once per 2400 ticks at the cap.
 
 ## 5. Genre Lattice
 
@@ -355,11 +406,11 @@ One record per nonzero directed edge: `{ "id": "lattice.edge.cyberpunk.hardboile
 6. **Effective weight** `w(g) = edge(cur, g) × fresh_bp(g)` (`u32`, at most 1,500,000); for a secret `cur`, `edge` reads the return weights; for the Margin node it is 100.
 7. **Forced:** the Folio at depth 25 (Standard 25, Abridged 15) is `genre.ur_text` (doc 14 §3.6 item 2).
 
-**Feasibility.** Before Folio 25, rules 2 and 3 exclude at most 9 genres together (8 capped genres need 24 appearances in at most 23 Folios; with 7 capped, only 2 earlier slots are uncapped), so at least 3 stay eligible; Abridged and Marginalia exclude at most 4. The implementation asserts `eligible.len() >= 3`.
+**Feasibility.** Choosing Folio `m <= 24` in Standard, rules 2 to 4 exclude at most 9 of the 12 core genres: `c` capped genres use `3c` of the `m - 1` earlier slots, and only the other `m - 1 - 3c` slots can hold an uncapped same-Volume genre (or, at position 1, the uncapped current genre). The maximum of `c + min(pos - 1, m - 1 - 3c) + [pos = 1 and m - 1 - 3c >= 1]` over `c` is 9, reached at `m = 20` (`c = 5` uses 15 of the 19 earlier slots, and the 4 earlier Folios of Volume 4 are the 4 uncapped ones: `5 + 4`) and at `m = 24` (`c = 6` with 3 uncapped same-Volume genres, or `c = 7` with 2). Abridged excludes at most 5 (at `m = 12` and `m = 14`), and Marginalia at most 4 (same block only, no cap). So at least 3 genres always stay eligible; the implementation asserts `eligible.len() >= 3`, and acceptance test 3 checks the bound by exhaustive enumeration.
 
 ### 5.5 Exit-offer algorithm
 
-The draw happens on the `ColophonOpen → ExitVote` (or `→ VictoryChoice`) tick (doc 14 §3.2), when the exit UI opens (Canon §17.1); exactly 3 candidates every time, even before forced Folios.
+The draw happens on the `InColophon → ExitVote` (or `→ VictoryChoice`) tick, the first lectern interaction (doc 14 §3.2, §3.6), when the exit UI opens (Canon §17.1); exactly 3 candidates every time, even before forced Folios. The function reads only its arguments, so the host and every client compute the same doors.
 
 ```rust
 /// Pure. `n` = exiting Folio index (0 at run start).
@@ -393,12 +444,12 @@ With `EXIT_OFFERS = 2` the doors show Space Opera and Hardboiled Noir.
 
 ### 5.6 Folio 1
 
-- Standard: the host's Origin genre when core. A secret Origin maps to its highest return-weight core genre, ties to lattice order: Oneiric → Fairy Tale, Redaction → Cyberpunk, Unwritten and Ur-Text → Mythic Fantasy (Canon gaps G4).
-- Seeded modes: the first candidate of `lattice_candidates(run_seed, 0, lattice.node.margin, [], mode)`, a uniform draw. For `0x0123456789ABCDEF` the candidates are MF, HN, SP (Folio 1 is Mythic Fantasy); for the Daily seed of 2026-10-11 (`0xc6f2e12ddca712ab`) they are WW, CH, MF.
+- Standard, Abridged, Novella and Custom: the host's Origin genre when core. A secret Origin maps to its highest return-weight core genre, ties to lattice order: Oneiric → Fairy Tale, Redaction → Cyberpunk, Unwritten and Ur-Text → Mythic Fantasy (Canon gaps G3).
+- Seeded modes (Daily, Weekly, Seeded): the first candidate of `lattice_candidates(run_seed, 0, lattice.node.margin, [], mode)`, a uniform draw. For `0x0123456789ABCDEF` the candidates are MF, HN, SP (Folio 1 is Mythic Fantasy); for the Daily seed of 2026-10-11 (`0xc6f2e12ddca712ab`) they are WW, CH, MF.
 
 ### 5.7 Exit preview
 
-Each door shows doc 14 §3.6 item 4 (name, palette, axioms, position, Contradiction forecast) plus **pure plan functions** of the candidate Folio, which recompute seeds without advancing live streams and match Folio `n + 1`'s generation:
+Each door shows doc 14 §3.6 item 4 (name, palette, axioms, position, Contradiction forecast) plus the fields below (doc 17 §9.1 draws them). The plan fields are **pure plan functions** of the candidate Folio, which recompute seeds without advancing live streams and match Folio `n + 1`'s generation exactly (acceptance test 9). A door hidden by `run.mut.blind_exits` (doc 14 §8.7) shows none of them until it commits.
 
 | Field | Source |
 |---|---|
@@ -408,51 +459,66 @@ Each door shows doc 14 §3.6 item 4 (name, palette, axioms, position, Contradict
 | Marginalia modifiers | `marg_mods()` (§22) |
 | the active Laws | §4 for the candidate genre |
 | two hazard icons | the two highest-weight hazards of the candidate GPV, ties to list order |
+| Lucre and Aether skins | GPV dimensions 10–11 of the candidate genre |
+| depth and position | doc 14 §3.1 `d(n + 1)` and `pos(n + 1)`; a boss crown when the type is boss, and "Binding" for a pos-4 Folio's doors |
+| secret door | a discovered secret exit door (§17.4) shows "?" and only its genre's palette |
+
+The champion aspects are recomputed for every door, because the aspect draw reads the candidate genre's axioms (doc 13 §7.3); the stream seed does not depend on the genre. The preview fields cost at most `3 × (2 + 5 + 4 + 3) = 42` draws on temporary generators per exit opening (at most 3 lattice doors; type 1–2, bleed 1–5, Marginalia `k <= 4`, aspects `k <= 3`), all discarded.
 
 ## 6. Folio types
 
 ### 6.1 Assignment
 
-`lattice.folio.boss` is doc 14's Boss; `lattice.folio.standard`, `.challenge` and `.rest` are variants of doc 14's Normal and keep its Rubric, Keeper and Colophon (doc 14 §3.1, §3.4).
+`lattice.folio.boss` is doc 14's Boss; `lattice.folio.standard`, `lattice.folio.challenge` and `lattice.folio.rest` are variants of doc 14's Normal (doc 14 §3.1). Standard and challenge Folios keep doc 14's Rubric, Keeper, marginal notes and Colophon; a rest Folio has no Rubric, no Keeper, no marginal notes and no Interleaf, and its Colophon entrance is open from entry (doc 14 §3.1, §3.2).
 
 ```rust
-fn folio_type(run_seed: u64, n: u32, genre: GenreId, mode: Mode) -> FolioType {
-    let pos = doc14::pos(n, mode);
-    if pos == 5 { return Boss; }
-    if n == 1 || genre == UNWRITTEN { return Standard; }
+fn folio_type(run_seed: u64, n: u32, genre: GenreId, mode: Mode) -> (FolioType, Option<ChallengeKind>) {
+    let pos = doc14::pos(n, mode);                            // Standard, Novella, Daily, Endless: n - 5 × (v - 1); Abridged [1, 4, 5]
+    if pos == 5 { return (Boss, None); }                      // boss Folios 5, 10, …; Abridged 3, 6, …; Marginalia n % 5 == 0
+    if n == 1 || genre == UNWRITTEN { return (Standard, None); }
     let mut r = stage_rng(run_seed, n, genre, "ftype", 0);
     let w: [u32; 3] = if n >= 26 { [7000, 2000, 1000] }      // [standard, challenge, rest]
                       else if pos == 4 { [8500, 1500, 0] }    // the Interleaf is the pre-boss rest
                       else { [8000, 1500, 500] };
-    let t = [Standard, Challenge, Rest][r.weighted(&w)];      // 1 weighted call
-    if genre == REDACTED && t == Rest { Standard } else { t }
+    let mut t = [Standard, Challenge, Rest][r.weighted(&w)];  // 1 weighted call
+    if genre == REDACTED && t == Rest { t = Standard; }      // no light makes a rest safe there (spawn_block_max 15)
+    let ch = if t == Challenge {                              // 1 more weighted call, §6.3 order
+        Some([Gauntlet, Siege, Heist, Duel, Race][r.weighted(&[25, 20, 20, 15, 20])])
+    } else { None };
+    (t, ch)
 }
 ```
 
-Example (§5.5 run): at Folio 2 Space Opera draws 3860 (standard) and Noir 9855 (rest); at Folio 3 Cyberpunk is rest and Mythic Fantasy challenge; at Folio 4 Cyberpunk is challenge.
+The function draws 0, 1 or 2 values. Example (§5.5 run, `range(10000)` values in brackets): at Folio 2 Space Opera is standard (3860), Hardboiled Noir rest (9855), Steampunk rest (9596) and Mythic Fantasy standard (7853); at Folio 3 Cyberpunk is rest (9633) and Mythic Fantasy a siege challenge (8993); at Folio 4 (pos 4) Cyberpunk is a gauntlet challenge (9480), Mythic Fantasy (774) and Gothic Horror (4365) standard. Over a Standard run, the 14 Folios at positions 1 to 3 among Folios 2 to 24 expect `14 × 0.05 = 0.7` rest Folios, and the 19 non-boss Folios among 2 to 24 expect `19 × 0.15 = 2.85` challenges.
 
 ### 6.2 Composition
 
-The Rubric is one `weighted([5000, 3000, 2000])` call (keeper, catchwords, seal) in stage `rubric` (doc 14 §3.4); Folio 2 of §5.5 draws catchwords for Space Opera, keeper for Noir and Steampunk.
+**Rubric.** Stage `rubric` draws one `weighted([5000, 3000, 2000])` over keeper, catchwords, seal (doc 14 §3.4) for standard and challenge Folios and nothing for rest and boss Folios. At Folio 2 of §5.5, Space Opera draws catchwords (5080) and Mythic Fantasy keeper (1931); Hardboiled Noir and Steampunk are rest Folios and draw no Rubric.
 
-| Type | Mission graph | Fixed rooms | Population (doc 13) |
+`folio_scale_bp` (doc 14 §8.1: Standard 10000, Abridged 9000, Novella and Daily 8000) scales the drawn node count of standard and challenge Folios: `n_target = max(4, mul_bp(base, folio_scale_bp))`, `base` being the first draw of stage `graph`.
+
+| Type | Mission graph `base` | Fixed rooms (rules) | Population (doc 13 §10) |
 |---|---|---|---|
-| standard | `max(4, mul_bp(range_incl(rooms_min, rooms_max), folio_scale_bp))` nodes | Incipit, Colophon; Interleaf at pos 4 | full Director budget |
-| challenge | `range_incl(10, 14)` | Incipit, Colophon, challenge structure (§6.3); Interleaf at pos 4 | full budget |
-| rest | `range_incl(6, 8)` | Incipit, campfire hub, shop, Fortune Engine hall, Colophon | flag `rest_population`: only the Rubric's Keeper or Seal waves; every other room `no_spawn` |
-| boss | fixed spine (§8.2) | Incipit antechamber, Editor checkpoint, boss arena, Colophon | doc 13 §10.1 Editor-Folio squad in the checkpoint |
+| standard | `range_incl(rooms_min, rooms_max)` | Incipit, Colophon, one `room.shop` (none in the Unwritten); Interleaf at pos 4 | `director.profile.standard`: full budget |
+| challenge | `range_incl(10, 14)` | Incipit, Colophon, one `room.shop` (none in the Unwritten), the challenge structure (§6.3); Interleaf at pos 4 | full budget |
+| rest | none: `rest_ring` builds 5 fixed nodes plus `j = range_incl(1, 3)` Rooms, 6 to 8 in all, unscaled | Incipit, `room.campfire` hub, `room.shop`, `room.fortune_hall`, Colophon | `director.profile.rest`: no initial population, no ambient or scripted waves; every room has `spawn_slots = 0`, while spawn cells and anchors of non-safe rooms stay for Erasure hunters and invaders |
+| boss | none: fixed spine (§8.2) | Incipit antechamber, Editor checkpoint, boss arena, Colophon | `director.profile.boss`: doc 13 §10.1 checkpoint squad |
+
+The `room.shop` of a standard or challenge Folio has 2 vendor sockets and 2 Fortune Engine sockets: doc 11 §12.1 puts vendor [1] in socket 0 and, when its roll succeeds, vendor [2] in socket 1 (an unused socket holds an empty stall prop), and doc 11 §11.1 puts the brass Engine in engine socket 0 and the silver Engine or its variant in socket 1 when placed. The rest Folio's `room.shop` uses vendor socket 0 only, and its `room.fortune_hall` holds the brass and silver Engines. The Interleaf's vendor is doc 11's `shop.general` [3]. Boss Folios hold only the Colophon shop.
+
+`type_required_nodes(plan)` is the number of nodes the D phase of §8.2 adds by rule, which growth (§8.3) leaves room for: `[pos == 4] + [genre != unwritten and not lattice.marg.sealed]` (Interleaf, shop) for standard and challenge Folios, plus, for challenge Folios, the structure's nodes (gauntlet 3, heist 2, siege, duel and race 0).
 
 ### 6.3 Challenge kinds
 
-Drawn in stage `ftype` right after a challenge result (1 more weighted call). Success is judged at exit commit; each success gives every Active Erratum one extra in-run Reliquary roll (doc 11).
+Drawn in stage `ftype` right after a challenge result (§6.1). Success is judged at exit commit and emits `ev.objective_completed` with kind 1 (G9); each success gives every Active Erratum one in-run Reliquary roll (doc 11 §9.12). A challenge never replaces the Rubric; both run.
 
-| ID | w | Structure | Success |
+| ID | w | Structure (rule `room.rule.challenge`, §8.2) | Success |
 |---|---|---|---|
-| `lattice.challenge.gauntlet` | 25 | 3 `room.gauntlet` on the main path | no Erratum downed in the Folio |
-| `lattice.challenge.siege` | 20 | an Arena on the main path seals for 7200 ticks; doc 13 sends a wave every 900 ticks inside it | survive |
-| `lattice.challenge.heist` | 20 | a locked `room.treasury` | open it with no hostile ever at `aware.alert` toward an Erratum |
-| `lattice.challenge.duel` | 15 | a champion with the Folio's full aspect set waits in the room before the Colophon | kill it |
-| `lattice.challenge.race` | 20 | none | commit an exit within 10800 ticks of entry |
+| `lattice.challenge.gauntlet` | 25 | 3 `room.gauntlet` nodes, inserted one at a time by splitting the non-RubricGate main-path edge whose start fraction is nearest 2500, 5000 and then 7500 Bp (ties to the lower index), recomputing the main path after each split | no `ev.player_downed` and no Erratum `ev.entity_killed` in the Folio |
+| `lattice.challenge.siege` | 20 | `room.rule.arena` always fires; the Arena seals for 7200 ticks when the first Erratum enters it; doc 13 sends 8 waves of 1500 mSKE, one every 900 ticks (doc 13 §10.4) | every siege-wave member is dead on the tick the seal ends |
+| `lattice.challenge.heist` | 20 | a `Treasury` attached to the main-path Room nearest fraction 6000 Bp by a `Locked(k)` edge, its `Key` on a dead end branching from the main-path Room nearest 3000 Bp; this is the Folio's one lock (§8.3) | the Treasury door opens while no hostile has ever held `aware.alert` toward any Erratum in the Folio |
+| `lattice.challenge.duel` | 15 | a champion carrying the Folio's whole aspect set waits in the main-path Room adjacent to the Colophon (doc 13 §10.2 step 4) | the champion is dead |
+| `lattice.challenge.race` | 20 | none | an exit commits within 10800 ticks of entry |
 
 ## 7. Generation pipeline
 
@@ -463,17 +529,17 @@ Drawn in stage `ftype` right after a challenge result (1 more weighted call). Su
 ```rust
 pub struct GenInput {
     pub run_seed: u64,
-    pub folio_index: u32, pub d: i32, pub pos: u8, pub mode: Id32,   // doc 14 §3.1, §8
+    pub folio_index: u32, pub d: u32, pub pos: u8, pub mode: Id32,   // doc 14 §3.1, §8; d >= 1 (Canon §13.8)
     pub genre: Id32, pub prev_genre: Option<Id32>,
     pub folio_scale_bp: i32, pub ambush_extra: u8,  // doc 14 §8.1, gp.ambush_extra
-    pub bleed_mult: u8, pub bleed_add: u8,          // run.mut.wild_bleed ×2, run.marg.bleeding_genres +r
+    pub bleed_mult: u8, pub bleed_add: u8,          // run.mut.wild_bleed: 2 (else 1); run.marg.bleeding_genres: its rank r (else 0)
 }
 pub struct FolioBlueprint {
     pub header: Header,               // sim_version, content_hash, every GenInput field, attempt, blueprint_hash
     pub plan: FolioPlan,              // ftype, challenge, rubric, bleed plan, marg_mods
     pub zones: SmallVec<[ZoneRec; 6]>, pub zone_of_cell: [u8; 1536],   // 16 × 6 × 16 cells
     pub graph: MissionGraph, pub rooms: Vec<RoomRec>, pub doors: Vec<DoorRec>,
-    pub chunks: Vec<ChunkBlob>,       // 128 chunks: palette_rle blocks, open_tag, protect, gsign (doc 03 §16)
+    pub chunks: Vec<ChunkBlob>,       // 128 chunks: palette_rle blocks, open_tag, protect and flip bits (doc 03 §4.7)
     pub fixtures: Vec<FixtureRec>, pub liquids: Vec<LiquidRec>, pub hazards: Vec<HazardRec>,
     pub nodes: Vec<NodeRec>,          // resource nodes and font basins (§11.2)
     pub spawn: SpawnPlan,             // §12
@@ -507,7 +573,7 @@ Example: `gen_seed(0x0123456789ABCDEF, 2, genre.space_opera) = 0x1c35d41d581f5ea
 
 | # | Stage | Work | Draws | p50 / p99 ms (Steam Deck, 4 threads) |
 |---|---|---|---|---|
-| 0 | `ftype`, `rubric`, `bleed`, `marg` | §6, §14.1, §22 | 1–2; 1; 1–6; k | < 0.1 |
+| 0 | `ftype`, `rubric`, `bleed`, `marg` | §6, §14.1, §22 | 0–2; 0–1; 0–5; `k <= 4` | < 0.1 |
 | 1 | `graph` | mission graph (§8) | per rule | 1 / 3 |
 | 2 | `typing` | kinds, footprints (§8.4) | 1–3 per node | 0.5 / 1 |
 | 3 | `zones` | bleed and seam rooms (§14.2) | 1 + cluster | < 0.5 |
@@ -519,19 +585,19 @@ Example: `gen_seed(0x0123456789ABCDEF, 2, genre.space_opera) = 0x1c35d41d581f5ea
 | 9 | rasterize (`par.map`, 128 chunks) | blocks, bits, blending (§14.4) | 0 | 20 / 45 |
 | 10 | validate and repair | §15 | 0 | 15 / 40 |
 | — | one attempt | | | **≤ 110 / 260** |
-| — | worst case, 4 attempts and fallback | | | ≤ 900 hard cap; CI fails above |
+| — | worst case: attempts 0 to 3 (§15.3) and the authored fallback | | | ≤ 900 (doc 02 `perf.deck.gen.folio_max_ms`); the nightly sweep fails above it |
 
-The Folio transition (doc 17) waits for generation.
+Stages run in table order; stage `k` reads only the outputs of stages before it, and the per-room stages 5 and 7 and the per-chunk stage 9 run through `par.map` in ascending index (doc 02 `OrderedMap`). Timing never changes output: the 900 ms figure is a CI performance gate, not a runtime cut-off. The host calls `generate_folio` on the exit-commit tick (doc 14 §3.6) and each client on receiving the commit; the page-turn transition (doc 17) lasts until the blueprint exists and its `blueprint_hash` matches the host's (doc 16).
 
 ## 8. Mission graph grammar
 
 ### 8.1 Node and edge kinds
 
-Nodes (`NodeId` = creation index): `Incipit`, `Colophon`, `Interleaf`, `Room`, `Hub`, `Key(k)`, `Service(kind)`, `Arena`, `Gauntlet`, `Treasury`, `Puzzle(p)`, `Vault`, `Campfire`, `Checkpoint`, `BossArena`, `Secret`, `SecretExit(genre)`. Edges: `Open`; `Locked(keys)` (1 or 2 keys); `OneWay(from, to)` (a door barred on the `to` side that the `from` side unbars, or a drop of at least 4 blocks); `Hidden` (§17.3); `PuzzleGate(p)`; `RubricGate` (the single edge into the Colophon, sealed by `protect` bits until the Rubric completes, doc 14 §3.4). The **main path** is the shortest Incipit→Colophon path by edge count over every non-Hidden edge, breadth-first, neighbors in ascending `NodeId`.
+Nodes (`NodeId` = creation index): `Incipit`, `Colophon`, `Interleaf`, `Room`, `Hub`, `Key(k)`, `Service(kind)`, `Arena`, `Gauntlet`, `Treasury`, `Puzzle(p)`, `Vault`, `Campfire`, `Checkpoint`, `BossArena`, `Secret`, `SecretExit(genre)`. Edges: `Open`; `Locked(keys)` (1 or 2 keys); `OneWay(from, to)` (a horizontal door barred on the `to` side, which the `from` side unbars, §9.2); `Hidden` (§17.3); `PuzzleGate(p)`; `RubricGate` (the single edge into the Colophon, sealed by `protect` bits until the Rubric completes, doc 14 §3.4). The **main path** is the shortest Incipit→Colophon path by edge count over every non-Hidden edge (a OneWay edge only from `from` to `to`; Locked and PuzzleGate edges count as passable), breadth-first, neighbors in ascending `NodeId`; it is recomputed after every rule that changes the graph. Its `len` is its edge count, its node `i` (0 = `in`) has **fraction** `floor_div(i × 10000, len)`, and its last edge is always the RubricGate.
 
 ### 8.2 Rules
 
-`in` = Incipit, `out` = Colophon; `RubricGate` stays the last edge into `out`.
+`in` = Incipit, `out` = Colophon. A phase-B rule replaces the axiom's middle Room and both its edges; the single edge into `out` that each rewrite writes is the `RubricGate`, so `out` always has degree 1. Lower-case letters are new `Room` nodes, created in the order written. Every rule's candidate list is sorted (edges by `(min NodeId, max NodeId)`, nodes by `NodeId`, pairs lexicographically) before its `range` draw, and a `range` is drawn only when its list is non-empty.
 
 | ID | Phase | Rewrite | Selection |
 |---|---|---|---|
@@ -540,63 +606,97 @@ Nodes (`NodeId` = creation index): `Incipit`, `Colophon`, `Interleaf`, `Room`, `
 | `room.rule.cycle_hidden_shortcut` | B | `in–a–b–c–out`; `in–c` Hidden | `cycle_w` |
 | `room.rule.cycle_gauntlet_return` | B | `in–Gauntlet–Treasury`, `Treasury→in` OneWay; `in–a–out` | `cycle_w` |
 | `room.rule.cycle_two_key_hub` | B | `in–Hub`; `Hub–a–K1`, `K1→Hub` OneWay; `Hub–b–K2`, `K2→Hub` OneWay; `Hub–c` Locked(k1, k2); `c–out` | `cycle_w` |
-| `room.rule.cycle_flooded_detour` | B | `in–w–out` with `w` flooded (§11.2); `in–a–b–out` | `cycle_w` |
+| `room.rule.cycle_flooded_detour` | B | `in–w–x` with `w` flooded (§11.2); `in–a–b–x`; `x–out` | `cycle_w` |
 | `room.rule.cycle_collapsing_bridge` | B | `in–c`, `c→x` OneWay (the bridge collapses after the first crossing), `x–out`; `in–a–b–x` | `cycle_w` |
 | `room.rule.cycle_patrol_loop` | B | `in–a–b–x`; `in–c–d–x`; `x–out`; a patrol route on the loop (§12) | `cycle_w` |
 | `room.rule.cycle_foreshadowed_vault` | B | `in–w–out`; `w–Treasury` Locked(k1) with a window tile on the shared face; `in–a–K1`, `K1→w` OneWay | `cycle_w` |
-| `room.rule.extend` | C, w 50 | split an Open edge `u–v` into `u–n–v` | `range` |
-| `room.rule.branch` | C, w 30 | dead end `u–n` on a Room or Hub with degree < 4 | `range` |
-| `room.rule.minor_cycle` | C, w 20 while loops remain | `u–n–v` for Rooms `u < v`, degree < 4, hop distance 2..=4, not adjacent | `range` |
-| `room.rule.lock_key` | D1 | lock an Open main-path edge off `in`; key on a reachable Room dead end, else a new branch | 2 `range` |
-| `room.rule.interleaf` | D2 | pos 4: split the main-path edge at index `floor_div(len × 5000, 10000)` with an `Interleaf` | none |
-| `room.rule.service` | D3 | attach each type-required service (§6.2) at main-path index `floor_div(len × frac, 10000)` (shop 5000, Fortune hall 7000, campfire 3000), clamped `1..=len-2` | none |
-| `room.rule.arena` | D4 | the main-path Room nearest position 6000 Bp becomes an `Arena` (mini-boss room) | `roll_bp(3000)`; siege always |
-| `room.rule.puzzle_gate` | D5 | an inner Open main-path edge becomes `PuzzleGate(p)`; `Puzzle(p)` branches from its `in` side | `roll_bp(2500)`, `range` |
-| `room.rule.vault` | D6 | attach a `Vault` (Reliquary room) to a non-main-path Room | `roll_bp(5000)`, `range` |
-| `room.rule.gauntlet_branch` | D7 | attach `Gauntlet–Treasury` to a Room | `roll_bp(2000)`, `range` |
-| `room.rule.rescue` | D8 | the main-path Room nearest 7000 Bp hosts doc 13's stranded native (flag `rescue`) | `roll_bp(2000)` |
+| `room.rule.extend` | C, w 50 | split an `Open` edge `u–v` (never the RubricGate) into `u–n–v` | `range` over Open edges |
+| `room.rule.branch` | C, w 30 | dead end `u–n` on a Room or Hub with degree < 4 | `range` over those nodes |
+| `room.rule.minor_cycle` | C, w 20 while loops remain | `u–n–v` for Rooms `u < v`, both of degree < 4, hop distance 2..=4 | `range` over those pairs |
+| `room.rule.lock_key` | D1 | applied while the graph holds fewer `Locked` edges than the lock target (§8.3): an Open main-path edge becomes `Locked(k)`; its key goes on a Room dead end reachable from `in` without crossing any Locked, PuzzleGate or OneWay edge (that Room becomes a `Key`), else on a new `Key` branch of a reachable Room or Hub of degree < 4, else of `in` | 2 `range`: the edge among Open main-path edges other than the first, then the key spot among the dead ends, or among the branch anchors when no dead end exists |
+| `room.rule.interleaf` | D2 | pos 4, standard and challenge: split main-path edge `min(floor_div(len × 5000, 10000), len - 2)` (0-based, `len` edges, the RubricGate last) with an `Interleaf` | none |
+| `room.rule.service` | D3 | standard and challenge: attach the `room.shop` Service as a dead end of main-path node `clamp(floor_div(len × 5000, 10000), 1, len - 1)`; when the Oneiric secret exit is planned (§17.4) and the graph has no Campfire, also attach a `Campfire` dead end at main-path node `clamp(floor_div(len × 3000, 10000), 1, len - 1)` | none |
+| `room.rule.arena` | D4 | standard and challenge: the main-path Room whose index fraction `floor_div(i × 10000, len)` is nearest 6000 (ties to the lower index) becomes an `Arena` (mini-boss room) | 1 `roll_bp(3000)`, always drawn; a siege challenge converts regardless of the roll |
+| `room.rule.puzzle_gate` | D5 | an Open main-path edge other than the first and the last becomes `PuzzleGate(p)`; `Puzzle(p)` is a dead end of its `in`-side node | `roll_bp(2500)`, then `range` on success |
+| `room.rule.vault` | D6 | attach a `Vault` (Reliquary room) as a dead end of a non-main-path Room of degree < 4, else of a main-path Room of degree < 4 | `roll_bp(5000)`, then `range` on success |
+| `room.rule.gauntlet_branch` | D7 | attach `Gauntlet–Treasury` as a branch of a Room of degree < 4; skipped when the graph already holds a Treasury or the challenge is a gauntlet | `roll_bp(2000)`, always drawn, then `range` on success |
+| `room.rule.rescue` | D8 | standard and challenge: the main-path Room nearest fraction 7000 (ties to the lower index) hosts doc 13's stranded native (flag `rescue`) | `roll_bp(2000)` |
 | `room.rule.challenge` | D9 | the challenge kind's structure (§6.3) | none |
-| `room.rule.secret` | D10 | `Secret` by a Hidden edge to a node other than `in` and `out` | `range` per secret |
-| `room.rule.secret_exit` | D11 | `SecretExit(g)` by a Hidden edge to the node farthest in hops from `in` (not `out`; ties to lower `NodeId`) | none |
+| `room.rule.secret` | D10 | each of `n_secrets` (§17.1) `Secret` nodes joins by a `Hidden` edge a non-secret node other than `in` and `out` of degree < 4 (any non-secret node other than `in` and `out` when none has degree < 4) | `range` per secret |
+| `room.rule.secret_exit` | D11 | when §17.4 planned a secret exit to genre `g`: `SecretExit(g)` by a `Hidden` edge to the non-secret node farthest in hops from `in` (not `out`; ties to the lower `NodeId`) | none |
 | `room.rule.boss_spine` | boss | `in–Checkpoint–BossArena–out` | none |
-| `room.rule.rest_ring` | rest | `in–Campfire`; Campfire spokes to the services, `j = range_incl(1, 3)` Rooms, and `out` | 1 `range` |
+| `room.rule.rest_ring` | rest | `in–Campfire`; spokes `Campfire–Service(shop)`, `Campfire–Service(fortune_hall)`, `Campfire–r_1` … `Campfire–r_j` with `j = range_incl(1, 3)`, and `Campfire–out` (the RubricGate, unsealed from entry) | 1 `range` |
 
 ### 8.3 Algorithm
 
+Stage `graph` uses `stage_rng(run, n, genre, "graph", attempt)` and draws in exactly this order:
+
 ```rust
-fn build_graph(r: &mut Rng, g: &Gpv, plan: &FolioPlan, n_target: u32) -> MissionGraph {
-    match plan.ftype { Boss => return boss_spine(), Rest => return rest_ring(r, g), _ => {} }
+fn build_graph(r: &mut Rng, g: &Gpv, plan: &FolioPlan, scale_bp: i32, attempt: u8) -> MissionGraph {
+    match plan.ftype {
+        Boss => { let mut G = boss_spine(); features_d10_d11(&mut G, r, plan, 1); return G; }   // exactly 1 secret
+        Rest => { let mut G = rest_ring(r); features_d10_d11(&mut G, r, plan, 1); return G; }  // 1 range, then 1 secret
+        _ => {}
+    }
+    let (lo, hi) = if plan.ftype == Challenge { (10, 14) } else { (g.rooms_min, g.rooms_max) };
+    let base = if attempt == 3 { lo } else { r.range_incl(lo, hi) };  // 1 draw (none at the forced attempt 3, §15.3)
+    let n_target = max(4, mul_bp(base, scale_bp));
+    let n_secrets = secret_count(r, g, n_target, plan);                // 1 roll_bp (§17.1)
     let mut G = axiom();
-    apply_cycle(&mut G, CYCLES[r.weighted(&g.cycle_w)]);           // 1 weighted call
-    let loops_max = floor_div(n_target * g.loop_bp, 10000);
-    let n_grow = n_target - type_required_nodes(plan);
+    let cycle = if attempt == 3 { HIDDEN_SHORTCUT } else { CYCLES[r.weighted(&g.cycle_w)] }; // 1 weighted call (0 at attempt 3)
+    apply_cycle(&mut G, cycle);
+    let loops_max = if attempt == 3 { 0 } else { floor_div(n_target * g.loop_bp, 10000) };
+    let n_grow = n_target.saturating_sub(type_required_nodes(plan));
     let mut loops = 0;
     while G.non_secret_count() < n_grow {
-        let mut rule = r.weighted(&[50, 30, if loops < loops_max { 20 } else { 0 }]);  // 1 call
-        if !eligible(&G, rule) { rule = EXTEND; }                  // extend is always eligible
-        G.apply(rule, r.range(G.targets(rule).len() as u64));       // 1 call
+        let mut rule = r.weighted(&[50, 30, if loops < loops_max { 20 } else { 0 }]);   // 1 call
+        if G.targets(rule).is_empty() { rule = EXTEND; }               // extend always has an Open edge
+        G.apply(rule, r.range(G.targets(rule).len() as u64));          // 1 call
         if rule == MINOR_CYCLE { loops += 1; }
     }
-    features_d1_to_d11(&mut G, r, plan);                            // fixed order, draws per §8.2
+    features_d1_to_d9(&mut G, r, plan, lock_target(plan, n_target));   // §8.2 order and draws
+    features_d10_d11(&mut G, r, plan, n_secrets);
     G
+}
+fn lock_target(plan: &FolioPlan, n_target: u32) -> u32 {
+    match (plan.ftype, plan.challenge) {
+        (Standard, _) => 1 + (n_target >= 18) as u32,
+        (Challenge, Some(Heist)) => 0,                                 // the heist's own lock (§6.3) is the one lock
+        (Challenge, _) => 1,
+        _ => 0,
+    }
 }
 ```
 
-`n_target` is the first draw of stage `graph` (§6.2 counts). Lock edges in total (major cycle included): standard `1 + [n_target >= 18]`, challenge 1, rest and boss 0. A finished standard graph has `n_target..=n_target + 8` non-secret nodes. Example: Mythic Fantasy, `n_target = 18`, `folio_scale_bp = 10000`: `loops_max = floor_div(18 × 1500, 10000) = 2`; growth stops at 18 non-secret nodes, and `lock_key` adds a second lock since `18 >= 18`.
+- D1 counts every `Locked` edge already in the graph, the major cycle's included, so a `cycle_lock_key`, `cycle_two_key_hub` or `cycle_foreshadowed_vault` Folio adds at most one more lock. When D1 finds no candidate edge (an Open main-path edge other than the first), it first splits the first main-path edge with a new Room (no draw) and then draws.
+- Growth stops at `n_grow` non-secret nodes, or at once when the axiom plus the major cycle already reach it (the largest cycle, `two_key_hub`, has 8 nodes). D1 to D9 then add the `type_required_nodes` (Interleaf, shop, challenge structure) and at most 8 optional nodes: 2 key branches, D1's split, a Puzzle, a Vault, a Gauntlet and a Treasury, and an Oneiric Campfire. So a finished standard or challenge graph has between `n_target` and `max(n_target, 8 + type_required_nodes) + 8` non-secret nodes, which L1's margin of 10 rooms per footprint covers; `rooms_total` is that count.
+- Example: Mythic Fantasy, pos 2, `base = 18`, `folio_scale_bp = 10000`: `n_target = 18`, `n_secrets = 2 + [roll_bp(7000)]`, `loops_max = floor_div(18 × 1500, 10000) = 2`, `n_grow = 18 - 1 = 17` (the shop), growth stops at 17 non-secret nodes, D3 adds the shop (18), and D1 adds locks until 2 exist, since `18 >= 18`. In Abridged (`folio_scale_bp = 9000`) the same draw gives `n_target = mul_bp(18, 9000) = 16` and one lock.
 
 ### 8.4 Typing
 
-Nodes in ascending `NodeId`: feature nodes map directly (`Incipit` → `room.incipit`, `Key` → `room.key_room`, the flooded room → `room.cistern`, the bridge → `room.chasm`, …); each `Room` draws a kind with §16.2 weights, skipping kinds at their maximum or outside the run's content set (1 weighted call). Every node then draws a footprint from `fp_weights` within the kind's range (1 weighted call) and, when 2 storeys are allowed and available, `roll_bp(two_storey_bp)` (1 call). Every non-safe room then rolls `roll_bp(open_bp)` for the open tag (1 call).
+Stage `typing` (`stage_rng(…, "typing", attempt)`) visits nodes in ascending `NodeId`.
+
+1. **Kind.** Feature nodes map directly: `Incipit` → `room.incipit`, `Colophon` → `room.colophon`, `Interleaf` → `room.interleaf`, `Key` → `room.key_room`, `Hub` → `room.crossroads`, `Service(shop)` → `room.shop`, `Service(fortune_hall)` → `room.fortune_hall`, `Campfire` → `room.campfire`, `Arena` → `room.arena`, `Gauntlet` → `room.gauntlet`, `Treasury` → `room.treasury`, `Puzzle` → `room.puzzle`, `Vault` → `room.reliquary_vault`, `Checkpoint` → `room.editor_checkpoint`, `BossArena` → `room.boss_arena`, the flooded detour's `w` → `room.cistern`, the collapsing bridge's `c` → `room.chasm`; `Secret` and `SecretExit` nodes are 1 × 1-cell, 1-storey boxes typed in stage `secret` (§17). Every other `Room` draws its kind with one `weighted` call over the §16.1 kinds in table order with the §16.2 weights, a kind at its per-Folio `max` or absent from the run's content set weighing 0.
+2. **Footprint.** One `weighted` call over `fp_weights` (§3.4) restricted to the footprints in the kind's `fp` range, in the order `[1×1, 1×2, 2×2, 2×3, 3×3]`; when the restricted weights sum to 0, each footprint in range weighs 1. A kind with a single footprint still makes the call. Orientation of non-square footprints is chosen in embedding (§9.1).
+3. **Storeys.** Kinds with `st` 1 take 1 storey and kinds with `st` 2 take 2, without a draw; a `1–2` kind draws `roll_bp(two_storey_bp)` when the genre has `storeys >= 2`, else takes 1 storey without a draw.
+4. **Open tag.** Every room that is not safe, not secret and not `room.boss_arena` draws `roll_bp(open_bp)`; on success its cells get doc 03's `open_tag` (sky-lit at the zone genre's `ambient_light`, no roof).
+
+A typed Room therefore draws 3 or 4 values, a feature node 1 to 3. Example: with no unlocks and no kind at its maximum, a Cyberpunk Room's kind draw sees server room weight 128 (§16.2) out of 1,819 for the 25 always-available kinds (hall 270, guardpost 260, gallery 156, …, crypt 0), so 703 Rooms in 10,000 (`floor_div(128 × 10000, 1819)`) become server rooms.
 
 ## 9. Spatial embedding and corridors
 
 ### 9.1 Placement
+
+Stage `embed` uses `stage_rng(…, "embed", attempt)`; Secret and SecretExit nodes embed like any node, as 1 × 1 × 1 boxes.
 
 1. **Incipit:** storey `min(start_storey, storeys - 1)`, centered on the south edge: `cx = x0/16 + floor_div(W - fw, 2)`, `cz = z0/16 + D - fd`.
 2. **Order:** breadth-first from the Incipit, neighbors in ascending `NodeId`; a node's parent is its first placed neighbor.
 3. **Candidates** for `v` with parent `u`, sorted by `(cs, cz, cx, orientation)`: `H` = free boxes (either orientation) on `u`'s storeys sharing a full cell face with `u`; `V` = free boxes directly above or below `u` overlapping its projection; `C` = free boxes on `u`'s base storey at Chebyshev distance 2..=4 with an A* corridor route (§9.3).
 4. **Choice:** the Colophon takes the `H ∪ V` (else `C`) candidate maximizing doubled-center `|Δcx| + |Δcz| + 2|Δcs|` from the Incipit, ties to the earlier index, no draw. Others: with `H` and `V` both non-empty, `V` if `roll_bp(vert_bp)` else `H`, then `range(len)`; with one non-empty, `range(len)` in it; else `range(len)` in `C`; `C` empty fails the attempt (§15.3).
 5. **Non-tree edges:** a door when boxes share a face, else a corridor; no route fails the attempt.
+6. **Arena boxes** (`room.arena` 3 × 3 × 2, `room.boss_arena` per §21.2) may use storeys up to `min(5, start_storey + 2)` even where the genre's `storeys` is smaller; every other box stays inside `fp_w × fp_d × storeys`.
+
+Example: Mythic Fantasy (`W = D = 10`, `x0 = z0 = 16 × floor_div(16 - 10, 2) = 48`) puts a 1 × 1 Incipit at `cx = 3 + floor_div(10 - 1, 2) = 7`, `cz = 3 + 10 - 1 = 12`, storey 0: blocks `x ∈ 112..128`, `z ∈ 192..208`, the southernmost row of the 160 × 160-block footprint `48..208`.
 
 ### 9.2 Doors, connectors and protect bits
 
@@ -604,7 +704,7 @@ Nodes in ascending `NodeId`: feature nodes map directly (`Incipit` → `room.inc
 |---|---|
 | Open | horizontal: doorway 3 wide × 3 tall, genre door skin; vertical: a 3 × 3 floor opening with a slab stair run (500 mm rises) along the lower room's wall |
 | Locked(keys) | lock door (doc 09 `lock.*`) bound to its key items; destructible like every door (Canon §4.3) with doc 07 block HP by lock tier |
-| OneWay | horizontal: a door barred on the `to` side; vertical: a 4-block drop. Terrain is fixed, so only a placeable ladder (Canon §4.3) climbs back |
+| OneWay | always horizontal: a door with a bar on the `to` side. An Erratum on the `from` side unbars it with a 30-tick `input.interact`, after which it is an Open door for the rest of the Folio; from the `to` side it is a locked door without a lock (no key, no lockpick). Like every door it is `destructible` (Canon §4.3), so breaking it from the `to` side also opens it; validation (§15) ignores that and treats the edge as one-way. Vertical one-way drops are not used: a VERVE-10 Erratum with an air jump, a wall jump and a mantle reaches `2000 + 1200 + 1600 + 1600 = 6400` mm (Canon §4.2, doc 03 §5.7, §5.9), so no fixed drop height is both harmless at VERVE 0 (`SAFE_FALL` 3200 mm) and unclimbable at VERVE 10 |
 | Hidden | a §17.3 hiding method |
 | PuzzleGate(p) | a gate that opens when puzzle `p` resolves (§16.3) |
 | RubricGate | the Colophon entrance; its cells carry `protect` until the Rubric completes (doc 14 §3.4) |
@@ -623,7 +723,7 @@ Cosmic Horror (2 pairs, period 3600 ticks) and Oneiric (1 pair, period 1800): ho
 
 ### 9.5 Gravity-flip volumes (Oneiric)
 
-`range_incl(2, 4)` single-storey Rooms (not the first or last two main-path nodes, not safe, not zoned) are chosen by `range` without replacement; they get clear height 4 blocks, a vertically mirrored fill and `gsign = +1` (doc 03). The flip fall stays under Oneiric `SAFE_FALL = 4000 × (10000 + 4 × 400) / 10000 = 4640` mm, so a flip never hurts.
+`k = range_incl(2, 4)` single-storey Rooms are chosen by `range` without replacement (1 + k draws) among Rooms that are not among the first or last two main-path nodes, not safe, not in a bleed or seam zone and with no neighbor in one, in ascending `NodeId`; with fewer candidates than `k`, all candidates flip. A flip room gets clear height 4 blocks, doors 3 wide and 4 tall (so a body walking on the ceiling passes), a vertically mirrored WFC fill and the doc 03 §4.7 `flip` bit on every cell of its interior, so bodies there use `gsign = +1`. The longest fall a flip room allows is its 4000 mm clear height, either inside it or leaving it upside down into a normal room, which stays under Oneiric `SAFE_FALL = mul_bp(4000, 10000 + (9 - 5) × 400) = 4640` mm (Canon §4.2), so a flip never hurts; Oneiric's `fall_dmg_bp` 2500 would quarter it anyway.
 
 ## 10. Room templates and Wave Function Collapse
 
@@ -650,20 +750,20 @@ Shell classes pin every boundary tile (wall, corner, door, window, floor-only fo
 
 ### 10.2 Tilesets
 
-Each genre has a primary and a secondary tileset (§3.3; the secondary fills its `kinds`), of 40 to 160 prototypes, each a 64-block payload of palette slots as run-length pairs `[slot, count, …]` (index `lx + 4 × (lz + 4 × ly)`), 6 face sockets (`+X, -X, +Y, -Y, +Z, -Z`) and flags (`walkable`, `cover`, `spawn`, `destructible`, `light`).
+Each genre has a primary and a secondary tileset (§3.3). The secondary's record lists the room kinds it fills in `kinds` (Gothic Horror's catacomb: crypt, cistern, prison, chasm, larder, ambush_den); the primary fills every other kind, and a corridor or a secret room takes the tileset of the room it adjoins with the lower `NodeId`. Each tileset holds 40 to 160 prototypes, each a 64-block payload of palette slots as run-length pairs `[slot, count, …]` (index `lx + 4 × (lz + 4 × ly)`), 6 face sockets (`+X, -X, +Y, -Y, +Z, -Z`) and flags (`walkable`, `cover`, `spawn`, `destructible`, `light`).
 
 ```json
 {
-  "id": "biome.gothic_horror.manor",
-  "palette": {"1": "block.gothic_horror.wall", "2": "block.gothic_horror.floor", "3": "block.gothic_horror.trim", "4": "block.gothic_horror.shelf", "6": "block.light_fixture"},
+  "id": "biome.gothic_horror.manor", "role": "primary", "kinds": [],
+  "palette": {"1": "block.masonry.slate", "4": "block.planks", "6": "block.light_fixture.gothic_horror"},
   "tiles": [
-    {"name": "floor_rug", "w": 120, "sym": "x", "faces": [3, 3, 0, 1, 3, 3], "flags": ["walkable", "spawn"], "rle": [2, 16, 0, 48]},
-    {"name": "bookcase", "w": 60, "sym": "l", "faces": [5, 3, 0, 1, 3, 3], "flags": ["cover", "destructible"], "rle": [2, 16, 4, 4, 0, 12, 4, 4, 0, 12, 4, 4, 0, 12]}
+    {"name": "floor_rug", "w": 120, "sym": "x", "faces": [3, 3, 0, 1, 3, 3], "flags": ["walkable", "spawn"], "rle": [1, 16, 0, 48]},
+    {"name": "bookcase", "w": 60, "sym": "l", "faces": [5, 3, 0, 1, 3, 3], "flags": ["cover", "destructible"], "rle": [1, 16, 4, 4, 0, 12, 4, 4, 0, 12, 4, 4, 0, 12]}
   ]
 }
 ```
 
-Slot 0 is air. Symmetry `x` (4 identical rotations), `l` (4 distinct), `i` (2); Oneiric flip rooms add a vertical mirror. Two tiles touch when facing sockets are equal or a declared asymmetric pair. Expanded tilesets hold at most 256 variants, so a domain is a `[u64; 4]` bitset.
+Slot 0 is air; every other slot names a doc 07 §10.1 block (genre walls and floors are `block.masonry.<stone>` of the genre stone of doc 07 §9.3, never destructible; dressing uses destructible blocks). Example: `floor_rug` is 16 floor blocks (`ly = 0`) then 48 air; `bookcase` is a floor layer and three layers each holding one 4-block shelf row (`lz = 0`) and 12 air, 64 blocks either way. Symmetry `x` (4 identical rotations), `l` (4 distinct), `i` (2); Oneiric flip rooms add a vertical mirror. Two tiles touch when facing sockets are equal or a declared asymmetric pair. Expanded tilesets hold at most 256 variants, so a domain is a `[u64; 4]` bitset.
 
 ### 10.3 WFC algorithm
 
@@ -674,7 +774,7 @@ fn wfc_room(r: &mut Rng, ts: &Tileset, tpl: &RoomTemplate, dims: (u8, u8, u8), c
     propagate_all(&mut dom, ts)?;                         // AC-3, FIFO seeded in ascending tile index
     let mut resets = 0;
     loop {
-        let Some(t) = min_options_tile(&dom) else { return Ok(collapse_to_grid(&dom)); };  // ties: lowest index
+        let Some(t) = min_options_tile(&dom) else { return Ok(collapse_to_grid(&dom)); };  // fewest options >= 2; ties: lowest index
         let opts: Vec<u16> = dom[t].iter().collect();      // ascending variant index
         let w: Vec<u32> = opts.iter().map(|&v| weight(ts, v, cover_bp)).collect();
         dom[t] = Bitset::single(opts[r.weighted(&w)]);    // 1 draw per observation
@@ -688,11 +788,12 @@ fn wfc_room(r: &mut Rng, ts: &Tileset, tpl: &RoomTemplate, dims: (u8, u8, u8), c
 }
 fn weight(ts: &Tileset, v: u16, cover_bp: i32) -> u32 {
     let w = ts.w(v) as i64;
-    (if ts.has_flag(v, COVER) { mul_bp(w, 5000 + cover_bp) } else { w }) as u32
+    (if ts.has_flag(v, COVER) { max(1, mul_bp(w, 5000 + cover_bp)) } else { w }) as u32   // never 0 (L8: w >= 1)
 }
 ```
 
-- `reset_block` returns every tile of the 4 × 4 × 4-tile block around `t` (clipped) to its pinned or full domain. On `WfcFail` the room takes `fallback_fill` with no further draws. Draws per room equal the number of observations, a declared variable count (Canon §3.4).
+- `min_options_tile` picks the uncollapsed tile (2 or more options) with the fewest options, ties to the lowest tile index `tx + tw × (tz + td × ty)`; this is Merrell's minimum-count choice, not Shannon entropy, so it needs no floats. A domain of 0 options is a contradiction, and `propagate_*` returns `Err` on the first one.
+- `reset_block` returns every tile of the 4 × 4 × 4-tile block whose corner is `(floor_div(tx, 4) × 4, floor_div(ty, 4) × 4, floor_div(tz, 4) × 4)`, clipped to the room, to its pinned or full domain. On `WfcFail` (a contradiction after the third reset, or one during the initial or a post-reset `propagate_all`) the room takes `fallback_fill` with no further draws. Draws per room equal the number of observations, a declared variable count (Canon §3.4); a 576-tile room makes at most `576 + 3 × 64 = 768` observations, because each of the 3 resets reopens at most one 64-tile block.
 - Cover example: a weight-60 cover tile weighs `mul_bp(60, 11000) = 66` in Space Opera (`cover_bp` 6000) and `mul_bp(60, 7000) = 42` in Wuxia (2000).
 - Rooms run on `item_rng("wfc", room_index, attempt)`, independently, through `par`.
 
@@ -700,20 +801,23 @@ fn weight(ts: &Tileset, v: u16, cover_bp: i32) -> u32 {
 
 ### 11.1 Dressing
 
-Per room (`item_rng("dress", i, attempt)`): one shuffle of prop sockets, then props from the tileset list in the first `floor_div(len × 6000, 10000)` (1 weighted call each). Crates, barrels, glass and wood are `destructible`; the Colophon always has some, so desecration (doc 14 §3.9) is possible.
+Each tileset lists props `{block, w, socket_class}`; a prop is a doc 07 block or a multi-block prefab of destructible blocks (crates, barrels, shelves, glass, planks). Per room, on `item_rng(…, "dress", i, attempt)`: one `shuffle` of the room's prop sockets in ascending block index (`len - 1` draws), then the first `floor_div(len × 6000, 10000)` sockets each take one prop by one `weighted` call over the props of that socket's class (a class with no props leaves the socket empty, no draw). Prop sockets never lie on a door-to-door path, so dressing cannot block navigation. The Colophon template additionally places 2 fixed `block.planks` crates (no draw), so V14 and desecration (doc 14 §3.9) are always possible.
 
 ### 11.2 Liquids, resource nodes and basins
 
-- **Basins:** non-safe basin sockets fill with chance 2500 Bp (cisterns and flooded rooms always), liquid by 1 weighted call over the zone genre's `liquids`, settled.
-- **Flooded detour:** at least 2 blocks deep along its path with a 2-block air pocket at most every 16 blocks: under 7 s at the 2400 mm/s swim, inside the 14 s breath at END 40 (Canon §12).
-- **Exclusions:** no lava, acid or red ink in safe rooms or within 8 blocks of the Incipit spawn; no liquid above the Incipit floor within 8 horizontal blocks.
-- **Red-ink pools:** `range_incl(2, 4)` 3 × 3 × 1 pools in Redaction Folios; 2 per Editor arena (§21.2).
-- **Font basins:** each `room.shrine`, `room.garden` and `room.cistern` holds a `liq.wellspring` basin with chance 3000 Bp and `range_incl(1, 3)` uses (doc 08).
-- **Resource nodes** (Canon §4.3): `6 + floor_div(rooms, 3)` (+2 per 4 rooms under `law.post_apocalypse.scarcity`); each draws a room with free node sockets (`range`), a kind (`weighted(node_w)`: H, F, M) and a material (`range` over the zone genre's Canon §5.9 materials); doc 07 sets yields.
+Stages `liquid` and `node` (`stage_rng`, rooms in ascending `NodeId`):
+
+- **Basins.** A basin socket is a 3 × 3 × 2 floor depression. Each basin socket of a non-safe room draws `roll_bp(2500)` (10000 under `lattice.marg.flooded`, §22); cisterns and the flooded detour's room fill every basin without a roll. A filled basin draws one `weighted` call over the zone genre's `liquids` and is filled to its brim with settled liquid. Safe rooms hold no liquid except font basins.
+- **Flooded detour:** at least 2 blocks deep along its door-to-door path with a 2-block air pocket at most every 16 blocks: 16 blocks at the 2400 mm/s swim take `ceil_div(16000 × 60, 2400) = 400` ticks (6.7 s), inside the 14 s breath at END 40 (Canon §12).
+- **Exclusions:** no lava, acid or red ink in safe rooms or within 8 blocks of the Incipit spawn; no liquid above the Incipit floor within 8 horizontal blocks. An excluded liquid draw is redrawn among the remaining liquids of the list (one more `weighted` call); with none left the basin stays empty.
+- **Red-ink pools:** `range_incl(2, 4)` 3 × 3 × 1 pools in Redaction Folios, each in a non-safe room chosen by `range`; 2 per Editor arena (§21.2), no draw.
+- **Font basins** (doc 08 §12.5): each `room.shrine`, `room.garden` and `room.cistern` draws `roll_bp(3000)`; on success one of its basin sockets (the lowest index) holds `liq.wellspring` with `range_incl(1, 3)` uses.
+- **Ore veins** (doc 07 §9.4, Canon §4.3): `n_veins = 6 + floor_div(d, 5)`, plus `2 × floor_div(rooms_total, 4)` under `law.post_apocalypse.scarcity`. Each vein draws a non-safe room with a free node socket (`range` over such rooms), a kind (`weighted` over the zone genre's doc 07 §9.4 weights, a kind whose yield's `min_d` exceeds `d` weighing 0) and a size `range_incl(2, 4)`: the node block fills the socket and the next `size - 1` wall blocks along the socket's wall in ascending block index. Veins stop when no room has a free node socket. Example: depth 12 places `6 + 2 = 8` veins; a 16-room Post-Apocalypse Folio places `8 + 2 × 4 = 16`.
+- **Harvest nodes** (doc 08 §8.1 H and F): `n_harvest = 4 + floor_div(rooms_total, 4)` when `node_w` sums above 0 (never in the Unwritten). Each draws a room with a free node socket (`range`) and a class (`weighted(node_w)`: plant or fungus); doc 08 fills it with an ingredient of that class by the zone genre's biome tags. Every `room.garden` also gets 2 plant nodes on its first free node sockets, no draw.
 
 ### 11.3 Light plan for stealth gradients
 
-Bands use effective light (Canon §2.3): **dark** `<= 4`, **dim** `5..=9`, **bright** `>= 10`. Targets are `bright_bp` and `dark_bp` (§3.3); `room.stealth` kinds use `bright_bp / 2` and `min(10000, dark_bp × 3 / 2)`; open rooms with `ambient_light >= 5` have no dark target.
+Bands use effective light (Canon §2.3, doc 09 §2.2): **dark** `<= 4`, **dim** `5..=9`, **bright** `>= 10`. A room's targets are the zone genre's `bright_bp` and `dark_bp` (§3.3; `bright_bp × 5000` under `lattice.marg.unlit`); kinds tagged `stealth` use `floor_div(bright_bp, 2)` and `min(10000, floor_div(dark_bp × 3, 2))`; the dark target is 0 for open rooms with `ambient_light >= 5` and for any room whose dark share before its first fixture is already below the target (sky light). Stage `light` runs per room on `item_rng(…, "light", i, attempt)`, after `dress`, and evaluates light inside the room box alone (doc 03 §10.3 propagation from the room's own sky cells and fixtures; neighbors and corridors are ignored), so rooms are independent and run through `par.map`. Light from outside can only raise levels, so a safe room proofed in its box stays proofed after the Folio bake (doc 03 §10.5), which V7 checks.
 
 ```rust
 fn light_room(r: &mut Rng, room: &Room, g: &Gpv) -> Vec<Fixture> {
@@ -741,36 +845,47 @@ fn light_room(r: &mut Rng, room: &Room, g: &Gpv) -> Vec<Fixture> {
 
 ### 11.4 Hazards and traps
 
-Stage `hazard`, rooms ascending. Count: gauntlet `range_incl(5, 7)`; safe rooms 0; others `floor_div(trap_bp, 10000)` plus 1 on `roll_bp(trap_bp % 10000)`. Each hazard: 1 weighted call over the zone genre's eligible `hazards` (§18), then a hazard socket or, for path traps, a `range`-chosen feet cell on the door-to-door path; 4 blocks of mutual spacing; none within 8 blocks of the Incipit spawn. Damage enters Canon §10.6 at step 3: `D2 = base × P(d)` against NPCs, `base × T(d)` against Errata.
+Stage `hazard` (`stage_rng(…, "hazard", attempt)`), rooms in ascending `NodeId`:
+
+1. **Count.** `room.gauntlet`: `range_incl(5, 7)` (1 draw). Safe rooms, secret rooms, `room.boss_arena` and `room.arena`: 0, no draw. Every other room: `floor_div(t, 10000) + [roll_bp(t % 10000)]` with `t = trap_bp` of the zone genre (`× 20000` under `lattice.marg.trapped`), 1 draw. Gothic Horror (`trap_bp` 2000) therefore gives a non-gauntlet room 0 or 1 hazards at 20%.
+2. **Kind.** Per hazard, one `weighted` call over the zone genre's §18.2 list with its position weights, a hazard ineligible by §18.1 (`dep` axis at local axiom 0, electronic below local TEC 3, structural) weighing 0.
+3. **Spot.** *Path traps* (`dart_trap`, `spike_pit`, `gas_vent`, `alarm`, `net_snare`, `rune_ward`, `curse_glyph`, `collapsing_floor`, `quicksand`) take a feet cell on the room's door-to-door path; every other hazard takes a free hazard socket. One `range` over the candidates that keep 4 blocks of spacing from every placed hazard and 8 blocks from the Incipit spawn; with no candidate the hazard is dropped and the room moves on.
+4. **Structural hazards** are never drawn here: `hazard.chasm` is the trench of every `room.chasm` and `hazard.gravity_flip` is a §9.5 flip room. They stay in the Unwritten's and the Oneiric's §18.2 lists for skins and preview icons.
+
+Damage enters Canon §10.6 at step 3 with `D2 = base × P(d)` against NPCs and `base × T(d)` against Errata (`src_lvl = d`, Canon §13.8.1), never crits, and builds statuses with `S(d)`. "Per pulse" in §18.1 means each status-pulse tick (period 15, phase 0, Canon §2.2) on which the entity's capsule overlaps the hazard's active volume, so a hazard active for 60 ticks hits 4 times.
 
 ## 12. Population interface (doc 13 §10)
 
-Doc 13 owns budgets, packs and waves; worldgen supplies places.
+Doc 13 owns budgets, packs and waves; worldgen supplies places. Stage `spawn` makes no draws.
 
-- **`spawn_slots`:** `floor_div(pop_w × fw × fd × storeys × density_bp, 10000)` (§16.1 `pop`); 0 for safe, sanctuary and `no_spawn` rooms and for rooms with a feet cell within 24,000 mm path of the Incipit spawn (doc 13 §10.2, doc 14 §3.3). A 2 × 2 single-storey hall gets 17 in Space Opera, 14 in Gothic Horror.
-- **Spawn cells:** feet cells flagged `spawn`, ascending index, at least `2 × spawn_slots` per room.
-- **Spawn anchors** (waves, hunters, invaders): each slotted room's spawn cell nearest its center (ties to the lower index), and the center feet cell of each corridor cell ≥ 24,000 mm from the Incipit.
+- **`spawn_slots`:** `floor_div(pop_w × fw × fd × storeys × density_bp, 10000)` with `pop_w` from §16.1 and the Folio genre's `density_bp` (× 12500 under `lattice.marg.dense`). It is 0 in every rest Folio and for safe, sanctuary, secret and `no_spawn` rooms and rooms with a feet cell within 24,000 mm of path from the Incipit spawn (doc 13 §10.1, doc 14 §3.3). Example: a 2 × 2 single-storey hall (`pop_w` 4) gets `floor_div(4 × 2 × 2 × 1 × 11000, 10000) = 17` in Space Opera and `floor_div(16 × 9000, 10000) = 14` in Gothic Horror.
+- **Spawn cells:** a room's feet cells whose tile carries the `spawn` flag and whose `light_block` in the room's §11.3 evaluation is at or below the zone genre's `spawn_block_max`, ascending index (the Folio bake can only light more cells, and doc 13 §10.1 skips those at spawn time). When a room has fewer than `2 × spawn_slots` of them, `spawn_slots` drops to `floor_div(cells, 2)`, so V10 holds by construction.
+- **Spawn anchors** (waves, hunters, invaders): for every non-safe, non-secret room with a feet cell at least 24,000 mm of path from the Incipit spawn, its spawn cell nearest the room's center (any feet cell when it has no spawn cell; ties to the lower index); plus the center feet cell of every corridor cell at least 24,000 mm from the Incipit spawn. Rest Folios keep their anchors for Erasure hunters and invaders. Doc 13 §10.4 filters them into qualifying anchors by light, distance and sight.
+- **Ambush anchors** (`gpv.evt.ambush` and the dread `ambush` complication): the qualifying anchors (doc 13 §10.4) in rooms or corridors within 2 graph hops of the target room, ascending cell index. With 2 or more, two `range` draws on `rng.event` pick them without replacement (`range(len)`, then `range(len - 1)`); with 1, both packs share it and nothing is drawn; with 0, the ambush becomes doc 13's reserve-wave rule and `rng.event` draws nothing more.
 - **Patrol routes:** one per mission-graph cycle, the center feet cells of its rooms in cycle order.
-- **Territory:** rooms with `pop >= 2` take `factions[k % F]`, `k` their order among such rooms, `factions` the zone genre's native factions by ascending ID (doc 13 §8).
+- **Territory:** rooms with `pop >= 2` take `factions[k % F]`, `k` their order among such rooms, `factions` the zone genre's native factions by ascending ID (doc 13 §12.1); none in the Unwritten.
 - **Civic anchors:** center feet cells of shop, prison, library, garden and hireling-hall rooms (doc 13 civic packs). `no_spawn` bars packs, waves and hunters; only civic packs and doc 14's Colophon hunter may stand in such rooms.
-- **Rubric setup** (doc 14 §3.4): Keeper room = the non-safe room farthest by path from the Incipit (ties to lower `NodeId`); catchwords = container or lore sockets ≥ 30,000 mm from the Incipit, taken in descending distance, each in a new room ≥ 20,000 mm from those picked, until 3 (fewer fails the attempt); Seal point = center feet cell of the largest non-safe main-path room beyond 5000 Bp of the Incipit→Colophon distance, with ≥ 80 feet cells within 4000 mm.
+- **Vendor and Engine sockets** (§6.2): the shop room's 2 vendor sockets and 2 Engine sockets, the rest Folio's Engine hall's 2 Engine sockets, the Interleaf's vendor socket and the Colophon's shop and Engine sockets (doc 11 §11.1, §12.1).
+- **Rubric setup** (doc 14 §3.4, standard and challenge Folios only): Keeper room = the non-safe room farthest by path from the Incipit (ties to the lower `NodeId`); catchwords = container or lore sockets at least 30,000 mm of path from the Incipit, taken in descending distance (ties to the lower index), each in a room with no earlier pick and at least 20,000 mm of path from every earlier pick, until 3 (fewer fails the attempt); Seal point = center feet cell of the non-safe main-path room with the most feet cells among those beyond 5000 Bp of the Incipit→Colophon path distance and with at least 80 feet cells within 4000 mm of that center (none fails the attempt).
 - **Rescue:** the rescue room (§8.2) hosts doc 13's stranded native (doc 14 `run.note.rescue`).
 
-## 13. Loot spots (doc 11 §9–§10)
+## 13. Loot spots (doc 11 §9–§12)
 
-- **Chests:** `4 + range(3)` per Normal Folio, the first draw of stage `loot` (doc 11 §9.6), none in boss Folios; sockets fill treasury (locked chests), armory, key rooms, vault, then 1 weighted call over `lw` per chest.
-- **Floor spots:** 36 feet cells (9 per slot 0..=3) taken in order from one shuffle of non-safe feet cells with 4-block spacing; doc 11 fills them.
-- **Guarded spots:** container sockets of slotted rooms by `spawn_slots` descending, then `NodeId`, for doc 11's Volume plan.
-- **Incipit caches:** 3 container sockets in the main-path room next to the Incipit (counter caches, doc 11 §9.10).
-- **Reliquary spots:** vault, then treasury, then other non-safe rooms by descending `lw`; at least 4.
-- **Secrets** map to doc 11 tables (§17.2). The Unwritten places no Lucre.
+Stage `loot` (`stage_rng(…, "loot", attempt)`) places spots; doc 11 fills them from `rng.loot_place` and keyed `rng.loot`.
+
+- **Chests:** `c = 4 + range(3)` in every standard, challenge and rest Folio (the first draw of the stage; mean 5, the figure doc 11 §9.6's Lucre table assumes), and `mul_bp(4 + range(3), 16667)` = 6, 8 or 10 in Abridged, whose loot quantity per Folio is × 16667 (Canon §17.1); none in boss Folios. Chests fill container sockets: first one per Treasury (a `loot.chest.locked`), then one each in the armory, the key rooms and the Reliquary vault in ascending `NodeId`, then every remaining chest draws a room by one `weighted` call over non-safe rooms with a free container socket, weight `lw` (§16.1), and takes its lowest free socket. A chest finding no socket stands on its room's free feet cell nearest the center. Doc 11 makes chests in a Treasury or behind a `Locked` edge locked chests and omits Lucre lines in the Unwritten (Canon §5.2).
+- **Floor spots:** 9 per slot 0..=3, 36 in all (15 per slot, 60 in all, in Abridged; none in the Unwritten): the feet cells of non-safe, non-secret rooms in ascending index take one `shuffle`, then are taken greedily in shuffled order, skipping any cell within 4 blocks (Chebyshev) of a taken one; spot `k` belongs to slot `floor_div(k, 9)` (`floor_div(k, 15)` in Abridged).
+- **Guarded spots:** container sockets of rooms with `spawn_slots > 0`, by `spawn_slots` descending, then `NodeId`, then socket index, for doc 11 §9.9's Volume plan; in a rest Folio, where no room has slots, the container sockets of non-safe rooms by descending `lw`, then `NodeId`.
+- **Incipit caches:** the first 3 free container sockets of the main-path rooms after the Incipit, in main-path order (counter caches, doc 11 §9.10).
+- **Reliquary spots:** container sockets of the Reliquary vault, then the Treasuries, then other non-safe rooms by descending `lw` (ties to the lower `NodeId`); at least 4 per standard, challenge or rest Folio (doc 11 §10 places at most 4). A boss Folio's illumined Reliquary and gilt Engine stand in its Colophon.
+- **Secrets** map to doc 11 tables (§17.2).
 
 ## 14. Bleed, seam and dynamic zones
 
 ### 14.1 Bleed plan (pure, previewed)
 
 ```rust
-fn bleed_plan(run: u64, n: u32, g: GenreId, prev: Option<GenreId>, d: i32, inp: &GenInput, marg: &[MargId]) -> BleedPlan {
+fn bleed_plan(run: u64, n: u32, g: GenreId, prev: Option<GenreId>, d: u32, inp: &GenInput, marg: &[MargId]) -> BleedPlan {
     if !gpv(g).bleed_ok { return BleedPlan::NONE; }
     let entry = prev.filter(|p| is_core(*p) && *p != g);
     let mut r = stage_rng(run, n, g, "bleed", 0);
@@ -778,7 +893,7 @@ fn bleed_plan(run: u64, n: u32, g: GenreId, prev: Option<GenreId>, d: i32, inp: 
     let chance = if g == ONEIRIC || extra > 0 || inp.bleed_add > 0 { 10000 }
                  else { min(8000, gpv(g).drift_bp + 500 * (vol_of_depth(d) - 1)) };
     let base = if r.roll_bp(chance) { if g == ONEIRIC { 2 } else { 1 } } else { 0 };   // 1 call
-    let count = min(4, base * inp.bleed_mult as u32 + inp.bleed_add as u32 + extra);
+    let count = min(3, base * inp.bleed_mult as u32 + inp.bleed_add as u32 + extra);   // entry + 3 drift = doc 02's 4 bleed slots
     let cand: Vec<GenreId> = CORE.filter(|c| *c != g && Some(*c) != prev);          // lattice order
     let mut w: Vec<u32> = cand.iter().map(|c| edge(g, *c)).collect();
     let drift: Vec<GenreId> = (0..count).map(|_| { let i = r.weighted(&w); w[i] = 0; cand[i] }).collect();
@@ -788,77 +903,112 @@ fn bleed_plan(run: u64, n: u32, g: GenreId, prev: Option<GenreId>, d: i32, inp: 
 }
 ```
 
-`vol_of_depth(d) = ceil_div(d, 5)` for `d <= 25`, else 6. Examples (run `0x0123456789ABCDEF`, prev MF): Folio 7 GH → entry MF, no drift, no seam; ON → entry MF, drift `[MA, GH]`; CH → entry MF, drift `[FT]`; RD → none; GH with `bleed_add = 1` → drift `[CH, HN]`. Folio 2 GH → entry MF, drift `[HN]`, seam HN; Folio 3 GH → entry MF, no drift, seam MF.
+`vol_of_depth(d) = ceil_div(d, 5)` for `d <= 25`, else 6. `edge(g, c)` reads §5.2 for a core `g` and the §5.3 return weights for the Oneiric. The plan draws 1 `roll_bp`, `count` `weighted` calls and 1 `roll_bp` for the seam when a source exists: 0 to 5 values. A drift genre never repeats the entry genre, and the cap of 3 keeps the entry zone plus drift zones within doc 02's 4 bleed slots. The drift chance rises 500 Bp per Volume, from 2500 in Volume 1 to 4500 in Volume 5 for a `drift_bp` of 2500, capped at 8000. Examples (run `0x0123456789ABCDEF`, prev MF): Folio 7 GH → entry MF, no drift, no seam; ON → entry MF, drift `[MA, GH]`; CH → entry MF, drift `[FT]`; RD → none; GH with `bleed_add = 1` → drift `[CH, HN]`. Folio 2 GH → entry MF, drift `[HN]`, seam HN; Folio 3 GH → entry MF, no drift, seam MF.
 
 ### 14.2 Zone assignment (stage `zones`)
 
-1. **Entry zone** (`zone.bleed`): the Incipit, plus its lowest-`NodeId` neighbor Room on `roll_bp(bleed_in_bp)`.
-2. **Drift zone** per drift genre: seed by `range` over eligible Rooms (not sanctuary, safe, arena, checkpoint, gravity-flip or zoned), grown breadth-first by `NodeId` to `range_incl(1, 3)` rooms.
-3. **Seam** (`zone.seam`, Canon §5.8): `range_incl(1, 2)` eligible Rooms adjacent to the seam genre's zone, the first by `range`, the second its lowest-`NodeId` eligible neighbor. Inside, `local_axiom` is the per-axis maximum of both genres, both genres' Laws apply, natives of either are native, the Folio genre supplies skins, and `st.unmoored` clears.
-4. Corridors take their lower-`NodeId` endpoint's zone; `zone_of_cell` stores the zone index.
-5. A bleed zone uses its genre for `local_genre` (Contradiction re-evaluates on crossing), sky light, gravity, §2.1 physics, tileset, fixtures, hazards, liquids, nodes, Laws and roster; doc 13 opens a war front at its edge; a Scriptorium inside it Rewrites into the bleed genre.
+Stage `zones` (`stage_rng(…, "zones", attempt)`) works on the typed graph before embedding. Zone records are indexed 0 (plain, the Folio genre), then the entry zone, then drift zones in draw order, then the seam: at most 6 (§7.1). **Eligible** Rooms are typed Rooms that are not safe, sanctuary, `room.arena`, `room.editor_checkpoint`, `room.boss_arena` or tagged `no_bleed`, and not already zoned.
+
+1. **Entry zone** (`zone.bleed`, when the plan has an entry genre): the Incipit, plus its lowest-`NodeId` eligible neighbor on `roll_bp(bleed_in_bp)` (1 draw).
+2. **Drift zone** per drift genre, in plan order: the seed Room by `range` over eligible Rooms (1 draw), then a size `range_incl(1, 3)` (1 draw); the zone grows breadth-first from the seed through eligible neighbors in ascending `NodeId` until it holds `size` rooms or no eligible neighbor remains.
+3. **Seam** (`zone.seam`, Canon §5.8, when the plan has a seam genre): the candidates are eligible Rooms adjacent to the seam source's zone (the first drift zone, else the entry zone). With none, there is no seam and no draw. Otherwise `k = range_incl(1, 2)` (1 draw), the first seam room by `range` over the candidates (1 draw), and, when `k = 2`, the second is the first room's lowest-`NodeId` eligible neighbor (none: the seam has 1 room). Inside, `local_axiom` is the per-axis maximum of both genres, both genres' Laws apply, natives of either genre are native, the Folio genre supplies skins (`local_genre` is the Folio genre, G7), and `st.unmoored` ends (§24.3).
+4. Corridors take their lower-`NodeId` endpoint's zone; `zone_of_cell` stores the zone index of every cell, corridors and walls included.
+5. A bleed zone uses its genre for `local_genre` (Contradiction re-evaluates on crossing, Canon §5.5), sky light, gravity, §2.1 physics, `spawn_block_max`, tileset, fixtures, hazards, liquids, nodes, Laws, events and roster; doc 13 §12.4 opens a war front at its edge; a Scriptorium inside it Rewrites into the bleed genre (doc 11 §15).
+
+Example: Folio 2 Gothic Horror after Mythic Fantasy (§14.1: entry MF, drift `[HN]`, seam HN): the Incipit and, at 3000 Bp, its first neighbor are Mythic Fantasy; 1 to 3 Rooms are Hardboiled Noir; 1 or 2 Rooms next to the Noir zone are a Gothic-Horror/Hardboiled-Noir seam where both Gothic dread and Noir void rules run and each axis reads `max(GH, HN)`: ARC 5, TEC 5, MYT 9, VRV 3.
 
 ### 14.3 Dynamic zones
 
-`set_dynamic_zone(rooms, genre, until_tick)` overrides `zone_of_cell` for the listed rooms with a `zone.dynamic` record and restores it at `until_tick` (inclusive end); every override and restore re-evaluates Contradiction for entities inside. Users: doc 13's `genre_shift` boss phase (1200 ticks), `gpv.evt.genre_storm` (§19), and `room.bleed_shrine`, whose altar turns one bleed zone plain until Folio exit.
+`set_dynamic_zone(rooms, genre, until_tick)` overrides `zone_of_cell` for the listed rooms with a `zone.dynamic` record during ticks `t <= until_tick` and restores the stored zone at the end of tick `until_tick`; every override and restore re-evaluates Contradiction for entities inside (Canon §5.5). Dynamic zones are simulation state (doc 03), not blueprint records, and at most 2 are active at once; a third request replaces the one with the earliest `until_tick`. Users: doc 13's `genre_shift` boss phase (1200 ticks), `gpv.evt.genre_storm` (§19), and `room.bleed_shrine`, whose altar (60-tick interact) turns the bleed zone nearest by path (ties to the lower zone index) plain until Folio exit.
 
 ### 14.4 Blending
 
-Wall and floor blocks within 2 blocks of a face between zones dither: with `h = mix64(gen_seed ^ (block_linear_index + 1))`, a block takes the neighbor zone's palette when `h % 10000 < [5000, 2500, 0][dist]` (`dist` 0 = touching). Zone membership stays per cell; doc 18 draws a stitched-page seam.
+Wall and floor blocks at Chebyshev distance `dist ∈ {0, 1}` from a face between cells of two zones dither; `dist` 0 is the block layer touching the face. For block linear index `b` (§1), `h = mix64(gen_seed ^ (b + 1))`, and the block takes the neighbor zone tileset's block for the same palette slot when `h % 10000 < [5000, 2500][dist]`. No draw is made. Zone membership stays per cell, so blending is cosmetic; doc 18 draws a stitched-page seam along the face.
 
 ## 15. Validation and repair
 
 ### 15.1 Navigation model
 
-Feet cells as §1. Moves: horizontal at level; up 1 block with 3 air above the target (Canon §4.2); down at most `floor_div(SAFE_FALL(v), 1000)` blocks, `v` the target's local VERVE (3 at VERVE 0, 4 at 10); ladders, vines, ropes; swimming in water, blood and alcohol. Lava, acid and red ink block. Locks pass with keys, puzzle gates once the puzzle room is reached, the RubricGate once the Rubric is reachable, bars per §9.2. Collapsing floors count as OneWay drops.
+Nodes are feet cells (§1). Edges, each also listing what it needs:
+
+- **Walk:** to a horizontally adjacent feet cell at the same level.
+- **Climb up:** 1 block (step-up or jump) when the target has 2 air cells above it; 2 blocks (jump and mantle, doc 03 §5.9: the VERVE-0 apex 1100 mm plus 1600 mm reach) when the target has 2 air cells above it and the source column has 4. Climbable blocks (doc 03 `climbable`) and slab stairs link every level they span.
+- **Drop:** to the feet cell below an adjacent air column. A **safe drop** falls at most `floor_div(SAFE_FALL(v), 1000)` blocks, `v` the target's local VERVE (Canon §4.2: 3 blocks at VERVE 0, 4 at VERVE 10); any longer drop is a **hard drop**, which costs HP but is still possible.
+- **Swim:** through water, blood, oil, alcohol and every other liquid except lava, acid and red ink, which block; a swim segment longer than 16 blocks without a 2-block air pocket blocks (breath, §11.2).
+- **Doors:** Open doors pass; `Locked(keys)` passes when every key is held; a OneWay door passes only from its `from` side; a `PuzzleGate` passes once its puzzle room is reached (§16.3 guarantees solvability); the `RubricGate` passes once every Rubric target is reached (always in rest Folios); `Hidden` edges pass for V4 only (a player who found the secret may use it) and never for V1–V3; relink doors follow the state being checked.
+
+The **safe move set** omits hard drops; the **full move set** includes them. Collapsing floors and spike pits are 2-block pits (§1) and need no special case.
 
 ### 15.2 Checks
 
+The key-progression search runs per variant: both relink states (§9.4) as static graphs, and, when the collapsing-bridge cycle exists, the bridge intact and collapsed (4 variants at most).
+
+```rust
+fn progression(nav: &Nav) -> Vec<Snapshot> {             // Snapshot = (keys held, puzzles reached, rubric done, reach set)
+    let (mut keys, mut puzzles, mut rubric) = (KeySet::EMPTY, PuzzleSet::EMPTY, nav.rest_folio);
+    let mut snaps = vec![];
+    loop {
+        let reach = nav.bfs_safe(nav.incipit_spawn, keys, puzzles, rubric);    // ascending cell index
+        snaps.push(Snapshot { keys, puzzles, rubric, reach: reach.clone() });
+        let k2 = keys | nav.keys_on(&reach);
+        let p2 = puzzles | nav.puzzles_reached(&reach);
+        let r2 = rubric || nav.rubric_targets().iter().all(|c| reach.contains(c));
+        if (k2, p2, r2) == (keys, puzzles, rubric) { return snaps; }
+        keys = k2; puzzles = p2; rubric = r2;
+    }
+}
+```
+
 | ID | Check |
 |---|---|
-| V1 | every non-secret room is reachable from the Incipit under the key progression |
-| V2 | each key is collected strictly before any door needing it |
-| V3 | the Rubric targets are reachable without the RubricGate; the Colophon after it |
-| V4 | no softlock: with each key set `K_i`, every reachable feet cell reaches the Colophon or a key outside `K_i` |
-| V5 | V1–V4 hold in both relink states and after the bridge collapses |
+| V1 | the last snapshot's reach set holds a feet cell of every non-secret room |
+| V2 | for each `Locked` door, the snapshot that first holds all its keys reaches every key pedestal without crossing that door (a key never sits behind its own lock) |
+| V3 | the Rubric targets lie in a snapshot taken while `rubric` was false (reachable without the RubricGate), and the Colophon's feet cells lie in the last snapshot |
+| V4 | no softlock: for each snapshot `i`, every feet cell reachable from the Incipit spawn by the full move set with `keys_i` and `puzzles_i` lies in the set `G_i` of cells that reach, by the safe move set, a Colophon feet cell or a key pedestal outside `keys_i`; `G_i` is one reverse breadth-first search from those targets |
+| V5 | V1–V4 hold in every variant |
 | V6 | no hazard within 8 blocks of the Incipit spawn, no liquid above its floor within 8, no spawn cell or anchor within 24,000 mm path |
-| V7 | safe rooms are `no_spawn` and, where `spawn_block_max <= 14`, lit above it |
-| V8 | no electronic hazard, lock or camera where local TEC ≤ 2 (Canon §5.7) |
+| V7 | safe rooms are `no_spawn` and, where `spawn_block_max <= 14`, every feet cell's `light_block` exceeds it after the Folio bake |
+| V8 | no electronic hazard, lock, camera, door or room where local TEC ≤ 2 (Canon §5.7, G10) |
 | V9 | no hazard, service or node whose `dep` axis has local axiom 0 (Canon §5.3) |
-| V10 | chests as drawn; ≥ 36 floor spots, ≥ 4 Reliquary spots, 3 Incipit caches; spawn cells ≥ `2 × spawn_slots` |
-| V11 | the Interleaf (pos 4) lies at 4000..=6000 Bp of the Incipit→Colophon path distance |
+| V10 | chests as drawn (§13); 36 floor spots (60 in Abridged, 0 in the Unwritten); at least 4 Reliquary spots in standard, challenge and rest Folios; 3 Incipit caches; every room holds at least `2 × spawn_slots` spawn cells |
+| V11 | the Interleaf (pos 4) lies at 4000..=6000 Bp of the Incipit→Colophon safe path distance |
 | V12 | `room.no_mount` tags match §16.4 |
-| V13 | one Colophon with 5 door volumes (3 lattice, 1 secret, 1 "Close the Book" or Margins, doc 14 §3.6); secrets only via Hidden edges; ≤ 1 secret exit, ≤ 1 seam |
-| V14 | at least one destructible block inside the Colophon |
+| V13 | exactly one Colophon with 5 door volumes (up to 3 lattice doors, 1 secret door, 1 "Close the Book" door, doc 14 §3.6); every Secret and SecretExit node joins by a `Hidden` edge only; at most 1 secret exit, and none in a secret-genre Folio; at most 1 seam |
+| V14 | at least one destructible block inside the Colophon (the 2 fixed crates, §11.1) |
+| V15 | every puzzle room carries its solution aids (§16.3): the lever-order lore objects lie in rooms of an earlier snapshot than the PuzzleGate's far side; plate pairs lie within 8,000 mm of path; 3 `item.tool.torch` ground items and a sturdy face within 1 block of every sigil |
+| V16 | the vendor and Engine sockets of §6.2 exist: 2 and 2 in a standard or challenge Folio's `room.shop` (none in the Unwritten), 1 vendor socket in the rest shop and 2 Engine sockets in the rest Engine hall |
+
+Example (V4): a key pedestal on a ledge reachable only by a 5-block hard drop into a sealed cellar with no way up fails V4, because the cellar's cells are in the full reach set of snapshot 0 but reach neither the Colophon nor a new key by safe moves.
 
 ### 15.3 Repair and retry
 
-- V1–V5: carve a 1 × 2 passage along A* from the reachable frontier to the target through non-protected cells (air 1, solid 5), at most 3 carves per attempt, no draws. V11: swap the Interleaf with the main-path Room whose fraction is nearest 5000 Bp (ties to the lower `NodeId`).
-- Still failing: `attempt += 1`, rerun stages 1–10 (attempts 0..=3); attempt 4 forces `rooms_min`, no minor cycles and `cycle_hidden_shortcut`; then the CI-validated authored fallback `room.tpl.fallback.<layout>` in the genre skin.
-- V6–V14: fixed in place without draws: remove offending hazards, liquids, anchors or secret exits (highest index first), add safe-room light (§11.3 step 3), recompute tags.
+- **V1–V5:** carve a passage 1 block wide and 2 tall along A* from the reachable frontier to the nearest unreached target (costs: air 1, non-protected solid 5; never through liquid or `protect` cells; ties toward the lower cell index); a carved cell over air gets a floor block of the genre stone. At most 3 carves per attempt, no draws; the checks rerun after each carve.
+- **V11:** swap the Interleaf with the main-path Room whose path fraction is nearest 5000 Bp (ties to the lower `NodeId`), then recheck.
+- **Retry:** still failing, `attempt += 1` and stages 1–10 rerun on the attempt's sub-streams (§7.2). Attempts 0, 1 and 2 are normal. Attempt 3 is forced simple: `base` = the lower bound without a draw, no minor cycles, `cycle_hidden_shortcut`, and no `PuzzleGate`, relink or gravity-flip room. If attempt 3 fails, the Folio uses the CI-validated authored fallback `room.tpl.fallback.<layout>` in the genre's tilesets; it holds a slot for every fixed room of §6.2, its type activates the slots it needs, and it makes no draws. Plan stages never rerun, so the preview stays true.
+- **V6–V16:** fixed in place without draws: remove offending hazards, liquids, anchors or secret exits (highest index first), add safe-room light (§11.3 step 3), recompute tags and spawn slots.
 
 ## 16. Room catalog
 
 ### 16.1 Kinds
 
-`fp` footprint in cells, `st` storeys, `max` per Folio, `w` typing weight (— = rules only), `pop` population weight (§12), `lw` loot weight (§13). Sanctuaries per doc 14 §3.3.
+`fp` footprint in cells, `st` storeys, `max` per Folio, `w` typing (spawn) weight that a mission-graph Room uses to become this kind (— = placed by §8.2 rules only), `verb` the GPV verb that scales `w` (§16.2), `pop` population weight (§12), `lw` loot weight (§13). Sanctuaries per doc 14 §3.3. Safe rooms carry `no_spawn`.
 
 | ID | fp | st | max | w | verb | pop | lw | Tags and function |
 |---|---|---|---|---|---|---|---|---|
 | `room.incipit` | 1×1–2×2 | 1 | 1 | — | — | 0 | 0 | safe, sanctuary; spawn and respawn point; boss antechamber |
-| `room.colophon` | 2×2 | 1 | 1 | — | — | 0 | 0 | safe, sanctuary, no_bleed; doc 14 §3.9 services, exit doors |
+| `room.colophon` | 2×2 | 1 | 1 | — | — | 0 | 0 | safe, sanctuary, no_bleed; doc 14 §3.9 services, 5 exit-door volumes, 2 fixed destructible crates |
 | `room.interleaf` | 1×2–2×2 | 1 | 1 | — | — | 0 | 0 | safe, sanctuary; Hearth, vendor |
 | `room.editor_checkpoint` | 2×2 | 1 | 1 | — | — | 3 | 0 | boss approach (§21.1) |
 | `room.boss_arena` | per §21.2 | 2 | 1 | — | — | 0 | 0 | no_bleed; doc 13 §9 geometry |
-| `room.campfire` | 1×1–2×2 | 1 | 1 | — | — | 0 | 0 | safe; rest (§16.3) |
+| `room.campfire` | 1×1–2×2 | 1 | 1 | — | — | 0 | 0 | safe; rest (§16.3); the rest Folio's hub and the Oneiric secret exit's trigger |
 | `room.arena` | 3×3 | 2 | 1 | — | — | 0 | 0 | mini-boss room (doc 13) |
 | `room.key_room` | 1×1–2×2 | 1 | — | — | — | 2 | 0 | key pedestal |
 | `room.treasury` | 1×2 | 1 | 2 | 40 | — | 1 | 3 | no_mount; locked chests |
 | `room.reliquary_vault` | 1×1–2×2 | 1 | 1 | — | — | 0 | 2 | no_mount; Reliquary spots first |
-| `room.gauntlet` | 1×3 | 1 | 3 | 60 | traverse | 0 | 2 | 5–7 hazards; chest at the end |
+| `room.gauntlet` | 1×3 | 1 | 4 | 60 | traverse | 0 | 2 | 5–7 hazards; chest at the end |
 | `room.puzzle` | 2×2 | 1 | 1 | — | — | 0 | 2 | §16.3 |
 | `room.cistern` | 2×2 | 1–2 | 1 | 40 | traverse | 2 | 1 | basins always filled |
-| `room.chasm` | 1×3 | 1 | 1 | 40 | traverse | 1 | 1 | bridge over `hazard.chasm` |
+| `room.chasm` | 1×3 | 1 | 1 | 40 | traverse | 1 | 1 | a trench 5 wide and 6 deep along the long axis (`hazard.chasm`) under a 3-wide destructible plank bridge; a 12-step slab stair climbs from the trench floor to the ledge at the lower-`NodeId` door |
 | `room.hall` | 2×2–3×3 | 1–2 | — | 300 | melee | 4 | 2 | combat |
 | `room.guardpost` | 1×1–1×2 | 1 | — | 200 | shoot | 2 | 1 | stealth |
 | `room.barracks` | 2×2 | 1 | 2 | 120 | melee | 5 | 2 | sleepers |
@@ -866,28 +1016,28 @@ Feet cells as §1. Moves: horizontal at level; up 1 block with 3 air above the t
 | `room.gallery` | 1×3 | 1 | — | 120 | sneak | 2 | 1 | stealth |
 | `room.ambush_den` | 2×2 | 1 | 2 | 50 | sneak | 3 | 1 | stealth, dark |
 | `room.overlook` | 2×2 | 2 | 1 | 40 | traverse | 2 | 1 | atrium |
-| `room.shrine` | 1×1 | 1 | 1 | 80 | pray | 1 | 1 | patron altar (doc 06); MYT ≥ 1 |
-| `room.library` | 2×2 | 1–2 | 1 | 70 | cast | 1 | 2 | no_mount; 4 lore sockets |
+| `room.shrine` | 1×1 | 1 | 1 | 80 | pray | 1 | 1 | patron altar of the zone genre (doc 06) and `station.enchanting`; local MYT ≥ 1 |
+| `room.library` | 2×2 | 1–2 | 1 | 70 | cast | 1 | 2 | no_mount; 4 lore sockets; `station.enchanting` |
 | `room.observatory` | 2×2 | 2 | 1 | 30 | cast | 1 | 2 | 2 lore sockets |
 | `room.alchemy_lab` | 1×2 | 1 | 1 | 60 | craft | 1 | 1 | no_mount; `station.alchemy` (docs 07, 08) |
-| `room.forge` | 2×2 | 1 | 1 | 60 | craft | 2 | 1 | smithing station (doc 07) |
-| `room.workshop` | 2×2 | 1 | 1 | 50 | craft | 2 | 2 | tinkering station (doc 07) |
+| `room.forge` | 2×2 | 1 | 1 | 60 | craft | 2 | 1 | `station.forge` (doc 07 §5.1) |
+| `room.workshop` | 2×2 | 1 | 1 | 50 | craft | 2 | 2 | `station.workbench` and `station.loom` (doc 07 §5.1) |
 | `room.armory` | 1×2 | 1 | 1 | 70 | shoot | 2 | 3 | no_mount; racks |
 | `room.prison` | 2×2 | 1 | 1 | 50 | talk | 3 | 1 | captive hireling (doc 13) |
 | `room.garden` | 2×2–3×3 | 1 | 1 | 60 | craft | 1 | 1 | H nodes, food |
-| `room.larder` | 1×1 | 1 | 1 | 50 | craft | 1 | 1 | no_mount; food |
+| `room.larder` | 1×1 | 1 | 1 | 50 | craft | 1 | 1 | no_mount; food; `station.kitchen` |
 | `room.crypt` | 2×2 | 1 | 1 | 60 | pray | 3 | 1 | undead roster |
 | `room.server_room` | 1×2–2×2 | 1 | 1 | 40 | hack | 2 | 2 | electronic; local TEC ≥ 5 |
-| `room.stable` | 2×2 | 1 | 1 | 30 | traverse | 1 | 0 | mount bay |
-| `room.shop` | 1×2 | 1 | 1 | 20 | talk | 0 | 0 | safe, no_mount; vendor (doc 11) |
-| `room.scriptorium` | 2×2 | 1 | 1 | 20 | — | 0 | 0 | safe, no_mount; §16.3 |
-| `room.fortune_hall` | 2×2 | 1 | 1 | 30 | — | 0 | 0 | safe; 2 Fortune Engines (doc 11) |
+| `room.stable` | 2×2 | 1 | 1 | 30 | traverse | 1 | 0 | mount bay; `station.loom` |
+| `room.shop` | 1×2 | 1 | 1 | — | — | 0 | 0 | safe, no_mount; 2 vendor and 2 Fortune Engine sockets (§6.2, doc 11 §11.1, §12.1); placed by `room.rule.service` and `room.rule.rest_ring` |
+| `room.scriptorium` | 2×2 | 1 | 1 | 20 | — | 0 | 0 | safe, no_mount; `station.scriptorium`; §16.3 |
+| `room.fortune_hall` | 2×2 | 1 | 1 | — | — | 0 | 0 | safe; 2 Fortune Engine sockets for the rest Folio's brass and silver Engines (doc 11 §11.1); placed by `room.rule.rest_ring` |
 | `room.illumination_vault` | 1×2 | 1 | 1 | 40 | — | 0 | 2 | unlock-gated; sigil-sealed (§16.3); one `loot.secret.vault` roll; flag `illumination_vault` |
 | `room.hireling_hall` | 2×2 | 1 | 1 | 30 | talk | 0 | 0 | unlock-gated; doc 13 hirelings |
 | `room.bleed_shrine` | 1×1 | 1 | 1 | 40 | pray | 1 | 0 | unlock-gated; needs a bleed zone; §14.3 |
 | `room.duel_page` | 2×2 | 1 | 1 | 30 | melee | 0 | 1 | unlock-gated; a one-aspect champion guards a chest |
 
-With the 8 secret rooms of §17.2 the catalog has 49 kinds.
+With the 8 secret rooms of §17.2 the catalog has 49 kinds. Typing can draw 29 of the 41 above: 25 always and 4 behind unlocks.
 
 ### 16.2 Typing weight
 
@@ -897,99 +1047,116 @@ w(kind, genre) = mul_bp(mul_bp(base_w, verb_bp(genre, kind.verb)), bias_bp(genre
 
 `verb_bp` is 10000 for kinds without a verb, `bias_bp` defaults to 10000, and a failed requirement or a missing unlock gives 0. Examples: Cyberpunk server room `mul_bp(mul_bp(40, 16000), 20000) = 128`; Mythic Fantasy library `mul_bp(mul_bp(70, 15000), 12000) = 126`; Wuxia hall `mul_bp(300, 16000) = 480`.
 
-Room bias (Bp): MF armory 12000, library 12000. GH crypt 20000, prison 12000, garden 5000. CH library 20000, observatory 15000, cistern 15000. SO server_room 15000, garden 3000, crypt 0. CP server_room 20000, garden 3000, shrine 5000, crypt 0. PA workshop 15000, garden 6000, library 5000. WW stable 15000, prison 12000. HN prison 15000, gallery 15000, garden 3000, crypt 3000. WX overlook 15000, garden 12000. SP workshop 20000, forge 15000. FT garden 20000, larder 15000. MA shrine 20000, crypt 12000. ON overlook 20000, observatory 15000. RD gallery 20000, server_room 15000, garden 0, stable 0, crypt 0, shrine 0. UW shop, scriptorium and fortune_hall 0. UT none.
+Room bias (Bp): MF armory 12000, library 12000. GH crypt 20000, prison 12000, garden 5000. CH library 20000, observatory 15000, cistern 15000. SO server_room 15000, garden 3000, crypt 0. CP server_room 20000, garden 3000, shrine 5000, crypt 0. PA workshop 15000, garden 6000, library 5000. WW stable 15000, prison 12000. HN prison 15000, gallery 15000, garden 3000, crypt 3000. WX overlook 15000, garden 12000. SP workshop 20000, forge 15000. FT garden 20000, larder 15000. MA shrine 20000, crypt 12000. ON overlook 20000, observatory 15000. RD gallery 20000, server_room 15000, garden 0, stable 0, crypt 0, shrine 0. UW scriptorium 0 (the shop and Engine-hall rules skip the Unwritten, which has no shops, Canon §5.2). UT none.
 
 ### 16.3 Services and puzzles
 
-- **Campfire.** Interact 300 uninterrupted ticks while not `in_combat`: heals `mul_bp(max_hp_mhp, 5000)` through Canon §10.9, refills stamina and aether, restores 25 composure; once per Erratum per campfire.
-- **Scriptorium room:** the Colophon station's Rewrite and identification (doc 10, doc 11), plus perk-column choice (Canon §13.9), reattachment (Canon §9.1) and affliction cure for `mul_bp(500, P(d))` Lucre (Canon §16.4). `flags.scriptorium_room` is set when one exists.
-- **Puzzles**, variant by `item_rng("puzzle", i)` `weighted([lever 40, plates 30, sigils 30])` (lever forced under `law.steampunk.clockwork`): *lever order*, 4 levers in an order from one shuffle of `[0, 1, 2, 3]`, inscribed on 2 lore objects elsewhere, a wrong pull resets and fires one `hazard.alarm` effect; *plates*, 3 plates each bearing ≥ 40,000 g on one tick (an Erratum is 75,000 g; placeables count); *sigils*, 3 sigil blocks each at `light_block >= 12` on one tick, which players solve with placeable light. Solving opens the `PuzzleGate` and the room's chest.
+- **Campfire.** A 300-tick `input.interact` channel by an Erratum not `in_combat`; it cancels if the Erratum takes damage, attacks, casts or its origin moves more than 500 mm. On completion: heal `mul_bp(max_hp_mhp, 5000)` through Canon §10.9, stamina and aether set to max, composure +25,000 m (capped at max); once per Erratum per campfire. It does not stop Erasure. The first completed rest in a Folio reveals an Oneiric secret exit's `dream_veil` (§17.4). Example: Max HP 85 at all-40 and 2 Erasure stacks heals `mul_bp(85000, 5000) = 42500`, then × 9400 for Erasure (Canon §11.6) = 39,950 mHP.
+- **Scriptorium room:** the Colophon station's Rewrite and identification (doc 10, doc 11 §15), plus perk-column choice (Canon §13.9), reattachment (Canon §9.1) and affliction cure for `mul_bp(500, P(d))` Lucre (Canon §16.4: 1,085 Lucre at `d = 10`). `flags.scriptorium_room` is set when one exists.
+- **Puzzles.** Each `room.puzzle` `i` draws its variant by one `weighted([40, 30, 30])` (lever, plates, sigils) on its own sub-stream `item_rng(…, "puzzle", i, attempt)`; the draw is made even under `law.steampunk.clockwork`, which then forces lever. Solving opens the `PuzzleGate` and unlocks the room's chest. Every variant is solvable by one solo Erratum with only what the Folio provides (V15):
+  - *Lever order:* 4 levers; the order is one `shuffle` of `[0, 1, 2, 3]` (3 draws). The order is inscribed on 2 lore objects placed by `range` over the lore sockets of rooms reachable without crossing the PuzzleGate (2 draws, without replacement). A wrong pull resets the sequence and fires one `hazard.alarm` effect (`ev.noise` 90 dB at that lever). Under `law.fairy_tale.rule_of_three`, after 2 failed attempts the correct order glows.
+  - *Plates:* 3 pressure plates from the template's plate sockets, each pair within 8,000 mm of path. A plate is **latched** for 300 ticks after the last tick on which entities, ground items and placed blocks on it weigh at least 40,000 g in total (an Erratum alone is 75,000 g, Canon §4.1); the puzzle solves on the first tick all 3 are latched. Solo check: two moves of at most 8,000 mm at the 4300 mm/s walk take `2 × ceil_div(8000 × 60, 4300) = 2 × 112 = 224` ticks, under 300.
+  - *Sigils:* 3 sigil blocks; the puzzle solves on the first tick all 3 cells have `light_block >= 12`. The room's fixtures avoid every socket within taxicab distance `fixture_level - 11` of a sigil, so the sigils start below 12, and stage `loot` places 3 shared `item.tool.torch` ground items on the room's feet cells nearest its lower-`NodeId` door. Every sigil has a sturdy face within 1 block, where a placed `block.torch` (light 14, doc 07 §10.1) lights it at `14 - 1 = 13`.
 
 ### 16.4 `room.no_mount`
 
-A room carries `room.no_mount` when its kind lists it, or when a feet cell on a path between two of its doors has under 3 blocks of headroom (3000 mm; a mount needs 2600 mm, Canon §17.7). Summoning there fails; a rider entering is dismounted with `ev.dismounted` (doc 05); doc 13 cavalry spawns dismounted. Corridors are never tagged.
+A room carries `room.no_mount` when its kind lists it (treasury, Reliquary vault, library, alchemy lab, armory, larder, shop, Scriptorium), or when a feet cell on the shortest safe path between any two of its doors (ties to the lower cell index; for a one-door room, any feet cell) has headroom under 3 blocks, headroom being the number of consecutive air cells from the feet cell up (a mount needs 2600 mm, Canon §17.7, so 3 cells). The tag is recomputed after every repair (§15.3). Summoning a mount there fails; a rider entering is dismounted with `ev.dismounted` (doc 05); doc 13 cavalry spawns dismounted. Corridors (clear height 4), doors (3 tall) and flip rooms (clear height 4) never force the tag.
 
 ## 17. Secrets
 
 ### 17.1 Count
 
-`n_secrets = floor_div(n_rooms × secret_bp, 10000)`, plus 1 on `roll_bp(n_rooms × secret_bp % 10000)` (stage `graph`, 1 call); rest and boss Folios have exactly 1; `lattice.marg.annotated` adds 2. Example: 18 Mythic Fantasy rooms give `18 × 1500 = 27000`: 2 secrets, a third at 7000 Bp.
+For standard and challenge Folios `n_secrets = floor_div(n_target × secret_bp, 10000) + [roll_bp((n_target × secret_bp) % 10000)]`, the second draw of stage `graph` (§8.3); rest and boss Folios have exactly 1 without a draw; `lattice.marg.annotated` adds 2. Example: 18 Mythic Fantasy rooms give `18 × 1500 = 27000`: 2 secrets, a third at 7000 Bp, 2.7 expected. Across the 12 core genres at mid-range room counts a standard Folio expects 1.5 (Weird West) to 4.0 (Fairy Tale) secrets, 2.70 on average.
 
-### 17.2 Secret room kinds (1 weighted call per Secret node; each 1 × 1 cell, 1 storey)
+### 17.2 Secret room kinds
 
-| ID | w | Contents (doc 11 tables) |
-|---|---|---|
-| `secret.room.cache` | 30 | `loot.secret.cache` |
-| `secret.room.shrine` | 15 | hidden patron altar; its first prayer gains +100 favor (doc 06) |
-| `secret.room.reliquary` | 10 | `loot.secret.vault` |
-| `secret.room.armory` | 15 | 2 racks with at least one counter source (Canon §17.3a) |
-| `secret.room.editors_desk` | 5 | `loot.secret.palimpsest` (Canon §13.3); `d >= 6` |
-| `secret.room.margin_note` | 15 | 1 story lore object and a cache |
-| `secret.room.oubliette` | 7 | a captive hireling (doc 13) |
-| `secret.room.ink_well` | 3 | a `liq.red_ink` basin granting one `afflict.red_ink` dose (Canon §16.4); `d >= 11` |
+Stage `secret` (`stage_rng(…, "secret", attempt)`) types each `Secret` node in ascending `NodeId` with one `weighted` call over the kinds below in table order; a kind whose condition fails weighs 0. Each is a 1 × 1-cell, 1-storey box.
+
+| ID | w | Condition | Contents (doc 11 tables) |
+|---|---|---|---|
+| `secret.room.cache` | 30 | — | `loot.secret.cache` |
+| `secret.room.shrine` | 15 | local MYT ≥ 1 | hidden patron altar; its first prayer gains +100 favor before scaling (doc 06) |
+| `secret.room.reliquary` | 10 | not the Unwritten | `loot.secret.vault` |
+| `secret.room.armory` | 15 | — | 2 racks with at least one counter source (Canon §17.3a) |
+| `secret.room.editors_desk` | 2 | `d >= 6` | `loot.secret.palimpsest` (Canon §13.3) |
+| `secret.room.margin_note` | 15 | — | 1 story lore object (§20.3) and a `loot.secret.cache` |
+| `secret.room.oubliette` | 7 | not the Unwritten | a captive hireling (doc 13 §10.2 step 6) |
+| `secret.room.ink_well` | 3 | `d >= 11` | a `liq.red_ink` basin; drinking from it grants one `afflict.red_ink` dose (Canon §16.4) |
+
+**Balance.** A Standard run's Folios 6 to 24 hold an expected `16 × 2.70 + 3 × 1 = 46.3` secrets (16 non-boss Folios, 3 boss Folios). At weight 2 of 97 that is 0.95 Editor's desks per run if every secret is found, each paying one Palimpsestic unique per Active Erratum, beside doc 11 §9.8's 3.125 from Editors and at most 1.25 from Volume rewards per player. The earlier weight of 5 gave 2.31 per run, which nearly doubled the Editor supply for a thorough explorer, so the weight is 2.
 
 ### 17.3 Hiding methods
 
-| ID | Hides by | Found by |
-|---|---|---|
-| `secret.hide.cracked_wall` | a destructible wall block with a hairline-crack variant | passive detection (Canon §6.4 row 35, keyed `rng.stealth`, once per observer per 60 ticks within 3 m); a hit plays a hollow knock; breaking it |
-| `secret.hide.false_wall` | a passable block rendered as wall | passive detection; walking into it |
-| `secret.hide.lever` | a lever disguised as a prop opens a wall section | passive detection outlines it |
-| `secret.hide.crate_stack` | the opening stands behind destructible crates and barrels | breaking or moving them |
-| `secret.hide.waterfall` | the door sits behind a liquid curtain | seen when an entity crosses the curtain |
-| `secret.hide.ceiling_hatch` | a hatch 4 blocks up | passive detection; a placeable ladder |
-| `secret.hide.verb_lock` | a seal needing another genre's verb: hack (TEC), prayer (MYT) or spell (ARC) | that verb; detection names it |
-| `secret.hide.dream_veil`, `.clearance`, `.blank_page`, `.palimpsest_wall` | secret exits | §17.4 |
+`ev.secret_found` (G9) carries the hiding method's row index in this table as its `kind` (doc 03's event table), 0 to 10.
 
-Method per secret: `weighted([cracked 30, false 20, lever 15, crates 10, waterfall 5, hatch 10, verb 10])`, impossible ones 0. Revealing a secret emits `ev.secret_found` (G9).
+| # | ID | Hides by | Found by |
+|---|---|---|---|
+| 0 | `secret.hide.cracked_wall` | a destructible `block.cracked_wall` with a hairline-crack variant | passive detection (Canon §6.4 row 35, keyed `rng.stealth`, once per observer per 60 ticks within 3 m, Canon §3.3) outlines it and a hit plays a hollow knock; breaking it opens the way |
+| 1 | `secret.hide.false_wall` | a block without collision rendered as the room's wall | passive detection; walking into it |
+| 2 | `secret.hide.lever` | a lever disguised as a dressing prop opens a 3 × 3 wall section | passive detection outlines it; pulling it (30-tick interact) |
+| 3 | `secret.hide.crate_stack` | the opening stands behind destructible crates and barrels | breaking them |
+| 4 | `secret.hide.waterfall` | the opening sits behind a 1-block liquid curtain of `liq.water` | seen when any entity crosses the curtain; walking through it |
+| 5 | `secret.hide.ceiling_hatch` | a hatch in the ceiling 4 blocks above the neighbor room's floor | passive detection; a placeable ladder or any climb to it |
+| 6 | `secret.hide.verb_lock` | a seal needing a verb (below) | performing that verb at the seal; passive detection names the verb |
+| 7–10 | `secret.hide.dream_veil`, `secret.hide.clearance`, `secret.hide.blank_page`, `secret.hide.palimpsest_wall` | secret exits only | §17.4 |
+
+**Choice.** A Secret whose box embedding put directly above its neighbor (§9.1 `V`) uses `ceiling_hatch` without a draw. Every other Secret draws `weighted([30, 20, 15, 10, 5, 0, 10])` over methods 0 to 6, with `waterfall` at 0 when the zone genre's `liquids` lack `liq.water` and `verb_lock` at 0 when no verb qualifies. **Verb:** among hack (local TEC ≥ 3; an electronic seal opened by doc 09 Hacking at the Folio's lock tier), prayer (local MYT ≥ 1; any doc 06 prayer within 3000 mm) and spell (local ARC ≥ 1 or a non-`none` aether axiom; any spell hit on the seal), the one whose axis has the lowest local value, ties in the order hack, prayer, spell. Example: in Mythic Fantasy (ARC 8, TEC 2, MYT 6) hack fails its minimum and prayer (6) beats spell (8), so the seal wants a prayer; in Cyberpunk (ARC 1, TEC 9, MYT 2) spell (1) wins.
+
+Revealing a secret (the first Erratum detecting, opening or passing it) emits `ev.secret_found` once per secret.
 
 ### 17.4 Secret exits to the four secret genres
 
-Stage `secret` tests targets in the order Oneiric, Redaction, Unwritten, Ur-Text with `roll_bp(chance)` until one succeeds (1 call per eligible target tested). A target is eligible when Folio `n + 1` is neither a boss nor depth 25, and:
+Secret exits exist only in core-genre Folios. The plan function `secret_exit_plan(run, n, genre, d, mode)` draws on `stage_rng(run, n, genre, "secret_exit", 0)` in stage 0, so `room.rule.service` (D3) and `room.rule.secret_exit` (D11) can use it. It tests the targets in the order Oneiric, Redaction, Unwritten, Ur-Text, each eligible target with one `roll_bp(chance)`, and stops at the first success (0 to 4 draws). A target is eligible when its chance is above 0, the next Folio is neither a boss (`pos(n + 1) != 5`) nor at depth 25, and its condition holds:
 
 | Exit | Chance | Condition | Hiding and discovery |
 |---|---|---|---|
-| `secret.exit.oneiric` | GPV `secret_exits` (§5.3) | `n >= 3` | `dream_veil`: invisible until an Erratum completes a campfire rest in the Folio; worldgen adds a `room.campfire` when absent |
-| `secret.exit.redacted` | GPV value | `n >= 6`, local TEC ≥ 5 | `clearance`: an electronic lock (doc 09) opened by Hacking, or automatically when an Erasure hunter dies in the Folio |
-| `secret.exit.unwritten` | 1000 | `n >= 8` | `blank_page`: visible and passable only for Errata with ≥ 5 `st.erasure` stacks |
-| `secret.exit.ur_text` | 800 | `n >= 26` | `palimpsest_wall`: dissolves while a Palimpsestic item is within 3 m |
+| `secret.exit.oneiric` | GPV `secret_exits` (§5.3; 0 when absent) | `d >= 3` | `dream_veil`: invisible and impassable until an Erratum completes a campfire rest in the Folio (§16.3); D3 adds a `room.campfire` when the graph has none |
+| `secret.exit.redacted` | GPV `secret_exits` (0 when absent) | `d >= 6`, Folio genre TEC ≥ 5 | `clearance`: an electronic lock (doc 09) opened by Hacking, or unlocked on the tick an Erasure hunter dies in the Folio |
+| `secret.exit.unwritten` | 1000 | `d >= 8` | `blank_page`: visible and passable only for Errata holding at least 5 `st.erasure` stacks (from 540 s, doc 14 §3.8) |
+| `secret.exit.ur_text` | 800 | `d >= 26` | `palimpsest_wall`: has no collision while a Palimpsestic item is within 3000 mm of it |
 
-The room holds a dog-eared page; interacting with it **discovers** the exit, and doc 14 §3.6 appends a door to that genre after the lattice doors. Generation stays pure, so the room exists regardless of history; when the target genre already appeared this run (before Marginalia) or in the last 10 Folios (Marginalia), discovery appends no door. Every secret-exit room also holds a `loot.secret.cache`, so it always pays.
+The SecretExit room holds a dog-eared page; a 60-tick interact with it **discovers** the exit, and doc 14 §3.6 appends a door to that genre after the lattice doors, shown as "?". Generation stays pure, so the room exists regardless of history; when the target genre already appeared this run (before Marginalia) or in the last 10 Folios (Marginalia), discovery appends no door. Every SecretExit room also holds a `loot.secret.cache`, so finding it always pays. Example: a Standard Fairy Tale Folio at `d = 8` (the next Folio is at pos 4) tests Oneiric at 2500 Bp, then Unwritten at 1000 Bp (Redaction has chance 0 there and is skipped without a draw), so it plans an exit with probability `2500 + floor_div(7500 × 1000, 10000) = 3250` Bp. Folio 9 plans none, because Folio 10 is a boss. Vectors for run `R = 0x0123456789ABCDEF` (`range(10000)` values in brackets): Fairy Tale Folio 8 tests Oneiric (8593) and Unwritten (9259) and plans none; Mythic Fantasy Folio 8 tests Oneiric (7395, against 2000) and then plans an Unwritten exit (680 < 1000); Hardboiled Noir Folio 7 plans a Redaction exit (706 < 2500); Gothic Horror Folio 5, a boss Folio before the pos-1 Folio 6, plans an Oneiric exit (968 < 1500).
 
 ## 18. Hazards and traps
 
 ### 18.1 Archetypes
 
-`base` is display HP (Canon §10.6); buildup scales by `S(d)`; hidden hazards use passive detection and Security disarming (doc 09); electronic ones need local TEC ≥ 3.
+`base` is display HP (Canon §10.6), so 6 means 6,000 mHP before `T(d)` or `P(d)`; buildup values are status powers scaled by `S(d)`. Hidden hazards (plates, tripwires, glyphs, lids) are hidden objects for passive detection (Canon §6.4 row 35) and are disarmed with Security (doc 09). "E" marks electronic hazards, which need local TEC ≥ 3 (Canon §5.7, G10); `dep` follows Canon §5.3 and bars a hazard where that axis is 0. Rearm: a plate or tripwire rearms 60 ticks after it fires; a glyph, lid or snare fires once.
 
 | ID | Trigger and cycle | Effect | dep |
 |---|---|---|---|
-| `hazard.dart_trap` | hidden plate | 3 darts, 25000 mm/s, 6 `dmg.pierce` each | none |
-| `hazard.blade_trap` | sweep every 60 ticks | 14 `dmg.slash`, 30 bleeding | none |
-| `hazard.spike_pit` | destructible lid breaks at ≥ 40,000 g | 3-block fall + 10 `dmg.pierce`, 40 bleeding | none |
-| `hazard.crusher` | slam every 120 ticks, 30-tick telegraph | 25 `dmg.blunt` | none |
-| `hazard.flame_jet` | on 60 of 180 ticks; 4 m cone, half-angle 2731 Bam | 8 `dmg.fire` per pulse, 60 burning | none |
+| `hazard.dart_trap` | hidden plate | 3 darts at 25000 mm/s from the nearest wall, 6 `dmg.pierce` each | none |
+| `hazard.blade_trap` | sweeps every 60 ticks along a 4-block arc | 14 `dmg.slash`, 30 bleeding | none |
+| `hazard.spike_pit` | hidden destructible lid over a 1 × 1 pit 2 blocks deep; breaks under ≥ 40,000 g | 10 `dmg.pierce`, 40 bleeding; the 2000 mm fall is under every `SAFE_FALL`; climb out by jump and mantle (§1) | none |
+| `hazard.crusher` | slams every 120 ticks after a 30-tick telegraph | 25 `dmg.blunt` | none |
+| `hazard.flame_jet` | active on ticks 0..60 of every 180; 4 m cone, half-angle 2731 Bam | 6 `dmg.fire` per pulse, 60 burning | none |
 | `hazard.gas_vent` | hidden plate | 6 cells of `gas.miasma` over 120 ticks | none |
-| `hazard.shock_floor` | electronic; 3 × 3 live 90 of 180 ticks | 6 `dmg.shock` per pulse, 40 shocked | techne |
-| `hazard.alarm` | hidden tripwire or sensor | `ev.noise` 90 dB at the source | none |
-| `hazard.net_snare` | hidden tripwire | `st.rooted` direct; 3 × 3 `block.web` | none |
+| `hazard.shock_floor` | E; 3 × 3 floor live on ticks 0..90 of every 180 | 6 `dmg.shock` per pulse, 40 shocked | techne |
+| `hazard.alarm` | hidden tripwire or sensor | `ev.noise` 90 dB at the source; rearms after 600 ticks | none |
+| `hazard.net_snare` | hidden tripwire | `st.rooted` directly; 3 × 3 `block.web` around the cell | none |
 | `hazard.rune_ward` | hidden glyph | 3 m blast, 18 `dmg.arcane`, 50 unraveled | arcana |
-| `hazard.curse_glyph` | hidden glyph | 60 dread and 40 withering buildup within 2 m | mythos |
-| `hazard.camera` | electronic; cone 8192 Bam, 16 m, sweep ±4096 Bam per 360 ticks | 60 ticks of sight on an Erratum = alarm; hackable | techne |
-| `hazard.collapsing_floor` | 3 × 3 destructible boards break 30 ticks after ≥ 40,000 g | drop below; OneWay in validation | none |
-| `hazard.falling_debris` | `ev.noise` ≥ 80 dB within 6 m | 3 destructible rubble blocks fall, 12 `dmg.blunt` each | none |
-| `hazard.lava_pool`, `.acid_pool`, `.deep_water`, `.oil_slick`, `.ink_seep` | contact | Canon §12.1; deep water ≥ 3 blocks; oil 100 ml per cell | none |
-| `hazard.steam_vent` | on 60 of 240 ticks | 2 cells of `gas.steam` | none |
-| `hazard.rad_zone` | 4 × 4 floor | 20 irradiated per pulse | none |
-| `hazard.miasma_bog` | persistent | `gas.miasma` 3 × 3 × 2 | none |
-| `hazard.web_field` | persistent | `block.web` 3 × 3 × 2 | none |
-| `hazard.quicksand` | 3 × 3 mire | `st.slowed` while inside; sinks at most 1 block | none |
-| `hazard.hull_breach` | destructible panel destroyed (30 damage) | 3000 mm/s² pull within 8 m for 300 ticks, then seals | techne |
-| `hazard.redaction_bar` | 1 × 3 × 8 slab sliding at 2000 mm/s | conceal 15; contact applies `st.silenced` | techne |
-| `hazard.chasm` | pit ≥ 6 blocks deep | fall damage | none |
-| `hazard.gravity_flip` | a §9.5 flip volume | gravity reversed | none |
+| `hazard.curse_glyph` | hidden glyph | 60 dread and 40 withering buildup to every entity within 2 m | mythos |
+| `hazard.camera` | E; cone half-angle 8192 Bam, 16 m, sweeping ±4096 Bam over 360 ticks | 60 consecutive ticks of sight on an Erratum fire the `hazard.alarm` effect at the camera and doc 09's `alarm_raised`; hackable | techne |
+| `hazard.collapsing_floor` | 3 × 3 destructible boards over a 3 × 3 pit 2 blocks deep; break 30 ticks after bearing ≥ 40,000 g | drop 2 blocks; climb out by jump and mantle (§1) | none |
+| `hazard.falling_debris` | an `ev.noise` of ≥ 80 dB within 6 m | 3 destructible rubble blocks fall, 12 `dmg.blunt` each | none |
+| `hazard.lava_pool` | contact | a 3 × 3 × 1 basin of `liq.lava` (Canon §12.1) | none |
+| `hazard.acid_pool` | contact | a 3 × 3 × 1 basin of `liq.acid` | none |
+| `hazard.deep_water` | contact | a 3 × 3 basin of `liq.water` 3 blocks deep (swim, breath) | none |
+| `hazard.oil_slick` | contact | 3 × 3 floor cells of `liq.oil`, 1,000 ml each (contact needs 100 ml) | none |
+| `hazard.ink_seep` | contact | 3 × 3 floor cells of `liq.red_ink`, 1,000 ml each | none |
+| `hazard.steam_vent` | active on ticks 0..60 of every 240 | 2 cells of `gas.steam` | none |
+| `hazard.rad_zone` | a 4 × 4 floor area, always on | 20 irradiated per pulse | none |
+| `hazard.miasma_bog` | persistent | `gas.miasma` filling 3 × 3 × 2 cells | none |
+| `hazard.web_field` | persistent | `block.web` filling 3 × 3 × 2 cells | none |
+| `hazard.quicksand` | a 3 × 3 mire | `st.slowed` while inside; the body sinks at most 1 block | none |
+| `hazard.hull_breach` | a destructible hull panel (`block.glass_pane` hardness, doc 07) is broken | a pull of 3000 mm/s² toward the panel on every body within 8 m for 300 ticks, then the panel reseals | techne |
+| `hazard.redaction_bar` | a 1 × 3 × 8 slab sliding at 2000 mm/s along its corridor, reversing at the ends | conceal 15; contact applies `st.silenced` directly | techne |
+| `hazard.chasm` | structural: the trench of `room.chasm`, 6 blocks deep | fall damage (Canon §4.2); the trench stair leads back up | none |
+| `hazard.gravity_flip` | structural: a §9.5 flip room | gravity reversed | none |
 
-Examples against Errata: a dart at `d = 10` deals `mul_bp(6000, 16190) = 9714` mHP (13,030 to an NPC via `P(10)`); a crusher at `d = 15` `mul_bp(25000, 21160) = 52900`; a flame pulse at `d = 5` `mul_bp(8000, 12388) = 9910`.
+Examples against Errata: a dart at `d = 10` deals `mul_bp(6000, 16190) = 9714` mHP (13,030 to an NPC via `P(10) = 21718`); a crusher at `d = 15` `mul_bp(25000, 21160) = 52900`; a flame pulse at `d = 5` `mul_bp(6000, 12388) = 7432`.
+
+**Balance against Canon §17.4** (Folio 1, an Erratum with 85 HP and `REF_ERRATA_AR_D1` 20, Canon §10.5 step 5): a crusher slam `effAR = floor_div(20 × 5000, 10000) = 10`, `DR = floor_div(10^8, 10,000 + 100,000) = 909`, leaves 22,728 mHP (27% of 85 HP, 2.3 times `REF_ENEMY_HIT_D1`), after a 30-tick telegraph; three darts leave `3 × 3,693 = 11,079` mHP (13%); a flame jet's full 60-tick window is 4 pulses of 6,000 fire (no armor) plus a burning proc, 24,000 + 6,800 mHP (36%), while crossing the cone's far end (`2 × 4000 × tan 15° = 2,144` mm wide) at the 4300 mm/s walk takes 30 ticks, 2 pulses (12,000 mHP, 14%, plus the proc). The flame pulse was 8 HP, which made a full window 45% of a Folio-1 Erratum's HP, more than a telegraphed crusher; 6 HP puts it beside the crusher. A chasm fall at VERVE 5 costs `excess = 6000 - 4000 = 2000` mm, 16% of Max HP (Canon §4.2), times the genre's `fall_dmg_bp`. Against NPCs the same hazards scale with `P(d)` while NPC HP scales with `H(d)` (Canon §13.8), so luring enemies into traps is strong early (a crusher's 25 HP is 42% of a 60-HP standard at Folio 1 before armor) and fades with depth (`mul_bp(25000, 79110) = 197,775` mHP against that standard's `mul_bp(60000, 202521) = 1,215,126` at Folio 25, 16%).
 
 ### 18.2 Per-genre hazard lists (skin names)
 
@@ -1012,39 +1179,39 @@ Weights 20, 20, 15, 15, 15, 15 by position; skins are `loc.<hazard id>.skin.<gen
 | ON | gravity_flip (upside room), deep_water (dream sea), collapsing_floor (falling dream), rune_ward (lucid sigil), web_field (cobweb thought), falling_debris (raining furniture) |
 | RD | camera (compliance optic), redaction_bar (redaction bar), alarm (audit alarm), shock_floor (live floor), crusher (shredder), ink_seep (red ink spill) |
 | UW | ink_seep (red ink), chasm (blank void), collapsing_floor (erased floor), falling_debris (falling letters), spike_pit (deleted step), blade_trap (cutting line) |
-| UT | rune_ward, camera, curse_glyph, flame_jet, ink_seep, collapsing_floor, each skinned by a core genre in lattice order cycling per room |
+| UT | rune_ward, camera, curse_glyph, flame_jet, ink_seep, collapsing_floor; the `k`-th room (ascending `NodeId`) holding Ur-Text hazards skins them as core genre `k % 12` in lattice order |
 
-Lint L4 holds: nothing electronic in MF, WX, FT, MA, UW; no arcana hazard in PA, HN, UW; no mythos hazard in UW.
+Lint L4 holds: nothing electronic in MF, WX, FT, MA, UW; no arcana hazard in PA, HN, UW; no mythos hazard in UW. `chasm` (UW) and `gravity_flip` (ON) are structural (§11.4), so those two genres draw from 5 hazards each in stage `hazard`, with the remaining position weights 20, 15, 15, 15, 15 (UW) and 20, 15, 15, 15, 15 (ON); every other genre draws from all 6.
 
 ## 19. Ambient and narrative events
 
 ### 19.1 Archetypes
 
-`requires` reads the target room's local genre; gated events need their unlock in the run's content set.
+`requires` reads the target room's local genre; gated events need their unlock in the run's content set. **Target rooms** are the rooms holding or adjoining an Erratum (by mission-graph edge) that meet `requires`, ascending `NodeId`, except where the row says otherwise; an event with no target room is ineligible.
 
 | ID | Class | Effect | requires |
 |---|---|---|---|
 | `gpv.evt.light_failure` | ambient | the target room's fixtures go dark for 600 ticks | — |
 | `gpv.evt.weather_front` | ambient | 1800 ticks: fog +1 per 8 m, doc 09 sound attenuation × 12000 | — |
-| `gpv.evt.distant_noise` | ambient | `ev.noise` 70 dB at least 2 rooms from every Erratum | — |
+| `gpv.evt.distant_noise` | ambient | `ev.noise` 70 dB at the target room's center; its target rooms are those at least 2 graph hops from every Erratum's room | — |
 | `gpv.evt.tremor` | ambient | fires the room's falling debris, else drops 2 rubble blocks | — |
-| `gpv.evt.whispers` | ambient | −5 composure to each Erratum there with `light_at < 8` | MYT ≥ 1 |
-| `gpv.evt.boon` | ambient | `st.blessed` to each Erratum there | MYT ≥ 1 |
+| `gpv.evt.whispers` | ambient | −5 composure (× the Canon §5.7 MYTHOS composure factor, doc 04) to each Erratum there with `light_at < 8` | MYT ≥ 1 |
+| `gpv.evt.boon` | ambient | `st.blessed` applied directly (30 s) to each Erratum there | MYT ≥ 1 |
 | `gpv.evt.lore_echo` | ambient | a lore object with an unread story event appears (§20) | — |
-| `gpv.evt.editor_glimpse` | ambient | 2,000,000 ml of `liq.red_ink` seeps into the room | — |
+| `gpv.evt.editor_glimpse` | ambient | 2,000,000 ml (2 full cells) of `liq.red_ink` appear at the room's center floor and spread by doc 03's liquid rules | — |
 | `gpv.evt.gravity_shift` | ambient | every gravity-flip volume toggles for 600 ticks | flip cells |
 | `gpv.evt.door_slam` | ambient | the open door nearest an Erratum closes and carries `protect` for 600 ticks | — |
 | `gpv.evt.wandering_vendor` | narrative | a `fac.neutral` vendor stays 1800 ticks (doc 11) | `unlock.room.wandering_scribe` |
-| `gpv.evt.genre_storm` | narrative | a dynamic zone (§14.3) of the top-weight lattice neighbor covers the room 1200 ticks, moving every 400 ticks to its lowest-`NodeId` neighbor | `unlock.event.genre_storms` |
-| `gpv.evt.patrol_shift` | narrative | doc 13 spawns a wave at the anchor nearest the Colophon walking toward the Incipit | — |
-| `gpv.evt.ambush` | narrative | doc 13 spawns a wave on 2 spawn-eligible anchors adjacent to the party's room | — |
-| `gpv.evt.reinforcements` | narrative | doc 13 spawns a wave at the qualifying anchor farthest from every Erratum | — |
-| `gpv.evt.plea` | narrative | freeing a captive within 1800 ticks gives +100 reputation and a hireling offer (doc 13) | — |
-| `gpv.evt.duel_challenge` | narrative | a champion (one plan aspect) duels the accepting Erratum behind a barrier, ≤ 1800 ticks | VRV ≥ 5 |
-| `gpv.evt.flood` | narrative | a basin releases 20,000,000 ml of its liquid over 600 ticks | basin |
+| `gpv.evt.genre_storm` | narrative | a dynamic zone (§14.3) of the Folio genre's top-weight lattice neighbor (§5.2, or §5.3 return weights; ties to lattice order; Cyberpunk → Hardboiled Noir) covers the target room for 1200 ticks, moving every 400 ticks to that room's lowest-`NodeId` non-safe neighbor | `unlock.event.genre_storms` |
+| `gpv.evt.patrol_shift` | narrative | doc 13 spawns a 1000-mSKE wave at the spawn anchor nearest the Colophon, walking toward the Incipit | — |
+| `gpv.evt.ambush` | narrative | doc 13 spawns a 2000-mSKE wave split over the 2 ambush anchors of the target room (§12; 0 or 2 more draws) | — |
+| `gpv.evt.reinforcements` | narrative | doc 13 spawns a 3000-mSKE wave at the qualifying anchor farthest from every Erratum | — |
+| `gpv.evt.plea` | narrative | a bound `fac.neutral` captive (doc 13 hireling template) appears in the target room; freeing it (60-tick interact) within 1800 ticks gives +100 reputation with the zone genre's +150 faction (doc 13 §12.1) and a hireling offer (doc 13 §13.4); it fulfils `law.mythic_fantasy.oathbound` | not the Unwritten |
+| `gpv.evt.duel_challenge` | narrative | a champion carrying the aspect set's first aspect (doc 13 §10.4) challenges the party; the first Erratum to accept (interact) duels it behind a barrier of `protect` cells for at most 1800 ticks | VRV ≥ 5 |
+| `gpv.evt.flood` | narrative | the target room's lowest-index filled basin releases 20,000,000 ml of its liquid over 600 ticks | a filled basin in the room |
 | `gpv.evt.fire_outbreak` | narrative | ignites the flammable block nearest the room center (doc 03) | — |
-| `gpv.evt.lockdown` | narrative, electronic | doors of the room and its neighbors shut 900 ticks; cameras activate | TEC ≥ 3 |
-| `gpv.evt.redaction_sweep` | narrative | a `hazard.redaction_bar` sweeps the target corridor once | TEC ≥ 1 |
+| `gpv.evt.lockdown` | narrative, electronic | the doors of the target room and its neighbors shut and carry `protect` for 900 ticks; cameras there activate (hackable, doc 09) | TEC ≥ 3 |
+| `gpv.evt.redaction_sweep` | narrative | a `hazard.redaction_bar` sweeps the lowest-index corridor adjoining the target room once | TEC ≥ 1; the room has a corridor |
 
 ### 19.2 Per-genre event lists (skin names)
 
@@ -1071,31 +1238,38 @@ Weights 25, 20, 15, 15, 15, 10 in list order.
 
 ### 19.3 Scheduler (`rng.event`, sequential, host only)
 
+The host draws every event on the Folio's sequential `rng.event` stream (Canon §3.2). Standard and challenge Folios only: boss and rest Folios get no events, complications or guaranteed ambushes. On a tick that qualifies for several, the order is guaranteed ambush, event check, complication check (§4).
+
 ```rust
-// Ticks with t - entry >= 1800 and (t - entry) % 1200 == 0, while the Colophon is closed and < 6 events fired.
+// Event checks: ticks with t - entry >= 1800 and (t - entry) % 1200 == 0,
+// while the Colophon services are closed (doc 14 §3.9) and fewer than 6 events have fired.
 fn event_check(r: &mut Rng, f: &FolioState) {
     if !r.roll_bp(f.gpv.event_bp) { return; }                                   // 1 draw
-    let elig = f.gpv.events.filter(|e| f.cooldown_ok(e) && requires_ok(e, f));  // list order
+    let elig = f.gpv.events.filter(|e| f.cooldown_ok(e) && !f.target_rooms(e).is_empty());   // list order
     if elig.is_empty() { return; }
-    let e = elig[r.weighted(&weights(&elig))];                                   // 1 draw
-    let rooms = target_rooms(e, f);              // rooms holding or adjoining an Erratum, ascending index
-    fire(e, rooms[r.range(rooms.len() as u64) as usize], f);                     // 1 draw; ambush 2 more
+    let e = elig[r.weighted(&position_weights(&elig))];                           // 1 draw
+    let rooms = f.target_rooms(e);                                                // ascending NodeId
+    let room = rooms[r.range(rooms.len() as u64) as usize];                       // 1 draw
+    if e == AMBUSH { ambush_anchors(r, f, room); }                                // 0 or 2 draws (§12)
+    fire(e, room, f);
 }
 ```
 
-Narrative events stay 2400 ticks apart; none repeats in a Folio; boss and rest Folios get none. `gp.ambush_extra` (doc 14) adds guaranteed ambushes at `entry + 5400 × k`, `k = 1..=ambush_extra`, outside the cap, 3 draws each. Complications (§4) run after the event check on shared ticks. Example: a 360 s Gothic Horror Folio runs `floor_div(21600 - 1800, 1200) + 1 = 17` checks; `stream_seed(0x0123456789ABCDEF, "rng.event", 2) = 0x9ad6720d21d175fe` first yields 2892 < 4000, so the first check succeeds.
+`cooldown_ok`: an event that has fired in this Folio never fires again in it, and a narrative event needs 2400 ticks since the last narrative event. `position_weights` keeps each eligible event's §19.2 list-position weight (25, 20, 15, 15, 15, 10). `gp.ambush_extra` (doc 14) adds guaranteed ambushes at `entry + 5400 × k`, `k = 1..=ambush_extra`, outside the cap of 6 and the cooldowns: each draws 1 target-room `range` and the 0 or 2 anchor draws. A check therefore draws 1, 3 or 5 values.
+
+Example: a 360 s Folio runs `floor_div(21600 - 1800, 1200) + 1 = 17` checks (entry + 1800, …, entry + 21000) if nobody enters the Colophon earlier, and fires at most 6 events. For run `0x0123456789ABCDEF`, Folio 2 has `stream_seed(R, "rng.event", 2) = 0x9ad6720d21d175fe`, whose first `range(10000)` is 2892. In a Space Opera Folio 2 (`event_bp` 3000, no clock Law) that value is the first check's roll at entry + 1800 and fires an event; in a Gothic Horror Folio 2 the same value is instead the complication roll at entry + 600 (`roll_bp(250)` with an Erratum in combat since entry + 360, which fails).
 
 ## 20. Folio story fragments
 
-Following Caves of Qud's sultans (R1 §5.9, R4 §7.3), stage `story` draws a life in events, rationalizes gaps afterwards, and scatters biased, contradictory retellings.
+Following Caves of Qud's sultan histories (R1 §5.9, R4 §7.3: events are generated first and rationalized after the fact), stage `story` draws a life in events, then explains its contradictions with bridging events, and scatters biased, contradictory retellings through the Folio. Every Folio type has a story; it draws on `stage_rng(…, "story", attempt)` in the order below.
 
 ### 20.1 Cast
 
-Two `next_u64` name seeds (hero, rival; doc 18 grammar) and 2 of the 4 `story_domains` without replacement (2 equal-weight calls). The **seat** is the lowest-`NodeId` treasury, vault or library, else the highest-`lw` room.
+Draws 1–4: the hero's and the rival's name seeds as two `next_u64` values (doc 18 §7 name grammars), then 2 of the GPV's 4 `story_domains` without replacement (`range(4)`, then `range(3)` over the rest). The **seat** is the lowest-`NodeId` treasury, Reliquary vault or library, else the non-safe room with the highest `lw` (ties to the lower `NodeId`).
 
 ### 20.2 Events and rationalization
 
-Slots origin, rise, deed, fall, erasure; erasure is always `gpv.story.erasure.scraped`. For each other slot, templates whose `requires` tags are all held are eligible, weight `10 + 20 × [template domain ∈ domains]`, 1 weighted call.
+The life has slots origin, rise, deed and fall, then the fixed `gpv.story.erasure.scraped`. Draws 5–8: each slot draws one template with one `weighted` call over **all** of the slot's templates in table order, weight `10 + 20 × [one of the template's domains is a drawn domain]` (`any` never counts as a match). The draw ignores `requires`. Then **rationalization**: when the drawn template's `requires` is not met by the tags held so far, the bridge granting the first tag of that `requires` is inserted before it, with no draw. A story therefore has 5 to 8 events (at most one bridge per slot after the origin, which has no `requires`) and always makes exactly 8 draws in §20.1–§20.2.
 
 | Template | requires | grants | domains |
 |---|---|---|---|
@@ -1113,23 +1287,31 @@ Slots origin, rise, deed, fall, erasure; erasure is always `gpv.story.erasure.sc
 | `gpv.story.fall.cursed` | `curse` or `pact` | `fallen` | moon, madness, crypt |
 | `gpv.story.bridge.met_rival` | — | `rival_kin` | any |
 | `gpv.story.bridge.won_fame` | — | `renown` | any |
+| `gpv.story.bridge.ennobled` | — | `noble` | any |
+| `gpv.story.bridge.orphaned` | — | `orphan` | any |
+| `gpv.story.bridge.found_relic` | — | `relic` | any |
+| `gpv.story.bridge.apprenticed` | — | `trained` | any |
+| `gpv.story.bridge.made_pact` | — | `pact` | any |
+| `gpv.story.bridge.was_cursed` | — | `curse` | any |
 | `gpv.story.erasure.scraped` | — | `erased` | any |
 
-**Rationalization.** When a slot has no eligible template, insert the bridge whose grant unblocks that slot's highest-weight blocked template (ties to the earlier row) and draw again; at most 2 bridges. Example: apprentice → relic_found → built_wonder grants `renown`, so hubris and betrayed are eligible for the fall and no bridge is needed.
+Every first `requires` tag (`noble`, `orphan`, `relic`, `trained`, `pact`, `rival_kin`, `renown`, `curse`) has exactly one bridge, so rationalization always succeeds.
+
+**Worked example** (Steampunk, domains `[brass, clock]`). Origin weights `[10, 10, 10]` (total 30), rise `[10, 10, 10]`, deed `[10, 30, 10]` (built_wonder matches brass and clock; total 50), fall `[10, 10, 10]`. With `range` values 25, 23, 20 and 5: origin 25 ≥ 20 → apprentice (`trained`); rise 23 ≥ 20 → pact, whose `orphan` is missing, so `bridge.orphaned` goes first; deed 20 lies in 10..40 → built_wonder (`trained` held; grants `renown`, `wonder`); fall 5 → betrayed (`renown` held). The life reads: an apprentice, later orphaned, made a pact, built a wonder, was betrayed, and was scraped from the page: 6 events. With values 25, 15, 20, 15 instead it is apprentice, relic_found, built_wonder, hubris, scraped, the 5-event record of §20.5. Vector: run `R`, Folio 2, Gothic Horror, attempt 0 draws hero seed `0x417db148d4394087`, rival seed `0x630efb60831bfd3c`, domains `[moon, blood]` and slot values 27 of 30 (apprentice), 21 of 30 (pact, bridged by orphaned), 2 of 30 (slew_beast, bridged by found_relic) and 47 of 70 (fall weights `[30, 10, 30]`: cursed): 7 events, apprentice, orphaned, pact, found_relic, slew_beast, cursed, scraped.
 
 ### 20.3 Retellings and placement
 
-- `L = 3 + floor_div(n_rooms, 6)` lore objects, each showing one event in one voice. Events are assigned round-robin over one shuffle of the event list, so each appears once when `L >= events`.
-- Voice per object: `weighted(praise 40, slander 40, redact 20)`. Every third object in placement order is **overwritten**: hero and rival swap roles in its text, so two objects contradict each other on purpose.
-- Sockets: 1 weighted call per object over lore sockets weighted by room (library 4, shrine 3, observatory 2, server room 2, crypt 2, others 1); one goes to `secret.room.margin_note` when present.
+- `L = 3 + floor_div(rooms_total, 6)` lore objects (6 at 18 rooms). Draws: one `shuffle` of the event indices `0..E` (`E - 1` draws), and object `k` shows event `perm[k % E]`, so each event appears once when `L >= E`.
+- Voice per object `k`: one `weighted([40, 40, 20])` over praise, slander, redact. Object `k` is **overwritten** when `k % 3 == 2`: hero and rival swap roles in its text (doc 18 §8.7), so two objects contradict each other on purpose.
+- Socket per object `k`: object 0 takes the lore socket of `secret.room.margin_note` when one exists (no draw); every other object makes one `weighted` call over the free lore sockets in ascending block index, weighted by room kind (library 4, shrine 3, observatory 2, server room 2, crypt 2, every other non-safe room 1, safe rooms 0), and a used socket weighs 0 afterwards. With no free socket left, the remaining objects are dropped. Order: the shuffle first, then for `k = 0, 1, …` the voice draw and then the socket draw, so a story makes `8 + (E - 1) + L + (L - [margin note])` draws in all (25 for `E = 6`, `L = 6` without a margin note).
 
 ### 20.4 Reading and solving
 
-Reading is a 60-tick interact granting Inscription XP (doc 04, magnitude `d`). Once the party has read 3 distinct events the story is **solved**: the best secret (editor's desk, then Reliquary, then §17.2 order) is revealed, doc 11's seat relic (affix themes = the 2 domains) is identified (doc 10), the Codex records it (doc 14), and `ev.objective_completed` is emitted.
+Reading is a 60-tick `input.interact` granting Inscription XP (doc 04, magnitude `d`). Once the party has read 3 distinct events (2 under `law.cosmic_horror.forbidden_knowledge`; bridges count) the story is **solved**: the best secret (editor's desk, then Reliquary, then the §17.2 table order, ties to the lower `NodeId`) is revealed to the party with `ev.secret_found`; doc 11's seat relic (affix themes from the 2 domains) becomes `know.identified` (doc 10); the Codex records the story (doc 14); `ev.objective_completed` is emitted with kind 2 (G9); and under `law.hardboiled_noir.leads` the Folio's SecretExit room, if any, is revealed too.
 
 ### 20.5 Folio Leaf and text
 
-One `cat.quest` item per Folio, the Folio Leaf (`item.quest.folio_leaf`, doc 11), lies at the seat; carried through an exit it records the story in the Codex. Text comes from `loc.gpv.story.*` grammars (doc 18) or the Scribe model and never enters simulation state.
+One `cat.quest` item per Folio, the Folio Leaf (`item.quest.folio_leaf`, doc 11; Canon §13.1 makes `cat.quest` this chapter's), lies at the seat as a shared ground item; carried through an exit it records the story in the Codex. Text comes from doc 18's `nar.grammar.story.<template_suffix>.<genre_suffix>` grammars (doc 18 §8.7) or the Scribe model, is cached by seed, and never enters simulation state. The blueprint stores only the record below: seeds as `"0x"` hex strings (Canon §1.6), template IDs, and per lore object its room `NodeId`, event index, voice (0 praise, 1 slander, 2 redact) and overwritten flag.
 
 ```json
 { "hero_name": "0x9c1f00d2a4be7731", "rival_name": "0x13a4c0ffee0f1e2d", "domains": ["brass", "clock"],
@@ -1141,156 +1323,202 @@ One `cat.quest` item per Folio, the Folio Leaf (`item.quest.folio_leaf`, doc 11)
 
 ### 21.1 Layout
 
-`room.rule.boss_spine`: Incipit (antechamber sanctuary, doc 14 §3.7) – Editor checkpoint (≥ 24,000 mm of path on, holding doc 13 §10.1's squad) – boss arena – Colophon. The Endpaper plays in the arena; the Colophon unseals per doc 14 §3.2; Erasure pauses while the Editor lives.
+`room.rule.boss_spine`: Incipit (antechamber sanctuary, doc 14 §3.7) – Editor checkpoint – boss arena – Colophon. The Checkpoint embeds only from §9.1's corridor candidates `C` at Chebyshev distance 3 or 4 cells from the Incipit, so at least 32 blocks of corridor separate them and every checkpoint feet cell lies beyond doc 14's 24,000 mm spawn exclusion; it holds doc 13 §10.1's squad and the boss proof (doc 13 §9.1). The arena follows the Checkpoint as an `H` candidate (a shared door) when one fits, else through a corridor. The Endpaper plays in the arena; the Colophon unseals per doc 14 §3.2; Erasure pauses while the Editor lives (Canon §11.6). Boss Folios have no Rubric, events or complications, and exactly 1 secret.
 
 ### 21.2 Arena construction
 
-Geometry is doc 13 §9.2's (the Proofreader's round reading room, the Redactor's archive, the Continuity Editor's mezzanine hall, the Abridger's platform cross over a void at least 8 m deep, the Last Word's four-quadrant ring); Marginalia reprises reuse them.
+Geometry is doc 13 §9.2's; Marginalia reprises reuse it (doc 14 §9.1 rotation).
 
-1. Box: `ceil_div(interior_m + 2, 16)` cells per axis, `ceil_div(ceiling_m + 2, 8)` storeys (Proofreader 3 × 3 × 2; Last Word 4 × 4 × 2).
-2. Shell and floor from the Folio genre's primary tileset; doc 13 features are authored prefabs `room.tpl.arena_<boss>`, not WFC.
-3. `bright_bp` 6000; 2 `liq.red_ink` pools (3 × 3 × 1) at the edge (doc 08).
-4. Doors to the checkpoint and the Colophon, `protect` while sealed (doc 13 §9.1).
-5. The mini-boss `room.arena` is a generic 3 × 3-cell, 2-storey box with `4 + floor_div(cover_bp, 1000)` 2 × 2 pillars at radius 12 blocks, pillar `k` at yaw `floor_div(65536 × k, p) + phase`, `phase = range(65536)` (1 draw); Space Opera gets 10 pillars.
+1. **Box:** `ceil_div(interior_m + 2, 16)` cells per horizontal axis and `ceil_div(height_m + 2, 8)` storeys, where `height_m` is the interior height (the void depth included). The box may rise above the genre's `storeys` (§9.1 item 6).
+
+| Editor | doc 13 §9.2 interior | `height_m` | Box (cells, x × z × storeys) |
+|---|---|---|---|
+| `boss.editor_v1` the Proofreader | round, radius 20 m: 40 × 40 m | 12 (ceiling) | `ceil_div(42, 16) = 3` × 3 × `ceil_div(14, 8) = 2` |
+| `boss.editor_v2` the Censor | archive 40 × 28 m | 8 (ceiling) | 3 × `ceil_div(30, 16) = 2` × `ceil_div(10, 8) = 2` |
+| `boss.editor_v3` the Continuity Editor | hall 36 × 36 m, mezzanine at 5 m | 12 | `ceil_div(38, 16) = 3` × 3 × 2 |
+| `boss.editor_v4` the Abridger | cross of 5 platforms of 12 × 12 m with 4 m gaps: `3 × 12 + 2 × 4 = 44` m | 18: a 10 m void below the platforms (the doc 13 fall trigger is 8 m down) and 8 m above | `ceil_div(46, 16) = 3` × 3 × `ceil_div(20, 8) = 3` |
+| `boss.ur_editor` the Last Word | ring of four quadrants, 48 × 48 m | 12 | `ceil_div(50, 16) = 4` × 4 × 2 |
+
+2. **Fill:** shell and floor from the Folio genre's primary tileset; doc 13's features (lectern pillars, shelf walls, mezzanine and ramps, platforms and bridges, quadrants) are authored prefabs `room.tpl.arena_<boss suffix>` placed without WFC or draws.
+3. **Light and ink:** `bright_bp` 6000 through §11.3 (dark target 0); 2 `liq.red_ink` pools (3 × 3 × 1) on the floor cells nearest the two arena corners away from the doors (doc 08).
+4. **Doors** to the Checkpoint and the Colophon carry `protect` while the arena is sealed (doc 13 §9.1, doc 14 §3.2).
+5. **Mini-boss arena.** `room.arena` is a generic 3 × 3-cell, 2-storey box (48 × 48 blocks outside, 46 × 46 inside) with `p = 4 + floor_div(cover_bp, 1000)` pillars of 2 × 2 blocks, full interior height, at radius 12 blocks from the arena's center block. Pillar `k` has yaw `y_k = (floor_div(65536 × k, p) + phase) mod 65536`, `phase = range(65536)` (1 draw on `item_rng(…, "arena", node, attempt)`), and center offset `(round_half_even(-12 × sin_bam(y_k), 2^30), round_half_even(-12 × cos_bam(y_k), 2^30))` blocks (Canon §1.3, §1.9); its 2 × 2 footprint spans `center_x - 1 ..= center_x` by `center_z - 1 ..= center_z`. Example: `p = 4`, `phase = 0` puts pillars at yaw 0, 16384, 32768 and 49152, offsets `(0, -12)`, `(-12, 0)`, `(0, 12)` and `(12, 0)`: north, west, south and east. Space Opera (`cover_bp` 6000) gets 10 pillars 36° apart (chord 7.4 blocks), Wuxia 6, the Unwritten 5. Doc 13 §9.3's dressing prefabs go in after the pillars and skip pillar blocks; prefab extents above 46 m are clipped to 46 m.
 
 ## 22. Marginalia modifiers
 
-From Folio 26 each Folio has `k = min(4, 1 + floor_div(n - 26, 10))` modifiers, drawn in stage `marg` without replacement (k weighted calls, excluded genres at 0) and previewed; they stack with doc 14's run-long marginal mutations.
+From Folio 26 each Folio has `k = min(4, 1 + floor_div(n - 26, 10))` modifiers: 1 at Folios 26–35, 2 at 36–45, 3 at 46–55, 4 from 56. The plan function `marg_mods(run, n, genre)` draws them on `stage_rng(run, n, genre, "marg", 0)` with `k` `weighted` calls over the table in order, setting each picked weight and every weight excluded for the genre to 0 (without replacement); the exit preview shows them (§5.7). They stack with doc 14 §9.3's run-long Marginal mutations and apply in boss Folios too, where some have nothing to act on.
 
 | ID | w | Excluded | Effect |
 |---|---|---|---|
-| `lattice.marg.annotated` | 60 | — | +2 secrets |
-| `lattice.marg.bleeding` | 80 | RD, UW, UT | drift certain, +1 drift genre |
-| `lattice.marg.brittle` | 60 | — | every crate, barrel and wooden block is destructible at half doc 07 HP |
-| `lattice.marg.champions` | 60 | — | doc 13 doubles the champion count |
+| `lattice.marg.annotated` | 60 | — | `n_secrets` + 2 (§17.1) |
+| `lattice.marg.bleeding` | 80 | RD, UW, UT | drift chance 10000 and one extra drift genre (`extra = 1` in §14.1), within the cap of 3 |
+| `lattice.marg.brittle` | 60 | — | every worldgen `destructible` block (doors, crates, barrels, planks, glass, cracked walls) has half its doc 07 block HP |
+| `lattice.marg.champions` | 60 | — | doc 13 doubles the budget champions and adds one aspect to the aspect set, at most 3 (doc 13 §7.3, §10.1) |
 | `lattice.marg.dense` | 100 | — | `density_bp` × 12500 |
-| `lattice.marg.erased` | 40 | — | +3 `hazard.ink_seep` |
-| `lattice.marg.flooded` | 60 | UW | basin chance 10000; +2 basins per cistern |
-| `lattice.marg.sealed` | 40 | UW | no mid-Folio shop rooms; +2 chests |
-| `lattice.marg.silent` | 60 | — | doc 09 sound attenuation × 7000 |
+| `lattice.marg.erased` | 40 | — | after stage `hazard`, 3 more `hazard.ink_seep`, each in a non-safe room by `range` on a free hazard socket (3 draws) |
+| `lattice.marg.flooded` | 60 | UW | every basin socket of a non-safe room fills (chance 10000); each `room.cistern` turns 2 more free floor areas into filled basins, no draw |
+| `lattice.marg.sealed` | 40 | UW | D3 places no `room.shop`, so the Folio has no mid-Folio vendors or Fortune Engines (the Colophon and Interleaf keep theirs); chests `c + 2` |
+| `lattice.marg.silent` | 60 | — | sound carries farther: doc 09's per-block sound attenuation × 7000 |
 | `lattice.marg.trapped` | 80 | — | `trap_bp` × 20000 |
-| `lattice.marg.unlit` | 80 | — | `bright_bp` × 5000; fixtures emit `fixture_level - 2` |
-| `lattice.marg.volatile` | 60 | UW | +1 flame jet or oil slick per 4 rooms |
+| `lattice.marg.unlit` | 80 | — | `bright_bp` × 5000; worldgen fixtures emit `fixture_level - 2`, so `protect_r` drops by 2 (Gothic Horror 4 → 2); safe rooms are still spawn-proofed (§11.3 step 3) |
+| `lattice.marg.volatile` | 60 | UW | after stage `hazard`, `floor_div(rooms_total, 4)` more hazards, each one `weighted([1, 1])` (`flame_jet`, `oil_slick`) and one `range` over non-safe rooms with a free hazard socket (2 draws each) |
 
 Examples (run `0x0123456789ABCDEF`): Folio 26 Gothic Horror `[annotated]`; Folio 36 Mythic Fantasy `[annotated, champions]`; Folio 36 Unwritten `[dense, unlit]`.
 
 ## 23. Abridged and Prologue layouts
 
-- **Abridged** (Canon §17.1, doc 14 §3.1): Folio `n ∈ 1..=15` has positions `[1, 4, 5]` per Volume and depths 1, 3, 5, 6, 8, 10, 11, 13, 15, 16, 18, 20, 21, 23, 25. Position-4 Folios carry the Interleaf; position 5 is the boss; Folio 15 is the Ur-Text. Abridged passes `folio_scale_bp` 9000 (doc 14 §8.1). Streams and EntityIds use `n`; depth-driven values use `d`. Secret exits come only from position 1. Abridged has no Marginalia.
-- **Prologue** (`mode.prologue`, doc 14): `generate_folio` returns the authored chain `room.prologue_l1` … `room.prologue_l7` with no draws.
+**Abridged** (`mode.abridged`, Canon §17.1, doc 14 §3.1, §8.2a) keeps every rule of this chapter and changes only these inputs and counts:
+
+| `n` | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Volume | 1 | 1 | 1 | 2 | 2 | 2 | 3 | 3 | 3 | 4 | 4 | 4 | 5 | 5 | 5 |
+| `pos` | 1 | 4 | 5 | 1 | 4 | 5 | 1 | 4 | 5 | 1 | 4 | 5 | 1 | 4 | 5 |
+| `d` | 1 | 3 | 5 | 6 | 8 | 10 | 11 | 13 | 15 | 16 | 18 | 20 | 21 | 23 | 25 |
+
+- Streams, sub-streams and `EntityId`s use `n`; every depth-driven value (`P`, `T`, `H`, `S`, `vol_of_depth`, Law and secret-exit thresholds, vein count) uses `d`.
+- `folio_type`: `n = 1` is standard, `pos = 5` is the boss (Folios 3, 6, 9, 12, 15), and `pos = 4` Folios draw `[8500, 1500, 0]`, so they are standard or challenge and always carry the Interleaf. Folio 15 is the Ur-Text (§5.4 rule 7), and the exit draw at Folio 14 still makes its 3 unseen candidates (G11).
+- Room counts: `n_target = max(4, mul_bp(base, 9000))`, so Mythic Fantasy plans 14 to 18 Rooms instead of 16 to 20.
+- Loot quantity per Folio × 16667 Bp (Canon §17.1): chests `mul_bp(4 + range(3), 16667)` = 6, 8 or 10, and 60 floor spots (15 per slot, doc 11 §9.6). Reliquary and Engine counts follow doc 11.
+- Secret exits follow §17.4 with `d`: a pos-1 Folio and a boss Folio before Folio 15 can hold one (the next Folio is never a boss); a pos-4 Folio cannot.
+- The lattice's Volume rule spans 3 Folios, the run cap of 3 appearances still applies, and at most 5 genres are ever excluded (§5.4). Abridged has no Marginalia.
+- Expected time: 15 Folios at 240 to 300 s for doc 14's 60 to 75 minutes; the 9000 room scale keeps 90% of the drawn rooms, rounded down to whole rooms (18 → 16).
+
+**Prologue** (`mode.prologue`, doc 14 §11): `generate_folio` returns the authored chain `room.prologue_l1` … `room.prologue_l7` with no draws and no Marginalia, events, secrets or bleed.
 
 ## 24. Determinism, tests and owned statuses
 
 ### 24.1 Determinism rules
 
-1. `generate_folio` reads only `GenInput` and `ContentDb` (with the run's content set); equal inputs give equal `blueprint_hash` on every platform (Canon §21 test 31).
-2. Every draw names its sub-stream (§7.2); per-room and per-chunk work uses `item_rng`, so `par.map` order is irrelevant.
-3. Lists are sorted before selection, ties to the lower index; no `HashMap` or `HashSet`.
-4. Plan functions are recomputed, never cached; preview and generation share code.
-5. Events, dread and complications use `rng.event` on the host only.
+1. `generate_folio` reads only `GenInput` and `ContentDb` (with the run's content set); equal inputs give equal `blueprint_hash` on every platform (Canon §21 test 31). Party size, account state, wall-clock time, thread count and floats never reach it.
+2. Every draw names its sub-stream (§7.2): stage streams `ftype`, `rubric`, `bleed`, `marg`, `secret_exit` (attempt 0 always), `graph`, `typing`, `zones`, `embed`, `liquid`, `node`, `hazard`, `secret`, `story`, `loot`, and per-item streams `wfc`, `dress`, `light`, `puzzle`, `arena`. Per-room and per-chunk work uses `item_rng`, so `par.map` order is irrelevant.
+3. Lists are sorted before selection, ties to the lower index; no `HashMap` or `HashSet` (Canon §1.11).
+4. Plan functions (`folio_type`, Rubric, `bleed_plan`, `marg_mods`, `secret_exit_plan`, and doc 13's aspect set) are recomputed, never cached; preview and generation share code.
+5. Events, dread and complications use the sequential `rng.event` on the host only; loot contents use `rng.loot_place` and keyed `rng.loot` (doc 11); population uses `rng.spawn` (doc 13). Worldgen never draws from them.
+6. Variable draw counts (WFC observations, shuffles, rejections) are declared per stage (§7.3), as Canon §3.4 requires.
 
 ### 24.2 CI
 
-- PR sweep: 50 seeds × 16 genres × 4 types pass V1–V14 within 3 attempts, fallback in fewer than 4.
-- Nightly: 1000 seeds × 16 × 4; p50 > 110 ms or p99 > 260 ms on the Steam Deck runner fails.
-- 32 golden `(GenInput, blueprint_hash)` pairs agree on x86_64 and aarch64 Linux, x86_64 Windows and wasm32.
+- **Unit vectors:** acceptance tests 1–2, 4–8, 15, 16, 29, 30 and 36 run as plain unit tests against the Python-checked values in this chapter.
+- **PR sweep:** 50 seeds × 16 genres × 4 types (64 per seed, 3,200 in all) pass V1–V16; at least 3,184 (99.5%) pass by attempt 2, and fewer than 4 need the fallback.
+- **Nightly:** 1,000 seeds × 16 × 4; the Steam Deck runner fails the build when p50 exceeds 110 ms, p99 260 ms or any single Folio 900 ms (doc 02 `perf.deck.gen.*`).
+- **Golden hashes:** 32 `(GenInput, blueprint_hash)` pairs agree on x86_64 and aarch64 Linux, x86_64 Windows and wasm32.
 
 ### 24.3 `st.contradicted` and `st.unmoored` (owner 12)
 
 - **`st.contradicted`** is present exactly while an equipped component of the bearer has `C >= 3` (Canon §11.1), re-evaluated on each `ev.contradiction_changed`; UI only.
-- **`st.unmoored`** (Canon §5.11): each Erratum keeps the ticks of its last 3 Contradiction failures (jams, fizzles, sparks). A failure at tick `t` whose oldest kept failure is at `t - 600` or later applies the status for 300 ticks (refresh). While it lasts: Death's Door (Canon §10.8 step 1) is skipped and not marked used; the bearer's own drops roll rarity with `SER = 40` (Canon §13.4); components at `C = 1` or `2` use the `C = 3` row (potency 7000, failure 500). It ends early on the tick the bearer's origin enters a `room.colophon` cell or a `zone.seam` cell. Example: failures at ticks 1000, 1300 and 1590 apply it at 1590 until 1890; a fourth at 1700 refreshes it to 2000.
+- **`st.unmoored`** (Canon §5.11): each Erratum keeps the ticks of its last 3 Contradiction failures (jams, fizzles, sparks), the newest included. A failure at tick `t` whose oldest kept failure is at `t - 600` or later applies the status for 300 ticks (refresh). While it lasts: Death's Door (Canon §10.8 step 1) is skipped and not marked used; the bearer's own drops roll rarity with `SER = 40` (Canon §13.4); components at `C = 1` or `2` use the `C = 3` row (potency 7000, failure 500). It ends early on the tick the bearer's origin enters a `room.colophon` cell or a `zone.seam` cell. Example: failures at ticks 1000, 1300 and 1590 apply it at 1590 until 1890; a fourth at 1700 refreshes it to 2000.
 
 ## Exports
 
-- `genre.*`: the full GPV of all 16 genres (§2, §3).
-- `law.*`: the 30 World Laws of §4.
+- `genre.*`: the full 65-dimension GPV of all 16 genres (§2, §3), including the non-canon fields `fixture_level`, `fog`, `ambient_decic`, `liquid_viscosity_bp`, `gas_dissipation_bp`, `damage_affinity`, `hard_bp` (§2.3, G13).
+- `law.*`: the 30 World Laws of §4, among them every Law Canon §5.10 requires.
 - `zone.plain`, `zone.bleed`, `zone.seam`, `zone.dynamic` (§14).
-- `lattice.node.margin`; `lattice.edge.<from_suffix>.<to_suffix>` (§5.2–§5.3); `lattice.folio.standard`, `.challenge`, `.rest`, `.boss`; `lattice.challenge.gauntlet`, `.siege`, `.heist`, `.duel`, `.race`; the 12 `lattice.marg.*` of §22.
-- `gpv.layout.*` (16, §3.4); `gpv.evt.*` (21, §19.1); `gpv.story.*` (15, §20.2).
-- `room.*`: the 41 kinds of §16.1 and `room.prologue_l1` … `room.prologue_l7`; tags `room.safe`, `room.sanctuary`, `room.stealth`, `room.no_bleed`, `room.no_spawn`, `room.no_mount`, `room.electronic`; templates `room.tpl.*` including `room.tpl.fallback.<layout>` and `room.tpl.arena_<boss>`; the 25 rules `room.rule.*` of §8.2.
+- `lattice.node.margin`; `lattice.edge.<from_suffix>.<to_suffix>` (§5.2–§5.3); `lattice.folio.standard`, `lattice.folio.challenge`, `lattice.folio.rest`, `lattice.folio.boss` (§6.1); `lattice.challenge.gauntlet`, `lattice.challenge.siege`, `lattice.challenge.heist`, `lattice.challenge.duel`, `lattice.challenge.race` (§6.3); the 12 `lattice.marg.*` of §22.
+- `gpv.layout.*` (16, §3.4); `gpv.evt.*` (21, §19.1); `gpv.story.*` (21, §20.2: 12 slot templates, 8 bridges, 1 erasure).
+- `room.*`: the 41 kinds of §16.1 and `room.prologue_l1` … `room.prologue_l7`; tags `room.safe`, `room.sanctuary`, `room.stealth`, `room.no_bleed`, `room.no_spawn`, `room.no_mount`, `room.electronic`; templates `room.tpl.*` including `room.tpl.fallback.<layout>` and `room.tpl.arena_<boss suffix>`; the 25 rules `room.rule.*` of §8.2.
 - `biome.<suffix>.<name>`: the 32 tilesets of §3.3.
-- `hazard.*`: the 28 archetypes of §18.1.
-- `secret.room.*` (8), `secret.exit.*` (4), `secret.hide.*` (11) (§17).
-- Requested outside this chapter's namespaces (Canon gaps G9): events `ev.secret_found`, `ev.objective_completed`; template `item.quest.folio_leaf` (doc 11).
+- `hazard.*`: the 28 archetypes of §18.1, `hazard.chasm` and `hazard.gravity_flip` structural.
+- `secret.room.*` (8) and `secret.exit.*` (4) (§17.2, §17.4); the 11 hiding methods with their `ev.secret_found` indices (§17.3): `secret.hide.cracked_wall` 0, `secret.hide.false_wall` 1, `secret.hide.lever` 2, `secret.hide.crate_stack` 3, `secret.hide.waterfall` 4, `secret.hide.ceiling_hatch` 5, `secret.hide.verb_lock` 6, `secret.hide.dream_veil` 7, `secret.hide.clearance` 8, `secret.hide.blank_page` 9, `secret.hide.palimpsest_wall` 10.
+- Owned statuses' behavior: `st.contradicted`, `st.unmoored` (§24.3).
+- Requested outside this chapter's namespaces (Canon gaps G9): events `ev.secret_found` and `ev.objective_completed` (registered by doc 03); template `item.quest.folio_leaf` (doc 11).
 
 ## Interface assumptions
 
-- **I1 (doc 03):** doc 03 §10 light (worldgen calls the same propagation); applies Canon §5.9 physics, `gsign`, relinks, `protect`, `ambient_decic`; instantiates records in §7.1 order.
-- **I2 (doc 16):** peers compare `blueprint_hash`; a mismatch is a desync.
-- **I3 (doc 07):** the §5.9 materials, per-genre fixture, wall, floor and trim blocks with `destructible` where §9.2 says, slabs, resource-node yields, `station.*`.
-- **I4 (doc 08):** the liquids of §3.5, `liq.wellspring`, `gas.miasma`, `gas.steam`; automata start from settled worldgen liquids.
-- **I5 (doc 13):** budgets over `spawn_slots`, spawn cells and anchors; a preview-recomputable aspect set (§7.3); civic packs, territory, war fronts, rescue natives, hirelings; §4 Law waves and Nemesis; `genre_shift` (§14.3); mini-boss arenas fitting `room.arena`.
-- **I6 (doc 11):** fills chests, floor spots, guarded spots, Incipit caches and Reliquary spots; secret tables; the story relic; `item.quest.folio_leaf`.
-- **I7 (doc 09):** `lock.*` for Locked edges and the clearance lock; disarming; camera alarms; fog and sound attenuation.
-- **I8 (docs 04, 05, 06, 10):** reading XP; `law_bound` techniques; dismounting; altars and favor; censored names.
-- **I9 (doc 14):** calls `generate_folio` with §7.1 inputs; owns phases, Rubric completion, doors and votes, Colophon, Interleaf, Endpaper, Codex and unlock sets.
-- **I10 (docs 17, 18):** exit preview display, transition length; naming and story grammars, `loc.*` skins, seams, palettes, music.
+- **I1 (doc 03):** worldgen calls doc 03 §10.3's light propagation for the light plan and the bake; doc 03 applies Canon §5.9 physics per local genre, the `flip` bit (`gsign`), relink portals, `protect`, `open_tag`, `ambient_decic`, and instantiates records in §7.1 order; dynamic zones (§14.3) are doc 03 state with at most 2 active.
+- **I2 (doc 02, doc 16):** `generate_folio` signature and `OrderedMap`; `FolioView.bleed` holds the entry zone plus at most 3 drift zones (§14.1 caps drift at 3); peers compare `blueprint_hash`, and a mismatch is a desync; budgets `perf.deck.gen.folio_*` (§7.3). Doc 02's citations of "doc 12 §6.3" and "§13.1" mean §7.3 and §14.1.
+- **I3 (doc 07):** the Canon §5.9 materials; `block.masonry.<stone>` genre walls and floors, `block.light_fixture.<genre_suffix>` with `light_emit = fixture_level`, `block.planks`, `block.door.*`, `block.cracked_wall`, `block.glass_pane`, `block.torch`; the 23 `block.node.*` and the §9.4 vein weights, whose count `6 + floor_div(d, 5)` §11.2 places; mining time × GPV `hard_bp`; station tiers from `room_bias`. Doc 07's citations of "doc 12 §2.1, §2.2, §2.4, §15" mean §2.3, §3.3, §2.1 and §16.
+- **I4 (doc 08):** the liquids of §3.5 (`liq.blood` included), `liq.wellspring` fonts with 1 to 3 uses, `gas.miasma`, `gas.steam`; harvest-node ingredients for the H and F classes by biome (mineral ingredients come from doc 07 veins); automata start from settled worldgen liquids; `liquid_viscosity_bp` clamps to `500..=10000` there.
+- **I5 (doc 13):** budgets over `spawn_slots`, spawn cells and anchors; the aspect set as the first `rng.spawn` draws, recomputable for the preview (§5.7); `director.profile.rest` spawns nothing; the checkpoint squad; civic packs, territory, war fronts, rescue natives, hirelings; Law waves and the Nemesis; ambush waves on §12's ambush anchors; `genre_shift` (§14.3); mini-boss prefabs fit the 46 × 46-block `room.arena` interior; `lattice.marg.champions` doubles budget champions and adds one aspect.
+- **I6 (doc 11):** fills chests, floor spots (9 per slot, 15 in Abridged), guarded spots, Incipit caches and Reliquary spots; puts vendors and Engines in the §6.2 sockets (none when `lattice.marg.sealed` removes the shop); omits Lucre lines in the Unwritten; secret tables `loot.secret.cache`, `loot.secret.vault`, `loot.secret.palimpsest`; the story relic; `item.quest.folio_leaf`; `item.tool.torch` ground items in sigil puzzle rooms.
+- **I7 (doc 09):** `lock.*` for Locked edges, verb seals and the clearance lock; disarming hidden hazards; camera alarms and `alarm_raised`; light bands, fog and sound attenuation. Doc 09's citation of "doc 12 §10.2" for the light bands means §11.3.
+- **I8 (docs 04, 05, 06, 10):** reading XP; `law_bound` techniques and the High Noon standoff term; dismounting in `room.no_mount`; altars, prayers within 3000 mm and favor; censored names; identification of the story relic.
+- **I9 (doc 14):** calls `generate_folio` with §7.1 inputs at each Folio entry; owns phases, Rubric completion, doors, the vote, the Colophon, Interleaf, Endpaper, Codex and unlock sets; a rest Folio has no Rubric (§6.2). Doc 14's citations "doc 12 §4.5", "§4.6", "§5.1", "§5.2", "§5.3" and "§4.9" mean §5.5, §5.6, §6.1, §6.2, §6.3 and doc 14's own §3.6, and its "Threshold room" is the Colophon.
+- **I10 (docs 17, 18):** the door panel shows every §5.7 field; the transition waits for the blueprint; doc 18 ships `nar.grammar.story.<template_suffix>.<genre_suffix>` for all 21 §20.2 templates, name grammars, `loc.*` skins for hazards and events, seams, palettes and music.
 
 ## Canon gaps
 
-- **G1** The contract fixes the header to canon-1.2; the canon on disk is canon-1.4, and every rule here was checked against it.
-- **G2** Canon §3.2 has no sub-streams. Assumed: §7.2 derivation; previews recompute seeds without advancing live streams.
+- **G1** The task contract cites canon-1.2 additions; the canon on disk is canon-1.5. Every rule here was checked against canon-1.5, and the additions this chapter owns are §2 (identity table), §2.4 (spawn light and placed light), §16.4 (`room.no_mount`), §23 (Abridged layout), §17.4 (secret exits) and §5.7 (champion-aspect preview).
+- **G2** Canon §3.2 has no sub-streams. Assumed: §7.2 derivation from `rng.worldgen`; previews recompute seeds without advancing live streams.
 - **G3** `FOLIO_1_GENRE` may be a secret Origin. Assumed: §5.6 maps it to a core genre.
-- **G4** Assumed: "lattice edge weights" means edge × freshness (§5.4).
+- **G4** Assumed: "lattice edge weights" in `LATTICE_CANDIDATES` means edge × freshness (§5.4).
 - **G5** The repeat rule does not name secret genres. Assumed: once per run before Marginalia (§17.4).
 - **G6** Canon §17.1 gives every Colophon a shop, and Canon §5.2 gives the Unwritten none. Assumed: §5.2 wins; Unwritten Colophons have no shop (doc 14 agrees).
 - **G7** Canon §5.8 defines `local_genre` by bleed zones only. Assumed: inside a seam `local_genre` is the Folio genre (it "supplies skins") while `local_axiom` is the per-axis maximum.
-- **G8** Canon §4.2 has no per-cell gravity sign. Assumed: Oneiric flip cells reverse Y gravity (doc 03 `gsign`).
-- **G9** Canon §18 lacks `ev.secret_found` and `ev.objective_completed`, which doc 04 expects from doc 12. Assumed: emitted on secret reveal and on Rubric, challenge and story completion.
-- **G10** Canon §5.7 does not list "electronic" things. Assumed: shock floors, cameras, lockdowns, the clearance lock, server rooms, Space Opera doors; doc 13 turrets inherit the rule.
+- **G8** Canon §4.2 has no per-cell gravity sign. Assumed: Oneiric flip cells carry doc 03's `flip` bit and reverse Y gravity (`gsign = +1`).
+- **G9** Canon §18 lacks `ev.secret_found` and `ev.objective_completed`, which doc 04 expects from this chapter. Assumed: emitted on secret reveal (§17.3) and on Rubric, challenge and story completion (kinds 0, 1, 2); doc 03 has registered both.
+- **G10** Canon §5.7 does not list "electronic" things. Assumed: shock floors, cameras, lockdowns, the clearance lock, hack seals, server rooms and Space Opera doors; doc 13 turrets inherit the rule.
 - **G11** Assumed: exits into forced Folios (Standard 24, Abridged 14) still draw 3 unseen candidates.
-- **G12** Doc 13 §10.1 puts the Editor squad "in the antechamber" while doc 14 §3.3 makes the antechamber a sanctuary. Assumed: the squad stands in the Editor checkpoint.
-- **G13** GPV fields `fixture_level`, `fog`, `ambient_decic`, `liquid_viscosity_bp`, `gas_dissipation_bp` and `damage_affinity` are not canon; docs 03, 08 and 13 request them, and they extend Canon §5.9 without changing it.
+- **G12** Earlier drafts of doc 13 placed the Editor squad "in the antechamber", which doc 14 makes a sanctuary; doc 13 §10.1 now places it in `room.editor_checkpoint`, as §21.1 does. Closed.
+- **G13** GPV fields `fixture_level`, `fog`, `ambient_decic`, `liquid_viscosity_bp`, `gas_dissipation_bp`, `damage_affinity` and `hard_bp` are not canon; docs 03, 07, 08 and 13 consume them, and they extend Canon §5.9 without changing it.
+- **G14** Canon §17.1 multiplies Abridged "loot quantity per Folio" by 16667 Bp without saying which counts. Assumed: worldgen chests (6, 8 or 10) and doc 11's floor loot (15 per slot) scale; Reliquaries, Engines and vendors do not.
+- **G15** Canon §12.3 names only ambient and wave spawns. Assumed, with doc 13 §10.1: the initial population also skips spawn cells whose `light_block` exceeds `spawn_block_max`.
+- **G16** Canon §3.2 gives `rng.loot_place` the "floor loot placed by worldgen". Assumed, with doc 11 §9.11: worldgen's `rng.worldgen` sub-streams choose loot-spot counts and positions (chests, floor spots, caches), and `rng.loot_place` chooses everything placed in them.
+- **G17** Canon §4.3's list of destructible blocks omits light fixtures, falling-debris rubble, pit lids and hull panels. Assumed: they are destructible (wooden or glass structures in doc 07's terms), because doc 09's light manipulation and §18.1's hazards rely on it; no structural wall or floor ever is.
 
 ## Acceptance tests
 
-`R = 0x0123456789ABCDEF`; abbreviations per §2.3.
+`R = 0x0123456789ABCDEF`; abbreviations per §2.3. Every number below was recomputed with an independent implementation of Canon §3.
 
 1. `stream_seed(R, "rng.lattice", 1) = 0xb93f5f6ccba93fac`; `lattice_candidates(R, 1, CP, [CP])`: totals 6,450,000 / 5,250,000 / 3,900,000, draws 1,106,450 / 3,525,875 / 3,019,215, result `[SO, HN, SP]`.
-2. `stream_seed(R, "rng.lattice", 0) = 0xa487e0eae90fea26`; seeded Folio 1 candidates `[MF, HN, SP]`; Daily 2026-10-11 gives `[WW, CH, MF]`.
-3. 10,000 random legal histories: 3 distinct candidates, never current, same-Volume, capped or secret; 3 `weighted` calls.
+2. `stream_seed(R, "rng.lattice", 0) = 0xa487e0eae90fea26`; seeded Folio 1 candidates `[MF, HN, SP]`; Daily 2026-10-11 (`0xc6f2e12ddca712ab`) gives `[WW, CH, MF]`.
+3. Exhaustive enumeration over `c` (capped genres) and position shows at most 9 excluded core genres for Standard `m <= 24`, 5 for Abridged and 4 for Marginalia; 10,000 random legal histories always yield 3 distinct candidates, never current, same-Volume, capped or secret, with exactly 3 `weighted` calls.
 4. `gen_seed(R, 2, genre.space_opera) = 0x1c35d41d581f5eaa`; `stream_seed(R, "rng.event", 2) = 0x9ad6720d21d175fe`, first `range(10000)` 2892.
-5. `folio_type`: Folio 2 SO standard (3860), HN rest (9855), SP rest; Folio 3 CP rest, MF challenge; Folio 4 CP challenge, MF and GH standard; Abridged GH Folios 1–15 boss exactly at 3, 6, 9, 12, 15.
-6. Rubric at Folio 2: SO catchwords, HN keeper, SP keeper, MF keeper. Chests at Folio 2: SO 4, HN 6, SP 4, MF 4.
-7. `bleed_plan` with prev MF: Folio 7 GH (MF, [], none), ON (MF, [MA, GH], none), CH (MF, [FT], none), RD none, GH with `bleed_add` 1 (MF, [CH, HN], none); Folio 2 GH (MF, [HN], seam HN); Folio 3 GH (MF, [], seam MF).
+5. `folio_type`: Folio 2 SO standard (3860), HN rest (9855), SP rest (9596), MF standard (7853); Folio 3 CP rest (9633), MF siege challenge (8993); Folio 4 CP gauntlet challenge (9480), MF (774) and GH (4365) standard; Abridged GH Folios 1–15 are bosses exactly at 3, 6, 9, 12, 15.
+6. Rubric at Folio 2: SO catchwords (5080), MF keeper (1931); the rest Folios HN and SP draw none. Chests at Folio 2 (stage `loot`, attempt 0): SO 4, HN 6, SP 4, MF 4; in Abridged the same draws give 6, 10, 6, 6.
+7. `bleed_plan` with prev MF: Folio 7 GH (MF, [], none), ON (MF, [MA, GH], none), CH (MF, [FT], none), RD none, GH with `bleed_add` 1 (MF, [CH, HN], none); Folio 2 GH (MF, [HN], seam HN); Folio 3 GH (MF, [], seam MF). No input yields more than 3 drift genres.
 8. Marginalia `k` at 26, 35, 36, 45, 46, 56, 100 = 1, 1, 2, 2, 3, 4, 4; Folio 26 GH `[annotated]`; 36 MF `[annotated, champions]`; 36 UW `[dense, unlit]`.
 9. Each preview of tests 1–2 equals its generated Folio's type, bleed plan, modifiers and aspect set.
-10. `protect_r`: MF 13, GH 4, CH 4, SO 14, CP 12, PA 11, WW 12, HN 11, WX 11, SP 13, FT 10, MA 12, ON 9, UT 13; RD and UW none; flat-floor coverage MF 265, GH 13.
-11. A 2 × 2 hall has 17 `spawn_slots` in SO, 14 in GH, and 0 within 24,000 mm of the Incipit spawn.
-12. Hazards: dart at `d = 10` 9,714 mHP (Erratum), 13,030 (NPC); crusher at `d = 15` 52,900; flame pulse at `d = 5` 9,910.
-13. Typing weights: CP server room 128, MF library 126, WX hall 480, RD garden 0, illumination vault 0 without its unlock.
-14. L1–L7 pass for all 16 records; GH `spawn_block_max` 5 fails L2; dropping `law.wuxia.qinggong` fails L7.
-15. Dread: GH in combat from entry holds 1000 Bp at tick 1080 and 0 once the Colophon opens; HN rolls at a constant 500.
-16. `st.unmoored`: failures at 1000, 1300, 1590 apply it until 1890; another at 1700 refreshes to 2000; entering a Colophon cell ends it that tick.
+10. `protect_r`: MF 13, GH 4, CH 4, SO 14, CP 12, PA 11, WW 12, HN 11, WX 11, SP 13, FT 10, MA 12, ON 9, UT 13; RD and UW none; flat-floor coverage of a fixture 2 blocks up: MF 265 cells, GH 13.
+11. A 2 × 2 hall has 17 `spawn_slots` in SO, 14 in GH, 0 in a rest Folio, and 0 within 24,000 mm of the Incipit spawn.
+12. Hazards: dart at `d = 10` 9,714 mHP (Erratum), 13,030 (NPC); crusher at `d = 15` 52,900; flame pulse at `d = 5` 7,432; at Folio 1 against AR 20 a crusher leaves 22,728 mHP and three darts 11,079.
+13. Typing weights: CP server room 128, MF library 126, WX hall 480, RD garden 0, illumination vault 0 without its unlock; CP's 25 always-available kinds total 1,819.
+14. L1–L10 pass for all 16 records; GH `spawn_block_max` 5 fails L2; dropping `law.wuxia.qinggong` fails L7; a 300-prototype tileset with symmetry `l` fails L8.
+15. Dread (GH, an Erratum in combat on every 360-tick mark): 250 at `entry + 360`, 1000 at `entry + 1440`, the check at `entry + 1800` rolls `roll_bp(1250)`, the cap 2500 at `entry + 3600`, and 0 once the Colophon services open; a Hardboiled Noir Folio rolls a constant 500.
+16. `st.unmoored`: failures at 1000, 1300, 1590 apply it until 1890; another at 1700 refreshes to 2000; entering a Colophon or seam cell ends it that tick; Death's Door is not marked used while it lasts.
 17. Same `GenInput` after different histories, and 1-thread versus 4-thread `par`, give identical `blueprint_hash` (100 seeds).
-18. 50 seeds × 16 genres × 4 types pass V1–V14 within 3 attempts; fallback < 4 in 3,200.
-19. A key behind its own lock fails V2; a sealed pit V4; an MF camera V8; lava 5 blocks from the Incipit spawn V6; an Interleaf at 3000 Bp fails V11 until repaired.
-20. Swept safe rooms carry `no_spawn`, and where `spawn_block_max <= 14` every feet cell exceeds it.
-21. 2 blocks of path headroom → `room.no_mount`; 3 blocks everywhere → untagged.
-22. An Oneiric flip room has clear height 4 and deals no fall damage on entry.
-23. After Oneiric at Folio 4, an Oneiric exit found at Folio 9 appends no door but keeps its cache; no secret exit precedes a boss or depth 25.
-24. A 360 s GH Folio runs 17 checks, at most 6 events; `ambush_extra = 1` adds an ambush at entry + 5400.
-25. Collapsed WFC grids satisfy every face constraint; a contradictory tileset ends in `fallback_fill` after exactly 3 resets.
-26. Nightly sweep p50 ≤ 110 ms, p99 ≤ 260 ms (Steam Deck runner), max ≤ 900 ms.
+18. The PR sweep of 3,200 Folios passes V1–V16, at least 3,184 by attempt 2, fewer than 4 with the fallback.
+19. A key behind its own lock fails V2; a sealed cellar under a 5-block hard drop fails V4; an MF camera fails V8; lava 5 blocks from the Incipit spawn fails V6; an Interleaf at 3000 Bp fails V11 until repaired; a sigil room without torches fails V15.
+20. Safe rooms carry `no_spawn`, and where `spawn_block_max <= 14` every feet cell's `light_block` exceeds it after the bake.
+21. 2 blocks of path headroom → `room.no_mount`; 3 blocks everywhere → untagged; a mount summoned in a library fails.
+22. An Oneiric flip room has clear height 4, doors 4 tall, no zoned neighbor, and deals no fall damage on entry or exit (4000 mm < 4640 mm).
+23. After Oneiric at Folio 4, an Oneiric exit discovered at Folio 8 appends no door but keeps its cache; Folios 4, 9, 14, 19 and 24 plan no secret exit; MF Folio 8 plans Unwritten (7395, 680), HN Folio 7 Redaction (706), FT Folio 8 none.
+24. A 360 s Folio runs 17 event checks and fires at most 6 events; SO Folio 2's first check fires (2892 < 3000); in GH Folio 2 the same value is the failed complication roll at `entry + 600`; `ambush_extra = 1` adds an ambush at `entry + 5400` outside the cap.
+25. Collapsed WFC grids satisfy every face constraint; a tileset whose every observation contradicts ends in `fallback_fill` after exactly 3 resets, with no draws after the failure.
+26. The nightly sweep holds p50 ≤ 110 ms, p99 ≤ 260 ms and max ≤ 900 ms on the Steam Deck runner.
+27. The §3.6 record parses as JSON with no floats and has 65 keys; L2 compares its Block A and B fields to Canon §5.2 and §5.9.
+28. No OneWay edge is vertical; every spike pit and collapsing-floor pit is 2 blocks deep and V4 passes with an Erratum dropped into it at VERVE 0.
+29. Story vector: `R`, Folio 2, GH, attempt 0 gives hero seed `0x417db148d4394087`, rival `0x630efb60831bfd3c`, domains `[moon, blood]` and 7 events: apprentice, orphaned, pact, found_relic, slew_beast, cursed, scraped; every story makes exactly 8 draws before its retellings.
+30. Mini-boss pillars with `p = 4`, `phase = 0` sit at offsets `(0, -12)`, `(-12, 0)`, `(0, 12)`, `(12, 0)`; Space Opera places 10.
+31. Editor arena boxes: Proofreader 3 × 3 × 2, Censor 3 × 2 × 2, Continuity Editor 3 × 3 × 2, Abridger 3 × 3 × 3, Last Word 4 × 4 × 2.
+32. Plates: an Erratum walking 8,000 mm twice reaches the third plate 224 ticks after the first, inside the 300-tick latch, so a solo player solves it.
+33. Veins: `d = 12` places 8; a 16-room Post-Apocalypse Folio at `d = 12` places 16; harvest nodes number `4 + floor_div(rooms_total, 4)` and are 0 in the Unwritten.
+34. Secret kinds: `secret.room.editors_desk` weighs 2 and 0 below `d = 6`; `secret.room.ink_well` 0 below `d = 11`; the verb seal wants a prayer in Mythic Fantasy and a spell in Cyberpunk.
+35. A Folio-2 Mythic Fantasy campfire rest at 2 Erasure stacks heals 39,950 mHP of an 85-HP Erratum; a Scriptorium cure at `d = 10` costs 1,085 Lucre.
+36. Secret-exit probability for a Standard Fairy Tale Folio at `d = 8` is 3250 Bp (Oneiric 2500, then Unwritten 1000 of the rest); the plan draws at most 2 values there.
 
 ## Invariants annex
 
 ```
-Σ doc12: gpv ⊗ laws ⊗ lattice ⊗ ftype ⊗ graph ⊗ embed ⊗ wfc ⊗ light ⊗ zones ⊗ validate
-W! generate_folio pure(GenInput, ContentDb)            N! party size|account|clock|float → generation
-W! GPV A == Canon §5.2 ∧ GPV B == Canon §5.9           W! 1..=3 Laws per genre ⊇ Canon-required
-N! Law changes a canon constant (all 30)               W! Law active ⇔ local genre ∨ seam includes it
-W! draw ∈ sub-stream(rng.worldgen|rng.lattice|rng.event) N! preview advances a live stream
-W! lattice: 3 weighted calls per exit                  W! candidates ∉ {cur, same-Volume, capped, secret}
-W! depth 25 ⇒ ur_text                                  W! boss ⇔ pos 5
-W! every Folio ends Incipit → … → RubricGate → Colophon W! Interleaf ∈ 4000..=6000 Bp (pos 4)
-W! key before lock ∧ no softlock ∧ Rubric reachable    W! V1..V14 before publish; attempts ≤ 4 then fallback
-W! terrain indestructible unless destructible          N! digging terrain
-W! safe room ⇒ no_spawn                                W! spawn eligibility reads light_block only
-N! spawn cell within 24,000 mm path of the Incipit     W! chests = 4 + range(3) per Normal Folio
-W! ≤ 1 seam per Folio, 1..=2 rooms                     N! static bleed in redacted|unwritten|ur_text
-N! electronic thing where local TEC ≤ 2                N! dep axis with local axiom 0
-W! hazard dmg := Canon §10.6                           W! room.no_mount ⇔ kind tag ∨ headroom < 3 blocks
-W! secret genre ≤ 1 per run before Marginalia          W! iteration ascending; N! HashMap|HashSet
-W! st.unmoored ends on Colophon or seam entry          W! story text cosmetic; N! LLM text → blueprint
+Σ doc12: gpv ⊗ laws ⊗ lattice ⊗ ftype ⊗ graph ⊗ embed ⊗ wfc ⊗ light ⊗ zones ⊗ validate ⊗ story
+W! generate_folio pure(GenInput, ContentDb)              N! party size|account|clock|threads|float → generation
+W! GPV A == Canon §5.2 ∧ GPV B == Canon §5.9             W! GPV has 65 dims for all 16 genres
+W! 1..=3 Laws per genre ⊇ Canon-required                 N! Law changes a canon constant (all 30)
+W! Law active ⇔ local genre ∨ seam includes it           W! draw ∈ named sub-stream(rng.worldgen|rng.lattice|rng.event)
+N! preview advances a live stream                        W! lattice: exactly 3 weighted calls per exit
+W! candidates ∉ {cur, same-Volume, capped, secret}       W! depth 25 ⇒ ur_text      W! boss ⇔ pos 5
+W! rest ⇒ no Rubric ∧ no spawns ∧ no events              W! Interleaf ∈ 4000..=6000 Bp (pos 4, standard|challenge)
+W! every Folio: Incipit → … → RubricGate → Colophon      W! out has degree 1
+W! key before lock ∧ no softlock ∧ Rubric reachable      W! V1..V16 before publish; attempts 0..=3 then fallback
+W! terrain indestructible unless destructible            N! digging terrain       N! vertical OneWay
+W! pit depth 2 ⇒ climbable at VERVE 0                    W! safe room ⇒ no_spawn ∧ (sbm ≤ 14 ⇒ lit above sbm)
+W! spawn eligibility reads light_block only              N! spawn cell within 24,000 mm path of the Incipit
+W! chests = 4 + range(3) (Abridged × 16667) per non-boss Folio
+W! ≤ 1 seam per Folio, 1..=2 rooms                       W! drift ≤ 3 ∧ entry + drift ≤ 4 bleed slots
+N! static bleed in redacted|unwritten|ur_text            N! electronic thing where local TEC ≤ 2
+N! dep axis with local axiom 0                           W! hazard dmg := Canon §10.6 ∧ src_lvl = d
+W! room.no_mount ⇔ kind tag ∨ headroom < 3 blocks        W! secret genre ≤ 1 per run before Marginalia
+N! secret exit in a secret-genre Folio ∨ before a boss ∨ before depth 25
+W! every puzzle solo-solvable with Folio contents        W! story: 8 draws, 5..=8 events, rationalized
+W! iteration ascending; N! HashMap|HashSet               W! st.unmoored ends on Colophon or seam entry
+W! story text cosmetic                                   N! LLM text → blueprint
 ```

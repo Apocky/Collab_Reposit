@@ -33,7 +33,7 @@ From `spec/00_CANON.md` (canon-1.5):
 
 Limited building and opt-in invasions, decided in `DECISIONS.md` items 16 and 15, are canon since canon-1.4 (§4.3, §17.9) and are consumed through the canon rows above.
 
-From other chapters, checked against the files in `spec/` on 2026-10-11. Docs 07, 09, 17 and 18 do not exist yet; every value read from them is listed under Interface assumptions with the exact shape this chapter calls.
+From other chapters, checked against every file in `spec/` on 2026-10-11 (docs 07, 09, 17 and 18 included); the exact shapes this chapter calls are listed under Interface assumptions.
 
 | Doc | What this chapter consumes |
 |---|---|
@@ -136,7 +136,7 @@ Step 0 of every source uses that source item's rarity power, quality, `eff_enh` 
 - The **Grimoire** has `2 + floor_div(MEM, 20)` slots (Canon §6.4 row 27). Each slot holds one compiled spell. Slot contents persist for the run.
 - The **active spell** is the Grimoire slot or wheel entry most recently selected. `input.cast` (doc 17) casts it: press for instant and cast-time spells, hold for channel and charge spells.
 - The **quick-cast wheel** has 8 entries. Each entry references one of: a Grimoire slot, a tome spell, a carried text, a carried wand, an on-use enchantment, or a prayer. Selecting an entry sets the active spell and casts it on release of the wheel button in the same input command. Opening the wheel never pauses or slows the simulation, in single player or co-op.
-- The replay command (Canon §2.4) carries the cast press in `buttons` and the selected entry in the command; doc 17 assigns the bits. The cast's RNG key is `(caster, input tick, seq 0)` (§3.9, §19.2). Seq 0 is the doc 05 §1.4 primary-action slot; a cast start and a weapon action start never share a tick (§3.5).
+- The replay command (Canon §2.4) carries the cast press in `buttons` (doc 17: `input.cast` bit 9, `input.cast_cancel` as `ACTION` value 5 in bits 26 to 28, a wheel selection as bits 19 and 20 set together with the entry index 0..=7 in `WHEEL_ENTRY` bits 29 to 31). The cast's RNG key is `(caster, input tick, seq 0)` (§3.9, §19.2). Seq 0 is the doc 05 §1.4 primary-action slot; a cast start and a weapon action start never share a tick (§3.5).
 
 ### 3.3 Cast types
 
@@ -393,7 +393,7 @@ Examples: `bolt flame` = 1 + 1 = 2. `orb flame on_impact foe ( nova frost )` = 2
 pub struct CompiledSpell {
     pub hash: u64, pub canonical: String, pub register: GenreId, pub school: SchoolId,
     pub stages: Vec<CompiledStage>,          // index 0 = root, then depth-first payloads
-    pub complexity: i32, pub base_cost: i64, // m-aether, skill-independent (§6.1)
+    pub complexity: i32, pub base_cost: i64, // m-aether; depends on the caster only through 3 perks (§6.1, §7.3)
     pub cast_ticks_raw: u32, pub cooldown: u32, pub cast_type: CastType,
     pub required: BTreeMap<SkillId, i32>,    // tier gates
     pub name_key: NameKey,                   // §17
@@ -511,7 +511,7 @@ Runtime Grimoire slot (part of the saved simulation state):
 
 ### 5.1 Dependency and skin of every glyph
 
-Every glyph in this catalog has exactly one dependency axis, set by its glyph origin through the §2.2 table, and that table is the full per-genre dependency list for all 84 glyphs. Its display name in a genre is `loc.glyph.<class>.<name>.skin.<genre_suffix>.name` (Canon §1.10). §5.7 gives the canonical English skin of every glyph in all 14 genres that have a register; doc 18 owns the localization tables and translates these strings. `genre.unwritten` and `genre.ur_text` have no glyph skins. There the Canon §1.10 resolution falls through to the glyph-origin skin, so in the Ur-Text every spell speaks in its own origin's voice, and a glyph whose origin is `genre.ur_text` (an Unwritten Origin's run-start glyphs, §8.1) shows its archetype name, which is the Mythic Fantasy column.
+Every glyph in this catalog has exactly one dependency axis, set by its glyph origin through the §2.2 table, and that table is the full per-genre dependency list for all 84 glyphs. Its display name in a genre is `loc.glyph.<class>.<name>.skin.<genre_suffix>.name` (Canon §1.10). §5.7 gives the canonical English skin of every glyph in all 15 genres that have a register, the Form rows of ten of them taken unchanged from doc 18 §7.5; doc 18 owns the localization tables and translates these strings. `genre.unwritten` has no glyph skins: there the Canon §1.10 resolution falls through to the glyph-origin skin, so a glyph whose origin is `genre.ur_text` (an Unwritten Origin's run-start glyphs, §8.1) shows its Ur-Text name, and the archetype name (the Mythic Fantasy column) appears only where both lookups miss.
 
 Glyph tiers gate compilation (§4.3 check 12). Cost columns are in m-aether. Cx is complexity points. Magnitude is the stage multiplier of §6.4. Pulse forms state magnitude per pulse.
 
@@ -777,25 +777,25 @@ Modifiers, triggers and conditions:
 | `glyph.cond.dark` | if Dark | if(lowlight) | In Shadow | If the Light Fails | Photometer |
 | `glyph.cond.unaware` | if Unaware | if(undetected) | Against the Unwary | If It Does Not See | Blind-Side Gauge |
 
-Skins in the other nine register genres. Together with the five columns above, every glyph has a canonical skin in all 14 genres that carry a register (§2.2). The skin is cosmetic text; its dependency comes from the glyph origin through §2.2.
+Skins in the other nine register genres and the Ur-Text. The Form rows of these nine genres and the whole Form column of the Ur-Text are doc 18 §7.5's names, adopted unchanged; this chapter adds every other class. Together with the five columns above, every glyph has a canonical skin in all 15 genres that carry a register (§2.2); only `genre.unwritten` has none. The skin is cosmetic text; its dependency comes from the glyph origin through §2.2.
 
 Forms:
 
 | Glyph | Gothic Horror | Space Opera | Post-Apocalypse | Weird West | Hardboiled Noir | Fairy Tale | Mythic Antiquity | Oneiric | The Redaction |
 |---|---|---|---|---|---|---|---|---|---|
-| `glyph.form.bolt` | Blood Dart | Psi Lance | Junk Slug | Hex Bullet | Cheap Shot | Elf-Shot | Divine Javelin | Paper Plane | Memo |
-| `glyph.form.orb` | Clot | Plasma Sphere | Scrap Bomb | Powder Keg | Pineapple | Glass Apple | Thunderstone | Soap Bubble | Parcel |
-| `glyph.form.beam` | Hemorrhage | Mind Beam | Arc Welder | Evil Eye | Hard Stare | Moonbeam | Gaze of Helios | Long Stare | Line Item |
-| `glyph.form.cone` | Blood Spray | Psi Wave | Blunderblast | Scattergun Hex | Spray and Pray | Witch's Breath | Breath of Typhon | Yawn | Broadcast Notice |
-| `glyph.form.touch` | Bloody Hand | Mind Touch | Live Wire | Hoodoo Hand | Shakedown | Kiss | Hand of the God | Brush of Fingers | Pat-Down |
-| `glyph.form.self` | Vein | Inner Discipline | Self-Rig | Gut | Number One | Heart | Soul | Dreamer | Personnel File |
-| `glyph.form.aura` | Sanguine Mantle | Psi Field | Rad Halo | Dust Devil | Presence | Enchanted Air | Mantle of Olympus | Dream Haze | Clearance Radius |
-| `glyph.form.field` | Blood Circle | Containment Field | Hot Zone | Medicine Wheel | Turf | Fairy Ring | Sacred Precinct | Dreamscape | Restricted Area |
-| `glyph.form.wall` | Ward of Bone | Force Barrier | Scrap Wall | Palisade Hex | Stonewall | Thorn Hedge | Cyclopean Wall | Folded Wall | Partition |
-| `glyph.form.rune` | Hex Sigil | Psi Mine | Booby Trap | Witch Bottle | Setup | Hidden Thorn | Curse Tablet | Dream Snare | Tripwire Clause |
-| `glyph.form.nova` | Blood Burst | Psionic Storm | Meltdown | Brimstone Burst | Blowup | Midnight Chime | Wrath of Olympus | Wake-Up | Blackout Order |
-| `glyph.form.chain` | Bloodline | Synapse Chain | Jumper Cables | Posse | Grapevine | Rhyme Chain | Thread of the Fates | Domino Dream | Routing Slip |
-| `glyph.form.manifest` | Raising | Psi Construct | Scrap Build | Haint Calling | Muscle | Fetching | Theophany | Dream Figure | Requisition |
+| `glyph.form.bolt` | Nail of Blood | Psi Dart | Zip Shot | Hex Bullet | Cheap Shot | Wishing Dart | Far-Darting Arrow | Thrown Thought | Memo |
+| `glyph.form.orb` | Clotted Orb | Focus Sphere | Junk Bomb | Cursed Coin | Tossed Bottle | Glass Bead | Thunderstone | Soap Bubble | Packet |
+| `glyph.form.beam` | Evil Eye | Mind Lance | Arc Torch | Witch's Stare | Hard Stare | Moonbeam | Sun-Chariot Ray | Staring Too Long | Directive |
+| `glyph.form.cone` | Grave Breath | Psi Wave | Spray Rig | Spit Hex | Smoke Screen | Dandelion Breath | Breath of the Winds | Sigh | Circular |
+| `glyph.form.touch` | Corpse Touch | Mind Touch | Jumper Clamp | Hand of Glory | Sucker Punch | Fairy Kiss | Anointing | Shoulder Tap | Stamp |
+| `glyph.form.self` | Within the Vein | Centering | Self-Wire | Rabbit's Foot | Second Wind | Heart's Wish | Heroic Spirit | Pinch | Self-Assessment |
+| `glyph.form.aura` | Mourning Shroud | Psi Field | Static Halo | Dust Devil Mantle | Bad Reputation | Rose Mantle | Aegis Mantle | Daydream | Clearance Badge |
+| `glyph.form.field` | Circle of Candles | Stasis Zone | Junk Field | Salt Circle | Turf | Toadstool Circle | Sacred Precinct | Room That Shouldn't Be | Restricted Area |
+| `glyph.form.wall` | Iron Gate | Barrier Plane | Scrap Wall | Bone Fence | Stonewall | Briar Hedge | Wall of Bronze | Locked Door | Cordon |
+| `glyph.form.rune` | Hex Mark | Psi Mine | Tripwire Rig | Hex Sign | Setup | Witch's Knot | Votive Mark | Note Under the Pillow | Pending Form |
+| `glyph.form.nova` | Bloodburst | Mind Flare | Overload Rig | Brimstone Burst | Blowup | Midnight Chime | Olympian Thunder | Sudden Waking | Mass Notice |
+| `glyph.form.chain` | Thread of Kin | Resonance Link | Daisy Wire | Hanging Rope | Domino | Silken Thread | Thread of the Fates | Déjà Vu | Chain of Custody |
+| `glyph.form.manifest` | Raising | Projection | Scrapbot Build | Calling Up | Calling a Favor | Summoned Helper | Invocation of Heroes | Imaginary Friend | Requisition |
 
 Essences:
 
@@ -825,7 +825,7 @@ Essences:
 | `glyph.ess.hush` | Vow of Silence | Psi Damper | Signal Killer | Tongue-Tie | Hush Money | Mute Curse | Oath of Harpocrates | Silent Scream | Gag Order |
 | `glyph.ess.polymorph` | Beast Curse | Bio-Rewrite | Mutagen | Varmint Hex | Frame-Up | Frog Curse | Wrath of Circe | Shapeshift Dream | Reclassification |
 | `glyph.ess.unmaking` | Exorcism | Psi Disruption | EMP | Cleansing | Cleanup | Unweaving | Atropos' Cut | Waking | Retraction |
-| `glyph.ess.summon` | Raised Servant | Drone Call | Scrap Critter | Haint | Hired Gun | Helper | Servant of the Gods | Imaginary Friend | Field Agent |
+| `glyph.ess.summon` | Raised Servant | Drone Call | Scrap Critter | Haint | Hired Gun | Helper | Servant of the Gods | Dream Companion | Field Agent |
 | `glyph.ess.shape` | Grave Digging | Matter Shaping | Demolition | Prospecting | Construction Job | Giant's Spade | Hephaestian Craft | Clay Dream | Renovation |
 | `glyph.ess.tide` | Black Rain | Hydro-Burst | Flash Flood | Rainmaker | Downpour | Wishing Well | Wrath of Poseidon | Drowning Dream | Sprinkler System |
 | `glyph.ess.gale` | Ill Wind | Vacuum Breach | Dust Storm | Twister | Hot Air | North Wind | Bag of Aeolus | Dream Wind | Ventilation |
@@ -833,7 +833,7 @@ Essences:
 | `glyph.ess.sight` | Spirit Sight | Sensor Sweep | Geiger Sense | Tracker's Eye | Stakeout | Magic Mirror | Eye of Argus | Lucid Sight | Surveillance |
 | `glyph.ess.appraise` | Provenance | Analysis Scan | Salvage Read | Assayer's Eye | Fence's Eye | Truth-Telling | Gift of Athena | Recognition | Audit |
 | `glyph.ess.omen` | Tarot | Precog | Bad Feeling | Bone Reading | Hunch | Black Cat | Augury | Premonition | Risk Assessment |
-| `glyph.ess.psychometry` | Touch of the Dead | Psi Imprint | Old World Memory | Object Reading | Fingerprints | Remembering Thing | Memory of Mnemosyne | Déjà Vu | Chain of Custody |
+| `glyph.ess.psychometry` | Touch of the Dead | Psi Imprint | Old World Memory | Object Reading | Fingerprints | Remembering Thing | Memory of Mnemosyne | Familiar Feeling | Provenance Check |
 
 Modifiers:
 
@@ -888,9 +888,98 @@ Conditions:
 | `glyph.cond.dark` | if Moonless | If Unlit Sector | If Pitch-Black | If After Dark | If In the Shadows | If Night | If Under Nyx | If Lights Out | If Off the Record |
 | `glyph.cond.unaware` | if Unsuspecting | If Off Sensors | If Napping | If Bushwhacked | If Blindsided | If Unwitting | If Unforeseen | If Sleepwalking | If Uninformed |
 
+The Ur-Text (register Word, doc 18 §7.3 vocabulary of word, first, beginning and page):
+
+| Glyph | The Ur-Text |
+|---|---|
+| `glyph.form.bolt` | First Letter |
+| `glyph.form.orb` | Round Hand |
+| `glyph.form.beam` | Underline |
+| `glyph.form.cone` | Flourish |
+| `glyph.form.touch` | Signature |
+| `glyph.form.self` | First Person |
+| `glyph.form.aura` | Illumination |
+| `glyph.form.field` | Paragraph |
+| `glyph.form.wall` | Ruled Line |
+| `glyph.form.rune` | Initial |
+| `glyph.form.nova` | Exclamation |
+| `glyph.form.chain` | Ligature |
+| `glyph.form.manifest` | Character Sketch |
+| `glyph.ess.flame` | Burning Word |
+| `glyph.ess.frost` | Frozen Page |
+| `glyph.ess.storm` | Lightning Stroke |
+| `glyph.ess.acid` | Etching |
+| `glyph.ess.force` | Heavy Type |
+| `glyph.ess.edge` | Paper Edge |
+| `glyph.ess.radiance` | Gilt Light |
+| `glyph.ess.shadow` | Blot |
+| `glyph.ess.mind` | Unreadable Line |
+| `glyph.ess.arcane` | The Word |
+| `glyph.ess.venom` | Bitter Gloss |
+| `glyph.ess.thunder` | Shouted Line |
+| `glyph.ess.mend` | Correction |
+| `glyph.ess.ward` | Margin Guard |
+| `glyph.ess.swiftness` | Shorthand |
+| `glyph.ess.levitate` | Superscript |
+| `glyph.ess.veil` | Blank Space |
+| `glyph.ess.bind` | Bookbinding |
+| `glyph.ess.dread` | Foreshadowing |
+| `glyph.ess.dominion` | Authorial Will |
+| `glyph.ess.slumber` | Dull Chapter |
+| `glyph.ess.hush` | Ellipsis |
+| `glyph.ess.polymorph` | Revision |
+| `glyph.ess.unmaking` | Deletion |
+| `glyph.ess.summon` | Character |
+| `glyph.ess.shape` | Typesetting |
+| `glyph.ess.tide` | Wash |
+| `glyph.ess.gale` | Page Turn |
+| `glyph.ess.lumen` | Lamp of the Scribe |
+| `glyph.ess.sight` | Reading |
+| `glyph.ess.appraise` | Proofreading |
+| `glyph.ess.omen` | Foreword |
+| `glyph.ess.psychometry` | Marginal History |
+| `glyph.mod.empower` | Bold |
+| `glyph.mod.extend` | Long Form |
+| `glyph.mod.widen` | Wide Margin |
+| `glyph.mod.reach` | Far Margin |
+| `glyph.mod.quicken` | Quick Draft |
+| `glyph.mod.charged` | Building Climax |
+| `glyph.mod.split` | Three Columns |
+| `glyph.mod.homing` | Cross-Referenced |
+| `glyph.mod.pierce` | Through the Page |
+| `glyph.mod.ricochet` | Rebounding Line |
+| `glyph.mod.linger` | Lingering Stain |
+| `glyph.mod.delay` | Postscript |
+| `glyph.mod.hushed` | Silent Letter |
+| `glyph.mod.thrift` | Terse |
+| `glyph.mod.volatile` | Unedited |
+| `glyph.mod.keen` | Italic |
+| `glyph.mod.siphon` | Borrowed Word |
+| `glyph.mod.leech` | Quoted |
+| `glyph.mod.sculpt` | Careful Hand |
+| `glyph.mod.anchor` | Fixed Type |
+| `glyph.mod.heavy` | Heavy Stroke |
+| `glyph.mod.twin` | Repeated |
+| `glyph.trig.on_impact` | At the Full Stop |
+| `glyph.trig.on_kill` | At the Last Word |
+| `glyph.trig.on_expire` | At the End of the Chapter |
+| `glyph.trig.timer` | After a Pause |
+| `glyph.trig.proximity` | When It Is Read |
+| `glyph.trig.on_struck` | In Rebuttal |
+| `glyph.trig.on_status` | When It Is Annotated |
+| `glyph.trig.pulse` | Refrain |
+| `glyph.cond.foe` | If Antagonist |
+| `glyph.cond.ally` | If Protagonist |
+| `glyph.cond.wounded` | If Torn |
+| `glyph.cond.native` | If In This Story |
+| `glyph.cond.wet` | If Smudged |
+| `glyph.cond.burning` | If Scorched |
+| `glyph.cond.dark` | If Unlit Page |
+| `glyph.cond.unaware` | If Unread |
+
 ## 6. Cost and potency
 
-### 6.1 Base cost (skill-independent)
+### 6.1 Base cost (skill-independent except three perks)
 
 ```
 core(stage)       = form.cost + Σ_i mul_bp(essence_i.cost', 10000 + 2500 × i)       // i = 0 primary, 1 secondary
@@ -901,7 +990,7 @@ base_cost(spell)  = Σ over stages s of mul_bp(mul_bp(stage_cost(s), DEPTH_BP[de
 DEPTH_BP = [10000, 7500, 6000];  fire_bp(root) = 10000;  fire_bp(payload) = fires_bp of the trigger that opens it
 ```
 
-For a beam the root `stage_cost` is a per-second drain. `base_cost` feeds skill XP (§7.4) and inscription (§8.3).
+For a beam the root `stage_cost` is a per-second drain. `base_cost` feeds skill XP (§7.4) and inscription (§8.3). Skill levels never enter it; only the perks Spellcraft 25, Divination 50 and Alteration 100 do (§7.3).
 
 ### 6.2 Cast cost
 
@@ -1723,23 +1812,23 @@ All IDs below are in namespaces Canon §19 assigns to doc 06.
 | `glyph.cond.` (8) | foe, ally, wounded, native, wet, burning, dark, unaware |
 | `school.` (8) | evocation, abjuration, alteration, conjuration, illusion, restoration, divination, spellcraft |
 | `spell.` (28 authored) | `spell.searing_bolt` = W1, `spell.frost_orb` = W2, `spell.storm_ray` = W3, `spell.firestorm_bolt` = W4, `spell.cinder_bolt` = W5, `spell.flame_conjuration` = W6, `spell.mending_aura` = W7 (origin `genre.mythic_fantasy`); `spell.packet_surge` = W8 (`genre.cyberpunk`); `spell.mountain_palm` = W9 (`genre.wuxia`); `spell.gaze_of_madness` = W10 (`genre.cosmic_horror`); `spell.thorn_sleep` = W11 (`genre.fairy_tale`); `spell.boiler_burst` = W12 (`genre.steampunk`); wand pool `spell.wand_striking`, `.wand_digging`, `.wand_light`, `.wand_haste`, `.wand_polymorph`, `.wand_dispel`, `.wand_fear`, `.wand_lightning`, `.wand_venom`, `.wand_conjure`, `.wand_invisibility` (§8.4); text spells `spell.text_mending`, `.text_demolition`, `.text_warding`, `.text_silence`, `.text_summoning` (§8.3) |
-| `summon.` (19) | familiar, elemental, servitor, swarm, wisp, golem, hound, phantasm, sentinel, herald, misprint, risen; `summon.poly.` toad, sheep, rat, crow, ooze, paper, beast |
+| `summon.` (18) | familiar, elemental, servitor, swarm, wisp, golem, hound, phantasm, sentinel, herald, misprint; `summon.poly.` toad, sheep, rat, crow, ooze, paper, beast |
 | `patron.` (16) | one per genre suffix of Canon §5.2 |
 | `prayer.` (14) | supplication, offering, benediction, smite, sanctuary, mending, reattachment, absolution, turning, provision, vigil, intercession, lantern, oath |
 | `ench.` (27) | focus, attunement, logic, memory, toughness, agility, resistance, potency, valor, precision, ruin, thrift, celerity, lightbearer, breath, surefoot, searing, frostbite, galvanic, corrosive, sanctified, vampiric, siphoning, disruption, spellstore, blink, restoring |
 
-Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt lockout 30 ticks, Overcasting 60 ticks, charge `charge_bp(c) = 10000 + floor_div(5000 × c, 60)` with `c` in `0..=60` past `ct` and auto-release at `ct + 120`, `DEPTH_BP = [10000, 7500, 6000]`, `NPC_SPELL_SCALE_BP = 4500`, max trigger depth 2, casting base speeds 2150 and 1720 mm/s, siphon cap 5000 Bp of `cast_cost` and leech cap 2500 Bp of Max HP per root resolution, enchanting ARCANA gates 1, 4 and 7, supplication `r1 = range(180_000)`, petition gate `prayer_timer <= 7200`. Enumerations (not content IDs): glyph pools `base`, `glyphs_2`, `family.<name>`; essence kinds `damage`, `heal`, `buff`, `control`, `poly`, `dispel`, `summon`, `world`, `lore`; implement profiles `focus`, `tome`, `staff`. Behavior of the Canon §11.1 statuses owned by 06 (§15) and of `res.aether`, `res.ward` (spell side) and `res.favor`.
+Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt lockout 30 ticks, charge `charge_bp(c) = 10000 + floor_div(5000 × c, 60)` with `c` in `0..=60` past `ct` and auto-release at `ct + 120` (Evocation 50: `10000 + floor_div(7500 × c, 90)`, `c` in `0..=90`, auto-release at `ct + 150`), `DEPTH_BP = [10000, 7500, 6000]`, `NPC_SPELL_SCALE_BP = 4500`, max trigger depth 2, casting base speeds 2150 and 1720 mm/s, siphon cap 5000 Bp of `cast_cost` and leech cap 2500 Bp of Max HP per root resolution, enchanting ARCANA gates 1, 4 and 7, supplication `r1 = range(180_000)`, petition gate `prayer_timer <= 7200`. Enumerations (not content IDs): glyph pools `base`, `glyphs_2`, `family.<name>`; essence kinds `damage`, `heal`, `buff`, `control`, `poly`, `dispel`, `summon`, `world`, `lore`; implement profiles `focus`, `tome`, `staff`. Behavior of the Canon §11.1 statuses owned by 06 (§15) and of `res.aether`, `res.ward` (spell side) and `res.favor`.
 
 ## Interface assumptions
 
 | Doc | This chapter assumes |
 |---|---|
 | 03 | `aether_tick` runs first in `sys.actions` for each entity, then its cast machine; spell projectiles join `sys.projectiles` and spell hits the `sys.damage` queue; `ev.spell_cast` gains `spell_hash: u64`; the seven §19.1 events with their payloads; an `ev.damage_dealt` flag `self_cost`; `raycast_blocks` for line of effect; fire-grid `ignite(cell)`; temporary block-light sources `add_light(pos, level, expiry)` and darkness volumes (−8 effective light) for shadow; block place and remove with a `conjured` flag |
-| 04 | **Conflicts for doc 04 to resolve:** (a) doc 04 §5.3 states a school aether factor `10000 − 25 × skill` "that doc 06 applies"; spell cost is owned here (§6.2) and doc 04 should cite it; (b) doc 04's Spellcraft "glyphs per spell `2 + floor_div(skill, 25)`" is not adopted (§7.3) and should be deleted. Doc 04 also: adopts the §7.3 hook column; feeds the §7.4 inputs into its XP table; applies composure loss with the MYTHOS term (§10.3); lists starting glyphs in Calling and Echo kits; gives an Unwritten Origin glyph origin `genre.ur_text` |
+| 04 | keeps its §5.3 magic, faith and Inscription perk texts identical to §7.3 and its §5.2 magic rows identical to §7.4; cites the §6.2 cost factor; grants `RowFlat(26, ·)` and `RowFlat(27, ·)` talents that §4.3 check 13 and §8.2 read; applies composure loss with the MYTHOS term (§10.3); lists starting glyphs in Calling and Echo kits; gives an Unwritten Origin glyph origin `genre.ur_text` |
 | 05 | exports `arch.ranged.staff`, `arch.ranged.wand` and `arch.offhand.tome` with the §8.5 `casting` block (doc 11 already uses the first two); `HitRecord` gains a spell extension `{ spell_pot, c_pot, edge_bp, school }` and carries `move_id` = the stage's form glyph `id32`; spell crit keys as §19.2; casting stances join §1.6; knockback impulse; poise damage; the friendly-fire classes of gap G11 |
-| 07 | material `arcane_affinity: i32 0..=10` and `dmg_bp`; block hardness, block HP and tags `flammable`, `brittle`, `metal`, `destructible`; an enchanting station; a material tag `arcane_reagent`; an altar block storing its patron; each genre's stone block |
+| 07 | (present) material `arcane_affinity` and `dmg_bp` (§2), `hardness` 0..=10 with `hardness_milli = -1` for non-destructible blocks, tags `flammable`, `metal`, `stone`, `arcane_reagent`; `station.enchanting`; `placed_meta` with patron and `conjured` flag; the casting-material tendency `C = −150 × (arcane_affinity − 4)` folded into implement `cost_bp`; staff, wand and tome recipes; each genre's stone block |
 | 08 | `add_liquid(cell, liq, ml)`, `place_gas(cell, gas, density)`, `move_gas(cell, dir, n)`; aether potions and `liq.mana` |
-| 09 | noise propagation; awareness states; `st.invisible` detection; hidden-object reveal for sight; casting as a visible event; runes as trap-detection objects |
+| 09 | (present) `noise.spell.<school>`, fizzle 70 dB and surge 90 dB noise IDs; shadow-area darkness (−8); `st.invisible` detection; the awareness-state icons of Divination 50; hidden-object reveal for sight; runes as trap-detection objects |
 | 10 | the effects of `appraise`, `omen`, `psychometry` and sight's aura; `observable` per the §8.3 `use_id`s; the 15 `wand_pool` spells; zap curses; type identification on zap and read; an API that makes one unknown carried type known (Cosmic Horror boon) |
 | 11 | templates `item.text.inscribed` (an inscribed text holding glyph references) and `item.book.primer_<school>` for alteration, conjuration, illusion, restoration and spellcraft; wand spells drawn by the §8.4 weights; glyph tomes filled by `glyph_tome` (§8.1); trainer service from the loot pool; bound-glyph roll on Legendary and Exotic implements from the §8.5 list; recharge service |
 | 12 | Scriptorium glyph Rewrite; `room.shrine` and `secret.room.shrine` altars with their patron; Colophon tome stock; campfire aether refill; bleed and seam zones for local axioms |
@@ -1747,8 +1836,8 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 | 14 | kit primers as §8.1 states; `unlock.loot.glyphs_2` adds the `glyphs_2` pool; Echo traits enter the `[T]` slots of §3.4, §6.2, §6.3 and §12.1 |
 | 15 | each `unlock.glyph.<family>` adds that §8.1 family pool; each Folio Expansion supplies 4 glyphs for its family |
 | 16 | prediction of cast start, Winding and spell projectile stand-ins with the §19.2 keys; downed rules; the Restoration 100 revival hook |
-| 17 | `input.cast`, `input.cast_wheel`, `input.pray`, `input.cast_cancel`; the wheel selection (3-bit entry index and 1 valid bit) and the lore-essence item selection in the replay command; the party map reveal of `item.text.mapping` |
-| 18 | localization of the §5.7 skins and of patron, prayer and enchantment names; register VFX and audio |
+| 17 | (present) `input.cast`, `input.cast_wheel`, `input.pray`, `input.cast_cancel` and the bit layout of §3.2; the lore-essence target list; the spell composer over `compile`; the party map reveal of `item.text.mapping`. Doc 17's composer example lists W1 burning power 54; with the Evocation 25 hook it is 64 (§6.7) |
+| 18 | (present) §7.5 Form skins, adopted unchanged in §5.7; localization of every §5.7 skin and of patron, prayer and enchantment names; register VFX and audio (`mag` cast, release and fizzle per register) |
 
 ## Canon gaps
 
@@ -1759,7 +1848,7 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 | G3 | Canon §18 lacks casting, prayer and learning events | requests `ev.cast_started`, `ev.cast_interrupted`, `ev.wild_surge`, `ev.glyph_learned`, `ev.enchant_applied`, `ev.prayer_resolved`, `ev.favor_changed` with the §19.1 payloads; a fizzle uses doc 03's `ev.spell_cast { fizzled: true }` |
 | G4 | Canon §19 gives no namespace for polymorph templates | uses `summon.poly.` inside the owned `summon.` namespace |
 | G5 | Canon §13.1 and §13.6 name staves, wands and tomes, but doc 05 exports only `arch.offhand.focus` | uses `arch.ranged.staff`, `arch.ranged.wand` (as doc 11 does) and `arch.offhand.tome`, and asks doc 05 to export all three |
-| G6 | Canon §4.2 has no casting movement modes | adds base speeds 2150 mm/s (Winding, Overcasting, Charging) and 1720 mm/s (Channeling) as doc 05 §1.6 stances |
+| G6 | Canon §4.2 has no casting movement modes | adds base speeds 2150 mm/s (Winding, Charging) and 1720 mm/s (Channeling) as doc 05 §1.6 stances |
 | G7 | Canon §16.5 scales IVAN's prayer timers by 3.6 but says nothing of IVAN's `Timer < RAND_N(500000)` | uses `range(180_000)` (§16.3 balance note); favor deltas +50, −50, −75, −100 come from IVAN |
 | G8 | Canon §3.3 defines `seq` as a per-actor counter that resets each tick; doc 05 §1.4 allocates fixed slots instead | a cast, zap, read or prayer draws at seq 0, doc 05's primary-action slot, because it never starts on the same tick as a weapon action (§3.5); seq 0x2000 to 0x2FFF (interruption), 0x3000 (`st.confused`) and 0x4000 to 0x4FFF (payloads) are reserved for doc 06, and other docs' per-tick counters stay below 0x2000 |
 | G9 | status instances have no source tag | adds a `dispellable: bool` field set at application (§14.1) |
@@ -1770,7 +1859,6 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 | G14 | Canon §11.2 starts from a hit's status power `p` | for spells, `p` already includes `spell_pot` (§6.4); the canon chain then runs unchanged |
 | G15 | Resolved by canon-1.4: limited building (§4.3) and invasions (§17.9) are canon | spells break only `destructible` blocks; conjured walls, webs and ice walls are temporary barricades; the invader casts no spells (doc 13) |
 | G16 | Canon §13.8.1 lists the casting implement as "focus, wand, staff or tome" and omits texts, on-use enchantment items and holy symbols | a text, the enchanted item and an equipped `item.trinket.holy_symbol` (for prayers) are the casting implement of their own activations (§3.1) |
-| G17 | Canon §11.1 gives `st.shielded` a 10 s base duration; doc 04's Abjuration 75 makes pools its holder grants last until depleted or Folio exit | applies doc 04's perk to pools that holder grants only (§15) |
 
 ## Acceptance tests
 
@@ -1789,7 +1877,7 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 13. **Keyed draws.** Run seed `0x0123456789ABCDEF`, Folio 8, actor `(8 << 40) | 7`, tick 30016, seq 0: `rng.combat` first `range(10000)` = 482; `rng.magic` four draws = 3992, 2458, 59936, 5793; at C = 4 the surge is entry 2, Backfire, dealing 13311 mHP before Ref-B's mitigation.
 14. **Draw count.** Every root resolution makes exactly 4 `rng.magic` calls whatever the outcome; the `rng.combat` roll happens only when the failure chance is above 0 (C ≥ 3 after the Unmoored rule, or a cursed wand's misfire).
 15. **Surge table.** Both weight columns sum to 10000.
-16. **Summon.** W6 elemental: HP 109834 mHP (95508 before the Conjuration 25 factor), attack 12733 mHP every 45 ticks, status power 42 after `S(3)`, duration 4050 ticks, cap 2; a third summon releases the lower-EntityId one with `ev.minion_released` reason 0.
+16. **Summon.** W6 elemental: HP 95508 mHP, attack 12733 mHP every 45 ticks, status power 42 after `S(3)`, duration 6075 ticks (4050 before the Conjuration 25 factor), cap 2; a third summon releases the lower-EntityId one with `ev.minion_released` reason 0.
 17. **Heal aura.** W7: 155 Bp per pulse, 1627 mHP on a 105 HP ally, 40 pulses, 6200 Bp total.
 18. **Siphon and leech.** A 36523 mHP hit at `d_current = 3` siphons 4610 m-aether; against an 80,000 mHP target it leeches 1141 Bp, healing a 105 HP caster by 11980 mHP.
 19. **Bargain.** W11: cast 6526, shortfall 4526, Debt 5657, repaid in 175 ticks at 1950 m-aether per second; a Folio exit before then costs 6 favor at Devotion 0.
@@ -1811,17 +1899,17 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 35. **Unmoored.** An Erratum whose rolls fail at C ≥ 3 three times within 600 ticks gains `st.unmoored` for 300 ticks; a Strained (C = 1) spell cast during it rolls `rng.combat` at 500 Bp; a fizzle caused only by `curse.misfire` at C = 0 does not count toward the three.
 36. **Disconnected mid-cast.** A cast that starts at C = 5 and resolves after the caster enters a zone where C = 6 fizzles: 4 `rng.magic` draws, 0 `rng.combat` draws, full cost spent, no Unmoored count.
 37. **NPC failures.** An NPC caster at C = 4 whose roll fails fizzles; no surge entry is chosen and no `summon.misprint` spawns.
-38. **Skins.** Each of the 84 glyphs has a non-empty skin in all 14 register genres of §2.2 (1176 strings). In `genre.ur_text`, a bolt of Cyberpunk origin displays "Packet" and a bolt of `genre.ur_text` origin displays "Bolt"; in `genre.unwritten` a Wuxia-origin bolt displays "Flying Needle".
+38. **Skins.** Each of the 84 glyphs has a non-empty skin in all 15 genres except `genre.unwritten` (1260 strings), no two glyphs share a skin within one genre, and the Form rows equal doc 18 §7.5. In `genre.ur_text` every bolt displays "First Letter"; in `genre.unwritten` a Wuxia-origin bolt displays "Flying Needle" and an Ur-Text-origin bolt "First Letter".
 39. **Wand pool.** Exactly 15 authored spells carry `wand_pool`; their `wand_weight` values sum to 10000; each has complexity 8 or less and no beam form.
 40. **Glyph pools.** `base` holds 52 glyphs: 11 forms, 23 essences, 11 modifiers, 3 triggers, 4 conditions. With `unlock.daily_baseline` a Folio-1 evocation tome holds 2 tier-1 `base` evocation glyphs and makes exactly 2 draws; `glyph.form.rune` never appears without `unlock.loot.glyphs_2`.
-41. **Petitions.** With `prayer_timer` set to 0, 3600, 7200 and 7201 at petition start, the first three petitions start and the fourth fails; each resolved petition adds 3600 at Devotion 0 (3240 with Devotion 25). `prayer.mending` for a petitioner with ATN 40 and Devotion 50 at the local patron heals 4312 Bp of Max HP.
+41. **Petitions.** With `prayer_timer` set to 0, 3600, 7200 and 7201 at petition start, the first three petitions start and the fourth fails; each resolved petition adds 3600 (2700 with the Oracle talent `divine_favor`). With Devotion 25 `prayer.benediction` costs `mul_bp(60, 8000) = 48` before Devotion scaling. `prayer.mending` for a petitioner with ATN 40 and Devotion 50 at the local patron heals 4312 Bp of Max HP.
 42. **Blank Page.** A PLEASED supplication to `patron.unwritten` at full health leaves `prayer_timer` at 18000 and grants `st.blessed` for 900 ticks.
 43. **Downed.** A supplication input while `st.downed` fails with `Disabled` and draws nothing.
 44. **Sacrifice.** A standard-rank NPC corpse at Folio 10 has value 217 and gives 14 favor at Devotion 0 from another genre; a stack of 20 items of value 1 gives 4; a `cat.currency` pile is refused.
-45. **Perk hooks.** W1's `st.burning` power is 67 per hit; with the `skill.evocation.m25` flag cleared and every other input unchanged it is 54.
+45. **Perk hooks.** W1's `st.burning` power is 64 per hit; with the `skill.evocation.m25` flag cleared and every other input unchanged it is 54. W8's cast cost is 7029 with `skill.spellcraft.m25` and 7369 without it. W6's summon lasts 6075 ticks with `skill.conjuration.m25` and 4050 without it.
 46. **Recharge text.** On an uncursed wand at 3 of 6 charges: uncursed text gives 5 of 5, blessed gives 6 of 6, cursed gives 4 of 5.
-47. **Overcast.** A caster with `skill.evocation.m100` casting `bolt flame` with the input held 60 ticks past its last Winding tick debits its `cast_cost` twice and adds +5000 Bp in Canon §10.5 step 1; released after 30 Overcasting ticks it debits once and resolves normally; a `bolt mend` (restoration) never enters Overcasting.
-48. **No glyph-count cap.** Ref-A (Spellcraft 24) compiles W5, a 5-glyph spell, which doc 04's "2 + floor_div(skill, 25)" would forbid.
+47. **Evocation 50 charge.** With `skill.evocation.m50`, `charge_bp(45) = 13750` and `charge_bp(90) = 17500`, and a charged bolt (`ct = 24`) auto-releases at `held = 174`; without the perk it auto-releases at `held = 144` at 15000.
+48. **Spellcraft hooks.** `bolt flame empower widen quicken` fails `E_MODIFIER` (widen does not apply to bolt); `orb flame empower widen quicken reach` fails `E_GRAMMAR` at Spellcraft 99 and compiles past check 1 with `skill.spellcraft.m100`. With `skill.spellcraft.m50`, `orb flame on_impact foe ( nova frost )` has complexity 10 instead of 11.
 
 ## Invariants annex
 
@@ -1829,7 +1917,7 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 Σ doc06: aether ⊗ glyph grammar ⊗ cost ⊗ potency ⊗ contradiction ⊗ summons ⊗ enchanting ⊗ prayer
 W! glyph.dep := {origin.aether_axiom} | {arcana} if none        N! glyph origin = genre.unwritten
 W! Req(glyph) = max(1, origin.axiom[dep] − 2)                     W! register := origin(root form)
-W! stage = 1 form ∧ 1..=2 essences ∧ 0..=3 modifiers ∧ 0..=1 trigger ∧ (condition ⇒ trigger)
+W! stage = 1 form ∧ 1..=2 essences ∧ 0..=3 modifiers (0..=4 with Spellcraft 100) ∧ 0..=1 trigger ∧ (condition ⇒ trigger)
 W! trigger depth ≤ 2                                              W! complexity ≤ row 26 budget (4 + floor_div(LOG, 10) + RowFlat grants)
 W! validation order = §4.3 order; first failure reported          N! opposed pair ∈ one stage
 N! helpful ∧ harmful essence ∈ one stage                          W! compile pure ∧ draws = 0
@@ -1844,12 +1932,12 @@ W! summon stats ∝ P(src_lvl) × pot snapshot; AR ∝ T(src_lvl)      N! summon
 N! st.polymorphed on boss|editor|hunter                           W! polymorph keeps HP ratio
 W! enchant dep = {arcana}; capacity by arc_aff                    N! enchant where local ARC = 0
 W! favor ∈ −1000..=1000 per (Erratum, patron)                     W! gains ×(100+dev)/100, losses ×100/(100+dev)
-W! sacrifice = isqrt(value × stack) × (2 if origin = patron genre) × (12500 if Devotion 75)    W! local patron × 15000
+W! sacrifice = isqrt(value × stack) × (2 if origin = patron genre)  W! local patron × 15000; non-local × 12500 with Devotion 75
 W! supplication draws = 4 exactly                                 N! names ∈ sim state
 N! HashMap|HashSet ∈ magic state                                  N! float ∈ magic state | content
 N! spell removes block ∉ destructible                             W! conjured blocks vanish at expiry ∧ drop nothing
 W! cooldown keys := root form(cd>0) ∪ root essences|modifiers(cd_add>0)    N! cooldown keyed by spell_hash
-W! ct = 0 ⇒ recovery base 45; ct ≥ 1 ⇒ 20                         W! charge resolves only if held ≥ ct; charge_bp ∈ 10000..=15000
+W! ct = 0 ⇒ recovery base 45; ct ≥ 1 ⇒ 20                         W! charge resolves only if held ≥ ct; charge_bp ∈ 10000..=15000 (..=17500 with Evocation 50)
 W! siphon per root resolution ≤ cast_cost/2                       W! leech per root resolution ≤ 2500 Bp caster Max HP
 W! failed roll ∧ C ≥ 3 ⇒ Unmoored count                           W! C becomes 6 mid-cast ⇒ fizzle, rng.combat draws = 0
 W! NPC failed roll ⇒ fizzle                                        N! NPC wild surge
@@ -1857,6 +1945,6 @@ W! cast|zap|read|prayer draws at seq 0                             N! cast ∧ w
 N! cast ∨ prayer while st.downed                                   W! perk effects := doc 04; perk hooks := §7.3
 W! enchant tier I|II|III ⇒ local ARC ≥ 1|4|7                       W! |wand_pool| = 15 ≤ 16 ∧ Σ wand_weight = 10000
 W! prayer r1 = range(180000)                                       W! petition ⇒ prayer_timer ≤ 7200
-W! ∀ glyph ∀ register genre: skin ≠ ∅                              W! unwritten|ur_text skin := glyph-origin skin
+W! ∀ glyph ∀ genre ≠ unwritten: skin ≠ ∅                          W! unwritten skin := glyph-origin skin
 W! loot-pool gating ⊆ {tomes, trainers, text study}                N! loot pool gates kits | authored spells
 ```

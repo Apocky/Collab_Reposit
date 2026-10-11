@@ -152,12 +152,20 @@ pub struct StatusMultiplier<'a> {
 /// active status multiplier in ascending status ID byte order, one `mul_bp`
 /// each. Panics if `statuses` is not strictly ascending by ID.
 #[must_use]
-pub fn final_move_speed_mm_s(base_mm_s: i64, row11_bp: i32, statuses: &[StatusMultiplier<'_>]) -> i64 {
+pub fn final_move_speed_mm_s(
+    base_mm_s: i64,
+    row11_bp: i32,
+    statuses: &[StatusMultiplier<'_>],
+) -> i64 {
     assert!(
-        statuses.windows(2).all(|w| w[0].id.as_bytes() < w[1].id.as_bytes()),
+        statuses
+            .windows(2)
+            .all(|w| w[0].id.as_bytes() < w[1].id.as_bytes()),
         "invariant: status multipliers sorted by ascending status ID"
     );
-    statuses.iter().fold(mul_bp(base_mm_s, row11_bp), |v, s| mul_bp(v, s.bp))
+    statuses
+        .iter()
+        .fold(mul_bp(base_mm_s, row11_bp), |v, s| mul_bp(v, s.bp))
 }
 
 /// SPEC: canon §5.9 `air_accel_bp` multiplies air acceleration (mm/s²).
@@ -189,7 +197,11 @@ pub const AIR_JUMP_BP: i32 = 6000;
 /// SPEC: canon §4.2. Air jump height in mm, `None` below VERVE 9.
 #[must_use]
 pub const fn air_jump_height_mm(vrv: u8) -> Option<i64> {
-    if vrv >= AIR_JUMP_MIN_VRV { Some(mul_bp(jump_height_mm(vrv), AIR_JUMP_BP)) } else { None }
+    if vrv >= AIR_JUMP_MIN_VRV {
+        Some(mul_bp(jump_height_mm(vrv), AIR_JUMP_BP))
+    } else {
+        None
+    }
 }
 
 /// SPEC: canon §4, §5.2. Local gravity `mul_bp(GRAVITY_BASE, gravity_bp)` as `Fx` m/s².
@@ -208,7 +220,10 @@ pub fn launch_speed(g: Fx, jump_h: Fx) -> Fx {
 /// SPEC: canon §4.2 ground jump launch speed at `vrv` under `gravity_bp`.
 #[must_use]
 pub fn jump_launch_speed(vrv: u8, gravity_bp: i32) -> Fx {
-    launch_speed(local_gravity(gravity_bp), fx_from_milli(jump_height_mm(vrv)))
+    launch_speed(
+        local_gravity(gravity_bp),
+        fx_from_milli(jump_height_mm(vrv)),
+    )
 }
 
 /// SPEC: canon §4.2 air jump launch speed (`None` below VERVE 9).
@@ -234,7 +249,10 @@ pub fn simulate_apex(g: Fx, v0: Fx) -> Apex {
     assert!(g > Fx::ZERO, "invariant: gravity must be positive");
     let a = Fx3::new(Fx::ZERO, -g, Fx::ZERO);
     let (mut p, mut v) = (Fx3::ZERO, Fx3::new(Fx::ZERO, v0, Fx::ZERO));
-    let mut best = Apex { height: Fx::ZERO, tick: 0 };
+    let mut best = Apex {
+        height: Fx::ZERO,
+        tick: 0,
+    };
     let mut tick = 0u32;
     while v.y > Fx::ZERO {
         (p, v) = semi_implicit_euler(p, v, a);
@@ -259,7 +277,11 @@ pub const fn safe_fall_mm(vrv: u8) -> i64 {
 /// under flipped gravity the fall is `land - peak`.
 #[must_use]
 pub fn fall_height(peak: Fx, land: Fx, gravity_flipped: bool) -> Fx {
-    let h = if gravity_flipped { land - peak } else { peak - land };
+    let h = if gravity_flipped {
+        land - peak
+    } else {
+        peak - land
+    };
     if h > Fx::ZERO { h } else { Fx::ZERO }
 }
 
@@ -286,7 +308,9 @@ pub fn fall_damage_mhp(fall_height: Fx, vrv: u8, max_hp_mhp: i64) -> i64 {
 /// owning order) chain after the genre factor, one `mul_bp` each.
 #[must_use]
 pub fn apply_fall_multipliers(damage_mhp: i64, fall_dmg_bp: i32, later_bps: &[i32]) -> i64 {
-    later_bps.iter().fold(mul_bp(damage_mhp, fall_dmg_bp), |v, &bp| mul_bp(v, bp))
+    later_bps
+        .iter()
+        .fold(mul_bp(damage_mhp, fall_dmg_bp), |v, &bp| mul_bp(v, bp))
 }
 
 // ---------------------------------------------------------------- dodge
@@ -308,7 +332,11 @@ pub const DODGE_SPEED_MM_S: i64 = DODGE_DISTANCE_MM * 60 / DODGE_TICKS as i64;
 pub const fn dodge_invuln_ticks(agi: i32) -> u32 {
     let over = if agi > 40 { agi as i64 - 40 } else { 0 };
     let t = 8 + floor_div(over, 15);
-    if t > DODGE_TICKS as i64 { DODGE_TICKS } else { t as u32 }
+    if t > DODGE_TICKS as i64 {
+        DODGE_TICKS
+    } else {
+        t as u32
+    }
 }
 
 /// SPEC: canon §4.2. Invulnerability starts on the dodge's first tick
@@ -337,13 +365,21 @@ mod tests {
 
     /// Micrometers (mm with three decimals), floored.
     fn um(x: Fx) -> i64 {
-        (i128::from(x.raw()) * 1_000_000 >> 32) as i64
+        ((i128::from(x.raw()) * 1_000_000) >> 32) as i64
     }
 
     /// SPEC: canon §4.2 JUMP_H column.
     #[test]
     fn jump_heights() {
-        let expect = [(0, 1100), (5, 1250), (6, 1400), (7, 1550), (8, 1700), (9, 1850), (10, 2000)];
+        let expect = [
+            (0, 1100),
+            (5, 1250),
+            (6, 1400),
+            (7, 1550),
+            (8, 1700),
+            (9, 1850),
+            (10, 2000),
+        ];
         for (v, h) in expect {
             assert_eq!(jump_height_mm(v), h);
         }
@@ -384,7 +420,11 @@ mod tests {
             let v0 = jump_launch_speed(vrv, gbp);
             assert_eq!(v0.raw(), raw, "v0 at VERVE {vrv}, gravity {gbp}");
             let a = simulate_apex(local_gravity(gbp), v0);
-            assert!((um(a.height) - apex_um).abs() <= 1, "apex {} vs {apex_um}", um(a.height));
+            assert!(
+                (um(a.height) - apex_um).abs() <= 1,
+                "apex {} vs {apex_um}",
+                um(a.height)
+            );
             // Doc 03 numbers the apex tick one higher than this crate's
             // count of integration steps (spec issue reported).
             assert_eq!(a.tick + 1, tick);
@@ -392,7 +432,11 @@ mod tests {
         let air = air_jump_launch_speed(10, 8000).expect("VERVE 10 has an air jump");
         assert_eq!(air.raw(), 27_187_601_199);
         let a = simulate_apex(local_gravity(8000), air);
-        assert!((um(a.height) - 1_199_874).abs() <= 1, "air apex {}", um(a.height));
+        assert!(
+            (um(a.height) - 1_199_874).abs() <= 1,
+            "air apex {}",
+            um(a.height)
+        );
         assert_eq!(air_jump_launch_speed(8, 8000), None);
     }
 
@@ -402,13 +446,19 @@ mod tests {
     fn every_genre_mounts_a_ledge() {
         for g in Genre::ALL {
             let vrv = g.axiom(crate::genre::Axiom::Verve);
-            let a = simulate_apex(local_gravity(g.gravity_bp()), jump_launch_speed(vrv, g.gravity_bp()));
+            let a = simulate_apex(
+                local_gravity(g.gravity_bp()),
+                jump_launch_speed(vrv, g.gravity_bp()),
+            );
             assert!(a.height >= Fx::from_int(1), "{}", g.id());
         }
         // Wuxia: the apex is 2 m minus 16 raw units (spec issue reported), so
         // a 2-block wall is cleared through the 550 mm step-up, not by the apex.
         let wx = Genre::Wuxia;
-        let a = simulate_apex(local_gravity(wx.gravity_bp()), jump_launch_speed(10, wx.gravity_bp()));
+        let a = simulate_apex(
+            local_gravity(wx.gravity_bp()),
+            jump_launch_speed(10, wx.gravity_bp()),
+        );
         assert_eq!(a.height.raw(), (2i64 << 32) - 16);
         assert!(a.height + fx_from_milli(550) >= Fx::from_int(2));
     }
@@ -426,12 +476,24 @@ mod tests {
         assert_eq!(fall_damage_mhp(Fx::from_int(5), 5, 85_000), 6800); // 8% per meter
         // A partial meter: 0.5 m excess is 400 Bp.
         assert_eq!(fall_damage_mhp(fx_from_milli(4500), 5, 100_000), 4000);
-        assert_eq!(fall_height(Fx::from_int(10), Fx::from_int(4), false), Fx::from_int(6));
-        assert_eq!(fall_height(Fx::from_int(4), Fx::from_int(10), false), Fx::ZERO);
-        assert_eq!(fall_height(Fx::from_int(4), Fx::from_int(10), true), Fx::from_int(6));
+        assert_eq!(
+            fall_height(Fx::from_int(10), Fx::from_int(4), false),
+            Fx::from_int(6)
+        );
+        assert_eq!(
+            fall_height(Fx::from_int(4), Fx::from_int(10), false),
+            Fx::ZERO
+        );
+        assert_eq!(
+            fall_height(Fx::from_int(4), Fx::from_int(10), true),
+            Fx::from_int(6)
+        );
         // Genre factor, then Acrobatics: Wuxia 5000 then 8000.
         assert_eq!(apply_fall_multipliers(13_600, 5000, &[8000]), 5440);
-        assert_eq!(apply_fall_multipliers(13_600, Genre::Redacted.row().fall_dmg_bp, &[]), 20_400);
+        assert_eq!(
+            apply_fall_multipliers(13_600, Genre::Redacted.row().fall_dmg_bp, &[]),
+            20_400
+        );
     }
 
     /// SPEC: canon §21 test 27. AGI 150 gives 12 invulnerability ticks.
@@ -490,13 +552,31 @@ mod tests {
     fn speed_composition() {
         let row11 = move_speed_bp(60);
         assert_eq!(row11, 10_500);
-        assert_eq!(final_move_speed_mm_s(base_speed_mm_s(Gait::Walk, MoveClass::Strafe), row11, &[]), 4289);
+        assert_eq!(
+            final_move_speed_mm_s(base_speed_mm_s(Gait::Walk, MoveClass::Strafe), row11, &[]),
+            4289
+        );
         let fwd = base_speed_mm_s(Gait::Walk, MoveClass::Forward);
         assert_eq!(final_move_speed_mm_s(fwd, row11, &[]), 4515);
-        let slowed = [StatusMultiplier { id: "st.slowed", bp: 7000 }];
+        let slowed = [StatusMultiplier {
+            id: "st.slowed",
+            bp: 7000,
+        }];
         assert_eq!(final_move_speed_mm_s(fwd, row11, &slowed), 3160);
-        let two = [StatusMultiplier { id: "st.encumbered", bp: 8500 }, StatusMultiplier { id: "st.hasted", bp: 12_500 }];
-        assert_eq!(final_move_speed_mm_s(4300, 10_000, &two), mul_bp(mul_bp(4300, 8500), 12_500));
+        let two = [
+            StatusMultiplier {
+                id: "st.encumbered",
+                bp: 8500,
+            },
+            StatusMultiplier {
+                id: "st.hasted",
+                bp: 12_500,
+            },
+        ];
+        assert_eq!(
+            final_move_speed_mm_s(4300, 10_000, &two),
+            mul_bp(mul_bp(4300, 8500), 12_500)
+        );
         assert_eq!(base_speed_mm_s(Gait::Walk, MoveClass::Backpedal), 3440);
         assert_eq!(base_speed_mm_s(Gait::Sprint, MoveClass::Forward), 6500);
         assert_eq!(base_speed_mm_s(Gait::Sprint, MoveClass::Strafe), 4085);
@@ -504,14 +584,26 @@ mod tests {
         assert_eq!(base_speed_mm_s(Gait::Swim, MoveClass::Backpedal), 2400);
         assert_eq!(base_speed_mm_s(Gait::Climb, MoveClass::Forward), 2400);
         assert_eq!(air_accel_mm_s2(Genre::Wuxia.row().air_accel_bp), 16_000);
-        assert_eq!(ground_decel_mm_s2(Genre::HardboiledNoir.row().ground_friction_bp), 34_000);
+        assert_eq!(
+            ground_decel_mm_s2(Genre::HardboiledNoir.row().ground_friction_bp),
+            34_000
+        );
     }
 
     /// SPEC: canon §4.2: status multipliers must arrive in ascending ID order.
     #[test]
     #[should_panic(expected = "invariant")]
     fn unsorted_statuses_panic() {
-        let bad = [StatusMultiplier { id: "st.slowed", bp: 7000 }, StatusMultiplier { id: "st.hasted", bp: 12_500 }];
+        let bad = [
+            StatusMultiplier {
+                id: "st.slowed",
+                bp: 7000,
+            },
+            StatusMultiplier {
+                id: "st.hasted",
+                bp: 12_500,
+            },
+        ];
         let _ = final_move_speed_mm_s(4300, 10_000, &bad);
     }
 
@@ -552,7 +644,7 @@ mod tests {
         }
 
         /// SPEC: canon §4.2: the input classification agrees with the angle
-        /// classification away from the thresholds (the doc 03 test floors `m`).
+        /// classification (CORDIC `atan2_bam`, ±1 Bam) except within 2 Bam of a threshold.
         #[test]
         fn input_class_matches_angle(x in -127i8..=127, z in -127i8..=127) {
             prop_assume!(x != 0 || z != 0);
@@ -561,7 +653,7 @@ mod tests {
             let r = i64::from(x);
             let yaw_in = palimpsest_math::atan2_bam(-r, fwd);
             let diff = palimpsest_math::ang_diff(yaw_in, 0);
-            let near = |t: u16| diff.abs_diff(t) <= 64;
+            let near = |t: u16| diff.abs_diff(t) <= 2;
             if !near(BACKPEDAL_ANGLE_BAM) && !near(STRAFE_ANGLE_BAM) {
                 prop_assert_eq!(class, move_class_from_angle(diff));
             }
