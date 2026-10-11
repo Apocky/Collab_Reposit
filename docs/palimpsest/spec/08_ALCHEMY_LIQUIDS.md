@@ -34,227 +34,85 @@ Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs,
 
 |Constant|Value|Meaning|
 |---|---|---|
-|`CELL_CAP_ML`|1,000,000|liquid capacity of one 1 m³ cell; also the gas capacity of an empty cell|
-|`CONTACT_ML`|100|Canon §12.1 liquid contact threshold per component|
-|`GAS_CONTACT_ML`|50,000|a cell "holds a gas" (contact, breathing) at this component volume or more|
-|`MAX_LIQ_COMPONENTS`|4|liquid components per cell or per vessel|
-|`MAX_GAS_COMPONENTS`|3|gas components per cell|
-|`LIQ_TRACE_ML`|10|a liquid component below this volume at the end of a liquids step is deleted|
-|`GAS_TRACE_ML`|1,000|a gas component below this volume at the end of a gases step is deleted|
-|`EVAP_MAX_ML`|20,000|only cells whose total liquid is at most this volume evaporate (except `evap_any_volume` liquids)|
+|`LIQ_UNIT_ML`|1,000|doc 03 §6.1 grid unit; a full cell holds 1,000 units|
+|`GAS_FULL_CONC`|10,000|doc 03 §7.1 concentration of a saturated cell (1,000,000 ml of gas)|
+|`GAS_CONTACT_CONC`|500|doc 03 §5.20: an eye cell holds a gas at this concentration or more|
 |`DOSE_ML`|250|volume of one standard dose (flask)|
-|`STEAM_PER_ML`|1,000|1 ml of boiled aqueous liquid yields 1,000 ml of gas (Canon §12.1: 1 cell per 1000 ml)|
-|`STEAM_CONVERT_CAP_ML`|5,000|liquid boiled per fire trigger per cell|
-|`ELECTRIFY_MAX_CELLS`|64|Canon §12.1|
-|`ELECTRIFY_TICKS`|180|Canon §12.1|
-|`ICE_TICKS`|1,200|Canon §12.1|
-|`BLAST_IMMUNITY_TICKS`|30|after taking a liquid or gas ignition blast, an entity ignores further liquid or gas ignition blasts for this long|
-|`PAYLOAD_MAX_ACTIVE`|512|alchemical payload records alive per Folio (§2.9)|
-|`DR_WINDOW`|1,800 ticks|diminishing-returns window per (drinker, effect) (§11.3)|
+|`PAYLOAD_MAX_ACTIVE`|512|payload records alive per Folio (§2.5)|
+|`LINGER_RADIUS_MM`, `LINGER_TICKS`|1,500; 1,200|Linger surface patch (§10.6)|
+|`VAPOR_RADIUS_MM`, `VAPOR_TICKS`|4,000; 600|vapor cloud patch (§10.4)|
+|`DR_WINDOW`|1,800 ticks|diminishing-returns window per (recipient, effect) (§11.3)|
 |`TOX_CAP`|100,000|Canon §12 `res.toxicity` maximum|
 
 ### 1.3 Determinism
 
-- Automata, reactions, burning, phase changes, electrification and contact are integer rules that draw **no** random numbers.
-- Random draws in this chapter come only from keyed `rng.alchemy` (brewing variance §9.5, seed brewing §15.2, wellspring quaffs §12.5) and keyed `rng.combat` (Contradiction failure of potion components, §9.9). Each draw site states its draw count.
-- Mutating iterations run in ascending `EntityId`, `uid`, or cell order `(cy, cz, cx, local index)` unless doc 03 imposes one. Transfer passes are double-buffered (Jacobi), so results never depend on visit order.
+- Liquid and gas behavior, reactions, triggers and contact are integer rules that draw **no** random numbers (doc 03 runs them; fire spread alone uses `rng.fire`, doc 03 §8.3).
+- Random draws in this chapter come only from keyed `rng.alchemy` (brewing variance §9.5, seed brewing §15.2, wellspring drinks §12.5) and keyed `rng.combat` (Contradiction failure of potions, §9.9). Each draw site states its draw count.
+- Mutating iterations run in ascending `EntityId`, `uid` or payload ID.
 
 ---
 
-## 2. The liquid model
+## 2. Liquids in the world grid
 
-### 2.1 Cell state
+### 2.1 Division of labor with doc 03
 
-A **component** is a liquid ID plus an optional payload index. Two components are the same component only if both fields match.
+- **Doc 03 §6 owns the grid**: the cell record (at most 3 liquids per cell, `u16` units), capacity, activation, run order and budget, the cell step (reactions hook, freeze, boil, fall, swap, spread, evaporation, absorption), `deposit`, `splash`, `drain`, contact sampling (§5.20: contact is at least 1 unit in the feet or body cell; `eye_submerged`), swim and wade speeds, surface triggers for the Canon §12.1 rows (§6.9), contact application (§6.10), gases (§7), fire (§8) and temperature (§9).
+- **This chapter owns the content**: every `liq.` and `gas.` record with the fields doc 03 §6.5 and §7.2 consume (§3.1, §4.2), every contact and drink row beyond the Canon ones (§3.2, §4.2), the extended trigger rows (§5.2), `alch_react` (§5.3), unit conversion for vessels (§2.3), payload patches (§2.5) and everything alchemical.
 
-```rust
-pub struct LiquidComp {
-    pub liq: u32,        // id32 of a liq.* ID
-    pub payload: u16,    // 0 = none; otherwise an alchemical payload record (§2.9)
-    pub ml: i64,         // Ml, > 0
-}
-pub struct LiquidCell {
-    pub comps: ArrayVec<LiquidComp, 4>,   // sorted ascending by (liq, payload)
-    pub electrified_until: u64,           // Tick; 0 = not electrified
-    pub burning_until: u64,               // Tick; 0 = not burning (§2.7)
-    pub film_frozen_until: u64,           // Tick; 0 = liquid (§2.8)
-}
-pub struct IceRecord {                    // block-entity data on a block.ice created from liquid
-    pub comps: ArrayVec<LiquidComp, 4>,   // the liquid that froze
-    pub revert_tick: u64,                 // melts back at this tick; 0 = temperature-driven only (§2.6)
-}
-```
-
-- `total(cell) = Σ comps.ml`, always `<= CELL_CAP_ML`. Solid blocks never hold liquid.
-- `fill_height_mm(cell) = floor_div(total × 1000, CELL_CAP_ML)`. Liquid always occupies the bottom of its cell.
-- Doc 03 owns storage (sparse per chunk, keyed by local index) and the active-cell set. A cell is active while it holds liquid that can move, react, burn, evaporate or is electrified.
-
-### 2.2 Depth, contact and submersion
-
-- **Feet cell** = `fx_floor_block(e.pos)`. **Body cells** = every cell whose Y range intersects `[e.pos.y, e.pos.y + eye_height]` at the entity's X and Z block.
-- **Contact** (Canon §12.1): the feet cell or a body cell holds at least `CONTACT_ML` of that component. Each component in contact applies its own contact row (§5.1). A frozen film applies the `block.ice` row instead of its liquid rows.
-- **Surface height above feet** `sh(e)`: scan body cells upward from the feet cell; for a full cell add 1000 mm, for the first non-full cell add its `fill_height_mm` and stop; subtract the feet's height within the feet cell (`e.pos.y − floor`, in mm).
-- **Wading**: `300 <= sh(e) < 1200` mm (doc 05: walk × 7000). **Swimming**: `sh(e) >= 1200` mm (Canon swim speed).
-- **Eye submerged**: the eye cell's `fill_height_mm` exceeds the eye's height within that cell. This is "the eye cell holds liquid" for `res.breath` (Canon §12).
-- No hydrostatic pressure: liquid moves upward only by displacement (§2.4 phase D) or boiling.
-
-### 2.3 Liquid definition schema
+### 2.2 Liquid record
 
 ```json
 {
-  "id": "liq.oil",
-  "group": "oily",
-  "density_g_per_l": 900,
-  "spread_bp": 6000,
-  "film_ml": 4000,
-  "fall_bp": 8000,
-  "conductive": false,
-  "flammable": { "mode": "ignite", "burn_ml_per_step": 400, "blast_hp_per_l": 10 },
-  "temp_dc": 150,
-  "freeze": null,
-  "boil": null,
-  "color": "#8C6D1F",
-  "light": 0,
-  "conceal_full": 3,
-  "evap_ml_per_step": 0,
-  "evap_any_volume": false,
-  "evap_gas": null,
-  "dep": [],
-  "vessel_flag": null,
+  "id": "liq.oil", "group": "oily", "color": "#8C6D1F",
+  "density_g_per_l": 900, "flow_bp": 7000, "move_bp": 8000, "evap_period": 0,
+  "freeze_decic": null, "freeze_block": null, "boil_decic": null, "boil_gas": null,
+  "temp_decic": 150, "heat_drive_bp": 0, "light_emit": 0,
+  "fire_fuel": true, "flammability_bp": 3000, "ignite_blast_mhp_per_unit": 10000,
+  "extinguishes": false, "conductive": false, "conceal_per_cell": 3,
+  "evap_gas": null, "dep": [], "vessel_flag": null,
   "contact": [{ "kind": "status_direct", "status": "st.oiled" }, { "kind": "friction_bp", "value": 3000 }],
   "drink": [{ "kind": "toxicity", "milli": 10000 }],
+  "triggers": { "fire": "ignite", "frost": null, "shock": null },
   "brew_base": { "mag_bp": 9000, "dur_bp": 15000, "tox_bp": 9000, "coat_charges_bp": 15000 }
 }
 ```
 
-- `group` ∈ `aq` (aqueous), `oily`, `gel`, `molten`, `metal`, `cryo`, `ether`. Groups only affect naming (§2.5) and which reactions exist; components of every group share a cell.
-- `spread_bp` is the inverse of viscosity (horizontal flow share). `film_ml` is the volume a cell keeps when spreading (a puddle that stops spreading). `fall_bp` is the vertical flow share.
-- Doc 12's Genre Parameter Vector field `liquid_viscosity_bp` (default 10000) multiplies every `spread_bp` and `fall_bp` in that genre: `eff = clamp(mul_bp(spread_bp, viscosity_bp), 500, 10000)`. `gas_dissipation_bp` (default 10000) multiplies gas decay (§4.3).
+`group` ∈ `aq` (aqueous), `oily`, `gel`, `molten`, `metal`, `cryo`, `ether`; groups drive naming and reaction tags only. `evap_gas` (`{gas, conc}`) is emitted into the cell each time doc 03 step 7 evaporates a unit of this liquid. Doc 12's `liquid_viscosity_bp` (default 10000) multiplies `flow_bp`, clamped to `500..=10000`.
 
-### 2.4 The liquids step
+### 2.3 Units, vessels and the grid
 
-Runs on ticks where `(t + 1) % 6 == 0` (Canon §2.2). Phases run in this order over the active cells; each phase reads a snapshot of the state left by the previous phase.
+- Quantities in this chapter are authored in ml (Canon §1.6). Vessels hold exact ml as item state (§6).
+- **Into the grid** from a vessel or item (pour, spill, splash, bleeding): `ceil_div(ml, LIQ_UNIT_ML)` units, so every dose leaves a visible puddle. World quantities authored by docs 06, 12 and 13 use doc 03's `floor_div` conversion.
+- **Out of the grid** into a vessel: filling drains `ceil_div(room_ml, 1000)` units (doc 03 `drain`) and the vessel keeps `min(room_ml, drained × 1000)` ml by the doc 03 proportional split. Filling a flask from a puddle therefore costs a whole unit, and pouring it back returns one unit.
+- **Mixtures.** Doc 03 averages flow and layers by density. Every other rule tests each component on its own: contact, conductivity, flammability and reactions. A cell's display name is its largest component's name, prefixed by the adjective (`loc.<liq>.adj`) of the second largest when that holds at least 10% of the total ("bloody water"). Drinking a mixture applies each component's drink row scaled by its share (§3.2). A brewing base must be a single component.
 
-```rust
-fn liquids_step(t: Tick) {
-    phase_a_reactions(t);        // §5.3 liquid+liquid, §5.4 liquid+block; ascending cell order, per cell only
-    phase_b_phase_changes(t);    // §2.6 freezing, boiling; frozen-film and ice reverts (§2.8)
-    phase_c_burning(t);          // §2.7 fuel consumption, ignition spread, blasts queued
-    phase_d_displacement(t);     // cells that became solid this step push their liquid up
-    phase_e_fall(t);             // vertical, double-buffered
-    phase_f_spread(t);           // horizontal, double-buffered
-    phase_g_evaporate(t);        // §2.6
-    phase_h_cleanup(t);          // delete components < LIQ_TRACE_ML; expire payloads (§2.9); deactivate idle cells
-    resolve_queued_blasts(t);    // §5.6
-}
-```
+### 2.4 Burning liquids
 
-**Phase D, displacement.** When a cell becomes solid (ice, obsidian, basalt, slag, or a placed block), its liquid moves to the cell above if that cell is not solid, clipped to the room there; the rest is deleted. A block placed into a liquid cell displaces the same way.
+Doc 03 §8 runs liquid fires: a cell holding a `fire_fuel` liquid ignites from §5.2 triggers or spread (chance from `flammability_bp`), burns 5 units of fuel per fire run, emits smoke and heat, and gives `st.burning` buildup to bodies in it. Values: oil 3000, alcohol 5000, fuel 8000, tar 2000, sap 1000. Ignition blasts per unit are in §5.2.
 
-**Phase E, fall.** For every cell `a` with liquid whose cell below `b` is not solid:
+### 2.5 Payload patches
 
-```
-room_b   = CELL_CAP_ML - total(b)                     // snapshot
-req(a→b) = mul_bp(min(total(a), room_b), fall_eff(a)) // fall_eff = volume-weighted fall_bp (§2.5), viscosity-scaled
-```
-
-Requests into the same target are clipped (below). Burning cells fall normally; frozen films do not move.
-
-**Phase F, spread.** For every cell `a` and each of its 4 horizontal neighbors `n` that is not solid, using the post-fall snapshot:
-
-```
-excess(a) = max(0, total(a) - film(a))                 // film = volume-weighted film_ml (§2.5)
-head      = total(a) - total(n)
-req(a→n)  = if head > 0 && excess(a) > 0 { mul_bp(floor_div(min(excess(a), head), 5), spread_eff(a)) } else { 0 }
-```
-
-Because each request is at most a fifth of the excess, the four requests from one cell never exceed its volume.
-
-**Clipping.** For a target `n`, `room = CELL_CAP_ML - total(n)` from the snapshot. If `Σ req(·→n) > room`, each request becomes `floor_div(req × room, Σ req)`. Unsent volume stays in its source.
-
-**Component split.** A transfer of `T` ml from a cell with total `v` moves `floor_div(T × c.ml, v)` of each component `c`; the remainder `T − Σ` comes from the largest component, ties to the lower `(liq, payload)`. **Component cap:** a component absent from the target is accepted only while the target (snapshot components plus already accepted new ones) has fewer than 4 components; new components are taken in descending transferred volume, ties to lower `(liq, payload)`. A refused component's share stays in its source.
-
-**Frozen films** do not spread. **Electrified** and **burning** flags stay on the cell; liquid that leaves an electrified or burning cell does not carry the flag.
-
-### 2.5 Mixture rules
-
-- A cell or a vessel holds up to 4 components. Liquids of the same ID and payload merge by adding volume.
-- **Mixture parameters**, volume-weighted with floor division: `spread`, `film`, `fall`, `density`, `temp_dc` (for heat emission). Example: 6,000 ml water and 2,000 ml honey give `spread = floor_div(6000×10000 + 2000×1500, 8000) = 7875` and `film = floor_div(6000×2000 + 2000×20000, 8000) = 6500`.
-- **Per-component behavior** never averages: contact (§5.1), conductivity, flammability and reactions each test the component's own volume against its threshold (`CONTACT_ML` for contact and conductivity; 100 ml of a flammable component for ignition).
-- **Display name**: the largest component's name, prefixed by the adjective of the second largest if it holds at least 10% of the total ("bloody water", "oily brine"). Adjectives are text keys `loc.<liq id>.adj` (doc 18).
-- **Drinking a mixture** (§10.1) applies each component's drink row scaled by its share of the dose.
-- **Brewing base** must be a single component with enough volume for every dose (§9.3); mixtures are refused as bases.
-
-### 2.6 Temperature, phase changes and evaporation
-
-- Each liquid has `temp_dc`. A cell whose dominant component (largest volume) holds at least 100,000 ml registers with doc 03's temperature grid as a heat source at that component's `temp_dc`. Lava at 12000 dC and molten metal at 15000 dC therefore heat their surroundings; coolant at −1960 dC chills them.
-- **Freeze** (phase B): if the cell temperature (doc 03) is at or below a component's freeze point and that component holds at least `CONTACT_ML`, the whole cell freezes by the frozen-liquid rule of §2.8 with `revert_tick = 0` (it melts when the temperature rises above the freeze point by 20 dC, checked each phase B). `freeze_to` `block.basalt` or `block.slag` (lava, molten metal) solidifies permanently and is not an ice record.
-- **Boil** (phase B): if the cell temperature is at or above a component's boil point, up to `STEAM_CONVERT_CAP_ML` of that component per step becomes its boil gas at `STEAM_PER_ML` (§4.4 injection).
-- **Evaporation** (phase G): for each component of a cell with `total <= EVAP_MAX_ML` (or any volume for `evap_any_volume` liquids):
-
-```
-temp_mult = 10000 + clamp(cell_temp_dc - 200, 0, 800) × 25          // 10000 at <= 20 °C, 30000 at >= 100 °C
-loss      = min(c.ml, mul_bp(evap_ml_per_step, temp_mult))
-c.ml     -= loss
-if evap_gas: inject(evap_gas, loss × gas_per_ml) at this cell        // §4.4
-```
-
-  Example: a 250 ml water splash at 15 °C loses 2 ml per step, so it lasts 125 steps (12.5 s). The same splash at 60 °C (`temp_mult = 20000`) loses 4 ml per step.
-- **Absorption**: an aqueous component resting on a block whose material has tag `absorbent` (doc 07: soil, sand, moss) loses 100 ml per step. Non-aqueous groups are not absorbed.
-
-### 2.7 Burning liquid cells
-
-- A cell **ignites** on a fire trigger (§5.2) or a fire-spread contact (doc 03 asks `is_flammable(cell)`: at least 100 ml of a component with `flammable.mode ∈ {ignite, explosive}`).
-- On ignition: queue the ignition blast of §5.2 (oil, alcohol and fuel only), set `burning_until = u64::MAX` and register the cell with doc 03 as a fire source.
-- Each phase C while burning: every flammable component loses `burn_ml_per_step` (all of it if less), the cell injects 50,000 ml `gas.smoke` (200,000 ml for tar), and every horizontally or vertically adjacent cell holding at least 100 ml of a flammable component ignites on the **next** liquids step (one ring per step). When no flammable component remains, `burning_until = 0`.
-- **Contact with a burning cell** adds 80 `st.burning` buildup per status pulse, in addition to the liquid's own contact rows.
-- Aqueous components in the same cell do not extinguish it: oil, alcohol and fuel float and burn on water. Only exhausting the fuel, freezing the cell (§2.8 clears `burning_until`) or placing a block into the cell ends it.
-
-### 2.8 Electrified, frozen and iced cells
-
-- **Electrify** (Canon §12.1): breadth-first search from the trigger cell over 6-neighbors, doc 03's neighbor order, visiting cells that hold at least `CONTACT_ML` of a conductive component, stopping at `ELECTRIFY_MAX_CELLS` cells. Each visited cell gets `electrified_until = max(old, t + ELECTRIFY_TICKS)`. Contact with an electrified cell adds 30 `st.shocked` buildup per status pulse (Canon §12.1).
-- **Frozen liquid** (frost trigger or freezing temperature) uses the cell's total:
-  - `total >= 200,000 ml`: the cell becomes `block.ice` carrying an `IceRecord` with the cell's components and `revert_tick = t + ICE_TICKS` (frost) or 0 (temperature). The cell's liquid moves into the record, not to phase D.
-  - `total < 200,000 ml`: the cell becomes a **frozen film**: `film_frozen_until = t + ICE_TICKS`. The liquid stays, does not flow or evaporate, and its contact is the `block.ice` row (ground acceleration and friction × 1500).
-- **Melting**: at `revert_tick`, at `film_frozen_until`, or on a fire trigger, a frozen cell reverts. An ice record restores its stored components to the cell (displacing as phase D in reverse is not needed: the cell was solid, so it is empty). Natural `block.ice` without a record melts into 917,000 ml of `liq.water`.
-
-### 2.9 Alchemical payloads
-
-A payload lets a liquid or gas carry a potion's effects (Linger and Aerosol, §10.4, §10.6).
+A payload lets a potion's effects ride on a puddle (Linger, §10.6) or a cloud (Aerosol and vaporizers, §10.4). The grid is untouched; the payload is a patch around an origin.
 
 ```rust
 pub struct Payload {
-    pub id: u16,                        // 1..=65535, allocated from a per-Folio counter, never 0
-    pub effects: ArrayVec<PayloadEffect, 4>,  // {eff: u32, mag: i64, dur: u32, potency_bp: i32}
-    pub src_lvl: i32,                   // the potion's ilvl
-    pub quality_bp: i32,
-    pub buc: u32,
-    pub creator: u64,                   // EntityId of the thrower
-    pub origin_genre: u32,
-    pub route: PayloadRoute,            // Surface or Vapor
-    pub expires_tick: u64,              // surface: t + 1200; vapor: t + 600
+    pub id: u16,                                   // 1..=65535 from a per-Folio counter, never 0
+    pub effects: ArrayVec<PayloadEffect, 4>,       // {eff: u32, mag: i64, dur: u32, potency_bp: i32}
+    pub src_lvl: i32, pub quality_bp: i32, pub buc: u32,
+    pub creator: u64, pub origin_genre: u32,
+    pub route: PayloadRoute,                       // Surface { liq: u32 } or Vapor
+    pub origin: Gidx, pub radius_mm: i32,          // LINGER_RADIUS_MM or VAPOR_RADIUS_MM
+    pub expires_tick: u64,                         // t + LINGER_TICKS or t + VAPOR_TICKS
 }
 ```
 
-- Payloads live in `BTreeMap<u16, Payload>` per Folio. When creating one would exceed `PAYLOAD_MAX_ACTIVE`, the lowest-ID active payload expires first.
-- In phase H (and in the gas step's cleanup), components whose payload has expired get `payload = 0` and merge into the plain component of the same liquid or gas.
-- `potency_bp` is the Contradiction potency snapshot of that effect at creation (§9.9), like the DoT applier snapshot of Canon §11.3.
+- Stored in `BTreeMap<u16, Payload>` per Folio; creating one beyond `PAYLOAD_MAX_ACTIVE` first expires the lowest ID.
+- **Surface exposure**: the entity has contact with the patch's `liq` (doc 03 §5.20) and its feet cell center lies within `radius_mm` of `origin`. **Vapor exposure**: the eye cell holds `gas.alch_vapor` at `GAS_CONTACT_CONC` or more and lies within `radius_mm`. When several patches qualify, the one with the nearest origin applies (`dist2`, ties to lower ID).
+- `potency_bp` is the Contradiction potency snapshot at creation (§9.9), like Canon §11.3's applier snapshot.
 
-### 2.10 Worked example: a bucket spill
+### 2.6 Worked example: a thrown liquid-flame flask
 
-A 10,000 ml bucket of water is poured into an empty floor cell surrounded by empty floor cells, at 15 °C, viscosity 10000. Water: `spread = 10000`, `film = 2000`.
-
-|Step|Center|Each of N, S, E, W|Total|Phase F transfer per neighbor, then phase G|
-|---|---|---|---|---|
-|0|10,000|0|10,000||
-|1|3,598|1,598|9,990|`floor_div(min(8000, 10000), 5) = 1600`; then −2 ml per wet cell|
-|2|2,320|1,915|9,980|excess 1,598, head 2,000: `floor_div(1598, 5) = 319`|
-|3|2,062|1,977|9,970|excess 320, head 405: 64|
-|4|2,012|1,987|9,960|excess 62, head 85: 12|
-|5|2,002|1,987|9,950|excess 12: 2|
-|6|2,000|1,985|9,940|excess 2: `floor_div(2, 5) = 0`; spreading has stopped|
-
-Spreading conserves volume; only evaporation (2 ml per wet cell per step) removes it. Neighbors below `film_ml` never spread, so diagonals stay dry. The center puddle (2,000 ml at 2 ml per step) is the last to dry, 1,000 steps (100 s) after step 6.
+A `alch.potion.liquid_flame` flask (250 ml oil base) shatters on open floor on Folio 5. Its spill enters the grid as `ceil_div(250, 1000) = 1` unit through doc 03 `splash`, which puts `max(1, floor_div(1, 9)) = 1` unit of oil in each of the 9 floor cells around the impact. The impact is a fire trigger (§5.2): doc 03 blasts the impact cell for `10,000 × min(1, 5) = 10,000` mHP base, which an Erratum within 2 m takes as `D2 = mul_bp(10000, T(5) = 12388) = 12,388` mHP before resistance, and consumes that cell's unit. The 8 other oily cells then catch through fire spread (`flammability_bp` 3000). Separately, the potion's own splash applies `alch.eff.burn` to everyone within 2000 mm (§10.2).
 
 ---
 

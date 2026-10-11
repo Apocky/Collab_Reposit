@@ -134,7 +134,7 @@ grant   = min(ink_run, max(0, INK_PLAY_ROLLING_24H − play_ink_granted_in_windo
 
 **Co-op.** Each player earns separately and in full. Nothing is split.
 
-**Apocrypha runs.** A run is Apocrypha when the `MOD` section of its `content_hash` (doc 02 §11.2) lists at least one mod; the run report carries that count as `mod_count` and the `modset_hash` of doc 02 §13.4. Doc 02 puts every loaded mod into that section, so every modded run is Apocrypha. An Apocrypha run earns 0 Ink, 0 Quires, 0 Codex XP and 0 Reliquaries, and the lobby shows "Apocrypha: account rewards off" before the run starts. Achievements are evaluated by doc 14 and are also off in Apocrypha runs.
+**Apocrypha runs.** A run is Apocrypha when the `MOD` section of its `content_hash` (doc 02 §11.2) lists at least one mod; the run report carries that count as `mod_count`, and the §10.4 content-hash check, which assumes an empty `MOD` section, rejects a modded run that reports `mod_count = 0`. Doc 02 puts every loaded mod into that section, so every modded run is Apocrypha. An Apocrypha run earns 0 Ink, 0 Quires, 0 Codex XP and 0 Reliquaries, and the lobby shows "Apocrypha: account rewards off" before the run starts. Achievements are evaluated by doc 14 and are also off in Apocrypha runs.
 
 ### 2.3 Caps
 
@@ -552,13 +552,13 @@ An Echo's tier is fixed at release and never changes, so its duplicate value nev
 | Plain cosmetic | 5 | every Plain cosmetic from launch |
 | Fold step | 40 for an Illuminated Echo, 8 for a Rubricated Echo | the next Fold of an owned Echo below Fold 6 |
 
-Archive purchases route through §3.8 for already-owned Echoes: buying an owned Echo is not offered; the Fold step shelf is the route. Expansion entries carry `requires_sku`. Nothing ever leaves the Archive.
+Buying an entry the account already owns is never offered; for an owned Echo the Fold step shelf is the route. An Archive purchase of an unowned Echo grants it at Fold 0. Expansion entries carry `requires_sku`. Nothing ever leaves the Archive.
 
 ### 3.10 Expected cost and percentile tables
 
 Values are exact rational evaluations of §3.3 and §3.4 (recomputed with Python `fractions` for this review; the Markov-chain rows by exact linear solves), rounded half-even. `T` counts pulls from a fresh family state (counters 0, flags clear). The content tool (`pal odds`, doc 02 `crate.tools`) recomputes every disclosed value with exact `i128` rational arithmetic at content build, stores each as a `pct4` integer in the banner's odds record, and fails the build if any differs from the record.
 
-**3.10.1 Tier rates (Featured, Script and Standard banners).**
+**3.10.1 Tier rates (Featured, Script, Expansion and Standard banners).**
 
 | Quantity | Value |
 |---|---|
