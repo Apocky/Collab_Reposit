@@ -85,6 +85,14 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 70 | Enemy AI | Kept: smart tactical utility AI tuned per genre | Doc 13 |
 | 71 | Native factions | Kept: run-scoped alliances through reputation | Doc 13 |
 | 72 | Folio stories | Kept: prominent story fragments with an optional Folio quest | Doc 12 |
+| 73 | Crossplay | Kept: Steam P2P with Datagram Relay plus an EOS build for Epic crossplay; headless host for verification | Doc 16 |
+| 74 | Matchmaking | Kept: friends plus a public lobby browser with mute, block, report and kick votes | Docs 15, 16 |
+| 75 | Communication | Kept: pings, text and push-to-talk voice; voice with strangers off by default | Docs 15, 16, 17 |
+| 76 | Host migration | Kept: resume from the last Folio-entry snapshot | Doc 16 |
+| 77 | Hub form | Kept: walkable first-person 3D Margin hub with stations, vendors and trophies | Docs 14, 17, 18 |
+| 78 | Margin cast | Kept: each resident has a multi-run arc advanced by run milestones, delivered as text | Docs 14, 18 |
+| 79 | Unlock pace | Kept: about 80 hours of play unlocks every non-cosmetic option without spending money | Docs 14, 15 |
+| 80 | Echo unlocks | Kept: every Echo also unlocks through a bounded Recollection trial, so the Inkwell is never the only path | Docs 14, 15 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 
@@ -94,3 +102,5 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | End-of-service offline guarantee | Research R2 (Destiny 2 final update 2026-06-09) | Brief §8 |
 | In-house Q32.32 fixed point, keyed RNG, JSON content | Canon implementability review | Canon §1 to §3 |
 | World Laws, seam zones, Colophon, Going Native, Unmoored | Research R6 (Torg, Noita) | Canon §5.10, §5.11, §17.1 |
+| Cavalry converts to an unmounted `enemy.role.charger`; mount-only IDs retire (stablemaster, remount, mounted nav) | Decision 55 (mounts cut) vs doc 13 reconciler | Canon §17.7; doc 13 |
+| The Erasure hunter is one elite-strength enemy (rank.elite stats, hunter AI); no repeat spawns | Decision 26 vs doc 13 reconciler | Canon §11; docs 13, 14 |

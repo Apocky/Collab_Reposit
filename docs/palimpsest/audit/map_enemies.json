@@ -1,0 +1,15 @@
+{
+ "enemy.mythic_fantasy.troll": "enemy.mythic_fantasy.cave_troll",
+ "npc.hireling.mythic_fantasy_chapter": "npc.hireling.chapter_mythic_fantasy",
+ "npc.hireling.gothic_horror_chapter": "npc.hireling.chapter_gothic_horror",
+ "npc.hireling.cosmic_horror_chapter": "npc.hireling.chapter_cosmic_horror",
+ "npc.hireling.space_opera_chapter": "npc.hireling.chapter_space_opera",
+ "npc.hireling.cyberpunk_chapter": "npc.hireling.chapter_cyberpunk",
+ "npc.hireling.post_apocalypse_chapter": "npc.hireling.chapter_post_apocalypse",
+ "npc.hireling.weird_west_chapter": "npc.hireling.chapter_weird_west",
+ "npc.hireling.hardboiled_noir_chapter": "npc.hireling.chapter_hardboiled_noir",
+ "npc.hireling.wuxia_chapter": "npc.hireling.chapter_wuxia",
+ "npc.hireling.steampunk_chapter": "npc.hireling.chapter_steampunk",
+ "npc.hireling.fairy_tale_chapter": "npc.hireling.chapter_fairy_tale",
+ "npc.hireling.mythic_antiquity_chapter": "npc.hireling.chapter_mythic_antiquity"
+}

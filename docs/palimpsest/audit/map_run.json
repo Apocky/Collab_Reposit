@@ -1,0 +1,12 @@
+{
+ "echo.aldric_unsworn": "echo.fenrir",
+ "echo.vesper_crane": "echo.lilith",
+ "echo.dr_halloway": "echo.jormungandr",
+ "echo.old_master_huo": "echo.sun_wukong",
+ "echo.sibyl_of_ash": "echo.loki",
+ "trait.echo.aldric_unsworn": "trait.echo.fenrir",
+ "trait.echo.vesper_crane": "trait.echo.lilith",
+ "trait.echo.dr_halloway": "trait.echo.jormungandr",
+ "trait.echo.old_master_huo": "trait.echo.sun_wukong",
+ "trait.echo.sibyl_of_ash": "trait.echo.loki"
+}
