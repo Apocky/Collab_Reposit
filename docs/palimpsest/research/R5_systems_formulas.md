@@ -802,3 +802,148 @@ PvP stance damage per hit: Dagger 40.5, Straight Sword 110, Greatsword 228.9, Co
 | Called-shot penalties | Fallout head −40, eyes −60, limbs −30/−20, melee ½ | VERIFIED-SRC | 05 |
 
 ---
+## 9. Design implications for PALIMPSEST
+
+These are opinionated and written in CANON units: Bp, mHP, 60 Hz ticks, perception at 20 Hz, `Light` 0..15 and `Db`. "Steal" means port as written. "Amend" means a proposed change to `00_CANON.md`. Each item names its owning document.
+
+### 9.1 Attributes (doc 04)
+
+1. **Amend: give `sub.analysis` (ANL) a unique lever.** In CANON §6.4 every sub-attribute has at least one row except ANL, which only governs Alchemy and Medicine. Following Qud's one-lever-per-attribute rule (§1.6), add two rows:
+   - **Identification and appraisal speed** `× (10000 + d(ANL) × 100)` Bp, clamped to 5000..20000.
+   - **Alchemy potency term** `floor_div(ANL, 5)` (§9.3).
+2. **Amend §7.1: a talent ceiling, stolen from Dwarf Fortress.** A base sub-attribute can never be trained above `min(100, max(2 × start, start + 40))`, where 40 is the human baseline used as the median. Starts of 20, 40 and 60 cap at 60, 80 and 100. Without this, use-training levels everyone to 100.
+3. **Steal DF's 7-point range sets for enemy templates.** `range: [min, a, b, median, c, d, max]`. Pick one of the six segments with probability 1/6 each, then draw uniformly inside it with keyed `rng.spawn`. Every goblin gets distinct sub-attributes, which feed CANON §6.5's NPC rows. Default set relative to median m: `[m−25, m−10, m−5, m, m+5, m+15, m+40]`.
+4. **Keep a single governing sub per skill** (CANON §7). Fallout-style two-stat coupling (§1.3) already lives in the derived rows, and a second governing stat would muddy the UI.
+5. **Keep mastery gates at 25/50/75/100.** As with PF2e ranks, perks at the gates are what players remember (§1.5).
+
+### 9.2 Stealth and awareness (doc 09)
+
+6. **Awareness is a per-pair meter** `A(o, e) ∈ 0..=10000`, updated on the observer's perception tick (period 3). States and thresholds:
+   - UNAWARE at A < 2500, but a SUSPICIOUS observer only drops back below 1000 (hysteresis).
+   - SUSPICIOUS at ≥ 2500: turns toward the stimulus and barks.
+   - INVESTIGATING at ≥ 6000 or on an audible noise more than 15 dB over threshold. Walks to the last-known position and **does not attack** (SPD v4).
+   - ALERT at 10000: combat.
+   - SEARCHING for 20 s after losing line of sight, then RETURNING.
+   - After an incident, **Vigilance** (MGS Caution) lasts 90 s and multiplies every gain by 12500.
+   - Decay after 2 s without a stimulus: −1500 Bp/s while UNAWARE or SUSPICIOUS, −500 Bp/s while INVESTIGATING or SEARCHING. ALERT does not decay while there is line of sight.
+7. **Sight gain per tick** is a `mul_bp` chain applied to the zone rate ÷ 20 (Shadow Tactics zones and Oblivion distance factor):
+
+   | Zone | Geometry | Rate (Bp/s) | Posture rule |
+   |---|---|---|---|
+   | Near | ≤ 6 m × (1 + row 32), half-angle 35° | 40000 | any posture is seen |
+   | Far | ≤ 24 m × (1 + row 32), half-angle 55° | 8000 × `(1 − d/R_far)` | crouch 5500, prone 3000; **both are 0 if `light_at(e)` ≤ 7** |
+   | Peripheral | 55°–100° | 2000 | only if moving at walk or faster |
+   | Behind | > 100° | 0 | hearing only |
+
+   - Further factors:
+     - `light_bp[L]` for L = 0..15: `[800, 1000, 1300, 1700, 2200, 2800, 3500, 4300, 5100, 5900, 6700, 7500, 8200, 8900, 9500, 10000]`.
+     - motion: still 6000, walk 10000, run 13000, sprint 16000.
+     - visible fraction: rays to head, torso and feet give 0, 3333, 6667 or 10000.
+     - `st.invisible` 1000 (CANON).
+   - The **light gem** is `light_bp × posture × motion` shown 0–100, which follows Thief's lesson that hidden state must be visible.
+8. **Hearing** is event-driven on `ev.noise`:
+   - Received level: `L_rx = L_src − 20·log10(max(d_m, 1)) − 0.25·d_m − occlusion`. Occlusion per crossing: solid block 25 dB, closed door 15 dB, open doorway 3 dB, liquid 10 dB.
+   - Audible iff `L_rx ≥ max(25 − row 33, ambient_dB + 3)`. Noise under ambient is inaudible, as in Splinter Cell.
+   - Gain = `clamp((L_rx − threshold) × 400, 500, 6000)` Bp, applied instantly. It records the last-known *position* but not the identity of the source.
+   - Footsteps: crouch 25, walk 40, run 55, sprint 65 dB; landing 55 + 5 per metre fallen.
+   - Surface modifiers: metal +10, stone +6, wood +3, dirt 0, grass and moss −6, carpet and snow −8, shallow water +8. Armor: heavy +8, medium +4, light +0.
+   - Other sources: callout 85, door 45, melee hit 70, unsuppressed gun 140, suppressed 115, spell 60 (each genre-skinned). Room ambient: crypt 20, wind 35, rain 45, machinery 60, club or foundry 75.
+9. **Mark of the Ninja rule:** draw every player-made noise as a ring at the exact free-field radius where `L_rx` = 25 dB. Solve numerically and cache per dB. Walking on stone (46 dB) gives about 8.7 m; sprinting on metal (75 dB) about 58 m; crouching on grass gives under 1 m.
+10. **Propagation:** reaching ALERT emits an 85 dB callout carrying the target's position. Allies who hear it set `A = max(A, 7000)` and receive the last-known position. Seeing a downed or dead faction member starts Vigilance for the whole faction in that region and sends the observer INVESTIGATING (Hitman, Shadow Tactics).
+11. **Sneak attacks** need `st.hidden`, or victim A < 6000 toward the attacker. Multipliers: melee ×3 (×4 at Sneak 50, ×5 at Sneak 100), ranged ×2 (×2.5 at Sneak 75), spells ×1.5. They never roll a crit (CANON step 2.3–2.4), which is Oblivion's `max()` lesson. This is the Morrowind/Skyrim lineage with tighter caps for co-op.
+12. **Disguises (Hitman):** an NPC template lists `aware.enforcer_of: [disguise ids]`. Enforcers accrue A at the zone rate × row 40. Everyone else accrues only on an **illegal action**: a visible weapon, trespassing, lockpicking or climbing in view gives +6000 at once.
+13. **Darkness also defends in gunfights** (Fallout §2.3). An NPC's spread at the player is multiplied by 18000 at target Light ≤ 5, 14000 at 6–9 and 11500 at 10–12.
+
+### 9.3 Alchemy and liquids (doc 08)
+
+14. **Potency, Morrowind-shaped, with no random failure.** In co-op, random failure that destroys ingredients feels like theft.
+    - `f = skill.alchemy + floor_div(ANL, 5) + floor_div(FAT, 10)`.
+    - Magnitude Bp = `mul_bp(base_bp, 5000 + 50 × f)` × mortar quality.
+    - Mortar qualities 7000, 10000, 12000, 15000, 20000, which compress Morrowind's 0.5/1.0/1.2/1.5/2.0.
+    - Duration has its own axis. Retort adds to beneficial effects, alembic divides harmful side effects, and calcinator adds to both, **including poisons** (OMW `applyTools`, §3.1).
+    - If `f` is below the recipe's difficulty, the brew comes out one quality tier lower instead of failing.
+15. **Ingredients carry 4 hidden effects.** Skill 0/25/50/75 reveals 1/2/3/4 (Oblivion ranks). **Hidden effects still combine** and are revealed by brewing (Morrowind). A potion carries every effect shared by at least 2 ingredients (Skyrim). Discovery is shared by the whole party.
+16. **Steal SPD field brewing exactly** for the in-run "pot" in every genre (cauldron, autoclave, still):
+    - 3 ingredients. 1 type gives a guaranteed result **and identifies that appearance class for the party**. 2 types give 25% random; 3 types give 50% random.
+    - Healing results reroll with probability `count/10`.
+    - This makes alchemy an identification tool (doc 10).
+17. **Five universal modifier reagents (Minecraft), genre-skinned:**
+    - Extend: duration × 16000.
+    - Amplify: +1 magnitude tier, duration × 5000. Cannot combine with Extend.
+    - Invert: beneficial becomes its harmful twin.
+    - Aerosol: becomes a gas cloud in the gas cellular automaton.
+    - Linger: becomes a surface, duration × 2500.
+    - One of each per potion.
+18. **Reactions use Noita's schema verbatim** as the `alch.reaction` content type: `in1, in2, in3?, out1, out2, out3?, probability_bp` (per liquids step at 10 Hz), `fast, convert_all, req_lifetime_ticks, blob_radius1/2, entity, sfx`.
+    - Each run seeds **2 secret 3-material recipes**, in the style of Lively Concoction and Alchemic Precursor, from a genre-weighted pool. Lore texts hint at them.
+    - Liquid depth uses Qud's bands as cell fill: < 20% is a puddle (slip and stick saves, evaporation), 20–99% is wading, 100% is swimming.
+    - Mixtures are named by their top-2 components ("bloody brine").
+19. **Witcher refill, limited:** up to 3 **Signature** recipes refill at a Folio rest point by spending 1 solvent each. Everything else is consumed. `res.toxicity` (CANON) is the brake, with potions at 15,000–30,000 milli each.
+
+### 9.4 Spellcrafting (doc 06)
+
+20. **The casting implement is a Noita wand, ported 1:1.** Noita runs at 60 frames/s, the same as CANON's tick rate, so its timings transfer directly.
+    - Fields: `cast_delay_ticks, recharge_ticks, capacity, spells_per_cast, shuffle, spread_mdeg, speed_bp, always_cast[]`.
+    - Deck/Hand/Discard with depth-first draw, wrap and reload exactly as in §4.1. The wait is `max(cast_delay, recharge)`.
+    - Trigger and timer payloads carry the next glyph, and their aether is charged up front.
+    - CANON row 26 (complexity budget) caps glyphs per sentence. Row 27 (grimoire slots) caps implements' loadouts carried.
+21. **Glyph grammar from Arx and Ars Magica.**
+    - Verb: Create, Negate, Raise, Lower, Perceive, Control.
+    - Form: CANON damage types plus matter (water, stone, flesh, mind, light, metal).
+    - Shape: projectile, touch, self, field, beam, cone.
+    - Modifier: multicast N, trigger, timer, homing, spread.
+    - Seal: always-cast.
+    - Opposite verbs give paired spells for free (Heal and Harm). Fire↔frost and radiant↔umbral **cancel** within a sentence (Magicka). Other mixed Forms become type shares summing to 10000 (CANON §10.5).
+22. **Aether cost is Oblivion's power law** with Morrowind's target surcharge: `cost = base × max(1, mag)^1.28 × max(1, dur_s) × (1 + 0.15 × area_m) × (15000 if aimed at a target)`, then × `(12500 − 50 × school_skill)` Bp (×1.25 at skill 0, ×0.75 at 100). There is no cast-failure roll. Real-time failure feels like input lag.
+23. **Three input modes map to the same glyph IDs:** hotbar; **traced gestures** (Arx: 20-point resample, 8 directions, tolerance 2), which grant cast time × 7500 when traced cleanly; and **voice keywords** through on-device speech recognition (Mage Arena), which gives no numeric bonus, so speech is never mandatory.
+
+### 9.5 Crafting (doc 07)
+
+24. **Quality roll uses RimWorld's distribution with deterministic integers.**
+    - Map skill 0..100 to `s = skill/5`, and interpolate the center `c(s)` from §5.1's table (0.7 to 4.2) in milli.
+    - `z_milli = Σ_{i=1..12} rng.craft.range(1000) − 6000` (Irwin–Hall, σ ≈ 1000).
+    - `v = c + station_bonus + material_bonus + mul(z, 700)/1000`.
+    - Tier = `clamp(floor(v/1000), 0, 5)` over `q.awful..q.masterwork`.
+    - `q.peerless` comes only from Inspiration (+2 tiers) or a Specialist station (+1).
+24a. **Station tiers (Valheim).** Level 1..5, raised by placing extensions within 8 m. Upgrading an item to quality step n needs station level ≥ n.
+25. **Anti-reroll escalation (Minecraft).** The n-th affix reroll on one item costs `base × 2^n`, and the 7th is refused ("the page will not take more ink"). This is the crafting-side guardrail that keeps loot-box-like rerolling honest.
+26. **Masterwork chronicle (DF).** Every masterwork or Peerless craft logs the crafter, Folio and material to the run chronicle and the score screen.
+27. **Patterns as meta, not power (Destiny Deepsight).** Five "Deepsight" extractions of one archetype unlock its pattern in the hub as a crafting *option* (skin, perk pool access), never a stat bonus.
+
+### 9.6 Identification (doc 10)
+
+28. **Formal ID scrolls use NetHack's odds exactly.**
+    - Uncursed: 1 item 84%, 2/3/4/all 4% each.
+    - Blessed: 20% each.
+    - Cursed: always 1 item.
+    - The spell version counts as blessed at skill 50.
+29. **Item identification uses SPD's use-count exactly:** weapons 20 hits dealt, armor 10 hits taken, implements 10 casts, rings, amulets and implants 1 character level. The bank holds half the requirement and refills **only from XP**, so ID cannot be farmed on a wall.
+30. **Curios, with the right tool from Darkest Dungeon.** Each Folio places 2–4 curios with roll tables. A genre-matched provision gives a fixed outcome, and **1 in 4 tool–curio pairs has a known downside**, so the table never becomes a solved lookup.
+31. **Price-ID stays automatic, with no hidden per-object surcharge.** NetHack's 1-in-4 random surcharge adds noise without deduction in co-op. Use CANON rows 37–38 and the R1 Appraisal Ledger.
+
+### 9.7 Damage, poise, hit locations (doc 05)
+
+32. **Keep CANON's ratio armor and reject Qud dice for kinetic damage.** OpenMW's code confirms that the ratio family (Morrowind, PoE, CANON) behaves well. Qud's per-hit penetration dice suit a turn grid, but at 600 rounds per minute they turn into noise.
+33. **Poise.** Errata poise resets 8 s after the last hit; Elden Ring's 30 s is tuned for a slower game. NPC stance regenerates after `clamp(6 + 0.075 × (P − 80), 4, 20)` s (§7.3). Bull-Goat-style affixes cap at −45% poise damage taken.
+34. **Called shots (an optional Focus mode, VATS-like).** Fallout's table becomes aim-assist and Focus-cost multipliers: head 14000, eyes or weakpoint 16000, groin and arms 13000, legs 12000, torso 10000. Melee uses half the surcharge.
+
+**Avoid:**
+- Morrowind's light-blind stealth.
+- Skyrim's Fortify-Alchemy and Restoration feedback loops (crafted buffs must never affect crafting).
+- Random brew or cast failure.
+- NetHack's hidden per-object price surcharge.
+- Oblivion's player-level enemy scaling (R2).
+- Kenshi's self-harm training: Toughness XP only from hostile-sourced damage.
+- Tarkov's hard class gates in a cross-genre game, because pen and class tables do not translate across genre skins.
+
+---
+
+### Open questions (not verifiable this session)
+
+- Path of Exile 1's current armour formula (`5D` or `10D`) and Path of Exile 2's per-attribute bonuses: poewiki is blocked by Anubis.
+- Skyrim's alchemy and detection GMST defaults: UESP is blocked by Cloudflare.
+- Tarkov's exact penetration-chance curve and material destructibility values after 2024 patches.
+- Kenshi's XP curve constants and training-dummy caps.
+- Mage Arena's release date and spell list; what "Mage Anyone?" refers to.
+- RimWorld's true σ: the decompiled value I recall (1.25) does not fit the wiki table, and 0.7 does.
+- Thief's Dark Engine visibility formula: no primary source was reached.
