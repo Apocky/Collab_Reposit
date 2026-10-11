@@ -1450,7 +1450,8 @@ Prologue state machine (one row per room transition, evaluated at the end of eac
 
 ### 12.1 Files and write points
 
-- `run.sav` holds the Canon §2.4 header, the Canon §2.5 simulation save (including `RunState`) and the replay log so far. One active run per account per device. Account data lives in a separate signed file and is never part of `run.sav`.
+- `run.sav` is a doc 02 §12.1 container of kind 1 (run suspend) in `runs/`. It holds the Canon §2.4 header, the Canon §2.5 simulation save (including `RunState`), the replay log so far, and a version-stable **checkpoint record**: the `RunSummary` fields of §4.6 (JSON, integers only) as of the latest Folio entry, used when the simulation payload cannot be loaded (§12.2). One active run per account per device. Account data lives in the separate signed meta profile (doc 02 §12.4) and is never part of `run.sav`.
+- The Prologue writes only its room checkpoints (§11) to `runs/prologue.sav` and never touches `run.sav`.
 - **Single player** writes at every Folio entry, every `AUTOSAVE_PERIOD_TICKS` after it (non-ranked runs only), on Suspend at the exact current tick, and on application quit.
 - **Co-op** writes only at Folio entry (Canon §2.5). Every client keeps a copy of the host's latest Folio-entry save for host migration (doc 16).
 
@@ -1458,7 +1459,7 @@ Prologue state machine (one row per room transition, evaluated at the end of eac
 
 - Single-player Suspend works at any tick boundary. Resume continues at that tick; the final `state_hash` equals an uninterrupted run's (Canon acceptance test 32).
 - Co-op Suspend (host only) ends the session. Resume loads the latest Folio-entry save, so the in-progress Folio restarts from its entry; the Suspend dialog states this. Absent players' slots resume `Dormant`.
-- Resume requires equal `sim_version` and `content_hash`. On a mismatch the run is archived: it ends `run.end.abandoned` with the score from the save's accumulators, and the payout is granted.
+- Resume requires equal `sim_version` and `content_hash`. On a mismatch the game offers, per doc 02 §12.3, the previous build's branch `prev` (kept 30 days), on which the run resumes normally, or **Close the Book**: the meta layer ends the run `run.end.abandoned_version` from the checkpoint record, with `victory_bp = 10000`, and grants the §4.6 payout through doc 15. The run is never ranked after a mismatch.
 - Content hot reload is refused while a run is active (Canon §2.4).
 
 ### 12.3 Ranked integrity
@@ -1466,46 +1467,68 @@ Prologue state machine (one row per room transition, evaluated at the end of eac
 - Each write increments `save_seq: u32` in `RankedState`. While online, a ranked run reports `(ranked_token, save_seq, state_hash)` on each write. Loading a save whose `save_seq` is below the latest reported value demotes the run to unranked.
 - Ranked runs have no periodic autosave. Crash recovery (no Suspend file) loads the latest Folio-entry save, truncates the replay log to that tick and increments `restores`. A run with `restores > RANKED_RESTORE_MAX` is demoted at submission. Orderly Suspend and resume does not count as a restore.
 
+```rust
+pub struct RankedState { pub ranked: bool, pub ranked_token: [u8; 32], pub save_seq: u32, pub restores: u8 }
+```
+
+Save write points, consolidated:
+
+| Event | Single player | Co-op host | Co-op client |
+|---|---|---|---|
+| Folio entry boundary | write | write | keep a copy of the host's write |
+| Every `AUTOSAVE_PERIOD_TICKS` after entry | write (unranked runs only) | none | none |
+| Suspend | write at the current tick boundary | end session; nothing new written | none |
+| Application quit | write at the current tick boundary (doc 02 §12.3) | as Suspend | none |
+| Run end | delete `run.sav` after the meta layer records `RunSummary` | same | delete its copy |
+
 ---
 
 ## Exports
 
-All IDs below are in namespaces Canon §19 assigns to doc 14. All 289 pass the Canon §1.1 grammar, are at most 64 bytes, and have distinct `fnv1a32`.
+All IDs below are in namespaces Canon §19 assigns to doc 14. All 335 pass the Canon §1.1 grammar, are at most 64 bytes, and have distinct `fnv1a32` (checked with the Canon §1.1 constants).
 
-| Namespace | IDs |
-|---|---|
-| `mode.` | `standard`, `novella`, `daily`, `weekly_gauntlet`, `seeded`, `endless`, `custom`, `prologue` |
-| `grade.` | `g00` to `g20` (21) |
-| `run.end.` | `victory`, `erased`, `abandoned`, `margin_closed`, `margin_exhausted`, `departed` |
-| `run.rubric.` | `keeper`, `catchwords`, `seal` |
-| `run.note.` | the 10 IDs of §3.5 |
-| `run.mut.` | the 16 IDs of §8.7 |
-| `run.marg.` | the 12 IDs of §9.3 |
-| `run.kit.` | `universal`, `<calling>` and `<calling>_alt` for the 10 Callings (21) |
-| `margin.` | the 15 facilities and 8 `margin.milestone.*` IDs of §5.1 |
-| `unlock.` | the 73 Bindery nodes of §5.3, `unlock.set.starter`, and the content of `unlock.daily_baseline` (ID from Canon §13.6) |
-| `echo.` | the 24 IDs of §6.3 |
-| `score.` | 8 component IDs (§4.2) and 6 `score.board.*` IDs (§9.4) |
-| `ach.` | the 56 IDs of §10 |
+| Namespace | IDs | Count |
+|---|---|---|
+| `mode.` | `standard`, `abridged`, `novella`, `daily`, `weekly_gauntlet`, `seeded`, `endless`, `custom`, `prologue`, and the Canon §17.5 co-op modes `ff_off`, `ff_full`, `loot_shared` | 12 |
+| `grade.` | `g00` to `g20` | 21 |
+| `run.end.` | `victory`, `erased`, `abandoned`, `abandoned_version`, `margin_closed`, `margin_exhausted`, `departed` | 7 |
+| `run.rubric.` | `keeper`, `catchwords`, `seal` | 3 |
+| `run.note.` | the IDs of §3.5 | 10 |
+| `run.mut.` | the IDs of §8.7 | 16 |
+| `run.marg.` | the IDs of §9.3 | 12 |
+| `run.boon.` | the IDs of §3.9 | 12 |
+| `run.kit.` | `universal`, `<calling>` and `<calling>_alt` for the 13 Callings | 27 |
+| `margin.` | the 16 facilities and 9 `margin.milestone.*` IDs of §5.1 | 25 |
+| `unlock.` | the 91 Bindery nodes of §5.3, `unlock.set.starter`, `unlock.daily_baseline` (ID from Canon §13.6) | 93 |
+| `echo.` | the IDs of §6.3 | 24 |
+| `score.` | 8 component IDs (§4.2) and 7 `score.board.*` IDs (§9.4) | 15 |
+| `ach.` | the IDs of §10 | 58 |
 
-Data constants exported: §1.1 table, `grade_bp(G)`, `PROLOGUE_SEED = 0x39d13f78bea6b81d`.
+Reserved patterns (instances listed by doc 15's Script catalog, validated by §2.3): `unlock.kit.<calling>_<name>`, `unlock.glyph.<family>`, `unlock.room.<name>`, `unlock.hireling.<type>`, `run.kit.<calling>_<name>`.
+
+Names this chapter fixes inside other owners' namespaces: `trait.echo.<suffix>`, `_b`, `_c` (doc 04's namespace, authored here at doc 04's request); `cosm.echo.<suffix>.{palette, outfit, frame, title, trail, recollected}`, `cosm.binding.<b>`, `cosm.palette.<g>` (doc 15's catalog).
+
+Data constants exported: the §1.1 table, `grade_bp(G)`, `RUN_SCORE_BP = 1460`, `MUTATOR_BP_CAP = 20000`, `PROLOGUE_SEED = 0x39d13f78bea6b81d`. Functions exported to other docs: `d(f)`, `v(f)`, `pos(f)` (§3.1), `diff_hp_bp`, `diff_dmg_bp`, `m13` (§7.3), `run_score(slot)` (§4.6).
 
 ## Interface assumptions
 
 | Doc | This chapter assumes it provides |
 |---|---|
-| 04 | Erratum creation and Echo presets; `trait.echo_<suffix>` for all 24 Echoes with the §6.3 effects; level-up allocation for joiners; Ghost needs frozen |
-| 05 | `arch.melee.{hafted_mace, hafted_maul, blade_long, blade_short, fist_wraps, polearm_spear}`, `arch.ranged.{sidearm, longarm, launcher, flamer, wand, staff, sling, hand_crossbow}`, `arch.offhand.{shield_medium, focus}`, `arch.armor.{light,medium,heavy}_{head,body,hands,legs,feet}`, `ammo.{light, heavy, explosive, fuel, stone}` |
-| 06 | `glyph.{bolt, flame, ward, frost, chain, mend, cleanse, sight, summon_wisp, bind}` |
-| 07 | `gadget.{turret_light, drone_scout}`, `mat.{iron, scrap}`, durability-loss hook for `run.marg.brittle_kit` |
-| 08 | `apparatus.field_kit`, `ing.{common_herb, common_mineral}` |
-| 09 | `aware.alerted` transitions for `run.note.silent` |
-| 11 | `item.food.ration`; `item.tool.{bandage, torch, pick, lockpicks, toolkit}`; `item.potion.{healing, haste, focus, fortify, aether, antidote, invisibility, clarity}`; `item.text.{mending, blink, mapping, demolition, appraisal, recharge, sanctify}`; `item.throwable.{javelin, knife, smoke, frag, fire_flask, acid_flask, poison_flask}`; `item.book.primer_{evocation, abjuration, divination}`; `item.container.flask`; `item.trinket.lattice_lens`; `item.quest.catchword`; base values that keep every kit in 360..=440 Lucre; `loot.volume_reward`; `loot.pool.<suffix>` tags at base power budget; `lucre_bp`, `shop_price_bp`, `reliq_key_delta` hooks |
-| 12 | `room.{incipit, colophon, interleaf}`, `room.prologue_l1` to `l7`; sanctuary flag; Rubric draw with weights `[5000, 3000, 2000]`; `folio_scale_bp`; `ambush_extra`; bleed-zone count hook; `rooms_total`; Illumination vault, rescue event and Scriptorium flags; lattice draw on demand; secret exits |
-| 13 | `boss.editor_v1..=v4`, `boss.ur_editor`, `enemy.prologue_hunter`; `keeper` flag; Seal waves; `elite_promote_add_bp`; `champion_extra`; `telegraphed` attack flag; `final_phase_extra`; every `template_hp ≤ 400` HP |
-| 15 | Ink and Codex XP from `RunSummary` (R3 proposes 400 Ink per hour of play); account Reliquary grants; `cosm.binding.<b>`; `cosm.echo_<suffix>_recollected`; Inkwell featured-Echo reference of 19.6 hours; Codex tiers that pay Quires |
+| 02 | save container kind 1 and the `runs/` directory; `prev` branch flow on version mismatch; intents `ChooseExit { door }` and `CommitOffer` applied in `(slot, action_seq)` order; headless verifier for §9.4 |
+| 03 | the run layer runs once per tick after `sys.despawn` (system 34) and before `sys.tick_end` (35), in a system `sys.run_layer` that doc 03 adds to its order; `sys.tick_begin` emits `ev.folio_entered`; `protect` bits for the sealed Colophon entrance; Ghost movement (§5.12) |
+| 04 | Erratum creation and Echo presets; `trait.echo.<suffix>` variants A, B and C for all 24 Echoes under its power-budget validator; the §2.5 role kits this chapter binds; level-up allocation for joiners; Ghost needs frozen; Going Native recomputation (Canon §5.11) |
+| 05 | `arch.melee.{hafted_mace, hafted_maul, blade_long, blade_short, dagger, fist_wraps, polearm_spear, polearm_staff}`, `arch.ranged.{sidearm, longarm, heavy_auto, flamer, wand, staff, sling, hand_crossbow}`, `arch.offhand.{shield_small, shield_medium, shield_tower, focus}`, `arch.armor.{light,medium,heavy}_{head,body,hands,legs,feet}`, `ammo.{light, heavy, fuel, stone}`; step 13 reads `m13` (§7.3) |
+| 06 | `glyph.ess.{flame, frost, storm}` and `glyph.form.{aura, chain}`; the run-start glyphs of doc 06 §8.1 |
+| 07 | `gadget.{turret_light, drone_scout}`, `item.tool.{toolkit, hacking_deck}`, durability-loss hook for `run.marg.brittle_kit` |
+| 08 | `apparatus.{mortar, alembic}` at tier 1 |
+| 09 | `aware.alert` for `run.note.silent` |
+| 10 | `appr.reason.kit` for kit and lore type knowledge; boon `run.boon.appraising_eye` raises pickups to `know.appraised` |
+| 11 | every kit item template with its base value; `item.food.ration`; `item.tool.{bandage, pick, lockpicks}`; `item.potion.{healing, haste, focus, fortify, aether, antidote, invisibility, clarity, regeneration, shielding}`; `item.text.{mending, blink, mapping, demolition, appraisal, recharge, sanctify, summoning}`; `item.throwable.{javelin, knife, smoke, frag, fire_flask, poison_flask, disruptor_flask}`; `item.book.{primer_evocation, primer_abjuration}`; `item.container.flask`; `item.trinket.{lattice_lens, holy_symbol}`; `item.quest.catchword`; `item.remains`; `loot.volume_reward`; `loot.pool.<suffix>` tags renormalized inside rarity bands; `lucre_bp`, `shop_price_bp`, `reliq_key_delta` and `run.boon.deep_pockets` hooks; Colophon shop stock |
+| 12 | `room.{incipit, colophon, interleaf}`, `room.prologue_l1` to `l7`; sanctuary flag; sealed Colophon entrance; Interleaf at `INTERLEAF_PATH_BP`; Rubric draw with weights `[5000, 3000, 2000]`; `generate(seed, f, d, genre, ...)` with depth; `folio_scale_bp`; `ambush_extra`; bleed-zone count hook; `rooms_total`; Illumination vault and rescue flags; lattice draw on demand; secret exits |
+| 13 | `boss.editor_v1..=v4`, `boss.ur_editor`, `enemy.prologue_hunter`, `npc.companion.<origin_suffix>`; `keeper` flag; Seal waves; `elite_promote_add_bp`; `champion_extra`; `telegraphed` attack flag; `final_phase_extra`; `sys.erasure` honouring `clock_start` and `colophon_entry_tick`; Colophon desecration hunters; every `template_hp ≤ 400` HP; kill XP × 16667 in Abridged |
+| 15 | Quires `min(400, floor_div(run_score, 50))` per run; achievement grades paid at 10/25/50/100 Quires and 40/80/160/320 Ink; Ink, Codex XP and Reliquaries from `RunSummary`; Folds and kit A/B rule; `cosm.*` catalog entries named in Exports; Apocrypha flag; Inkwell reference of 19.6 hours (slot A) and 13.9 hours (slot B) |
 | 16 | lobby, Dormant detection, host migration from Folio-entry save copies, ranked tokens, headless verification host |
-| 17 | Margin screens, door previews and forecasts, Ghost spectator UI, `access.scribes_mercy` |
+| 17 | Margin screens, door previews and forecasts, Ghost spectator UI, boon altar UI, `access.scribes_mercy` |
 
 ## Canon gaps
 

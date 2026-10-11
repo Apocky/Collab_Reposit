@@ -611,7 +611,7 @@ Mass of a filled vessel: `empty_mass + Σ floor_div(c.ml × density_g_per_l, 100
 
 ## 7. Alchemical effects (`alch.eff.*`)
 
-58 effects. **Pol**: B beneficial, H harmful. **Dep** (Canon §5.3): `none` for mundane effects; `aether` for supernatural effects, whose dependency is `{origin_genre.aether_axiom}` (arcana when that is none), mirroring the spell-glyph rule, so an invisibility dan pill brewed in Wuxia depends on VERVE and an invisibility stim brewed in Cyberpunk on TECHNE; `mythos` and `verve` are fixed. **Kind** and **Unit**:
+59 effects. **Pol**: B beneficial, H harmful. **Dep** (Canon §5.3): `none` for mundane effects; `aether` for supernatural effects, whose dependency is `{origin_genre.aether_axiom}` (arcana when that is none), mirroring the spell-glyph rule, so an invisibility dan pill brewed in Wuxia depends on VERVE and an invisibility stim brewed in Cyberpunk on TECHNE; `mythos` and `verve` are fixed. **Kind** and **Unit**:
 
 - `instant`: applied once. `bp_maxhp` is Bp of the recipient's Max HP (Canon §10.9); `bp_pool` is Bp of that pool's max; `milli_tox` is `Milli` toxicity; `points` are whole satiation or sub-attribute points.
 - `status`: applies the named Canon status directly with the brewed duration as its `base` (Canon §11.4 scaling applies only to scaled statuses). `ward` sets the `st.shielded` pool to its magnitude in Bp of Max HP.
@@ -619,13 +619,13 @@ Mass of a filled vessel: `empty_mass + Σ floor_div(c.ml × density_g_per_l, 100
 - `buildup`: status power `p` in threshold points, entering Canon §11.2 (× `S(src_lvl)` and the rest of that chain).
 - `direct`: a `direct` Canon status applied with the brewed duration as `base`.
 - `damage`: `base_mhp` of a hit; at use it follows Canon §10.4 (`× P(src_lvl) → × rarity power (Common 10000) → × quality → × 10000 → × 10000`) and enters the pipeline as an item hit that never crits. Its status power (listed in Mechanic) is scaled by the same per-effect chain as `buildup` effects.
-- `special`: `red_dose` grants one `afflict.red_ink` dose through doc 04; it exists only on forbidden draughts (§9.2).
+- `special`: `red_dose` fills the `afflict.red_ink` meter (one dose, doc 04 §10.1); it exists only on forbidden draughts (§9.2). `mutate` grants one doc 04 mutation point; a brew whose primary effect is `mutate` is the mutagen potion doc 04 names, and one whose primary is `satiate` is its nourishment potion.
 
 **Twin** is the effect that the Invert modifier substitutes (§9.4); pairs are symmetric. **Tox** is the toxicity this effect adds per dose (§11). **Value** is Lucre at `P(1)` per effect (§12.1). Caps bound the final magnitude and duration after every multiplier, before Contradiction potency and blessing.
 
 |Effect|Pol|Dep|Kind|Unit|Base mag|Base dur|Mag cap|Dur cap|Tox milli|Value|Twin|Mechanic|
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-|`alch.eff.heal`|B|none|instant|bp_maxhp|3000|—|9000|—|12000|30|`harm`|res.hp +mag (Canon §10.9 healing rules)|
+|`alch.eff.heal`|B|none|instant|bp_maxhp|3000|—|9000|—|12000|30|`harm`|res.hp +mag (§10.9 healing rules)|
 |`alch.eff.restore_stamina`|B|none|instant|bp_pool|5000|—|10000|—|5000|12|`drain_stamina`|res.stamina +mag of max|
 |`alch.eff.restore_aether`|B|aether|instant|bp_pool|4000|—|10000|—|9000|25|`unravel`|res.aether +mag of max|
 |`alch.eff.restore_composure`|B|none|instant|bp_pool|3000|—|9000|—|7000|20|`dread`|res.composure +mag of max|
@@ -682,7 +682,8 @@ Mass of a filled vessel: `empty_mass + Σ floor_div(c.ml × density_g_per_l, 100
 |`alch.eff.irradiate`|H|none|buildup|p|40|—|120|—|—|15|—|st.irradiated buildup|
 |`alch.eff.expose`|H|none|buildup|p|50|—|150|—|—|20|`fortify`|st.exposed buildup|
 |`alch.eff.charm`|H|aether|buildup|p|50|—|150|—|—|40|—|st.charmed buildup|
-|`alch.eff.red_dose`|H|none|special|doses|1|—|1|—|5000|0|—|one afflict.red_ink dose (base liquid only)|
+|`alch.eff.mutate`|B|none|instant|points|1|—|1|—|20000|40|—|+1 doc 04 mutation point (natural form; supernatural form when the origin genre has MYTHOS >= 8)|
+|`alch.eff.red_dose`|H|none|special|doses|1|—|1|—|5000|0|—|fills the afflict.red_ink meter: one dose (doc 04)|
 
 Effect application notes:
 
@@ -742,7 +743,7 @@ Effect columns give the `alch.eff.` suffix.
 |`ing.dreamfoil`|sleep|restore_composure|mind_vision|confuse|10000|10|5|H flower: oneiric, fairy_tale|plant|oneiric: Somnifoil; wuxia: Drowsy-cloud herb|
 |`ing.earthroot`|fortify|paralyze|resist_acid|satiate|10000|40|5|H root: caves|plant|mythic_antiquity: Gaia root; post_apocalypse: Ironroot|
 |`ing.ectoplasm_wisp`|invisibility|levitate|dread|unravel|12000|1|12|D tag ghost, spirit|monster|gothic_horror: Spirit residue; cosmic_horror: Ectoplasm|
-|`ing.eldritch_eye`|mind_vision|dread|fortify_intellect|confuse|12000|40|18|D tag eldritch|monster|cosmic_horror: Eye of the Outer; space_opera: Xeno-ocellus|
+|`ing.eldritch_eye`|mind_vision|dread|fortify_intellect|mutate|12000|40|18|D tag eldritch|monster|cosmic_horror: Eye of the Outer; space_opera: Xeno-ocellus|
 |`ing.eye_of_newt`|mind_vision|night_eye|fortify_perception|confuse|10000|5|4|D tag amphibian; B|animal|fairy_tale: Newt's eye; cyberpunk: Optic jelly|
 |`ing.fadeleaf`|mind_vision|invisibility|slow|fortify_perception|10000|10|6|H shrub: forest|plant|cosmic_horror: Veil-leaf; cyberpunk: Ghost-fern|
 |`ing.fairy_wing`|levitate|charm|featherfall|confuse|11000|1|15|D tag fae; H|monster|fairy_tale: Pixie wing; oneiric: Moth-dream wing|
@@ -765,7 +766,7 @@ Effect columns give the `alch.eff.` suffix.
 |`ing.mandrake`|sleep|fear|fortify_intellect|restore_aether|12000|60|12|H root: graveyards|plant|fairy_tale: Screaming root; oneiric: Dream-root|
 |`ing.mender_root`|heal|cure|regenerate|slow|11000|40|6|H root: forest biomes|plant|weird_west: Snakeroot; space_opera: Medi-tuber|
 |`ing.mint_leaf`|restore_stamina|detox|focus|resist_fire|9000|5|2|H herb: every genre|plant|cyberpunk: Menthol cartridge; fairy_tale: Pennyroyal|
-|`ing.mutagen`|fortify_might|irradiate|regenerate|expose|11000|30|10|D tag mutant; W labs|tech|post_apocalypse: FEV sample; cosmic_horror: Shoggoth cell|
+|`ing.mutagen`|mutate|irradiate|regenerate|fortify_might|11000|30|10|D tag mutant; W labs|tech|post_apocalypse: Mutant serum; cosmic_horror: Shoggoth cell|
 |`ing.nanopaste`|heal|ward|fortify|unravel|12000|20|14|S shop; D tag construct|tech|cyberpunk: Medi-nanite paste; steampunk: Restorative grease|
 |`ing.nightshade`|poison|sleep|night_eye|harm|10000|10|5|H berry: shade|plant|gothic_horror: Belladonna; cyberpunk: Black-berry synth|
 |`ing.ooze_core`|corrode|resist_acid|slow|satiate|10000|200|5|D tag ooze, amorphous|monster|post_apocalypse: Sludge heart; space_opera: Protoplasm nucleus|
