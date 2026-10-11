@@ -44,7 +44,7 @@ As of 2026-10-11. Research dossier for PALIMPSEST (working title). It feeds `spe
 
 ### 2.1 What Torg is
 
-Torg (West End Games, 1990) and Torg Eternity (Ulisses Spiele) are set during the "Possibility Wars". Invading realities ("cosms") overwrite regions of Earth, and each cosm keeps its own physics of possibility. Eternity's Kickstarter began 2017-05-31 and raised USD 355,992 against an 8,000 goal. Original WEG cosm books: Living Land, Nile Empire, Aysle and Cyberpapacy in 1990; Orrorsh and Nippon Tech in 1991; Tharkold in 1992. Nippon Tech was renamed Pan-Pacifica in Eternity. `[VERIFIED https://en.wikipedia.org/wiki/Torg]` Each cosm has "four axioms and three World Laws" in the original (Wikipedia's summary). Eternity cosm books add a fourth law in some cases (Nile and Tharkold each list three, below).
+Torg (West End Games, 1990) and Torg Eternity (Ulisses Spiele) are set during the "Possibility Wars". Invading realities ("cosms") overwrite regions of Earth, and each cosm keeps its own physics of possibility. Eternity's Kickstarter began 2017-05-31 and raised USD 355,992 against an 8,000 goal. Original WEG cosm books: Living Land, Nile Empire, Aysle and Cyberpapacy in 1990; Orrorsh and Nippon Tech in 1991; Tharkold in 1992. Nippon Tech was renamed Pan-Pacifica in Eternity. `[VERIFIED https://en.wikipedia.org/wiki/Torg]` Each cosm has "four axioms and three World Laws" (Wikipedia's summary). The Eternity previews list three laws each for Nile Empire and Tharkold (§2.7).
 
 ### 2.2 The axioms (Eternity)
 
@@ -68,7 +68,7 @@ Torg (West End Games, 1990) and Torg Eternity (Ulisses Spiele) are set during th
 
 **Lessons from the table** `[INFERENCE]`:
 
-- **No cosm is high on everything.** Each cosm's four values sum to between 38 (Living Land) and 75 (Core Earth). The spread *between* a cosm's axioms is what makes it distinctive. Living Land has Spirit 24 and Tech 6, while Orrorsh is flat at 16-18. Orrorsh's horror lives in its World Laws, not in its axioms. This matters for PALIMPSEST. **A genre whose identity is a mood (horror, noir) needs Laws, not extreme axioms.**
+- **No cosm is high on everything.** Each cosm's four values sum to between 38 (Living Land) and 74 (Cyberpapacy). The spread *between* a cosm's axioms is what makes it distinctive. Living Land has Spirit 24 and Tech 6, while Orrorsh is flat at 16-18. Orrorsh's horror lives in its World Laws, not in its axioms. This matters for PALIMPSEST. **A genre whose identity is a mood (horror, noir) needs Laws, not extreme axioms.**
 - **Social 23-25 marks modern and future cosms.** Living Land's Social 7 makes democracy, money and psionics contradictions there.
 - **Gaps between neighbors drive play.** Core Earth tech (23) in Aysle (14) is a 9-point gap. Torg treats any positive gap identically, as a binary contradiction. PALIMPSEST's canon grades by gap size. That is better for real time (see §2.8).
 
