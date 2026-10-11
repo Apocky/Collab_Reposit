@@ -1,7 +1,7 @@
 # 01 — Vision, Pillars and Inspiration Ledger
 As of 2026-10-11. Status: BINDING. Conforms to canon-1.2.
 
-This chapter fixes what PALIMPSEST is, what it must feel like, which games it learns from and how its success is measured. Every other chapter answers to the pillars in §2. When a system choice is ambiguous, the pillar tests decide. The canon file on disk is canon-1.4; every statement here was checked against it (Canon gaps G1). This chapter draws no random numbers and adds no simulation state.
+This chapter fixes what PALIMPSEST is, what it must feel like, which games it learns from and how its success is measured. Every other chapter answers to the pillars in §2. When a system choice is ambiguous, the pillar tests decide. This chapter draws no random numbers and adds no simulation state.
 
 ## Imports
 
@@ -9,9 +9,7 @@ This chapter fixes what PALIMPSEST is, what it must feel like, which games it le
 |---|---|---|
 | DESIGN_BRIEF | §1–§9 | high concept, Archetype × Skin, axioms, run shape, tech, attributes, monetization stance, document contract |
 | DECISIONS | 2026-10-11, rows 1–24 | product-owner answers: Standard plus Abridged, first person, Bevy 0.20, PC and Deck first, wry literary tone, 16+ gore, PvP invasions, limited building |
-| Canon | §1.1, §1.5, §1.6 | ID grammar and `fnv1a32`; display-unit rule; integer-only content |
-| Canon | §2.1–§2.4 | 60 Hz tick, "N s" = 60·N ticks, replay log |
-| Canon | §4.2, §4.3 | dodge, jump, placeables, fixed terrain |
+| Canon | §1.1, §1.5, §1.6, §2.1–§2.4, §4.2, §4.3 | ID grammar, `fnv1a32`, integer content; 60 Hz, "N s" = 60·N ticks; dodge; placeables, fixed terrain |
 | Canon | §5.1–§5.11 | axioms, 16 genres, Contradiction, Anachronism Edge, Shock of the New, seam zones, World Laws, Going Native, Unmoored |
 | Canon | §6.4, §7.2, §8 | derived stats, skill pace contract, level target 28 ± 3 at Folio 25, `kill_xp_std` |
 | Canon | §11.6, §12.1, §12.3 | Erasure, surfaces and reactions, spawn light |
@@ -19,16 +17,12 @@ This chapter fixes what PALIMPSEST is, what it must feel like, which games it le
 | Canon | §14, §16, §17 | currencies, Callings and Echoes, run constants, party tables, anchors, ghosts, invasions |
 | Canon | §19, §22 | this chapter owns `pillar.` and `kpi.`; monetization invariants |
 | Doc 02 | §1, §8.10, §14, §15, Exports | offline-complete rule, Deck targets, platforms, `perf.` budgets, `flag.telemetry.usage` default false |
-| Doc 05 | §1, §4, §16 | logical combat inputs, melee moveset, jams |
-| Doc 06 | §3, §16 | casting inputs, prayer |
-| Doc 10 | §5, §11, §12 | identification methods, Sealed contents, Index and Bestiary |
-| Doc 11 | §5, §10, §11, §15, §17 | manufacturers, in-run Reliquaries, Fortune Engines, Rewrite, co-op loot |
-| Doc 12 | §4, §13, §16, §19 | Lattice, bleed, secret exits, story fragments |
-| Doc 13 | §9.2, §10 | the five Editors, the Director |
+| Docs 05, 06, 10, 11 | 05 §1, §4, §16; 06 §3, §16; 10 §5, §11, §12; 11 §5, §10, §11, §15, §17 | inputs, moveset, jams; casting, prayer; identification, Sealed contents, Index; manufacturers, Reliquaries, Fortune Engines, Rewrite, co-op loot |
+| Docs 12, 13 | 12 §4, §13, §16; 13 §9.2 | Lattice, bleed, secret exits; the five Editors |
 | Doc 14 | §3, §4.2, §5, §6, §7, §8, §9, §11 | Folio flow, score, Margin, Echoes, Grades, modes, Marginalia, Prologue |
 | Doc 15 | §1, §2.7–§2.8, §3, §6, §8.6, §9, §11, §12 | business model, income, Inkwell, Codex, ratings, anti-predatory rules, end of service, economy KPIs |
 | Doc 16 | §1.1, §3.6, §5.7 | topologies, crossplay default, intents |
-| Research | R1 §1, §2, §3, §8; R2 §1–§8; R3 §0, A1–A5, D1–D6; R5 §9; R6 §1, §5, §6, §8, §11; R7 §1.2, §1.4, §9 | inspiration facts, peer bar, monetization law, omni-genre precedents |
+| Research | R1, R2, R3, R5, R6, R7 as cited | facts, peer bar, law, precedents |
 
 ---
 
@@ -40,7 +34,7 @@ This chapter fixes what PALIMPSEST is, what it must feel like, which games it le
 
 ### 1.2 One-paragraph pitch
 
-You are an Erratum: a character your story dropped. With up to three friends you descend 25 Folios, each written in one of a dozen fictional genres, from Gothic Horror to Wuxia to Space Opera. Every genre is a reality with its own physics, laws and four axioms, so the gun you found in a cyberpunk arcology jams in the fairy-tale forest, yet the wolf there has never seen a gun and staggers at the first shot. The world is a simulated block manuscript: oil burns, water conducts, light keeps the dark things away and severed arms can be sewn back on. Loot is part-built and rarity-tiered, unknown potions hide behind per-seed colors, skills grow by use, and death ends the run. The Editors, the Palimpsest's living red pens, hunt you if you linger. Reach the Ur-Text at Folio 25 and close the book, or keep writing into the endless Marginalia. Every gacha pull, loot box and battle-pass reward is earned by playing; money buys only things you can see before you pay.
+You are an Erratum: a character your story dropped. With up to three friends you descend 25 Folios, each written in one of a dozen fictional genres, from Gothic Horror to Wuxia to Space Opera. Every genre is a reality with its own physics, laws and four axioms, so the gun you found in a cyberpunk arcology jams one shot in ten in the fairy-tale forest, yet the wolf there has never seen a gun and staggers at the first shot. The world is a simulated block manuscript: oil burns, water conducts, light keeps the dark things away and severed arms can be sewn back on. Loot is part-built and rarity-tiered, unknown potions hide behind per-seed colors, skills grow by use, and death ends the run. The Editors, the Palimpsest's living red pens, hunt you if you linger. Reach the Ur-Text at Folio 25 and close the book, or keep writing into the endless Marginalia. Every gacha pull, loot box and battle-pass reward is earned by playing; money buys only things you can see before you pay.
 
 ### 1.3 Fiction premise
 
@@ -52,14 +46,12 @@ You are an Erratum: a character your story dropped. With up to three friends you
 | Genre | the rules a page was written under | axiom vector, World Laws, skins (Canon §5) |
 | Errata | characters who fell out of their stories when the page was scraped; they belong to no story, so they carry anything anywhere | player characters; Origin tolerance (Canon §5.4) |
 | Editors | the manuscript's correctors; they treat Errata as mistakes and erase them | `fac.editors`, Erasure, Volume bosses (Canon §11.6; doc 13) |
-| Red Ink | the Editors' servants and their correcting pressure | Erasure stacks, hunters, `liq.red_ink` |
 | Colophon | the sign-off at the end of every page, where the scribe rests | sanctuary room before the exits (Canon §17.1) |
-| Scriptorium | where texts are copied into another hand | Rewrite and identification services (doc 11) |
 | The Margin | the blank edge of the page where Errata gather between descents | meta hub (doc 14 §5) |
 | The Ur-Text | the first text, under every other one; all axioms 5, nothing contradicts | Folio 25, `genre.ur_text`, C = 0 and E = 0 (Canon §5.5) |
 | Marginalia | notes written past the end of the book | endless Folios 26 onward (doc 14 §9) |
 
-**Premise.** Stories do not end in the Palimpsest; they are scraped thin and written over. When a page is scraped, a few characters slip through the knife and fall out of their plot. They wake in the Margin with a memory of one genre (their Origin) and a hand that can hold any other genre's tools. The Editors see them as typographical sin. Five Editors guard the Volumes: the Proofreader, the Redactor, the Continuity Editor, the Abridger and the Last Word (doc 13 §9.2). Under every page lies the Ur-Text. An Erratum who reaches it can read the first sentence and choose: **Close the Book** and be written back into a story, or step through a Margins door and keep writing where no Editor has authority (doc 14 §9.1).
+**Premise.** Stories do not end in the Palimpsest; they are scraped thin and written over. When a page is scraped, a few characters slip through the knife and fall out of their plot. They wake in the Margin remembering one genre (their Origin), able to wield any other. The Editors see them as typographical sin. Five Editors guard the Volumes: the Proofreader, the Redactor, the Continuity Editor, the Abridger and the Last Word (doc 13 §9.2). Under every page lies the Ur-Text. An Erratum who reaches it can read the first sentence and choose: **Close the Book** and be written back into a story, or step through a Margins door and keep writing where no Editor has authority (doc 14 §9.1).
 
 **Fiction rules.**
 
@@ -77,7 +69,7 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 ### 2.1 `pillar.one_ruleset` — One Ruleset, Many Skins
 
 **Statement.** Mechanics live in genre-neutral archetypes; genres are data that change names, looks, sounds, dependencies, physics columns and World Laws, never the underlying formulas.
-**Why it matters.** Sixteen genres are only shippable if one combat, item and status system serves all of them, and a genre only feels real if it changes how you play, not just what you see (R6 §1 items 9 and 12).
+**Why it matters.** Sixteen genres ship only if one ruleset serves them all, and a genre feels real only if it changes how you play (R6 §1).
 
 | Test | Pass condition | Method |
 |---|---|---|
@@ -116,7 +108,7 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 ### 2.4 `pillar.party_of_errata` — Lost Together
 
 **Statement.** One to four players, every size tuned, each needing the others: revives, ghosts, carried Remains, shared knowledge, ally-targeted verbs and no competition for loot.
-**Why it matters.** Barony proved first-person co-op roguelikes; the 2026 bar is interdependence at every party size (R3 A2, A3).
+**Why it matters.** Barony proved the format; the 2026 bar is interdependence at every party size (R3 A2).
 
 | Test | Pass condition | Method |
 |---|---|---|
@@ -129,7 +121,7 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 ### 2.5 `pillar.every_find_a_question` — Every Find Is a Question
 
 **Statement.** Items are built from parts, rolled per player, partly unknown and worth investigating; skills grow by what you do; meta progression widens options and never adds raw power.
-**Why it matters.** Identification, appraisal and use-based growth make knowledge the deepest loot, which is what SPD, NetHack, Morrowind and Borderlands players return for.
+**Why it matters.** Knowledge is the deepest loot; SPD, NetHack, Morrowind and Borderlands players return for it.
 
 | Test | Pass condition | Method |
 |---|---|---|
@@ -186,18 +178,18 @@ Example: option A fails `pillar.living_page.t1` (order 3); option B fails `pilla
 
 ## 3. Inspiration ledger
 
-Each entry lists what we take exactly (with the owning doc), what we improve, what we reject, and the signature moment the game must reproduce. A signature moment is a release check: a scripted bot scenario or playtest beat that must occur as written. Facts come from R1, R2 and R7; status as of 2026-10-11.
+Each entry lists what we take exactly (with the owning doc), improve, reject, and the signature moment the game must reproduce as a scripted release check. Facts: R1, R2, R7.
 
 ### 3.1 Barony (Turning Wheel; 5.0.2 on 2026-02-18)
 
-- **Take exactly:** first-person real-time 1–4 co-op roguelike frame (brief §1; docs 05, 16); dead players become ghosts who open doors and mark targets (Canon §17.6; doc 16); only an item's magic is hidden, never its base type (Barony 5.0 Lore; Canon §13.6; doc 10); blessed/uncursed/cursed states (doc 10); real-time hunger (`res.satiation`; doc 04); Tinkering and Alembic as craft stations (docs 07, 08); shared-loot co-op as the opt-in `mode.loot_shared` (Canon §17.5; doc 14).
+- **Take exactly:** first-person real-time 1–4 co-op roguelike frame (brief §1; docs 05, 16); dead players become ghosts who open doors and mark targets (Canon §17.6; doc 16); only an item's magic is hidden, never its base type (Barony 5.0 Lore; Canon §13.6; doc 10); blessed/uncursed/cursed states (doc 10); real-time hunger (`res.satiation`; doc 04); shared-loot co-op as the opt-in `mode.loot_shared` (Canon §17.5; doc 14).
 - **Improve:** per-party-size tables for HP, count and damage (Canon §17.2); instanced loot by default; host-authoritative replays; 25 genre-distinct Folios instead of biome swaps.
-- **Reject:** full-strength friendly fire on direct hits (default is 5000 Bp, Canon §17.5); starvation at 5% Max HP per tick; appraising mundane gear.
+- **Reject:** full-strength friendly fire on direct hits (default 5000 Bp, Canon §17.5); appraising mundane gear.
 - **Signature moment — "The Ghost Opens the Door":** a party member dies in a trap room, floats ahead as a ghost, opens the far door and applies `st.marked` to the elite; the survivors carry the Remains through the exit and the ghost returns at 50% Max HP (docs 14, 16).
 
 ### 3.2 Shattered Pixel Dungeon (00-Evan; v4.0.2 on 2026-10-07)
 
-- **Take exactly:** per-seed unknown appearances shuffled at run start (Canon §13.6; doc 10); the Scroll of Upgrade as the Emendation, 3 per Volume with the re-level rule (Canon §13.7; doc 11); strength requirement as attribute shortfall (Canon §6.3; doc 04); seeds and a daily seed (Canon §3.6; doc 14); deck-based category pacing (doc 11); same-ingredient brews that auto-identify (doc 08); sleep, wander and hunt detection rates as zone-rate inputs (doc 09).
+- **Take exactly:** per-seed unknown appearances shuffled at run start (Canon §13.6; doc 10); the Scroll of Upgrade as the Emendation, 3 per Volume with the re-level rule (Canon §13.7; doc 11); strength requirement as attribute shortfall (Canon §6.3; doc 04); seeds and a daily seed (Canon §3.6; doc 14); deck-based category pacing (doc 11); same-ingredient brews that auto-identify (doc 08).
 - **Improve:** real time and co-op; type knowledge shared across the party and across all 16 genre skins.
 - **Reject:** turn-based clock; a run that ends at a fixed depth with no endless continuation.
 - **Signature moment — "The Gamble Read":** cornered at low HP, the player drinks an unknown crimson flask; it is liquid flame, the room burns, the enemies burn with it, and the flask type is now known to the whole party in every genre's skin (docs 08, 10).
@@ -227,8 +219,8 @@ Each entry lists what we take exactly (with the owning doc), what we improve, wh
 
 - **Take exactly:** surfaces and elemental reactions (Canon §12.1; docs 03, 08); high ground ×11000 at ≥ 2,500 mm (Canon §10.5 step 4a; doc 05); visible sight cones and last-known position (docs 09, 17); rest between fights as the Interleaf (doc 14 §3.9); a forbidden power path as Red Ink Marginalia powers (Canon §16.4; doc 04 §10); faction reputation (Canon §15; doc 13).
 - **Improve:** real time with tactical depth carried by surfaces, verticality and party roles; a reaction graph small enough to memorize (11 surfaces, 8 triggers).
-- **Reject:** turn-based combat; parties of 6; long-rest spam; dialogue trees as the primary verb.
-- **Signature moment — "Grease and Fire from the Balcony":** the Alchemist oils a stair (`st.oiled`, fire buildup ×20000), the Vanguard shoves an elite off a 3 m ledge, and the Spellwright's fire glyph ignites the oil in a 2 m blast (docs 05, 06, 08).
+- **Reject:** turn-based combat; parties of 6; dialogue trees as the primary verb.
+- **Signature moment — "Grease and Fire from the Balcony":** the Alchemist oils a stair (`st.oiled`, fire buildup ×20000), the Gunslinger fires from a balcony 3 m above (×11000), and the Spellwright's fire glyph ignites the oil in a 2 m blast (docs 05, 06, 08).
 
 ### 3.7 Caves of Qud (Freehold; 1.0 on 2024-12-05)
 
@@ -267,7 +259,7 @@ Each entry lists what we take exactly (with the owning doc), what we improve, wh
 
 ### 3.12 Secondary precedents
 
-Torg Eternity (axioms, Contradiction, World Laws; R6 §2), Noita (Holy Mountain as the Colophon; bleed modifiers; R6 §6), Hades II (God Mode as Scribe's Mercy; R3 A2), Slay the Spire 2 (4-player co-op interdependence; R3 A3), Dungeon Crawler Carl (pressure clock per floor; R6 §5), Spider-Verse (foreign things keep their home render style; R6 §6), Elden Ring Nightreign (a clock that compresses a 3D map into a session; R3 A3).
+Torg Eternity (axioms, World Laws), Noita (Holy Mountain, bleed), Hades II (God Mode), Slay the Spire 2 (co-op interdependence), Dungeon Crawler Carl (floor clock), Spider-Verse (foreign render styles); R6 §2–§6, R3 A3.
 
 ---
 
@@ -282,13 +274,7 @@ Torg Eternity (axioms, Contradiction, World Laws; R6 §2), Noita (Holy Mountain 
 | Elden Ring Nightreign | 2025-05-30 | 1–3 | premium | a clock compressing 3D runs to 40–60 min; tune every party size |
 | Borderlands 4 | cap 70 on 2026-09-10 | 1–4 | premium | part-built loot; PC performance as a sales risk |
 | ARC Raiders | 12M+ sold | 1–3 | 40 | crossplay on by default; free first pass track |
-| Risk of Rain 2 | Alloyed Collective DLC 2025-11-18 | 1–4 | 15 DLC | 3D co-op roguelite cadence |
 | Deep Rock Galactic: Rogue Core | EA 2026-05-20 | 1–4 | premium | first-person co-op roguelite |
-| Barony | 5.0.2 | 1–4 | premium | first-person co-op roguelike |
-| Caves of Qud | 1.0 plus 2026 builds | 1 | premium | systemic depth |
-| Shattered Pixel Dungeon | v4.0.2 | 1 | free plus supporter | systemic updates every few months |
-| Enshrouded | 1.0 2026-10-15 | 1–16 | premium | voxel cost on consoles |
-| Destiny 2 | final update 2026-06-09 | 1–6 | expansions plus Silver | end of service is real |
 
 ### 4.2 Parity list (must ship)
 
@@ -299,7 +285,7 @@ Torg Eternity (axioms, Contradiction, World Laws; R6 §2), Noita (Holy Mountain 
 | PAR-03 | crossplay on by default with opt-out | Steam at EA; relay route with the first non-Steam platform | 16 |
 | PAR-04 | cross-save | Steam Auto-Cloud for `profile/` and `runs/` | 02 |
 | PAR-05 | Steam Deck Verified, 10-foot UI | 1280 × 800 at 60 fps in `perf_saturation_4p` | 02, 17 |
-| PAR-06 | accessibility suite | Scribe's Mercy (`access.scribes_mercy`: 20% damage resistance, +2% per death, cap 80%), remapping, subtitles, color-independent signals | 17 |
+| PAR-06 | accessibility suite | Scribe's Mercy (`access.scribes_mercy`), remapping, subtitles, color-independent signals | 17 |
 | PAR-07 | seeds, daily, weekly | Canon §3.6; `mode.daily`, `mode.weekly_gauntlet`, `mode.seeded` | 14 |
 | PAR-08 | session-sized runs | Daily 25 min, Novella 60 min, Abridged 60–75 min, Standard 100–150 min | 14 |
 | PAR-09 | horizontal meta | Bindery adds options only | 14 |
@@ -319,18 +305,17 @@ R3 recommends 45–75 minute runs; the brief fixes the Standard run at 100–150
 4. Full gacha, loot boxes and pass with no paid randomness and commit-reveal fairness: one SKU worldwide (doc 15).
 5. Offline-complete end of service from day one.
 6. Opt-in invasions in which another player becomes an Editor (Canon §17.9).
-7. Endless Marginalia with bounded, proven-safe number growth.
 
 ---
 
 ## 5. Novelty register
 
-Each entry is novel in the genre or bleeding-edge in 2026. Owners implement; this chapter only names the promise.
+Each entry is novel in the genre or bleeding-edge in 2026; owners implement it.
 
 - **NR-01 Graded Contradiction (owner 12, 05, 06).** Torg's any-axis rule made real-time: potency steps 9000 to 5000 Bp, failure 0 to 1500 Bp, inert at gap 6, recomputed on the tick the local genre changes (Canon §5.5).
 - **NR-02 Anachronism Edge and Shock of the New (owner 05).** Foreign tech is weaker but surprising: up to +2400 Bp against natives and a guaranteed first-hit stagger at E ≥ 3 (Canon §5.6).
 - **NR-03 Genre-native casting (owner 06).** Each genre powers spells through its own axiom: Bandwidth runs on TECHNE in Cyberpunk, Qi on VERVE in Wuxia (Canon §5.2 `aether_axiom`).
-- **NR-04 Rewriting (owner 11).** Translate an item into the local genre's equivalent, keeping archetype, rarity, material tier and most affixes, as Destiny 2: Renegades translated Star Wars (R6 §1 item 8).
+- **NR-04 Rewriting (owner 11).** Translate an item into the local genre's equivalent, keeping archetype, rarity, material tier and most affixes (R6 §1).
 - **NR-05 Seam zones (owner 12).** At most one stitched room pair per Folio where both genres' axioms take their maximum and both toolsets work at full strength (Canon §5.8).
 - **NR-06 World Laws and law-bound verbs (owner 12).** Qinggong or the High Noon duel work only where their Law is active; Laws grant tolerance to licensed classes (Canon §5.10).
 - **NR-07 Going Native (owner 14, 04).** Once per run, at a Colophon, an Erratum adopts the current genre as its Origin and takes a native body form (Canon §5.11).
@@ -353,8 +338,6 @@ Each entry is novel in the genre or bleeding-edge in 2026. Owners implement; thi
 - **NR-24 Foreign things look foreign (owner 18, 02).** Out-of-genre items and Errata keep their home genre's shader, outline and animation step rate (R6 §6, Spider-Verse).
 - **NR-25 Damage-normalized skill XP (owner 04).** Draining one standard enemy gives 1.5 skill XP whatever the fire rate, so no weapon farms skills (Canon §7.1).
 - **NR-26 Echoes with Recollection trials (owner 14, 15).** Every gacha character has a deterministic earn path whose expected hours stay below the Inkwell's 19.58 (doc 15 §2.8).
-- **NR-27 Deterministic WASM mods (owner 02).** Sandboxed scripted effects with fuel limits and NaN canonicalization, safe inside a lockstep-verified simulation (Canon §3.7).
-- **NR-28 Folio story fragments (owner 12).** Each Folio carries a generated retelling of its genre's story, read from props and solved by deduction (doc 12 §19).
 
 ---
 
@@ -383,7 +366,7 @@ Reference numbers: a Folio-1 standard enemy has 60 HP and the reference player d
                 prep, placed trap    revives              known          0.5% Max HP/s
 ```
 
-Worked example: a spawner with `n_base = 5` in a 3-player party spawns `floor_div(5 × 15000 + 0, 10000) = 7` enemies and keeps `carry = 5000` for its next wave (Canon §17.2). Each member present receives `floor_div(kill_xp × 10000, 15000)` per kill (Canon §8).
+Worked example: a spawner with `n_base = 5` in a 3-player party spawns `floor_div(5 × 15000 + 0, 10000) = 7` enemies and keeps `carry = 5000` for its next wave (Canon §17.2).
 
 ### 6.3 The 5-minute Folio
 
@@ -402,8 +385,6 @@ Worked example: a spawner with `n_base = 5` in a 3-player party spawns `floor_di
 | 23,400 (390 s) | second warning |
 | 25,200 (420 s) | stack 1; then one stack every 1,800 ticks |
 | 41,400 (690 s) | stack 10: first hunter at the default threshold 10 |
-
-Target Folio length is 180 to 420 s (Canon §17.1).
 
 ### 6.4 The 2-hour run
 
@@ -432,7 +413,7 @@ Reference income (doc 15 §2.7): 400 Ink per hour (2.5 pulls), 20,000 Codex XP p
 
 ## 7. Player verbs master table
 
-Logical inputs are `input.` IDs owned by doc 17; IDs marked † are requested from doc 17 (Interface assumptions). Defaults below are binding starting bindings; doc 17 owns remapping, hold/toggle alternatives and conflict resolution. On gamepad, holding LB opens the Grimoire layer (abbreviated "LB+"). Input is never synthesized for a player (Canon §11.8).
+Logical inputs are doc 17's `input.` IDs; † marks IDs requested from doc 17. These defaults bind until doc 17 ships remapping and hold/toggle options. Gamepad "LB+" means while LB is held (the Grimoire layer). Input is never synthesized (Canon §11.8).
 
 | Verb | Logical input | KB/M | Gamepad | Systems touched | Owner |
 |---|---|---|---|---|---|
@@ -478,7 +459,7 @@ Logical inputs are `input.` IDs owned by doc 17; IDs marked † are requested fr
 | SS-3 Co-op night | `mode.standard` with co-op overlay | 4 | lobby and Margin 600 + 25 Folios at 320 (8,000) + one break at a Folio entry 400 | 9,000 s = 150 min | Folio-entry save resumes on another night (Canon §2.5) |
 | SS-4 Endless Marginalia | `mode.endless` | 1–4 | per Marginalia Volume: 4 Folios at 300 + Editor Folio 360 = 1,560 | 26 min per Volume | "Close the Book" door after every Marginalia Editor (doc 14 §9.1) |
 
-A 60-minute SS-4 session is two Marginalia Volumes (3,120 s) plus 480 s in the Margin. SS-1 needs no account unlocks (`unlock.daily_baseline`), so a new player and a veteran compete on equal items. SS-3 is the design target for co-op tuning: every Folio of it must hold four players' attention, which is why exits need unanimity before 3,600 ticks and a majority before 7,200 (doc 14 §3.6).
+A 60-minute SS-4 session is two Marginalia Volumes (3,120 s) plus 480 s in the Margin. SS-1 uses `unlock.daily_baseline`, so new and veteran players compete on equal items. SS-3 is the co-op tuning target.
 
 ---
 
@@ -497,7 +478,7 @@ Age target 16+ (DECISIONS #13). Primary input is mouse and keyboard; gamepad par
 
 ### 9.2 Platforms
 
-PC first: Windows x86_64 (DX12, Vulkan fallback), Linux x86_64 and aarch64 in Steam Linux Runtime 3.0, macOS 14+ on Apple silicon; Steam Deck Verified at 1280 × 800 and 60 fps; Steam Machine 10-foot UI; a WebGPU demo of Volume I, solo only. Switch 2, PS5 and Xbox Series are post-1.0 ports behind the same `Platform` and `Transport` traits (doc 02 §14; DECISIONS #6).
+PC first: Windows, Linux (x86_64, aarch64) and macOS 14+ on Apple silicon; Steam Deck Verified at 1280 × 800 and 60 fps; Steam Machine 10-foot UI; a solo WebGPU demo of Volume I. Switch 2, PS5 and Xbox Series follow 1.0 (doc 02 §14; DECISIONS #6).
 
 ### 9.3 Business model: Earned Randomness, Paid Certainty
 
@@ -523,8 +504,7 @@ PEGI 16, ESRB M, USK 16, ACB MA15+, ClassInd 16, GRAC 18, CERO D (doc 15 §8.6).
 2. Manuscript metaphors are the house dialect: pages, ink, folios, errata, colophons, binding. Never "level", "loot box" or "gacha" in diegetic text; the Inkwell is "drawing ink", a Reliquary is "unsealing".
 3. Genres speak sincerely in their own register; the wink lives only in marginal notes and Editor lines.
 4. Editors speak in style-guide rulings: "Strike. Unattested usage." "Query: why is this character still here?"
-5. No casino lexicon anywhere near Inkwell, Reliquary or Fortune Engine text: no "jackpot", "spin", "bet", "wager", "slot" or "lucky streak" (doc 15 AP-7).
-6. The on-device Scribe writes only cosmetic text inside these rules, with a template fallback (doc 18).
+5. No casino lexicon anywhere near Inkwell, Reliquary or Fortune Engine text: no "jackpot", "spin", "bet", "wager", "slot machine" or "lucky streak" (doc 15 AP-7). The Scribe (NR-23) obeys the same rules.
 
 | Genre | Register | Sample line |
 |---|---|---|
@@ -575,7 +555,7 @@ pub fn evaluate(k: &KpiRecord, value: Option<i64>, n: u64) -> KpiVerdict {
 }
 ```
 
-An unbounded side uses `i64::MIN` or `i64::MAX`. `Alert` opens a tuning ticket for the owner doc; `Fail` blocks the next content update until a fix ships or the product owner signs a waiver.
+Open bounds use `i64::MIN` or `i64::MAX`. `Alert` opens a tuning ticket for the owner doc; `Fail` blocks the next content update until fixed or waived by the product owner.
 
 ### 10.3 KPI table
 
@@ -595,7 +575,6 @@ An unbounded side uses `i64::MIN` or `i64::MAX`. `Alert` opens a tuning ticket f
 | `kpi.coop.hours_share` | run-hours in parties of 2 or more, Bp | ≥ 4000 | ≥ 2500 | a |
 | `kpi.coop.desyncs_per_1000h` | desyncs per 1,000 co-op hours | ≤ 5 | ≤ 10 | a |
 | `kpi.quality.crash_free_bp` | sessions without a crash, Bp | ≥ 9950 | ≥ 9900 | e |
-| `kpi.quality.deck_gates_bp` | nightly Deck `perf.` gates green, Bp | 10000 | ≥ 9500 | f |
 | `kpi.quality.review_positive_90d` | positive Steam reviews 90 days after EA, Bp | ≥ 8500 | ≥ 8000 | d |
 | `kpi.biz.units_90d` | units sold in the first 90 days of EA | ≥ 200,000 | ≥ 100,000 | d |
 | `kpi.biz.return_14d` | buyers starting runs on ≥ 2 UTC dates within 14 days, Bp; never driven by rewards or notifications | ≥ 6000 | ≥ 4500 | a |
@@ -607,10 +586,113 @@ An unbounded side uses `i64::MIN` or `i64::MAX`. `Alert` opens a tuning ticket f
 | `kpi.econ.minor_refunds` | unauthorized-minor refunds per 28 days | no rise period over period | any rise alerts | c |
 | `kpi.econ.spend_top1_share` | revenue share of the top 1% of spenders | informational | none | c |
 | `kpi.econ.chat_report_rate` | reports per 1,000 sessions | trend only | none | c |
-| `kpi.access.mercy_run_share` | runs with Scribe's Mercy, Bp | informational | none | a |
 
 ### 10.4 Worked examples
 
-1. Folio seconds sample `[210, 250, 260, 290, 300, 305, 330, 360, 410, 470]` with a test record of `min_sample = 10`: `n = 10`, `p50 = sorted[ceil_div(500, 10) - 1] = sorted[4] = 300`, inside 180..=420: **Pass**. `p90 = sorted[8] = 410`.
+1. Folio seconds sample `[210, 250, 260, 290, 300, 305, 330, 360, 410, 470]` with a test record of `min_sample = 10`: `n = 10`, `p50 = sorted[ceil_div(50 × 10, 100) - 1] = sorted[4] = 300`, inside 180..=420: **Pass**. `p90 = sorted[ceil_div(90 × 10, 100) - 1] = sorted[8] = 410`.
 2. Cosmic Horror offered 1,200 times in 2-door offers and picked 390 times: `floor_div(3900000, 1200) = 3250` Bp, outside 3500..=6500 but inside 3000..=7000: **Alert** to doc 12.
 3. Volume I clear rates 5200, 5600, 4700, 6100 Bp for party sizes 1–4: mean `floor_div(21600, 4) = 5400`, deviations −200, +200, −700, +700, maximum 700: **Pass**. With 6600 for four players the mean is 5525 and the maximum deviation 1075: **Alert**.
+
+---
+
+## 11. Questions for the product owner
+
+Per the product owner's standing request, every system this chapter designs carries an open question. Each default below is binding until answered; answers land in DECISIONS.md.
+
+| # | System | Question | Default in force |
+|---|---|---|---|
+| Q-01 | Fiction | Does the Last Word reveal that Editors were once Errata? | yes, one line in its defeat text; no branching |
+| Q-02 | Fiction | Is "Close the Book" a homecoming or a sacrifice? | homecoming: the Erratum is written back into its story |
+| Q-03 | Pillars | Should Lost Together (4) outrank The Page Is Alive (3)? | no; order as in §2 |
+| Q-04 | Pillars | Raise the systemic kill share target from 800 to 1500 Bp? | 800 Bp |
+| Q-05 | Inspirations | Which signature moment opens the trailer? | the revolver that jams in Fairy Tale while the wolf staggers (NR-02) |
+| Q-06 | Competitive bar | All 16 genres at EA, or 8 core at EA and the rest in free updates? | all 16 at EA |
+| Q-07 | Novelty | Ship the Scribe on by default? | off (`flag.scribe.enabled = false`), opt-in in settings |
+| Q-08 | Loops | Keep Erasure onset at 420 s for four-player Folios that average 320 s? | 420 s (Canon §17.1) |
+| Q-09 | Verbs | Q and E for lean, or for abilities? | lean; abilities on 1–4 |
+| Q-10 | Sessions | Which structure does a 3–4 player lobby preselect? | Standard, with a one-click Abridged "short night" |
+| Q-11 | Platforms | macOS at EA or at 1.0? | EA |
+| Q-12 | Business | Folio Expansion at 12.99 (doc 15) or 14.99 (R3's upper bound)? | 12.99 |
+| Q-13 | Ratings | Any regional low-gore build? | none; the gore slider is presentation only |
+| Q-14 | Tone | Allow strong profanity in Noir, Cyberpunk and Post-Apocalypse? | mild language only |
+| Q-15 | KPIs | Is 200,000 units in 90 days the commercial bar? | yes |
+| Q-16 | KPIs | Make usage telemetry opt-out to measure KPIs? | no; opt-in, and KPIs accept `Insufficient` |
+
+---
+
+## Exports
+
+All IDs pass Canon §1.1 and sit in namespaces Canon §19 assigns to this chapter.
+
+| Namespace | IDs |
+|---|---|
+| `pillar.` | `pillar.one_ruleset`, `pillar.out_of_story`, `pillar.living_page`, `pillar.party_of_errata`, `pillar.every_find_a_question`, `pillar.fair_page`; tests `pillar.<name>.t1`, `.t2`, `.t3` for each (18) |
+| `kpi.` | the 25 IDs of §10.3, including doc 15's requested `kpi.econ.featured_hours_p50`, `kpi.econ.ink_per_hour_p50`, `kpi.econ.codex_completion`, `kpi.econ.refund_rate`, `kpi.econ.minor_refunds`, `kpi.econ.spend_top1_share`, `kpi.econ.chat_report_rate` |
+
+Record schemas: pillar record (§2.7), KPI record (§10.2). Doc-local labels, not content IDs: `PAR-01`…`PAR-14`, `NR-01`…`NR-26`, `SS-1`…`SS-4`, `Q-01`…`Q-16`.
+
+## Interface assumptions
+
+| Doc | Assumed to provide |
+|---|---|
+| 02 | bot harness and CI targets for pillar tests; `flag.telemetry.usage`, `flag.telemetry.crash_mode`, `flag.scribe.enabled`; nightly `perf.` gates |
+| 04 | four ability slots; each of the 13 Calling kits lists its ally-targeting verbs (`pillar.party_of_errata.t2`) |
+| 07 | placeables used from the quickbar with a placement preview |
+| 09 | grid-driven stealth, sight cones and sleeping-target sneak attacks (doc not yet on disk) |
+| 10, 11 | skin and item records lintable for `pillar.one_ruleset.t1`; a generator callable for `pillar.every_find_a_question.t2` |
+| 12 | per-genre syntactic-channel fields for `pillar.one_ruleset.t2`; `law.*` records and seam zones per Canon §5.8, §5.10 |
+| 14 | exit forecasts; per-Folio entry and exit ticks, Rewrite counts and party size in run history for KPIs |
+| 15 | §12 econ KPI definitions and guardrails; SEP rules; verifier |
+| 16 | replay verification, desync counts, an aggregate opt-in telemetry channel, intents `ChooseExit`, `TradePropose`, `DropItemFor` |
+| 17 | adopts §7 defaults and adds `input.move`, `input.look`, `input.weapon_1..=3`, `input.weapon_next`, `input.quickbar_use`, `input.quickbar_radial`, `input.ping`, `input.comm_radial`, `input.inventory`, `input.map`; state icons; odds panels; `access.scribes_mercy` at 20%, +2% per death, cap 80% |
+| 18 | adopts §9.5 as the voice bible; enforces the casino-lexicon lint; Scribe output rules |
+
+## Canon gaps
+
+- **G1.** The contract header names canon-1.2; the canon on disk is canon-1.4, against which every rule here was checked. The canon-1.3 and 1.4 content used here (Colophon, World Laws, seams, Going Native, Unmoored, limited building, invasions) contradicts nothing in canon-1.2.
+- **G2.** `input.` belongs to doc 17, which is not yet on disk. §7 states default bindings and requests 10 input IDs (Interface assumptions).
+- **G3.** Doc 15 Canon gap 17 calls the 15-Folio run `mode.novella`; doc 14 §8.1 defines `mode.abridged` (15 Folios, depths to 25) and `mode.novella` (Folios 1–15 at `d = f`) as different modes. This chapter follows doc 14 and Canon §17.1.
+- **G4.** Editor IDs differ between doc 13 (`boss.editor.proofreader` … `boss.editor.last_word`) and doc 14 (`boss.editor_v1` … `boss.ur_editor`). This chapter uses display names only. Requested: one ID set with aliases.
+- **G5.** Doc 14 §11 Prologue room L3 teaches mining 3 blocks and placing 2, and doc 14 §5.1 lists `margin.plot` as a building plot; Canon §4.3 and §17.8 (canon-1.4) fix terrain and make the Margin trophy slots. §7 assumes canon-1.4: placeables only.
+- **G6.** Doc 12 Canon gap G10 assumes `gpv.law.*` and no seam zones; Canon §5.8 and §5.10 define `law.*` and `zone.seam`. NR-05 and NR-06 follow the canon.
+- **G7.** Doc 14 §1.1 sets `Q_REF` at 60 Quires per reference hour; doc 15 §2.7 quotes 300 from the same constant. This chapter states no Quire rate and defines no Quire KPI until they agree.
+- **G8.** No canon field records telemetry consent; assumed doc 16 provides an aggregate opt-in channel and opt-in KPIs may stay `Insufficient`.
+
+## Acceptance tests
+
+1. **Pillar registry.** Content holds exactly 6 `pillar.` records with `order` 1..=6, each listing exactly 3 tests. `fnv1a32`: `pillar.one_ruleset` = `0x44b5d6ae`, `pillar.out_of_story` = `0x0f73a927`, `pillar.living_page` = `0xd366b69e`, `pillar.party_of_errata` = `0xbd9c6103`, `pillar.every_find_a_question` = `0xc83836a7`, `pillar.fair_page` = `0xab1fec97`; none collides with another loaded ID.
+2. **ID grammar.** All 24 `pillar.` IDs and 25 `kpi.` IDs match `^[a-z][a-z0-9_]*(\.[a-z0-9_]+){1,5}$` and are at most 64 bytes. `fnv1a32("kpi.econ.featured_hours_p50") = 0x706610de`.
+3. **Release gate.** 17 tests `Pass` and `pillar.fair_page.t1` `NotRun` gives `false`; all 18 `Pass` gives `true`.
+4. **Conflict rule.** `prefer([3], [4]) = B`; `prefer([6], [1]) = B`; `prefer([], [2]) = A`; `prefer([2], [2]) = Escalate`.
+5. **Percentile.** §10.4 example 1 gives `p50 = 300` (`Pass`) and `p90 = 410`.
+6. **Door pick.** 390 picks of 1,200 offers gives 3250 Bp and `Alert`.
+7. **Party parity.** Rates 5200, 5600, 4700, 6100 give maximum deviation 700 and `Pass`; 5200, 5600, 4700, 6600 give 1075 and `Alert`.
+8. **Sample floor.** `evaluate` with `n = 1999` and `min_sample = 2000` returns `Insufficient` for any value.
+9. **Integer records.** A KPI record with `"target_lo": 180.0` is rejected by the content validator (Canon §1.6).
+10. **Session budgets.** SS-1 sums to 1,500 s, SS-2 to 7,800, SS-2a to 4,350, SS-3 to 9,000, one SS-4 Volume to 1,560; the SS-2 run body of 7,500 s lies in 6,000..=9,000 s (Canon §17.1).
+11. **Loop math.** Folio-10 TTK with a Common Normal +0 ilvl-10 weapon is 190 ticks; dodge invulnerability is 8 ticks at AGI 40 and 10 at AGI 70; a 5-enemy spawner in a 3-player party spawns 7 and carries 5000.
+12. **Erasure timeline.** Stack 1 lands at tick 25,200 and stack 10 at 41,400 after entry.
+13. **Marginalia cap.** The enhancement cap at Folio 50 is 20.
+14. **Separation wall.** A `store.` SKU whose grant list contains `cur.ink` fails validation; a build with `juris.paid_random_items_enabled = true` fails to compile.
+15. **Casino lexicon.** A `loc.` string bound to a `banner.`, `reliq.` or `engine.` ID containing a whole-word, case-insensitive "jackpot", "spin", "bet", "wager", "slot machine" or "lucky streak" fails the content build.
+16. **Ledger completeness.** The inspiration ledger has 11 entries, each citing at least one owner doc in 02..=18; the novelty register has at least 25 entries, each with an owner.
+17. **Bindings.** Every logical input in §7 exists in doc 17's binding table, and no two verbs in one input context share a default binding, checked separately for KB/M and gamepad.
+18. **Genre floor.** `ceil_div(24, 3) = 8` core genres is the structural minimum under `GENRE_REPEAT_RULE`.
+
+## Invariants annex
+
+```
+Σ 01: pitch ⊗ pillars ⊗ ledger ⊗ bar ⊗ novelty ⊗ loops ⊗ verbs ⊗ sessions ⊗ audience ⊗ tone ⊗ kpis
+W! |pillars| = 6 ∧ ∀ pillar: |tests| = 3                 W! EA ⇒ ∀ 18 tests = Pass
+W! pillar.fair_page ≻ every other pillar                 W! conflict(1..5) → lower order wins
+W! mechanics := archetype; genre := data                 N! per-genre formula
+W! foreign gear allowed ∧ priced ∧ forecast              N! binary ban of foreign gear
+W! sim deterministic ∧ replay-verifiable                 N! renderer-only gameplay effect
+W! every party size tuned                                N! loot competition by default
+W! meta := horizontal                                    N! purchasable power ∨ purchasable randomness
+W! every random container: odds 4 dp ∧ pity visible      N! premium currency ∨ timers ∨ streaks
+W! offline-complete except invasions ∧ ranked boards     N! content that needs a server to exist
+W! KPI shares in Bp ∧ integer records                    N! KPI target on streaks ∨ sessions/day ∨ minors
+W! tone := literary ∧ wry ∧ manuscript                   N! casino lexicon near Inkwell|Reliquary|Engine
+W! Scribe text → cosmetic only                           N! LLM output → sim state
+```

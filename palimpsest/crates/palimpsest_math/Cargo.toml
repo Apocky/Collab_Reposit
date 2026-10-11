@@ -9,8 +9,16 @@ publish.workspace = true
 [lints]
 workspace = true
 
+[features]
+default = []
+# Doc 02 §4.1 and §4.7 derive Serialize/Deserialize for Fx, Fx3 and Rng, while
+# doc 02 §3.3 allows only blake3 as an external dependency of this crate; the
+# derives are therefore opt-in.
+serde = ["dep:serde"]
+
 [dependencies]
 blake3 = { workspace = true }
+serde = { workspace = true, optional = true }
 
 [dev-dependencies]
 proptest = { workspace = true }

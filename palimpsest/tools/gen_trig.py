@@ -140,7 +140,7 @@ def render_atan(a):
     lines = [HEADER.format(digits=DIGITS)]
     lines.append("//! SPEC: doc 02 §4.4 CORDIC arctangent table.\n")
     lines.append("\n")
-    lines.append("/// SPEC: doc 02 §4.4. `ATAN_T[i] = round_half_even(atan(2^-i) / (2*pi) * 2^32)`\n")
+    lines.append("/// SPEC: canon §1.9, doc 02 §4.4. `ATAN_T[i] = round_half_even(atan(2^-i) / (2*pi) * 2^32)`\n")
     lines.append("/// for `i` in `0..=15`, in units of 2^-16 Bam (one full turn is 2^32).\n")
     lines.append("#[rustfmt::skip]\n")
     lines.append("pub const ATAN_T: [i64; 16] = [\n")

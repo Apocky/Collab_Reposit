@@ -175,7 +175,14 @@ pub const fn stream_rng(run_seed: u64, name: &str, folio_index: u32) -> Rng {
 /// `mix64(stream_seed(run_seed, stream, folio as u64) ^ mix64(actor ^ mix64(tick ^ ((seq as u64) << 48))))`.
 #[inline]
 #[must_use]
-pub const fn keyed_seed(run_seed: u64, stream: &str, folio: u32, actor: u64, tick: u64, seq: u32) -> u64 {
+pub const fn keyed_seed(
+    run_seed: u64,
+    stream: &str,
+    folio: u32,
+    actor: u64,
+    tick: u64,
+    seq: u32,
+) -> u64 {
     mix64(stream_seed(run_seed, stream, folio) ^ mix64(actor ^ mix64(tick ^ ((seq as u64) << 48))))
 }
 
@@ -189,7 +196,14 @@ pub const fn keyed_seed(run_seed: u64, stream: &str, folio: u32, actor: u64, tic
 /// on how many other draws happened.
 #[inline]
 #[must_use]
-pub const fn keyed_rng(run_seed: u64, stream: &str, folio: u32, actor: u64, tick: u64, seq: u32) -> Rng {
+pub const fn keyed_rng(
+    run_seed: u64,
+    stream: &str,
+    folio: u32,
+    actor: u64,
+    tick: u64,
+    seq: u32,
+) -> Rng {
     Rng::from_seed64(keyed_seed(run_seed, stream, folio, actor, tick, seq))
 }
 
@@ -277,6 +291,7 @@ pub mod streams {
 
 #[cfg(test)]
 mod tests {
+    use super::Rng;
     use super::*;
     use proptest::prelude::*;
 
@@ -332,7 +347,10 @@ mod tests {
     fn canon_t07_keyed_draw() {
         // Canon §21 test 7.
         let actor = (3u64 << 40) | 5;
-        assert_eq!(keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0), 0x4dcd_b61b_ac36_2a8f);
+        assert_eq!(
+            keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0),
+            0x4dcd_b61b_ac36_2a8f
+        );
         let mut r = keyed_rng(RUN, streams::COMBAT, 3, actor, 1000, 0);
         assert_eq!(r, Rng::from_seed64(0x4dcd_b61b_ac36_2a8f));
         assert_eq!(r.range(10_000), 8822);
@@ -366,10 +384,22 @@ mod tests {
         assert_eq!(alone, after_50);
         assert_eq!(alone, 8822);
         // Different keys do give different generators.
-        assert_ne!(keyed_seed(RUN, "rng.combat", 3, actor, 1000, 1), keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0));
-        assert_ne!(keyed_seed(RUN, "rng.combat", 3, actor, 1001, 0), keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0));
-        assert_ne!(keyed_seed(RUN, "rng.loot", 3, actor, 1000, 0), keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0));
-        assert_ne!(keyed_seed(RUN, "rng.combat", 4, actor, 1000, 0), keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0));
+        assert_ne!(
+            keyed_seed(RUN, "rng.combat", 3, actor, 1000, 1),
+            keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0)
+        );
+        assert_ne!(
+            keyed_seed(RUN, "rng.combat", 3, actor, 1001, 0),
+            keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0)
+        );
+        assert_ne!(
+            keyed_seed(RUN, "rng.loot", 3, actor, 1000, 0),
+            keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0)
+        );
+        assert_ne!(
+            keyed_seed(RUN, "rng.combat", 4, actor, 1000, 0),
+            keyed_seed(RUN, "rng.combat", 3, actor, 1000, 0)
+        );
     }
 
     #[test]
@@ -526,10 +556,20 @@ mod tests {
         assert!(!streams::is_mod_stream("rng.mod..x"));
         assert!(!streams::is_mod_stream("rng.combat"));
         // Folio streams for different Folios are distinct; run-scoped uses folio 0.
-        assert_ne!(stream_seed(RUN, streams::WORLDGEN, 1), stream_seed(RUN, streams::WORLDGEN, 2));
-        assert_ne!(stream_seed(RUN, streams::APPEARANCE, 0), stream_seed(RUN, streams::WORLDGEN, 0));
+        assert_ne!(
+            stream_seed(RUN, streams::WORLDGEN, 1),
+            stream_seed(RUN, streams::WORLDGEN, 2)
+        );
+        assert_ne!(
+            stream_seed(RUN, streams::APPEARANCE, 0),
+            stream_seed(RUN, streams::WORLDGEN, 0)
+        );
         // Every stream name is distinct under fnv1a64.
-        let mut all: std::vec::Vec<u64> = streams::SEQUENTIAL.iter().chain(streams::KEYED.iter()).map(|n| fnv1a64(n.as_bytes())).collect();
+        let mut all: std::vec::Vec<u64> = streams::SEQUENTIAL
+            .iter()
+            .chain(streams::KEYED.iter())
+            .map(|n| fnv1a64(n.as_bytes()))
+            .collect();
         all.sort_unstable();
         all.dedup();
         assert_eq!(all.len(), 20);

@@ -22,15 +22,15 @@ pub const FX_FRAC_BITS: u32 = 32;
 pub struct Fx(i64);
 
 impl Fx {
-    /// SPEC: doc 02 §4.1. Zero.
+    /// SPEC: canon §1.4, doc 02 §4.1. Zero.
     pub const ZERO: Fx = Fx(0);
-    /// SPEC: doc 02 §4.1. One (raw `2^32`).
+    /// SPEC: canon §1.4, doc 02 §4.1. One (raw `2^32`).
     pub const ONE: Fx = Fx(1 << 32);
     /// SPEC: canon §2.1. One half (raw `2^31`).
     pub const HALF: Fx = Fx(1 << 31);
     /// SPEC: canon §2.1 `DT` raw `71582788 = floor(2^32 / 60)`, one tick.
     pub const DT: Fx = Fx(71_582_788);
-    /// SPEC: doc 02 §4.6 `Fx::MAX = Fx(i64::MAX)`.
+    /// SPEC: canon §1.8, doc 02 §4.6 `Fx::MAX = Fx(i64::MAX)`.
     pub const MAX: Fx = Fx(i64::MAX);
     /// SPEC: canon §1.4. The most negative representable value.
     pub const MIN: Fx = Fx(i64::MIN);
@@ -65,7 +65,7 @@ impl Fx {
         fx_from_milli(m)
     }
 
-    /// SPEC: doc 02 §4.1 `mul_int`: checked `raw * n`.
+    /// SPEC: canon §1.4, doc 02 §4.1 `mul_int`: checked `raw * n`.
     #[inline]
     #[must_use]
     #[track_caller]
@@ -76,7 +76,7 @@ impl Fx {
         }
     }
 
-    /// SPEC: doc 02 §4.1 `div_int`: `floor_div(raw, n)`, `n > 0`.
+    /// SPEC: canon §1.4, doc 02 §4.1 `div_int`: `floor_div(raw, n)`, `n > 0`.
     #[inline]
     #[must_use]
     #[track_caller]
@@ -91,7 +91,7 @@ impl Fx {
         fx_floor_block(self)
     }
 
-    /// SPEC: doc 02 §4.1 `to_milli_floor = floor_div(raw as i128 * 1000, 2^32)`.
+    /// SPEC: canon §1.4, doc 02 §4.1 `to_milli_floor = floor_div(raw as i128 * 1000, 2^32)`.
     /// Always fits in `i64`.
     #[inline]
     #[must_use]
@@ -399,11 +399,26 @@ mod tests {
     #[test]
     fn div_fx_examples() {
         // Doc 02 §4.1 rounding examples.
-        assert_eq!(div_fx(Fx::from_int(7), Fx::from_int(2)).raw(), 15_032_385_536);
-        assert_eq!(div_fx(Fx::from_int(1), Fx::from_int(3)).raw(), 1_431_655_765);
-        assert_eq!(div_fx(Fx::from_int(-1), Fx::from_int(3)).raw(), -1_431_655_766);
-        assert_eq!(div_fx(Fx::from_int(1), Fx::from_int(-3)).raw(), -1_431_655_766);
-        assert_eq!(div_fx(Fx::from_int(-1), Fx::from_int(-3)).raw(), 1_431_655_765);
+        assert_eq!(
+            div_fx(Fx::from_int(7), Fx::from_int(2)).raw(),
+            15_032_385_536
+        );
+        assert_eq!(
+            div_fx(Fx::from_int(1), Fx::from_int(3)).raw(),
+            1_431_655_765
+        );
+        assert_eq!(
+            div_fx(Fx::from_int(-1), Fx::from_int(3)).raw(),
+            -1_431_655_766
+        );
+        assert_eq!(
+            div_fx(Fx::from_int(1), Fx::from_int(-3)).raw(),
+            -1_431_655_766
+        );
+        assert_eq!(
+            div_fx(Fx::from_int(-1), Fx::from_int(-3)).raw(),
+            1_431_655_765
+        );
         assert_eq!(div_fx(Fx::MIN, Fx::ONE), Fx::MIN);
     }
 
@@ -443,7 +458,16 @@ mod tests {
         for n in 0u128..=70_000 {
             assert_eq!(isqrt_u128(n), n.isqrt(), "n = {n}");
         }
-        for k in [2u128, 3, 7, 1 << 20, 1 << 31, (1 << 32) + 1, 1 << 40, (1 << 63) + 12_345] {
+        for k in [
+            2u128,
+            3,
+            7,
+            1 << 20,
+            1 << 31,
+            (1 << 32) + 1,
+            1 << 40,
+            (1 << 63) + 12_345,
+        ] {
             let sq = k * k;
             assert_eq!(isqrt_u128(sq), k);
             assert_eq!(isqrt_u128(sq - 1), k - 1);
@@ -452,9 +476,58 @@ mod tests {
         // Every bit length 2..=128 at its extremes.
         for bits in 2u32..=128 {
             let lo = 1u128 << (bits - 1);
-            let hi = if bits == 128 { u128::MAX } else { (1u128 << bits) - 1 };
+            let hi = if bits == 128 {
+                u128::MAX
+            } else {
+                (1u128 << bits) - 1
+            };
             assert_eq!(isqrt_u128(lo), lo.isqrt());
             assert_eq!(isqrt_u128(hi), hi.isqrt());
+        }
+    }
+
+    /// Instrumented copy of the doc 02 §4.2 loop that also counts iterations.
+    fn isqrt_counted(n: u128) -> (u128, u32) {
+        if n < 2 {
+            return (n, 0);
+        }
+        let bits = 128 - n.leading_zeros();
+        let mut x: u128 = 1u128 << bits.div_ceil(2);
+        let mut iters = 0;
+        loop {
+            iters += 1;
+            let y = (x + n / x) >> 1;
+            if y >= x {
+                return (x, iters);
+            }
+            x = y;
+        }
+    }
+
+    #[test]
+    fn isqrt_iteration_bound_and_random_cross_check() {
+        // Doc 02 §4.2: at most 7 loop passes, measured over 300 inputs per bit
+        // length 2..=128, and a 100,000-input cross-check against core.
+        let mut rng = crate::rng::Rng::from_seed64(0x15_0127);
+        let mut worst = 0;
+        for bits in 2u32..=128 {
+            for _ in 0..300 {
+                let lo = u128::from(rng.next_u64()) | (u128::from(rng.next_u64()) << 64);
+                let n = if bits == 128 {
+                    lo | (1u128 << 127)
+                } else {
+                    (lo & ((1u128 << bits) - 1)) | (1u128 << (bits - 1))
+                };
+                let (r, it) = isqrt_counted(n);
+                assert_eq!(r, isqrt_u128(n));
+                worst = worst.max(it);
+            }
+        }
+        assert!(worst <= 7, "isqrt_u128 needed {worst} passes");
+        for _ in 0..100_000 {
+            let n = u128::from(rng.next_u64()) | (u128::from(rng.next_u64()) << 64);
+            let n = n >> rng.range(128);
+            assert_eq!(isqrt_u128(n), n.isqrt(), "n = {n}");
         }
     }
 
@@ -538,9 +611,18 @@ mod tests {
 
     #[test]
     fn debug_and_display_without_floats() {
-        assert_eq!(format!("{:?}", Fx::from_int(1)), "Fx(raw=4294967296 ~1.000)");
-        assert_eq!(format!("{:?}", fx_from_milli(-1500)), "Fx(raw=-6442450944 ~-1.500)");
-        assert_eq!(format!("{:?}", fx_from_milli(4300)), "Fx(raw=18468359372 ~4.300)");
+        assert_eq!(
+            format!("{:?}", Fx::from_int(1)),
+            "Fx(raw=4294967296 ~1.000)"
+        );
+        assert_eq!(
+            format!("{:?}", fx_from_milli(-1500)),
+            "Fx(raw=-6442450944 ~-1.500)"
+        );
+        assert_eq!(
+            format!("{:?}", fx_from_milli(4300)),
+            "Fx(raw=18468359372 ~4.300)"
+        );
         assert_eq!(format!("{}", fx_from_milli(-250)), "-0.250");
         assert_eq!(format!("{}", Fx::from_raw(1)), "0.000");
         assert_eq!(format!("{}", Fx::MIN), "-2147483648.000");

@@ -7,17 +7,18 @@
 use core::ops::{Add, Index, Neg, Sub};
 
 use crate::fx::{Fx, div_fx, fx_floor_block, isqrt_u128, mul_fx};
-use crate::int::narrow_i64;
+use crate::int::{U256, floor_div_i128, floor_div_i256, narrow_i64};
+pub use crate::int::I256;
 
-/// SPEC: doc 02 §4.6 `EPS = Fx(256)` (2^-24 m²), the degeneracy threshold for
+/// SPEC: canon §1.8, doc 02 §4.6 `EPS = Fx(256)` (2^-24 m²), the degeneracy threshold for
 /// squared segment lengths and the capsule-ray quadratic.
 pub const EPS: Fx = Fx::from_raw(256);
 
-/// SPEC: doc 02 §4.6. Ray direction components with `|raw| < DDA_DIR_EPS_RAW`
+/// SPEC: canon §1.8, doc 02 §4.6. Ray direction components with `|raw| < DDA_DIR_EPS_RAW`
 /// count as 0 in the voxel DDA, so `div_fx(Fx::ONE, d)` cannot overflow.
 pub const DDA_DIR_EPS_RAW: i64 = 256;
 
-/// SPEC: doc 02 §4.5. A vector of three `Fx` (meters).
+/// SPEC: canon §1.4, doc 02 §4.5. A vector of three `Fx` (meters).
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Fx3 {
@@ -89,10 +90,10 @@ fn sq_i128(d: i128) -> i128 {
 }
 
 impl Fx3 {
-    /// SPEC: doc 02 §4.5. The zero vector.
+    /// SPEC: canon §1.4, doc 02 §4.5. The zero vector.
     pub const ZERO: Fx3 = Fx3::new(Fx::ZERO, Fx::ZERO, Fx::ZERO);
 
-    /// SPEC: doc 02 §4.5. Build from three `Fx`.
+    /// SPEC: canon §1.4, doc 02 §4.5. Build from three `Fx`.
     #[inline]
     #[must_use]
     pub const fn new(x: Fx, y: Fx, z: Fx) -> Fx3 {
@@ -114,31 +115,34 @@ impl Fx3 {
         Fx3::new(Fx::from_milli(x), Fx::from_milli(y), Fx::from_milli(z))
     }
 
-    /// SPEC: doc 02 §4.5 `add`: checked per-axis add.
+    /// SPEC: canon §1.4, doc 02 §4.5 `add`: checked per-axis add.
     #[inline]
     #[must_use]
     #[track_caller]
+    #[allow(clippy::should_implement_trait)] // doc 02 §4.5 API; the operator trait is implemented too
     pub fn add(self, o: Fx3) -> Fx3 {
         Fx3::new(self.x + o.x, self.y + o.y, self.z + o.z)
     }
 
-    /// SPEC: doc 02 §4.5 `sub`: checked per-axis sub.
+    /// SPEC: canon §1.4, doc 02 §4.5 `sub`: checked per-axis sub.
     #[inline]
     #[must_use]
     #[track_caller]
+    #[allow(clippy::should_implement_trait)] // doc 02 §4.5 API; the operator trait is implemented too
     pub fn sub(self, o: Fx3) -> Fx3 {
         Fx3::new(self.x - o.x, self.y - o.y, self.z - o.z)
     }
 
-    /// SPEC: doc 02 §4.5 `neg`: checked per-axis negation.
+    /// SPEC: canon §1.4, doc 02 §4.5 `neg`: checked per-axis negation.
     #[inline]
     #[must_use]
     #[track_caller]
+    #[allow(clippy::should_implement_trait)] // doc 02 §4.5 API; the operator trait is implemented too
     pub fn neg(self) -> Fx3 {
         Fx3::new(-self.x, -self.y, -self.z)
     }
 
-    /// SPEC: doc 02 §4.5 `scale`: `mul_fx` per axis.
+    /// SPEC: canon §1.4, doc 02 §4.5 `scale`: `mul_fx` per axis.
     #[inline]
     #[must_use]
     #[track_caller]
@@ -146,7 +150,7 @@ impl Fx3 {
         Fx3::new(mul_fx(self.x, s), mul_fx(self.y, s), mul_fx(self.z, s))
     }
 
-    /// SPEC: doc 02 §4.5 `dot_wide`: `Σ a.raw * b.raw` in `i128`, raw Q64.64,
+    /// SPEC: canon §1.4, doc 02 §4.5 `dot_wide`: `Σ a.raw * b.raw` in `i128`, raw Q64.64,
     /// never narrowed. Panics only if the sum exceeds `i128`.
     #[inline]
     #[must_use]
@@ -159,7 +163,7 @@ impl Fx3 {
         )
     }
 
-    /// SPEC: doc 02 §4.5 `dot = Fx((dot_wide >> 32) as i64)`, floor, checked narrowing.
+    /// SPEC: canon §1.4, doc 02 §4.5 `dot = Fx((dot_wide >> 32) as i64)`, floor, checked narrowing.
     #[inline]
     #[must_use]
     #[track_caller]
@@ -167,7 +171,7 @@ impl Fx3 {
         Fx::from_raw(narrow_i64(self.dot_wide(o) >> 32))
     }
 
-    /// SPEC: doc 02 §4.5 `cross`: `mul_fx` terms, x then y then z.
+    /// SPEC: canon §1.4, doc 02 §4.5 `cross`: `mul_fx` terms, x then y then z.
     #[inline]
     #[must_use]
     #[track_caller]
@@ -178,7 +182,7 @@ impl Fx3 {
         Fx3::new(x, y, z)
     }
 
-    /// SPEC: doc 02 §4.5 `length = Fx(isqrt_u128(dot_wide as u128))`, floor.
+    /// SPEC: canon §1.4, doc 02 §4.5 `length = Fx(isqrt_u128(dot_wide as u128))`, floor.
     /// `dot_wide` is Q64.64, so its integer square root is Q32.32 directly.
     #[inline]
     #[must_use]
@@ -190,7 +194,7 @@ impl Fx3 {
         Fx::from_raw(i64::try_from(r).expect("Fx3::length: result out of range"))
     }
 
-    /// SPEC: doc 02 §4.5 `try_normalize`: `None` if `length.raw < 256`, else
+    /// SPEC: canon §1.4, doc 02 §4.5 `try_normalize`: `None` if `length.raw < 256`, else
     /// `div_fx` of each axis by the length.
     #[must_use]
     #[track_caller]
@@ -199,14 +203,22 @@ impl Fx3 {
         if l.raw() < 256 {
             return None;
         }
-        Some(Fx3::new(div_fx(self.x, l), div_fx(self.y, l), div_fx(self.z, l)))
+        Some(Fx3::new(
+            div_fx(self.x, l),
+            div_fx(self.y, l),
+            div_fx(self.z, l),
+        ))
     }
 
     /// SPEC: canon §1.4 `fx_floor_block` per axis: the block containing the point.
     #[inline]
     #[must_use]
     pub const fn floor_block(self) -> IVec3 {
-        IVec3::new(fx_floor_block(self.x), fx_floor_block(self.y), fx_floor_block(self.z))
+        IVec3::new(
+            fx_floor_block(self.x),
+            fx_floor_block(self.y),
+            fx_floor_block(self.z),
+        )
     }
 }
 
@@ -239,7 +251,7 @@ impl Neg for Fx3 {
 
 impl Index<usize> for Fx3 {
     type Output = Fx;
-    /// SPEC: doc 02 §4.6. `0 = x`, `1 = y`, `2 = z`; panics otherwise.
+    /// SPEC: canon §1.8, doc 02 §4.6. `0 = x`, `1 = y`, `2 = z`; panics otherwise.
     #[inline]
     #[track_caller]
     fn index(&self, i: usize) -> &Fx {
@@ -266,7 +278,7 @@ pub fn dist2(p: Fx3, q: Fx3) -> i128 {
     sum3_i128(sq_i128(dx), sq_i128(dy), sq_i128(dz))
 }
 
-/// SPEC: doc 02 §4.5 `dist(p, q) = Fx(isqrt_u128(dist2(p, q) as u128))`, floor.
+/// SPEC: canon §1.4, doc 02 §4.5 `dist(p, q) = Fx(isqrt_u128(dist2(p, q) as u128))`, floor.
 #[inline]
 #[must_use]
 #[track_caller]
@@ -284,21 +296,21 @@ pub fn within(p: Fx3, q: Fx3, r: Fx) -> bool {
     dist2(p, q) <= rr * rr
 }
 
-/// SPEC: doc 02 §4.6 `clamp01(x) = x.clamp(Fx::ZERO, Fx::ONE)`.
+/// SPEC: canon §1.8, doc 02 §4.6 `clamp01(x) = x.clamp(Fx::ZERO, Fx::ONE)`.
 #[inline]
 #[must_use]
 pub fn clamp01(x: Fx) -> Fx {
     x.clamp(Fx::ZERO, Fx::ONE)
 }
 
-/// SPEC: doc 02 §4.6 `nonneg(t) = Some(t) if t >= 0 else None`.
+/// SPEC: canon §1.8, doc 02 §4.6 `nonneg(t) = Some(t) if t >= 0 else None`.
 #[inline]
 #[must_use]
 pub fn nonneg(t: Fx) -> Option<Fx> {
     if t >= Fx::ZERO { Some(t) } else { None }
 }
 
-/// SPEC: doc 02 §4.6 `min_nonneg(a, b)`: the smaller of the `Some` values.
+/// SPEC: canon §1.8, doc 02 §4.6 `min_nonneg(a, b)`: the smaller of the `Some` values.
 #[inline]
 #[must_use]
 pub fn min_nonneg(a: Option<Fx>, b: Option<Fx>) -> Option<Fx> {
@@ -309,7 +321,7 @@ pub fn min_nonneg(a: Option<Fx>, b: Option<Fx>) -> Option<Fx> {
     }
 }
 
-/// SPEC: doc 02 §4.6. A capsule: the segment `a`-`b` with radius `r`.
+/// SPEC: canon §1.8, doc 02 §4.6. A capsule: the segment `a`-`b` with radius `r`.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Capsule {
@@ -321,7 +333,7 @@ pub struct Capsule {
     pub r: Fx,
 }
 
-/// SPEC: doc 02 §4.6 and canon §1.8, §4.1. The vertical movement capsule: the
+/// SPEC: canon §1.8, doc 02 §4.6 and canon §1.8, §4.1. The vertical movement capsule: the
 /// segment from `origin + (0, radius, 0)` to `origin + (0, height - radius, 0)`
 /// with radius `radius`. `origin` is the bottom-center of the capsule.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -336,7 +348,7 @@ pub struct VCapsule {
 }
 
 impl VCapsule {
-    /// SPEC: doc 02 §4.6. Segment endpoints `(bottom, top)`:
+    /// SPEC: canon §1.8, doc 02 §4.6. Segment endpoints `(bottom, top)`:
     /// `origin + (0, r, 0)` and `origin + (0, height - r, 0)`.
     #[inline]
     #[must_use]
@@ -349,16 +361,20 @@ impl VCapsule {
         )
     }
 
-    /// SPEC: doc 02 §4.6. The general capsule with the same segment and radius.
+    /// SPEC: canon §1.8, doc 02 §4.6. The general capsule with the same segment and radius.
     #[inline]
     #[must_use]
     #[track_caller]
     pub fn to_capsule(&self) -> Capsule {
         let (a, b) = self.segment();
-        Capsule { a, b, r: self.radius }
+        Capsule {
+            a,
+            b,
+            r: self.radius,
+        }
     }
 
-    /// SPEC: doc 02 §4.6 vertical capsule against a block. For the box
+    /// SPEC: canon §1.8, doc 02 §4.6 vertical capsule against a block. For the box
     /// `[lo, hi]` of block `blk` and the vertical segment at `(x, z)` spanning
     /// `[y0, y1]`: `dx = max(0, lo.x - x, x - hi.x)`, `dz` likewise,
     /// `dy = max(0, lo.y - y1, y0 - hi.y)`; overlap iff
@@ -379,94 +395,122 @@ impl VCapsule {
         let z = i128::from(s0.z.raw());
         let dx = gap(i128::from(lo.x.raw()), x, x);
         let dz = gap(i128::from(lo.z.raw()), z, z);
-        let dy = gap(i128::from(lo.y.raw()), i128::from(s0.y.raw()), i128::from(s1.y.raw()));
+        let dy = gap(
+            i128::from(lo.y.raw()),
+            i128::from(s0.y.raw()),
+            i128::from(s1.y.raw()),
+        );
         let rr = i128::from(self.radius.raw());
         sum3_i128(sq_i128(dx), sq_i128(dy), sq_i128(dz)) < rr * rr
     }
 }
 
-/// `floor(num * 2^32 / den)` for `0 <= num < den`, by exact binary long
-/// division in `u128` (no intermediate can overflow because `den < 2^127`).
-fn frac_q32(num: u128, den: u128) -> i64 {
-    debug_assert!(num < den);
-    let mut rem = num;
-    let mut q: i64 = 0;
-    for _ in 0..32 {
-        rem <<= 1; // rem < den < 2^127, so this cannot lose bits
-        q <<= 1;
-        if rem >= den {
-            rem -= den;
-            q |= 1;
-        }
-    }
-    q
+/// SPEC: canon §1.4, doc 02 §4.6 `div128(n, d)`: the ratio of two values of
+/// equal scale as `Fx`, `floor_div(n << 32, d)` with checked narrowing to
+/// `i64`. Requires `d != 0`; negates both operands when `d < 0`. The shift is
+/// checked too (a plain `<<` would drop bits silently), so it panics when
+/// `|n| >= 2^95` instead of wrapping.
+#[must_use]
+#[track_caller]
+pub fn div128(n: i128, d: i128) -> Fx {
+    let (n, d) = if d < 0 {
+        (n.checked_neg().expect("div128: overflow"), d.checked_neg().expect("div128: overflow"))
+    } else {
+        (n, d)
+    };
+    let shifted = n.checked_mul(1i128 << 32).expect("div128: n << 32 overflows i128");
+    Fx::from_raw(i64::try_from(floor_div_i128(shifted, d)).expect("invariant: div128 range"))
 }
 
-/// SPEC: doc 02 §4.6 closest points between segments `p1`-`q1` and `p2`-`q2`.
+/// SPEC: canon §1.4, doc 02 §4.6 `div256(n, d) = Fx(floor_div_i256(n.shl32(), d))`,
+/// checked; negates both operands when `d < 0`. Panics if `d == 0` or the
+/// quotient does not fit `Fx`.
+#[must_use]
+#[track_caller]
+pub fn div256(n: I256, d: I256) -> Fx {
+    let (n, d) = if d.is_negative() { (n.neg(), d.neg()) } else { (n, d) };
+    Fx::from_raw(i64::try_from(floor_div_i256(n.shl32(), d)).expect("invariant: div256 range"))
+}
+
+/// `clamp01(floor(n * 2^32 / d))` for `d != 0`, exact and total: it equals
+/// `clamp01(div256(n, d))` whenever `div256` does not panic, and also covers
+/// ratios whose unclamped value does not fit `Fx`.
+#[track_caller]
+fn ratio01(n: I256, d: I256) -> Fx {
+    assert!(d != I256::ZERO, "ratio01: zero divisor");
+    let (n, d) = if d.is_negative() { (n.neg(), d.neg()) } else { (n, d) };
+    if n.is_negative() || n == I256::ZERO {
+        Fx::ZERO // floor(n * 2^32 / d) <= 0
+    } else if n >= d {
+        Fx::ONE // floor(n * 2^32 / d) >= 2^32
+    } else {
+        // 0 < n < d < 2^255: the 32-bit fraction fits.
+        let q = U256::frac_q32(n.unsigned_abs(), d.unsigned_abs());
+        Fx::from_raw(i64::try_from(q).expect("fraction below 2^32"))
+    }
+}
+
+/// SPEC: canon §1.8, doc 02 §4.6 closest points between segments `p1`-`q1`
+/// and `p2`-`q2`: the one implementation of the closest-point problem.
 ///
-/// Returns `(s, t, c1, c2)` with `c1 = p1 + (q1 - p1)·s` and
-/// `c2 = p2 + (q2 - p2)·t`, `s, t` in `0..=1`. Degenerate segments (squared
-/// length `<= EPS`) are treated as points.
+/// Returns `(s, t, c1, c2)` with `s, t` in `0..=1`, `c1 = p1 + (q1 - p1)·s`
+/// and `c2 = p2 + (q2 - p2)·t`. All dot products are exact `i128` Q64.64
+/// (`dot_wide`) and there is no epsilon: a segment is degenerate only when its
+/// squared length is exactly 0.
 ///
-/// The unclamped `s0 = clamp01(floor_div(num << 32, denom))` of doc 02 is
-/// computed as: `0` when `num <= 0`, `1` when `num >= denom`, and otherwise by
-/// exact long division. This equals the doc 02 expression whenever that
-/// expression does not overflow `i128` (shifts do not check overflow), and
-/// stays exact for long segments where it would.
+/// This follows the doc 02 §4.6 code step by step and gives the same `(s, t)`
+/// wherever that code completes. The doc's `clamp01(div128(..))`,
+/// `clamp01(div256(..))` and `t = div128(((b * s.raw()) >> 32) + f, e)` are
+/// evaluated in 256-bit arithmetic with the clamp decided before narrowing, so
+/// nearly parallel or very short segments (whose unclamped ratios exceed the
+/// `Fx` range and would hit the doc's "invariant" panics) still return the
+/// clamped result.
 #[must_use]
 #[track_caller]
 pub fn closest_seg_seg(p1: Fx3, q1: Fx3, p2: Fx3, q2: Fx3) -> (Fx, Fx, Fx3, Fx3) {
     let (d1, d2, r) = (q1.sub(p1), q2.sub(p2), p1.sub(p2));
-    let (a, e, f) = (d1.dot(d1), d2.dot(d2), d2.dot(r));
-    let (s, t);
-    if a <= EPS && e <= EPS {
-        s = Fx::ZERO;
-        t = Fx::ZERO;
-    } else if a <= EPS {
-        s = Fx::ZERO;
-        t = clamp01(div_fx(f, e));
+    let (a, e, f) = (d1.dot_wide(d1), d2.dot_wide(d2), d2.dot_wide(r)); // i128, Q64.64
+    let w = I256::from_i128;
+    let (s, t) = if a == 0 && e == 0 {
+        (Fx::ZERO, Fx::ZERO)
+    } else if a == 0 {
+        (Fx::ZERO, ratio01(w(f), w(e)))
     } else {
-        let c = d1.dot(r);
-        if e <= EPS {
-            t = Fx::ZERO;
-            s = clamp01(div_fx(-c, a));
+        let c = d1.dot_wide(r);
+        if e == 0 {
+            (ratio01(w(c).neg(), w(a)), Fx::ZERO)
         } else {
-            let b = d1.dot(d2);
-            let mul = |u: Fx, v: Fx| i128::from(u.raw()) * i128::from(v.raw());
-            let denom = mul(a, e)
-                .checked_sub(mul(b, b))
-                .expect("closest_seg_seg: denom overflow");
-            let mut s0 = if denom > 0 {
-                let num = mul(b, f)
-                    .checked_sub(mul(c, e))
-                    .expect("closest_seg_seg: num overflow");
-                if num <= 0 {
-                    Fx::ZERO
-                } else if num >= denom {
-                    Fx::ONE
-                } else {
-                    Fx::from_raw(frac_q32(num.unsigned_abs(), denom.unsigned_abs()))
-                }
+            let b = d1.dot_wide(d2);
+            let denom = I256::mul(a, e).sub(I256::mul(b, b)); // >= 0 (Cauchy-Schwarz)
+            let mut s = if denom != I256::ZERO {
+                ratio01(I256::mul(b, f).sub(I256::mul(c, e)), denom)
             } else {
                 Fx::ZERO
             };
-            let tnom = mul_fx(b, s0) + f;
-            if tnom < Fx::ZERO {
+            // tn = ((b * s.raw) >> 32) + f, exact (the shift is floor).
+            let tn = I256::mul(b, i128::from(s.raw())).sar(32).add(w(f));
+            // t = floor(tn * 2^32 / e) with e > 0, so t < 0 iff tn < 0 and
+            // t > 1 iff tn * 2^32 >= (2^32 + 1) * e.
+            let t;
+            if tn.is_negative() {
                 t = Fx::ZERO;
-                s0 = clamp01(div_fx(-c, a));
-            } else if tnom > e {
+                s = ratio01(w(c).neg(), w(a));
+            } else if tn.shl32() >= I256::mul(e, (1i128 << 32) + 1) {
                 t = Fx::ONE;
-                s0 = clamp01(div_fx(b - c, a));
+                s = ratio01(w(b).sub(w(c)), w(a));
             } else {
-                t = div_fx(tnom, e);
+                // 0 <= tn * 2^32 < (2^32 + 1) * e, so t is in 0..=2^32.
+                t = Fx::from_raw(
+                    i64::try_from(floor_div_i256(tn.shl32(), w(e))).expect("t in 0..=2^32"),
+                );
             }
-            s = s0;
+            (s, t)
         }
-    }
+    };
     (s, t, p1.add(d1.scale(s)), p2.add(d2.scale(t)))
 }
 
-/// SPEC: doc 02 §4.6 capsule overlap:
+/// SPEC: canon §1.8, doc 02 §4.6 capsule overlap:
 /// `dist2(cp1, cp2) <= (c1.r + c2.r).raw()²` in `i128`, with `cp1`, `cp2`
 /// from [`closest_seg_seg`].
 #[must_use]
@@ -476,7 +520,7 @@ pub fn capsule_overlap(c1: &Capsule, c2: &Capsule) -> bool {
     within(cp1, cp2, c1.r + c2.r)
 }
 
-/// SPEC: doc 02 §4.6 ray against sphere. `rd` must be unit length. Returns the
+/// SPEC: canon §1.8, doc 02 §4.6 ray against sphere. `rd` must be unit length. Returns the
 /// entry distance `t >= 0`, or `None` on a miss, a tangent ray, or when the
 /// entry point lies behind the origin.
 #[must_use]
@@ -496,14 +540,15 @@ pub fn ray_sphere(ro: Fx3, rd: Fx3, cen: Fx3, r: Fx) -> Option<Fx> {
     nonneg(-b - Fx::from_raw(sq))
 }
 
-/// SPEC: doc 02 §4.6 ray against capsule (Quilez form). `rd` must be unit
+/// SPEC: canon §1.8, doc 02 §4.6 ray against capsule (Quilez form). `rd` must be unit
 /// length (from [`Fx3::try_normalize`]). Returns the entry distance `t >= 0`
 /// or `None`.
 #[must_use]
 #[track_caller]
 pub fn ray_capsule(ro: Fx3, rd: Fx3, pa: Fx3, pb: Fx3, r: Fx) -> Option<Fx> {
     let (ba, oa) = (pb.sub(pa), ro.sub(pa));
-    let (baba, bard, baoa, rdoa, oaoa) = (ba.dot(ba), ba.dot(rd), ba.dot(oa), rd.dot(oa), oa.dot(oa));
+    let (baba, bard, baoa, rdoa, oaoa) =
+        (ba.dot(ba), ba.dot(rd), ba.dot(oa), rd.dot(oa), oa.dot(oa));
     let a = baba - mul_fx(bard, bard);
     let b = mul_fx(baba, rdoa) - mul_fx(baoa, bard);
     let c = mul_fx(baba, oaoa) - mul_fx(baoa, baoa) - mul_fx(mul_fx(r, r), baba);
@@ -514,7 +559,8 @@ pub fn ray_capsule(ro: Fx3, rd: Fx3, pa: Fx3, pb: Fx3, r: Fx) -> Option<Fx> {
         if h < 0 {
             return None;
         }
-        let sq = i64::try_from(isqrt_u128(h.unsigned_abs())).expect("ray_capsule: sqrt out of range");
+        let sq =
+            i64::try_from(isqrt_u128(h.unsigned_abs())).expect("ray_capsule: sqrt out of range");
         let t = div_fx(-b - Fx::from_raw(sq), a);
         let y = baoa + mul_fx(t, bard);
         if y > Fx::ZERO && y < baba {
@@ -525,7 +571,7 @@ pub fn ray_capsule(ro: Fx3, rd: Fx3, pa: Fx3, pb: Fx3, r: Fx) -> Option<Fx> {
     min_nonneg(ray_sphere(ro, rd, pa, r), ray_sphere(ro, rd, pb, r)) // ray parallel to axis
 }
 
-/// SPEC: doc 02 §4.6. A ray with origin and direction (unit length for the
+/// SPEC: canon §1.8, doc 02 §4.6. A ray with origin and direction (unit length for the
 /// capsule and sphere tests; any length for the voxel DDA, where `t` is then
 /// in units of the direction's length).
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -538,14 +584,14 @@ pub struct Ray {
 }
 
 impl Ray {
-    /// SPEC: doc 02 §4.6. Build a ray.
+    /// SPEC: canon §1.8, doc 02 §4.6. Build a ray.
     #[inline]
     #[must_use]
     pub const fn new(origin: Fx3, dir: Fx3) -> Ray {
         Ray { origin, dir }
     }
 
-    /// SPEC: doc 02 §4.6. The point `origin + dir·t` (`mul_fx` per axis).
+    /// SPEC: canon §1.8, doc 02 §4.6. The point `origin + dir·t` (`mul_fx` per axis).
     #[inline]
     #[must_use]
     #[track_caller]
@@ -553,7 +599,7 @@ impl Ray {
         self.origin.add(self.dir.scale(t))
     }
 
-    /// SPEC: doc 02 §4.6 [`ray_capsule`] against `c`; `dir` must be unit length.
+    /// SPEC: canon §1.8, doc 02 §4.6 [`ray_capsule`] against `c`; `dir` must be unit length.
     #[inline]
     #[must_use]
     #[track_caller]
@@ -561,7 +607,7 @@ impl Ray {
         ray_capsule(self.origin, self.dir, c.a, c.b, c.r)
     }
 
-    /// SPEC: doc 02 §4.6 [`ray_sphere`]; `dir` must be unit length.
+    /// SPEC: canon §1.8, doc 02 §4.6 [`ray_sphere`]; `dir` must be unit length.
     #[inline]
     #[must_use]
     #[track_caller]
@@ -569,7 +615,7 @@ impl Ray {
         ray_sphere(self.origin, self.dir, center, r)
     }
 
-    /// SPEC: doc 02 §4.6 voxel traversal from this ray; see [`VoxelDda`].
+    /// SPEC: canon §1.8, doc 02 §4.6 voxel traversal from this ray; see [`VoxelDda`].
     #[inline]
     #[must_use]
     #[track_caller]
@@ -578,7 +624,7 @@ impl Ray {
     }
 }
 
-/// SPEC: doc 02 §4.6. The face of a block, named by its outward normal.
+/// SPEC: canon §1.8, doc 02 §4.6. The face of a block, named by its outward normal.
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Face {
@@ -597,7 +643,7 @@ pub enum Face {
 }
 
 impl Face {
-    /// SPEC: doc 02 §4.6 `Face::entered(axis, step)`: the face of the new block
+    /// SPEC: canon §1.8, doc 02 §4.6 `Face::entered(axis, step)`: the face of the new block
     /// a ray crosses when stepping along `axis` (0 = x, 1 = y, 2 = z) by
     /// `step` (+1 enters through the negative face, -1 through the positive).
     /// Panics for `axis > 2` or `step == 0`.
@@ -630,7 +676,7 @@ impl Face {
     }
 }
 
-/// SPEC: doc 02 §4.6. One block visited by the voxel DDA.
+/// SPEC: canon §1.8, doc 02 §4.6. One block visited by the voxel DDA.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub struct DdaStep {
     /// The block visited.
@@ -641,7 +687,7 @@ pub struct DdaStep {
     pub face: Option<Face>,
 }
 
-/// SPEC: doc 02 §4.6 voxel traversal (Amanatides-Woo DDA) as an iterator.
+/// SPEC: canon §1.8, doc 02 §4.6 voxel traversal (Amanatides-Woo DDA) as an iterator.
 ///
 /// Yields every block the ray `o + d·t` crosses, in order, starting with the
 /// block containing `o` at `t = 0`. Each later block is yielded with the `t`
@@ -665,7 +711,7 @@ pub struct VoxelDda {
 }
 
 impl VoxelDda {
-    /// SPEC: doc 02 §4.6. Start a traversal from `o` along `d` up to `t_max`,
+    /// SPEC: canon §1.8, doc 02 §4.6. Start a traversal from `o` along `d` up to `t_max`,
     /// taking at most `max_steps` steps beyond the start block.
     #[must_use]
     #[track_caller]
@@ -740,7 +786,9 @@ impl Iterator for VoxelDda {
         };
         self.cell[ax] = c;
         // A crossing time beyond the Fx range is never reached: keep it at MAX.
-        self.t_next[ax] = self.t_next[ax].checked_add(self.t_delta[ax]).unwrap_or(Fx::MAX);
+        self.t_next[ax] = self.t_next[ax]
+            .checked_add(self.t_delta[ax])
+            .unwrap_or(Fx::MAX);
         self.steps_left -= 1;
         Some(DdaStep {
             cell: IVec3::from(self.cell),
@@ -748,6 +796,30 @@ impl Iterator for VoxelDda {
             face: Some(Face::entered(ax, self.step[ax])),
         })
     }
+}
+
+/// SPEC: canon §1.8, doc 02 §4.6 `dda(o, d, t_max, visit)`: callback form of
+/// [`VoxelDda`]. Calls `visit(cell, t, face)` for every block the ray crosses
+/// up to `t_max` (the start block first, with `t = 0` and no face) and stops
+/// early when `visit` returns `false`. Bounded by `t_max` and by the `i32`
+/// block range; use [`VoxelDda::new`] directly for an explicit step bound.
+#[track_caller]
+pub fn dda(o: Fx3, d: Fx3, t_max: Fx, mut visit: impl FnMut(IVec3, Fx, Option<Face>) -> bool) {
+    for s in VoxelDda::new(o, d, t_max, u32::MAX) {
+        if !visit(s.cell, s.t, s.face) {
+            return;
+        }
+    }
+}
+
+/// SPEC: canon §2.1 semi-implicit Euler for one tick: `v += a × DT`, then
+/// `p += v × DT`, each product with `mul_fx` per axis. Returns `(p', v')`.
+#[must_use]
+#[track_caller]
+pub fn semi_implicit_euler(p: Fx3, v: Fx3, a: Fx3) -> (Fx3, Fx3) {
+    let v2 = v.add(a.scale(Fx::DT));
+    let p2 = p.add(v2.scale(Fx::DT));
+    (p2, v2)
 }
 
 #[cfg(test)]
@@ -773,11 +845,17 @@ mod tests {
         assert_eq!(a.scale(Fx::HALF), Fx3::new(Fx::HALF, Fx::ONE, m(1500)));
         assert_eq!(a.dot(b), Fx::from_int(4 - 10 + 18));
         assert_eq!(a.dot_wide(b), 12i128 << 64);
-        assert_eq!(a.cross(b), Fx3::from_ints(2 * 6 - 3 * -5, 3 * 4 - 6, -5 - 2 * 4));
+        assert_eq!(
+            a.cross(b),
+            Fx3::from_ints(2 * 6 - 3 * -5, 3 * 4 - 6, -5 - 2 * 4)
+        );
         assert_eq!(a[0], a.x);
         assert_eq!(a[1], a.y);
         assert_eq!(a[2], a.z);
-        assert_eq!(Fx3::from_milli(2500, -1, 0).floor_block(), IVec3::new(2, -1, 0));
+        assert_eq!(
+            Fx3::from_milli(2500, -1, 0).floor_block(),
+            IVec3::new(2, -1, 0)
+        );
     }
 
     #[test]
@@ -794,10 +872,23 @@ mod tests {
         assert_eq!(v.length(), Fx::from_int(5));
         assert_eq!(Fx3::ZERO.length(), Fx::ZERO);
         assert_eq!(Fx3::ZERO.try_normalize(), None);
-        assert_eq!(Fx3::new(Fx::from_raw(255), Fx::ZERO, Fx::ZERO).try_normalize(), None);
+        assert_eq!(
+            Fx3::new(Fx::from_raw(255), Fx::ZERO, Fx::ZERO).try_normalize(),
+            None
+        );
         let n = v.try_normalize().unwrap();
-        assert_eq!(n, Fx3::new(div_fx(Fx::from_int(3), Fx::from_int(5)), div_fx(Fx::from_int(4), Fx::from_int(5)), Fx::ZERO));
-        assert_eq!(Fx3::from_ints(0, 0, -7).try_normalize(), Some(Fx3::from_ints(0, 0, -1)));
+        assert_eq!(
+            n,
+            Fx3::new(
+                div_fx(Fx::from_int(3), Fx::from_int(5)),
+                div_fx(Fx::from_int(4), Fx::from_int(5)),
+                Fx::ZERO
+            )
+        );
+        assert_eq!(
+            Fx3::from_ints(0, 0, -7).try_normalize(),
+            Some(Fx3::from_ints(0, 0, -1))
+        );
     }
 
     #[test]
@@ -809,8 +900,13 @@ mod tests {
         assert!(within(p, q, Fx::from_int(5)));
         assert!(!within(p, q, Fx::from_raw(Fx::from_int(5).raw() - 1)));
         // Extreme but representable coordinates do not overflow.
-        let far = dist2(Fx3::new(Fx::MAX, Fx::ZERO, Fx::ZERO), Fx3::new(Fx::MIN, Fx::ZERO, Fx::ZERO));
-        assert_eq!(far, ((1i128 << 64) - 1) * ((1i128 << 64) - 1));
+        let far = dist2(Fx3::new(Fx::MAX, Fx::ZERO, Fx::ZERO), Fx3::ZERO);
+        assert_eq!(far, i128::from(i64::MAX) * i128::from(i64::MAX));
+        let far2 = dist2(Fx3::new(Fx::MAX, Fx::MIN, Fx::ZERO), Fx3::ZERO);
+        assert_eq!(
+            far2,
+            i128::from(i64::MAX) * i128::from(i64::MAX) + (1i128 << 126)
+        );
     }
 
     #[test]
@@ -840,25 +936,51 @@ mod tests {
     #[test]
     fn closest_seg_seg_degenerate_and_parallel() {
         // Two points.
-        let (s, t, c1, c2) = closest_seg_seg(Fx3::ZERO, Fx3::ZERO, Fx3::from_ints(1, 0, 0), Fx3::from_ints(1, 0, 0));
+        let (s, t, c1, c2) = closest_seg_seg(
+            Fx3::ZERO,
+            Fx3::ZERO,
+            Fx3::from_ints(1, 0, 0),
+            Fx3::from_ints(1, 0, 0),
+        );
         assert_eq!((s, t), (Fx::ZERO, Fx::ZERO));
         assert_eq!((c1, c2), (Fx3::ZERO, Fx3::from_ints(1, 0, 0)));
         // Point against segment.
-        let (_, t, _, c2) = closest_seg_seg(Fx3::from_ints(1, 5, 0), Fx3::from_ints(1, 5, 0), Fx3::ZERO, Fx3::from_ints(4, 0, 0));
+        let (_, t, _, c2) = closest_seg_seg(
+            Fx3::from_ints(1, 5, 0),
+            Fx3::from_ints(1, 5, 0),
+            Fx3::ZERO,
+            Fx3::from_ints(4, 0, 0),
+        );
         assert_eq!(t, div_fx(Fx::ONE, Fx::from_int(4)));
         assert_eq!(c2, Fx3::from_ints(1, 0, 0));
         // Segment against point.
-        let (s, _, c1, _) = closest_seg_seg(Fx3::ZERO, Fx3::from_ints(0, 4, 0), Fx3::from_ints(3, 3, 0), Fx3::from_ints(3, 3, 0));
+        let (s, _, c1, _) = closest_seg_seg(
+            Fx3::ZERO,
+            Fx3::from_ints(0, 4, 0),
+            Fx3::from_ints(3, 3, 0),
+            Fx3::from_ints(3, 3, 0),
+        );
         assert_eq!(s, div_fx(Fx::from_int(3), Fx::from_int(4)));
         assert_eq!(c1, Fx3::from_ints(0, 3, 0));
-        // Parallel segments: denom = 0, s0 = 0, then t from tnom.
-        let (s, t, c1, c2) = closest_seg_seg(Fx3::ZERO, Fx3::from_ints(2, 0, 0), Fx3::from_ints(1, 1, 0), Fx3::from_ints(3, 1, 0));
-        assert_eq!(s, Fx::ZERO);
+        // Parallel segments: denom = 0 so s0 = 0; tnom = f = -2 < 0 gives t = 0
+        // and s = clamp01(-c / a) = 2 / 4.
+        let (s, t, c1, c2) = closest_seg_seg(
+            Fx3::ZERO,
+            Fx3::from_ints(2, 0, 0),
+            Fx3::from_ints(1, 1, 0),
+            Fx3::from_ints(3, 1, 0),
+        );
+        assert_eq!(s, Fx::HALF);
         assert_eq!(t, Fx::ZERO);
-        assert_eq!(c1, Fx3::ZERO);
+        assert_eq!(c1, Fx3::from_ints(1, 0, 0));
         assert_eq!(c2, Fx3::from_ints(1, 1, 0));
         // Disjoint crossing segments where s clamps to 1.
-        let (s, _, c1, _) = closest_seg_seg(Fx3::ZERO, Fx3::from_ints(1, 0, 0), Fx3::from_ints(5, -1, 1), Fx3::from_ints(5, 1, 1));
+        let (s, _, c1, _) = closest_seg_seg(
+            Fx3::ZERO,
+            Fx3::from_ints(1, 0, 0),
+            Fx3::from_ints(5, -1, 1),
+            Fx3::from_ints(5, 1, 1),
+        );
         assert_eq!(s, Fx::ONE);
         assert_eq!(c1, Fx3::from_ints(1, 0, 0));
     }
@@ -879,8 +1001,16 @@ mod tests {
 
     #[test]
     fn capsule_overlap_examples() {
-        let c1 = Capsule { a: Fx3::from_ints(0, 0, 0), b: Fx3::from_ints(2, 0, 0), r: Fx::HALF };
-        let c2 = Capsule { a: Fx3::from_ints(1, -1, 1), b: Fx3::from_ints(1, 1, 1), r: Fx::HALF };
+        let c1 = Capsule {
+            a: Fx3::from_ints(0, 0, 0),
+            b: Fx3::from_ints(2, 0, 0),
+            r: Fx::HALF,
+        };
+        let c2 = Capsule {
+            a: Fx3::from_ints(1, -1, 1),
+            b: Fx3::from_ints(1, 1, 1),
+            r: Fx::HALF,
+        };
         assert!(capsule_overlap(&c1, &c2)); // distance 1 = 0.5 + 0.5 (touching counts)
         let c3 = Capsule { r: m(499), ..c2 };
         assert!(!capsule_overlap(&c1, &c3));
@@ -889,7 +1019,11 @@ mod tests {
     #[test]
     fn vcapsule_block_example() {
         // Doc 02 §4.6: origin (2.5, 1.0, 0.5), r 0.3, height 1.8 against block (3, 1, 0).
-        let mut c = VCapsule { origin: Fx3::from_milli(2500, 1000, 500), radius: m(300), height: m(1800) };
+        let mut c = VCapsule {
+            origin: Fx3::from_milli(2500, 1000, 500),
+            radius: m(300),
+            height: m(1800),
+        };
         let (s0, s1) = c.segment();
         assert_eq!(s0.y, m(1000) + m(300));
         assert_eq!(s1.y, m(1000) + m(1800) - m(300));
@@ -900,7 +1034,11 @@ mod tests {
         assert!(c.overlaps_block(IVec3::new(2, 1, 0)));
         assert!(!c.overlaps_block(IVec3::new(2, 5, 0)));
         // Block directly below the feet: dy = lo.y... gap is r exactly, strict test fails.
-        let stand = VCapsule { origin: Fx3::from_milli(500, 1000, 500), radius: m(300), height: m(1800) };
+        let stand = VCapsule {
+            origin: Fx3::from_milli(500, 1000, 500),
+            radius: m(300),
+            height: m(1800),
+        };
         assert!(!stand.overlaps_block(IVec3::new(0, 0, 0)));
         let cap = stand.to_capsule();
         assert_eq!(cap.r, m(300));
@@ -922,32 +1060,69 @@ mod tests {
         assert_eq!(miss, None);
         // Same through the Ray / Capsule types.
         let ray = Ray::new(Fx3::from_milli(0, 1000, 0), rd);
-        assert_eq!(ray.hit_capsule(&Capsule { a: pa, b: pb, r }).map(Fx::raw), Some(20_186_346_293));
+        assert_eq!(
+            ray.hit_capsule(&Capsule { a: pa, b: pb, r }).map(Fx::raw),
+            Some(20_186_346_293)
+        );
         // Ray pointing away misses.
-        assert_eq!(ray_capsule(Fx3::from_milli(0, 1000, 0), rd.neg(), pa, pb, r), None);
+        assert_eq!(
+            ray_capsule(Fx3::from_milli(0, 1000, 0), rd.neg(), pa, pb, r),
+            None
+        );
     }
 
     #[test]
     fn ray_capsule_parallel_to_axis() {
-        // Ray straight down the capsule axis hits the top cap at distance 10 - 1.5 - 0.3.
+        // Ray straight down the capsule axis (a = 0) hits the top cap at
+        // 10 - 1.5 - 0.3 m. With r = m(300) = 1288490188 raw, r² floors to
+        // 386547056 raw and isqrt(386547056 << 32) = 1288490187, so the exact
+        // result is 8.5 m - 1288490187 raw (one raw above 8.5 m - r).
         let pa = Fx3::from_milli(0, 300, 0);
         let pb = Fx3::from_milli(0, 1500, 0);
-        let t = ray_capsule(Fx3::from_ints(0, 10, 0), Fx3::from_ints(0, -1, 0), pa, pb, m(300));
-        assert_eq!(t, Some(Fx::from_int(10) - m(1500) - m(300)));
+        let t = ray_capsule(
+            Fx3::from_ints(0, 10, 0),
+            Fx3::from_ints(0, -1, 0),
+            pa,
+            pb,
+            m(300),
+        );
+        assert_eq!(t.map(Fx::raw), Some(35_218_731_829));
+        assert_eq!(
+            t,
+            Some(Fx::from_int(10) - m(1500) - m(300) + Fx::from_raw(1))
+        );
     }
 
     #[test]
     fn ray_sphere_examples() {
-        let t = ray_sphere(Fx3::ZERO, Fx3::from_ints(0, 0, -1), Fx3::from_ints(0, 0, -10), Fx::from_int(2));
+        let t = ray_sphere(
+            Fx3::ZERO,
+            Fx3::from_ints(0, 0, -1),
+            Fx3::from_ints(0, 0, -10),
+            Fx::from_int(2),
+        );
         assert_eq!(t, Some(Fx::from_int(8)));
         // Tangent counts as a miss (h <= 0).
-        let t = ray_sphere(Fx3::from_ints(2, 0, 0), Fx3::from_ints(0, 0, -1), Fx3::from_ints(0, 0, -10), Fx::from_int(2));
+        let t = ray_sphere(
+            Fx3::from_ints(2, 0, 0),
+            Fx3::from_ints(0, 0, -1),
+            Fx3::from_ints(0, 0, -10),
+            Fx::from_int(2),
+        );
         assert_eq!(t, None);
         // Behind the origin.
-        let t = ray_sphere(Fx3::ZERO, Fx3::from_ints(0, 0, 1), Fx3::from_ints(0, 0, -10), Fx::from_int(2));
+        let t = ray_sphere(
+            Fx3::ZERO,
+            Fx3::from_ints(0, 0, 1),
+            Fx3::from_ints(0, 0, -10),
+            Fx::from_int(2),
+        );
         assert_eq!(t, None);
         let ray = Ray::new(Fx3::ZERO, Fx3::from_ints(1, 0, 0));
-        assert_eq!(ray.hit_sphere(Fx3::from_ints(5, 0, 0), Fx::ONE), Some(Fx::from_int(4)));
+        assert_eq!(
+            ray.hit_sphere(Fx3::from_ints(5, 0, 0), Fx::ONE),
+            Some(Fx::from_int(4))
+        );
         assert_eq!(ray.at(Fx::from_int(3)), Fx3::from_ints(3, 0, 0));
         assert_eq!(min_nonneg(Some(Fx::ONE), Some(Fx::ZERO)), Some(Fx::ZERO));
         assert_eq!(min_nonneg(None, Some(Fx::ONE)), Some(Fx::ONE));
@@ -1020,7 +1195,9 @@ mod tests {
         assert!(v.iter().all(|s| s.cell.x == 0 && s.cell.y == 0));
         assert_eq!(v.len(), 4);
         // Negative directions and negative coordinates.
-        let v: Vec<DdaStep> = Ray::new(Fx3::from_milli(-500, -500, -500), Fx3::from_ints(0, -1, 0)).voxels(Fx::from_int(2), 10).collect();
+        let v: Vec<DdaStep> = Ray::new(Fx3::from_milli(-500, -500, -500), Fx3::from_ints(0, -1, 0))
+            .voxels(Fx::from_int(2), 10)
+            .collect();
         assert_eq!(v.iter().map(|s| s.cell.y).collect::<Vec<_>>(), [-1, -2, -3]);
         assert_eq!(v[1].face, Some(Face::PosY));
         assert_eq!(v[1].t, Fx::HALF);
@@ -1030,9 +1207,18 @@ mod tests {
     fn dda_tie_order_x_then_y_then_z() {
         // Exact diagonal from a block center: every crossing is a three-way tie.
         let o = Fx3::from_milli(500, 500, 500);
-        let v: Vec<DdaStep> = VoxelDda::new(o, Fx3::from_ints(1, 1, 1), Fx::from_int(1), 10).collect();
+        let v: Vec<DdaStep> =
+            VoxelDda::new(o, Fx3::from_ints(1, 1, 1), Fx::from_int(1), 10).collect();
         let cells: Vec<IVec3> = v.iter().map(|s| s.cell).collect();
-        assert_eq!(cells, [IVec3::new(0, 0, 0), IVec3::new(1, 0, 0), IVec3::new(1, 1, 0), IVec3::new(1, 1, 1)]);
+        assert_eq!(
+            cells,
+            [
+                IVec3::new(0, 0, 0),
+                IVec3::new(1, 0, 0),
+                IVec3::new(1, 1, 0),
+                IVec3::new(1, 1, 1)
+            ]
+        );
         assert!(v[1..].iter().all(|s| s.t == Fx::HALF));
     }
 
@@ -1042,6 +1228,68 @@ mod tests {
         let v: Vec<DdaStep> = VoxelDda::new(o, Fx3::from_ints(1, 0, 0), Fx::MAX, 10).collect();
         assert_eq!(v.len(), 1);
         assert_eq!(v[0].cell.x, i32::MAX);
+    }
+
+    #[test]
+    fn dda_callback_matches_iterator() {
+        let o = Fx3::from_milli(500, 1500, 500);
+        let d = Fx3::from_milli(600, 0, -800);
+        let solid = IVec3::new(2, 1, -3);
+        let mut seen = Vec::new();
+        dda(o, d, Fx::from_int(4), |cell, t, face| {
+            seen.push(DdaStep { cell, t, face });
+            cell != solid
+        });
+        let mut want = Vec::new();
+        for s in VoxelDda::new(o, d, Fx::from_int(4), 1000) {
+            want.push(s);
+            if s.cell == solid {
+                break;
+            }
+        }
+        assert_eq!(seen, want);
+        assert_eq!(seen.len(), 6);
+        // Without a solid block the traversal runs to t_max.
+        let mut n = 0;
+        dda(o, d, Fx::from_int(4), |_, t, _| {
+            assert!(t <= Fx::from_int(4));
+            n += 1;
+            true
+        });
+        assert_eq!(n, VoxelDda::new(o, d, Fx::from_int(4), 1000).count());
+    }
+
+    #[test]
+    fn semi_implicit_euler_steps() {
+        // Constant velocity 6 m/s along x for 60 ticks: each tick adds mul_fx(6, DT).
+        let v = Fx3::from_ints(6, 0, 0);
+        let mut p = Fx3::ZERO;
+        let mut vv = v;
+        for _ in 0..60 {
+            (p, vv) = semi_implicit_euler(p, vv, Fx3::ZERO);
+        }
+        assert_eq!(vv, v);
+        assert_eq!(p.x, mul_fx(Fx::from_int(6), Fx::DT).mul_int(60));
+        assert_eq!(p.x.raw(), 25_769_803_680); // 60 * floor(6 * 71582788)
+        // Velocity is updated before position (semi-implicit).
+        let g = Fx3::new(Fx::ZERO, Fx::from_int(-20), Fx::ZERO);
+        let (p1, v1) = semi_implicit_euler(Fx3::ZERO, Fx3::ZERO, g);
+        assert_eq!(v1.y, mul_fx(Fx::from_int(-20), Fx::DT));
+        assert_eq!(p1.y, mul_fx(v1.y, Fx::DT));
+        // Jump launch with v0 = sqrt(2 g h) for h = 1.25 m, g = 20 m/s²
+        // (doc 02 §4.2): the discrete apex lies just below 1.25 m.
+        let mut p = Fx3::ZERO;
+        let mut v = Fx3::new(Fx::ZERO, sqrt_fx_for_test(50), Fx::ZERO);
+        let mut apex = Fx::ZERO;
+        for _ in 0..120 {
+            (p, v) = semi_implicit_euler(p, v, g);
+            apex = apex.max(p.y);
+        }
+        assert!(apex > m(1100) && apex < m(1250), "apex {apex:?}");
+    }
+
+    fn sqrt_fx_for_test(n: i32) -> Fx {
+        crate::fx::sqrt_fx(Fx::from_int(n))
     }
 
     #[test]
@@ -1058,11 +1306,35 @@ mod tests {
     }
 
     #[test]
-    fn frac_q32_matches_shift_division() {
-        for (n, d) in [(1u128, 2u128), (1, 3), (2, 3), (5, 7), (123_456_789, 987_654_321)] {
-            let q = frac_q32(n, d);
-            assert_eq!(q as u128, (n << 32) / d);
+    fn wide_division_examples() {
+        // Doc 02 §4.6 examples.
+        assert_eq!(div128(2 << 64, 4 << 64).raw(), 2_147_483_648);
+        assert_eq!(div128(-1, 3).raw(), -1_431_655_766);
+        assert_eq!(div128(1, -3).raw(), -1_431_655_766);
+        assert_eq!(div256(I256::mul(3 << 64, 1 << 64), I256::mul(4 << 64, 1 << 64)).raw(), 3_221_225_472);
+        assert_eq!(div256(I256::mul(3 << 64, 1 << 64), I256::mul(-(4 << 64), 1 << 64)).raw(), -3_221_225_472);
+        for (n, d) in [(1i128, 2i128), (1, 3), (2, 3), (5, 7), (123_456_789, 987_654_321)] {
+            let q = U256::frac_q32(I256::from(n).unsigned_abs(), I256::from(d).unsigned_abs());
+            assert_eq!(i128::from(q), (n << 32) / d);
+            assert_eq!(ratio01(I256::from(n), I256::from(d)), div128(n, d));
         }
+        assert_eq!(ratio01(I256::from(-5i128), I256::from(3i128)), Fx::ZERO);
+        assert_eq!(ratio01(I256::from(5i128), I256::from(3i128)), Fx::ONE);
+        assert_eq!(ratio01(I256::from(3i128), I256::from(3i128)), Fx::ONE);
+        assert_eq!(ratio01(I256::from(1i128), I256::from(-3i128)), Fx::ZERO);
+        assert_eq!(ratio01(I256::from(-1i128), I256::from(-3i128)), div128(1, 3));
+    }
+
+    #[test]
+    #[should_panic(expected = "invariant: div128 range")]
+    fn div128_range_panics() {
+        let _ = div128(1 << 64, 1);
+    }
+
+    #[test]
+    #[should_panic(expected = "n << 32 overflows")]
+    fn div128_shift_overflow_panics() {
+        let _ = div128(1 << 100, 1 << 100);
     }
 
     fn small() -> impl Strategy<Value = i64> {
@@ -1070,7 +1342,8 @@ mod tests {
     }
 
     fn v3() -> impl Strategy<Value = Fx3> {
-        (small(), small(), small()).prop_map(|(x, y, z)| Fx3::new(Fx::from_raw(x), Fx::from_raw(y), Fx::from_raw(z)))
+        (small(), small(), small())
+            .prop_map(|(x, y, z)| Fx3::new(Fx::from_raw(x), Fx::from_raw(y), Fx::from_raw(z)))
     }
 
     proptest! {

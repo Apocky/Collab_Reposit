@@ -2,7 +2,7 @@
 // Regenerate with `python3 tools/gen_trig.py`; verify with `python3 tools/gen_trig.py --check`.
 //! SPEC: doc 02 §4.4 CORDIC arctangent table.
 
-/// SPEC: doc 02 §4.4. `ATAN_T[i] = round_half_even(atan(2^-i) / (2*pi) * 2^32)`
+/// SPEC: canon §1.9, doc 02 §4.4. `ATAN_T[i] = round_half_even(atan(2^-i) / (2*pi) * 2^32)`
 /// for `i` in `0..=15`, in units of 2^-16 Bam (one full turn is 2^32).
 #[rustfmt::skip]
 pub const ATAN_T: [i64; 16] = [

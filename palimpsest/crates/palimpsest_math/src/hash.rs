@@ -83,7 +83,10 @@ mod tests {
         assert_eq!(fnv1a64(b"rng.loot"), 0xdfec_5b83_d454_f05e);
         assert_eq!(fnv1a64(b"rng.worldgen"), 0x7f6e_8785_6ef8_4a9a);
         assert_eq!(fnv1a32(b"genre.cyberpunk"), 0x99b5_4427);
-        assert_eq!(fnv1a64(b"PALIMPSEST/DAILY/2026-10-11"), 0xc6f2_e12d_dca7_12ab);
+        assert_eq!(
+            fnv1a64(b"PALIMPSEST/DAILY/2026-10-11"),
+            0xc6f2_e12d_dca7_12ab
+        );
         assert_eq!(id32("genre.cyberpunk"), 0x99b5_4427);
     }
 
@@ -105,15 +108,15 @@ mod tests {
     #[test]
     fn blake3_wrapper() {
         // BLAKE3 of the empty input (published test vector).
-        assert_eq!(
-            blake3_256(&[]),
-            *blake3::hash(b"").as_bytes()
-        );
+        assert_eq!(blake3_256(&[]), *blake3::hash(b"").as_bytes());
         let e = blake3_256(&[]);
         assert_eq!(e[..4], [0xaf, 0x13, 0x49, 0xb9]);
         // Concatenation semantics: part boundaries do not matter.
         assert_eq!(blake3_256(&[b"ab", b"c"]), blake3_256(&[b"abc"]));
-        assert_eq!(blake3_256(&[b"", b"abc", b""]), *blake3::hash(b"abc").as_bytes());
+        assert_eq!(
+            blake3_256(&[b"", b"abc", b""]),
+            *blake3::hash(b"abc").as_bytes()
+        );
     }
 
     proptest! {

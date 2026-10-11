@@ -72,9 +72,10 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 | `MTU_PAYLOAD` | 1,200 bytes | largest unreliable message; snapshots stop at 1,150 |
 | `RELIABLE_MSG_MAX` | 262,144 bytes | larger payloads are split into 65,536-byte parts |
 | `DATAGRAM_OVERHEAD` | 48 bytes | fixed transport overhead counted per datagram in every budget |
-| `CLIENT_DOWN_BUDGET` | 16,000 B/s (128 kbit/s) | per client, all channels, overhead included |
-| `SNAP_RATE` | 10,560 B/s payload | snapshot token refill; 352 B per snapshot on average |
-| `SNAP_BUCKET` | 2,112 B | snapshot token capacity (6 average snapshots) |
+| `CLIENT_DOWN_BUDGET` | 16,000 B/s (128 kbit/s) | per client, all channels, overhead included; on a listen host `min(16000, floor_div(48000, remote_peers))` |
+| `HOST_UP_BUDGET` | 48,000 B/s (384 kbit/s) | listen host total; dedicated servers have no total cap |
+| `SNAP_RATE` | `CLIENT_DOWN_BUDGET − 5,440` = 10,560 B/s payload by default | snapshot token refill (4,000 B/s of reliable channels and 1,440 B/s of snapshot datagram overhead removed); 352 B per snapshot |
+| `SNAP_BUCKET` | `6 × floor_div(SNAP_RATE, 30)` = 2,112 B by default | snapshot token capacity |
 | `CIL_BATCH_TICKS` | 6 | CIL message cadence (10 Hz) |
 | `NET_STALL_MS` | 1,000 ms | silence before the "connection problem" overlay |
 | `NET_TIMEOUT_MS` | 5,000 ms | silence before a peer is declared lost |
@@ -95,7 +96,7 @@ Every numeric constant of this chapter lives in the content record `net.params.d
   "slack_target_min": 2, "slack_target_max": 8, "interp_min": 4, "interp_max": 12,
   "pred_ring": 128, "pred_stall_ticks": 120, "lagcomp_max_rewind": 16, "lagcomp_slop": 4,
   "snap_ring": 32, "handle_bits": 13, "mtu_payload": 1200, "snap_payload_max": 1150,
-  "datagram_overhead": 48, "client_down_budget": 16000, "snap_rate": 10560, "snap_bucket": 2112,
+  "datagram_overhead": 48, "client_down_budget": 16000, "host_up_budget": 48000, "reliable_share": 4000,
   "cil_batch_ticks": 6, "stall_ms": 1000, "timeout_ms": 5000, "migrate_announce_ms": 10000,
   "migrate_warm_max_ms": 45000, "default_port": 27310, "invader_slot": 4, "invasion_max_ticks": 18000, "invasion_first_folio": 3, "invasion_entry_delay": 7200,
   "pvs_period": 6, "pvs_grace_ticks": 30, "pvs_near_mm": 16000,
@@ -124,7 +125,7 @@ Single player is a host with zero remote peers. The client process runs `HostSes
 
 ### 2.3 Listen host (`net.topo.listen`)
 
-One player's client is host and runs the solo arrangement plus up to 3 remote thin clients and, in an invasion, one invader (§9.13). The host player's own slot uses `LocalInputPort` and is never predicted, so the host plays at zero network latency. A listen-host session never pauses. The host's upstream budget is 384 kbit/s for 3 clients (doc 02 `perf.deck.net.host_kbps`).
+One player's client is host and runs the solo arrangement plus up to 3 remote thin clients and, in an invasion, one invader (§9.13). The host player's own slot uses `LocalInputPort` and is never predicted, so the host plays at zero network latency. A listen-host session never pauses. The host's total upstream is capped at `HOST_UP_BUDGET` = 48,000 B/s (384 kbit/s, doc 02 `perf.deck.net.host_kbps`), divided among its remote peers as §15 states.
 
 ### 2.4 Dedicated headless server (`net.topo.dedicated`)
 
@@ -545,7 +546,7 @@ For every even tick `t`, after `Sim::step(t)` returns, the sim thread extracts a
 | 6 | EQUIP | 4 × 16-bit visual `cidx` (main hand, off-hand, head, body; 0xFFFF none), 4 illuminated bits | |
 | 7 | EXTRA | light 4 bits, attach handle 13 bits (rider ↔ mount, 8191 none), aux 8 bits | aux: containers, the opened-by slot mask; zones, radius in 250 mm units |
 
-Examples: position (12.3456 m, 3.0 m, 200.0004 m) → (12345, 3000, 200000); yaw 16400 → 1025 → shown 16408; pitch −300 → 490 → shown −304; HP 42,500 of 85,000 → 128; HP 400 of 85,000 → 2. Quantization affects presentation only: the predictor's own state arrives exact in `OWNER` (§7.2), and no client decision reads quantized values back into the simulation.
+Examples: position (12.3456 m, 3.0 m, 200.0004 m) → (12345, 3000, 200000); yaw 16400 → 1025 → shown 16408; pitch −300 → 490 → shown −304; HP 42,500 of 85,000 → 128; HP 400 of 85,000 → 2; ward 10,000 with Max HP 85,000 → 2. Quantization affects presentation only: the predictor's own state arrives exact in `OWNER` (§7.2), and no client decision reads quantized values back into the simulation.
 
 ### 6.5 Delta compression and baselines
 
@@ -568,7 +569,7 @@ struct ClientRepl {
 
 Each client's **view origin** is its Erratum; a ghost spectating an ally uses the ally; a loading client uses the Incipit. An entity `e` is relevant to client `c` when the first matching rule says so:
 
-1. **Never** an item drop with visibility `Instanced(s)` and `s ≠ c.slot` (doc 11 §14.4).
+1. **Never** an item drop with visibility `Instanced(s)` and `s ≠ c.slot` (doc 11 §14.4); never a ghost to an invader's client.
 2. **PvP culling** (§9.13): an invader and an Erratum are mutually relevant only while visible: every `PVS_PERIOD` ticks the host tests each such pair; the pair is visible when the distance between origins is at most 16,000 mm, or when either of two rays from the viewer's eye (to the target's eye, and to its origin + 900 mm) reaches the target without crossing a `full` block (doc 03 §5.18). A pair unseen for more than `PVS_GRACE_TICKS` is culled.
 3. **Always**: every Erratum; every entity with `owner_slot = c.slot`; every template flagged `net_always` (Editor bosses during `BossFight`, hunters, exit doors); the mount of a relevant rider.
 4. **Window**: `e` is in a chunk column with `|cx − ocx| <= 2` and `|cz − ocz| <= 2`, the doc 03 §15.1 activation window. An entity leaves only when the distance exceeds 3 columns.
@@ -597,11 +598,11 @@ prio    = mul_bp(mul_bp(w_kind, dist_bp), view_bp)
 
 Per snapshot:
 
-1. `bucket = min(bucket + 352, 2112)`; `budget = min(1150, max(0, bucket))` bytes of payload.
+1. `refill = floor_div(SNAP_RATE, 30)` (352 by default); `bucket = min(bucket + refill, 6 × refill)`; `budget = min(1150, max(0, bucket))` bytes of payload.
 2. Mandatory, in order: header, `OWNER`, `HUD`, events concerning the receiver's own slot (at most 128 bytes). These are written even when they exceed `budget`.
 3. Candidates: relevant entities whose state differs from the baseline, creates and removals (`acc += 100000` once when they first become pending), and dirty field pages. Each pending candidate adds its `prio` to `acc`.
 4. Candidates are sorted by `acc` descending, ties by ascending handle (pages after entities, by chunk slot). Records are written in that order while they fit; a record that does not fit is skipped, and writing stops after 8 consecutive skips. Remaining events fill the leftover bytes.
-5. Every written candidate resets `acc` to 0. `bucket −= bytes written`, never below −2112.
+5. Every written candidate resets `acc` to 0. `bucket −= bytes written`, never below `−6 × refill`.
 
 ### 6.8 Snapshot packet
 
@@ -668,13 +669,13 @@ All block changes replicate to every client, inside or outside interest, because
 | 5 | 4 | `tick: u32` |
 | 9 | 1 | `part`: bit 7 set when more parts of the same tick follow |
 | 10 | v | `edit_count: varint`, then per edit in `ev.block_changed` emission order: `zz(gidx − prev_gidx)` (prev starts at 0), `state: u16`, `cause: u8` (`cidx` of `grid.cause.*`) |
-| … | v | `crack_count: varint`, then per cell whose crack stage changed: `zz(gidx − prev_gidx)`, `stage: u8` in `0..=9` = `floor_div(accumulated × 10, block_hp)` (doc 03 §13.2) |
+| … | v | `crack_count: varint`, then per cell whose crack stage changed: `zz(gidx − prev_gidx)`, `stage: u8` in `0..=9` = `floor_div(accumulated × 10, block_hp)` (doc 03 §13.2); 24,000 accumulated of 30,000 is stage 8 |
 
 A part holds at most 4,096 edits. The client keeps a **pending overlay** `BTreeMap<Gidx, BlockState>` of received edits whose tick its render timeline has not reached; prediction collision reads the overlay first and the render grid second, and the renderer applies a batch to the render grid when `render_tick >= tick`. Example: an edit at `Gidx` 2,099,204 to `block.air` (state 0) by cause index 3 after a previous edit at 2,099,200 encodes as `08 00 00 03`. After a batch reaches the render grid, the client runs doc 03's relight on its presentation light grid with the same 4,096-update budget per tick; presentation light is never compared with the host's, and the HUD light gem reads `HUD.light_at`.
 
 ### 6.12 Field pages
 
-A field page is the presentation state of one chunk's non-empty fluid and fire cells. Presentation cell: `liq_level = min(15, ceil_div(total_units × 15, 1000))`, `liq_type` = the component with the most units (ties to the lower type index), `gas_conc = min(15, ceil_div(conc × 15, 10000))` of the strongest gas, `gas_type`, `fire` = the `FireCell` intensity (0 to 3), `charged` = the liquid is electrified (doc 03 §6.9).
+A field page is the presentation state of one chunk's non-empty fluid and fire cells. Presentation cell: `liq_level = min(15, ceil_div(total_units × 15, 1000))`, `liq_type` = the component with the most units (ties to the lower type index), `gas_conc = min(15, ceil_div(conc × 15, 10000))` of the strongest gas (concentration 5,000 → 8), `gas_type`, `fire` = the `FireCell` intensity (0 to 3), `charged` = the liquid is electrified (doc 03 §6.9).
 
 `FIELDS` body: `page_count: varint`; per page: `slot: u8`, `full: u8` (1 = all non-empty cells, 0 = changes since the baseline page), `cell_count: varint`; per cell in ascending `Local`: `local_delta: varint` (from the previous `Local`, first from −1), `rec: u16` (bits 0–3 liquid level, 4–7 gas concentration, 8–9 fire, 10 charged), then `liq_type: u8` when the liquid level is above 0 and `gas_type: u8` when the gas concentration is above 0. In a delta page, `rec = 0` means the cell became empty. Example: a cell at `Local` 1,057 holding 437 units of the liquid with type index 2 encodes, as the first cell of a page, `a2 08 07 00 02` (`liq_level = ceil_div(6555, 1000) = 7`).
 
@@ -1095,7 +1096,7 @@ Run report, request and response (the reference failed run of doc 15: 400 Ink, 6
 
 ### 11.7 Telemetry and crash reports
 
-Both are opt-in and keyed by the random install ID (doc 02 §17.4). `POST /v1/telemetry/batch` `{ "install_id": "<32 hex>", "build": 1042, "events": [ … ] }`, at most 64 KiB, every 300 s while enabled; a disabled client sends nothing and keeps nothing. Network counters in each session summary: median and 95th-percentile RTT, loss, corrections per minute, 99th-percentile correction distance, substituted commands, late packets, snapshot budget overruns, desyncs, migrations by mode. `POST /v1/crash` takes a minidump or desync dump of at most 8 MiB.
+Both are opt-in and keyed by the random install ID (doc 02 §17.4). `POST /v1/telemetry/batch` `{ "install_id": "<32 hex>", "build": 1042, "events": [ … ] }`, at most 64 KiB, every 300 s while enabled; a disabled client sends nothing and keeps nothing, and the endpoint drops IP addresses at ingest (doc 02 §17.4). Network counters in each session summary: median and 95th-percentile RTT, loss, corrections per minute, 99th-percentile correction distance, substituted commands, late packets, snapshot budget overruns, desyncs, migrations by mode. `POST /v1/crash` takes a minidump or desync dump of at most 8 MiB.
 
 ### 11.8 Workshop
 
@@ -1118,7 +1119,7 @@ PALIMPSEST ships no kernel or client anti-cheat (doc 02 §14, Steam Deck Verifie
 | Host's own session | the host, for its own party | a host that edits its process changes only its party's game; its ranked submission fails re-simulation, and its run reports earn at most doc 15's per-run and 24-hour caps |
 | Ranked boards | nothing until verified | full re-simulation of the CIL from tick 0 and cross-checked input-log hashes (§10.2) |
 | Economy | platform tickets, server ledger | doc 15 caps, idempotent grants, 5% re-simulation sampling, run reports matched against the host's `final_state_hash` |
-| Invasions (PvP) | nothing | signed tickets, empty mod set, equal `content_hash`, PvP culling, lag-compensation cap of 16 ticks, reports to `svc.moderation`; statistical flags (aim-snap rate, reaction time) go to human review only |
+| Invasions (PvP) | nothing | signed tickets, empty mod set, equal `content_hash`, PvP culling, lag-compensation cap of 16 ticks, reports to `svc.moderation`; statistical flags (aim-snap rate, reaction time) go to human review only; a cheating host affects only invasions into its own session, whose invader rewards doc 15 caps at 60 Quires per 24 hours |
 
 Input automation inside one's own co-op session is not detected. Sanctions are per account and online only: hidden from boards, barred from invasions, or both; offline play is never restricted.
 
@@ -1135,7 +1136,7 @@ Input automation inside one's own co-op session is not detected. Sanctions are p
 | Replays | written and viewable locally; uploaded later only on request |
 | Leaderboards, invasions, cloud saves, telemetry, crash upload | unavailable; telemetry is not queued |
 
-A session never waits on a service: every service call happens in the Margin or at run end, on the net or worker thread, with a 10 s timeout.
+A session never waits on a service: service calls run on the net or worker thread with a 10 s timeout, the simulation never blocks on one, and a failed call affects only its own feature.
 
 ---
 
@@ -1168,7 +1169,7 @@ Budgets count message bytes plus `DATAGRAM_OVERHEAD` (48 bytes) per datagram.
 | World edits | 1,500 B/s average | keyframes and Folio state are exempt and occur at Folio entry |
 | CIL | 1,800 B/s | 10 messages/s of 132 B (6 ticks × 21 B + 6 B) |
 | Control (owner, party, run, hashes, chat) | 700 B/s | |
-| **Down total** | **16,000 B/s (128 kbit/s)** | listen host with 3 clients: 384 kbit/s up (doc 02 `perf.deck.net.host_kbps`); dedicated with 4: 512 kbit/s |
+| **Down total** | **16,000 B/s (128 kbit/s)** | listen host with 3 clients: 48,000 B/s = 384 kbit/s up (doc 02 `perf.deck.net.host_kbps`); with 3 clients and an invader each peer gets `floor_div(48000, 4) = 12,000` B/s, so `SNAP_RATE = 6,560` and refill 218 B; dedicated with 4 clients and an invader: 80,000 B/s |
 | Inputs, client → host | 6,480 B/s (51.8 kbit/s) | 60 packets/s of 60 B; host down from 3 clients 155.5 kbit/s |
 | Voice while talking | 5,600 B/s | 50 frames/s of 64 B (60 B at 24 kbit/s plus a 4 B header) |
 | Folio entry burst | ≤ 64 KiB per tick | `FolioState`, `Keyframe` (≈ 12.5 KB for 300 entities), `ChunkData` only on mismatch |
@@ -1238,9 +1239,9 @@ Non-ID interfaces: the `Transport` trait, the message table of §3.7 and every l
 | 10 | `ItemView` encoding; `KnowledgeDelta` contents |
 | 11 | `DropItemFor` producing `Instanced(to_slot)`; a Keepsake flag on item instances; loot rolls skipping Dormant and ghost slots |
 | 12 | `generate_folio` as a pure function returning `blueprint_hash`; the `net_always` flag on exit doors |
-| 13 | `net_always` on Editor bosses during `BossFight` and on hunters; invader character templates and behavior under Canon §17.9 |
-| 14 | slot-status effects of each `SessionIntent`; `SlotJoin` consumed inside `enter_folio`; `FolioRestart` counted in `restores`; invasion rewards and the unranked-board rule |
-| 15 | endpoint semantics of §11.4; the `minor` flag; Keepsakes untradeable |
+| 13 | `net_always` on Editor bosses during `BossFight` and on hunters; the account Editor kits that `InvaderJoin { kit }` names; `enemy.editors.invader` spawning at the hunter anchor |
+| 14 | slot-status effects of each `SessionIntent`; `SlotJoin` consumed inside `enter_folio`; `FolioRestart` counted in `restores`; the Redaction resolution of Canon §17.9, including ghosts |
+| 15 | endpoint semantics of §11.4; invader Quires from matched outcome reports (§11.5); the `minor` flag and `juris.flag.invasion_minor_default`; Keepsakes untradeable |
 | 17 | stalled and migration overlays, stale-entity rendering, trade window, kick vote, voice and crossplay settings, friend codes, ping display |
 | 18 | `loc.` keys for every `net.reject.*` and `svc.err.*` ID |
 
@@ -1259,7 +1260,7 @@ Non-ID interfaces: the `Transport` trait, the message table of §3.7 and every l
 - **G11.** Canon §14 says no currency can be traded or gifted; doc 11 §17 lets players pass Lucre piles by dropping them. This chapter's trade and `DropItemFor` refuse `cat.currency`; doc 11's Public Lucre drops conflict with the canon and need a ruling.
 - **G12.** Canon §11.1 fixes a 30 s bleed-out and a 3 s revive. Added: 1,200 and 600 ticks for the second and later downs in a Folio, damage shortening (doc 05 §14.3), talent multipliers, and `revive_hp_bp = max(2000, 5000 − 150 × grade)`.
 - **G13.** `flag.` belongs to doc 02; the flags this chapter needs are requested in Interface assumptions.
-- **G14.** Doc 02 §15 budgets 384 kbit/s of host upstream and describes it as 96 kbit/s per remote peer (R4's snapshot figure). This chapter keeps the 384 kbit/s total for 3 peers and splits each peer's 128 kbit/s into 96 kbit/s of snapshots and 32 kbit/s of reliable channels; doc 02's wording needs that split.
+- **G14.** Doc 02 §15 budgets 384 kbit/s of host upstream and describes it as 96 kbit/s per remote peer (R4's snapshot figure). This chapter keeps the 384 kbit/s total and splits each of 3 peers' 128 kbit/s into 96 kbit/s of snapshots and 32 kbit/s of reliable channels; with 4 remote peers (an invader present) each peer gets exactly 96 kbit/s (§15). Doc 02's wording needs that split.
 
 ## Acceptance tests
 
@@ -1298,7 +1299,7 @@ Non-ID interfaces: the `Transport` trait, the message table of §3.7 and every l
 33. **Late targets.** A target spawned at tick 4990 is not hit by a rewound ray applied at `t = 5000` with `t_r = 4984`.
 34. **Instanced Lucre.** A kill in a 3-player party with one Dormant slot produces Lucre piles for the 2 Active slots only, each sent only to its owner.
 35. **Telemetry.** With telemetry at its default, and for any minor-flagged account, a full online session makes zero requests to `/v1/telemetry/batch`.
-36. **Budgets.** In NetSim `typical`, no snapshot payload exceeds 1,150 bytes and no 600-tick window exceeds 16,000 B/s per client.
+36. **Budgets.** In NetSim `typical`, no snapshot payload exceeds 1,150 bytes and no 600-tick window exceeds 16,000 B/s per client. A listen host with 4 remote peers gives each 12,000 B/s, `SNAP_RATE` 6,560 and refill 218, and its total upstream stays at or below 48,000 B/s.
 37. **Invasion window.** With `mode.invasion_open`: Folio 2 at entry + 9,000 ticks is closed; Folio 3 at entry + 7,199 is closed and at entry + 7,200 is open; a boss Folio is closed; the tick after any Erratum enters `room.colophon` is closed; after one invasion has started in a Folio, that Folio stays closed. A Daily or ranked lobby refuses `mode.invasion_open`.
 38. **Invasion end.** An invader present for 18,000 ticks receives `InvaderLeave { reason: 2 }` on that tick and `ev.invasion_ended` is emitted; outcome reports of 12,000 ticks with reason 3 from both host and invader pay 10 Quires (doc 15 §2.4), and a lone report pays nothing.
 39. **Redaction and downed.** With two Errata downed and the third alive, an invader hit that brings the third to 0 HP triggers the Redaction instead of a run end, and both downed Errata lose `st.downed` without `ev.player_revived`.

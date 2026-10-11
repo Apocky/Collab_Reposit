@@ -89,7 +89,7 @@ pub fn fwd_fx(yaw: Bam, pitch: i16) -> Fx3 {
     Fx3::new(q30_to_fx(x), q30_to_fx(y), q30_to_fx(z))
 }
 
-/// SPEC: doc 02 §4.3. Convert a Q2.30 value to `Fx`: `Fx::from_raw((q30 as i64) << 2)`.
+/// SPEC: canon §1.9, doc 02 §4.3. Convert a Q2.30 value to `Fx`: `Fx::from_raw((q30 as i64) << 2)`.
 /// Exact for every `i32`.
 #[inline]
 #[must_use]
@@ -183,7 +183,10 @@ mod tests {
             h.update(&v.to_le_bytes());
         }
         let hex = h.finalize().to_hex();
-        assert_eq!(hex.as_str(), "d2612a42910edad3b81095ad0be154d6076c5c33771916cbbea2ded40419ec11");
+        assert_eq!(
+            hex.as_str(),
+            "d2612a42910edad3b81095ad0be154d6076c5c33771916cbbea2ded40419ec11"
+        );
     }
 
     #[test]
@@ -193,8 +196,12 @@ mod tests {
         // f64 sin is accurate to well under 1e-9 here, so the rounded value
         // must agree to within 1 unit everywhere.
         for (i, &v) in SIN_T.iter().enumerate() {
-            let x: f64 = (2.0 * core::f64::consts::PI * (i as f64) / 65536.0).sin() * 1_073_741_824.0;
-            assert!((x - f64::from(v)).abs() <= 0.5 + 1e-6, "T[{i}] = {v}, libm {x}");
+            let x: f64 =
+                (2.0 * core::f64::consts::PI * (i as f64) / 65536.0).sin() * 1_073_741_824.0;
+            assert!(
+                (x - f64::from(v)).abs() <= 0.5 + 1e-6,
+                "T[{i}] = {v}, libm {x}"
+            );
         }
     }
 
