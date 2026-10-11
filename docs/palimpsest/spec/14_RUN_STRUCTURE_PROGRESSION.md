@@ -339,7 +339,7 @@ Kits are not regenerated after Folio 1. A mid-run joiner (§2.5) translates agai
 }
 ```
 
-The kit validator recomputes `consumable_entries` from the rule below and rejects a record that disagrees, and rejects any alt or Script kit whose Calling-part value differs from the standard kit's by more than 500 Bp. `minions` lists doc 13 templates spawned and bound at run start (Beastbinder: `["npc.companion.<origin_suffix>"]`, resolved with the Erratum's Origin suffix). `consumable_entries` lists entry indices removed when `gp.kit_consumables = false` (Grade 10+, §7.1, and the Prologue, §11) or `run.mut.bare_kit` is active; `run.mut.bare_kit` also removes every armor entry. Consumable entries are exactly the entries whose template is in `cat.potion`, `cat.throwable`, `cat.text` or `cat.food`; ammunition, tools, books, gadgets, materials and containers are never consumable entries. The universal kit is never removed.
+The kit validator recomputes `consumable_entries` from the rule below and rejects a record that disagrees, and rejects any alt or Script kit whose Calling-part value differs from the standard kit's by more than 500 Bp. `minions` lists doc 13 templates spawned and bound at run start (Beastbinder: `["npc.companion.<origin_suffix>"]`, resolved with the Erratum's Origin suffix). `consumable_entries` lists entry indices removed when `gp.kit_consumables = false` (Grade 10+, §7.1) or `run.mut.bare_kit` is active; `run.mut.bare_kit` also removes every armor entry. Consumable entries are exactly the entries whose template is in `cat.potion`, `cat.throwable`, `cat.text` or `cat.food`; ammunition, tools, books, gadgets, materials and containers are never consumable entries. The universal kit is never removed.
 
 ### 2.5 Mid-run joiners
 
@@ -1160,12 +1160,12 @@ Grades open with `margin.milestone.first_victory`, which unlocks Grade 1. A vict
 | `mode.weekly_gauntlet` | Novella, 15 | Canon §3.6 weekly | `unlock.daily_baseline` | free from baseline | 6 | 3 drawn | yes | 10000 | 8000 | as Standard; ranked rules §12.3 | `first_editor_v2` |
 | `mode.seeded` | Standard, Novella or Abridged | typed | baseline (toggle: account) | free | 0..=max | none | no | 5000 | by structure | as Standard | `first_editor_v1` |
 | `mode.endless` | Standard continued, none (≤ 9999) | inherited | inherited | inherited | inherited | Marginal mutations only (§9.3) | yes | 10000 | 10000 | as Standard | `first_standard_victory` |
-| `mode.custom` | Standard (25, or 10 with `run.mut.short_book`), Novella or Abridged | CSPRNG or typed | account | free | 0..=max | any owned | no | 5000, or 0 with an easing mutator | by structure | as Standard | `first_victory` |
+| `mode.custom` | Standard (25, or 10 with `run.mut.short_book`), Novella or Abridged | CSPRNG or typed | account | free | 0..=max | any owned | no | 5000; 2000 with `run.mut.short_book`; 0 with an easing mutator | by structure | as Standard | `first_victory` |
 | `mode.prologue` | 1 Folio | `PROLOGUE_SEED` | `unlock.set.starter` | 4 starters | 0 | none | no | none (no account rewards) | fixed layout | checkpoint at each room entry (§11) | first launch |
 
 "By structure" means 10000 for Standard, 9000 for Abridged and 8000 for Novella. `folio_scale_bp` is passed to doc 12, which scales each Folio's room count to `max(4, mul_bp(rooms_base, folio_scale_bp))`. Co-op (1 to 4 players) overlays every mode except the Prologue (§8.8).
 
-**`mode_quire_bp` choices.** Abridged's 7500 brings its Quires per hour (Example E, 141 per hour) in line with Standard's (Example B, 143 per hour); at 10000 it would pay 212 per 67.5 minutes. Seeded and Custom pay 5000 because the player picks the seed or stacks hard mutators on the short structure: at 10000 a Grade-20 `run.mut.short_book` victory with every hard mutator reaches the 400-Quire cap in about 50 minutes, eight times the reference rate. `MUTATOR_BP_CAP` (§4.2) bounds the same exploit on the leaderboard side.
+**`mode_quire_bp` choices.** Abridged's 7500 brings its Quires per hour (Example E, 141 per hour) in line with Standard's (Example B, 143 per hour); at 10000 it would pay 212 per 67.5 minutes. Seeded and Custom pay 5000 because the player picks the seed or the mutators. The 12 hard mutators multiply to 64,529 Bp, so `MUTATOR_BP_CAP = 20000` (§4.2) bounds them first. Even capped, a Grade-20 `run.mut.short_book` victory (10 Folios at 300 s, about 50 minutes) scores 208,200: at 10000 it would pay 400 Quires (480 per hour, eight times `Q_REF`) and at 5000 still 303 (364 per hour). At 2000 it pays 121 Quires, 145 per hour, level with a Standard victory, so the short structure carries 2000.
 
 **Co-op modes** (Canon §17.5, owned here). `mode.ff_off`, `mode.ff_full` and `mode.loot_shared` are lobby overlays, never selected alone, set in `RunSetup` with 2 or more slots and stored in `RunState.coop`. `mode.ff_off` and `mode.ff_full` exclude each other. A run with `mode.ff_off` or `mode.loot_shared` is unranked and otherwise pays and counts normally; `mode.ff_full` keeps ranked eligibility, since it only makes the run harder.
 
@@ -1185,27 +1185,29 @@ Folios 1 to 15 at `folio_scale_bp = 8000`, targeting 240 s per Folio and 60 minu
 
 ### 8.4 Daily
 
-One Volume: Folios 1 to 5, `boss.editor_v1` final, Grade 2, `folio_scale_bp = 8000`. At run start the host draws from `rng.run` with `folio_index = 0`, exactly 9 draws in this order:
+One Volume: Folios 1 to 5, `boss.editor_v1` final (`victory_bp = 15000`), Grade 2, `folio_scale_bp = 8000`, Folio 1 genre by rule F1's seeded branch. At run start the host draws from `rng.run` with `folio_index = 0`, exactly 9 draws in this order:
 
-1. Callings for slots 0..=3 without replacement from the Canon §16 table order: `range(10)`, `range(9)`, `range(8)`, `range(7)` (4 draws, always, whatever the party size).
+1. Callings for slots 0..=3 without replacement from the 13 Callings in Canon §16.2 table order: `range(13)`, `range(12)`, `range(11)`, `range(10)` (4 draws, always, whatever the party size).
 2. Origins for slots 0..=3 with replacement from the 12 core genres in Canon §5.2 order: `range(12)` ×4.
 3. One mutator from the Gauntlet pool (§8.7, 12 entries sorted by ID): `range(12)`.
 
-Example, 2026-10-11 (daily seed `0xc6f2e12ddca712ab`, `rng.run` stream seed `0x6c9f436c0c107704`): slots 0..=3 are Gunslinger/Cyberpunk, Artificer/Hardboiled Noir, Vanguard/Weird West, Alchemist/Gothic Horror; mutator `run.mut.dear_pages`.
+Slots beyond the party size ignore their draws. A drawn Erratum is `kin.human` with doc 04's Calling preset allocation, the Calling's standard kit and the player's own appearance preset.
+
+Example, 2026-10-11 (daily seed `0xc6f2e12ddca712ab`, `rng.run` stream seed `0x6c9f436c0c107704`): slots 0..=3 are Grenadier/Cyberpunk, Oracle/Hardboiled Noir, Duelist/Weird West, Artificer/Gothic Horror; mutator `run.mut.dear_pages`. The raw draws are Callings 3, 8, 1, 5 (Grenadier from 13; Oracle from the remaining 12; Duelist from 11; Artificer from 10), Origins 4, 7, 6, 1, and mutator 4 of the sorted pool.
 
 **Ranked attempt.** Each account has one ranked Daily attempt per UTC date. A run is ranked when every party member's attempt for that date is unused at `Commit`; `Commit` consumes them all. Any further attempt that day is practice: unranked, `mode_quire_bp = 5000`. Missing a day removes nothing; there are no streaks.
 
 ### 8.5 Weekly Gauntlet
 
-Novella structure (15 Folios, `boss.editor_v3` final, `victory_bp = 15000`), Grade 6, free Calling and Origin from `unlock.daily_baseline`. Three mutators come from `rng.run` with `folio_index = 0` without replacement over the 12-entry Gauntlet pool: `range(12)`, `range(11)`, `range(10)` (3 draws). Example, ISO week `2026-W41`: weekly seed `0x2e7e2bae906b8339`, stream seed `0x54f2e7d7bdbce9f5`, mutators `run.mut.blind_exits`, `run.mut.ambushes`, `run.mut.elite_ink`. Attempts are unlimited; the board keeps each party's best verified score of the week.
+Novella structure (15 Folios, `boss.editor_v3` final, `victory_bp = 15000`), Grade 6, free Calling and Origin from `unlock.daily_baseline`. Three mutators come from `rng.run` with `folio_index = 0` without replacement over the 12-entry Gauntlet pool: `range(12)`, `range(11)`, `range(10)` (3 draws). Example, ISO week `2026-W41`: weekly seed `0x2e7e2bae906b8339`, stream seed `0x54f2e7d7bdbce9f5`, raw draws 2, 0, 3, mutators `run.mut.blind_exits`, `run.mut.ambushes`, `run.mut.elite_ink`. Attempts are unlimited; the board keeps each party's best verified score of the week.
 
 ### 8.6 Seeded
 
-The player types a seed (Canon §3.6 decoding) and picks Standard (25 Folios) or Novella (15) structure. Share string: seed display, then `-`, structure letter `S` or `N`, content letter `B` (baseline) or `A` (account), and two Grade digits, for example `028T-5CY4-TQKFF-SB07`. Seeded runs are unranked and pay `mode_quire_bp = 5000`.
+The player types a seed (Canon §3.6 decoding) and picks the Standard (25 Folios), Novella (15) or Abridged (15) structure. Share string: seed display, then `-`, then four positional characters: structure letter `S`, `N` or `A`; content letter `B` (baseline) or `A` (account); two Grade digits. Example: `028T-5CY4-TQKFF-SB07` is Standard, baseline, Grade 7; `028T-5CY4-TQKFF-AA00` is Abridged, account set, Grade 0. A Grade above the player's `max_grade` is lowered to it. Seeded runs are unranked, pay `mode_quire_bp = 5000`, never offer Margins doors, and unlock no Grade.
 
 ### 8.7 Custom mutators
 
-Custom runs pick a structure, a Grade and any owned mutators. They are unranked. An **easing** mutator sets `mode_quire_bp = 0`, disables achievements and Grade unlocks, and pauses Recollection counters for the run.
+Custom runs pick a structure, a Grade and any owned mutators. They are unranked and never offer Margins doors. An **easing** mutator sets `mode_quire_bp = 0`, disables achievements and Grade unlocks, and pauses Recollection counters for the run. A mutator's Bp effects merge into `GradeParams` after the Grade (§7.2); its HP and damage factors join the §7.3 chains within their scope.
 
 | ID | Effect | `score_bp` | Easing | Gauntlet pool |
 |---|---|---|---|---|
@@ -1215,7 +1217,7 @@ Custom runs pick a structure, a Grade and any owned mutators. They are unranked.
 | `run.mut.champion_parade` | `champion_extra += 2` | 12500 | no | yes |
 | `run.mut.dear_pages` | `shop_price_bp` chain 15000 | 11000 | no | yes |
 | `run.mut.elite_ink` | `elite_promote_add_bp += 2000` | 12000 | no | yes |
-| `run.mut.hungry_hunters` | hunter HP and damage factor 15000 | 11000 | no | yes |
+| `run.mut.hungry_hunters` | hunter-scoped HP and damage factor 15000 | 11000 | no | yes |
 | `run.mut.iron_ink` | damage chain factor 15000 | 13000 | no | yes |
 | `run.mut.no_rest` | Interleaf Rest disabled; `rest_heal_bp` chain 5000 | 12000 | no | yes |
 | `run.mut.pauper` | `lucre_bp` chain 5000 | 11500 | no | yes |
@@ -1223,14 +1225,14 @@ Custom runs pick a structure, a Grade and any owned mutators. They are unranked.
 | `run.mut.wild_bleed` | doc 12 bleed-zone count ×2 | 11000 | no | yes |
 | `run.mut.paper_foes` | HP chain factor 6000 | 5000 | yes | no |
 | `run.mut.patron` | `lucre_bp` chain 20000 | 8000 | yes | no |
-| `run.mut.short_book` | `final_folio = 10` (`boss.editor_v2` final) | 10000 | no | no |
+| `run.mut.short_book` | `final_folio = 10` (`boss.editor_v2` final); valid only with the Standard structure; `mode_quire_bp = 2000` | 10000 | no | no |
 | `run.mut.soft_ink` | damage chain factor 6000 | 5000 | yes | no |
 
 Mutator record:
 
 ```json
 { "id": "run.mut.iron_ink", "score_bp": 13000, "easing": false, "gauntlet": true,
-  "dmg_factor_bp": 15000, "hp_factor_bp": 10000 }
+  "scope": "all", "dmg_factor_bp": 15000, "hp_factor_bp": 10000 }
 ```
 
 ### 8.8 Co-op overlay
@@ -1239,7 +1241,9 @@ Mutator record:
 - **Scaling.** `n` is fixed at each Folio entry (§3.3) and drives Canon §17.2 for spawns in that Folio. Loot is instanced per player (Canon §17.1). XP splits per Canon §8.
 - **Exits and gates** use the unanimity-then-majority rule (§3.6). Ghosts follow §3.10.
 - **Joining** happens only at a Folio entry (§2.5).
-- **Leaving.** A disconnected player's slot becomes `Dormant` at once: the Erratum leaves the world with its inventory and is not counted in `n` from the next Folio entry. If the player is not back within `DORMANT_GRACE_S` (300 s wall clock), or leaves on purpose, the slot becomes `Departed`. Both host and player compute the departed payout from the score accumulators of the most recent Folio-entry save, with `victory_bp = 10000` and the slot's presence, store it as `quires_paid`, and pay it once. A Departed or Dormant player who rejoins at a later Folio entry becomes Active again, and the final payout subtracts `quires_paid` (§4.6).
+- **Co-op modes.** `mode.ff_off`, `mode.ff_full` and `mode.loot_shared` (Canon §17.5) are set in `RunSetup` (§8.1).
+- **Leaving.** A disconnected player's slot becomes `Dormant` at once: the Erratum leaves the world with its inventory and is not counted in `n` from the next Folio entry. If the player is not back within `DORMANT_GRACE_S` (300 s wall clock), or leaves on purpose, the slot becomes `Departed` and `run.end.departed` is recorded for that slot. Both host and player compute the departed `run_score` (§4.6) from the score accumulators of the most recent Folio-entry save, with `victory_bp = 10000` and the slot's presence; doc 15 converts it to Quires once, and that grant is stored as `quires_paid`. A Departed or Dormant player who rejoins at a later Folio entry becomes Active again, and the final grant subtracts `quires_paid` (§4.6).
+- **Host migration** (doc 16) resumes from the latest Folio-entry save copy that every client keeps (§12.1); the Folio in progress restarts from its entry.
 - **Ranked co-op.** Daily needs every member's unused attempt (§8.4). Boards are per party size (§9.4).
 
 ---
@@ -1248,7 +1252,9 @@ Mutator record:
 
 ### 9.1 Structure
 
-Margins doors appear in a Standard run's VictoryChoice only when the host's account held `margin.milestone.first_standard_victory` before the run started; otherwise the only door is "Close the Book". Endless begins when a Margins door of the Folio 25 VictoryChoice commits: `mode` becomes `mode.endless`, `final_folio = u32::MAX`, and `score_at_victory` is stored (§4.2). Marginalia Folios 26 to `MARGINALIA_MAX_FOLIO` use §3.1 positions. Every Keeper is `rank.champion`. Boss Folios (`f % 5 == 0`) rotate Editors by `r = (floor_div(f, 5) - 6) % 5`: `r = 0..=3` gives `boss.editor_v1..=v4` and `r = 4` gives `boss.ur_editor` (Folio 30 → v1, 50 → Ur-Editor, 55 → v1). Each Marginalia Endpaper appends a "Close the Book" door after its exit doors (`run.end.margin_closed`). The lattice keeps "no genre twice in the same Volume"; the run-wide cap of 3 appearances ends at Folio 25 (Canon §17.1).
+Margins doors appear in a `mode.standard` run's VictoryChoice only when the host's account held `margin.milestone.first_standard_victory` before the run started; otherwise the only door is "Close the Book". The Margins doors are the first `EXIT_OFFERS` of the 3 lattice candidates drawn on the Folio 25 Colophon-entry tick. Endless begins when a Margins door commits: `mode` becomes `mode.endless`, `final_folio = u32::MAX`, and `score_at_victory` is stored (§4.2). Marginalia Folios 26 to `MARGINALIA_MAX_FOLIO` use §3.1 positions with `d(f) = f`, including the pos-4 Interleaf and a Colophon in every Folio. Every Keeper is `rank.champion`. Boss Folios (`f % 5 == 0`) rotate Editors by `r = (floor_div(f, 5) - 6) % 5`: `r = 0..=3` gives `boss.editor_v1..=v4` and `r = 4` gives `boss.ur_editor` (Folio 30 → v1, 45 → v4, 50 → Ur-Editor, 55 → v1); the boss Folio's genre comes from the pos-4 Binding doors, as in the main run. Each Marginalia boss Folio's exit vote appends a "Close the Book" door after its exit doors (`run.end.margin_closed`, §3.2). The lattice keeps "no genre twice in the same Volume"; the run-wide cap of 3 appearances ends at Folio 25 (Canon §17.1).
+
+Canon rules that continue in Marginalia: each Erratum receives 1 Emendation on every Marginalia `ev.folio_exited` and the enhancement cap is `15 + floor_div(d - 25, 5)` (Canon §13.7); armor adds Marginalia HP `gear_hp` (Canon §13.8.2); every Folio keeps the Erasure clock, Colophon and boons of §3.
 
 ### 9.2 Scaling
 
@@ -1270,11 +1276,11 @@ deep_bp(f)     = if f > 300 { 10000 + 500 × (f - 300) } else { 10000 }   // in 
 | 400 | 47500 | 28750 | 60000 | 285000 | 172500 |
 | 500 | 57500 | 33750 | 110000 | 632500 | 371250 |
 
-At Grade 20 with `run.marg.thick_vellum` at rank 5 an Editor's HP chain reaches `DIFF_CAP_BP` at Folio 467. **Overflow bound:** doc 13 templates have `template_hp ≤ 400` HP. Then the largest enemy HP is `400,000 × H(300) × 400000 × 37000 × DIFF_CAP_BP` (each `mul_bp`) = 4,021,273,828,026,032,000 mHP, below `i64::MAX`.
+At Grade 20 with `run.marg.thick_vellum` at rank 5 an Editor's HP chain `[12000, 11000, marg_hp_bp(f), deep_bp(f), 15000]` first reaches `DIFF_CAP_BP` at Folio 467 (1,003,404 before the clamp). Every mutation reaches rank 5 by the 60th draw at Folio 321 (12 activations and 48 raises, one per Marginalia Volume from Folio 26). **Overflow bound:** doc 13 templates have `template_hp ≤ 400` HP. Then the largest enemy HP is `400,000 × H(300) × 400000 × 37000 × DIFF_CAP_BP` (each `mul_bp`) = 4,021,273,828,026,032,000 mHP, below `i64::MAX` (9,223,372,036,854,775,807). Damage is far from the limit: a 1,000 HP template hit through `T(300) = 1,746,060,986`, hunter damage 20000, `DIFF_CAP_BP` and three more step-2 multipliers of 13000, 15000 and 12000 is 81,715,654,144,800 mHP.
 
 ### 9.3 Marginal mutations
 
-At the first Folio of each Marginalia Volume (`f = 26, 31, 36, ...`), before note draws (§3.3), one draw from that Folio's `rng.run` stream: while any mutation is inactive, `range(inactive_count)` over the inactive list sorted by ID activates it at rank 1. Once all 12 are active, `range(12)` over the sorted list picks one to raise by 1; if it is at rank 5, the next ID in ascending order (wrapping) below rank 5 is raised instead. When all are at rank 5, no draw happens. Rank `r` effects:
+At the first Folio of each Marginalia Volume (`f = 26, 31, 36, ...`), before note draws (§3.3), one draw from that Folio's `rng.run` stream (0 draws once every mutation is at rank 5): while any mutation is inactive, `range(inactive_count)` over the inactive list sorted by ID activates it at rank 1. Once all 12 are active, `range(12)` over the sorted list picks one to raise by 1; if it is at rank 5, the next ID in ascending order (wrapping) below rank 5 is raised instead. When all are at rank 5, no draw happens. Rank `r` effects:
 
 | ID | Effect at rank r |
 |---|---|
@@ -1297,12 +1303,13 @@ At the first Folio of each Marginalia Volume (`f = 26, 31, 36, ...`), before not
 |---|---|---|---|
 | `score.board.standard` | score | fewer `end_tick`; earlier submission | party size 1..=4; all-time and per 12-week season |
 | `score.board.standard_speed` | `end_tick` ascending, victories only | higher score; earlier submission | party size; Grade 0..=20 |
+| `score.board.abridged` | score | fewer `end_tick`; earlier submission | party size; all-time and season |
 | `score.board.novella` | score | fewer `end_tick`; earlier submission | party size; all-time and season |
 | `score.board.daily` | score | deeper Folio; fewer `end_tick` | party size; UTC date |
 | `score.board.weekly_gauntlet` | best score | fewer `end_tick` | party size; ISO week |
 | `score.board.endless` | deepest Folio cleared | higher score; fewer `end_tick` | party size; all-time and season |
 
-Seasons partition display only; every entry stays in the all-time board forever. Eligible entries: ranked mode, no easing mutator, no `access.scribes_mercy`, `restores <= RANKED_RESTORE_MAX` (§12.3), and a server-verified replay.
+Seasons partition display only; every entry stays in the all-time board forever. Eligible entries: ranked mode (§8.1), no easing mutator, no `access.scribes_mercy`, no `mode.ff_off`, no `mode.loot_shared`, not Apocrypha, `restores <= RANKED_RESTORE_MAX` (§12.3), and a server-verified replay. `score.board.endless` takes Endless runs only; `score.board.standard` takes the run's final score, which for an Endless run is the §4.2 maximum. A season is 12 weeks starting at Monday 00:00 UTC of ISO week 1 of 2027 and every 12 weeks after.
 
 ```rust
 fn verify(sub: &Submission) -> Result<(), Reject> {
@@ -1332,88 +1339,110 @@ fn verify(sub: &Submission) -> Result<(), Reject> {
 
 ## 10. Achievements
 
-Achievements are account-level, evaluated by the meta layer from simulation events and `RunSummary`, and mirrored to platform achievements. "Present" means the player's slot was Active or Ghost. Every achievement is disabled in runs with an easing mutator; those marked † are also disabled while `access.scribes_mercy` is active. Cumulative counters never reset.
+Achievements are account-level, evaluated by the meta layer from simulation events and `RunSummary`, and mirrored to platform achievements. "Present" means the player's slot was Active or Ghost. "Victory" means `run.end.victory` in Standard, Abridged or Novella unless the entry names a mode. "Cumulative" counters add across runs and never reset; every other condition must happen within one run. Every achievement is disabled in Apocrypha runs and in runs with an easing mutator; those marked † are also disabled while `access.scribes_mercy` is active. The Prologue counts only for `ach.first_page`.
 
-| ID | Condition | Quires | Ink |
-|---|---|---|---|
-| `ach.first_page` | complete the Prologue | 100 | 160 |
-| `ach.turned_page` | clear Folio 1 | 50 | 0 |
-| `ach.volume_1` | present at `boss.editor_v1`'s death | 150 | 160 |
-| `ach.volume_2` | present at `boss.editor_v2`'s death | 200 | 160 |
-| `ach.volume_3` | present at `boss.editor_v3`'s death | 250 | 160 |
-| `ach.volume_4` | present at `boss.editor_v4`'s death | 300 | 160 |
-| `ach.ur_text` † | Standard victory | 500 | 320 |
-| `ach.novella` † | Novella victory | 250 | 160 |
-| `ach.marginalia_30` † | clear Folio 30 | 200 | 0 |
-| `ach.marginalia_50` † | clear Folio 50 | 300 | 160 |
-| `ach.marginalia_100` † | clear Folio 100 | 500 | 320 |
-| `ach.grade_5` † | victory at Grade ≥ 5 | 300 | 160 |
-| `ach.grade_10` † | victory at Grade ≥ 10 | 400 | 160 |
-| `ach.grade_15` † | victory at Grade ≥ 15 | 500 | 160 |
-| `ach.grade_20` † | victory at Grade 20 | 800 | 320 |
-| `ach.callings_v1` | `boss.editor_v1` killed as each of the 10 Callings (cumulative) | 300 | 160 |
-| `ach.callings_win` † | Standard or Novella victory as each Calling | 600 | 320 |
-| `ach.origins_v1` | `boss.editor_v1` killed with each of the 12 core Origins | 300 | 160 |
-| `ach.atlas` | clear a Folio of each of the 12 core genres (cumulative) | 200 | 0 |
-| `ach.oneiric` | enter `genre.oneiric` | 150 | 0 |
-| `ach.redacted` | enter `genre.redacted` | 150 | 0 |
-| `ach.unwritten` | enter `genre.unwritten` outside the Prologue | 150 | 0 |
-| `ach.secret_trio` | all three secret genres entered | 300 | 160 |
-| `ach.anachronist` | 100 kills of native targets by a base component with `E >= 3` | 100 | 0 |
-| `ach.shock_of_new` | trigger Shock of the New 50 times | 100 | 0 |
-| `ach.coherent_volume` | clear Folios 1 to 5 of one run without ever gaining `st.contradicted` | 150 | 0 |
-| `ach.rewritten` | 50 Rewrites committed | 100 | 0 |
-| `ach.appraiser` | 500 item instances identified | 100 | 0 |
-| `ach.connoisseur` | every potion type of the run's content set known in one run | 150 | 0 |
-| `ach.master` | any skill reaches 100 in one run | 200 | 0 |
-| `ach.triad` | three skills at ≥ 50 at once | 100 | 0 |
-| `ach.level_30` | character level 30 | 150 | 0 |
-| `ach.palimpsestic` | equip a Palimpsestic item | 100 | 0 |
-| `ach.exotic_pair` | equip an Exotic weapon and an Exotic armor piece at once | 100 | 0 |
-| `ach.crafter` | 100 `ev.item_crafted` | 100 | 0 |
-| `ach.brewer` | 100 `ev.potion_brewed` | 100 | 0 |
-| `ach.builder` | place 1,000 blocks | 50 | 0 |
-| `ach.excavator` | break 5,000 blocks | 50 | 0 |
-| `ach.ghost_step` | complete `run.note.silent` | 100 | 0 |
-| `ach.deaths_door` | 25 Death's Door saves | 100 | 0 |
-| `ach.erasure_10` | exit a Folio while holding 10 Erasure stacks | 100 | 0 |
-| `ach.hunter` | kill an Erasure hunter | 150 | 0 |
-| `ach.hunter_10` | kill 10 Erasure hunters | 200 | 160 |
-| `ach.swift_volume` † | `boss.editor_v1` dies before run tick 54,000 (15 min) | 150 | 0 |
-| `ach.speed_win` † | Standard victory with `end_tick < 324000` (90 min) | 400 | 160 |
-| `ach.party_of_four` | clear Folio 5 in a party of 4 | 100 | 0 |
-| `ach.reviver` | 50 `ev.player_revived` as the reviver | 100 | 0 |
-| `ach.full_house` † | Standard victory in a party of 4 with `S_deaths = 0` | 300 | 160 |
-| `ach.daily_10` | 10 ranked Daily runs ended | 150 | 160 |
-| `ach.gauntlet` † | Weekly Gauntlet victory | 250 | 160 |
-| `ach.recollection` | complete one Recollection trial | 100 | 0 |
-| `ach.recollection_all` | complete all 24 Recollection trials | 1000 | 320 |
-| `ach.bindery_half` | own 37 of the 73 Bindery nodes | 0 | 160 |
-| `ach.bindery_all` | own all 73 Bindery nodes | 0 | 320 |
-| `ach.notes_100` | complete 100 marginal notes | 150 | 0 |
-| `ach.cartographer` | complete `run.note.cartographer` in 5 Folios of one run | 100 | 0 |
+Each achievement has a **grade** 1 to 4, and doc 15 pays it once per account: Quires 10 / 25 / 50 / 100 (doc 15 §2.4) and Ink 40 / 80 / 160 / 320 (doc 15 §2.2) for grades 1 / 2 / 3 / 4, plus `pass.xp.achievement` Codex XP. No achievement references owning Inkwell entries or Keepsakes (doc 15 kompu rule).
 
-56 achievements pay 12,050 Quires and 4,960 Ink in total.
+| ID | Condition | Grade | Quires | Ink |
+|---|---|---|---|---|
+| `ach.first_page` | complete the Prologue | 1 | 10 | 40 |
+| `ach.turned_page` | clear Folio 1 | 1 | 10 | 40 |
+| `ach.volume_1` | present at `boss.editor_v1`'s death | 2 | 25 | 80 |
+| `ach.volume_2` | present at `boss.editor_v2`'s death | 2 | 25 | 80 |
+| `ach.volume_3` | present at `boss.editor_v3`'s death | 3 | 50 | 160 |
+| `ach.volume_4` | present at `boss.editor_v4`'s death | 3 | 50 | 160 |
+| `ach.ur_text` † | Standard victory | 4 | 100 | 320 |
+| `ach.abridged` † | Abridged victory | 3 | 50 | 160 |
+| `ach.novella` † | Novella victory | 3 | 50 | 160 |
+| `ach.marginalia_30` † | clear Folio 30 | 2 | 25 | 80 |
+| `ach.marginalia_50` † | clear Folio 50 | 3 | 50 | 160 |
+| `ach.marginalia_100` † | clear Folio 100 | 4 | 100 | 320 |
+| `ach.grade_5` † | victory at Grade ≥ 5 | 3 | 50 | 160 |
+| `ach.grade_10` † | victory at Grade ≥ 10 | 3 | 50 | 160 |
+| `ach.grade_15` † | victory at Grade ≥ 15 | 4 | 100 | 320 |
+| `ach.grade_20` † | victory at Grade 20 | 4 | 100 | 320 |
+| `ach.callings_v1` | `boss.editor_v1` killed as each of the 13 Callings (cumulative) | 3 | 50 | 160 |
+| `ach.callings_win` † | victory as each of the 13 Callings (cumulative) | 4 | 100 | 320 |
+| `ach.origins_v1` | `boss.editor_v1` killed with each of the 12 core Origins (cumulative) | 3 | 50 | 160 |
+| `ach.atlas` | clear a Folio of each of the 12 core genres (cumulative) | 2 | 25 | 80 |
+| `ach.oneiric` | enter `genre.oneiric` | 2 | 25 | 80 |
+| `ach.redacted` | enter `genre.redacted` | 2 | 25 | 80 |
+| `ach.unwritten` | enter `genre.unwritten` outside the Prologue | 2 | 25 | 80 |
+| `ach.secret_trio` | all three of `genre.oneiric`, `genre.redacted` and `genre.unwritten` entered (cumulative) | 3 | 50 | 160 |
+| `ach.anachronist` | 100 kills of native targets by a base component with `E >= 3` (cumulative) | 1 | 10 | 40 |
+| `ach.shock_of_new` | trigger Shock of the New 50 times (cumulative) | 1 | 10 | 40 |
+| `ach.coherent_volume` | clear Folios 1 to 5 of one run without ever gaining `st.contradicted` | 2 | 25 | 80 |
+| `ach.rewritten` | 50 Rewrites committed (cumulative) | 1 | 10 | 40 |
+| `ach.appraiser` | 500 item instances identified (cumulative) | 1 | 10 | 40 |
+| `ach.connoisseur` | every potion type of the run's content set known in one run | 2 | 25 | 80 |
+| `ach.master` | any skill reaches 100 in one run | 2 | 25 | 80 |
+| `ach.triad` | three skills at ≥ 50 at once | 1 | 10 | 40 |
+| `ach.level_30` | character level 30 | 2 | 25 | 80 |
+| `ach.palimpsestic` | equip a Palimpsestic item | 1 | 10 | 40 |
+| `ach.exotic_pair` | equip an Exotic weapon and an Exotic armor piece at once | 1 | 10 | 40 |
+| `ach.crafter` | 100 `ev.item_crafted` (cumulative) | 1 | 10 | 40 |
+| `ach.brewer` | 100 `ev.potion_brewed` (cumulative) | 1 | 10 | 40 |
+| `ach.builder` | place 1,000 blocks (cumulative) | 1 | 10 | 40 |
+| `ach.excavator` | break 5,000 blocks (cumulative) | 1 | 10 | 40 |
+| `ach.ghost_step` | complete `run.note.silent` | 1 | 10 | 40 |
+| `ach.deaths_door` | 25 Death's Door saves (cumulative) | 1 | 10 | 40 |
+| `ach.erasure_10` | exit a Folio while holding 10 Erasure stacks | 1 | 10 | 40 |
+| `ach.hunter` | kill an Erasure hunter | 2 | 25 | 80 |
+| `ach.hunter_10` | kill 10 Erasure hunters (cumulative) | 2 | 25 | 80 |
+| `ach.swift_volume` † | `boss.editor_v1` dies before run tick 54,000 (15 min) in Standard | 2 | 25 | 80 |
+| `ach.speed_win` † | Standard victory with `end_tick < 324000` (90 min) | 3 | 50 | 160 |
+| `ach.party_of_four` | clear Folio 5 in a party of 4 | 1 | 10 | 40 |
+| `ach.reviver` | 50 `ev.player_revived` as the reviver (cumulative) | 1 | 10 | 40 |
+| `ach.full_house` † | Standard victory in a party of 4 with `S_deaths = 0` | 3 | 50 | 160 |
+| `ach.daily_10` | 10 ranked Daily runs ended (cumulative) | 2 | 25 | 80 |
+| `ach.gauntlet` † | Weekly Gauntlet victory | 3 | 50 | 160 |
+| `ach.recollection` | complete one Recollection trial | 1 | 10 | 40 |
+| `ach.recollection_all` | complete all 24 Recollection trials | 4 | 100 | 320 |
+| `ach.bindery_half` | own 46 of the 91 Bindery nodes | 2 | 25 | 80 |
+| `ach.bindery_all` | own all 91 Bindery nodes | 3 | 50 | 160 |
+| `ach.notes_100` | complete 100 marginal notes (cumulative) | 2 | 25 | 80 |
+| `ach.cartographer` | complete `run.note.cartographer` in 5 Folios of one run | 1 | 10 | 40 |
+| `ach.going_native` | Go Native at a Colophon (Canon §5.11) | 1 | 10 | 40 |
 
----
+58 achievements: 21 of grade 1, 17 of grade 2, 14 of grade 3 and 6 of grade 4, paying 1,935 Quires and 6,360 Ink in total.
+
+Achievement record:
+
+```json
+{ "id": "ach.hunter_10", "grade": 2, "cumulative": true, "scribes_mercy_ok": true,
+  "counter": "erasure_hunter_kills", "target": 10 }
+```
+
+`counter` names the meta-layer counter, which the meta layer derives from `ev.entity_killed` of a `rank.hunter` spawned by §3.8; it is not a simulation event ID.
 
 ## 11. Onboarding: the Prologue Folio
 
 On first launch the game offers **Begin** or **I have read this before**. Skipping sets `prologue_done` and grants nothing. The Prologue is replayable at `margin.first_page`; replays grant nothing.
 
-The player picks one of the 4 starter Callings and one of the 4 starter Origins. The run is `mode.prologue`: single player, `run_seed = PROLOGUE_SEED = fnv1a64("PALIMPSEST/PROLOGUE") = 0x39d13f78bea6b81d`, `folio_index = 1`, Folio genre `genre.unwritten`, Grade 0, a fixed hand-built layout of seven rooms (`room.prologue_l1` to `room.prologue_l7`, doc 12), the chosen Calling's standard kit (Margin Translation uses the chosen Origin as `g1`, so no kit item is translated), and no score. Target length 300 to 480 s; natural Erasure (Canon §11.6) still applies after 420 s.
+The player picks one of the 4 starter Callings (Vanguard, Duelist, Gunslinger, Spellwright) and one of the 4 starter Origins (Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West), with `kin.human` and doc 04's Calling preset. The run is `mode.prologue`: single player, `run_seed = PROLOGUE_SEED = fnv1a64("PALIMPSEST/PROLOGUE") = 0x39d13f78bea6b81d`, `folio_index = 1`, Folio genre `genre.unwritten`, Grade 0, a fixed hand-built layout of seven rooms (`room.prologue_l1` to `room.prologue_l7`, doc 12), the universal kit plus the chosen Calling's standard kit (Margin Translation uses the chosen Origin as `g1`, so no kit item is translated), no Calling lore, no boons, and no score. Target length 300 to 480 s; natural Erasure (Canon §11.6) still applies after 420 s. `genre.unwritten` has no shops and no Lucre drops (Canon §5.2), so the Prologue holds no Lucre and its Colophon has no services.
 
 | Room | Local genre | Teaches | Leaves when |
 |---|---|---|---|
 | L1 Your Story | bleed zone of the chosen Origin | look, move, sprint, jump, interact; a native NPC vignette | the player reaches the far door |
 | L2 The Red Pen | chosen Origin | attack, block, dodge against 3 `rank.minion` Red Ink scrawls (`fac.editors`) | all three die |
-| L3 The Fall | Unwritten | the scripted Editor erases the room; a 12 m drop into water (no fall damage); mine 3 blocks with the pick, place 2 blocks to bridge a gap | the player reaches the ledge |
-| L4 Blank Pages | Unwritten | a chest with 30 Lucre, one unknown potion (type `item.potion.healing`, appearance from the shuffle) and one known `item.text.appraisal`; quickbar; identification by use or appraisal | the player uses the reading stand |
+| L3 The Fall | Unwritten | the scripted Editor erases the floor; a 3,000 mm drop onto solid ground, below the 3,200 mm safe-fall height at VERVE 0 (Canon §4.2), so it deals no damage; pick up the `item.tool.pick` lying there, mine 3 blocks, place 2 blocks to bridge a gap | the player reaches the ledge |
+| L4 Blank Pages | Unwritten | a chest (no Lucre) holding one unknown potion of type `item.potion.regeneration` (appearance from the shuffle; healing potions are already known from the universal kit) and one `item.text.appraisal`, whose type the script marks known; quickbar; identification by use or by reading the appraisal text | the player uses the reading stand |
 | L5 A Borrowed Page | bleed zone of `genre.fairy_tale` | pick up a Cyberpunk `arch.ranged.sidearm` (ilvl 1); the HUD shows its Contradiction state (C = 4 for a Cyberpunk Origin per Canon §5.6; Disconnected at C = 6 for Mythic Fantasy and Weird West, C = 5 for Gothic Horror); a native wolf shows Anachronism Edge | the wolf dies |
-| L6 Scriptorium | Unwritten | a free Rewrite of the sidearm into the Fairy Tale skin; Coherent state | a Rewrite is committed |
-| L7 The Erasure | Unwritten | on entry the script directly applies 3 stacks of `st.erasure` (a `direct` status, Canon §11.1); `enemy.prologue_hunter` chases the player 60 m to the Colophon | the player enters the Colophon door |
+| L6 Scriptorium | bleed zone of `genre.fairy_tale` (Rewriting translates into the local genre, so the station must stand in Fairy Tale) | a free Rewrite of the sidearm into the Fairy Tale skin; its HUD state becomes Coherent | a Rewrite is committed |
+| L7 The Erasure | Unwritten | on entry the script directly applies 3 stacks of `st.erasure` (a `direct` status, Canon §11.1); `enemy.prologue_hunter` (`fac.editors`) chases the player 60 m to the Colophon | the player's origin enters `room.colophon` |
 
-Each room entry writes a checkpoint save (single player may save at any tick, Canon §2.5). When the Erratum dies, the current room reloads from its checkpoint; the Prologue never ends `run.end.erased`. Completion sets `prologue_done`, grants `ach.first_page` and loads the Margin. No Prologue item carries over.
+Each room entry writes a checkpoint save (single player may save at any tick, Canon §2.5). When the Erratum dies, the current room reloads from its checkpoint; the Prologue never ends `run.end.erased`. Completion sets `prologue_done`, grants `ach.first_page` and loads the Margin. No Prologue item, knowledge or Illuminated skin carries over, and the Prologue counts for no other achievement, trial, milestone or account reward.
+
+Prologue state machine (one row per room transition, evaluated at the end of each tick):
+
+| State | Event | Next |
+|---|---|---|
+| `Offer` | Begin | `L1` (checkpoint) |
+| `Offer` | I have read this before | `Done` without reward; sets `prologue_done` |
+| `Lk` (k = 1..=6) | the room's leave condition | `L(k+1)` (checkpoint) |
+| `L7` | the leave condition | `Done`: sets `prologue_done`, grants `ach.first_page` on the first completion only |
+| `Lk` (any) | the Erratum's `ev.entity_killed` | `Lk` reloaded from its checkpoint |
+| any | the player quits | Margin; the next launch offers Resume (from the last checkpoint) or Restart |
 
 ---
 

@@ -2,7 +2,7 @@
 
 As of 2026-10-11. Status: BINDING. Conforms to canon-1.2.
 
-This chapter owns item knowledge and how it grows, item value, curses and blessings, `cat.wand` and its type-hiding rule, sealed Reliquary contents, and the Concordance (item encyclopedia and bestiary).
+This chapter owns item knowledge and how it grows, item value, curses and blessings, `cat.wand` and its type-hiding rule, sealed Reliquary contents, and the identification side of the Index and Bestiary.
 
 ## Imports
 
@@ -64,7 +64,7 @@ pub struct TypeKnowledge {                         // one per run, host-authorit
     pub seen:     BTreeSet<Id32>,                  // descriptors the party has encountered (§5.3)
     pub tried_no_effect: BTreeSet<Id32>,           // descriptors used once with no observable outcome
     pub read_mode: BTreeMap<Id32, ReadMode>,       // texts only: Targeted | Untargeted, from the read prompt
-    pub refused_cats: BTreeMap<Id32, u32>,         // texts only: bitmask of §13.1 row indices a targeted text refused
+    pub refused_cats: BTreeMap<Id32, u32>,         // texts only: bitmask of Canon §13.1 row indices a targeted text refused
     pub price_obs: BTreeMap<Id32, Vec<PriceObs>>,  // ≤ 8 per descriptor, oldest dropped first (§5.8)
     pub excluded: BTreeMap<Id32, BTreeSet<Id32>>,  // descriptor -> type keys proven wrong
     pub recollect_volume: [u8; 4],                 // per party slot: Volume of the last Recollection, 0 = none
@@ -147,7 +147,7 @@ A property changed by an unseen source (none at launch) clears its flag. Nothing
 - Knowledge travels with the item through drops and trades, identically in instanced loot and `mode.loot_shared` (Canon §17.5).
 - Items stack only when template, `buc`, `curse_penalty`, `enhancement`, `charges`, `affixes`, `ilvl`, `quality` and `knowledge.flags` are all equal. Splitting copies the knowledge.
 - Type identification updates every instance of that type in the run at once, on the ground or carried.
-- A player who joins mid-run shares `TypeKnowledge` from the join tick. A ghost (Canon §17.6) cannot pick up, appraise or analyze, but keeps seeing party knowledge.
+- A player who joins mid-run shares `TypeKnowledge` from the join tick. A ghost (Canon §17.6) cannot pick up, appraise or analyze, but keeps seeing party knowledge. An invader (Canon §17.9) is not in the party: it never receives party knowledge, and its Editor kit is fully identified.
 
 ### 2.6 Starting knowledge
 
@@ -530,7 +530,7 @@ The Ledger panel (doc 17) shows `candidates(d)` for every seen unknown descripto
 
 ### 5.9 Scriptorium and altar services
 
-Scriptorium rooms (doc 12) and altars sell these services. `d` is the current Folio depth, with `P(min(d, 300))`. Payment is Lucre per item.
+Scriptoria (doc 12 rooms and the Scriptorium station in every Colophon, Canon §17.1) and patron altars (doc 12) sell these services. `d` is the current Folio depth, with `P(min(d, 300))`. Payment is Lucre per item.
 
 | ID | Where | Effect | Cost | d1 | d3 | d12 | d25 |
 |---|---|---|---|---|---|---|---|
@@ -545,7 +545,7 @@ Costs depend only on depth and stay below the affliction cure anchor `mul_bp(500
 
 ### 5.10 Divination glyphs (`skill.divination`)
 
-Glyphs belong to doc 06, whose catalog does not yet list these essences (Canon gaps); their identification effects are defined here. `div_tier` = mastery tier of `skill.divination` (0..=4). Glyph potency (Canon §5.5) multiplies radii and chances with `mul_bp`; a Disconnected glyph cannot be cast.
+Glyphs belong to doc 06, whose catalog does not yet list these essences (Interface assumptions); their identification effects are defined here. `div_tier` = mastery tier of `skill.divination` (0..=4). Glyph potency (Canon §5.5) multiplies radii and chances with `mul_bp`; a Disconnected glyph cannot be cast.
 
 | Glyph | Effect ID | Effect | Draws |
 |---|---|---|---|
@@ -704,7 +704,7 @@ A cursed equipped item cannot be unequipped (Canon §13.6), whatever its knowled
 
 - A cursed weapon in any weapon slot becomes the active weapon on equip, and active-weapon switching is locked while it is equipped. A cursed two-handed weapon also locks `slot.offhand` empty.
 - A cursed wand in `slot.offhand` stays there. A cursed implant cannot be uninstalled.
-- Binding ends only when the item becomes uncursed or its slot stops existing. A severed `bp.arm_l` or `bp.arm_r` (Canon §9.1) takes the ring in `slot.ring_l` or `slot.ring_r` with it; the ring stays on the `cat.body_part` item and is recovered with a 60-tick interact, still cursed. `st.polymorphed` stows equipment and re-equips bound items when it ends. Ghost item loss (Canon §17.6) may take a bound item.
+- Binding ends only when the item becomes uncursed or its slot stops existing. A severed `bp.arm_l` or `bp.arm_r` (Canon §9.1) takes the ring in `slot.ring_l` or `slot.ring_r` with it; the ring stays on the `cat.body_part` item and is recovered with a 60-tick interact, still cursed. `st.polymorphed` stows equipment and re-equips bound items when it ends. Ghost item loss (Canon §17.6) and Redaction item loss (Canon §17.9) may take a bound item.
 - Bound items cannot be sold, dropped, stashed or crafted with.
 
 ### 7.3 Curse affixes
@@ -779,7 +779,7 @@ Low-MYTHOS genres weaken curses but never release them.
 | Doc 08 transmutations `alch.tx.uncurse`, `alch.tx.consecrate` | one potion | ingredients |
 | Prayer "fix curses" boon (doc 06) | every equipped item | prayer timer |
 
-Severing and ghost loss end binding (§7.2) but never uncurse.
+Severing, ghost loss and Redaction end binding (§7.2) but never uncurse.
 
 ### 7.7 Blessings
 
@@ -846,7 +846,7 @@ Prices are per unit. Every displayed price for an unknown-type item records a `P
 
 ### 10.3 Rules
 
-- Vendors refuse bound items, `cat.quest` items and account seals (§11.2).
+- Vendors refuse bound items and `cat.quest` items.
 - **Buyback.** Until `ev.folio_exited`, a vendor sells back any item a party member sold it, at the exact `sell_offer` paid, with its knowledge unchanged.
 - Every vendor offers `appr.svc.appraise`; only Scriptoria offer the other services. Fortune Engine capsules arrive with RARITY set and are never cursed.
 
@@ -854,49 +854,28 @@ Prices are per unit. Every displayed price for an unknown-type item records a `P
 
 ## 11. Seals: Reliquary contents
 
-### 11.1 In-run Reliquaries (doc 11)
+A **sealed** item (`sealed = true`, doc 11 instance field) came from an in-run Reliquary, a Fortune Engine capsule or an account Reliquary (a Keepsake, doc 15 §5.4) and has not yet been inspected by a party member. Sealing is a presentation layer over normal knowledge and never changes the item.
 
-Each item from an opened in-run Reliquary arrives as a **sealed lot**: `seal = Sealed`, `RARITY` set, contents fixed by doc 11's keyed `rng.loot` roll and never cursed.
-
-| While sealed | Rule |
+| Rule | Value |
 |---|---|
-| Visible | category silhouette, rarity, `origin_genre`, `ilvl` |
-| Hidden | the template, even for categories that are not type-hidden, and every other property |
-| Allowed | carry, drop, trade, draft (doc 11 turn-order draft uses this view), sell, unseal |
-| Not allowed | equip, use, Rewrite, craft, Analysis, familiarity |
-| Sale | vendors pay `mul_bp(seal_floor, sell share)`, `seal_floor = max(1, mul_bp(cat_floor_base, P(ilvl)) × rarity value multiplier)` |
+| Knowledge at creation | RARITY set, every other flag clear; type knowledge from the party table (Canon §13.6) |
+| Sealed view | category silhouette, origin-genre tag, rarity frame and `ilvl`; a type-hidden item's descriptor is also withheld |
+| Unsealing | the first time any party member opens the item's detail view, equips, uses, sells or trades it: `sealed = false`, no draw, no event |
+| After unsealing | §6.4 display; every §5 method applies |
+| Curses | in-run Reliquary and Fortune Engine contents are never cursed (§7.1); Keepsakes roll curses with their source genre's MYTHOS, and a cursed Keepsake behaves like any cursed item (doc 15 §5.5) |
+| Draft | doc 11's turn-order Reliquary draft shows only the sealed view |
 
-`cat_floor_base`: potion and text 10, ammo-like and throwable 5, armor, off-hand and melee 15, ranged 20, ward generator 30, accessory 40, wand 50, implant 60. Example: a sealed Rare accessory at `ilvl 12` has `seal_floor = mul_bp(40, 25804) × 4 = 103 × 4 = 412`; at CHM 40 a vendor pays `mul_bp(412, 3000) = 123`.
-
-| Unseal by | Result | Cost |
-|---|---|---|
-| Break the seal (60-tick channel) | normal knowledge: RARITY known, everything else per §2 | free |
-| Appraisal completion (§5.5) on the lot | unsealed, then that tier's reveal set applied | time |
-| `appr.eff.identify` or `appr.eff.divine_identify` targeting the lot | unsealed and fully identified | the text or spell |
-| `appr.svc.unseal` | unsealed and fully identified | `mul_bp(30, P(d))`, half the identify price |
-
-Reason `appr.reason.seal`.
-
-### 11.2 Account Reliquaries (doc 15)
-
-Doc 15 owns sources, contents, odds, pity and the commit-reveal server roll; this chapter owns presentation.
-
-1. The open response carries each lot's content ID and rarity; the client stores them sealed and shows the rarity frame and kind silhouette at once, so pity counters and odds disclosures match what the player sees.
-2. **Break the seal** in the Margin at any time: instant, free, works offline.
-3. **Carry the seal**: before a run the player may attach up to 3 sealed lots to their Erratum. They take no inventory space, have no gameplay effect, and unseal with a reveal ceremony at the carrier's 5th `ev.item_identified` event in that run (any scope, any reason) or at `ev.run_ended`, whichever comes first.
-4. Sealing never changes content, costs nothing, has no timer, and is never bought, sped up or skipped with money.
+**Account Reliquaries.** Doc 15 fixes and stores the full Keepsake instance at open, so its identity never changes. The rarity frame is visible from that moment, matching the disclosed odds and pity counters. A Keepsake materializes sealed from the Satchel (doc 15 §5.5), is identified only inside runs by §5 methods, and on reaching `know.identified` records its template in the Index (§12). No part of sealing is sold, timed or accelerated with money.
 
 ---
 
-## 12. The Concordance: item codex and bestiary
+## 12. The Index and the Bestiary
 
-The Concordance is the account-level encyclopedia in the Margin, with tabs **Item Codex** and **Bestiary** (Canon gaps 4). It is stored locally, synced online, and complete offline under the end-of-service guarantee.
+Doc 14 §5.5 places the account's item encyclopedia (the **Index**) and the **Bestiary** in the Margin and sets their unlock thresholds. This chapter owns their identification content, familiarity ranks, illuminated pages, Recollection and the never-monetized rule. Both are stored locally, synced when online, and complete offline under the end-of-service guarantee.
 
-### 12.1 Item Codex
+### 12.1 Index
 
-Per template (unique templates included) and per `curse.` affix: `seen`, `identified_runs`, `familiarity` points, and the set of genre skins unlocked as illuminated.
-
-- `seen` is set on pickup. A type-hidden type's page opens only after its first identification in any run.
+- An entry opens on a template's first `know.identified` instance, plus one skin entry per genre held (doc 14). A type-hidden type's page lists its price group and use rule.
 - `familiarity += 1` once per run per template at its first identification in that run (type known, or an instance reaching `know.identified`), for every party member present.
 
 | Rank | Points | Unlocks |
@@ -908,51 +887,38 @@ Per template (unique templates included) and per `curse.` affix: `seen`, `identi
 
 ### 12.2 Illuminated variants
 
-Canon §13.9 unlocks an illuminated skin account-wide on pickup. This chapter adds:
-
-- The unlock is recorded at pickup, but its notification and the illuminated render wait until `RARITY` is known or `ev.run_ended`, because illumination rolls only on Legendary-or-better drops and an early glow would leak rarity.
-- Pages show each illuminated skin as a gilded plate per genre; a never-identified type-hidden page shows "An illuminated page awaits its name".
+Canon §13.9 unlocks an illuminated skin account-wide on pickup. The unlock is recorded at pickup, but its notification and the illuminated render wait until `RARITY` is known or `ev.run_ended`, because illumination rolls only on Legendary-or-better drops and an early glow would leak rarity. Each illuminated skin appears as a gilded plate per genre; a never-identified type-hidden page shows "An illuminated page awaits its name".
 
 ### 12.3 Recollection
 
-Once per Volume per party slot (`recollect_volume`), a player may name one seen, unknown descriptor and one type at `know.rank.familiar` or above in the same class. If `assign[type] == descriptor`, `identify_type` with reason `appr.reason.recollection`; otherwise `excluded[descriptor].insert(type)`. No draws. Recollection is disabled in Daily, Weekly and Seeded leaderboard modes (doc 14); every display-only Concordance feature stays on.
+Once per Volume per party slot (`recollect_volume`), a player may name one seen, unknown descriptor and one type of the same class at `know.rank.familiar` or above. If `assign[type] == descriptor`, `identify_type` with reason `appr.reason.recollection`; otherwise `excluded[descriptor].insert(type)`. No draws. Recollection is off in Daily, Weekly and Seeded leaderboard modes (doc 14); display-only features stay on.
 
 ### 12.4 Bestiary
 
-Per enemy template (doc 13): encounters and kills, all play counted.
-
-| Rank | Kills | Shows (in the Margin and in in-run inspect) |
-|---|---|---|
-| `know.bestiary.sighted` | 0 (1 encounter) | name, silhouette, genre, rank |
-| `know.bestiary.studied` | 10 | HP multiplier, resistances, immunities |
-| `know.bestiary.catalogued` | 50 | status thresholds, drop categories, champion aspects |
-| `know.bestiary.mastered` | 200 | lore, gilded page |
+Doc 14's thresholds, counting kills made while the player was present, carry these rank IDs: `know.bestiary.sighted` (1 kill: entry, art, lore), `know.bestiary.studied` (10 kills: resistances and immunities on the target HUD in every run), `know.bestiary.catalogued` (25 kills: drop categories).
 
 ### 12.5 Never monetized
 
-- Only play grants entries, points and ranks; no SKU, entitlement, Inkwell result or account Reliquary does, and nothing can be bought, sped up or skipped.
-- Completion counts only entries obtainable in runs; Inkwell and account-Reliquary cosmetics live in the wardrobe (doc 15).
-- Completion rewards are cosmetic titles and Margin plot decorations only.
+- Entries, points and ranks come only from identification and kills inside runs; no SKU, entitlement, Inkwell result or Reliquary opening grants them, and nothing can be bought, sped up or skipped. A Keepsake counts only once identified in a run.
+- Completion counts only entries obtainable in runs; Inkwell cosmetics live in the wardrobe (doc 15). Completion rewards are cosmetic titles and Margin decorations only.
 
 ---
 
-## 13. Reference rosters
+## 13. Content bindings
 
-Owners: potions 08; texts 06 (doc-10 effects §5.4; Emendation and Rewrite 11); rings, amulets, relics 11; wands 06; implants 04. Owners may change rosters within §3.2 budgets, keeping these price groups and rules. Codes: **A** always, **E** on_effect, **D** display, **C** conditional; `*` marks malign.
+| Class | Types and owner | Rule |
+|---|---|---|
+| `idc.potion` | 29 `alch.potion.*`, base values in doc 08 §12.1–§12.2 | drink `always`, throw `on_effect` |
+| `idc.text` | `item.text.*` (doc 11 §3.5; spells doc 06) plus the §5.4 texts | per template `use_id`; doc 06 spell texts `always` |
+| `idc.ring`, `idc.amulet`, `idc.relic` | `item.ring.*`, `item.amulet.*`, `item.trinket.*` (doc 11 §3.4) | `equip_id` |
+| `idc.wand` | `wand_pool` spells (§4.2) | `always` |
+| `idc.implant` | implant-form `aug.*` (doc 04) | `equip_id` |
 
-| Class | Base value: types (rule) |
-|---|---|
-| Potions | 20: vigor E, antidote E, blindness* A, ferment* A · 40: healing E, clarity E, dark_sight A, flame* A, miasma* A, frost* A · 60: haste A, fortify A, regeneration A, stupor* A · 80: levitation A, invisibility A, empower A, ward A · 120: restoration E, insight A, purity E · 200: red_ink* A |
-| Texts | 15: identify A · 40: light A, survey E, omen E, clamor* A · 60: intuit A, scatter* A, silence A, amnesia* A · 90: unbind E, mapping A, summons* A, lullaby E, terror E, warding A, binding E · 150: consecrate A, recharge A, rewrite A · 300: emendation A |
-| Rings | 100: sustenance C, stealth C, aggravation* C, hunger* C · 150: power D, agility D, toughness D, insight D, focus D, clumsiness* D · 200: fortune D, regeneration D, resistance D, warning C, teleportitis* C · 300: evasion C |
-| Amulets | 150: breath D, clarity D, sight D, strangling* C · 250: warding D, coherence D, unchanging C, restless* C · 400: life_saving C, reflection C, fortitude D, discord* C |
-| Wands (charges_base) | 100: light A (8), opening E (6) · 150: digging E (6), striking E (6), slowing E (5), probing A (5) · 200: fire A (5), frost A (5), lightning A (5), sleep E (5), invisibility E (4) · 300: teleport_other E (4), wild* A (5) · 500: polymorph E (3) |
-| Implants | 200: optic D, lung D, plating D, tracker* C · 300: reflex D, cache D, lace D, glitch* C · 450: adrenal C, cortex D |
-| Relics | 120: lucky_coin D, beacon D · 180: watcher D, hearth C, lodestone* D · 260: thorns C, oathstone C, hourglass D · 400: lattice_lens C, weeping* C |
+- **Equip rule.** An accessory or implant is `display` when every implicit is a character-sheet stat (sub-attribute, resistance, crit term or multiplier, `gear_tol`, armor poise, additive damage, natural armor, or a §6.4 row modifier); otherwise it is `conditional`. For doc 11's launch accessories that makes `item.ring.wealth`, `item.trinket.hourglass`, `.wishbone`, `.merchants_scale`, `.keyring_charm`, `.lodestone` and `.warning_bell` conditional, each identified by its first trigger or F-type, and every other ring, amulet and trinket `display`.
+- **Malign accessories.** Doc 11 lists none at launch; any type it marks `malign` uses `curse_base` 6000 (§7.1).
+- **Targeted texts.** Texts carrying `appr.eff.identify` (any non-mundane target) or `appr.eff.consecrate` (any BUC-bearing target), and doc 06's recharge text (`cat.wand` only).
 
-Targeted texts: identify, consecrate, recharge, rewrite, emendation. Their valid target categories: identify, any non-mundane item; consecrate, any BUC-bearing item; recharge, `cat.wand`; rewrite and emendation, any item with ENH. `item.wand.probing` zapped at oneself reveals BUC and CHARGES of every inventory item (reason `appr.reason.zap`). `item.wand.wild` picks one of the other 13 wand effects per zap with one `range(13)` on keyed `rng.magic` (doc 06). `item.relic.lattice_lens` is the Lattice Lens of Canon §17.1 and identifies when an exit offer opens with 3 choices. Distinct price groups in a class differ by at least 20 Lucre.
-
-**Integrated example.** Folio 3, Gothic Horror. Ana (ITU 55) senses a murky green flask as CLEAN (2500 Bp), drinks one at full HP with no effect, then sees a buy price of 45: the Ledger narrows it to healing or clarity (§5.8). Wounded later, she drinks another; HP rises and healing is identified for the party. Bo's unknown ring binds on equip: `curse.feeble`, penalty 2, rolled at `mul_bp(2000, 16000) = 3200` Bp, at full potency here (PWR −10). Unbinding costs `mul_bp(150, 11881) = 178` Lucre.
+**Integrated example.** Folio 3, Gothic Horror. Ana (ITU 55) senses an unknown murky green flask as CLEAN (2500 Bp). A buy price of 33 narrows it to healing or haste (§5.8); she drinks one and healing is identified for the party, since drinking always identifies. Bo equips an unknown ring: `item.ring.keen` is `display`, so its type is identified, but it was cursed with `curse.feeble` at penalty 2 (ring curse chance `mul_bp(2000, 16000) = 3200` Bp here) and binds at full potency (PWR −10). Unbinding at the Colophon's Scriptorium costs `mul_bp(150, 11881) = 178` Lucre.
 
 ---
 
@@ -962,51 +928,51 @@ All in namespaces Canon §19 assigns to this chapter.
 
 | Namespace | IDs |
 |---|---|
-| `know.` | core `know.unknown`, `know.classified`, `know.appraised`, `know.identified` (Canon §13.6); new `know.rank.noted`, `know.rank.studied`, `know.rank.familiar`, `know.rank.mastered`, `know.bestiary.sighted`, `know.bestiary.studied`, `know.bestiary.catalogued`, `know.bestiary.mastered` |
-| `idc.` | core classes `idc.potion`, `idc.text`, `idc.ring`, `idc.amulet`, `idc.wand`, `idc.implant`, `idc.relic`; 142 descriptors `idc.<class>.<name>` listed in §3.3 |
+| `know.` | core `know.unknown`, `know.classified`, `know.appraised`, `know.identified` (Canon §13.6); new `know.rank.noted`, `know.rank.studied`, `know.rank.familiar`, `know.rank.mastered`, `know.bestiary.sighted`, `know.bestiary.studied`, `know.bestiary.catalogued` |
+| `idc.` | core classes `idc.potion`, `idc.text`, `idc.ring`, `idc.amulet`, `idc.wand`, `idc.implant`, `idc.relic`; 172 descriptors `idc.<class>.<name>` listed in §3.3 |
 | `appr.tier.` | `novice`, `apprentice`, `journeyman`, `expert`, `master` |
 | `appr.use.` | `always`, `on_effect`, `never`, `display`, `conditional` |
-| `appr.eff.` | `identify`, `survey`, `omen`, `unbind`, `consecrate`, `intuit`, `recharge`, `amnesia`, `divine_identify`, `divine_omen`, `aura`, `psychometry` |
-| `appr.svc.` | `appraise`, `classify`, `identify`, `unseal`, `unbind`, `drop_test`, `consecrate` |
-| `appr.reason.` | `use`, `zap`, `equip`, `bind`, `witness`, `deduction`, `text`, `appraisal`, `analysis`, `familiarity`, `service`, `altar`, `glyph`, `sense`, `recollection`, `kit`, `craft`, `brew`, `seal` |
+| `appr.eff.` | `identify`, `survey`, `omen`, `unbind`, `consecrate`, `intuit`, `amnesia`, `divine_identify`, `divine_omen`, `aura`, `psychometry` |
+| `appr.svc.` | `appraise`, `classify`, `identify`, `unbind`, `drop_test`, `consecrate` |
+| `appr.reason.` | `use`, `zap`, `equip`, `bind`, `witness`, `deduction`, `text`, `appraisal`, `analysis`, `familiarity`, `service`, `altar`, `glyph`, `sense`, `recollection`, `kit`, `craft`, `brew`, `talent` |
 | `buc.` | core `buc.blessed`, `buc.uncursed`, `buc.cursed` (Canon §13.6); no new IDs |
 | `curse.` | `leaden`, `thirsting`, `fumbling`, `feeble`, `sluggish`, `frail`, `addled`, `myopic`, `muffled`, `ill_starred`, `blunted`, `misfire`, `dulled`, `loud`, `beacon`, `ravenous`, `brittle`, `bloodprice`, `backlash`, `dread`, `red_letter`, `siphon`, `greed`, `fragile_ward`, `spoiled`, `misprint`, `backfire`, `leaking` (28) |
 
-Also defined here, without new IDs: the `cat.wand` contract (§4), the type-hiding function (§3.1), `roll_curse` (§7.1), `value_true` and `value_vendor` (§6), the knowledge structs (§2), content errors `idc_pool_exhausted`, `idc_slot_mixed`, `idc_base_type_missing`, and text keys `loc.idc.<class>.<name>.name` and `loc.idc.<class>.form.<genre_suffix>` (strings owned by doc 18).
+Also defined here, without new IDs: the `cat.wand` classification and type key (§4), the type-hiding function (§3.1), `roll_curse` (§7.1), `value_true` and `value_vendor` (§6), the knowledge structs (§2), content errors `idc_pool_exhausted`, `idc_slot_mixed`, `idc_base_type_missing`, and text keys `loc.idc.<class>.<name>.name` and `loc.idc.<class>.form.<genre_suffix>` (strings owned by doc 18).
 
 ## Interface assumptions
 
 | Doc | Assumed |
 |---|---|
 | 03 | `ev.item_identified` payload `{ scope, uid or type_key, descriptor, flags_new: u32, reason, slot }`; appraisal and familiarity run right after Needs |
-| 04 | kits may hold type-hidden items; adopts the §5.5 appraisal XP and no other appraisal perks; implant install counts as equip; red ink adds `afflict.red_ink` buildup |
+| 04 | Appraisal perks at 25/50/75/100 as hooked in §5.5; `anl_speed_bp`; trait `need` factors (gumshoe); appraisal XP events; talents such as `prophecy` call `identify_type` with `appr.reason.talent`; implant install is an equip for §5.2 |
 | 05 | locks weapon switching for bound weapons; sums `curse.misfire` into the failure roll; reports the killing weapon instance |
-| 06 | glyphs `glyph.divination.identify`, `.omen`, `.aura`, `.psychometry`; wand and text effects set `observable`; a "fix curses" prayer boon |
+| 06 | adds essences `glyph.ess.appraise`, `glyph.ess.omen`, `glyph.ess.psychometry` (school divination) and makes `glyph.ess.sight` apply `appr.eff.aura`; tags at most 16 spells `wand_pool`; text effects set `observable`; a "fix curses" prayer boon |
 | 07 | `mat_value_bp` per material (iron 10000); crafted items fully flagged; durability honors `curse.brittle` |
-| 08 | potion drink and splash effects set `observable`; holy-water dip steps `buc` up; pure brews call `identify_type`; §8 contract |
+| 08 | §12.4 drink, throw, brew and alchemy-hook rules as used in §5.1; holy-water brewing and the `alch.tx` uncurse recipes |
 | 09 | per-tick sight checks for witness ID; noise and dynamic-light hooks for `curse.loud` and `curse.beacon` |
-| 11 | owns `item.<class>.<name>` templates for §13 and the doc-10 texts; calls `roll_curse` and `value_true`; knowledge of shop, Reliquary and Fortune Engine items per §10 and §11; `charges.max`; the 3000 Bp malign share; Lucre income per Folio per player of at least `mul_bp(300, P(d))` |
-| 12, 13 | Scriptoria and altars placed; NPCs use type-hidden items; Editors honor `curse.red_letter`; enemy templates for the Bestiary |
-| 14, 15 | leaderboard mode flags, Concordance UI, `unlock.daily_baseline`; account Reliquary open response with content IDs and rarity; the wardrobe |
+| 11 | maps `item.text.appraisal` to `appr.eff.identify` and `item.text.sanctify` to `appr.eff.unbind`, and adds `item.text.survey`, `.omen`, `.consecrate`, `.intuit`, `.amnesia`; calls `roll_curse` and `value_true`; owns `sealed`; 3000 Bp malign consumable share; Lucre income per Folio per player of at least `mul_bp(300, P(d))` |
+| 12, 13 | Scriptoria and patron altars placed; NPCs use type-hidden items; Editors honor `curse.red_letter`; enemy templates for the Bestiary |
+| 14, 15 | Index and Bestiary thresholds; Calling lore types; `run.boon.appraising_eye`; leaderboard mode flags; `unlock.daily_baseline`; Keepsake curse rolls and Satchel materialization |
 | 16, 17 | `ItemView`-only replication with host authority; `input.examine`, focus lock, Ledger panel, §6.4 tooltips |
 | 18, 19 | sigil atlas, descriptor art, form nouns, curse-state skins, stamp review; schemas for every §2 struct and content record |
 
 ## Canon gaps
 
-1. **Item template IDs.** `item.` belongs to doc 11 (Canon §19). Assumed `item.<class>.<name>` for every §13 type and doc-10 text; this chapter defines only their effects (`appr.eff.`).
-2. **`rng.ident` uses.** Canon §3.3 lists appraisal error and curse sensing; as owner this chapter adds the §5.12 uses and asks the canon table to list them.
-3. **Object-keyed constants.** Canon §3.3 keys action draws only. Assumed valid: actor = object id, tick = `u64::MAX`, seq = purpose code.
-4. **Name collision.** Canon §20 calls the battle pass "Codex"; the encyclopedia is therefore the Concordance, with tabs Item Codex and Bestiary.
-5. **Mundane categories.** Canon §13.6 starts them at `know.classified`; this chapter makes that state terminal and complete.
-6. **Item contract.** Canon §13.9 lacks `recharges`, `zaps_total`, `seal` and the `ItemKnowledge` sub-fields; assumed added by doc 19.
-7. **Tick schedule.** Canon §2.2 has no appraisal or familiarity row; assumed to run in the Needs pass.
-8. **§6.4 rows.** Appraisal rate, Analysis chance and psychometry chance are defined here; if Canon §6.4's "derived stats only" rule covers them, they become rows 45 to 47 unchanged.
-9. **Blessing chance.** Canon §5.7 has no MYTHOS term for it; kept flat, 0 at MYTHOS 0.
-10. **Missing §5.9.** Canon §12.3 and §13.9 cite a §5.9 that does not exist; implant stamps avoid manufacturer marks via doc 18 review.
-11. **Categories.** Emendations and the Rewrite consumable are assumed `cat.text`; the Lattice Lens of Canon §17.1 is `item.relic.lattice_lens`.
-12. **Binding and slot loss.** Severing and ghost loss (Canon §9.1, §17.6) are read as the slot or item leaving, not an unequip, so Canon §13.6 binding ends without uncursing.
+1. **Item template IDs.** `item.` belongs to doc 11 (Canon §19), yet doc 08 names potions `alch.potion.*` while doc 11 §3.5 lists `item.potion.*`. This chapter keys on type keys whatever their namespace and uses doc 08's IDs and base values.
+2. **Potion rosters.** Doc 11 §3.5 lists 12 potions with no harmful type and values that differ from doc 08 §12.1. This chapter needs doc 08's roster for price identification and the §8 malign share.
+3. **`rng.ident` uses.** Canon §3.3 lists appraisal error and curse sensing; as owner this chapter adds the §5.12 uses and asks the canon table to list them.
+4. **Object-keyed constants.** Canon §3.3 keys action draws only. Assumed valid: actor = object id, tick = `u64::MAX`, seq = purpose code.
+5. **Names.** Canon §20 calls the battle pass "Codex"; following doc 14 §5.5 the encyclopedia is the Index (doc 15 says "Item Codex") and the Bestiary.
+6. **Mundane categories.** Canon §13.6 starts them at `know.classified`; this chapter makes that state terminal and complete.
+7. **Item contract.** Canon §13.9 lacks `zaps_total`, `sealed` (doc 11 adds it) and the `ItemKnowledge` sub-fields; assumed added by doc 19.
+8. **Tick schedule.** Canon §2.2 has no appraisal or familiarity row; assumed to run in the Needs pass.
+9. **§6.4 rows.** Appraisal rate, Analysis chance and psychometry chance are defined here; if Canon §6.4's "derived stats only" rule covers them, they become rows 45 to 47 unchanged.
+10. **Blessing chance.** Canon §5.7 has no MYTHOS term for it; kept flat, 0 at MYTHOS 0.
+11. **Wand types.** Canon §13.6 says "every `cat.wand` type"; doc 06 makes every wand one archetype holding a spell, so the type is the spell (§4.2).
+12. **Binding and item loss.** Severing, ghost loss and Redaction (Canon §9.1, §17.6, §17.9) are read as the slot or item leaving, not an unequip, so binding ends without uncursing.
 13. **Misfire.** `curse.misfire` raises the Canon §5.5 failure chance above 0, so the single per-activation roll still applies.
-14. **Events.** No new `ev.` IDs; binding, sensing, sealing and deduction report through `ev.item_identified` reasons.
+14. **Events.** No new `ev.` IDs; binding, sensing and deduction report through `ev.item_identified` reasons.
 
 ## Acceptance tests
 
@@ -1014,61 +980,58 @@ Run seed for keyed tests: `0x0123456789ABCDEF`.
 
 1. **Appearance stream.** `stream_seed(run, "rng.appearance", 0) = 0x95b9ab50b5b43f53`.
 2. **Amulet permutation.** The sorted 18 amulet descriptors shuffle to `teardrop, heart, bell, fang, acorn, spindle, lozenge, cage, arrowhead, crescent, coin, key, feather, knot, shell, wheel, disc, star`.
-3. **Assignments** (§13 rosters): amulet breath → teardrop, discord → fang; implant adrenal → hollow_triangle; potion antidote → azure; relic beacon → bee; ring aggravation → obsidian; text amnesia → nulzeph; wand digging → oak.
-4. **Draw count.** Exactly 135 `range` calls, with the §13 rosters or with zero types.
-5. **Pool budget.** 13 implant types against 14 stamps fails load with `idc_pool_exhausted`; 12 loads.
-6. **Type hiding.** `equip_slots [ring_l, ring_r]` → `idc.ring`; `[neck]` → `idc.amulet`; `[trinket]` → `idc.relic`; `[belt]` → none; a staff (`cat.weapon_ranged`) → none; `[neck, trinket]` → `idc_slot_mixed`.
+3. **Assignments.** Doc 11's amulets: composure → teardrop, elements → heart, ferocity → bell, fortune → fang, sanctuary → acorn, scholar → spindle, vigor → lozenge, wayfarer → cage. The first descriptor of each later shuffled pool: implant `twin_moons`, potion `rose`, relic `laurel`, ring `sapphire`, text `illoq`, wand `bone`.
+4. **Draw count.** Exactly 165 `range` calls, whatever the type counts.
+5. **Pool budget.** 31 potion types fail load with `idc_pool_exhausted`; doc 08's 29 load; 17 `wand_pool` spells fail.
+6. **Type hiding.** `equip_slots [ring_l, ring_r]` → `idc.ring`; `[neck]` → `idc.amulet`; `[trinket]` → `idc.relic`; `[belt]` → none; a staff → none; `[neck, trinket]` → `idc_slot_mixed`. Two wands holding the same spell share one type key.
 7. **Derived state.** Unknown type with `BUC` set: `know.unknown`; after `identify_type` with only RARITY set: `know.appraised`; a block: `know.classified` forever, never a target.
 8. **True value.** The four §6.1 items give 286, 656, 619 and 70.
-9. **Vendor value.** The §6.1 longsword with only quality visible: `value_vendor = 55`, sells for 16 at CHM 40; identified: sells for 85. Identified items always have `value_vendor == value_true`.
-10. **Estimate.** Item `uid (7 << 40) | 42` has `u = −6692`. With `V = 286`: (skill 0, steps 0) shows "≈ 80–380"; (25, 0) "≈ 120–360"; (25, 2) "≈ 180–330"; (75, 4) "≈ 270–290".
-11. **Containment.** For every `V` in `1..=2000`, every `err_bp` in `{300, 1000, 2500, 5000}` and every `u` in `{−10000, −1, 0, 1, 10000}`, `lo <= V <= hi`.
-12. **Appraisal time.** Weapon `ilvl 7`, skill 20, ITU 50: need 23,600, rate 1,700, 14 passes. Ring `ilvl 25`, skill 0, ITU 40: 52 passes. Master type step, ring `ilvl 10`, second completion: need 57,150, rate 4,200, 14 passes. `rate(0, ITU 1) = 610`.
-13. **Descent.** On `ev.folio_exited` the test-12 weapon at skill 20 gains 7,080 progress.
-14. **Analysis.** ANL 60, appraisal 30, `ilvl 8`: `anl_bp = 5000`. Keyed folio 8, actor `(8 << 40) | 3`, seq 0: tick 50000 rolls 6052 (fail); tick 50001 rolls 2404 (2 reveals: RARITY, BUC). ANL 40, skill 0, `ilvl 25`: 500.
-15. **Analysis lock.** A second Examine of the same item by the same slot at the same character level is refused without a draw.
-16. **Curse sense.** ITU 55: 2500 Bp. Keyed folio 2, actor `(2 << 40) | 1`, tick 9000, seq 0 rolls 4498: no flag, `SENSED[s]` set, a second pickup by that slot draws nothing.
-17. **Curse resistance.** PRV 70: 1500 Bp; PRV 40: 0, still one draw; an `OMEN` item draws nothing.
-18. **Binding.** An unknown cursed ring with a failed resistance roll equips, binds and sets `BUC`, `AFFIX_NAME[c]`, `AFFIX_ROLL[c]`; unequip is refused.
-19. **`roll_curse` draws.** Exactly 3 for every outcome and every category.
-20. **Curse chance.** Weapon Gothic Horror 2400; weapon Noir 600; ring Mythic Fantasy 2300; potion Fairy Tale 1450; malign ring Cosmic Horror 9000; Legendary weapon Mythic Antiquity 1312; shop weapon Cyberpunk 412; anything in The Unwritten 0.
-21. **Curse potency.** `curse.feeble` at `p = 3` on a Gothic Horror ring, wearer Gothic Horror Origin with ATN 40: PWR −15 in Mythic Antiquity, −10 in Cyberpunk, −9 in Noir.
-22. **Disconnected curse.** At `C >= 6` the curse magnitude is 0, the item stays bound and `eff_enh` still subtracts `curse_penalty`.
-23. **Price observation.** Healing potion, `ilvl 3`, buyer CHM 50: price 45; candidates = the six base-40 types; with `tried_no_effect`, {healing, clarity}.
-24. **Deduction.** A single candidate is identified the same tick with reason `appr.reason.deduction`. With 11 of 12 amulet types known and no unknown amulet descriptor seen, nothing is identified.
-25. **Text refusal.** An unknown Emendation pointed at a potion is not consumed, sets `read_mode = Targeted` and the potion row in `refused_cats`, and removes identify from its candidates.
-26. **Services at depth 12.** appraise 51, classify 103, identify 154, unseal 77, unbind 387, consecrate 774.
-27. **Cursed identify.** Keyed folio 5, actor `(5 << 40) | 9`, tick 30000, seq 0 over 5 items picks index 3. Blessed identify draws nothing.
-28. **Amnesia.** Known non-text types `[A..G]`, keyed folio 4, actor `(4 << 40) | 2`, tick 20000, seq 0: uncursed amnesia forgets B and D; texts stay known.
-29. **Wand.** Wrest keyed folio 6, actor `(6 << 40) | 4`, tick 40000, seq 0 rolls 7239: fails, `CHARGES` set. Recharge at `r0 = 1` draws nothing; at `r0 = 2` risks 1500 Bp; explosion at `ilvl 9`: 29,887 mHP.
-30. **Familiarity.** F1 at 1800 ticks or 3 kills; affix slot 1 at 7200 or 16; F-type at 7200 or 15. Another weapon's kills never count for a weapon.
-31. **Seals, in-run.** Sealed Rare accessory, `ilvl 12`: `seal_floor 412`, sells for 123 at CHM 40, cannot be equipped; breaking leaves only RARITY known; `appr.svc.unseal` costs 77 at depth 12 and fully identifies.
-32. **Seals, account.** Breaking shows exactly the open response's content ID; a carried seal opens on the carrier's 5th `ev.item_identified` or at `ev.run_ended`.
-33. **Illumination.** An illuminated Legendary ring's unlock is recorded on pickup; notification and render wait for `RARITY` or run end.
-34. **Recollection.** Allowed once per Volume per slot; refused in Daily mode; a wrong guess adds one exclusion and draws nothing.
-35. **Unread Edge.** At `d = 10`, SER 40 with 3 unidentified equipped items gives weights `[7000, 3124, 1104, 339, 120, 46, 0]`.
-36. **Stacks.** Two otherwise identical potions, one with `BUC` set, do not merge.
-37. **Replication.** An unappraised weapon's client packet has no rarity, enhancement or affix fields; an unknown-type potion's has its descriptor `id32` and no template `id32`.
-38. **No hidden inputs.** Every function that returns a displayed chance, time or cost takes `&ItemView` (compile-time check); `ItemView` has no field for an unrevealed property.
+9. **Vendor value.** The §6.1 longsword with only quality visible: `value_vendor = 55`, sells for 16 at CHM 40; identified: 85. Identified items always have `value_vendor == value_true`.
+10. **Estimate.** Item `uid (7 << 40) | 42` has `u = −6692`. With `V = 286`: (skill 0, steps 0) "≈ 80–380"; (20, 0) "≈ 160–340"; (20, 2) "≈ 220–320"; (0, 4) "≈ 200–320"; (25, any) "286".
+11. **Containment.** For every `V` in `1..=3000`, `err_bp` in `{500, 1000, 2600, 5000}` and `u` in `{−10000, −1, 0, 1, 10000}`, `lo <= V <= hi`.
+12. **Appraisal time.** Weapon `ilvl 7`, skill 20, ITU 50, ANL 40: need 23,600, rate 1,700, 14 passes; ANL 70: rate 2,210, 11 passes. Ring `ilvl 25`, skill 0, ITU 40: 52 passes. Master type step, ring `ilvl 10`, second completion: need 57,150, 14 passes. `rate(0, ITU 1, ANL 40) = 610`.
+13. **Descent and perks.** On `ev.folio_exited` the test-12 weapon at skill 20 gains 7,080 progress. An Appraisal-50 player's pickup sets RARITY with no work. An Appraisal-100 player's carried ring is identified, type included, after 600 ticks.
+14. **Analysis.** ANL 60, appraisal 30, `ilvl 8`: `anl_bp = 5000`. Keyed folio 8, actor `(8 << 40) | 3`, seq 0: tick 50000 rolls 6052 (fail); tick 50001 rolls 2404 (2 reveals: RARITY, BUC). ANL 40, skill 0, `ilvl 25`: 500. A second Examine by the same slot at the same level is refused without a draw.
+15. **Curse sense.** ITU 55: 2500 Bp. Keyed folio 2, actor `(2 << 40) | 1`, tick 9000, seq 0 rolls 4498: no flag, `SENSED[s]` set; a second pickup by that slot draws nothing.
+16. **Curse resistance and binding.** PRV 70: 1500 Bp; PRV 40: 0, still one draw; an `OMEN` item draws nothing. An unknown cursed ring with a failed roll equips, binds and sets `BUC`, `AFFIX_NAME[c]`, `AFFIX_ROLL[c]`; unequip is refused.
+17. **`roll_curse`.** Exactly 3 draws for every outcome and category. Chances: weapon Gothic Horror 2400; weapon Noir 600; ring Mythic Fantasy 2300; potion Fairy Tale 1450; malign ring Cosmic Horror 9000; Legendary weapon Mythic Antiquity 1312; anything in The Unwritten 0; in-run Reliquary contents 0.
+18. **Curse potency.** `curse.feeble`, `p = 3`, Gothic Horror ring, Gothic Horror Origin wearer, ATN 40: PWR −15 in Mythic Antiquity, −10 in Cyberpunk, −9 in Noir. At `C >= 6` the magnitude is 0, the item stays bound and `eff_enh` still subtracts the penalty.
+19. **Price observation.** Healing (base 30), `ilvl 3`, buyer CHM 50: price 33; candidates = base-30 potions (healing, haste).
+20. **Use rules.** Drinking an unknown potion always identifies it; a thrown potion that touches no entity and causes no reaction does not, and adds nothing to `tried_no_effect`. An untargeted text read with no observable result adds its descriptor to `tried_no_effect`.
+21. **Deduction.** A single candidate is identified the same tick with reason `appr.reason.deduction`. With every amulet type but one known and no unknown amulet descriptor seen, nothing is identified.
+22. **Text refusal.** An unknown targeted text pointed at a potion is not consumed, sets `read_mode = Targeted` and the potion row in `refused_cats`, and its candidates lose every identify and consecrate text.
+23. **Services at depth 12.** appraise 51, classify 103, identify 154, unbind 387, consecrate 774.
+24. **Cursed texts.** Cursed identify, keyed folio 5, actor `(5 << 40) | 9`, tick 30000, seq 0 over 5 items picks index 3; blessed identify draws nothing. Uncursed amnesia over known non-text types `[A..G]`, keyed folio 4, actor `(4 << 40) | 2`, tick 20000, seq 0, forgets B and D; texts stay known.
+25. **Wands.** Zapping an unknown wand identifies its spell type for every wand holding that spell; a zap at 0 charges sets `CHARGES`.
+26. **Familiarity.** F1 at 1800 ticks or 3 kills; affix slot 1 at 7200 or 16; F-type at 7200 or 15. Another weapon's kills never count for a weapon.
+27. **Seals.** A Reliquary item is created with only RARITY set and `sealed = true`; opening its detail view clears `sealed` with no draw; in-run Reliquary and Fortune Engine contents are never cursed; a Keepsake from a Gothic Horror Reliquary rolls curses with MYTHOS 9.
+28. **Illumination.** An illuminated Legendary ring's unlock is recorded on pickup; notification and render wait for `RARITY` or run end.
+29. **Recollection.** Allowed once per Volume per slot; refused in Daily mode; a wrong guess adds one exclusion and draws nothing.
+30. **Self-harm cap.** A drunk harmful potion at depth 25 against a 220 HP Erratum deals at most 66,000 mHP to the drinker.
+31. **Unread Edge.** At `d = 10`, SER 40 with 3 unidentified equipped items gives weights `[7000, 3124, 1104, 339, 120, 46, 0]`.
+32. **Stacks.** Two otherwise identical potions, one with `BUC` set, do not merge.
+33. **Replication.** An unappraised weapon's client packet has no rarity, enhancement or affix fields; an unknown-type potion's has its descriptor `id32` and no template `id32`. An invader receives no party type knowledge.
+34. **No hidden inputs.** Every function returning a displayed chance, time or service cost takes `&ItemView`; `ItemView` has no field for an unrevealed property.
 
 ## Invariants annex
 
 ```
-Σ doc10: knowledge ⊗ appearances ⊗ methods ⊗ value ⊗ curses ⊗ seals ⊗ concordance
+Σ doc10: knowledge ⊗ appearances ⊗ methods ⊗ value ⊗ curses ⊗ seals ⊗ index
 W! type_hidden(t) ⇔ idc_of(t) ≠ ∅                 W! |types_c| ≤ |pool_c| − 2 ∀ class c
-W! shuffle := rng.appearance, run scope, once     W! shuffle draws = Σ(|pool_c| − 1) = 135
+W! shuffle := rng.appearance, run scope, once     W! shuffle draws = Σ(|pool_c| − 1) = 165
 W! type knowledge ∈ party scope                   W! instance knowledge ∈ item
 W! state == derive_state(flags, type known)       N! state lowered except by amnesia
 W! hidden property ⇒ fully active                 N! displayed chance|time|cost ← hidden property
 W! vendor knows type ⇒ price observation          W! value_vendor == value_true when identified
-W! every rng.ident draw keyed; count per §5.12    N! draw count depends on hidden data except §5.2 step 1
-W! roll_curse draws == 3                            W! curse chance == 0 when local MYTHOS == 0
-W! curse affix = last affix ∧ dep {mythos}        W! bound ⇔ cursed ∧ equipped (any potency)
-N! Contradiction releases binding                 W! Reliquary|Fortune Engine payout ⇒ RARITY known ∧ ¬cursed
+W! wand type key := its spell                     W! potion drink ⇒ type identified
+W! every rng.ident draw keyed; count per §5.12    W! roll_curse draws == 3
+W! curse chance == 0 when local MYTHOS == 0       W! curse affix = last affix ∧ dep {mythos}
+W! bound ⇔ cursed ∧ equipped (any potency)        N! Contradiction releases binding
+W! Reliquary|Fortune Engine content ⇒ ¬cursed     W! sealed item ⇒ RARITY known at creation
 W! estimate contains value_true                   W! u constant per uid
 W! seal ⇒ content unchanged                       N! seal ∈ {sold, timed, money-accelerated}
-W! Concordance ← play only                        N! Concordance ← SKU|Inkwell|account Reliquary
+W! Index|Bestiary ← in-run play only              N! Index|Bestiary ← SKU|Inkwell|Reliquary opening
 N! appearance mapping persists across runs        W! Recollection off in leaderboard modes
-W! malign share of a consumable class = 3000 Bp   N! malign consumable > 3000 Bp Max HP direct damage
-W! client receives ItemView only                  N! unrevealed property ∈ client packet
+W! self-harm per consumable use ≤ 3000 Bp Max HP  W! client receives ItemView only
+N! invader ← party knowledge                      N! unrevealed property ∈ client packet
 ```

@@ -109,6 +109,9 @@ All in-run quantities are measured by the simulation and reported in the run rep
 | `mode.custom` with an easing mutator | yes | no | `pass.xp.active_minute` only | no | yes |
 | `mode.prologue` (first play and replays) | no | no | none | no | no |
 | Apocrypha (any loaded mod) | no | no | none | no | no |
+| PvP invasion session, invader side (DECISIONS #15) | yes, from the invader's own active ticks in the invaded session | no | `pass.xp.active_minute` only | no | no |
+
+An invasion pays the invader only time-based income, so killing other players never pays account rewards; the invaded party's run pays by its own row.
 
 Victory Ink scales with the run's length because a flat 300 would let repeated 5-Folio Daily practice runs earn `3 × 25 + 5 × 10 + 40 + 300 = 465` Ink per 25 minutes (1,116 per hour, 2.8 times the reference). With the scaled bonus a Daily victory earns `75 + 50 + 40 + 60 = 225` Ink in 25 minutes (540 per hour), level with a Standard victory (535 per hour). Easing mutators keep only time-based income, so faster Folios cannot raise income per hour.
 
@@ -1207,40 +1210,72 @@ Refunds route through the platform where the platform processes payment. Every r
 
 ### 8.1 Region resolution
 
-Inputs per session: `store_region` (platform account country), `billing_country` (platform wallet or last transaction), `ip_country` (GeoIP at login). The effective profile is
+Inputs per session: `store_region` (platform account country), `billing_country` (platform wallet or last transaction), `ip_country` (GeoIP at login; absent when unknown). Each is an ISO 3166-1 alpha-2 code. The effective profile is
 
 ```
-effective = merge_strictest([juris.region.default,
-                             profile(store_region), profile(billing_country), profile(ip_country)])
+effective = merge_strictest([juris.region.default] ++ profiles(store_region) ++ profiles(billing_country) ++ profiles(ip_country))
 ```
 
-EU member states map to `juris.region.eu`; Belgium maps to `eu` then `be`; the Netherlands to `eu` then `nl`. Countries without a profile use `default`. `merge_strictest` applies each flag's strict direction: `or` (true wins), `and` (false wins), `min`, `max`, or an ordered enum where the stricter value wins. Worked example: a Belgian account on a UK IP merges `default`, `eu`, `be` and `uk`: `child_data_consent_age = max(13, 16, 13) = 16`, `withdrawal_waiver_consent = true`.
+`profiles(c)` returns the profiles whose `countries` list contains `c`, parent first:
+
+| Profile | Countries |
+|---|---|
+| `juris.region.eu` | AT, BE, BG, CY, CZ, DE, DK, EE, ES, FI, FR, GR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK (EU-27) and IS, LI, NO (EEA) |
+| `juris.region.be` | BE (after `eu`) |
+| `juris.region.nl` | NL (after `eu`) |
+| `juris.region.uk` | GB |
+| `juris.region.us` | US, PR, GU, VI, AS, MP |
+| `juris.region.ca` | CA |
+| `juris.region.au` | AU |
+| `juris.region.br` | BR |
+| `juris.region.kr` | KR |
+| `juris.region.jp` | JP |
+| `juris.region.cn` | CN (mainland; HK, MO and TW use `default`) |
+
+Every other country uses `default` alone. `merge_strictest` applies each flag's strict direction from §8.2: `or` (true wins), `and` (false wins), `max` or `min`. Because every input can only tighten the result, a VPN or a foreign wallet never loosens any rule. The merge reruns at every login and every store open. Worked example: a Belgian account on a UK IP merges `default`, `eu`, `be` and `uk`: `child_data_consent_age = max(13, 16, 16, 13) = 16`, `withdrawal_waiver_consent = true`, `vat_inclusive_display = true`.
 
 ### 8.2 Flags
 
-| Flag | Type | Default | Strict | Behaviour |
+Flags are records in doc 02's flag file (doc 02 §17.3) with `kind` `bool` or `int`, `sim_affecting: false`, and one extra field `strict` (`or`, `and`, `max`, `min`). The economy service and the client read the same records.
+
+```json
+{ "id": "juris.flag.vat_inclusive_display", "kind": "bool", "default": false, "strict": "or",
+  "channels": ["dev", "nightly", "playtest", "beta", "stable"], "sim_affecting": false }
+```
+
+| Flag | Kind | Default | Strict | Behaviour |
 |---|---|---|---|---|
-| `juris.paid_random_items_enabled` | bool | false | and | compile-time false; never flipped (SEP-5) |
+| `juris.paid_random_items_enabled` | bool | false | and | compile-time false; never flipped (SEP-5); not merged, because no profile may set it |
 | `juris.flag.store_enabled` | bool | true | and | false hides the fiat store |
 | `juris.flag.purchases_default_on` | bool | false | and | new accounts start with purchases off |
-| `juris.flag.minor_age` | u8 | 18 | max | platform age below this value marks the account minor |
-| `juris.flag.minor_tx_cap` | age-banded minor units, or none | none | min of set values | regional ceiling per transaction for minors; the guardian cap (§8.4, starting at 0) applies beneath it |
-| `juris.flag.minor_month_cap` | age-banded minor units, or none | none | min of set values | regional monthly ceiling for minors, as above |
+| `juris.flag.minor_age` | int | 18 | max | a platform age below this value marks the account minor (§8.4) |
 | `juris.flag.vat_inclusive_display` | bool | false | or | prices shown tax-inclusive |
 | `juris.flag.withdrawal_waiver_consent` | bool | false | or | §7.3 checkbox |
-| `juris.flag.refund_window_days` | u16 | 14 | max | §7.4 |
-| `juris.flag.minor_refund_window_days` | u16 | 90 | max | §7.4 |
+| `juris.flag.refund_window_days` | int | 14 | max | §7.4 |
+| `juris.flag.minor_refund_window_days` | int | 90 | max | §7.4 |
 | `juris.flag.odds_public_pages` | bool | true | or | §3.11.3, §5.6 |
-| `juris.flag.draw_log_retention_days` | u32 | 1826 | max | §4.4 |
-| `juris.flag.minor_chat_default` | enum `friends_only` < `quick_ping_only` | `friends_only` | stricter | §8.5 |
-| `juris.flag.child_data_consent_age` | u8 | 13 | max | below it, without verified guardian consent: offline-only profile, no chat, no analytics |
-| `juris.flag.minor_playtime_window` | bool | false | or | minors play online only 20:00–21:00 local time on Fridays, weekends and public holidays |
+| `juris.flag.draw_log_retention_days` | int | 1826 | max | §4.4 |
+| `juris.flag.minor_chat_default` | int: 0 = `friends_only`, 1 = `quick_ping_only` | 0 | max | §8.5 |
+| `juris.flag.child_data_consent_age` | int | 13 | max | below it, without verified guardian consent: offline-only profile, no chat, no analytics |
+| `juris.flag.minor_playtime_window` | bool | false | or | minors play online only 20:00 to 21:00 local time on Fridays, Saturdays, Sundays and public holidays |
 | `juris.flag.real_name_required` | bool | false | or | publisher real-name check before online play |
 | `juris.flag.minor_store_block` | bool | false | or | fiat store hidden for minors |
-| `juris.flag.minor_inkwell_block` | bool | false | or | Inkwell and Reliquary opening hidden for minors (earned-only; DFA readiness) |
+| `juris.flag.minor_inkwell_block` | bool | false | or | Inkwell pulls and Reliquary opening hidden for minors; earning and banking continue, so nothing is lost if the block lifts |
 | `juris.flag.no_random_trading` | bool | true | or | no transfer of any randomized reward (always true; SEP-7) |
 | `juris.flag.dfa_watch` | bool | false | or | publication of the EU Digital Fairness Act text opens a compliance review due within 30 days |
 | `juris.flag.kr_domestic_representative` | bool | false | or | KR representative designation is active and named on the odds pages |
+| `juris.flag.fr_store_text` | bool | false | or | store, odds pages and purchase dialogs must be available in French |
+| `juris.flag.invasion_minor_default` | int: 0 = off, 1 = on | 0 | min | PvP invasions (DECISIONS #15) start off for minor-flagged accounts; only a guardian enables them |
+
+**Minor spend caps** are profile data, not flags, because they are per age band and per currency. Each profile may carry `minor_caps`, a list of `{ age_min, age_max, currency, tx_minor, month_minor, store_blocked }`, where `tx_minor` and `month_minor` are minor units or `null`. For a minor-flagged account of platform age `a` (age 0 when the platform reports a child account without an age), every merged entry with `age_min ≤ a ≤ age_max` applies: amounts convert into the account's store currency with the §7.2 anchor rule, the per-transaction cap is the minimum `tx_minor`, the monthly cap is the minimum `month_minor`, and `store_blocked` is the `or` of all entries. The guardian cap (§8.4) then applies beneath the regional caps.
+
+```json
+{ "id": "juris.region.jp", "countries": ["JP"], "parent": null,
+  "flags": { "juris.flag.vat_inclusive_display": true },
+  "minor_caps": [
+    { "age_min": 0,  "age_max": 15, "currency": "JPY", "tx_minor": null, "month_minor": 5000,  "store_blocked": false },
+    { "age_min": 16, "age_max": 17, "currency": "JPY", "tx_minor": null, "month_minor": 10000, "store_blocked": false } ] }
+```
 
 ### 8.3 Region profiles
 
@@ -1248,21 +1283,24 @@ EU member states map to `juris.region.eu`; Belgium maps to `eu` then `be`; the N
 |---|---|---|
 | `juris.region.be` | none beyond `eu` | Paid loot boxes are gambling (row 1); none exist, so the same deterministic SKUs sell. |
 | `juris.region.nl` | none beyond `eu` | Transferable random prizes are the trigger (row 2). `no_random_trading = true` everywhere. |
-| `juris.region.br` | `vat_inclusive_display = true`; `minor_chat_default = quick_ping_only`; `child_data_consent_age = 16` | ECA Digital Art. 20 bans paid loot boxes where minors are likely users (row 12): none exist. Art. 21 interaction limited by default: minors start with quick pings only. The consent age of 16 is a design value. |
+| `juris.region.br` | `vat_inclusive_display = true`; `minor_chat_default = 1`; `child_data_consent_age = 16` | ECA Digital Art. 20 bans paid loot boxes in games likely accessed by minors (row 12): none exist. Art. 21 limits interaction by default: minors start with quick pings only. The consent age of 16 is a design value. |
 | `juris.region.au` | `vat_inclusive_display = true` | Chance-linked purchases (M) and simulated gambling (R18+) (row 11): neither exists. |
-| `juris.region.uk` | `vat_inclusive_display = true`; `withdrawal_waiver_consent = true` | Industry principles: £0 default for child accounts, lenient refunds (row 3) are global defaults here. DMCC all-in pricing (row 3b): §7.3. |
-| `juris.region.eu` | `vat_inclusive_display = true`; `withdrawal_waiver_consent = true`; `child_data_consent_age = 16`; `dfa_watch = true` | CPC principles (row 4): fiat prices only, no forced overspend, no pressure timers. DFA watch (row 5): `minor_store_block` and `minor_inkwell_block` are built and default false; the review decides whether to set them. |
-| `juris.region.us` | none | FTC v. Cognosphere (row 16): no loot boxes sold, no currency to disclose. COPPA (row 16b): `child_data_consent_age = 13`. ESRB descriptor "In-Game Purchases" without "Includes Random Items". |
+| `juris.region.uk` | `vat_inclusive_display = true`; `withdrawal_waiver_consent = true` | Industry principles: £0 default for child accounts and lenient refunds (row 3) are global defaults here (§8.4, §7.4). DMCC all-in pricing (row 3b): §7.3. |
+| `juris.region.eu` | `vat_inclusive_display = true`; `withdrawal_waiver_consent = true`; `child_data_consent_age = 16`; `dfa_watch = true` | CPC principles (row 4): fiat prices only, no forced overspend, no pressure timers. DFA watch (row 5): `minor_store_block` and `minor_inkwell_block` are built and default false; the review decides whether to set them in `eu`. |
+| `juris.region.us` | none | FTC v. Cognosphere (row 16): no loot box is sold, no currency exists, so its parental-consent, direct-purchase and exchange-rate duties have no object; odds are still disclosed (§3.11). COPPA (row 16b): `child_data_consent_age = 13` (the default). ESRB descriptor "In-Game Purchases" without "Includes Random Items". |
 | `juris.region.kr` | `minor_age = 19`; `vat_inclusive_display = true`; `kr_domestic_representative = true` once either threshold of row 15 is met | Probability disclosure is mandatory only for paid items (row 15); PALIMPSEST applies it voluntarily at 4 decimals in-game, on the web and in every ad that shows the Inkwell. |
-| `juris.region.jp` | `vat_inclusive_display = true`; minor month cap JPY 5,000 under 16 and JPY 10,000 at 16–17 | JOGA 2026 declaration (row 14): youth caps with guardian consent, no card-matching gacha (§5.6 set rule). |
-| `juris.region.cn` | `vat_inclusive_display = true`; minor caps: under 8 store blocked; 8–15 CNY 50 per transaction and 200 per month; 16–17 CNY 100 and 400 | 2016 notice (row 13): odds pages and published results are global. `real_name_required` and `minor_playtime_window` are set true only in a licensed mainland edition build; no such edition ships at launch. |
-| `juris.region.ca` | none | ESRB as US; store text available in English and French. |
+| `juris.region.jp` | `vat_inclusive_display = true`; `minor_caps`: JPY 5,000 per month under 16, JPY 10,000 per month at 16 and 17 | JOGA 2026 declaration (row 14): youth caps with guardian consent, no card-matching gacha (§5.6 set rule). |
+| `juris.region.cn` | `vat_inclusive_display = true`; `minor_caps`: under 8 `store_blocked`; 8 to 15 CNY 50 per transaction and 200 per month; 16 and 17 CNY 100 and 400 | 2016 notice (row 13): odds pages and published results are global. `real_name_required` and `minor_playtime_window` are set true only in a licensed mainland edition build; no such edition ships at launch. |
+| `juris.region.ca` | `fr_store_text = true` | ESRB as US; store, odds pages and purchase dialogs in English and French. |
+
+Minor-cap example: a 15-year-old minor-flagged account with a CNY store currency merges `default` and `cn`: per-transaction cap CNY 50.00 (5,000 minor units), monthly cap CNY 200.00. A CNY 58 Folio Expansion is refused with `minor_cap_tx` before platform checkout.
 
 ### 8.4 Parental controls and purchase defaults
 
 - Purchases start **off** for every account (`purchases_default_on = false`); the account holder turns them on once in Settings → Purchases after platform re-authentication.
-- An account is **minor-flagged** when the platform reports a child or family-member account, or a platform age below `minor_age`. For a minor-flagged account: every purchase also needs guardian approval through the platform's family tools; the monthly cap starts at 0 and only the guardian raises it; `minor_refund_window_days` applies.
-- **Guardian settings** (4- to 8-digit PIN): purchases, monthly cap, chat level, Inkwell and Reliquary visibility, a 60-minute session reminder (default off), Spend summary.
+- An account is **minor-flagged** when the platform reports a child or family-member account, or a platform age below `minor_age`. For a minor-flagged account: every purchase also needs guardian approval through the platform's family tools; the guardian monthly cap starts at 0 and only the guardian raises it; the regional `minor_caps` (§8.2) cap it from above; `minor_refund_window_days` applies.
+- **Cap check,** at `Confirming` (§7.6), in minor units of the store currency: the purchase is refused with `minor_cap_tx` when `price > tx_cap`, with `minor_cap_month` when `spent_this_month + price > min(guardian_cap, month_cap)`, and with `minor_store_blocked` when `store_blocked` holds. `spent_this_month` sums the account's purchases since 00:00 UTC on the first day of the current UTC month, minus refunds.
+- **Guardian settings** (4- to 8-digit PIN): purchases, monthly cap, chat level, PvP invasions (default per `invasion_minor_default`), Inkwell and Reliquary visibility, a 60-minute session reminder (default off), Spend summary.
 - Below `child_data_consent_age` without verified guardian consent, the client runs an offline-only profile (§4.5).
 
 ### 8.5 Chat safety
@@ -1275,11 +1313,12 @@ EU member states map to `juris.region.eu`; Belgium maps to `eu` then `be`; the N
 | Filters | profanity and slur filter on by default for text and player names |
 | Adult defaults | text on with filter; voice push-to-talk, party only |
 | Minor defaults | `friends_only`: free text and voice with friends only, quick chat with others; `quick_ping_only`: pings only |
+| PvP invaders (DECISIONS #15) | an invader from another session gets pings and emotes only, never text or voice, for every account; the invaded party can block the invader from the scoreboard, which ends that invader's session and bars that account from invading this player for 30 days |
 | Enforcement | reports triaged within 72 hours; chat bans of 24 hours, then 7 days, then permanent |
 
 ### 8.6 Rating targets
 
-PALIMPSEST contains strong fantasy and firearm violence, blood, body-part wounds, cosmic and gothic horror, and mild language. The monetization design adds no rating trigger: no paid random items, no paid time-limited offers, no daily-login rewards, no unblockable communication (R3 C3).
+PALIMPSEST contains strong fantasy and firearm violence, blood, body-part wounds and severing (Canon §9.1), cosmic and gothic horror, and mild language. The product owner fixed 16+ rating targets with severing and blood kept (DECISIONS #13). Each board's target is the lowest band its published guidelines assign to severing with blood: boards with a 16 band use it; GRAC has no 16 band and assigns its adult band to dismemberment with blood; ESRB and CERO have 17+ bands. The monetization design adds no rating trigger: no paid random items, no paid time-limited offers, no daily-login rewards, no unblockable communication (R3 C3).
 
 | Board | Target | Descriptors |
 |---|---|---|
@@ -1291,7 +1330,7 @@ PALIMPSEST contains strong fantasy and firearm violence, blood, body-part wounds
 | GRAC | 청소년이용불가 (18) | violence, fear |
 | CERO | D | 暴力, 恐怖 |
 
-No content is cut to chase a lower rating. Gore intensity has a player option (doc 17) that does not change the rated content.
+No content is cut to chase a lower rating. When a board assigns a higher band than its target, the game ships at that band in that territory and nothing else changes. Gore intensity has a player option (doc 17) that does not change the rated content.
 
 ---
 
@@ -1354,18 +1393,89 @@ Posting invariants, checked by a deferred constraint trigger at commit:
 1. For each `(tx_id, asset)`, `Σ amount = 0`.
 2. A wallet balance never goes below 0.
 3. All postings of one transaction share one `purchasable` value (SEP-2).
-4. Mint accounts (database labels, not content IDs) exist per source: `mint/ink/play`, `mint/ink/achievement`, `mint/ink/codex`, `mint/ink/welcome`, `mint/quire/*`, `mint/vellum/dupe`, `mint/vellum/spark`, `mint/reliquary/*`, `mint/quill/purchase`, `mint/quill/codex`. Burn accounts: `burn/ink/inkwell`, `burn/vellum/archive`, `burn/reliquary/open`, `burn/quill/redeem`.
+4. Mint accounts (database labels, not content IDs) exist per source: `mint/ink/play`, `mint/ink/achievement`, `mint/ink/recollection`, `mint/ink/codex`, `mint/ink/welcome`, `mint/quire/run`, `mint/quire/achievement`, `mint/quire/codex`, `mint/vellum/dupe`, `mint/vellum/spark`, `mint/reliquary/editor`, `mint/reliquary/folio`, `mint/reliquary/codex`, `mint/reliquary/coda`, `mint/quill/purchase`, `mint/quill/codex`. Burn accounts: `burn/ink/inkwell`, `burn/quire/bindery`, `burn/vellum/archive`, `burn/reliquary/open`, `burn/quill/redeem`, and `burn/*/clawback` for each asset (§10.4).
 5. No transaction has postings in both a fiat-linked mint (`mint/quill/purchase`) and any `purchasable = false` asset.
 
 Balances are `SUM(amount)` per wallet, cached in a balance table updated in the same transaction.
 
 ### 10.3 Idempotent grants
 
-`idem_key = SHA-256(canonical_json({source_kind, source_id, account_id, sub_index}))`. Examples: a run grant uses `("run", run_id, account_id, "ink")`; a pull uses `("pull", epoch_id, nonce)`; a platform purchase uses `("platform", platform, platform_txn_id)`. A request whose key exists returns the stored result and posts nothing. Clients retry with the same request body until they receive a response.
+`idem_key = SHA-256(canonical_json({"a": account_id, "i": sub_index, "k": source_kind, "s": source_id}))`, with the §4.6 canonical JSON (sorted keys, no whitespace, `u64` as `"0x"` plus 16 lowercase hex digits).
+
+| Source | `k` | `s` | `i` |
+|---|---|---|---|
+| run report (all grants of one report, one journal transaction) | `run` | `run_id` | 0 |
+| pull or Reliquary open | `pull` | epoch ID | nonce |
+| platform purchase | `platform` | `"<platform>:<platform_txn_id>"`, for example `"steam:5234112"` | 0 |
+| Codex tier reward | `codex` | `pass.codex_<nnn>` | tier, 1 to 100 |
+| Codex Coda Reliquary | `coda` | `pass.codex_<nnn>` | Coda Reliquary ordinal, from 1 |
+| achievement | `ach` | the `ach.` ID | 0 |
+| spark end conversion | `spark_end` | the banner ID | 0 |
+| Archive purchase | `archive` | client request UUID | 0 |
+
+Example: `{"a":"0x0123456789abcdef","i":0,"k":"run","s":"0x00000000075bcd15"}` hashes to `909de25b25a2d70ca98a91f48c4098ee338ccb3dd518356c1d5db5519b06a4b6`. A request whose key exists returns the stored result and posts nothing. Clients retry with the same request body until they receive a response.
 
 ### 10.4 Run reports
 
-At `ev.run_ended`, each player's client submits a run report: the §2.4 session header, `run_id`, slot, `active_ticks`, qualified Folio exits with genres, Editor kills, kill counts per rank and party size, identifications, crafts, revives, outcome, the input-log BLAKE3 hash, and the host's final `state_hash`. The service accepts a report when its header matches a released `sim_version` and `content_hash`, and its `state_hash` matches the host's report for the same `run_id`. It computes grants by §2.2, §2.4, §5.1 and §6.2. `econ-verify` replays 5% of reports chosen by `fnv1a64(run_id) mod 100 < 5`, plus every report that reaches 90% of any cap; a mismatch voids that report's grants and flags the account for review.
+**`run_id`** is a `u64` the host draws from its OS CSPRNG at run start, stores in `RunState` (doc 14, Interface assumptions) and sends to every joiner. It never feeds simulation randomness.
+
+At `ev.run_ended` (and at a `run.end.departed` for that slot), each player's client submits one run report. Example (a solo Standard death in Folio 4; hashes are illustrative):
+
+```json
+{
+  "v": 1,
+  "run_id": "0x00000000075bcd15",
+  "acct": "0x0123456789abcdef",
+  "host_acct": "0x0123456789abcdef",
+  "slot": 0,
+  "sim_version": 1,
+  "content_hash": "92c159a0a347070d679d6edd626a8bc6938565f60204dd732ba14c2ac3592cc9",
+  "content_set": ["unlock.calling.alchemist", "unlock.loot.throwables_2"],
+  "mod_count": 0,
+  "run_seed": "0x0123456789abcdef",
+  "mode": "mode.standard",
+  "easing": 0,
+  "final_folio": 25,
+  "end": "run.end.erased",
+  "started_utc": 1793491200,
+  "ended_utc": 1793492400,
+  "active_ticks": 54000,
+  "folio_exits": [
+    { "folio": 1, "genre": "genre.cyberpunk", "entry_tick": 0, "exit_tick": 16200, "present": 1 },
+    { "folio": 2, "genre": "genre.weird_west", "entry_tick": 16200, "exit_tick": 34200, "present": 1 },
+    { "folio": 3, "genre": "genre.steampunk", "entry_tick": 34200, "exit_tick": 50400, "present": 1 }
+  ],
+  "editor_kills_present": [],
+  "victory_present": 0,
+  "kills_present": [ { "party_size": 1, "k_sum": 600 } ],
+  "types_identified": 5,
+  "crafts": 2,
+  "revives": 0,
+  "codex_entries_new": [],
+  "satchel_materialized": [],
+  "score": 2930,
+  "quires": 29,
+  "input_log_blake3": "a4cd5df9faa66d265baf53d652ff672a1e3b76f2466877f8eaa64d45ea905817",
+  "state_hash": "51d121c58a6957cd0ec9d418ee68c1a00fc163416ec79029b098dd2b296d7ce8"
+}
+```
+
+`k_sum` is §6.2's `K[n]`. Grants for this report: Ink `3 × 15 + 10 × 3 + 20 = 95`; Codex XP `15 × 150 + 3 × 400 + floor_div(10000 × 600, 10000) + 800 + 5 × 25 + 2 × 25 = 2,250 + 1,200 + 600 + 800 + 125 + 50 = 5,025`; Quires 29; Reliquaries 0; the lifetime Folio-exit counter rises by 3.
+
+**Acceptance procedure,** in order; the first failure rejects the report with the named code and grants nothing:
+
+1. `report_malformed`: schema validation (integers only, hex formats, sorted `content_set`).
+2. `sim_version_unknown`: `sim_version` is a released version.
+3. Apocrypha: if `mod_count > 0`, the report is accepted with zero grants (§2.2) and the remaining checks are skipped.
+4. `content_mismatch`: every ID in `content_set` was owned by `host_acct` at `started_utc`, and `content_hash` equals doc 02 §11.2's hash recomputed from that release's base records, `content_set`, an empty `MOD` section and that release's sim-affecting flags.
+5. `host_mismatch`: in co-op, `run_seed`, `content_hash`, `mode` and the final `state_hash` equal the host's report for the same `run_id`; a non-host report waits up to 7 days for the host's report and is then accepted on its own.
+6. Grants are computed by §2.2, §2.4, §5.1, §6.2 and the §2.3 caps, and posted in one journal transaction keyed per §10.3.
+
+**Verification sampling.** `econ-verify` replays the report's input log headlessly when `mix64(run_id) mod 100 < 5` (Canon §3.1 `mix64` on the `u64`), when the report reaches 90% of any cap, or when the account has `econ_review = true`. Clients keep the replay log (doc 02 container kind 3) of every reported run for 30 days and upload it within 7 days of a request; a missing upload voids the report. A replay whose `state_hash`, `active_ticks` or any counted field differs from the report is a **mismatch**:
+
+- the report's grants are reversed with `burn/<asset>/clawback` postings that debit each wallet down to 0 at most; any shortfall is stored as `econ_debt[asset]` and subtracted from that asset's future grants before they reach the wallet;
+- every unverified report of that account from the previous 30 days is queued for replay, with the same rules;
+- `econ_review = true` holds every new grant in a pending table until support clears the account; pending grants post on clearance or are discarded on a confirmed second mismatch.
 
 ### 10.5 Receipt validation, refunds and chargebacks
 
@@ -1382,8 +1492,8 @@ At `ev.run_ended`, each player's client submits a run report: the §2.4 session 
 | Phase | Starts | Effects |
 |---|---|---|
 | `Live` | launch | normal operation |
-| `SunsetAnnounced` | announcement, at least 180 days before shutdown | Codex and cosmetic sales stop at once; purchases from the prior 30 days are refundable on request; banners, Archive and free tracks continue |
-| `FinalSync` | 30 days before shutdown | every client prompts a full sync; the service issues an `eos_final` receipt per account: all entitlements, balances, Folds, pity, spark, Reliquary counters, vault, Codex progress |
+| `SunsetAnnounced` | announcement, at least 180 days before shutdown | Codex and cosmetic sales stop at once; purchases from the prior 30 days are refundable on request; Folio Expansions stay on sale on the platform storefront because they keep working offline; banners, Archive and free tracks continue |
+| `FinalSync` | 30 days before shutdown | every client prompts a full sync; the service issues an `eos_final` receipt per account: all entitlements, balances, Folds, pity and guarantee flags of every family, spark, Standard spark, Reliquary counters, unopened Reliquaries with their source genres, the Keepsake vault, Codex progress, catch-up reserve and Coda XP |
 | `Shutdown` | shutdown day | every unrevealed `server_seed` is revealed and published; the full audit log for the last 5 years and every daily root are published as a download; servers stop |
 | `EndOfService` | permanent | the client runs §11.3 forever |
 
@@ -1424,36 +1534,41 @@ KPI IDs belong to doc 01 (`kpi.`); this chapter defines the economy KPIs and the
 
 ## Exports
 
+Every ID below is in a namespace Canon §19 assigns to this chapter, passes the Canon §1.1 grammar and is at most 64 bytes.
+
 | Namespace | IDs |
 |---|---|
-| `banner.` | `banner.standard`, `banner.beginner`, `banner.echo.p<nnn>`, `banner.script.p<nnn>`, `banner.archive`, `banner.reliquary.account`; `banner.tier.illuminated`, `banner.tier.rubricated`, `banner.tier.plain`; `banner.family.echo`, `banner.family.script`, `banner.family.standard`, `banner.family.beginner`; `banner.hazard.illuminated_std`, `banner.hazard.rubricated_std`, `banner.hazard.illuminated_beginner`; `banner.pool.illuminated_echo`, `banner.pool.illuminated_script`, `banner.pool.rubricated`, `banner.pool.plain` |
+| `banner.` | `banner.standard`, `banner.beginner`, `banner.echo.p<nnn>`, `banner.script.p<nnn>`, `banner.exp<nn>.p<nnn>`, `banner.archive`, `banner.reliquary.account`; `banner.tier.illuminated`, `banner.tier.rubricated`, `banner.tier.plain`; `banner.family.echo`, `banner.family.script`, `banner.family.standard`, `banner.family.beginner`, `banner.family.exp<nn>`; `banner.hazard.illuminated_std`, `banner.hazard.rubricated_std`, `banner.hazard.illuminated_beginner`; `banner.pool.illuminated_echo`, `banner.pool.illuminated_script`, `banner.pool.rubricated`, `banner.pool.plain` |
 | `pass.` | `pass.codex_<nnn>`; `pass.xp.active_minute`, `pass.xp.folio_exit`, `pass.xp.editor_kill`, `pass.xp.kill`, `pass.xp.run_end`, `pass.xp.run_victory`, `pass.xp.type_identified`, `pass.xp.craft`, `pass.xp.revive`, `pass.xp.codex_entry`, `pass.xp.achievement` |
 | `store.` | `store.sku.base_game`, `store.sku.folio_exp_<nn>`, `store.sku.codex_<nnn>_premium`, `store.sku.supporter_pack`, `store.sku.cosm_<name>`, `store.sku.set_<name>`, `store.price_matrix` |
-| `bundle.` | `bundle.script.<name>` (Scripts), `bundle.sku.<name>` (SKU grant lists), examples `bundle.script.kit_twin_holster`, `bundle.sku.supporter_pack` |
-| `cosm.` | categories `cosm.cat.outfit`, `cosm.cat.ink`, `cosm.cat.vfx`, `cosm.cat.emote`, `cosm.cat.sigil`, `cosm.cat.title`, `cosm.cat.frame`, `cosm.cat.margin`, `cosm.cat.trail`; item patterns `cosm.<category>.<name>`; examples `cosm.ink.verdigris`, `cosm.outfit.codex_001_t005`, `cosm.emote.codex_001_bow`, `cosm.sigil.codex_001_quill_rampant` |
+| `bundle.` | the 36 launch Scripts of §3.1.2 (`bundle.script.lost_chapter_<genre_suffix>` ×12, `bundle.script.glyphs_<family>` ×6, `bundle.script.hireling_<type>` ×5, `bundle.script.kit_<calling_suffix>` ×13) and 3 per Folio Expansion; `bundle.sku.<name>` (SKU grant lists), example `bundle.sku.supporter_pack` |
+| `cosm.` | categories `cosm.cat.outfit`, `cosm.cat.ink`, `cosm.cat.vfx`, `cosm.cat.emote`, `cosm.cat.sigil`, `cosm.cat.title`, `cosm.cat.frame`, `cosm.cat.margin`, `cosm.cat.trail`, `cosm.cat.binding`, `cosm.cat.recollected`; item pattern `cosm.<category>.<name>`; the 60 Plain cosmetics `cosm.ink.inkwell_01` to `_20`, `cosm.sigil.inkwell_01` to `_15`, `cosm.title.inkwell_01` to `_15`, `cosm.emote.inkwell_01` to `_10`; doc 14's requested `cosm.binding.<b>` for `vellum`, `lapis`, `verdigris`, `oxblood`, `gilt`, `soot` (category `binding`, source a Bindery node) and `cosm.echo_<echo_suffix>_recollected` for the 24 Echoes (category `recollected`, source a Recollection; the only `cosm.` items whose ID does not carry its category segment, kept for doc 14 §6.1); Codex examples `cosm.outfit.codex_001_t005`, `cosm.emote.codex_001_bow`, `cosm.sigil.codex_001_quill_rampant` |
 | `juris.` | `juris.paid_random_items_enabled` (Canon §22); the 20 `juris.flag.*` IDs of §8.2; `juris.region.default`, `juris.region.be`, `juris.region.nl`, `juris.region.br`, `juris.region.au`, `juris.region.uk`, `juris.region.eu`, `juris.region.us`, `juris.region.kr`, `juris.region.jp`, `juris.region.cn`, `juris.region.ca` |
 
-Constants (not content IDs): `INK_PULL_COST = 160`, `INK_PULL_COST_BEGINNER = 120`, `REF_INK_PER_HOUR = 400`, `INK_PER_RUN_CAP = 2500`, `INK_PLAY_ROLLING_24H = 4000`, `INK_ACTIVE_MINUTES_PER_RUN = 240`, `QUIRES_PER_RUN_CAP = 400`, `CODEX_XP_PER_TIER = 12000`, `REF_CODEX_XP_PER_HOUR = 20000`, `CODEX_XP_PLAY_ROLLING_24H = 200000`, `CATCHUP_WEEKLY = 40000`, `CATCHUP_CAP = 160000`, `CODA_XP_PER_RELIQUARY = 24000`, `SPARK_CLAIM = 100`, `BANNER_PERIOD_DAYS = 28`, `KEEPSAKE_VAULT_CAP = 30`, `SATCHEL_SIZE = 5`, `FOLIO_DWELL_MIN_TICKS = 5400`, `ACTIVE_WINDOW_TICKS = 3600`.
+Constants (not content IDs): `INK_PULL_COST = 160`, `INK_PULL_COST_BEGINNER = 120`, `REF_INK_PER_HOUR = 400`, `WELCOME_INK = 1200`, `VICTORY_INK_PER_FOLIO = 12`, `INK_PER_RUN_CAP = 2500`, `INK_PLAY_ROLLING_24H = 4000`, `INK_ACTIVE_MINUTES_PER_RUN = 240`, `CODEX_XP_PER_TIER = 12000`, `REF_CODEX_XP_PER_HOUR = 20000`, `VICTORY_XP_PER_FOLIO = 160`, `CODEX_XP_PLAY_ROLLING_24H = 200000`, `CATCHUP_WEEKLY = 40000`, `CATCHUP_CAP = 160000`, `CODA_XP_PER_RELIQUARY = 24000`, `SPARK_CLAIM = 100`, `BANNER_PERIOD_DAYS = 28`, `KEEPSAKE_VAULT_CAP = 30`, `SATCHEL_SIZE = 5`, `SATCHEL_MAX_LEGENDARY_PLUS = 1`, `RELIQUARY_FOLIO_EXITS = 30`, `FOLIO_DWELL_MIN_TICKS = 5400`, `ACTIVE_WINDOW_TICKS = 3600`, `AUDIT_RETENTION_DAYS = 1826`, `REPLAY_KEEP_DAYS = 30`, `VERIFY_SAMPLE_PERCENT = 5`.
+
+Error codes: `insufficient_ink`, `banner_ended`, `requires_sku`, `beginner_target_required`, `beginner_closed`, `epoch_mismatch`, `minor_cap_tx`, `minor_cap_month`, `minor_store_blocked`, `report_malformed`, `sim_version_unknown`, `content_mismatch`, `host_mismatch`.
 
 ## Interface assumptions
 
 | Doc | Assumed to provide |
 |---|---|
-| 14 | Binds the 24 Echo IDs to slots MF-A … MA-B (placeholders `echo.slot_<code>_a` and `echo.slot_<code>_b` in §3.13); per Echo: trait variants A, B, C, kits A and B, Fold 1 palette, Fold 4 outfit, Fold 6 frame, title and trail; Recollection trials; `run_score` calibrated so the reference failed run scores 3,000 and a reference victory 15,000; achievement grade 1 to 4; the unlock IDs that Scripts grant (`unlock.kit.*`, `unlock.glyph.*`, `unlock.room.*`, `unlock.hireling.*`); `unlock.daily_baseline` excludes Echoes, Scripts and Keepsakes |
-| 11 | `loot.keepsake.<genre_suffix>` tables for all 16 genres; `generate_keepsake(genre, rarity, Rng)` with forced rarity, `ilvl = 1`, Serendipity off; template weights renormalized inside a rarity band when a Script adds templates |
+| 14 | Already on disk and consumed as Imports: the 24 Echo IDs and tiers, `est_ch`, the score, `RunSummary`, the Quire payout, achievements with Quires and Ink, mode table, easing mutators, Margin milestones. Requested additions: `SlotState.active_ticks: u64` and `SlotState.last_input_tick: u64` maintained per §2.2; `RunState.run_id: u64` (§10.4); `RunState.satchels` holding each slot's Satchel item records and a per-slot materialization cursor (§5.5), with materialization run at Folio entry after Ghost restoration; kit variant 2 = `run.kit.<calling>_script` for all 13 Canon §16.2 Callings (doc 14 currently lists kits for 10); the per-Echo Fold content (trait variants A, B and C, kits A and B, Fold 1 palette, Fold 4 outfit, Fold 6 frame, title and trail); `unlock.daily_baseline` excludes Echoes, Scripts and Keepsakes |
+| 11 | `loot.keepsake.<genre_suffix>` tables for all 16 genres; `generate_keepsake(genre, rarity, Rng)` with forced rarity, `ilvl = 1`, `gear_tier = 1`, Serendipity off, template eligibility from a supplied content set; `value` recomputation from `P(ilvl)` at materialization; template weights renormalized inside a rarity band when a Script adds templates |
 | 10 | Knowledge flags allow the rarity flag set while the base state is `know.unknown` or `know.classified`; the curse roll runs inside item generation |
 | 04 | A trait power-budget validator usable on Echo trait variants |
-| 02 | Crate `palimpsest_econ` with in-house ChaCha20; mod classification into simulation-affecting and cosmetic |
-| 03 | `ev.folio_entered` and `ev.folio_exited` carry ticks so dwell is computable; `ev.item_identified` distinguishes type-level identification |
-| 16 | Hosting of the economy service under `svc.`; the run-report message of §10.4; the host's final `state_hash` per `run_id` |
-| 17 | Inkwell, odds panel, history, Fairness panel, store, Spend summary, guardian settings and chat controls; reveal animation limits of AP-7 |
-| 18 | Art and `loc.` keys for every `cosm.`, `banner.`, `pass.` and `store.` ID |
+| 02 | A library crate `crate.econ` = `palimpsest_econ` (layer 1; workspace deps `math`, `data`; external `sha2` 0.11.0, `hmac` 0.13.0, `ed25519-dalek` 3.0.0; no `bevy*`), linked by `crate.services`, `crate.client`, `crate.platform` and `crate.tools`, holding ChaCha20, `FairStream`, the pull and open algorithms, receipt verification and `palimpsest-verify`; the `strict` field on `juris.` flag records; `pal odds` in `crate.tools`; replay logs kept 30 days for reported runs |
+| 03 | `ev.folio_entered` and `ev.folio_exited` on the entry and exit ticks so dwell is computable; `ev.item_identified` distinguishes type-level identification |
+| 06, 12, 13 | The Script grant targets of §3.1.2: 4 glyphs per `glyphs_<family>` (06); `room.<genre_suffix>.lost_chapter_1` to `_3` per core genre (12); `npc.hireling.<genre_suffix>_chapter` per core genre and the 5 hireling types of `hireling_<type>` (13) |
+| 16 | Hosting of the economy service under `svc.`; the run-report message of §10.4; the host's final `state_hash` per `run_id`; PvP invasion sessions (DECISIONS #15) with pings and emotes only toward invaders (§8.5) |
+| 17 | Inkwell, odds panel, history, Fairness panel (fresh and pinned client seed modes, "Reveal now"), store, Spend summary, guardian settings and chat controls; reveal animation limits of AP-7 |
+| 18 | Art, display names and `loc.` keys for every `cosm.`, `banner.`, `pass.`, `store.` and `bundle.` ID, including the 60 Plain cosmetic names |
 | 01 | KPI IDs for §12 |
 
 ## Canon gaps
 
-1. **Canon §3.6 says "Paid gacha".** There is no paid gacha; the Inkwell is funded only by earned Ink. Assumed: §3.6 means the Inkwell and account Reliquaries. The generator is HMAC-SHA256 key derivation feeding a ChaCha20 keystream (§4.2), which satisfies the §3.6 ChaCha20 delegation. Requested wording: "Account draws (Inkwell, account Reliquaries) never use this generator."
-2. **No namespace for Scripts.** Assumed `bundle.script.<name>` inside this chapter's `bundle.` namespace. Requested: confirm, or add `script.` to §19 with an alias.
+1. **Canon §3.6 says "Paid gacha".** There is no paid gacha; the Inkwell is funded only by earned Ink. Assumed: §3.6 means the Inkwell and account Reliquaries. The generator is HMAC-SHA256 key derivation feeding a ChaCha20 keystream (§4.2), which satisfies the §3.6 ChaCha20 delegation. Requested wording: "Account draws (Inkwell, account Reliquaries) never use this generator, except that doc 15 §5.4 seeds `Rng::from_seed64` for Keepsake item generation."
+2. **No namespace for Scripts.** Assumed `bundle.script.<name>` inside this chapter's `bundle.` namespace (§3.1.2). Requested: confirm, or add `script.` to §19 with an alias.
 3. **`reliq.` belongs to doc 11.** The account Reliquary uses `banner.reliquary.account`. Requested: confirm.
 4. **`kpi.` belongs to doc 01.** Requested IDs: `kpi.econ.featured_hours_p50`, `kpi.econ.ink_per_hour_p50`, `kpi.econ.codex_completion`, `kpi.econ.refund_rate`, `kpi.econ.minor_refunds`, `kpi.econ.spend_top1_share`, `kpi.econ.chat_report_rate`.
 5. **Canon §14 lists "Codex tiers" as an Ink and Quire source.** Applied to the free track only (SEP-3), so no purchase reaches Ink or Quires. Requested clarification in §14.
@@ -1461,6 +1576,15 @@ Constants (not content IDs): `INK_PULL_COST = 160`, `INK_PULL_COST_BEGINNER = 12
 7. **Canon §18 has no account-level events and no run-report contract.** Defined the run report in §10.4 as a doc 16 message.
 8. **Canon §14 has only `ent.quill`.** Premium-track, expansion and cosmetic ownership are entitlement rows keyed by SKU and content ID, not `ent.` IDs.
 9. **Codex kill XP uses `rank_xp_bp` of `rank.boss` and `rank.hunter`** (Canon §17.3) outside character XP; no conflict, recorded for traceability.
+10. **`crate.econ` is missing.** Doc 02 owns `crate.` and its crate table has no library for the fairness and receipt code that the service, the client and the verifier must share. Requested record: `crate.econ` = `palimpsest_econ`, layer 1, lib, workspace deps `math` and `data`, external `sha2` 0.11.0, `hmac` 0.13.0, `ed25519-dalek` 3.0.0, forbidden `bevy*`, `wgpu*`, `palimpsest_sim`.
+11. **Keepsake generation draws outside the named streams.** Canon §3.2 and §3.3 list every simulation stream; a Keepsake is generated in the Margin, outside the simulation, from `Rng::from_seed64(item_seed)` with `item_seed` taken from the fair stream (§5.3). Requested: add this use to Canon §3 as a non-simulation account draw. The item enters the simulation only as a recorded item record (§5.5), so no simulation stream is touched.
+12. **Quire run payout ownership.** Canon §19 gives the account economy rules for `cur.` to this chapter, but doc 14 §4.6 already defines the run Quire payout, and doc 14's pacing (27,100 Quires at `Q_REF = 300`) and acceptance tests depend on it. This chapter adopts doc 14's formula unchanged and drops its former `min(400, floor_div(run_score, 50))` rule and `QUIRES_PER_RUN_CAP = 400`, which contradicted doc 14 (its Example C pays 1,681). Achievement Quires and Ink likewise come from doc 14 §10's per-achievement table instead of the former grade table. Requested §19 note: "run Quire payout and achievement grants: doc 14".
+13. **Canon §14 Ink sources** list play time, run completion, Codex tiers and achievements. This chapter also grants the one-time welcome Ink and the duplicate-Recollection Ink of doc 14 §6.1, and counts Folio exits and Editor kills as run completion. Requested: add "welcome, duplicate Recollection" to §14.
+14. **Echo tier binding.** Canon §16.2 fixes 2 Echoes per core genre without saying which is rarer. §3.1.1 binds doc 14's Tier 2 Echo to Illuminated and its Tier 1 Echo to Rubricated. Requested: confirm in Canon §16.2.
+15. **PvP invasions.** DECISIONS #15 assigns opt-in invasions to Canon §17.9, which canon-1.3 does not yet contain. Assumed until it exists: invader-side income is time-based only (§2.2), invaders get pings and emotes only (§8.5), and minors start with invasions off (`juris.flag.invasion_minor_default`, §8.2).
+16. **Callings.** Canon §16.2 lists 13 Callings; doc 14 (written against canon-1.1) lists kits for 10. The 13 kit Scripts of §3.1.2 follow the canon.
+17. **The 15-Folio mode name.** Canon §17.1 names it `mode.abridged`; doc 14 exports `mode.novella`; DECISIONS #2 says "Abridged". This chapter uses doc 14's exported `mode.novella`. Requested: one ID, with an alias for the other.
+18. **Margin plot.** Canon §17.8 describes a buildable 64 × 32 × 64 plot; DECISIONS #16 turns it into trophy and decoration slots. `cosm.margin.*` items are decorations for those slots and have no gameplay effect either way.
 
 ## Acceptance tests
 

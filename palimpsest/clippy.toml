@@ -1,0 +1,7 @@
+# Canon §1.2 and doc 02 §6.2: no floats in simulation state.
+disallowed-types = [
+  { path = "f32", reason = "Canon §1.2: simulation state never contains floats" },
+  { path = "f64", reason = "Canon §1.2: simulation state never contains floats" },
+  { path = "std::collections::HashMap", reason = "Canon §1.11: use BTreeMap" },
+  { path = "std::collections::HashSet", reason = "Canon §1.11: use BTreeSet" },
+]

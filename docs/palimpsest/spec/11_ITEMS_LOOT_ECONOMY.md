@@ -68,7 +68,7 @@ Every template has an ID in `item.` or is an archetype owned by doc 05 (`arch.*`
 | Field | Rule |
 |---|---|
 | `base_value` | Lucre at ilvl 1, Common, Normal, +0 (§13.1 value formula) |
-| `stack_max` | 1 for every equipment item; §14.3 for stackables |
+| `stack_max` | 1 for every equipment item; §3.5 for stackables |
 | `rarity_eligible` | true for weapons, armor, off-hands, accessories, ward generators, wands, implants and mount tokens; false otherwise (always `rar.common`) |
 | `template_weight` | weight inside its category for the archetype draw (§2.3 step 2) |
 | `pool` | `base` (in `unlock.set.starter`) or a `loot.pool.<suffix>` tag gated by a doc 14 Bindery node |
@@ -156,7 +156,7 @@ fn roll_drop(table: &LootTable, src: &DropSource, slot: u8, ctx: &mut LootCtx) -
 | Step | Sub-generator tag | Draws | Rule |
 |---|---|---|---|
 | 1 Category | `loot.cat` | 1 `weighted` (0 if fixed) | If `req.category` is fixed, skip. Otherwise draw from the player's category deck (§9.2): weights = `remaining_count × role_bias_bp` (§9.3); decrement the drawn card; refill the deck when every count is 0. |
-| 2 Template | `loot.arch` | 1 `weighted` | Eligible templates of the category: in the run content set, pool tag owned, a skin exists in `origin_genre` (§4), and no skin dependency axis has `axiom = 0` there (Canon §5.3). Weights: `template_weight`, sorted by content ID. |
+| 2 Template | `loot.arch` | 1 `weighted` | Eligible templates of the category: in the run content set, pool tag owned, a skin exists in `origin_genre` (§4; `item.` templates have an untagged skin in every genre), and no skin dependency axis has `axiom = 0` there (Canon §5.3). Weights: `template_weight`, sorted by content ID. |
 | 3 Rarity | `loot.rarity` | 1 `weighted` (0 if forced or not rarity-eligible) | Canon §13.4 weights with the receiving player's SER (40 while `st.unmoored`, Canon §5.11), then the source shift `w[r] = floor_div(w[r] × (10000 + shift_bp × r), 10000)` for `r >= 1`, then bad-luck multipliers (§9.4), then the floor (weights below it set to 0). Palimpsestic weight stays 0 except in sources that force it. |
 | 3b Exotic or Palimpsestic template | `loot.exotic` | 1 `weighted` | If rarity is Exotic: replace the template by an Exotic of the same category (§8.2) not yet generated for this player this run; none left → all of that category become eligible again; no Exotic of that category in the content set → rarity becomes Legendary. Palimpsestic: §8.3 pool, excluding uniques any party member holds. |
 | 4 Origin genre | none | 0 | `req.origin_genre`: the local genre at the source position (Canon §5.8); in a seam zone the Folio's genre (canon-1.3 §5.8). |
@@ -214,7 +214,7 @@ fn generate_item(seed: u64, req: &GenRequest, st: &mut PlayerLootState, run: &Ru
 | `cat.armor` | 15 `arch.armor.*` (05) | yes | `cat.armor` | 1 | yes |
 | `cat.offhand` | 5 `arch.offhand.*` (05) | yes | `cat.offhand` | 1 | yes |
 | `cat.ward_gen` | 3 `arch.ward.*` (05) | yes | `cat.ward_gen` | 1 | yes |
-| `cat.mount` | token of `arch.mount.runner`, `hover`, `glider` (05) | yes | none (§9.11) | 1 | vehicle skins only |
+| `cat.mount` | token of `arch.mount.runner`, `hover`, `glider` (05) | yes | none (§9.10) | 1 | vehicle skins only |
 | `cat.implant` | `aug.*` (04) | yes | `cat.implant` | 1 | no |
 | `cat.accessory` | `item.ring.*`, `item.amulet.*`, `item.trinket.*`, `item.belt.*`, `item.back.*`, `item.face.*` (11) | yes | `cat.accessory` | 1 | no |
 | `cat.potion` | `item.potion.*` (11; effects 08) | no | `cat.potion` | 10 | no |
@@ -257,7 +257,7 @@ Families: E melee edged, B melee blunt, D draw and bolt, G gun, H heavy, C casti
 | `arch.armor.heavy_head` / `_body` / `_hands` / `_legs` / `_feet` | 22 / 46 / 16 / 28 / 16 | 800 / 560 / 800 / 800 / 800 | AR | `arch.offhand.shield_tower` | 70 | 600 | SH |
 | `arch.ward.light` | 60 | 1000 | WG | `arch.offhand.focus` | 44 | 800 | CA |
 | `arch.ward.standard` | 80 | 1000 | WG | `arch.offhand.lantern` | 28 | 600 | SH |
-| `arch.ward.heavy` | 100 | 600 | WG | mount token runner / hover / glider | 120 / 160 / 140 | 1000 / 600 / 600 | §9.11 |
+| `arch.ward.heavy` | 100 | 600 | WG | mount token runner / hover / glider | 120 / 160 / 140 | 1000 / 600 / 600 | §9.10 |
 
 Ward capacity follows Canon §13.2 (`mul_bp(cap_base_mhp, T(ilvl))`, fixed recharge). Ward skins (§4.3) give each generator its dependency.
 
@@ -300,7 +300,7 @@ All accessories have `rarity_eligible = true`, roll affixes per Canon §13.3, ha
 | `item.trinket.compass_rose` | +6 ITU |
 | `item.trinket.hourglass` | on `ev.folio_entered`, `st.hasted` applied directly for 600 ticks |
 | `item.trinket.thimble` | +8 armor poise |
-| `item.trinket.wishbone` | Fortune Engine top-face guarantee arms after 3 non-top dispenses instead of 4 (§11.4) |
+| `item.trinket.wishbone` | Fortune Engine top-face guarantee arms after 3 non-top dispenses instead of 4 (§11.2) |
 | `item.trinket.merchants_scale` | buy prices for the bearer × 9500, after Canon §6.4 row 37 |
 | `item.trinket.keyring_charm` | on entering the first Folio of each Volume, receive 1 `item.key.bound` |
 | `item.trinket.lodestone` | auto-pickup radius 3000 mm instead of 1500 mm (§14.4) |
@@ -598,6 +598,7 @@ A loose part instance has `category = cat.part`, a `manufacturer`, `rarity = rar
 - **Value**: `X = lo + floor_div((hi - lo) × roll_bp, 10000)`. Each affix contributes `mul_bp(X, its potency)` where a Bp contribution is scaled (Canon §5.5); flat counts (sub-attributes, dB, mm, ticks, charges, tolerance) are 0 when the affix is Disconnected and unscaled otherwise.
 - **Display**: affix values are hidden until the affix's knowledge flag is set (doc 10).
 - **Curse affixes** (`curse.*`) belong to doc 10 and are outside the count.
+- **Chance affixes** (`affix.arc_proc`, `affix.frugal`) roll keyed `rng.combat` once per hit or shot, always (Canon §3.4).
 
 Worked examples: `affix.dmg_vs_beast` tier 2, `roll_bp = 1146`: `X = 1800 + floor_div(700 × 1146, 10000) = 1880` Bp. The descending `affix.self_repair` tier 2, `roll_bp = 4095`: `X = 900 + floor_div(-200 × 4095, 10000) = 900 - 82 = 818` ticks.
 
@@ -791,7 +792,7 @@ A Legendary item draws one perk (`loot.legendary`, 1 `weighted`, equal weights 1
 |---|---|---|---|---|
 | `perk.leg.echoing_strike` | W | base | none | every 4th hit repeats 20 ticks later as a Canon §10.6 step-3 hit with `D2` = 5000 Bp of the original, no crit |
 | `perk.leg.bloodsong` | W | base | mythos | each kill applies `st.empowered` directly |
-| `perk.leg.worldbreaker` | W | legendary_perks_1 | none | block damage × 30000 (doc 03); blocks of hardness ≤ 3 break on hit |
+| `perk.leg.worldbreaker` | W | legendary_perks_1 | none | block damage × 30000 (doc 03) against blocks tagged destructible; such blocks of hardness ≤ 3 break on hit |
 | `perk.leg.inkdrinker` | W | legendary_perks_1 | mythos | hits on `fac.editors` heal 500 Bp of damage dealt; each such kill removes 1 `st.erasure` stack from the wielder |
 | `perk.leg.overture` | W | legendary_perks_1 | verve | the first hit after `in_combat` turns true +10000 Bp |
 | `perk.leg.recursion` | W | legendary_perks_1 | none | kills reset the attack interval and restore 5000 Bp of the magazine |
@@ -950,7 +951,7 @@ Example record:
 
 ### 9.6 Chests and floor loot
 
-Doc 12 places `4 + range(3)` chests per Normal Folio. Container contents roll on opening with `drop_rng(folio, container uid, tick, slot)`; each player opens their own instance.
+Doc 12 places `4 + range(3)` chests per Normal Folio (one `rng.worldgen` draw). Container contents roll on opening with `drop_rng(folio, container uid, tick, slot)`; each player opens their own instance.
 
 | Table | Lines |
 |---|---|
@@ -960,7 +961,7 @@ Doc 12 places `4 + range(3)` chests per Normal Folio. Container contents roll on
 
 ### 9.7 Treasure bags (Experienced Pixel Dungeon analog)
 
-Bags are `cat.container` items (`stack_max` 1, mass 500 g). Using one (30 ticks) rolls its contents with `drop_rng(folio, bag uid, tick, slot)` and spills them as the user's instanced ground items.
+Bags are `cat.container` items (`stack_max` 1, mass 500 g). Using one (30 ticks) rolls its contents with `drop_rng(folio, bag uid, tick, slot)`: first the count `range` where the bag has one (1 draw), then one `next_u64` seed per item and per Lucre or Palimpsestic line (a chanced line adds its `roll_bp` before its seed). The contents spill as the user's instanced ground items.
 
 | Bag | Contents |
 |---|---|
@@ -975,7 +976,7 @@ Burning: when a ground `item.bag.lucky` takes `dmg.fire`, it rolls keyed `rng.lo
 
 ### 9.8 Bosses, Volume rewards, secrets and Palimpsestic sources
 
-- **Volume reward** (`loot.volume_reward`, doc 14 §3.9): an offer of 3 items from `offer_rng(slot, editor EntityId, "volume_reward")` (§11.2): option 0 Legendary of a deck-weighted equipment card, option 1 Exotic, option 2 Palimpsestic with 2500 Bp else Legendary. `ilvl` = Folio index, `buc.uncursed`, knowledge `know.appraised`.
+- **Volume reward** (`loot.volume_reward`, doc 14 §3.9): an offer of 3 items from `offer_rng(slot, editor EntityId, "volume_reward")` (§11.2; 4 draws: `roll_bp(2500)`, then 3 item seeds): option 0 Legendary of a deck-weighted equipment card, option 1 Exotic, option 2 Palimpsestic with 2500 Bp else Legendary. `ilvl` = Folio index, `buc.uncursed`, knowledge `know.appraised`.
 - **Secrets** (doc 12 kinds): `loot.secret.cache` 3 items shift 3000 floor Uncommon plus a chest Lucre line; `loot.secret.vault` one gilt Fortune Engine or one illumined Reliquary (`rng.loot_place` `weighted([5000, 5000])`); `loot.secret.palimpsest` one Palimpsestic unique per Active Erratum (keyed `rng.loot`, actor = vault uid).
 - Palimpsestic uniques come only from Editor bags, Volume rewards and Palimpsest vaults (Canon §13.3).
 
@@ -1008,7 +1009,7 @@ Every Active Erratum gets an instanced copy at the same placement (a guarded spo
 | `reliq.gilded` | `item.key.gilded` | 2 equipment floor Rare; 1 equipment floor Epic | 3000 | 200 | 2500 Bp per Normal Folio from Folio 6 |
 | `reliq.illumined` | `item.key.illumined` | 3 equipment floor Rare; 1 equipment floor Legendary | 4000 | 0 | every boss Folio's Endpaper; `loot.secret.vault` |
 
-- Existence, tier and mimic flag are drawn at Folio generation from `rng.loot_place` (per Reliquary: `roll_bp` for existence where chanced, then `roll_bp(mimic)`, always both). A higher key opens a lower tier. Keys sit on a keyring (§14.1).
+- Placement draws come from `rng.loot_place` at Folio generation: the plain count `1 + range(2)` (1 draw), then per candidate Reliquary in tier order one existence `roll_bp` (made even for unchanced tiers) and one `roll_bp(mimic)`. A higher key opens a lower tier. Keys sit on a keyring (§14.1).
 - **Instancing.** Each Active Erratum has its own instance and its own contents, rolled on opening with `drop_rng(folio, reliquary uid, tick, slot)`. The mimic flag is shared.
 - **Bad-luck protection** per player and run: `rq5` = Reliquaries opened since one held Epic or better, `rq20` = since Legendary or better. When `rq5 = 4`, the equipment slot with the highest floor uses floor Epic; when `rq20 = 19`, it uses floor Legendary (both may apply; Legendary wins). The tooltip shows "Epic or better within `5 - rq5`" and "Legendary or better within `20 - rq20`".
 - **Displayed odds**: per slot, the §2.3 step-3 weights with the opener's SER, shown to 4 decimals. Example: a plain Reliquary's equipment slot at Folio 7, SER 40: weights `[0, 2728, 888, 258, 88, 33, 0]`, total 3995: Uncommon 68.2854%, Rare 22.2278%, Epic 6.4581%, Legendary 2.2028%, Exotic 0.8260%.
@@ -1035,7 +1036,7 @@ Every Active Erratum gets an instanced copy at the same placement (a guarded spo
 | `engine.gilt` | 420 | R, R, E, E, L, X | 2500, 2500, 1800, 1800, 1000, 400 | each boss Folio's Endpaper; `loot.secret.vault` |
 | `engine.armory`, `engine.wardrobe`, `engine.curio` | 160 | as silver | as silver | pool `loot.pool.fortune_engines_2`: each silver placement becomes a variant with 5000 Bp (1 `roll_bp`, 1 `weighted` over 3 equal) |
 
-Variants restrict face categories: armory to weapons and off-hands, wardrobe to armor and ward generators, curio to accessories, wands and implants. Other engines draw face categories from the equipment cards of §9.2 as fixed weights. No engine exists in `genre.unwritten`.
+Each placement chance is one `rng.loot_place` `roll_bp`, made whether or not the tier is eligible. Variants restrict face categories: armory to weapons and off-hands, wardrobe to armor and ward generators, curio to accessories, wands and implants. Other engines draw face categories from the equipment cards of §9.2 as fixed weights. No engine exists in `genre.unwritten`.
 
 ### 11.2 Offers, odds and dispensing
 
@@ -1094,7 +1095,7 @@ fn displayed_weights(p: &Player, e: &Engine) -> [u32; 6] {
 
 ### 12.1 Shop types and stock
 
-Every Normal Folio has the Colophon shop (canon-1.3 §17.1) plus `1 + [roll_bp(4000)]` shops drawn with weights armory 3, apothecary 3, curio 2, fence 1, wanderer 1 (`rng.loot_place`). Boss Folios have the Endpaper Colophon shop only. `genre.unwritten` has none.
+Every Normal Folio has the Colophon shop (canon-1.3 §17.1) plus `1 + [roll_bp(4000)]` shops drawn with weights armory 3, apothecary 3, curio 2, fence 1, wanderer 1 (`rng.loot_place`: 1 `roll_bp` and 2 `weighted`, always; the second type is used only when the roll succeeds). Boss Folios have the Endpaper Colophon shop only. `genre.unwritten` has none.
 
 | Shop | Lines per player | Markup |
 |---|---|---|
@@ -1283,7 +1284,7 @@ On `ev.folio_exited` from Folio `f >= 26`, every slot that is Active or Ghost re
 
 ### 16.3 Reforging
 
-At a Scriptorium, the player picks one affix; `offer_rng(slot, item uid, "reforge")` shows 3 candidates (each: eligible affix by §6.1 excluding the item's other groups, tier by §6.1 weights, `roll_bp`). Committing one replaces the affix, pays, advances the stream once and increments `reforge_count`; declining costs nothing.
+At a Scriptorium, the player picks one affix; `offer_rng(slot, item uid, "reforge")` shows 3 candidates (9 draws) (each: eligible affix by §6.1 excluding the item's other groups, tier by §6.1 weights, `roll_bp`). Committing one replaces the affix, pays, advances the stream once and increments `reforge_count`; declining costs nothing.
 
 ```
 cost = mul_bp(mul_bp(30, P(d)), rarity_value_bp) × (2^(c+1) - 1) → × gp.shop_price_bp,   c = reforge_count ∈ 0..=3; refused at 4
@@ -1304,6 +1305,7 @@ Perk choice per column, Tier-5 tuning, and viewing every displayed odd. Doc 02 `
 ## 17. Co-op loot
 
 - **Instanced (default).** Every kill, container, Reliquary, bag, Engine and shop shelf is rolled per Active player with `seq = slot`; `finder_slot` records the roller. Lucre is per player. Players transfer anything, Lucre piles included, by dropping it (Public).
+- **Invaders.** A PvP invader (DECISIONS.md item 15) is not a party member of the host run: it receives no loot rolls, cannot pick up, buy or open anything there, and its death rolls `loot.drop.hunter` for each Active Erratum.
 - **Ghost loss.** Canon §17.6 picks the lost item with keyed `rng.loot` (actor = ghost EntityId, seq 0) among equipped non-weapon items sorted by uid.
 - **`mode.loot_shared`** (Canon §17.5). Each kill or container rolls once with `seq = 0`, SER = `floor_div(Σ SER of Active Errata, n)`, and drops Public items. Scaled lines use `shared_drop_bp[n] = [10000, 12800, 16000, 18286]` instead of `party_drop_bp`, so each player receives 8000 Bp of the solo yield; a line chance above 10000 rolls twice (a 10000 line, then a line of the excess), with 4 draws always. Reliquaries have one Public instance; shops keep one shelf (slot 0's stock); deck and bad-luck counters belong to slot 0. Engines and Volume rewards stay per player.
 
@@ -1411,6 +1413,7 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 10. **`errata_grade`** in Canon §13.9 is read as doc 14 `RunState.grade`.
 11. **Unmoored Serendipity.** "Serendipity procs" (canon-1.3 §5.11) is read as SER 40 in §13.4 and an Engine SER shift of 0.
 12. **Purses.** The canon does not say whether Lucre is per player; this chapter makes it per player.
+13. **Invasions and limited building** (DECISIONS.md items 15 and 16) are not yet in the canon (§17.9 pending). Assumed: invaders take no part in host-run loot (§17), and block-affecting loot effects touch only blocks tagged destructible.
 
 ## Acceptance tests
 

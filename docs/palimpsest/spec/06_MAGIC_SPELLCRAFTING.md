@@ -758,7 +758,7 @@ leech_mhp    = mul_bp(caster_max_hp_mhp, leech_bp)                              
 
 ### 6.7 Worked spells
 
-**Reference caster Ref-A**: Origin Mythic Fantasy, level 5, ATN 50, FOC 45, LOG 50, MEM 40, other sub-attributes 40. Max HP 105, max aether 70, budget 9, 4 Grimoire slots, regeneration `mul_bp(1500, 13000) = 1950` m-aether per second in Mythic Fantasy. Skills: Evocation 30, Spellcraft 24, Conjuration 25, Restoration 12. Implement: Common Normal +0 focus, `ilvl` 3 (`P(3) = 11881`), `cost_bp` 9500. Location `genre.mythic_fantasy` (ARC 8), `d = 3`. All glyphs have Mythic Fantasy origin: `Req[arcana] = 6 <= 8`, so `C = 0`, `E = 0`, glyph term `10000 + 3 × 200 = 10600`. Register rider Ley-Bound: cost × 9500 with an implement. Target: a standard Folio-3 NPC with 0 resistance and 0 AR to the types shown, nerve threshold `100 + 2 × 3 = 106`.
+**Reference caster Ref-A**: Origin Mythic Fantasy, level 5, ATN 50, FOC 45, LOG 50, MEM 40, other sub-attributes 40. Max HP 105, max aether 70, budget 9, 4 Grimoire slots, regeneration `mul_bp(1500, 13000) = 1950` m-aether per second in Mythic Fantasy. Skills: Evocation 30, Spellcraft 24, Conjuration 25, Abjuration 25 (only for the aura's tier-2 gate), Restoration 12. Implement: Common Normal +0 focus, `ilvl` 3 (`P(3) = 11881`), `cost_bp` 9500. Location `genre.mythic_fantasy` (ARC 8), `d = 3`. All glyphs have Mythic Fantasy origin: `Req[arcana] = 6 <= 8`, so `C = 0`, `E = 0`, glyph term `10000 + 3 × 200 = 10600`. Register rider Ley-Bound: cost × 9500 with an implement. Target: a standard Folio-3 NPC with 0 resistance and 0 AR to the types shown, nerve threshold `100 + 2 × 3 = 106`.
 
 **W1 Searing Bolt** `bolt flame` (Evocation)
 
@@ -1045,7 +1045,7 @@ Worked flavor spells (each with `C = 0`, home genre, glyph term from §2.2):
 |---|---|---|---|---|
 | **W9 Palm of Mountain Force** `touch force heavy`, a Wuxia Technique | Wuxia Origin, ATN 45, Alteration 30, Spellcraft 10, no implement, `d = 6` so `src_lvl = 3` | base `3500 × 13000 = 4550`; `cost_skill 25 → 11250`; 5118 m-aether (no-implement factor 10000 by Flowing Body) | `11150 → 12265 → 13491 → 14840` (glyph term 11000) | `dmg_base 22000 × 13000 = 28600`; `B = 33979`; 50424 mHP `dmg.blunt`, instant, full move speed; knockback 9000 mm/s; poise × 20000; `st.stunned` p 47, ×S(3) 49 |
 | **W10 Gaze of Madness** `cone mind`, a Gnostic Rite | Cosmic Horror Origin, ATN 55, Illusion 40, Spellcraft 20, Rare focus `ilvl` 12, `d = 12` | base 6500; `cost_skill 35 → 10750`; 6987 → ×9500 = 6637 m-aether; composure toll 3318, × 15000 MYTHOS term = 4977 m-composure | `11950 → 13145 → 14459 → ×11500 = 16627` | `dmg_base 14000`; `B = 14000 → ×25804 36125 → ×11000 39737`; 66070 mHP `dmg.psychic` to every target in the cone; `st.dread` p `45 → ×7000 31 → ×16627 51 → ×S(12) 67` |
-| **W11 Thorn-Sleep on credit** `bolt slumber`, a Bargain | Fairy Tale Origin, ATN 40, Illusion 20, Spellcraft 10, focus `ilvl` 4, 2000 m-aether left | base 6000; `cost_skill 17 → 11650`; 6990 → ×9500 = 6640; shortfall 4640, `Debt = 5800` | `10600 → 11660 → 12826` | `st.sleeping` p `50 → ×12826 64 → ×S(4) 69`; regeneration 1950 m-aether per s repays the Debt in 179 ticks; leaving the Folio before then costs `ceil_div(5800, 1000) = 6` favor |
+| **W11 Thorn-Sleep on credit** `bolt slumber`, a Bargain | Fairy Tale Origin, ATN 40, Illusion 25 (slumber's tier-2 gate), Spellcraft 10, focus `ilvl` 4, 2000 m-aether left | base 6000; `cost_skill 21 → 11450`; 6870 → ×9500 = 6526; shortfall 4526, `Debt = mul_bp(4526, 12500) = 5657` | `10750 → 11825 → 13007` | `st.sleeping` p `50 → ×13007 65 → ×S(4) 70`; regeneration 1950 m-aether per s repays the Debt in 175 ticks; leaving the Folio before then costs `ceil_div(5657, 1000) = 6` favor |
 | **W12 Boiler Burst** `nova thunder`, a Device | Steampunk Origin, ATN 40, Evocation 25, Spellcraft 15, Common focus `ilvl` 10, `d = 10` | base 7500; `cost_skill 22 → 11400`; 8550 → ×9500 = 8122 m-aether | `10750 → 11180 → 11627` (glyph term 10400) | `dmg_base 14000`; `B = 30405`; 35351 mHP `dmg.sonic` within 5000 mm; `st.deafened` p `40 → ×7000 28 → ×11627 32 → ×S(10) 40`; no interruption rolls; one `gas.steam` cell vents at the caster's feet |
 
 ## 11. Contradiction for spells
@@ -1425,7 +1425,7 @@ Constants: `CAST_RECOVERY_TICKS = 20`, interrupt lockout 30 ticks, `DEPTH_BP = [
 16. **Summon.** W6 elemental: HP 95508 mHP, attack 12733 mHP every 45 ticks, status power 42 after `S(3)`, duration 4050 ticks, cap 2; a third summon releases the lower-EntityId one.
 17. **Heal aura.** W7: 155 Bp per pulse, 1627 mHP on a 105 HP ally, 40 pulses, 6200 Bp total.
 18. **Siphon and leech.** A 36523 mHP hit at `d_current = 3` siphons 4610 m-aether; against an 80,000 mHP target it leeches 1141 Bp, healing a 105 HP caster by 11980 mHP.
-19. **Bargain.** W11: cast 6640, shortfall 4640, Debt 5800, repaid in 179 ticks at 1950 m-aether per second; a Folio exit before then costs 6 favor at Devotion 0.
+19. **Bargain.** W11: cast 6526, shortfall 4526, Debt 5657, repaid in 175 ticks at 1950 m-aether per second; a Folio exit before then costs 6 favor at Devotion 0.
 20. **Composure toll.** W10 costs 3318 m-composure before the MYTHOS term, 4977 after × 15000.
 21. **Supplication.** The §16.3 worked draws give PLEASED, DISPLEASED, HELPED and (tick 18002) ANGRY exactly as stated; PLEASED adds 18000 to the timer and 50 favor at Devotion 0.
 22. **Devotion scaling.** Devotion 20: gain 50 → 60, loss 100 → 83. Devotion 50: `prayer.benediction` costs 40.
@@ -1437,7 +1437,7 @@ Constants: `CAST_RECOVERY_TICKS = 20`, interrupt lockout 30 ticks, `DEPTH_BP = [
 28. **Counterspell and null field.** An unmaking bolt hitting an NPC in Winding ends its cast and applies `st.silenced` with base 60 ticks through Canon §11.4. Inside a null field no cast starts and an entering bolt ends with no effect.
 29. **Polymorph.** A standard NPC polymorphed by a Fairy Tale register becomes `summon.poly.toad`; the status ends once it has taken 2000 Bp of its Max HP; a `rank.boss` target is immune.
 30. **Determinism.** Compiling the same glyph references with the same caster twice yields byte-identical `CompiledSpell` values and draws nothing; a save at any tick during Channeling reloads to the same drain accumulator and pulse schedule.
-31. **Limited building.** A force bolt (block power 6) on a stone block not tagged `destructible` deals 0 block damage. A shape bolt at Alteration 0 (`shape_power` 3) removes a `destructible` block of hardness 3 and fails on hardness 4. A shape wall's 15 conjured blocks are gone on the tick after its 600-tick duration ends.
+31. **Limited building.** A force bolt (block power 6) on a stone block not tagged `destructible` deals 0 block damage. A shape bolt at Alteration 25 (the tier-2 gate; `shape_power = 3 + 1 = 4`) removes a `destructible` block of hardness 4 and fails on hardness 5. A shape wall's 15 conjured blocks are gone on the tick after its 600-tick duration ends.
 
 ## Invariants annex
 

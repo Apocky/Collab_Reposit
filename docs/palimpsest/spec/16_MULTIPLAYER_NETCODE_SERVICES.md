@@ -9,6 +9,7 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 | Source | Section | What this chapter consumes |
 |---|---|---|
 | DESIGN_BRIEF | §5, §8 | host-authoritative co-op with prediction, reconciliation and lag-compensated hits; deterministic input logs for replays and daily verification; offline-complete end-of-service mode |
+| DECISIONS | 2026-10-11 rows 6, 15, 16 | PC and Steam Deck first; opt-in PvP invasions where a player invades as an Editor; limited building (only placeables and destructible-tagged blocks change) |
 | Canon | §1.1, §1.3, §1.6 | ID grammar and `id32`; `floor_div`, `ceil_div`, `mul_bp`; integer-only content, `u64` as hex strings |
 | Canon | §1.8, §1.9, §1.11 | Folio box 256 × 64 × 256, chunk slot math; `Bam`, pitch clamp ±16000, `ang_diff`; `EntityId` layout, ascending-ID iteration |
 | Canon | §2.1–§2.5 | 60 Hz tick, no extrapolation except local prediction; tick schedule row "Network snapshot, period 2, phase 0"; session header; replay command record with `view_tick`; save contract; `state_hash` every 60 ticks; co-op saves only at Folio entry |
@@ -24,6 +25,10 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 | Doc 02 | §6.5–§6.7, §12.1, §13.4, §15, §17.3, §17.4 | 12 serialization sections and section hashes; golden replays; desync dump; `PALS` container kinds; `modset_hash`; `perf.deck.net.host_kbps` = 384 kbit/s for 3 clients; flags `flag.net.transport`, `flag.net.input_redundancy`; telemetry consent rules |
 | Doc 03 | §2.2, §3.2–§3.4, §5, §5.16, §5.19, §13, §14.2, §15.1, §16 | system order (`sys.input_apply`, `sys.hitscan`, `sys.melee`, `sys.tick_end`); entity kinds, `comp.player` (semantics owned here), `Kind.flags`, `Pose.hist`; the character controller; pose-history rewind; first-tick projectile rewind; `set_block` and `ev.block_changed`; event payloads; 5 × 5 chunk activation window; save coverage |
 | Doc 04 | §6.2, Restoration and Warden talents | downed members and ghosts share kill XP; instant revive at Restoration 100; Warden `resurgence` revive time × 5000 |
+| Doc 05 | §2.6, §14.3 | `LAGCOMP_MAX_TICKS = 16`, target state read at the present tick, projectile catch-up steps; downed Errata keep capsules and cannot attack, block or use items; bleed-out shortening `ceil_div(total_mhp × 1800, max_hp_mhp)` |
+| Doc 11 | §2.2, §14.4, §17 | item `visibility` `Instanced(slot)` or `Public`; ground items destroyed at Folio exit; per-slot rolls with `seq = slot` |
+| Doc 12 | §6.1 | `FolioBlueprint`, `blueprint_hash` compared by every co-op peer |
+| Doc 13 | target scoring | downed candidates × 2000, ghosts never perceivable |
 | Doc 10 | §2.2, §2.5, §2.8 | party-shared type knowledge; knowledge travels with traded items; host sends only `ItemView` |
 | Doc 14 | §1.1, §2.1, §2.5, §3.2, §3.6, §3.10, §4.3, §8.4, §8.8, §9.4, §12 | lobby state machine; joiner rules; exit commit rule and constants; ghost restoration HP; Dormant and Departed slots, `DORMANT_GRACE_S`; ranked Daily attempts; boards and `verify`; `RANKED_RESTORE_MAX` = 2; Folio-entry save copies for host migration |
 | Doc 15 | §2.3, §4, §8.5, §10, §11 | caps; commit-reveal fairness, Sealed Drafts, signed receipts; chat safety; economy service components, ledger, idempotent grants, run reports; end-of-service mode |
@@ -41,9 +46,10 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 2. **Thin clients, snapshot replication.** Clients render remote state from 30 Hz delta-compressed snapshots and predict only their own mover. They regenerate each Folio's terrain locally from the seed and receive block edits as an ordered diff log, so terrain never streams in bulk.
 3. **Every client keeps the Confirmed Input Log (CIL)** of the inputs the host applied, plus the latest Folio-entry state. This gives every client a complete replay, makes any client able to become host, and feeds the daily verifier.
 4. **Shadow replicas are optional.** A client with spare cores runs a full `Sim` replica that consumes the CIL (the Shadow). Shadows detect desyncs live and make host migration instant.
-5. **Favor the shooter** for Errata attacks, inside a rewind window of 30 ticks.
+5. **Favor the shooter** for Errata and invader attacks, inside doc 05's rewind cap of 16 ticks (`LAGCOMP_MAX_TICKS`, doc 05 §2.6).
 6. **Platform P2P first.** Steam builds connect through Steam Datagram Relay, so no player IP address is revealed and no game servers are rented. The dedicated server binary exists for self-hosting and for headless verification, not for live matchmaking.
-7. **Offline-complete.** Every gameplay feature, including co-op over LAN and direct IP, runs without the backend (DESIGN_BRIEF §8).
+7. **Offline-complete.** Every gameplay feature, including co-op over LAN and direct IP, runs without the backend (DESIGN_BRIEF §8). Invasions need matchmaking and are the one online-only feature.
+8. **Opt-in invasions** (DESIGN_BRIEF §1, DECISIONS #15). A run whose host enables invasions accepts one invading player at a time from another session, who plays an Editor in slot 4. This chapter owns the session, matchmaking, visibility and transport rules; the invader's gameplay belongs to Canon §17.9 and docs 13 and 14 (Canon gaps G3).
 
 ### 1.2 Constants
 
@@ -57,7 +63,7 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 | `INTERP_MIN`, `INTERP_MAX` | 4, 12 ticks | remote-entity interpolation delay range |
 | `PRED_RING` | 128 ticks | prediction history |
 | `PRED_STALL_TICKS` | 120 | prediction stops after this many ticks without an authoritative mover state |
-| `LAGCOMP_MAX_REWIND` | 30 ticks | hard cap; the pose history holds 32 (Canon §9) |
+| `LAGCOMP_MAX_REWIND` | 16 ticks | equals doc 05 `LAGCOMP_MAX_TICKS`; the pose history holds 32 (Canon §9) |
 | `LAGCOMP_SLOP` | 4 ticks | added to the measured lag before clamping `view_tick` |
 | `SNAP_RING` | 32 snapshots | baselines kept by host and client (64 ticks) |
 | `NET_HANDLE_BITS` | 13 | per-client entity handles `0..=8190`; 8191 means none |
@@ -74,17 +80,22 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 | `MIGRATE_WARM_MAX_MS` | 45,000 ms | estimated re-simulation time above which migration is cold |
 | `JOIN_WAIT_MAX` | none | a joiner waits for the next Folio entry however long it takes |
 | `DEFAULT_PORT` | UDP 27310 | renet direct and dedicated |
+| `INVADER_SLOT` | 4 | the slot index an invader's commands use |
+| `INVASION_MAX_TICKS` | 18,000 (300 s) | longest invasion |
+| `PVS_PERIOD` | 6 ticks | visibility culling cadence for PvP pairs (§6.6) |
+| `PVS_GRACE_TICKS` | 30 | an unseen hostile player stays replicated this long |
 
 Every constant lives in the content record `net.params.default` (`content/16/net/params.json`), loaded with the content set and covered by `content_hash`:
 
 ```json
 { "id": "net.params.default", "proto": 1, "input_redundancy": 8, "input_buffer_span": 64,
   "slack_target_min": 2, "slack_target_max": 8, "interp_min": 4, "interp_max": 12,
-  "pred_ring": 128, "pred_stall_ticks": 120, "lagcomp_max_rewind": 30, "lagcomp_slop": 4,
+  "pred_ring": 128, "pred_stall_ticks": 120, "lagcomp_max_rewind": 16, "lagcomp_slop": 4,
   "snap_ring": 32, "handle_bits": 13, "mtu_payload": 1200, "snap_payload_max": 1150,
   "datagram_overhead": 48, "client_down_budget": 16000, "snap_rate": 10560, "snap_bucket": 2112,
   "cil_batch_ticks": 6, "stall_ms": 1000, "timeout_ms": 5000, "migrate_announce_ms": 10000,
-  "migrate_warm_max_ms": 45000, "default_port": 27310,
+  "migrate_warm_max_ms": 45000, "default_port": 27310, "invader_slot": 4, "invasion_max_ticks": 18000,
+  "pvs_period": 6, "pvs_grace_ticks": 30, "pvs_near_mm": 16000,
   "bleed_ticks": [1800, 1200, 600], "revive_base_ticks": 180, "revive_min_ticks": 30,
   "revive_range_mm": 1500, "revive_cone_bam": 8192, "bleed_damage_ticks_per_maxhp": 900,
   "trade_range_mm": 4000, "trade_break_mm": 6000, "trade_max_items": 8, "trade_accept_ticks": 600 }
@@ -254,6 +265,8 @@ pub struct Hello {
     pub password_proof: Option<[u8; 32]>, pub ping_location: String,       // Steam ping location, else empty
     pub shadow_capable: bool, pub minor: bool,                               // minor: doc 15 §8.4 flag
     pub migrating_from_tick: Option<u64>, pub resume_slot: Option<u8>,
+    pub role: u8,                    // 0 party member, 1 invader (§9.13)
+    pub invasion_ticket: Option<[u8; 64]>,  // svc.lobby-signed ticket, required when role = 1
 }
 pub struct Welcome {
     pub slot: Option<u8>,            // None while waiting to drop in (§9.1)
@@ -270,3 +283,213 @@ The host checks, in this order, and answers `Reject` with the first failing reas
 ### 3.9 Time synchronization
 
 Each client sends `Ping` every 500 ms. The host answers at once with `Pong`, where `host_tick` is the next tick it will simulate and `host_tick_age_us` is the time since that tick's scheduled start. The client keeps `rtt_us` as an exponentially weighted mean (`rtt += (sample − rtt) / 8`, integer µs) and `host_tick_est(now) = host_tick + (rtt/2 + host_tick_age_us + elapsed_us) / 16667`. Snapshots refine the estimate (§5.6). `rtt_ticks = ceil_div(rtt_us, 16667)`.
+
+---
+
+## 4. Session state machines
+
+### 4.1 Client
+
+| State | Entered when | Event | Next |
+|---|---|---|---|
+| `net.cstate.disconnected` | start; `Bye`; `Reject`; migration failed | player joins a lobby, enters an address, or uses Quick Join | `connecting` |
+| `net.cstate.connecting` | transport connect issued | transport `Connected` | `handshaking` |
+| | | connect error, or 5,000 ms | `disconnected` |
+| `net.cstate.handshaking` | `Hello` sent | `Welcome` with a slot and no run | `lobby` |
+| | | `Welcome` with a run and `slot = None` | `awaiting_folio` |
+| | | `Welcome` with `migrating_from_tick` accepted | `loading` (keyframe pending) |
+| | | `Reject`, or 5,000 ms | `disconnected` |
+| `net.cstate.lobby` | | `RunHeader` (doc 14 `Commit`) | `loading` |
+| `net.cstate.awaiting_folio` | drop-in or rejoin pending (§9.1) | `JoinReady` then `FolioEnter` for that Folio | `loading` |
+| `net.cstate.loading` | `FolioEnter` received | blueprint hash equal, `Keyframe` decoded | `playing` (sends `FolioReady`) |
+| | | blueprint hash differs | stays; requests chunk data (§6.13) |
+| `net.cstate.playing` | | no snapshot for `NET_STALL_MS` | `stalled` |
+| | | `FolioEnter` for the next Folio | `loading` |
+| | | `ev.run_ended` in `RunState` | `lobby` |
+| `net.cstate.stalled` | overlay shown, prediction frozen at `PRED_STALL_TICKS` | snapshot arrives | `playing` |
+| | | `NET_TIMEOUT_MS` since the last host message, or transport `Disconnected` from the host | `migrating` |
+| `net.cstate.migrating` | §9.3 | this client is the chosen successor and finished catch-up | host role (§9.3) |
+| | | `MigrateAnnounce` received, connected, `Welcome` accepted | `loading` |
+| | | every successor timed out | `disconnected`; the Folio-entry state is kept for resume (doc 14 §12.2) |
+
+### 4.2 Host, per peer
+
+| State | Entered when | Event | Next |
+|---|---|---|---|
+| `net.peer.pending` | transport `Connected` | valid `Hello`, run not started | `lobby` |
+| | | valid `Hello`, run started, party member | `waiting` |
+| | | valid `Hello` with `migrating_from_tick` | `loading` |
+| | | valid `Hello`, role invader, invasion slot free (§9.13) | `loading` |
+| | | invalid `Hello`, or 5,000 ms | `Reject`, closed |
+| `net.peer.lobby` | | `Commit` | `loading` |
+| `net.peer.waiting` | drop-in or rejoin pending | `JoinRequest` held at the exit-commit tick of the current Folio | `loading` at the next Folio entry |
+| `net.peer.loading` | `FolioEnter` sent | `FolioReady` | `in_game` |
+| `net.peer.in_game` | | silence for `NET_TIMEOUT_MS`, or transport `Disconnected` | `lost` |
+| | | `Bye` | closed; slot `Departed` (doc 14 §8.8) |
+| `net.peer.lost` | `SlotDormant` session intent at the next tick | reconnect with `resume_slot` | `waiting` |
+| | | `DORMANT_GRACE_S` (300 s) elapses | closed; `SlotDeparted` |
+
+While a peer is `loading` or `lost`, its slot's commands are substitutes (§5.4), so its Erratum stands still. The Incipit is a sanctuary (doc 14 §3.3), so a loading Erratum is safe.
+
+### 4.3 Lobby messages
+
+Doc 14 §2.1 owns the lobby states; the network carries them with four control messages:
+
+| Type | ID | Direction | Body |
+|---|---|---|---|
+| 0x70 | `net.msg.lobby_settings` | H → C | `LobbySettings` on every change |
+| 0x71 | `net.msg.lobby_pick` | C → H | `{ slot: u8, erratum: ErratumChoice }` (doc 14 `ErratumSelect`) |
+| 0x72 | `net.msg.lobby_ready` | C → H | `{ ready: bool }` |
+| 0x73 | `net.msg.run_header` | H → C | `RunHeader` at `Commit` |
+
+```rust
+pub struct LobbySettings {
+    pub privacy: Id32,          // net.lobby.private | friends | public
+    pub join_open: bool,        // drop-in allowed during the run (default true)
+    pub ff: Id32,               // 0 = default, else mode.ff_off | mode.ff_full (Canon §17.5)
+    pub loot: Id32,             // 0 = instanced, else mode.loot_shared
+    pub invasions: bool,        // default false (§9.13)
+    pub voice: Id32,            // net.voice.off | net.voice.party | net.voice.proximity
+    pub password_set: bool, pub mode: Id32, pub grade: u8, pub mutators: Vec<Id32>, pub seed: Option<u64>,
+}
+```
+
+---
+
+## 5. Input path
+
+### 5.1 Command production and the input packet
+
+Each client tick (period from §5.6) the client samples input, builds the `PlayerCommand` for its predicted tick `P` (doc 02 §5.5), stores it in the prediction ring, runs the predictor one step (§7.3) and sends an input packet holding the newest `count = min(8, commands produced)` commands, oldest first. `view_tick = floor(render_tick)` at the moment of sampling (§7.6). `action_seq` is the sequence number of the newest intent the client has issued at or before `P`.
+
+| Offset | Size | Field |
+|---|---|---|
+| 0 | 1 | `msg_type` = 0x10 |
+| 1 | 4 | `newest_tick: u32` (wire tick of the last command) |
+| 5 | 1 | `count: u8` in `1..=8`; the commands cover ticks `newest − count + 1 ..= newest` with no gap |
+| 6 | 4 | `snap_ack: u32`, wire tick of the newest snapshot or keyframe fully decoded; 0 = none |
+| 10 | 1 | `interp_delay: u8`, the client's current interpolation delay in ticks |
+| 11 | 1 | `flags`: bit 0 Shadow running, bit 1 stalled; bits 2–7 zero |
+| 12 | n | commands, oldest first |
+
+The first command is written in full: `move_x i8, move_z i8, yaw u16, pitch i16, buttons u32, action_seq varint, view_lag u8`, where `view_lag = min(255, tick − view_tick)`. Each later command starts with a mask byte (bit 0 move pair, 1 yaw, 2 pitch, 3 buttons, 4 action_seq, 5 view_lag, 6–7 zero) followed by the changed fields in bit order, with `action_seq` written as the varint of its increase over the previous command.
+
+**Worked example.** Ticks 1198 to 1200, newest snapshot decoded at boundary 1185, interpolation delay 6. Tick 1198: full forward (`move_z = −127`), yaw 16384, pitch −300, `SPRINT` held (`0x20`), `action_seq` 41, view tick 1184. Tick 1199: yaw 16400. Tick 1200: yaw 16416, pitch −296, `ATTACK_PRIMARY | SPRINT` (`0x21`), an intent issued (`action_seq` 42). The packet is 37 bytes:
+
+```
+10 b0 04 00 00 03 a1 04 00 00 06 00            header (12 bytes)
+00 81 00 40 d4 fe 20 00 00 00 29 0e            tick 1198, full (12 bytes)
+02 10 40                                       tick 1199: mask yaw, 16400
+1e 20 40 d8 fe 21 00 00 00 01                  tick 1200: mask yaw|pitch|buttons|seq
+```
+
+A typical steady-state packet carries 8 commands in 60 bytes.
+
+### 5.2 Redundancy and acknowledgement
+
+Every command travels in 8 consecutive packets, so up to 7 consecutive lost packets lose nothing. Snapshots acknowledge implicitly: each snapshot header carries `input_ack_tick`, the last tick the host applied for that slot. The client never resends older commands; a command that arrives after its tick was simulated is late (§5.3).
+
+### 5.3 Host input buffer (jitter buffer)
+
+```rust
+pub struct SlotInput {
+    buf: BTreeMap<u64, PlayerCommand>,       // ticks in next ..< next + INPUT_BUFFER_SPAN
+    last_applied: PlayerCommand,
+    last_intent_seq: u32,
+    slack_hist: [i16; 120], slack_head: u8,  // arrival slack of each packet's newest command
+    late_packets: u32, substituted: u32,
+}
+fn on_input_packet(si: &mut SlotInput, p: &InputPacket, next: u64) {
+    let newest = reconstruct_tick(p.newest_tick, next);
+    for (i, c) in p.commands.iter().enumerate() {            // oldest first
+        let t = newest + 1 + i as u64 - p.count as u64;
+        if t >= next && t < next + INPUT_BUFFER_SPAN { si.buf.entry(t).or_insert(sanitize(c, t)); }
+    }
+    if newest < next { si.late_packets += 1; }
+    let slack = (newest as i64 - next as i64).clamp(-127, 127) as i16;
+    si.slack_hist[si.slack_head as usize] = slack; si.slack_head = (si.slack_head + 1) % 120;
+}
+fn take(si: &mut SlotInput, t: u64) -> (PlayerCommand, bool /* real */) {
+    while si.buf.first_key_value().map_or(false, |(&k, _)| k < t) { si.buf.pop_first(); }
+    let (c, real) = match si.buf.remove(&t) {
+        Some(c) => (c, true),
+        None => { si.substituted += 1; (substitute(&si.last_applied, t), false) }
+    };
+    let c = clamp_view_tick(c, t, &lag_estimate(si));          // §5.5
+    si.last_applied = c;
+    (c, real)
+}
+```
+
+`next` is the tick the host simulates next. **Slack** is how many ticks early the newest command arrived. The host reports, per slot, in every snapshot header: the newest slack, and `target_slack = clamp(2 + ceil_div(spread, 2), 2, 8)`, where `spread = s[113] − s[6]` over the sorted 120-entry history (the 5th-to-95th percentile spread). Examples: spread 0 → 2; spread 3 → 4; spread 6 → 5; spread 20 → 8.
+
+### 5.4 Missing input
+
+When no command for tick `t` is buffered, the host applies the neutral substitute:
+
+```rust
+const HOLD_MASK: u32 = (1 << 4) | (1 << 24) | (0b111 << 15);    // CROUCH, WALK, QUICKBAR_INDEX
+fn substitute(last: &PlayerCommand, t: u64) -> PlayerCommand {
+    PlayerCommand { tick: t, slot: last.slot, move_x: 0, move_z: 0, yaw: last.yaw, pitch: last.pitch,
+                    buttons: last.buttons & HOLD_MASK, action_seq: last.action_seq, view_tick: t }
+}
+```
+
+The substitute keeps stance and the selected quickbar index, releases every action button, moves nowhere and never rewinds. It contains no press edge, because every bit it holds was already held, so it never starts an action (Canon gaps G4). The replay log records the substitute, since Canon §2.4 logs the applied command.
+
+### 5.5 `view_tick` clamp
+
+```rust
+fn clamp_view_tick(mut c: PlayerCommand, t: u64, est: &LagEstimate) -> PlayerCommand {
+    // est.rtt_ticks = ceil_div(rtt_us, 16667) from the transport, refreshed once per 60 ticks
+    let lag = est.rtt_ticks + est.interp_delay as u64 + est.target_slack as u64;
+    let max_rewind = core::cmp::min(LAGCOMP_MAX_REWIND, lag + LAGCOMP_SLOP);
+    c.view_tick = c.view_tick.clamp(t.saturating_sub(max_rewind), t);
+    c
+}
+```
+
+| RTT | rtt_ticks | interp | target slack | lag | max rewind | requested `view_tick` at `t = 5000` | applied |
+|---|---|---|---|---|---|---|---|
+| 100 ms | 6 | 6 | 2 | 14 | 16 | 4982 | 4984 |
+| 50 ms | 3 | 6 | 2 | 11 | 15 | 4990 | 4990 |
+| 50 ms | 3 | 6 | 2 | 11 | 15 | 4970 | 4985 |
+| 400 ms | 24 | 10 | 4 | 38 | 16 | 4960 | 4984 |
+| 20 ms | 2 | 4 | 2 | 8 | 12 | 5003 | 5000 |
+
+A client cannot claim more rewind than its measured lag plus 4 ticks, and never more than 16. Doc 05 §2.6 then computes `rewind = t − view_tick`.
+
+### 5.6 Client tick-rate controller
+
+The client keeps `slack_ewma` in milli-ticks and updates it on each snapshot with integer division truncating toward zero: `slack_ewma += (slack × 1000 − slack_ewma) / 8`. With `err = slack_ewma − target_slack × 1000`:
+
+| Condition | Client tick period |
+|---|---|
+| `err < −1000` (commands arrive too late) | 15,873 µs (63 Hz) |
+| `err > 2000` (commands arrive too early) | 17,544 µs (57 Hz) |
+| otherwise | 16,667 µs |
+| `|slack − target_slack| > 30` | hard reset: `P = host_tick_est + target_slack + rtt_ticks`, the prediction ring is cleared and `slack_ewma = target_slack × 1000` |
+
+Example: `target_slack = 2`, `slack_ewma = 2000`, then six snapshots report slack 0: the average falls 1750, 1532, 1341, 1174, 1028, 900; at the sixth, `err = −1100`, so the client switches to 63 Hz and gains 3 ticks of lead per second.
+
+### 5.7 Intents
+
+- Intents (doc 02 §5.5) travel as `IntentMsg` on the reliable control channel, tagged with the predicted tick at which the player issued them.
+- The host applies an intent at `apply_tick = max(intent.tick, next)`, at the start of that tick in `(slot, action_seq)` order. The CIL and the replay record `apply_tick`.
+- An intent with `action_seq <= last_intent_seq` is a duplicate and is dropped. A slot may apply at most 8 intents per tick; the rest wait for the next tick in order.
+- The owning document validates each payload; a rejected intent emits a diagnostic and the owner sees the rejection in its next `OwnerDelta`.
+- This chapter adds intent kinds: `TradePropose { to_slot }`, `TradeRespond { accept }`, `TradeSetItems { uids }`, `TradeLock { locked }`, `TradeConfirm`, `TradeCancel` (§9.7), `DropItemFor { uid, qty, to_slot }` (§9.6), `MarkTarget { target }` (ghosts, §9.5), and the host-only `Session(SessionIntent)`:
+
+```rust
+pub enum SessionIntent {                        // logged with slot = affected slot, applied before player intents
+    SlotJoin { slot: u8, character: JoinCharacter },  // at a Folio-entry boundary only (§9.1)
+    SlotDormant { slot: u8 }, SlotResume { slot: u8 }, SlotDeparted { slot: u8 },
+    HostChanged { from_slot: u8, to_slot: u8 },     // 0xFF = dedicated server; no simulation effect
+    FolioRestart { folio: u32 },                     // cold migration (§9.3); counts as a ranked restore
+    InvaderEnter { template: Id32, loadout: InvaderLoadout }, InvaderLeave { reason: u8 },   // §9.13
+}
+```
+
+### 5.8 Sanitization and protocol violations
+
+`sanitize` maps `move_x`, `move_z` of −128 to −127, clamps `pitch` to ±16000, and replaces a command whose reserved button bits 26–31 are set, whose `WEAPON_SELECT` exceeds 3 or whose `action_seq` decreased, with the substitute of §5.4. Each replacement, malformed packet, oversized intent (> 4,096 bytes) or intent beyond 120 per second counts one violation. More than 600 violations within 3,600 ticks disconnect the peer with `net.reject.protocol_violation`.
