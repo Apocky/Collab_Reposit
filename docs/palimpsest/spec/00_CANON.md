@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.9 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.10 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -455,6 +455,7 @@ Building is limited (DECISIONS.md, item 16).
 - **Placeables.** Errata place only `cat.placeable` items: barricades, bridge spans, ladders, traps, light sources and deployable cover. Doc 07 owns placement rules, anchors, block HP and costs. Placing takes ticks scaled by `skill.fieldcraft`.
 - **Resource nodes.** Materials come from resource nodes (ore veins, plants, salvage piles) that are interactable props, not from digging terrain.
 - Liquids, gases, fire, light and sound still simulate on the block grid (doc 03).
+- **No item durability** (product-owner decision, DECISIONS.md item 65). Weapons, armor, tools and accessories never wear or break. Placeables and destructible blocks keep block HP.
 
 ### 4.4 Micro-voxels
 
@@ -680,13 +681,13 @@ Core manufacturers (doc 11 owns the full mechanics):
 | cosmic_horror | `mfr.cosmic_horror.hollow_lantern`: hits apply `st.marked` for 4 s. `mfr.cosmic_horror.outer_choir`: 2500 Bp `dmg.psychic` share, +1500 Bp damage, costs 1 composure per shot. |
 | space_opera | `mfr.space_opera.perihelion`: a 30-tick charged shot deals × 15000. `mfr.space_opera.umbra`: no magazine; heat; overheating locks the weapon for 90 ticks. |
 | cyberpunk | `mfr.cyberpunk.ghostline`: projectiles home on `st.marked` targets at 16384 Bam/s. `mfr.cyberpunk.neon_saint`: charged shots pierce 1000 mm of blocks. |
-| post_apocalypse | `mfr.post_apocalypse.rustmaw`: magazine × 20000, durability × 5000. `mfr.post_apocalypse.lastditch`: 2000 Bp chance per shot to use no ammo. |
+| post_apocalypse | `mfr.post_apocalypse.rustmaw`: magazine × 20000, reload time × 13000. `mfr.post_apocalypse.lastditch`: 2000 Bp chance per shot to use no ammo. |
 | weird_west | `mfr.weird_west.coffin_creek`: crits ricochet 5000 Bp of their damage to the nearest other hostile within 8 m. `mfr.weird_west.seven_seals`: 2000 Bp `dmg.umbral` share with dependency mythos. |
 | hardboiled_noir | `mfr.hardboiled_noir.midnight_avenue`: shot noise capped at 50 dB. `mfr.hardboiled_noir.rainslick`: × 12000 against staggered or knocked-down targets. |
 | wuxia | `mfr.wuxia.jade_lotus`: thrown weapons return after 30 ticks. `mfr.wuxia.iron_crane`: a block within 6 ticks of impact reflects 5000 Bp of the damage. |
 | steampunk | `mfr.steampunk.brassworth`: +200 Bp per consecutive hit, maximum +3000. `mfr.steampunk.aetherline`: every 4th hit chains 3000 Bp of its damage as `dmg.shock` to 2 targets within 5 m. |
 | fairy_tale | `mfr.fairy_tale.thimbleweald`: × 13000 against targets with a larger capsule radius than the wielder. `mfr.fairy_tale.thornwood`: 1000 Bp chance per hit to apply `st.rooted`. |
-| mythic_antiquity | `mfr.mythic_antiquity.hephaesteum`: no durability loss; immune to `st.disarmed`. `mfr.mythic_antiquity.argive`: +1500 Bp damage while an allied Erratum is within 3 m. |
+| mythic_antiquity | `mfr.mythic_antiquity.hephaesteum`: the wielder is immune to `st.disarmed` and `st.corroded`. `mfr.mythic_antiquity.argive`: +1500 Bp damage while an allied Erratum is within 3 m. |
 | oneiric | `mfr.oneiric.somnambule`: projectiles pass through blocks after 10 m of flight. |
 | redacted | `mfr.redacted.bureau`: never rolls Contradiction failure; the potency loss still applies. |
 | ur_text | `mfr.ur_text.first_press`: Palimpsestic items only. |
@@ -1489,7 +1490,6 @@ Doc 19 owns the full schema. Every item instance carries at least:
 | `affixes` | list of {id, tier, roll_bp} | doc 11 |
 | `parts` | list of {slot, part_id} | assembled items only (doc 07) |
 | `materials` | list of material IDs | doc 07 |
-| `durability` | i32 current and max | doc 07 |
 | `charges` | i32 current and max | wands, gadgets |
 | `stack` | i32 | stackables |
 | `mass_g` | Grams | |
@@ -1929,6 +1929,10 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ---
 
 ## 23. Changelog
+
+### canon-1.10 (2026-10-11)
+
+- Removed item durability; replaced the two manufacturer traits that depended on it.
 
 ### canon-1.9 (2026-10-11)
 

@@ -172,7 +172,9 @@ The tags are hash inputs: no record carries them and they have no `id32` in save
 | `loot.lucre` | Lucre line amount (§9.1) | 1 |
 | `loot.ammo` | ammunition line family (§3.5) | 1 `weighted` or 0 |
 | `loot.key` | mini-boss key line, gilded or bound (§9.5) | 1 `weighted` |
-| `loot.bundle` | Reliquary consumable bundle (§10) | 4 | Placed sources (shop stock, floor loot, caches) take the item seed from `place_rng` (§9.11), a labeled generator of `rng.loot_place`; Offer sources (Engine faces, Volume rewards) take it from `offer_rng` (§11.2). The steps below are identical for every source.
+| `loot.bundle` | Reliquary consumable bundle (§10) | 4 |
+
+Placed sources (shop stock, floor loot, caches) take the item seed from `place_rng` (§9.11), a labeled generator of `rng.loot_place`; Offer sources (Engine faces, Volume rewards) take it from `offer_rng` (§11.2). The steps below are identical for every source.
 
 **Source kinds.** `Keyed` (kills, containers, Reliquaries, bags, quests, secrets, Engine dispensing), `Placed` (generated at Folio generation), `Offer` (generated from `rng.offer.p<slot>`) and `Keepsake` (doc 15).
 
@@ -294,7 +296,7 @@ Pool unlocks are horizontal (§1 principle 5): a tag adds templates inside their
 | `cat.ward_gen` | `arch.ward.{aegis, kinetic, reflector, bulwark}` (05) | yes | `cat.ward_gen` | 1 | yes |
 | `cat.mount` | tokens of `arch.mount.{runner, hover, glider}` (05) | yes | none (§9.10) | 1 | vehicle skins only |
 | `cat.implant` | implant-form `aug.*` (04) | yes | `cat.implant` | 1 | no |
-| `cat.accessory` | `item.ring.*`, `item.amulet.*`, `item.trinket.*`, `item.belt.*`, `item.back.*`, `item.face.*` (11) | yes | `cat.accessory` | 1 | no |
+| `cat.accessory` | `item.ring.*`, `item.amulet.*`, `item.trinket.*`, `item.belt.*`, `item.back.*`, `item.face.*` (11); `apparatus.respirator.*` (08, §3.4) | yes | `cat.accessory` | 1 | no |
 | `cat.potion` | `alch.potion.*` (08) | no | `cat.potion` | 10 | no |
 | `cat.text` | `item.text.*` (11; effects 06, 10) | no | `cat.text` | 10 | no |
 | `cat.throwable` | `arch.ranged.grenade_{frag, incendiary, concussion, flash, smoke}` (05), `item.throwable.counter_*` (11, on `arch.ranged.grenade_counter`), `alch.bomb.*` (08) | no | `cat.throwable` | 10 | no |
@@ -453,9 +455,10 @@ All accessories have `rarity_eligible = true`, roll affixes per Canon §13.3, ha
 | `item.back.satchel` | `slot.back` | 40 | 800 | +6 backpack slots |
 | `item.back.rucksack` | `slot.back` | 70 | 1600 | +10 backpack slots |
 | `item.back.expedition_pack` | `slot.back` | 110 | 2500 | +14 backpack slots |
-| `item.face.respirator` | `slot.face` | 50 | 400 | gases breathable (Canon §12) |
 | `item.face.mask` | `slot.face` | 30 | 200 | disguise item (doc 09) |
 | `item.face.goggles` | `slot.face` | 40 | 300 | +4 SGT |
+
+**Respirators** are doc 08's `apparatus.respirator.cloth`, `apparatus.respirator.mask` and `apparatus.respirator.rebreather` (doc 08 §4.3 owns filter, mass, hearing penalty and dependency; the rebreather depends on techne). This chapter stores their loot records as face accessories: `slot.face`, not type-hidden, rarity-eligible, no manufacturer, pool `base`, values 15, 40 and 90, template weights 40, 40 and 20. The three weights sum to the 100 of the single respirator they replace (§3.10), so the accessory card's other shares are unchanged.
 
 **Implants** (`cat.implant`): every implant-form `aug.*` of doc 04 §9.4 is a template with `base_value = 40 + 40 × region points`, weight 100, mass 300 g, dependency from its implant skin (techne, Canon §5.3). Where the local TECHNE is below 5, the implant card is merged into the accessory card (§9.2).
 
@@ -662,7 +665,7 @@ Canon §13.2 owns what each slot accepts; this table restates it with the templa
 | `slot.implant_arms` | implants | implant-form `aug.*` of the arms region | other |
 | `slot.implant_legs` | implants | implant-form `aug.*` of the legs region | other |
 | `slot.ward` | one ward generator | `cat.ward_gen` templates | other |
-| `slot.face` | masks, goggles, respirators | `item.face.*` | other |
+| `slot.face` | masks, goggles, respirators | `item.face.*`; doc 08 `apparatus.respirator.*` (§3.4) | other |
 | `slot.mount` | one mount token | `cat.mount` tokens | other |
 | `slot.hand_extra_1` | granted by `bp.arm_extra_1`: one one-handed weapon or off-hand item | one-handed `cat.weapon_melee` and `cat.weapon_ranged` templates, `cat.offhand` templates | weapon (Canon gaps 19) |
 | `slot.hand_extra_2` | granted by `bp.arm_extra_2`, as `slot.hand_extra_1` | as `slot.hand_extra_1` | weapon |
@@ -677,6 +680,7 @@ A retired ID is never generated, exported or loaded as a record. The loader reso
 |---|---|---|---|
 | `cat.block` | canon-1.4 | `cat.placeable` | limited building: Errata place only `cat.placeable` items (Canon §4.3) |
 | `item.relic.lattice_lens` | before first ship | `item.trinket.lattice_lens` | every trinket uses the `item.trinket.` prefix (§3.4) |
+| `item.face.respirator` | before first ship | `apparatus.respirator.mask` | doc 08 owns respirator mechanics (doc 08 §4.3 and its Canon gaps 8); §3.4 keeps loot records for its three respirators |
 
 ---
 
@@ -1870,7 +1874,7 @@ All IDs below are in namespaces Canon §19 assigns to doc 11, pass the Canon §1
 
 | Namespace | IDs |
 |---|---|
-| `item.` accessories (53, §3.4) | `item.amulet.composure`, `item.amulet.elements`, `item.amulet.ferocity`, `item.amulet.fortune`, `item.amulet.sanctuary`, `item.amulet.scholar`, `item.amulet.vigor`, `item.amulet.wayfarer`, `item.back.cloak`, `item.back.expedition_pack`, `item.back.rucksack`, `item.back.satchel`, `item.belt.bandolier`, `item.belt.harness`, `item.belt.sash`, `item.belt.utility`, `item.face.goggles`, `item.face.mask`, `item.face.respirator`, `item.ring.arcane_tongue`, `item.ring.bold_tongue`, `item.ring.finesse`, `item.ring.fortune`, `item.ring.intellect`, `item.ring.keen`, `item.ring.machine_tongue`, `item.ring.might`, `item.ring.perception`, `item.ring.presence`, `item.ring.sacred_tongue`, `item.ring.vigor`, `item.ring.warding`, `item.ring.wealth`, `item.ring.will`, `item.trinket.cat_eye`, `item.trinket.clockwork_heart`, `item.trinket.compass_rose`, `item.trinket.dragon_scale`, `item.trinket.forged_papers`, `item.trinket.holy_symbol`, `item.trinket.hourglass`, `item.trinket.keyring_charm`, `item.trinket.lattice_lens`, `item.trinket.lodestone`, `item.trinket.lucky_coin`, `item.trinket.merchants_scale`, `item.trinket.powder_horn`, `item.trinket.reliquary_bone`, `item.trinket.saints_finger`, `item.trinket.thimble`, `item.trinket.warning_bell`, `item.trinket.whetstone`, `item.trinket.wishbone` |
+| `item.` accessories (52, §3.4) | `item.amulet.composure`, `item.amulet.elements`, `item.amulet.ferocity`, `item.amulet.fortune`, `item.amulet.sanctuary`, `item.amulet.scholar`, `item.amulet.vigor`, `item.amulet.wayfarer`, `item.back.cloak`, `item.back.expedition_pack`, `item.back.rucksack`, `item.back.satchel`, `item.belt.bandolier`, `item.belt.harness`, `item.belt.sash`, `item.belt.utility`, `item.face.goggles`, `item.face.mask`, `item.ring.arcane_tongue`, `item.ring.bold_tongue`, `item.ring.finesse`, `item.ring.fortune`, `item.ring.intellect`, `item.ring.keen`, `item.ring.machine_tongue`, `item.ring.might`, `item.ring.perception`, `item.ring.presence`, `item.ring.sacred_tongue`, `item.ring.vigor`, `item.ring.warding`, `item.ring.wealth`, `item.ring.will`, `item.trinket.cat_eye`, `item.trinket.clockwork_heart`, `item.trinket.compass_rose`, `item.trinket.dragon_scale`, `item.trinket.forged_papers`, `item.trinket.holy_symbol`, `item.trinket.hourglass`, `item.trinket.keyring_charm`, `item.trinket.lattice_lens`, `item.trinket.lodestone`, `item.trinket.lucky_coin`, `item.trinket.merchants_scale`, `item.trinket.powder_horn`, `item.trinket.reliquary_bone`, `item.trinket.saints_finger`, `item.trinket.thimble`, `item.trinket.warning_bell`, `item.trinket.whetstone`, `item.trinket.wishbone` |
 | `item.` consumables, tools and books (47, §3.5) | `item.book.primer_abjuration`, `item.book.primer_alteration`, `item.book.primer_conjuration`, `item.book.primer_divination`, `item.book.primer_evocation`, `item.book.primer_illusion`, `item.book.primer_restoration`, `item.book.primer_spellcraft`, `item.book.schematic`, `item.food.bread`, `item.food.meal`, `item.food.ration`, `item.text.amnesia`, `item.text.appraisal`, `item.text.blink`, `item.text.consecrate`, `item.text.demolition`, `item.text.inscribed`, `item.text.intuit`, `item.text.mapping`, `item.text.mending`, `item.text.omen`, `item.text.recharge`, `item.text.sanctify`, `item.text.silence`, `item.text.summoning`, `item.text.survey`, `item.text.warding`, `item.throwable.counter_anchor`, `item.throwable.counter_breaker`, `item.throwable.counter_disruptor`, `item.throwable.counter_staggerer`, `item.throwable.counter_sunder`, `item.tool.bandage`, `item.tool.blank_text`, `item.tool.crutch`, `item.tool.emendation`, `item.tool.hacking_deck`, `item.tool.lockpicks`, `item.tool.pick`, `item.tool.rewrite_quill`, `item.tool.rope`, `item.tool.salve`, `item.tool.splint`, `item.tool.surgical_kit`, `item.tool.toolkit`, `item.tool.torch` |
 | `item.` bags, keys, currency, quest and corpse (14, §3.5, §9.7) | `item.bag.boss`, `item.bag.burnt`, `item.bag.editor`, `item.bag.elite`, `item.bag.lucky`, `item.bag.refined`, `item.key.bound`, `item.key.gilded`, `item.key.illumined`, `item.lucre`, `item.quest.catchword`, `item.quest.folio_leaf`, `item.quest.parcel`, `item.remains` |
 | `item.` Exotics and Palimpsestic uniques (34, §8.2, §8.3) | `item.exotic.black_bar`, `item.exotic.brass_lungs`, `item.exotic.briar_rose`, `item.exotic.cloud_step`, `item.exotic.cogheart`, `item.exotic.dead_drop`, `item.exotic.dragonsong`, `item.exotic.drifters_duster`, `item.exotic.gallows_oath`, `item.exotic.ghost_protocol`, `item.exotic.hydra_bow`, `item.exotic.ironhide_greaves`, `item.exotic.lullaby`, `item.exotic.paper_moon`, `item.exotic.quietus`, `item.exotic.redline_sutra`, `item.exotic.rust_psalm`, `item.exotic.stampede_sabatons`, `item.exotic.starfall`, `item.exotic.stormcrown`, `item.exotic.thunderwright`, `item.exotic.tidecaller_wraps`, `item.exotic.veil_of_vespers`, `item.exotic.widowmaker`, `item.palimpsestic.authors_quill`, `item.palimpsestic.blank_page`, `item.palimpsestic.colophon_mark`, `item.palimpsestic.dog_ear`, `item.palimpsestic.endpaper_band`, `item.palimpsestic.errata_sheet`, `item.palimpsestic.first_word`, `item.palimpsestic.marginal_gloss`, `item.palimpsestic.omnibus`, `item.palimpsestic.running_head` |
@@ -1895,36 +1899,34 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 
 | Doc | This chapter assumes it provides |
 |---|---|
-| 02 | intents `ShopBuy`, `ShopSell`, `CommitOffer`, `DropItem`, `UseItemOn`, `EquipItem`, `MoveItem`, plus `ShopHaggle { shop }` (Canon gaps 14); bots that assert the §13.2 income band |
+| 02 | intents `ShopBuy`, `ShopSell`, `CommitOffer`, `DropItem`, `UseItemOn`, `EquipItem`, `MoveItem`, plus `ShopHaggle { shop }` (Canon gaps 14); bots that assert the §13.2 income band; mod content IDs with second segment `x_<mod_id>` (§1 principle 8), and a mod loot patch that targets a doc 11 table such as `loot.chest.plain` and edits its `lines` |
 | 03 | ground-item entities; block damage for `perk.leg.worldbreaker` on `destructible` blocks only (Canon §4.3); `carried_g` from §14.1; torch light |
-| 04 | gear sub-attribute modifiers; food satiation; treatments; implant-form `aug.*` with region points, 8 of them tagged `implants_2`; "Emend the Flesh"; the composure-loss hook; Speech XP for haggling; kit roles |
+| 04 | gear sub-attribute modifiers; food satiation, rot and eat ticks (copied in §3.5); `bp.arm_extra_1` and `bp.arm_extra_2` granting `slot.hand_extra_1` and `slot.hand_extra_2` (§3.9); treatments; implant-form `aug.*` with region points, 8 of them tagged `implants_2`; "Emend the Flesh"; the composure-loss hook; Speech XP for haggling; kit roles |
 | 05 | the `arch.*` IDs of §3 with their stats; tendency letters mapped to its fields; overridable fields (`fire_mode`, `sig`, `innate_counter`, `max_ricochets`); ammunition families, values, carry caps and pickup sizes; counter charges and `grenade_counter` bits; the ward capacity chain; mount stats; and that it lists `arch.ranged.wand`, `arch.ranged.staff` and `arch.offhand.tome` in its namespace (Canon gaps 12) |
-| 06 | staff, focus and tome casting fields; wand charges by rarity; the bound-glyph list; spell texts; inscription consuming `item.tool.blank_text` and creating `item.text.inscribed`; trainer glyphs; primer glyphs |
-| 07 | material pools per (genre, material role) with `value_bp`, `dmg_bp`, `ar_bp`; `equivalent(material, genre)`; mass and durability; the 22 `part.*` IDs of §5.4; the 6 base gadgets and 6 `gadgets_2`; salvage units; resource nodes for `item.tool.pick` |
+| 06 | staff, focus and tome casting fields; wand charges by rarity; the bound-glyph list; spell texts; inscription consuming `item.tool.blank_text` and creating `item.text.inscribed`; trainer glyphs; the eight schools, whose `item.book.primer_<school>` glyph tomes this chapter fills with `glyph_tome` and doc 06 §8.1 reads (§3.5 Books) |
+| 07 | material pools per (genre, material role) with `value_bp`, `dmg_bp`, `ar_bp`; `equivalent(material, genre)`; mass and durability; the 22 `part.*` IDs of §5.4; the 6 base gadgets and 6 `gadgets_2`; salvage units; resource nodes for `item.tool.pick`; the `learn: 1` and `r2` recipe flags and the read rule of `item.book.schematic` (§3.5 Books); `gadgets_2` and `r2` membership, whose tags `loot.pool.gadgets_2` and `loot.pool.recipes_2` this chapter owns (§2.5) |
 | 08 | potion and bomb effects and values, Reliquary-only potion values, vessels, ingredient lists for apothecaries and `loot.trophy` |
 | 09 | noise in dB; locks for `loot.chest.locked`; mimic as a hidden object; `aware.suspicious`; lockpick and hacking-deck rules |
 | 10 | `roll_curse(rng, draft, local_myt, source)` with exactly 3 draws; `value_true` identical to §13.1; `value_vendor`; knowledge flags and sealing; `wand_pool`; `appr.svc.*`; and that `PriceObs.trade_bp` records the composite buy or sell trade of §12.2 |
-| 12 | spots for chests, Reliquaries, Engines, shops, Scriptoria, Volume-plan and counter caches; `room.treasury` and Locked edges for locked chests; the rest Folio's shop and Engine hall; secret kinds; at most one Palimpsest vault per Volume; Colophon and Interleaf rooms; challenge success judged at exit commit |
+| 12 | spots for chests, Reliquaries, Engines, shops, Scriptoria, Volume-plan and counter caches; `room.treasury` and Locked edges for locked chests; the rest Folio's shop and Engine hall; secret kinds; at most one Palimpsest vault per Volume; Colophon and Interleaf rooms; challenge success judged at exit commit; placement of `item.quest.folio_leaf` and its story record (§3.5) |
 | 13 | `loot_role`, `no_loot` and `trophy` template fields; `enemy.mimic`; tags undead and fiend; vendor NPCs `npc.vendor.<type>` for each `shop.<type>`; the reputation price factor; quest tiers 1 to 3; companion personal quests; carried items through §3.7. Its assumed `loot.drop.{armed, beast, caster, construct, undead, eldritch, swarm, editor, mount}` are replaced by the rank tables plus role bias (§9.3, §9.5) |
-| 14 | `RunState.grade`, `GradeParams`, Folio positions and `d(f)`, the Volume reward phase, Bindery pool tags and `unlock.room.fortune_engines_2`, `unlock.room.wandering_scribe`, `run.boon.deep_pockets`; and that it rebinds its kit templates to the owners' IDs in the table below |
+| 14 | `RunState.grade`, `GradeParams`, Folio positions and `d(f)`, the Volume reward phase, Bindery pool tags and `unlock.room.fortune_engines_2`, `unlock.room.wandering_scribe`, `run.boon.deep_pockets`; `run.rubric.catchwords` placing `item.quest.catchword`; and that its kits use the owner IDs of the former-name table below and of doc 05 §5.6 |
 | 15 | the `generate_keepsake` caller and the Satchel |
 | 16 | slot states, `DropItemFor`, the instanced replication rule, pickup collision order |
 | 17, 18 | odds panels, the ledger, the Engine UI, sealed cards, vendor screens; skin, vendor and manufacturer localization and the name review |
 
-**Kit template rebinding** (doc 14 §2.4 uses provisional IDs that no owner exports):
+**Former names.** Earlier drafts of docs 02, 04, 13 and 14 used names in this chapter's namespaces that no owner exports. They are written unmarked here because they are not content IDs; every chapter uses the owner ID on the right. Doc 05 §5.6 resolves the former `arch.` and `ammo.` kit role names.
 
-| Doc 14 ID | Owner ID |
+| Former name (doc) | Owner ID |
 |---|---|
-| `arch.melee.hafted_mace`, `.hafted_maul`, `.polearm_spear`, `.polearm_staff`, `.fist_wraps` | `arch.melee.mace`, `.warhammer`, `.spear`, `.quarterstaff`, `.fist` |
-| `arch.ranged.sidearm`, `.longarm`, `.heavy_auto`, `.flamer`, `.hand_crossbow`, `.sling` | `arch.ranged.pistol`, `.rifle_marksman`, `.rifle_auto`, `.beam`, `.crossbow`, `.thrown` |
-| `arch.offhand.shield_small`, `.shield_medium` | `arch.offhand.shield_buckler`, `.shield_heater` |
-| `arch.armor.<class>_<slot>` | `arch.armor.<slot>_<class>` |
-| `ammo.fuel`, `ammo.stone` | `ammo.cell`, `ammo.draw` |
-| `item.potion.{healing, haste, aether, invisibility, shielding, fortify, antidote, clarity, focus, regeneration}` | `alch.potion.{healing, haste, aether, invisibility, shielding, fortitude, cure, purity, calm, honeyed_healing}` |
-| `item.throwable.{knife, javelin}` | `arch.ranged.thrown` (knife and javelin skins) |
-| `item.throwable.{frag, smoke, fire_flask, poison_flask, disruptor_flask}` | `arch.ranged.grenade_frag`, `arch.ranged.grenade_smoke`, `alch.bomb.firebomb`, `alch.potion.toxic_gas`, `item.throwable.counter_disruptor` |
-| `item.container.flask` | `apparatus.vessel.flask` |
-| `item.relic.lattice_lens` | `item.trinket.lattice_lens` |
+| item.potion.{healing, haste, aether, invisibility, shielding} (14) | `alch.potion.healing`, `alch.potion.haste`, `alch.potion.aether`, `alch.potion.invisibility`, `alch.potion.shielding` |
+| item.potion.{fortify, antidote, clarity, focus, regeneration} (14) | `alch.potion.fortitude`, `alch.potion.cure`, `alch.potion.purity`, `alch.potion.calm`, `alch.potion.honeyed_healing` |
+| item.throwable.{knife, javelin} (14) | `arch.ranged.thrown` (knife and javelin skins) |
+| item.throwable.{frag, smoke, fire_flask, poison_flask, disruptor_flask} (14) | `arch.ranged.grenade_frag`, `arch.ranged.grenade_smoke`, `alch.bomb.firebomb`, `alch.potion.toxic_gas`, `item.throwable.counter_disruptor` |
+| item.container.flask (14) | `apparatus.vessel.flask` |
+| item.food.snack (04) | `item.food.bread` |
+| loot.drop.boss, loot.drop.editor (13) | `loot.boss.mini`, `loot.boss.editor` |
+| loot.mythic_fantasy.chest_common (02, mod patch example) | `loot.chest.plain` |
 
 ## Canon gaps
 
@@ -1939,13 +1941,16 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 9. **Unmoored Serendipity.** "Serendipity procs" (Canon §5.11) is read as effective SER 40 in §13.4 and an Engine SER shift of 0.
 10. **Purses.** The canon does not say whether Lucre is per player; this chapter makes it per player.
 11. **Placement generators.** Canon §3.2 describes `rng.loot_place` as one sequential stream. This chapter derives labeled generators from its Folio seed (`place_rng`, §9.11), as doc 12 does for `rng.worldgen`, so placement decisions never shift each other.
-12. **Namespaces.** `arch.ranged.wand` (doc 10), `arch.ranged.staff` and `arch.offhand.tome` (doc 06) live in doc 05's `arch.` namespace but are not in doc 05's export list; doc 05 must list them. Doc 14's kit IDs (table above) are not exported by any owner.
+12. **Namespaces.** `arch.ranged.wand` (doc 10), `arch.ranged.staff` and `arch.offhand.tome` (doc 06) live in doc 05's `arch.` namespace but are not in doc 05's export list; doc 05 must list them. Doc 14's provisional kit names (the former-name table above) are not exported by any owner.
 13. **Item value ownership.** Canon §13.9 gives `value` to doc 11; doc 10 §6.1 restates it as `value_true`. This chapter adopts doc 10's formula verbatim (enhancement 1000 Bp per step, curse and charge factors), so the two cannot diverge; Item Power keeps the canon 600 Bp enhancement step (§18).
 14. **Haggle intent.** Doc 02's intent list has no haggle action; this chapter requests `ShopHaggle { shop }`.
 15. **Illuminated for Placed and Offer items.** Canon §13.9 rolls it "per Legendary-or-better drop" with keyed `rng.loot`. Shop stock, floor loot, Engine faces and Volume rewards are not keyed drops, so they roll at first acquisition (§2.3 step 13).
 16. **Gear tolerance cap.** Canon §5.4 caps total tolerance at 6 but not the gear term. `GEAR_TOL_CAP = 3` (§3.4) is this chapter's balance rule for item-granted tolerance.
 17. **Deep pockets.** Doc 14 says the boon multiplies "every Lucre gain". This chapter applies it to Lucre piles only, not sales, so the buy floor stays above the sell cap (§12.2).
 18. **Five counters.** Canon §17.3a names three counter types; doc 05 adds `counter.sunder` and `counter.anchor`. This chapter stocks all five with dependency-none sources in every genre.
+19. **Extra hands.** Canon §13.2 writes `slot.hand_extra_N` without a bound, and Canon §13.3's Exotic limit names only `slot.weapon_1..3` and `slot.offhand` as the weapon group. Doc 04 defines two extra-arm parts, so this chapter defines `slot.hand_extra_1` and `slot.hand_extra_2` and counts them in the weapon group, since they hold the same items (§3.9). Proposed: canon lists both slots in §13.2 and in the weapon group.
+20. **Book sources.** Canon §13.1 gives `cat.book` content to docs 06 and 07 but names no loot source. Books come from kits and from the arcanist's glyph-tome line and the scribe's schematic line (§3.5, §12.1). They never enter the deck, so the 40-card deck and the §20 example are unchanged.
+21. **Retired IDs.** Canon §1.1 requires an alias only for a shipped ID. `cat.block` (retired in canon-1.4) and `item.relic.lattice_lens` never shipped; §3.10 keeps them as aliases so their historical mentions resolve and their `id32` stays reserved.
 
 ## Acceptance tests
 
@@ -1978,7 +1983,7 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 27. **Stacking.** Two `alch.potion.healing` with different `buc` never merge; healing potions of ilvl 3 and 5 merge at ilvl 3; two `arch.ranged.grenade_frag` of different ilvl never merge.
 28. **Marginalia Emendations.** Exiting Folio 26 grants 1 Emendation to each Active and Ghost slot; the cap at Folio 30 is 16.
 29. **Counters.** In each of the 15 genres with shops, the Colophon shop stocks all five counter charges, all five counter grenades and `alch.bomb.salt`; in all 16 genres a 4-player Folio whose exit preview shows `elite.warded` places a cache holding 2 `item.throwable.counter_breaker` and 2 `ammo.charge_breaker` per player in the next Folio.
-30. **IDs.** Every exported ID passes the grammar with distinct `fnv1a32`, including against canon IDs.
+30. **IDs.** Every exported ID, sub-generator tag included, passes the grammar with distinct `fnv1a32`, including against canon IDs and the §3.10 retired IDs.
 31. **Folio isolation.** Shop shelves, floor loot, caches, Reliquary and Engine placements of Folio 7 are byte-identical, uids included, for party sizes 1 to 4 and whether Folios 1 to 6 were played.
 32. **Uniques.** No party holds two copies of a Palimpsestic unique; a player receives no Exotic twice before that category's Exotics are exhausted; an undispensed Engine face does not count as acquired.
 33. **Malign share.** Harmful weight is exactly 3000 of 10000 for found potions, 2700 of 9000 for Reliquary-only potions and 3000 of 10000 for texts.
@@ -1987,6 +1992,8 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 36. **Invasions.** Killing an invader at Folio 4 gives each Active Erratum the contents of one `reliq.bound` without a key; a Redaction empties every purse and destroys one equipped non-weapon item per Erratum with one keyed draw, none when there is no eligible item.
 37. **Ammunition line.** A receiver whose weapons all have full reserves gets no ammunition and the line's sub-generator draws nothing; otherwise the family follows doc 05 §8.3 need weights.
 38. **Gear tolerance.** Two `item.ring.machine_tongue` at `eff_enh` 8 plus an `affix.tol_techne` give `gear_tol[techne] = 3`.
+39. **Books.** An arcanist glyph-tome line at Folio 7 draws 1 value in `loot.arch` and at most 2 in `loot.book`, and teaches only glyphs of the drawn primer's school of tier 2 or lower from the run's glyph loot pool. A schematic line draws 1 value in `loot.book` and teaches a `learn: 1` recipe of the content set, never an `r2` recipe without `loot.pool.recipes_2`. Neither line changes with what any player knows.
+40. **Restated tables.** The §3.8 rarity rows equal Canon §13.3 and the §3.9 slot rows equal Canon §13.2 field for field. Exports lists every ID exactly once and no §3.10 retired ID.
 
 ## Invariants annex
 

@@ -77,6 +77,14 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 62 | Pacifist play | Kept: tracked and rewarded through achievements, Codex marks and non-kill XP | Docs 04, 14 |
 | 63 | Hacking | Kept: optional quick minigame with auto-resolve at a cost, same model as lockpicking | Doc 09 |
 | 64 | Disguises | Kept: every sapient native faction in every genre | Doc 09 |
+| 65 | Durability | **Changed: no item durability.** Gear never wears or breaks; placeables and destructible blocks keep block HP | Canon §4.3, §13.9; docs 05, 07, 11 |
+| 66 | Inventory | Kept: 20 base slots plus bags, with a weight limit and encumbrance | Doc 11 |
+| 67 | Rewrite cost | Kept: Lucre cost scaling with item power, choice of 3 offered skins | Doc 11 |
+| 68 | Weapon perks | Kept: Destiny-style switchable perk columns by gear tier | Doc 11 |
+| 69 | Enemy roster | **Changed: 12 or more enemy types per genre** (about 190 for 16 genres), plus elites, champions, 2 or more mini-bosses per genre and 5 Editors | Docs 13, 20 |
+| 70 | Enemy AI | Kept: smart tactical utility AI tuned per genre | Doc 13 |
+| 71 | Native factions | Kept: run-scoped alliances through reputation | Doc 13 |
+| 72 | Folio stories | Kept: prominent story fragments with an optional Folio quest | Doc 12 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 

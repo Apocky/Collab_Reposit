@@ -18,6 +18,9 @@ ID_RE = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+){1,5}$")
 TICK_RE = re.compile(r"`([^`\n]+)`")
 REQUIRED = ["## Imports", "## Exports", "## Interface assumptions", "## Canon gaps",
             "## Acceptance tests", "## Invariants annex"]
+RETIRED = ["cat.mount", "slot.mount", "st.mounted", "ev.mounted", "ev.dismounted", "room.no_mount",
+           "skill.delving", "cat.block"]
+RETIRED_PREFIX = ["arch.mount."]
 HEDGES = ["might", "could", "consider", "optionally", "TBD", "roughly", "perhaps", "maybe"]
 # Namespaces that look like content IDs. Others (e.g. file names, Rust paths) are ignored.
 NAMESPACES = None
@@ -108,6 +111,7 @@ def main():
                 if pf and owners and n not in owners and "00" not in owners:
                     bad_owner.append(f"{i} (namespace {pf} owned by {','.join(sorted(owners))})")
         r["foreign_namespace_definitions"] = sorted(set(bad_owner))
+        r["retired_ids"] = sorted(set(i for i in ids_in(t) if i in RETIRED or any(i.startswith(x) for x in RETIRED_PREFIX))) if n != "00" else []
         jerr = []
         for k, blk in enumerate(json_blocks(t)):
             try:

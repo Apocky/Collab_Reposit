@@ -45,10 +45,11 @@ This chapter owns the one material table (Canon §13.8a), crafting quality, stat
 | `recipe.<group>.<name>` | recipes (§6.6, §7.2, §8.5, §11.2, §12.2) | 127 |
 | `part.<slot>.<name>` | loose parts (§7.2) | 29 |
 | `part.graft.<genre_suffix>.<mfr_name>` | licensed grafts (§7.5) | 38 |
-| `block.<…>`, `block.tag.<tag>` | blocks (§10.1) and block tags | §10.1 |
+| `block.<…>` | blocks (§9.3, §10.1, §10.6) | 129 |
+| `block.tag.<tag>` | block tags (§10.1) | 5 |
 | `gadget.<name>` | gadgets and deployables (§11) | 13 |
 
-`q.*` stays the Canon §13.5 core list. This chapter adds no quality ID.
+`q.*` stays the Canon §13.5 core list of seven. This chapter adds no quality ID. The Exports section lists every concrete ID of these forms.
 
 ### 1.2 Constants
 
@@ -212,39 +213,53 @@ Genres: MF mythic_fantasy, GH gothic_horror, CH cosmic_horror, SO space_opera, C
 
 Roles say which item component a material may form. Reference materials sit at 10000 for their role: `mat.iron` for blade, head, frame and plate; `mat.oak` for haft, limb and focus; `mat.leather` and `mat.linen` for soft.
 
+| Role | Code (§2.2) | Recipe key (§6.6) | Reference material |
+|---|---|---|---|
+| `mat.role.blade` | bl | B | `mat.iron` |
+| `mat.role.head` | hd | D | `mat.iron` |
+| `mat.role.haft` | ha | H | `mat.oak` |
+| `mat.role.limb` | li | L | `mat.oak` |
+| `mat.role.frame` | fr | F | `mat.iron` |
+| `mat.role.plate` | pl | P | `mat.iron` |
+| `mat.role.soft` | so | S | `mat.leather`, `mat.linen` |
+| `mat.role.focus` | fo | O | `mat.oak` |
+| `mat.role.block` | bk | — | — (building material; no recipe keys on it) |
+
 | Tag | Rule |
 |---|---|
-| `metal`, `wood`, `stone`, `fabric` | families; `fabric` soft materials make cloth armor, other soft materials make light armor |
-| `ricochet` | doc 05 §7 ricochet faces |
-| `flammable` | `flammability_bp >= 500`; doc 03 fire, doc 05 and doc 06 hooks |
-| `fuel` | burns in stations (§5.3); `kin.construct` refuels from it (Canon §16.3) |
-| `brittle` | the item shatters at durability 0 (§8.3) |
-| `alloying` | crafting input only, never a loot primary |
-| `arcane_reagent` | doc 06 §9.3 enchanting reagent |
-| `silvered`, `fae_bane` | banes (§3.2) |
-| `luminous` | blocks of it emit `light_block` 7 |
-| `edible`, `fat` | `mat.flesh` is raw meat (doc 04 §11.2) and an alchemy fat |
-| `absorbent`, `acid_soluble`, `tillable` | doc 08 §2 and §5; planting (§9.7) |
-| `terrain`, `nonsolid`, `unbreakable` | never loot, never a crafted primary; `air` is non-solid; `void` is unbreakable |
+| `mat.tag.metal`, `mat.tag.wood`, `mat.tag.stone`, `mat.tag.fabric` | families; `fabric` soft materials make cloth armor, other soft materials make light armor; recipe keys M, W, K, T (§6.6) |
+| `mat.tag.ricochet` | doc 05 §7 ricochet faces |
+| `mat.tag.flammable` | `flammability_bp >= 500`; doc 03 fire, doc 05 and doc 06 hooks |
+| `mat.tag.fuel` | burns in stations (§5.3); `kin.construct` refuels from it (Canon §16.3) |
+| `mat.tag.brittle` | the item shatters at durability 0 (§8.3) |
+| `mat.tag.alloying` | crafting input only, never a loot primary |
+| `mat.tag.arcane_reagent` | doc 06 §9.3 enchanting reagent |
+| `mat.tag.silvered`, `mat.tag.fae_bane` | banes (§3.2) |
+| `mat.tag.luminous` | blocks of it emit `light_block` 7 |
+| `mat.tag.edible`, `mat.tag.fat` | `mat.flesh` is raw meat (doc 04 §11.2) and an alchemy fat |
+| `mat.tag.absorbent`, `mat.tag.acid_soluble`, `mat.tag.tillable` | doc 08 §2 and §5; planting (§9.7) |
+| `mat.tag.terrain`, `mat.tag.nonsolid`, `mat.tag.unbreakable` | never loot, never a crafted primary; `air` is non-solid; `void` is unbreakable |
 
-**Acoustic class** (doc 09 §7.2 surface and break noise). Every material has exactly one `acoustic` value, written here so doc 09 never has to guess; doc 09's table agrees on every material it names.
+The §2.2 `tags` column and other chapters write tags bare (`flammable`); a bare tag always means `mat.tag.<name>` (Canon gaps 3).
 
-| `acoustic` | Materials |
+**Acoustic class** (doc 09 §7.2 surface and break noise). Every material has exactly one `acoustic` value, written here so doc 09 never has to guess; doc 09's table agrees on every material it names. The class IDs are doc 09's.
+
+| Materials | `acoustic` |
 |---|---|
-| `noise.surface.metal` | copper, tin, zinc, bronze, iron, cold_iron, scrap_iron, cast_iron, steel, brass, silver, hexed_silver, gold, chrome, titanium, moonsilver, plasteel, orichalcum, star_metal, aetherium, redacted_alloy, gold_leaf |
-| `noise.surface.glass` | glass, rad_glass, psi_crystal |
-| `noise.surface.stone` | granite, sandstone, slate, basalt, marble, obsidian, jade, brick, concrete, terracotta, coral, slag, void |
-| `noise.surface.ice` | ice |
-| `noise.surface.bone` | bone, dragonbone, chitin |
-| `noise.surface.wood` | pine, birch, cedar, bamboo, oak, thornwood, blackwood, elderwood |
-| `noise.surface.synthetic` | polymer, carbon_fiber |
-| `noise.surface.soft` | hide, leather, rubber, flesh |
-| `noise.surface.cloth` | linen, tweed, silk, nanoweave, dreamstuff, web |
-| `noise.surface.paper` | paper, vellum |
-| `noise.surface.foliage` | leaves |
-| `noise.surface.sand` | sand |
-| `noise.surface.dirt` | soil, coal |
-| none | air |
+| copper, tin, zinc, bronze, iron, cold_iron, scrap_iron, cast_iron, steel, brass, silver, hexed_silver, gold, chrome, titanium, moonsilver, plasteel, orichalcum, star_metal, aetherium, redacted_alloy, gold_leaf | `noise.surface.metal` |
+| glass, rad_glass, psi_crystal | `noise.surface.glass` |
+| granite, sandstone, slate, basalt, marble, obsidian, jade, brick, concrete, terracotta, coral, slag, void | `noise.surface.stone` |
+| ice | `noise.surface.ice` |
+| bone, dragonbone, chitin | `noise.surface.bone` |
+| pine, birch, cedar, bamboo, oak, thornwood, blackwood, elderwood | `noise.surface.wood` |
+| polymer, carbon_fiber | `noise.surface.synthetic` |
+| hide, leather, rubber, flesh | `noise.surface.soft` |
+| linen, tweed, silk, nanoweave, dreamstuff, web | `noise.surface.cloth` |
+| paper, vellum | `noise.surface.paper` |
+| leaves | `noise.surface.foliage` |
+| sand | `noise.surface.sand` |
+| soil, coal | `noise.surface.dirt` |
+| air | none |
 
 ### 2.5 Units, value and block defaults
 
@@ -277,7 +292,20 @@ Doc 03 §4.5 loader rule 2 overrides three of these for every block without `blo
 
 ### 2.6 Raw ores
 
-Ten metals come from ore: `mat.copper.ore`, `mat.tin.ore`, `mat.zinc.ore`, `mat.iron.ore`, `mat.silver.ore`, `mat.gold.ore`, `mat.titanium.ore`, `mat.orichalcum.ore`, `mat.star_metal.ore`, `mat.aetherium.ore`. An ore unit has `unit_mass_g = mul_bp(unit_mass_g(metal), 7000)` and `unit_value = max(1, mul_bp(unit_value(metal), 4000))`, stacks to 20, and is valid only as a process input. One ore unit smelts into one metal unit (§6.6).
+Ten metals come from ore: `mat.copper.ore`, `mat.tin.ore`, `mat.zinc.ore`, `mat.iron.ore`, `mat.silver.ore`, `mat.gold.ore`, `mat.titanium.ore`, `mat.orichalcum.ore`, `mat.star_metal.ore`, `mat.aetherium.ore`. An ore unit has `unit_mass_g = mul_bp(unit_mass_g(metal), 7000)` and `unit_value = max(1, mul_bp(unit_value(metal), 4000))`, stacks to 20, and is valid only as a process input. One ore unit smelts into one metal unit (§6.6). Ores are not §2.2 rows: they have no roles, never form a component or block, and never enter `pick_material` or `equivalent`.
+
+| Ore | Metal | `unit_mass_g` | `unit_value` (Lucre at `P(1)`) | Node (§9.3) | Smelted by (§6.6) |
+|---|---|---|---|---|---|
+| `mat.copper.ore` | `mat.copper` | 1568 | 3 | `block.node.copper` | `recipe.smelt.copper` |
+| `mat.tin.ore` | `mat.tin` | 1275 | 2 | `block.node.tin` | `recipe.smelt.tin` |
+| `mat.zinc.ore` | `mat.zinc` | 1249 | 2 | `block.node.zinc` | `recipe.smelt.zinc` |
+| `mat.iron.ore` | `mat.iron` | 1376 | 2 | `block.node.iron` | `recipe.smelt.iron`; also `recipe.alloy.cast_iron` |
+| `mat.silver.ore` | `mat.silver` | 1835 | 7 | `block.node.silver` | `recipe.smelt.silver` |
+| `mat.gold.ore` | `mat.gold` | 3377 | 7 | `block.node.gold` | `recipe.smelt.gold` |
+| `mat.titanium.ore` | `mat.titanium` | 788 | 13 | `block.node.titanium` | `recipe.smelt.titanium` |
+| `mat.orichalcum.ore` | `mat.orichalcum` | 1225 | 42 | `block.node.orichalcum` | `recipe.smelt.orichalcum` |
+| `mat.star_metal.ore` | `mat.star_metal` | 1662 | 38 | `block.node.star_metal` | `recipe.smelt.star_metal` |
+| `mat.aetherium.ore` | `mat.aetherium` | 525 | 44 | `block.node.aetherium` | `recipe.smelt.aetherium` |
 
 ### 2.7 Loot material pools
 
@@ -330,43 +358,45 @@ Doc 12 §2.4 named pool IDs before Canon §5.9 existed. Canon §5.9 wins. Doc 12
 
 Each archetype has a primary and an optional secondary component. Volumes are chosen so that the archetype built from its reference materials (§2.4) weighs exactly doc 05's `ref_mass_g`, which makes doc 05 §3.3's `mass_ratio_bp` exactly 10000 for a reference-material item. `Cells` is the unit count a recipe consumes (§6.6); `cells × unit_ml` of the reference material always covers the volume.
 
-| Archetype | Primary role, ml | Secondary role, ml | Mass at reference (g) | Cells |
-|---|---|---|---|---|
-| `arch.melee.dagger` | blade 47 | haft 42 | 400 | 1 + 1 |
-| `arch.melee.blade_short` | blade 109 | haft 58 | 900 | 1 + 1 |
-| `arch.melee.blade_long` | blade 170 | haft 84 | 1400 | 2 + 1 |
-| `arch.melee.blade_great` | blade 367 | haft 150 | 3000 | 3 + 1 |
-| `arch.melee.axe` | blade 133 | haft 606 | 1500 | 1 + 1 |
-| `arch.melee.axe_great` | blade 292 | haft 1203 | 3200 | 2 + 2 |
-| `arch.melee.mace` | head 181 | haft 502 | 1800 | 1 + 2 |
-| `arch.melee.warhammer` | head 413 | haft 1000 | 4000 | 4 + 1 |
-| `arch.melee.spear` | blade 57 | haft 1803 | 1800 | 1 + 2 |
-| `arch.melee.halberd` | blade 217 | haft 1991 | 3200 | 2 + 2 |
-| `arch.melee.quarterstaff` | haft 2400 | — | 1800 | 3 |
-| `arch.melee.fist` | head 60 | soft 149 | 600 | 1 + 1 |
-| `arch.melee.whip` | soft 683 | haft 151 | 700 | 2 + 1 |
-| `arch.melee.chain` | head 269 | soft 97 | 2200 | 2 + 1 |
-| `arch.ranged.pistol` | frame 118 | haft 97 | 1000 | 1 + 1 |
-| `arch.ranged.pistol_heavy` | frame 189 | haft 151 | 1600 | 1 + 1 |
-| `arch.ranged.smg` | frame 327 | haft 303 | 2800 | 2 + 1 |
-| `arch.ranged.rifle_auto` | frame 343 | haft 1202 | 3600 | 2 + 2 |
-| `arch.ranged.rifle_marksman` | frame 381 | haft 1603 | 4200 | 2 + 2 |
-| `arch.ranged.shotgun` | frame 340 | haft 1500 | 3800 | 2 + 2 |
-| `arch.ranged.sniper` | frame 636 | haft 1994 | 6500 | 3 + 2 |
-| `arch.ranged.launcher` | frame 795 | haft 993 | 7000 | 4 + 1 |
-| `arch.ranged.beam` | frame 553 | focus 198 | 4500 | 3 + 1 |
-| `arch.ranged.charge_rifle` | limb 1967 | soft 30 | 1500 | 2 + 1 |
-| `arch.ranged.crossbow` | limb 1567 | haft 3100 | 3500 | 2 + 4 |
-| `arch.ranged.thrown` | blade 38 | — | 299 | 2 per 3 |
-| `arch.ranged.staff` | haft 2000 | focus 40 | 1530 | 2 + 1 |
-| `arch.ranged.wand` | focus 400 | — | 300 | 1 |
-| `arch.offhand.shield_buckler` / `_heater` / `_tower` | plate 172 / 480 / 1105 | haft 197 / 298 / 406 | 1500 / 4000 / 9000 | 1+1 / 2+1 / 5+1 |
-| `arch.offhand.lantern` | frame 151 | focus 5 (`mat.glass`) | 1200 | 1 + 1 glass |
-| `arch.offhand.focus` | focus 800 | — | 600 | 1 |
-| `arch.offhand.tome` | soft 960 | focus 100 | 900 | 1 + 1 |
-| `arch.ward.aegis` / `kinetic` / `reflector` / `bulwark` | frame 34 / 147 / 96 / 372 | focus 44 / 59 / 60 / 98 | 300 / 1200 / 800 / 3000 | 1+1 / 1+1 / 1+1 / 2+1 |
-| `item.tool.pick` | head 203 | haft 1204 | 2500 | 3 + 2 |
-| `item.tool.toolkit` | frame 150 | haft 427 | 1500 | 1 + 1 |
+Rows are keyed by family; the archetype IDs in the second column are doc 05's (Canon §19) and the tool IDs doc 11's.
+
+| Family | Archetype | Primary role, ml | Secondary role, ml | Mass at reference (g) | Cells |
+|---|---|---|---|---|---|
+| melee | `arch.melee.dagger` | blade 47 | haft 42 | 400 | 1 + 1 |
+| melee | `arch.melee.blade_short` | blade 109 | haft 58 | 900 | 1 + 1 |
+| melee | `arch.melee.blade_long` | blade 170 | haft 84 | 1400 | 2 + 1 |
+| melee | `arch.melee.blade_great` | blade 367 | haft 150 | 3000 | 3 + 1 |
+| melee | `arch.melee.axe` | blade 133 | haft 606 | 1500 | 1 + 1 |
+| melee | `arch.melee.axe_great` | blade 292 | haft 1203 | 3200 | 2 + 2 |
+| melee | `arch.melee.mace` | head 181 | haft 502 | 1800 | 1 + 2 |
+| melee | `arch.melee.warhammer` | head 413 | haft 1000 | 4000 | 4 + 1 |
+| melee | `arch.melee.spear` | blade 57 | haft 1803 | 1800 | 1 + 2 |
+| melee | `arch.melee.halberd` | blade 217 | haft 1991 | 3200 | 2 + 2 |
+| melee | `arch.melee.quarterstaff` | haft 2400 | — | 1800 | 3 |
+| melee | `arch.melee.fist` | head 60 | soft 149 | 600 | 1 + 1 |
+| melee | `arch.melee.whip` | soft 683 | haft 151 | 700 | 2 + 1 |
+| melee | `arch.melee.chain` | head 269 | soft 97 | 2200 | 2 + 1 |
+| ranged | `arch.ranged.pistol` | frame 118 | haft 97 | 1000 | 1 + 1 |
+| ranged | `arch.ranged.pistol_heavy` | frame 189 | haft 151 | 1600 | 1 + 1 |
+| ranged | `arch.ranged.smg` | frame 327 | haft 303 | 2800 | 2 + 1 |
+| ranged | `arch.ranged.rifle_auto` | frame 343 | haft 1202 | 3600 | 2 + 2 |
+| ranged | `arch.ranged.rifle_marksman` | frame 381 | haft 1603 | 4200 | 2 + 2 |
+| ranged | `arch.ranged.shotgun` | frame 340 | haft 1500 | 3800 | 2 + 2 |
+| ranged | `arch.ranged.sniper` | frame 636 | haft 1994 | 6500 | 3 + 2 |
+| ranged | `arch.ranged.launcher` | frame 795 | haft 993 | 7000 | 4 + 1 |
+| ranged | `arch.ranged.beam` | frame 553 | focus 198 | 4500 | 3 + 1 |
+| ranged | `arch.ranged.charge_rifle` | limb 1967 | soft 30 | 1500 | 2 + 1 |
+| ranged | `arch.ranged.crossbow` | limb 1567 | haft 3100 | 3500 | 2 + 4 |
+| ranged | `arch.ranged.thrown` | blade 38 | — | 299 | 2 per 3 |
+| ranged | `arch.ranged.staff` | haft 2000 | focus 40 | 1530 | 2 + 1 |
+| ranged | `arch.ranged.wand` | focus 400 | — | 300 | 1 |
+| off-hand | `arch.offhand.shield_buckler` / `_heater` / `_tower` | plate 172 / 480 / 1105 | haft 197 / 298 / 406 | 1500 / 4000 / 9000 | 1+1 / 2+1 / 5+1 |
+| off-hand | `arch.offhand.lantern` | frame 151 | focus 5 (`mat.glass`) | 1200 | 1 + 1 glass |
+| off-hand | `arch.offhand.focus` | focus 800 | — | 600 | 1 |
+| off-hand | `arch.offhand.tome` | soft 960 | focus 100 | 900 | 1 + 1 |
+| ward | `arch.ward.aegis` / `kinetic` / `reflector` / `bulwark` | frame 34 / 147 / 96 / 372 | focus 44 / 59 / 60 / 98 | 300 / 1200 / 800 / 3000 | 1+1 / 1+1 / 1+1 / 2+1 |
+| tool | `item.tool.pick` | head 203 | haft 1204 | 2500 | 3 + 2 |
+| tool | `item.tool.toolkit` | frame 150 | haft 427 | 1500 | 1 + 1 |
 
 `arch.ranged.thrown` is the one archetype whose reference mass misses doc 05's 300 g, because no whole-millilitre iron blade weighs 300 g (38 ml is 299 g, 39 ml is 306 g). Doc 05 §3.3 then gives `mass_ratio_bp` 9966, `time_bp` 9989 and `stamina_bp = impact_bp = 9983`; `time_bp` 9989 leaves every tick count up to 454 unchanged, so thrown timing is exact. `item.tool.pick` and `item.tool.toolkit` match doc 11 §3.5's template masses.
 
@@ -867,6 +897,25 @@ A licensed graft `part.graft.<genre_suffix>.<name>` exists for each doc 11 manuf
 
 Example: Coffin Creek on a Rustmaw shotgun ricochets `mul_bp(5000, 7500) = 3750` Bp of a crit's `D2`; dependency verve with origin Weird West gives `Req[verve] = 5`.
 
+Each graft ID is its manufacturer's doc 11 §5.2 ID with `mfr.` replaced by `part.graft.`; the gimmick, its Dep and the class list are that manufacturer's row. No graft exists for `genre.unwritten` or `genre.ur_text`.
+
+| Grafts | `origin_genre` | Count |
+|---|---|---|
+| `part.graft.mythic_fantasy.deepanvil`, `part.graft.mythic_fantasy.silverbough`, `part.graft.mythic_fantasy.runecourt` | `genre.mythic_fantasy` | 3 |
+| `part.graft.gothic_horror.vesper_sons`, `part.graft.gothic_horror.grimhallow`, `part.graft.gothic_horror.ashgrave` | `genre.gothic_horror` | 3 |
+| `part.graft.cosmic_horror.hollow_lantern`, `part.graft.cosmic_horror.outer_choir`, `part.graft.cosmic_horror.dunwold` | `genre.cosmic_horror` | 3 |
+| `part.graft.space_opera.perihelion`, `part.graft.space_opera.umbra`, `part.graft.space_opera.starwright` | `genre.space_opera` | 3 |
+| `part.graft.cyberpunk.ghostline`, `part.graft.cyberpunk.neon_saint`, `part.graft.cyberpunk.chromaw` | `genre.cyberpunk` | 3 |
+| `part.graft.post_apocalypse.rustmaw`, `part.graft.post_apocalypse.lastditch`, `part.graft.post_apocalypse.geigerhaus` | `genre.post_apocalypse` | 3 |
+| `part.graft.weird_west.coffin_creek`, `part.graft.weird_west.seven_seals`, `part.graft.weird_west.sundown_rail` | `genre.weird_west` | 3 |
+| `part.graft.hardboiled_noir.midnight_avenue`, `part.graft.hardboiled_noir.rainslick`, `part.graft.hardboiled_noir.halloran` | `genre.hardboiled_noir` | 3 |
+| `part.graft.wuxia.jade_lotus`, `part.graft.wuxia.iron_crane`, `part.graft.wuxia.cloudpiercer` | `genre.wuxia` | 3 |
+| `part.graft.steampunk.brassworth`, `part.graft.steampunk.aetherline`, `part.graft.steampunk.boilerheart` | `genre.steampunk` | 3 |
+| `part.graft.fairy_tale.thimbleweald`, `part.graft.fairy_tale.thornwood`, `part.graft.fairy_tale.glass_cobbler` | `genre.fairy_tale` | 3 |
+| `part.graft.mythic_antiquity.hephaesteum`, `part.graft.mythic_antiquity.argive`, `part.graft.mythic_antiquity.delphic` | `genre.mythic_antiquity` | 3 |
+| `part.graft.oneiric.somnambule` | `genre.oneiric` | 1 |
+| `part.graft.redacted.bureau` | `genre.redacted` | 1 |
+
 ### 7.6 Compatibility
 
 1. The slot must be in the family list (§7.1); one part per slot.
@@ -944,7 +993,18 @@ Example: a steel longsword (1,334 g steel, 63 g oak) salvages `mul_bp(1334, 6000
 
 ### 9.1 Tool tiers
 
-A pick's tier is its head material's tier (minimum `tooltier.t1`); bare hands are `tooltier.t0`. Speed `TOOL_SPEED` (Bp): t0 3000, t1 10000, t2 13000, t3 16000, t4 20000, t5 25000. Class factor: a pick on stone, metal and crystal nodes, an `arch.melee.axe` or `axe_great` (tier of its primary) on timber and wooden blocks, and anything on soft nodes give 10000; any other tool gives 5000. Every other item's tool tier is its primary material's tier (doc 05 Table 3.2d), which doc 03 §13.2 compares with a block's `tool_tier` for weapon damage to blocks. Only resource nodes and `block.tag.destructible` blocks can be mined (Canon §4.3); a resource node is an interactable prop block, mined in place and never dug out of the terrain.
+A pick's tier is its head material's tier (minimum `tooltier.t1`); bare hands are `tooltier.t0`. Speed `TOOL_SPEED` (Bp): t0 3000, t1 10000, t2 13000, t3 16000, t4 20000, t5 25000. The tiers are ordered `t0 < t1 < … < t5`.
+
+| Tier | Held by | `TOOL_SPEED` (Bp, §9.2) | `TOOL_TERM` (§4.2) | Resource nodes it mines (§9.3 Req at or below) |
+|---|---|---|---|---|
+| `tooltier.t0` | bare hands; a crafter carrying no toolkit; any non-pick item whose primary is tier 0 | 3000 | −60 | timber, sand, clay, salvage, bone |
+| `tooltier.t1` | a pick with a tier-0 or tier-1 head; any other item with a tier-1 primary | 10000 | 0 | the t0 nodes plus copper, tin, zinc, silver, gold, iron, coal, obsidian, coral, stone |
+| `tooltier.t2` | an item whose primary (a pick's head) is tier 2 | 13000 | 10 | the t1 nodes plus titanium, jade |
+| `tooltier.t3` | primary or head tier 3 | 16000 | 20 | the t2 nodes plus orichalcum, star_metal, aetherium, psi_crystal |
+| `tooltier.t4` | primary or head tier 4 | 20000 | 30 | the t3 nodes plus dreamstuff, vellum (every node) |
+| `tooltier.t5` | primary or head tier 5 | 25000 | 40 | every node |
+
+Every block other than a resource node has `tool_tier` `tooltier.t0` (§2.5). Class factor: a pick on stone, metal and crystal nodes, an `arch.melee.axe` or `axe_great` (tier of its primary) on timber and wooden blocks, and anything on soft nodes give 10000; any other tool gives 5000. Every other item's tool tier is its primary material's tier (doc 05 Table 3.2d), which doc 03 §13.2 compares with a block's `tool_tier` for weapon damage to blocks. Only resource nodes and `block.tag.destructible` blocks can be mined (Canon §4.3); a resource node is an interactable prop block, mined in place and never dug out of the terrain.
 
 ### 9.2 Mining time
 
@@ -975,18 +1035,18 @@ Mineral nodes are every row below except timber, sand, clay and bone; salvage no
 
 | Node | Yield | Base | Hardness | Req |
 |---|---|---|---|---|
-| `block.node.copper`, `.tin`, `.zinc`, `.silver`, `.gold` | the metal's `.ore` | 2 (gold 1) | 4 | t1 |
+| `block.node.copper`, `block.node.tin`, `block.node.zinc`, `block.node.silver`, `block.node.gold` | the metal's ore (`mat.copper.ore`, `mat.tin.ore`, `mat.zinc.ore`, `mat.silver.ore`, `mat.gold.ore`) | 2 (gold 1) | 4 | t1 |
 | `block.node.iron` | `mat.iron.ore` | 2 | 5 | t1 |
 | `block.node.titanium` | `mat.titanium.ore` | 2 | 7 | t2 |
-| `block.node.orichalcum`, `.star_metal`, `.aetherium` | the metal's `.ore` | 1 | 8, 9, 7 | t3 |
+| `block.node.orichalcum`, `block.node.star_metal`, `block.node.aetherium` | the metal's ore (`mat.orichalcum.ore`, `mat.star_metal.ore`, `mat.aetherium.ore`) | 1 | 8, 9, 7 | t3 |
 | `block.node.coal` | `mat.coal` | 3 | 4 | t1 |
-| `block.node.obsidian`, `.coral` | the material | 2 | 5, 4 | t1 |
+| `block.node.obsidian`, `block.node.coral` | `mat.obsidian`, `mat.coral` | 2 | 5, 4 | t1 |
 | `block.node.jade` | `mat.jade` | 1 | 6 | t2 |
 | `block.node.psi_crystal` | `mat.psi_crystal` | 1 | 7 | t3 |
-| `block.node.dreamstuff`, `.vellum` | the material | 1 | 4, 5 | t4 |
+| `block.node.dreamstuff`, `block.node.vellum` | `mat.dreamstuff`, `mat.vellum` | 1 | 4, 5 | t4 |
 | `block.node.stone` | the genre stone | 3 | stone hardness | t1 |
 | `block.node.timber` | the genre wood | 3 | wood hardness | t0 |
-| `block.node.sand`, `.clay` | `mat.sand`, `mat.soil` | 2, 3 | 1 | t0 |
+| `block.node.sand`, `block.node.clay` | `mat.sand`, `mat.soil` | 2, 3 | 1 | t0 |
 | `block.node.salvage` | the genre salvage pair | 3 | 3 | t0 |
 | `block.node.bone` | `mat.bone` | 3 | 3 | t0 |
 
@@ -1023,15 +1083,15 @@ Plant blocks (doc 08 H and F sources) take a 30-tick interact (× 5000 at Surviv
 
 A `cat.corpse` other than Errata Remains is butchered in 240 ticks with Survival and destroyed. Flesh `min(12, floor_div(mass_g, 4000))` units, primary `min(8, floor_div(mass_g, 10000))`, secondary `min(4, floor_div(mass_g, 20000))`; each nonzero count gains 1 at Survival 25. Doc 04 §8.6 owns severed-part butchery and uses the same materials. A doc 13 template `materials` list overrides this table. A butchered material whose `min_d` exceeds `d_eff` (dragonbone before d 14, chitin before d 4) yields `mat.bone` instead, so early kills never hand out high-tier units:
 
-| Body plan or tag | Primary | Secondary | Flesh |
-|---|---|---|---|
-| `body.humanoid` | `mat.bone` | `mat.hide` if tagged beast | yes |
-| `body.quadruped`, `body.avian`, `body.serpentine` | `mat.hide` | `mat.bone` | yes |
-| `body.insectoid` | `mat.chitin` | — | no |
-| `body.construct` | first unit of the genre salvage pair, else `mat.iron` | `mat.copper` | no |
-| `body.amorphous`, `body.swarm` | — | — | no |
-| tag dragon | `mat.dragonbone` | `mat.hide` | yes |
-| tag undead | `mat.bone` | — | no |
+| Corpse | Doc 04 body plan or tag | Primary | Secondary | Flesh |
+|---|---|---|---|---|
+| humanoid | `body.humanoid` | `mat.bone` | `mat.hide` if tagged beast | yes |
+| beast-bodied | `body.quadruped`, `body.avian`, `body.serpentine` | `mat.hide` | `mat.bone` | yes |
+| insectoid | `body.insectoid` | `mat.chitin` | — | no |
+| construct | `body.construct` | first unit of the genre salvage pair, else `mat.iron` | `mat.copper` | no |
+| formless | `body.amorphous`, `body.swarm` | — | — | no |
+| dragon | tag dragon | `mat.dragonbone` | `mat.hide` | yes |
+| undead | tag undead | `mat.bone` | — | no |
 
 Butchering a sapient corpse costs composure 15 unless the butcher has `afflict.hunger` (doc 04 §11.3). Each output unit grants doc 04's 800 Survival milli-XP, at most 4,000 per corpse. Example: a 60,000 g quadruped at Survival 0 yields `min(12, 15) = 12` flesh, `min(8, 6) = 6` hide and `min(4, 3) = 3` bone, and grants 4,000 milli-XP (21 units, capped).
 
@@ -1049,36 +1109,47 @@ Example: Survival 20 beside water in light 12: `ceil_div(12000000, 14000) = 858`
 
 ### 10.1 Block catalog
 
-Block tags: `block.tag.destructible`, `block.tag.errata_placeable`, `block.tag.node`, `block.tag.hearth`, `block.tag.altar`. A block without `destructible` has `hardness_milli = -1` (§2.5), so worldgen terrain never breaks.
+Block tags (doc 03 §4.5 `tags`):
+
+| Tag | Meaning | Carried by |
+|---|---|---|
+| `block.tag.destructible` | Canon §4.3 destructible: damage, mining and explosions affect it; `hardness_milli = 1000 × hardness` unless the row overrides it (§2.5) | every block below whose `hardness_milli` is not −1 |
+| `block.tag.errata_placeable` | placed by a `cat.placeable` item (§10.3); doc 03 §4.5 loader rule 4 requires `destructible` with it | every placeable and `block.conjured` |
+| `block.tag.node` | resource node (§9.3): mined in place, breaks to `block.node_spent`, never broken by explosions | the 23 `block.node.*` |
+| `block.tag.hearth` | rest fire: doc 04 grants +2 composure per second within 3 m while its `light_block ≥ 12` and the Erratum is not `in_combat` | `block.campfire`, `block.campfire_out` |
+| `block.tag.altar` | doc 06 altar block for supplication, petition and offering within 3000 mm; an Erratum-placed one keeps the patron chosen at placement (§10.4) | `block.shrine_lamp` |
+
+A block without `destructible` has `hardness_milli = -1` (§2.5), so worldgen terrain never breaks.
 
 | Block | Material | Shape | `hardness_milli` | Notes |
 |---|---|---|---|---|
 | `block.air`, `block.void_bedrock`, `block.reinforced` | air, void, granite | none, full, full | −1 | doc 03, doc 12 shells |
-| `block.masonry.<m>` for every wall and floor material of doc 18 §3.4's block sets: granite, slate, basalt, sandstone, marble, brick, concrete, terracotta, coral, plasteel, titanium, polymer, scrap_iron, cast_iron, oak, pine, birch, cedar, bamboo, blackwood, thornwood, dreamstuff, paper, vellum (24) | that material | full | −1 | fixed genre walls and floors; never burn (§2.5) |
+| the 24 `block.masonry.<m>` of the masonry table below, one for every wall and floor material of doc 18 §3.4's block sets | that material | full | −1 | fixed genre walls and floors; never burn (§2.5) |
 | `block.soil`, `block.sand` | soil, sand | full | −1 | soil is `tillable` |
 | `block.cracked_wall` | granite | full | 2000 | destructible; hides secrets |
 | `block.planks` | oak | full | 3000 | destructible wooden structures |
 | `block.glass_pane` | glass | pane | 1000 | destructible |
 | `block.door.wood`, `block.door.iron` | oak, iron | door | 3000, 6000 | destructible; lock and HP rules §10.7 |
-| `block.light_fixture.<genre_suffix>` (16) | iron | fixture | 500 | `light_emit` = doc 12 `fixture_level` |
+| the 16 `block.light_fixture.<genre_suffix>` of §10.6 | iron | fixture | 500 | `light_emit` = doc 12 `fixture_level` |
 | `block.leaves` | leaves | cross | 0 | destructible, conceal 3 |
 | `block.ice` | ice | full | 2000 | §10.2 |
 | `block.web` | web | cross | 250 | §10.2 |
 | `block.obsidian`, `block.basalt`, `block.slag` | obsidian, basalt, slag | full | 5000, 6000, 4000 | doc 08 reaction products; destructible |
-| `block.node.*` (23), `block.node_spent` | §9.3, granite | full | §9.3, −1 | |
+| the 23 `block.node.*` of §9.3 | §9.3 | full | §9.3 | `block.tag.node` |
+| `block.node_spent` | granite | full | −1 | a broken node (§9.3) |
 | `block.crop` | leaves | cross | 0 | §9.7 |
 | `block.conjured` | granite | full | 2000 | doc 06 walls; renders as the local genre stone |
-| `block.barricade.wood`, `.stone`, `.metal` | oak, granite, iron | full | 3000, 5000, 6000 | placeable |
+| `block.barricade.wood`, `block.barricade.stone`, `block.barricade.metal` | oak, granite, iron | full | 3000, 5000, 6000 | placeable |
 | `block.barricade.gate` | oak | door | 3000 | placeable; opens only for `fac.errata` |
-| `block.bridge.plank`, `.metal` | oak, iron | slab (bottom) | 2000, 4000 | placeable |
-| `block.ladder.wood`, `.rope`, `.metal` | oak, linen, iron | ladder | 1000, 500, 3000 | placeable, climbable |
-| `block.cover.sandbag`, `.plate` | sand, iron | full | 3000, 6000 | placeable deployable cover |
+| `block.bridge.plank`, `block.bridge.metal` | oak, iron | slab (bottom) | 2000, 4000 | placeable |
+| `block.ladder.wood`, `block.ladder.rope`, `block.ladder.metal` | oak, linen, iron | ladder | 1000, 500, 3000 | placeable, climbable |
+| `block.cover.sandbag`, `block.cover.plate` | sand, iron | full | 3000, 6000 | placeable deployable cover |
 | `block.cover.barrier` | aetherium | pane, `gas_tight` 0 | 2000 | gadget-made; `light_filter` 0, conceal 2 |
 | `block.trap.spikes` | iron | layer level 1 | 1500 | placeable trap |
 | `block.torch`, `block.lantern` | oak, iron | fixture | 500, 2000 | light 14 (burns `TORCH_TICKS`), 15 |
 | `block.campfire`, `block.campfire_out` | granite | slab (bottom) | 2000 | light 15 / 0; `hearth`; heat 1000 DeciC while lit; `station.campfire` |
 | `block.shrine_lamp` | gold | fixture | 2000 | light 12; `altar` (doc 06 offering) |
-| `block.torch_out`, `block.lantern_out`, `block.shrine_lamp_out`, `block.light_fixture_out.<genre_suffix>` (16) | as the lit block | as the lit block | as the lit block | unlit states, `light_emit` 0 (§10.6) |
+| `block.torch_out`, `block.lantern_out`, `block.shrine_lamp_out`, and the 16 `block.light_fixture_out.<genre_suffix>` of §10.6 | as the lit block | as the lit block | as the lit block | unlit states, `light_emit` 0 (§10.6) |
 | `block.crate` | oak | full | 2000 | destructible; doc 11 container that drops its contents when broken |
 | `block.barrel` | oak | full | 2000 | destructible; `hide: enclosed` (doc 09 §10) |
 | `block.powder_keg` | oak | full | 1000 | destructible; `flammability_bp` 6000, `burn_runs` 5 and the `explosive` record exactly as doc 03 §4.5 shows |
@@ -1090,6 +1161,37 @@ Block tags: `block.tag.destructible`, `block.tag.errata_placeable`, `block.tag.n
 | `block.fuse_box` | iron | fixture | 3000 | destructible; doc 09 power cut |
 
 Every placeable and `block.conjured` carries `errata_placeable` and `destructible`. `hide` (`enclosed` or `under`) and `conceal_crouch_only` are block-record fields doc 09 reads; every block not listed with them has neither.
+
+**Masonry blocks.** Each `block.masonry.<m>` is fixed terrain: material `mat.<m>`, shape full, no tags, `hardness_milli` −1, `tool_tier` `tooltier.t0`, `flammability_bp` 0, `burn_runs` 0 and no melt fields (doc 03 §4.5 loader rule 2). The other fields are the §2.5 defaults, computed from §2.2 and listed here exactly. Doc 18 §3.4 sets: W walls, F floors. The Ur-Text also builds strata from every core genre's set. Sand and soil floors use `block.sand` and `block.soil`.
+
+| Block | `blast_res_milli` | `heat_cond_bp` | `sound_atten_ddb` | `conceal` | `light_emit` | `acoustic` | Doc 18 §3.4 use |
+|---|---|---|---|---|---|---|---|
+| `block.masonry.granite` | 5500 | 2800 | 370 | 15 | 0 | stone | MF W F; WX W F; UT W |
+| `block.masonry.slate` | 3500 | 2800 | 380 | 15 | 0 | stone | GH W F |
+| `block.masonry.basalt` | 5500 | 3700 | 400 | 15 | 0 | stone | CH W F |
+| `block.masonry.sandstone` | 3000 | 2800 | 330 | 15 | 0 | stone | WW W |
+| `block.masonry.marble` | 4000 | 2800 | 370 | 15 | 0 | stone | MA W F |
+| `block.masonry.brick` | 4000 | 2800 | 290 | 15 | 0 | stone | GH W; HN W; SP W |
+| `block.masonry.concrete` | 4500 | 2800 | 340 | 15 | 0 | stone | CP W F; PA W F; HN W F; RD W F |
+| `block.masonry.terracotta` | 2500 | 1900 | 290 | 15 | 0 | stone | MA W |
+| `block.masonry.coral` | 3000 | 1900 | 240 | 15 | 0 | stone | CH W |
+| `block.masonry.plasteel` | 7500 | 4600 | 450 | 15 | 0 | metal | SO W F |
+| `block.masonry.titanium` | 7500 | 3700 | 551 | 15 | 0 | metal | SO W |
+| `block.masonry.polymer` | 4500 | 1000 | 220 | 15 | 0 | synthetic | CP W; RD W |
+| `block.masonry.scrap_iron` | 4000 | 6400 | 600 | 15 | 0 | metal | PA W |
+| `block.masonry.cast_iron` | 4000 | 5500 | 600 | 15 | 0 | metal | SP W F |
+| `block.masonry.oak` | 4500 | 1900 | 175 | 15 | 0 | wood | MF W F; FT W F; SP F |
+| `block.masonry.pine` | 3000 | 1900 | 150 | 15 | 0 | wood | WW W F; HN F |
+| `block.masonry.birch` | 3500 | 1900 | 167 | 15 | 0 | wood | FT W |
+| `block.masonry.cedar` | 3000 | 1900 | 138 | 15 | 0 | wood | WX W F |
+| `block.masonry.bamboo` | 4500 | 1900 | 170 | 15 | 0 | wood | WX W |
+| `block.masonry.blackwood` | 5500 | 1900 | 220 | 15 | 0 | wood | GH W F |
+| `block.masonry.thornwood` | 5000 | 1900 | 190 | 15 | 0 | wood | FT W |
+| `block.masonry.dreamstuff` | 5000 | 3700 | 140 | 6 | 7 | cloth | ON W F |
+| `block.masonry.paper` | 1000 | 1000 | 180 | 15 | 0 | paper | ON W; UW W F |
+| `block.masonry.vellum` | 6000 | 1000 | 190 | 15 | 0 | paper | UT W F |
+
+`acoustic` abbreviates `noise.surface.<class>` (§2.4). `block.masonry.dreamstuff` glows at 7 because dreamstuff is `luminous`.
 
 ### 10.2 `block.ice` and `block.web`
 
@@ -1137,6 +1239,27 @@ Every light block has an unlit twin; snuffing, dousing, switching and relighting
 | `block.shrine_lamp` | 12 | arcane | `block.shrine_lamp_out` |
 | `block.light_fixture.<genre_suffix>` | doc 12 `fixture_level` | arcane in Oneiric, the Unwritten and the Ur-Text; electric where the genre's TECHNE ≥ 5 (Cosmic Horror, Space Opera, Cyberpunk, Post-Apocalypse, Hardboiled Noir, Steampunk, the Redaction); flame elsewhere | `block.light_fixture_out.<genre_suffix>` |
 
+The 16 worldgen fixtures, one per genre (`<genre_suffix>` is the Canon §5.2 suffix; material iron, shape fixture, `hardness_milli` 500, destructible; `light_emit` is doc 12's `fixture_level` for that genre lit and 0 unlit):
+
+| Lit block, unlit twin | Genre | `lightsrc` |
+|---|---|---|
+| `block.light_fixture.mythic_fantasy`, `block.light_fixture_out.mythic_fantasy` | `genre.mythic_fantasy` | flame |
+| `block.light_fixture.gothic_horror`, `block.light_fixture_out.gothic_horror` | `genre.gothic_horror` | flame |
+| `block.light_fixture.cosmic_horror`, `block.light_fixture_out.cosmic_horror` | `genre.cosmic_horror` | electric |
+| `block.light_fixture.space_opera`, `block.light_fixture_out.space_opera` | `genre.space_opera` | electric |
+| `block.light_fixture.cyberpunk`, `block.light_fixture_out.cyberpunk` | `genre.cyberpunk` | electric |
+| `block.light_fixture.post_apocalypse`, `block.light_fixture_out.post_apocalypse` | `genre.post_apocalypse` | electric |
+| `block.light_fixture.weird_west`, `block.light_fixture_out.weird_west` | `genre.weird_west` | flame |
+| `block.light_fixture.hardboiled_noir`, `block.light_fixture_out.hardboiled_noir` | `genre.hardboiled_noir` | electric |
+| `block.light_fixture.wuxia`, `block.light_fixture_out.wuxia` | `genre.wuxia` | flame |
+| `block.light_fixture.steampunk`, `block.light_fixture_out.steampunk` | `genre.steampunk` | electric |
+| `block.light_fixture.fairy_tale`, `block.light_fixture_out.fairy_tale` | `genre.fairy_tale` | flame |
+| `block.light_fixture.mythic_antiquity`, `block.light_fixture_out.mythic_antiquity` | `genre.mythic_antiquity` | flame |
+| `block.light_fixture.oneiric`, `block.light_fixture_out.oneiric` | `genre.oneiric` | arcane |
+| `block.light_fixture.redacted`, `block.light_fixture_out.redacted` | `genre.redacted` | electric |
+| `block.light_fixture.unwritten`, `block.light_fixture_out.unwritten` | `genre.unwritten` | arcane |
+| `block.light_fixture.ur_text`, `block.light_fixture_out.ur_text` | `genre.ur_text` | arcane |
+
 Electric fixtures belong to their room's circuit; `block.light_switch` and `block.fuse_box` act on that circuit as doc 09 §2.4 rows 4 and 6 say. Hiding props (`block.barrel`, `block.wardrobe` with `hide: enclosed`; `block.bed`, `block.table` with `hide: under`) hold the occupants doc 09 §10 allows; breaking one ejects them into the cell.
 
 ### 10.7 Doors
@@ -1177,7 +1300,7 @@ Examples: an unlocked wooden door at Folio 1 has `block_hp` 60,000 mHP: 10 swing
 
 ### 11.2 Catalog
 
-Recipes are workbench assembly recipes `recipe.bench.<gadget suffix>` with Tinkering (demolition: Fieldcraft); `×2` yields two consumables.
+Recipes are workbench assembly recipes `recipe.bench.<gadget suffix>` with Tinkering (demolition: Fieldcraft); `×2` yields two consumables. The 13 recipe IDs are `recipe.bench.turret_light`, `recipe.bench.drone_scout`, `recipe.bench.mine_frag`, `recipe.bench.trap_snare`, `recipe.bench.beacon_mend`, `recipe.bench.decoy`, `recipe.bench.turret_flame`, `recipe.bench.drone_combat`, `recipe.bench.mine_cryo`, `recipe.bench.barrier_projector`, `recipe.bench.tesla_coil`, `recipe.bench.demolition_charge` and `recipe.bench.noisemaker`; each has `kind` `recipe.kind.assembly`, `station` `station.workbench`, `station_tier` and `recipe_tier` equal to the Recipe column's tier (as for every §6.6 assembly row), `skill_min` equal to its skill value, and the Pool column's `pool`.
 
 | Gadget | Kind | Deploy | HP / AR base | Lasts | Effect | Recharge | Recipe: tier, skill, inputs | Pool |
 |---|---|---|---|---|---|---|---|---|
@@ -1322,15 +1445,27 @@ Folio 3, Mythic Fantasy. The Erratum (`(3 << 40) | 2`) has a steel pick (t2), Fi
 
 ## Exports
 
+Every concrete ID this chapter defines, written out in full. Each is defined with its data in the section named in the first column.
+
 | Namespace | IDs |
 |---|---|
-| `mat.` | the 69 materials of §2.2; `mat.<metal>.ore` for copper, tin, zinc, iron, silver, gold, titanium, orichalcum, star_metal, aetherium; `mat.role.{blade, head, haft, limb, frame, plate, soft, focus, block}`; `mat.tag.{absorbent, acid_soluble, alloying, arcane_reagent, brittle, edible, fabric, fae_bane, fat, flammable, fuel, luminous, metal, nonsolid, ricochet, silvered, stone, terrain, tillable, unbreakable, wood}` |
-| `tooltier.` | `t0` … `t5` |
-| `station.` | `hand`, `campfire`, `workbench`, `forge`, `loom`, `kitchen`, `alchemy`, `enchanting`, `scriptorium` |
-| `recipe.` | `recipe.kind.{shaped, shapeless, assembly, process, disassembly}`; the 127 recipes of §6.6 (process, ammunition, shaped and shapeless, assembly), §7.2, §8.5, §11.2 and §12.2; the 12 `r2` recipes form `loot.pool.recipes_2` |
-| `part.` | the 29 parts of §7.2; `part.graft.<genre_suffix>.<name>` for the 38 manufacturers of doc 11 §5.2 other than First Press and Marginal Press |
-| `block.` | every block of §10.1: `block.masonry.<m>` (24), `block.light_fixture.<genre_suffix>` and `block.light_fixture_out.<genre_suffix>` (16 each), 23 `block.node.*`, `block.node_spent`, the placeables, their unlit twins, the props (`crate`, `barrel`, `powder_keg`, `wardrobe`, `bed`, `table`), `tall_grass`, `vine`, `light_switch`, `fuse_box`; `block.tag.{destructible, errata_placeable, node, hearth, altar}` |
-| `gadget.` | the 13 gadgets of §11.2: six base, six in `loot.pool.gadgets_2`, and the crafted-only `gadget.noisemaker` |
+| `mat.` materials (69, §2.2) | `mat.copper`, `mat.tin`, `mat.zinc`, `mat.bronze`, `mat.iron`, `mat.cold_iron`, `mat.scrap_iron`, `mat.cast_iron`, `mat.steel`, `mat.brass`, `mat.silver`, `mat.hexed_silver`, `mat.gold`, `mat.chrome`, `mat.titanium`, `mat.moonsilver`, `mat.plasteel`, `mat.orichalcum`, `mat.star_metal`, `mat.aetherium`, `mat.redacted_alloy`, `mat.gold_leaf`, `mat.pine`, `mat.birch`, `mat.cedar`, `mat.bamboo`, `mat.oak`, `mat.thornwood`, `mat.blackwood`, `mat.elderwood`, `mat.granite`, `mat.sandstone`, `mat.slate`, `mat.basalt`, `mat.marble`, `mat.obsidian`, `mat.jade`, `mat.brick`, `mat.concrete`, `mat.terracotta`, `mat.glass`, `mat.rad_glass`, `mat.psi_crystal`, `mat.bone`, `mat.dragonbone`, `mat.chitin`, `mat.hide`, `mat.leather`, `mat.linen`, `mat.tweed`, `mat.silk`, `mat.rubber`, `mat.polymer`, `mat.carbon_fiber`, `mat.nanoweave`, `mat.coral`, `mat.flesh`, `mat.web`, `mat.paper`, `mat.vellum`, `mat.dreamstuff`, `mat.air`, `mat.void`, `mat.soil`, `mat.sand`, `mat.ice`, `mat.leaves`, `mat.coal`, `mat.slag` |
+| `mat.` ores (10, §2.6) | `mat.copper.ore`, `mat.tin.ore`, `mat.zinc.ore`, `mat.iron.ore`, `mat.silver.ore`, `mat.gold.ore`, `mat.titanium.ore`, `mat.orichalcum.ore`, `mat.star_metal.ore`, `mat.aetherium.ore` |
+| `mat.role.` (9, §2.4) | `mat.role.blade`, `mat.role.head`, `mat.role.haft`, `mat.role.limb`, `mat.role.frame`, `mat.role.plate`, `mat.role.soft`, `mat.role.focus`, `mat.role.block` |
+| `mat.tag.` (21, §2.4) | `mat.tag.absorbent`, `mat.tag.acid_soluble`, `mat.tag.alloying`, `mat.tag.arcane_reagent`, `mat.tag.brittle`, `mat.tag.edible`, `mat.tag.fabric`, `mat.tag.fae_bane`, `mat.tag.fat`, `mat.tag.flammable`, `mat.tag.fuel`, `mat.tag.luminous`, `mat.tag.metal`, `mat.tag.nonsolid`, `mat.tag.ricochet`, `mat.tag.silvered`, `mat.tag.stone`, `mat.tag.terrain`, `mat.tag.tillable`, `mat.tag.unbreakable`, `mat.tag.wood` |
+| `q.` (Canon §13.5's seven core values; this chapter adds none) | `q.awful`, `q.poor`, `q.normal`, `q.good`, `q.excellent`, `q.masterwork`, `q.peerless` |
+| `tooltier.` (6, §9.1) | `tooltier.t0`, `tooltier.t1`, `tooltier.t2`, `tooltier.t3`, `tooltier.t4`, `tooltier.t5` |
+| `station.` (9, §5.1) | `station.hand`, `station.campfire`, `station.workbench`, `station.forge`, `station.loom`, `station.kitchen`, `station.alchemy`, `station.enchanting`, `station.scriptorium` |
+| `recipe.kind.` (5, §6.1) | `recipe.kind.shaped`, `recipe.kind.shapeless`, `recipe.kind.assembly`, `recipe.kind.process`, `recipe.kind.disassembly` |
+| `recipe.` (127: 114 tabled in §6.6, §7.2, §8.5 and §12.2, then the 13 gadget recipes of §11.2; the 12 `r2` recipes form doc 11's `recipes_2` loot pool) | `recipe.smelt.copper`, `recipe.smelt.tin`, `recipe.smelt.zinc`, `recipe.smelt.iron`, `recipe.smelt.silver`, `recipe.smelt.gold`, `recipe.smelt.titanium`, `recipe.smelt.orichalcum`, `recipe.smelt.aetherium`, `recipe.smelt.star_metal`, `recipe.alloy.bronze`, `recipe.alloy.brass`, `recipe.alloy.steel`, `recipe.alloy.cast_iron`, `recipe.forge.cold_iron`, `recipe.ritual.hexed_silver`, `recipe.ritual.moonsilver`, `recipe.kiln.glass`, `recipe.kiln.brick`, `recipe.kiln.charcoal`, `recipe.kiln.alch_charcoal`, `recipe.loom.tan_leather`, `recipe.loom.weave_silk`, `recipe.fab.polymer`, `recipe.fab.carbon_fiber`, `recipe.fab.plasteel`, `recipe.fab.nanoweave`, `recipe.bench.ammo_light`, `recipe.bench.ammo_heavy`, `recipe.bench.ammo_shell`, `recipe.bench.ammo_draw`, `recipe.bench.ammo_rifle`, `recipe.bench.ammo_cell`, `recipe.bench.ammo_ordnance`, `recipe.forge.dagger`, `recipe.forge.blade_short`, `recipe.forge.blade_long`, `recipe.forge.blade_great`, `recipe.forge.axe`, `recipe.forge.axe_great`, `recipe.forge.mace`, `recipe.forge.warhammer`, `recipe.forge.spear`, `recipe.forge.halberd`, `recipe.bench.quarterstaff`, `recipe.forge.fist`, `recipe.loom.whip`, `recipe.forge.chain`, `recipe.forge.thrown`, `recipe.forge.pick`, `recipe.bench.toolkit`, `recipe.bench.lockpicks`, `recipe.bench.hacking_deck`, `recipe.hand.torch`, `recipe.hand.wall_torch`, `recipe.hand.bandage`, `recipe.hand.barricade_wood`, `recipe.hand.barricade_stone`, `recipe.hand.barricade_gate`, `recipe.forge.barricade_metal`, `recipe.hand.ladder_wood`, `recipe.loom.ladder_rope`, `recipe.hand.rope_ladder`, `recipe.forge.ladder_metal`, `recipe.hand.bridge_plank`, `recipe.forge.bridge_metal`, `recipe.hand.campfire`, `recipe.bench.lantern`, `recipe.bench.cover_sandbag`, `recipe.forge.cover_plate`, `recipe.bench.trap_spikes`, `recipe.hand.web_trap`, `recipe.bench.shrine_lamp`, `recipe.loom.armor_cloth`, `recipe.loom.armor_light`, `recipe.forge.armor_medium`, `recipe.forge.armor_heavy`, `recipe.bench.pistol`, `recipe.bench.pistol_heavy`, `recipe.bench.smg`, `recipe.bench.rifle_auto`, `recipe.bench.rifle_marksman`, `recipe.bench.shotgun`, `recipe.bench.sniper`, `recipe.bench.launcher`, `recipe.bench.beam`, `recipe.bench.charge_rifle`, `recipe.bench.crossbow`, `recipe.bench.staff`, `recipe.bench.focus`, `recipe.loom.tome`, `recipe.bench.lantern_held`, `recipe.forge.shield`, `recipe.bench.ward`, `recipe.bench.modify`, `recipe.bench.part_gun`, `recipe.forge.part_melee`, `recipe.forge.part_armor`, `recipe.bench.part_arcane`, `recipe.bench.part_module`, `recipe.disassemble.salvage`, `recipe.disassemble.strip`, `recipe.disassemble.extract_graft`, `recipe.cook.roast`, `recipe.cook.hearty_stew`, `recipe.cook.spiced_skewers`, `recipe.cook.strong_coffee`, `recipe.cook.mint_tea`, `recipe.cook.mushroom_soup`, `recipe.cook.herb_bread`, `recipe.cook.smoked_rations`, `recipe.cook.ginseng_broth`, `recipe.cook.troll_pie`, `recipe.cook.wanderers_feast`, `recipe.bench.turret_light`, `recipe.bench.drone_scout`, `recipe.bench.mine_frag`, `recipe.bench.trap_snare`, `recipe.bench.beacon_mend`, `recipe.bench.decoy`, `recipe.bench.turret_flame`, `recipe.bench.drone_combat`, `recipe.bench.mine_cryo`, `recipe.bench.barrier_projector`, `recipe.bench.tesla_coil`, `recipe.bench.demolition_charge`, `recipe.bench.noisemaker` |
+| `part.` loose parts (29, §7.2) | `part.barrel.short`, `part.barrel.long`, `part.barrel.heavy`, `part.barrel.rifled`, `part.feed.extended`, `part.feed.quick`, `part.feed.drum`, `part.optic.iron`, `part.optic.scope`, `part.optic.reflex`, `part.edge.keen`, `part.edge.heavy`, `part.edge.serrated`, `part.haft.long`, `part.haft.light`, `part.grip.wrapped`, `part.grip.guarded`, `part.focus.crystal`, `part.focus.conduit`, `part.plate.reinforced`, `part.lining.padded`, `part.coil.capacitor`, `part.barrel.suppressor`, `part.stock.braced`, `part.stock.folding`, `part.module.battery`, `part.module.plating`, `part.module.targeting`, `part.module.payload` |
+| `part.graft.` licensed grafts (38, §7.5) | `part.graft.mythic_fantasy.deepanvil`, `part.graft.mythic_fantasy.silverbough`, `part.graft.mythic_fantasy.runecourt`, `part.graft.gothic_horror.vesper_sons`, `part.graft.gothic_horror.grimhallow`, `part.graft.gothic_horror.ashgrave`, `part.graft.cosmic_horror.hollow_lantern`, `part.graft.cosmic_horror.outer_choir`, `part.graft.cosmic_horror.dunwold`, `part.graft.space_opera.perihelion`, `part.graft.space_opera.umbra`, `part.graft.space_opera.starwright`, `part.graft.cyberpunk.ghostline`, `part.graft.cyberpunk.neon_saint`, `part.graft.cyberpunk.chromaw`, `part.graft.post_apocalypse.rustmaw`, `part.graft.post_apocalypse.lastditch`, `part.graft.post_apocalypse.geigerhaus`, `part.graft.weird_west.coffin_creek`, `part.graft.weird_west.seven_seals`, `part.graft.weird_west.sundown_rail`, `part.graft.hardboiled_noir.midnight_avenue`, `part.graft.hardboiled_noir.rainslick`, `part.graft.hardboiled_noir.halloran`, `part.graft.wuxia.jade_lotus`, `part.graft.wuxia.iron_crane`, `part.graft.wuxia.cloudpiercer`, `part.graft.steampunk.brassworth`, `part.graft.steampunk.aetherline`, `part.graft.steampunk.boilerheart`, `part.graft.fairy_tale.thimbleweald`, `part.graft.fairy_tale.thornwood`, `part.graft.fairy_tale.glass_cobbler`, `part.graft.mythic_antiquity.hephaesteum`, `part.graft.mythic_antiquity.argive`, `part.graft.mythic_antiquity.delphic`, `part.graft.oneiric.somnambule`, `part.graft.redacted.bureau` |
+| `block.` resource nodes (23, §9.3) | `block.node.copper`, `block.node.tin`, `block.node.zinc`, `block.node.silver`, `block.node.gold`, `block.node.iron`, `block.node.titanium`, `block.node.orichalcum`, `block.node.star_metal`, `block.node.aetherium`, `block.node.coal`, `block.node.obsidian`, `block.node.coral`, `block.node.jade`, `block.node.psi_crystal`, `block.node.dreamstuff`, `block.node.vellum`, `block.node.stone`, `block.node.timber`, `block.node.sand`, `block.node.clay`, `block.node.salvage`, `block.node.bone` |
+| `block.` masonry (24, §10.1) | `block.masonry.granite`, `block.masonry.slate`, `block.masonry.basalt`, `block.masonry.sandstone`, `block.masonry.marble`, `block.masonry.brick`, `block.masonry.concrete`, `block.masonry.terracotta`, `block.masonry.coral`, `block.masonry.plasteel`, `block.masonry.titanium`, `block.masonry.polymer`, `block.masonry.scrap_iron`, `block.masonry.cast_iron`, `block.masonry.oak`, `block.masonry.pine`, `block.masonry.birch`, `block.masonry.cedar`, `block.masonry.bamboo`, `block.masonry.blackwood`, `block.masonry.thornwood`, `block.masonry.dreamstuff`, `block.masonry.paper`, `block.masonry.vellum` |
+| `block.` worldgen light fixtures and unlit twins (16 + 16, §10.6) | `block.light_fixture.mythic_fantasy`, `block.light_fixture.gothic_horror`, `block.light_fixture.cosmic_horror`, `block.light_fixture.space_opera`, `block.light_fixture.cyberpunk`, `block.light_fixture.post_apocalypse`, `block.light_fixture.weird_west`, `block.light_fixture.hardboiled_noir`, `block.light_fixture.wuxia`, `block.light_fixture.steampunk`, `block.light_fixture.fairy_tale`, `block.light_fixture.mythic_antiquity`, `block.light_fixture.oneiric`, `block.light_fixture.redacted`, `block.light_fixture.unwritten`, `block.light_fixture.ur_text`, `block.light_fixture_out.mythic_fantasy`, `block.light_fixture_out.gothic_horror`, `block.light_fixture_out.cosmic_horror`, `block.light_fixture_out.space_opera`, `block.light_fixture_out.cyberpunk`, `block.light_fixture_out.post_apocalypse`, `block.light_fixture_out.weird_west`, `block.light_fixture_out.hardboiled_noir`, `block.light_fixture_out.wuxia`, `block.light_fixture_out.steampunk`, `block.light_fixture_out.fairy_tale`, `block.light_fixture_out.mythic_antiquity`, `block.light_fixture_out.oneiric`, `block.light_fixture_out.redacted`, `block.light_fixture_out.unwritten`, `block.light_fixture_out.ur_text` |
+| `block.` other blocks (50, §10.1) | `block.air`, `block.void_bedrock`, `block.reinforced`, `block.soil`, `block.sand`, `block.cracked_wall`, `block.planks`, `block.glass_pane`, `block.door.wood`, `block.door.iron`, `block.leaves`, `block.ice`, `block.web`, `block.obsidian`, `block.basalt`, `block.slag`, `block.node_spent`, `block.crop`, `block.conjured`, `block.barricade.wood`, `block.barricade.stone`, `block.barricade.metal`, `block.barricade.gate`, `block.bridge.plank`, `block.bridge.metal`, `block.ladder.wood`, `block.ladder.rope`, `block.ladder.metal`, `block.cover.sandbag`, `block.cover.plate`, `block.cover.barrier`, `block.trap.spikes`, `block.torch`, `block.lantern`, `block.campfire`, `block.campfire_out`, `block.shrine_lamp`, `block.torch_out`, `block.lantern_out`, `block.shrine_lamp_out`, `block.crate`, `block.barrel`, `block.powder_keg`, `block.wardrobe`, `block.bed`, `block.table`, `block.tall_grass`, `block.vine`, `block.light_switch`, `block.fuse_box` |
+| `block.tag.` (5, §10.1) | `block.tag.destructible`, `block.tag.errata_placeable`, `block.tag.node`, `block.tag.hearth`, `block.tag.altar` |
+| `gadget.` (13, §11.2: six base, six in doc 11's `gadgets_2` loot pool, and the crafted-only noisemaker) | `gadget.turret_light`, `gadget.drone_scout`, `gadget.mine_frag`, `gadget.trap_snare`, `gadget.beacon_mend`, `gadget.decoy`, `gadget.turret_flame`, `gadget.drone_combat`, `gadget.mine_cryo`, `gadget.barrier_projector`, `gadget.tesla_coil`, `gadget.demolition_charge`, `gadget.noisemaker` |
 | Record fields | material `acoustic`; block `hide`, `conceal_crouch_only`, `lightsrc` (§10.6); instance fields `crafted`, `mat_bonus_bp`, `dish`, ammunition `smart`; gadget state `charges`, `progress`, `target` |
 
 Functions exported to other docs: `pick_material`, `equivalent`, `break_ticks(material)`, `break_ticks(cell)`, `door_lock_bp(cell)`, `mining_ticks`, `block_hp(cell)`, `block_drops(state, cause, actor)`, `on_block_changed`, `unit_mass_g`, `salvage_units`, `dur_max`, `wear`.
@@ -1340,15 +1475,15 @@ Functions exported to other docs: `pick_material`, `equivalent`, `break_ticks(ma
 | Doc | Assumed to provide |
 |---|---|
 | 02 | content validation of the §2.1 and §6.2 schemas, including both `recipe_overlap` rules and the §2.1 validation list |
-| 03 | `block.tag.*` tags on block records (§4.5); a `break_result` block field, default `block.air`, that its mining and damage breaks write (resource nodes set `block.node_spent`); `sys.crafting` in the tick order (§1.4); saved `placed_meta`, `stations` and `crops` maps cleared when another cause changes the cell; calls to `doc07::mining_ticks`, `doc07::block_hp` for every cell without `placed_meta` (doors included) and `doc07::block_drops`; placed-cell damage routed to `placed_meta.hp`; `hide`, `conceal_crouch_only` and `lightsrc` carried in the compiled block tables; its §13.3 placement accepting only `cat.placeable` items (its mention of `item.tool.torch` reads as the `block.torch` item); gadget entity kinds with the §11.3 fields |
+| 03 | `block.tag.*` tags on block records (§4.5); a `break_result` block field, default `block.air`, that its mining and damage breaks write (resource nodes set `block.node_spent`); `sys.crafting` in the tick order (§1.4); saved `placed_meta`, `stations` and `crops` maps cleared when another cause changes the cell; calls to `doc07::mining_ticks`, `doc07::block_hp` for every cell without `placed_meta` (doors included) and `doc07::block_drops`; placed-cell damage routed to `placed_meta.hp`; `hide`, `conceal_crouch_only` and `lightsrc` carried in the compiled block tables; its §13.3 placement accepting only `cat.placeable` items (its mention of `item.tool.torch` reads as the `block.torch` item); gadget entity kinds with the §11.3 fields; its §4.5 sample block records read as illustrations only, with §2.5 defaults and §10.1 rows governing (for example `block.masonry.marble` has `blast_res_milli` 4000, `heat_cond_bp` 2800, `sound_atten_ddb` 370 and `tool_tier` `tooltier.t0`) |
 | 04 | the Smithing (25, 50, 75, 100), Tinkering (25, 50, 75, 100), Fieldcraft (every tier) and Survival (25, 50) perks as quoted in §3, §4, §8, §9, §10, §11 and §13; Artificer talents `overclock`, `field_repair`, `scrap_savant`, `turret_tech`, `modular`, `drone_companion`, `reinforced`, `hardlight`, `masterwork`, `self_destruct`, `smart_rounds`, `legion`; `self_repair` spending `REPAIR_KIT_USE`; the XP rows quoted here (crafting, repair, salvage, Fieldcraft, Survival, a Tinkering row of `min(750, floor_div(750 × dmg, max))` per gadget hit); food values; meal-buff modifiers; augment installation at `station.workbench` |
 | 05 | `ref_mass_g` equal to §3.1's reference masses (staff 1530, tome 900); the §3.2 bleed multiplier on `status_bp`; `pen_cost` (negative means stop) and `ricochet` read from materials; turret projectiles using `rifle_auto` ballistics; a smart and a plain reserve counter per ammunition family, smart fired first with `DmgAdd +1000`; the shared `note_contradiction_failure(t)` |
 | 06 | `arcane_affinity`, `mat.tag.arcane_reagent`, `station.enchanting`, `block.conjured`, web and ice walls, the shrine lamp as an altar; bolt removal of nodes drops as §9.3 |
 | 08 | `ing.seed_*` as `cat.seed`, plant tags, `liq.water` withdrawal from containers, M-source ingredients on mineral nodes, `ing.charcoal` from `recipe.kiln.alch_charcoal`, `apparatus.vessel.crucible` and `liq.molten_metal` for pour mode, the §9.1 apparatus kinds and alchemy-station skins |
 | 09 | reading `acoustic`, `lightsrc`, the unlit twins, `hide` and `conceal_crouch_only`; the `suppressor` tag on `part.barrel.suppressor`; `noise.gadget.noisemaker` for `gadget.noisemaker`; lockpick snaps (durability 1 per pick) and hacking-deck wear 100 per attempt; `TOOL_Q` from crafted quality; Security-50 disarm yielding `block.trap.spikes` (§10.4); Seize applying `st.hacked` to hostile devices only |
-| 11 | mirroring §7.2's 22 loot parts and the graft loot; `item.book.schematic` with `teaches`; instance fields `crafted`, `mat_bonus_bp`, `dish` and part entries `{slot, part_id, mfr, quality}`; reusable gadgets with `stack_max` 1 and the §11.1 charges; doc 11 §3.6's "gadgets have dependency techne" read as §11.1 rule 3's skin rows; `gadget.noisemaker` in no loot pool; `item.tool.lockpicks`, `item.tool.hacking_deck`, `item.tool.rope`, `item.tool.torch`, `item.tool.toolkit` and `item.tool.pick` templates; doc 05 archetype IDs replacing its older ones |
+| 11 | mirroring §7.2's 22 loot parts and the graft loot; `item.book.schematic` with `teaches`; instance fields `crafted`, `mat_bonus_bp`, `dish` and part entries `{slot, part_id, mfr, quality}`; reusable gadgets with `stack_max` 1 and the §11.1 charges; doc 11 §3.6's "gadgets have dependency techne" read as §11.1 rule 3's skin rows; `gadget.noisemaker` in no loot pool; `item.tool.lockpicks`, `item.tool.hacking_deck`, `item.tool.rope`, `item.tool.torch`, `item.tool.toolkit` and `item.tool.pick` templates; doc 05 archetype IDs replacing its older ones; its §3.6 gadget loot rows reference this chapter's six base `gadget.*` IDs without redefining them, with stats equal to §11.2 |
 | 12 | station rooms and tiers (§5.1); the count and rooms of mineral (M) resource nodes, with an M weight in `node_w` (Canon gaps 13), and the §9.4 kind and size draws on `rng.worldgen`; `law.post_apocalypse.scarcity`; lock tiers on doors; genre stone, wood and `block.light_fixture.<suffix>`; walls without `destructible`; `block.masonry.<m>` for doc 18's wall and floor materials |
-| 13 | `ai.action.breach`; climb links on placed ladders, rope ladders and `block.vine`; door links using `break_ticks(cell)`; trap knowledge per squad; `disabled_until` for disabling abilities; the template `materials` list; its `block.dirt` read as `block.soil` |
+| 13 | `ai.action.breach`; climb links on placed ladders, rope ladders and `block.vine`; door links using `break_ticks(cell)`; trap knowledge per squad; `disabled_until` for disabling abilities; the template `materials` list; its dirt cells (the sand wyrm's burrow terrain) as `block.soil` (Canon gaps 20) |
 | 14 | `unlock.loot.recipes_2`, `unlock.loot.gadgets_2`, `run.marg.brittle_kit` rank `r`, `d_eff` |
 | 16, 17, 18 | host-authoritative crafting with instanced station outputs; grid, assembly and station UI with a 3 × 3 grid at `station.hand` (doc 17's 2 × 2 hand grid cannot hold the barricade, ladder and bridge patterns); skin names and localization keys |
 
@@ -1373,7 +1508,7 @@ Functions exported to other docs: `pick_material`, `equivalent`, `break_ticks(ma
 17. **Traps in two categories.** Canon §13.1 lists traps under both `cat.gadget` and `cat.placeable`. Resolved: block traps (`block.trap.spikes`, `block.web`) are `cat.placeable`; snares, mines and charges are `cat.gadget` props.
 18. **Block HP tables.** Canon §13.8 lists neither block-HP use. Placed blocks scale with `T(d_place)` against enemy damage; terrain destructibles with `P(d_current)` against Errata weapons (doc 03 G27). Requested: Canon §13.8 adds both rows.
 19. **Door HP by lock tier.** Doc 12 §9.2 asks this chapter for it; §10.7 defines `door_lock_bp`.
-20. **`block.dirt`.** Doc 13 names `block.dirt`; this chapter's block is `block.soil`.
+20. **Dirt.** Doc 13 named a dirt block (block.dirt) that this chapter never defined. Its meaning is this chapter's `block.soil` (the tillable `mat.soil` terrain block), so the materials ID map (`audit/map_materials.json`) renames it to `block.soil`; no dirt block exists. Closed.
 
 ## Acceptance tests
 
@@ -1427,6 +1562,7 @@ Functions exported to other docs: `pick_material`, `equivalent`, `break_ticks(ma
 48. **Suppressor.** `part.barrel.suppressor` installs on a pistol and is refused on a crossbow.
 49. **Veins.** Each M node doc 12 places draws exactly 1 `weighted` and 1 `range_incl(2, 4)` from its placement sequence and fills that many cells with one node kind.
 50. **Noisemaker.** A deployed `gadget.noisemaker` emits `noise.gadget.noisemaker` 10 times, once every 60 ticks of its 600 active ticks.
+51. **ID inventory.** The content set holds exactly 69 materials, 10 ores, 9 roles, 21 material tags, 6 tool tiers, 9 stations, 5 recipe kinds, 127 recipes, 29 parts, 38 grafts, 129 blocks, 5 block tags and 13 gadgets, each written out in Exports; every ID in these namespaces that any chapter names is one of them or a Canon §13.5 `q.` value. `mat.copper.ore` has unit mass 1568 g and unit value 3; `block.masonry.titanium` has `sound_atten_ddb` 551; `block.masonry.dreamstuff` has `light_emit` 7; `tooltier.t2` mines `block.node.jade` and not `block.node.psi_crystal`.
 
 ## Invariants annex
 
@@ -1456,4 +1592,5 @@ W! iteration ascending Gidx | EntityId | content ID                    N! HashMa
 W! one meal_buff per Erratum                                           W! Folio-scoped doc07 state cleared at ev.folio_exited
 W! live crops ≤ 4 per player ∧ harvested seed spent until next Folio   N! node, salvage or butchery unit with min_d > d_eff
 W! dismantled placeable keeps its uid                                  N! placement XP twice for one uid
+W! ∀ used ID ∈ mat. | station. | recipe. | part. | block. | tooltier. | gadget. ⇒ ∈ Exports    W! q. := Canon §13.5 seven
 ```

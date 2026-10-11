@@ -158,14 +158,14 @@ Every spawner except boss, editor and hunter spawners multiplies its base count 
 
 Humanoid sapient enemies carry a kin. Kin rules for enemies are the Canon §16.3 rules with the Errata-only clauses removed.
 
-| Kin | Enemy rules | Tags it adds |
+| Kin (Canon §16.3 `kin.<name>`) | Enemy rules | Tags it adds |
 |---|---|---|
-| `kin.human` | none | `human` |
-| `kin.construct` | immune to `st.poisoned`, `st.diseased`, `st.bleeding`; `resist[dmg.shock] -= 2500`; no breath; eligible for `st.hacked` only when tagged `electronic` (`body.construct` entities are always eligible, Canon §11.1); immune to every other mind-group status | `construct`, plus `electronic` when its basic attack depends on techne |
-| `kin.undead` | no natural HP regeneration; `dmg.umbral` taken heals 5000 Bp of its amount; `resist[dmg.radiant] -= 5000`; immune to `st.poisoned`, `st.diseased`; no breath | `undead` |
-| `kin.beastkin` | basic melee carries a 5000 Bp `dmg.slash` share; dark-vision +2 m | `beastkin` |
-| `kin.fae` | takes × 12500 damage from weapons whose primary material is `mat.cold_iron` or `mat.iron`; `origin_tol[arcana] += 1` | `fae` |
-| `kin.mutant` | one mutation from the template's `mutation` field: `regrowth` (natural HP regeneration 100 Bp of Max HP per second after 5 s without damage), `extra_arm` (adds `bp.arm_extra_1`), `hide` (`ar × 15000`) or `gills` (no breath) | `mutant` |
+| human | none | `human` |
+| construct | immune to `st.poisoned`, `st.diseased`, `st.bleeding`; `resist[dmg.shock] -= 2500`; no breath; eligible for `st.hacked` only when tagged `electronic` (`body.construct` entities are always eligible, Canon §11.1); immune to every other mind-group status | `construct`, plus `electronic` when its basic attack depends on techne |
+| undead | no natural HP regeneration; `dmg.umbral` taken heals 5000 Bp of its amount; `resist[dmg.radiant] -= 5000`; immune to `st.poisoned`, `st.diseased`; no breath | `undead` |
+| beastkin | basic melee carries a 5000 Bp `dmg.slash` share; dark-vision +2 m | `beastkin` |
+| fae | takes × 12500 damage from weapons whose primary material is `mat.cold_iron` or `mat.iron`; `origin_tol[arcana] += 1` | `fae` |
+| mutant | one mutation from the template's `mutation` field: `regrowth` (natural HP regeneration 100 Bp of Max HP per second after 5 s without damage), `extra_arm` (adds `bp.arm_extra_1`), `hide` (`ar × 15000`) or `gills` (no breath) | `mutant` |
 
 Every kin appears in the rosters (§8): human (`navy_trooper` and most sapient soldiers), construct (`flesh_golem`, `chrome_brawler`, `mantis_assassin`), undead (`ghoul`, `vampire_courtier`, `dead_miner`, `jiangshi`, `shade_warrior`), beastkin (`orc_raider`, `orc_sapper`, `werewolf`), fae (`bridge_troll`, `thorn_knight`, `wild_hunt_rider`) and mutant (`deep_one` gills, `star_seer` and `faceless_teacher` extra_arm, `pirate_boarder`, `mutant_behemoth` and `faceless_agent` hide, `glow_zealot` and `tunnel_mole` regrowth). The content validator rejects a roster that leaves any kin unused.
 
@@ -186,7 +186,7 @@ Tag vocabulary (closed enum, validated by schema): `human`, `construct`, `undead
 
 Tag bits for doc 03's `comp.tags` (`u64`): 0 `undead`, 1 `fiend`, 2 `divine`, 3 `eldritch`, 4 `construct`, 5 `electronic`, 6 `flier`, 7 `swimmer`, 8 `swarm`, 9 `breathless`, 10 `human`, 11 `beastkin`, 12 `fae`, 13 `mutant`, 14 `beast`, 15 `burrowing`, 16 `sapient`, 17 `mindless`, 18 `plant`, 19 `elemental`, 20 `editor`, 21 `summoned`, 22 `mounted`, 23 `enforcer`; bits 24 to 63 are reserved and must be 0.
 
-Senses: `sight` and `hearing` follow doc 09. `breath` detects any breathing entity within 6,000 mm through walls and replaces sight (the jiangshi rule; an Erratum holding its breath with `input.hold_breath` is undetectable to it, doc 09 §4.6). `tremor` detects footstep noise events at or above 25 dB within 12,000 mm through solid blocks. `thermal` ignores gas concealment (Canon §12.2) for sight rays. `scent` follows doc 09 scent marks (hounds, `fox_spirit`, `werewolf`, `big_bad_wolf`, `sewer_gator` and the beast companions carry it).
+Senses: `sight` and `hearing` follow doc 09. `breath` detects any breathing entity within 6,000 mm through walls and replaces sight (the jiangshi rule; an Erratum holding its breath with `input.hold_breath` is undetectable to it, doc 09 §4.6). `tremor` detects footstep noise events at or above 25 dB within 12,000 mm through solid blocks. `thermal` ignores gas concealment (Canon §12.2) for sight rays. `scent` follows doc 09 scent marks (`forest_wolf`, `fox_spirit`, `werewolf`, `big_bad_wolf`, `sewer_gator` and the beast companions carry it). The roster's hounds, `forest_wolf` and `big_bad_wolf`, set `perception` to `aware.profile.hound` (doc 09 §4.1 "hounds are named explicitly by their templates").
 
 ### 2.5 Resistance profiles
 
@@ -198,7 +198,7 @@ Enemy innate attacks use the template's `origin_genre` and the `dep` of each att
 
 Example: `enemy.space_opera.navy_trooper` has `dep = {techne}`, `Req = max(1, 10 - 2) = 8`. Inside a Fairy Tale bleed zone (TEC 1), `raw_gap = 7`, `Tol = 2`, `gap = 5`, so `C = 5`: potency 5000, 1500 Bp jam chance per volley rolled on keyed `rng.combat`, and `E = 6`, so +2400 Bp against Fairy Tale natives.
 
-Every attack of a `fac.editors` member has `dep = {}`. Editors and Red Ink servants are therefore Coherent everywhere and never receive Anachronism Edge. Every `fac.editors` attack whose profile does not name another affliction carries `afflict: {"id": "afflict.red_ink", "power": 20}` (doc 04 §10.1).
+Every attack of a `fac.editors` member has `dep = {}`. Editors and Red Ink servants are therefore Coherent everywhere and never receive Anachronism Edge. Every `fac.editors` attack whose profile does not name another affliction sets `afflict` to `afflict.red_ink` at power 20 (doc 04 §10.1).
 
 **World Laws.** An attack with `law_bound` is Disconnected (C = 6) wherever its Law is inactive (Canon §5.10): `enemy.wuxia.sect_disciple`'s `qinggong_leap` and `boss.wuxia.sword_saint`'s `qinggong_descent` carry `law.wuxia.qinggong`; `enemy.weird_west.marshal_rifleman`'s `high_noon` and `boss.weird_west.hanging_judge`'s `high_noon_duel` carry `law.weird_west.high_noon`. A disciple chasing an Erratum out of a Wuxia bleed zone loses its leap. Law tolerance grants apply to NPC components of the granted class exactly as to Errata components.
 
@@ -256,7 +256,7 @@ Role attack defaults, used when a roster entry does not override them:
 
 The AI is a utility AI (Dave Mark's infinite-axis model, R4 §9) with an action layer, a squad coordinator and a navigation service. It plugs into doc 03's system order (doc 03 §2.2): `sys.spawn_admit` (system 3) admits this chapter's `request_spawn` calls; `sys.ai_think` (system 6, owner 13) runs the four AI stages below in order and writes each agent's `comp.control`; `sys.actions` (system 7, docs 05 and 06) executes attacks and casts from that control; `sys.erasure` (system 32, owner 13) runs §10.5 and §10.6. Asleep entities (doc 03 §15.2) skip `sys.ai_think` entirely and draw nothing.
 
-| Stage inside `sys.ai_think` | Period | Phase | Iteration order | Draws |
+| Stage (inside system 6) | Period | Phase | Iteration order | Draws |
 |---|---|---|---|---|
 | 1. Squad coordinator (§4.10) | 30 | `squad_id % 30` | ascending `squad_id` | none |
 | 2. Director (§10) | 30 | 11 | one instance per Folio | `rng.spawn` |
@@ -442,7 +442,7 @@ States: `Idle`, `Moving`, `Windup`, `Active`, `Recovery`, `Channel`, `Interrupte
 | `Surrendered` | takes any damage | `Fleeing` | `flee_until = u64::MAX` (rest of the Folio) |
 | `Surrendered` | an Erratum completes a 30-tick spare interact | `Spared` | faction becomes `fac.neutral`; walks to the nearest exit door; `ev.entity_pacified` (§11.1) |
 | `Idle` | think selects an attack or ability | `Windup` until `t + windup` | acquire token; `cooldown_until = t + cooldown`; publish telegraph |
-| `Idle` | think selects a channel action: `use_item` (45), `pick_up` (30), `eat_corpse` (120), `raise_alarm` (60), `relight` (60), `wake_ally` (60), `call_allies` (30) or an ability of kind `self` or `aura` with a channel time | `Moving` to the action's cell when farther than 1500 mm, else `Channel` until `t + channel_ticks` | |
+| `Idle` | think selects a channel action: `use_item` (45), `pick_up` (30), `eat_corpse` (120), `raise_alarm` (60), `relight` (60), `wake_ally` (60), `call_allies` (30), `breach` (until its cell breaks, §4.7) or an ability of kind `self` or `aura` with a channel time | `Moving` to the action's cell when farther than 1500 mm, else `Channel` until `t + channel_ticks` | |
 | `Idle` | think selects a movement action | `Moving` | request path (§4.13) |
 | `Idle` | think selects `idle` | `Idle` | |
 | `Moving` | goal reached for a channel action | `Channel` until `t + channel_ticks` | |
@@ -452,7 +452,7 @@ States: `Idle`, `Moving`, `Windup`, `Active`, `Recovery`, `Channel`, `Interrupte
 | `Windup` | `t == phase_until` | `Active` until `t + active` | ranged aim locks 6 ticks before this transition |
 | `Active` | `t == phase_until` | `Recovery` until `t + recovery` | |
 | `Recovery` | `t == phase_until` | `Idle` | token released at `t + 30` |
-| `Channel` | the action's target or cell became invalid (target dead, item taken, prop destroyed) | `Idle` | no effect |
+| `Channel` | the action's target or cell became invalid (target dead, item taken, prop destroyed, breach cell broken) | `Idle` | no effect |
 | `Channel` | `t == phase_until` | `Idle` | the action's completion effect |
 
 While `Feared`, `comp.control` moves at run speed along the path that maximizes distance from `flee_from` (the §4.9 flight cell search with `flee_from` as the only threat; no draw) and never attacks (doc 06 §15). While `Fleeing`, the same with every known threat. `Surrendered` and `Spared` agents never attack and are never assigned tokens or squad orders. NPCs have no composure, so `st.dread` acts only through morale (§4.9, doc 06 G10).
@@ -498,6 +498,7 @@ Every action lists its weight and considerations in the order they multiply. `[r
 | `ai.action.call_allies` | 9000 | `target_aware` → `gate_half`; `allies_near` → `soft_up` | 30-tick shout; emits the doc 09 callout |
 | `ai.action.pick_up` | 8500 | `item_value` → `linear_up`; `since_damaged`[120] → `linear_up` | §5.3 |
 | `ai.action.dig` | 7000 | precondition: path blocked by a breakable block | §4.13 |
+| `ai.action.breach` | 7500 | precondition: the agent's next path link is a breach link (§4.13) | doc 07 §10.5; a channel action (§4.6) that lasts until the cell breaks: the agent faces the Errata-placed cell and strikes it on every tick `t0 + k × cycle_ticks` (`t0` the `Channel` start, `k ≥ 1`), each strike `damage_block(cell, B1, basic-attack shares, agent, 5000)` (doc 03 §13.2, the melee block factor; `B1` is the agent's ×1 basic-attack `B` of §2.2, whatever its basic attack's kind); placeables are `tooltier.t0`, so every strike counts; no token, no telegraph, no draw; when the cell breaks (cause `grid.cause.broken`) the §4.6 invalid-cell row ends the channel and the next think resumes the path |
 | `ai.action.vanish` | 9000 | `target_visible` → `binary`; `cooldown_ready` → `binary`; `light_here` → `linear_down` | stalker |
 | `ai.action.eat_corpse` | 8000 | `corpse_near` → `binary`; `self_hp` → `quad_down` | ghouls, beasts: heals 2500 Bp of Max HP over 120 ticks |
 | `ai.action.follow_owner` | 7000 | `owner_dist` → `logistic_up` | minions (§6) |
@@ -507,7 +508,7 @@ Every action lists its weight and considerations in the order they multiply. `[r
 | `ai.action.relight` | 6500 | precondition: sapient, not `construct`, `undead` or `beast`, a doc 09 §2.4 darkness disturbance at `aware.suspicious`, `target_aware` < 10000 | walk to the darkened cell (or the room's fuse box for an electric cut, doc 09 §2.4); 60-tick channel; then doc 07's lit state of the fixture is written with `set_block` and cause `grid.cause.toggled` (doc 03); needs `uses_items` for flame sources |
 | `ai.action.wake_ally` | 8500 | precondition: sapient, an ally with `st.sleeping` or doc 09 subdued within 16000 mm of path, `target_aware` < 10000 | walk to it, 60-tick interact; the ally wakes and enters `aware.searching` at its own position with Vigilance (doc 09 §9.4) |
 
-Behavior sets (`ai.set.*`) list the actions an agent scores. Every set also contains `idle`, `wander`, `patrol`, `investigate`, `search`, `return`, `call_allies`, `raise_alarm`, `relight` and `wake_ally` (the last four sapient only) and `ability` entries for each non-basic attack. The largest set, `ai.set.soldier`, scores 10 extras, 10 common actions and its abilities, inside the 24-action budget (§4.14).
+Behavior sets (`ai.set.*`) list the actions an agent scores. Every set also contains `idle`, `wander`, `patrol`, `investigate`, `search`, `return`, `call_allies`, `raise_alarm`, `relight` and `wake_ally` (those four sapient only), `breach` (agents of a ground nav class: `small`, `humanoid`, `large`, `mounted`, `burrower`) and `ability` entries for each non-basic attack. The largest set, `ai.set.soldier`, scores 10 extras, 11 common actions and its abilities (at most 3), inside the 24-action budget (§4.14).
 
 | Set | Extra actions |
 |---|---|
@@ -557,7 +558,7 @@ Forced targets override `ai_target` in this order: `st.taunted` forces the taunt
 | squad reduced to half its spawn size | −1000 (once) |
 | each think in combat while living allies ≥ 2 × alerted Errata | +100 |
 | `enemy.ab.bolster` or `elite.rallying` pulse | +1500 |
-| `st.dread` applied to the agent (NPCs have no composure, doc 06) | −2000 |
+| the agent gains dread | −2000 per `st.dread` application (NPCs have no composure, doc 06) |
 
 Agents tagged `construct`, `mindless`, `undead` or `editor`, ranks boss, editor and hunter, and `summoned` agents are morale-immune. Below 2500:
 
@@ -624,7 +625,8 @@ A cell is passable when its block is air, a non-solid plant, an open door, a liq
 | deep drop | down 4 or more blocks; only when the drop height is below `SAFE_FALL` (Canon §4.2) at the agent's position | 1200 per block |
 | climb | ladder, vine or rope blocks (doc 07) | 2000 per block |
 | door | closed unlocked door | 1000 + 1500 |
-| locked door | key holder (a member of the door's faction, or a hacked construct at an electronic door, §5.7): opens it; `ai.nav.large` or brute role: breaks it; otherwise impassable | key holder 1000 + 1500; breaker 1000 + `floor_div(break_ticks(door) × walk_mm_s, 60)` |
+| locked door | key holder (a member of the door's faction, or a hacked construct at an electronic door, §5.7): opens it; `ai.nav.large` or brute role: breaks it; otherwise impassable. An Errata `block.barricade.gate` uses the breach row instead | key holder 1000 + 1500; breaker 1000 + `floor_div(break_ticks(door) × walk_mm_s, 60)` |
+| breach | ground nav classes (every class except `ai.nav.flier` and `ai.nav.swimmer`); a cell holding an Errata-placed `block.barricade.*` (gate included) or `block.cover.*` block (doc 07 §10.5); traversed by `ai.action.breach` | `1000 + floor_div(ceil_div(hp × 60, block_dps) × walk_mm_s, 60)` with `block_dps = floor_div(mul_bp(B1, 5000) × 60, cycle_ticks)`, where `hp` is the cell's `placed_meta.hp` when the path is requested and `B1` the agent's ×1 basic-attack `B` (§2.2) |
 | dig | burrower or sapper; destructible-tagged or Errata-placed block (hunters: §10.5) | 1000 + `floor_div(dig_ticks × walk_mm_s, 60)` |
 | hazard | cell with fire, lava contact, acid or electrified liquid | × 3; lava impassable unless `immune` contains `dmg.fire` |
 | light | agents with tag `undead` or `fiend` at `light_at ≥ 12` | × 4 |
@@ -765,9 +767,9 @@ Every elite carries one non-aspect modifier. Every champion carries one champion
 
 | ID | Aspect | Effect | Min Folio | Excluded roles |
 |---|---|---|---|---|
-| `elite.warded` | yes | Canon §17.3a; countered by `counter.ward_breaker` | 3 | — |
-| `elite.surging` | yes | Canon §17.3a; countered by `counter.disruptor` | 3 | — |
-| `elite.unstoppable` | yes | Canon §17.3a; countered by `counter.staggerer` | 3 | — |
+| `elite.warded` | yes | Canon §17.3a: a ward pool of `mul_bp(max_hp_mhp, 5000)` that depletes per Canon §10.5 step 7 and refills fully 180 ticks after the carrier last took damage (doc 05 §15.2); countered by `counter.ward_breaker` | 3 | — |
+| `elite.surging` | yes | Canon §17.3a: attack and cast speed × 13000; regenerates 200 Bp of Max HP per second (doc 05 §15.2 accumulator, `k = 60`) unless it has `st.unraveled` or `st.shocked`; countered by `counter.disruptor` | 3 | — |
+| `elite.unstoppable` | yes | Canon §17.3a: immune to `st.staggered` and `st.knocked_down` from poise (doc 05 §15.2); countered by `counter.staggerer` | 3 | — |
 | `elite.vampiric` | no | heals 1500 Bp of the HP damage it deals | 1 | — |
 | `elite.molten` | no | immune to `st.burning`; attack shares scaled by 7000 and `dmg.fire` 3000 added; on death a 3000 mm environmental `dmg.fire` blast of base 15 HP (Canon §10.6) | 1 | — |
 | `elite.glacial` | no | immune to `st.frozen`; Errata within 4000 mm gain direct `st.chilled` each status pulse | 1 | — |
@@ -781,7 +783,7 @@ Every elite carries one non-aspect modifier. Every champion carries one champion
 | `elite.mirrored` | no | the first projectile hit it takes in each 240-tick window deals it nothing and instead reflects to the projectile's owner as a Canon §10.6 reflected hit with the projectile's shares and `D2 = min(that hit's D2, mul_bp(B1, 15000))`, no crit | 6 | — |
 | `elite.phasing` | no | every 240 ticks becomes intangible for 60 ticks (no capsule tests) and blinks up to 6000 mm to the walkable cell nearest the point 3000 mm behind its target (ties lower cell index, no draw) after a 30-tick `marker` telegraph; countered by `counter.anchor` (doc 05 §15.1: no phasing for 300 ticks) | 6 | cavalry |
 | `elite.redlined` | no | each hit pours 1000 ml of `liq.red_ink` on the target's feet cell (Canon §12.1), at most once per 600 ticks | 6 | — |
-| `elite.miasmic` | no | immune to `st.poisoned`; emits 1000 ml of `gas.miasma` into its cell every 120 ticks | 6 | — |
+| `elite.miasmic` | no | immune to `st.poisoned`; every 120 ticks emits one saturated cell of `gas.miasma` at its feet cell, `emit_gas_volume(cell, gas.miasma, 1)` (doc 08 §2.7) | 6 | — |
 | `elite.rallying` | no | every 300 ticks, allies of its faction within 12000 mm gain direct `st.empowered` and +1500 morale | 11 | — |
 | `elite.gravitic` | no | every 360 ticks, after a 45-tick `ring` telegraph, pulls every Erratum within 10000 mm 3000 mm toward itself over 20 ticks | 11 | — |
 | `elite.vengeful` | no | on death, after a 90-tick `circle` telegraph, a 4000 mm `dmg.arcane` blast with `dmg_mult_bp` 30000 | 11 | — |
@@ -822,7 +824,9 @@ Undead-, fiend- and cult-heavy high-MYTHOS genres lean to regenerating surging c
 
 ## 8. Genre rosters
 
-Each genre lists its factions and at least 6 enemies. Column conventions: **Name** is the suffix of `enemy.<genre_suffix>.<name>`. **Faction** is the `<group>` of `fac.native.<genre_suffix>.<group>`, or `wild` for `fac.wild.<genre_suffix>`. **Signature** is the suffix of `enemy.ab.<name>` and its effect, in addition to the role defaults of §3. **Dep** is the axiom dependency set of the basic attack and the signature (Canon §5.3). **Loot** is the template's doc 11 §9.3 `loot_role`: its kill drops roll doc 11's `loot.drop.<rank>` table (§9.5) with that role's category bias, and the `beast` role rolls `loot.trophy`. **W** is the Director weight inside its faction (§10.2). Every roster has a swarmer, which is the fallback pool for `enemy.ab.summon` and `elite.brood` (§5.5); Editor squads (§8.15) join every genre's room-faction draw (§10.2). A `fac.native` faction holds at least one `sapient` template or a vendor; packs of beasts and mindless monsters with no sapient member are `fac.wild` (Canon §15).
+Each genre lists its factions and at least 6 enemies. Column conventions: **Name** is the suffix of `enemy.<genre_suffix>.<name>`. **Faction** is the `<group>` of `fac.native.<genre_suffix>.<group>`, or `wild` for `fac.wild.<genre_suffix>`. **Signature** is the suffix of `enemy.ab.<name>` and its effect, in addition to the role defaults of §3. **Dep** is the axiom dependency set of the basic attack and the signature (Canon §5.3). **Loot** is the template's doc 11 §9.3 `loot_role`: its kill drops roll doc 11's `loot.drop.<rank>` table (§9.5) with that role's category bias, and the `beast` role rolls `loot.trophy`. **W** is the Director weight inside its faction (§10.2). Every roster has a swarmer, which is the fallback pool for `enemy.ab.summon` and `elite.brood` (§5.5); Editor squads (§8.15) join every genre's room-faction draw (§10.2). A `fac.native.*` faction holds at least one `sapient` template or a vendor; packs of beasts and mindless monsters with no sapient member are `fac.wild.*` (Canon §15).
+
+**Roster IDs.** A roster is named by the prefix of its entries: `enemy.<genre_suffix>` for the 15 genres of §8.1 to §8.14 and §8.16 (for example `enemy.gothic_horror`, whose entries are `enemy.gothic_horror.*`), and `enemy.editors` for the six Editor squads of §8.15. Doc 12's GPV field 52 `roster` holds one of these IDs; `genre.unwritten`'s roster is `enemy.editors` (§8.15, Canon §5.2). The §8.17 templates belong to no roster, including `enemy.editors.revisor` and `enemy.editors.invader`, which share the `enemy.editors` prefix at weight 0, as do the `enemy.editors.kit.*` records of §10.7.
 
 ### 8.1 Mythic Fantasy
 
@@ -918,7 +922,7 @@ Factions: `outlaw_gang`, `lawmen`, `railroad_company`, `hex_coven`, wild.
 | `outlaw_gunhand` | shooter | humanoid | human; sapient | outlaw_gang | `fan_the_hammer`: 6-round burst 4 ticks apart, × 3000 each | techne | marksman | 2000 |
 | `marshal_rifleman` | sniper | humanoid | human; sapient | lawmen | `high_noon`: a 90-tick standoff telegraph; if the target is visible at its end, the shot is a guaranteed crit at × 15000 | verve | marksman | 1000 |
 | `hexslinger` | caster | humanoid | human; sapient | hex_coven | `hex_bullet`: `dmg.umbral` 10000, `st.withering` power 60 | mythos | caster | 1500 |
-| `railroad_automaton` | brute | construct | —; construct, electronic | railroad_company | `steam_ram`: `charge` that leaves 1000 ml of `gas.steam` in each of the last 3 cells of its charge path | techne | construct | 1500 |
+| `railroad_automaton` | brute | construct | —; construct, electronic | railroad_company | `steam_ram`: `charge` that leaves one saturated cell of `gas.steam` (`emit_gas_volume(cell, gas.steam, 1)`, doc 08 §2.7) in each of the last 3 cells of its charge path | techne | construct | 1500 |
 | `sand_wyrm` | stalker | serpentine | —; beast, burrowing | wild | `sand_swim`: moves through `block.sand` and `block.dirt` cells as if passable (no block breaks) and surfaces under its target with direct `st.knocked_down`, cooldown 600 | — | beast | 500 |
 | `posse_rider` | cavalry | humanoid on runner (horse) | human; sapient, mounted | lawmen | `lasso`: 12000 mm projectile, direct `st.grappled` and a 4000 mm pull | — | marksman | 1500 |
 
@@ -961,7 +965,7 @@ Factions: `clockwork_guild`, `sky_pirates`, `luddite_brigade`, wild.
 | `sky_aeronaut` | flier | humanoid | human; sapient, flier | sky_pirates | `grapnel_swing`: 15000 mm grapple to a solid block, then a dive attack | techne | skirmisher | 1500 |
 | `galvanist` | caster | humanoid | human; sapient | clockwork_guild | `arc_coil`: `dmg.shock` 10000 that chains to 2 more targets within 4000 mm at 5000 Bp | techne | caster | 1000 |
 | `luddite_wrecker` | sapper | humanoid | human; sapient | luddite_brigade | `sabot`: melee hits disable one Errata gadget, turret or drone for 600 ticks | — | brute | 1000 |
-| `steam_juggernaut` | guardian | construct | —; construct, electronic | clockwork_guild | `boiler_vent`: every 300 ticks emits 1000 ml of `gas.steam` into each of the 4 orthogonally adjacent air cells at its feet level | techne | construct | 1000 |
+| `steam_juggernaut` | guardian | construct | —; construct, electronic | clockwork_guild | `boiler_vent`: every 300 ticks emits one saturated cell of `gas.steam` (`emit_gas_volume(cell, gas.steam, 1)`) into each of the 4 orthogonally adjacent air cells at its feet level | techne | construct | 1000 |
 | `sewer_gator` | brute | quadruped | —; beast, swimmer | wild | `death_roll`: grab with direct `st.grappled`, then × 25000 `dmg.slash` after 60 ticks unless the grab breaks | — | beast | 1500 |
 
 ### 8.11 Fairy Tale
@@ -1171,6 +1175,14 @@ Mini-boss loot is `loot.drop.boss` (§9.1). Every mini-boss attack has the `dep`
 
 The Director (`director.profile.standard` in standard and challenge Folios; `director.profile.boss` in Editor Folios; `director.profile.rest` in rest Folios, which spawn nothing, doc 12 §6.2, doc 14 §3.1) owns population, waves, intensity pacing and Erasure hunters. It runs as stage 2 of `sys.ai_think` on period 30, phase 11, and its population and wave draws use the host-only sequential stream `rng.spawn`.
 
+Doc 12 §6.2 names the profile of each Folio type. The profiles differ only in these rows; everything else in §10 applies to all three.
+
+| Profile ID | Folio types | Population `pop` (§10.1) | Initial phase (§10.4) | Reserve waves (§10.4) | Scripted waves (§10.4) | Erasure clock start (§10.5) |
+|---|---|---|---|---|---|---|
+| `director.profile.standard` | standard, challenge | `mul_bp(POP_BASE_MSKE, density_bp)`, planned in full: mini-boss, champions, elites, minions, standards, reserve and Keeper | `director.phase.build_up` | yes; the three Seal waves under `run.rubric.seal` | every source | Folio entry |
+| `director.profile.boss` | boss (Editor Folio) | `mul_bp(mul_bp(POP_BASE_MSKE, density_bp), BOSS_APPROACH_BP)` as the checkpoint squad in `room.editor_checkpoint`: elites, minions and standards only, no reserve | `director.phase.boss` | none | only after the Editor's death | the Editor's death tick |
+| `director.profile.rest` | rest | 0: no initial population | `director.phase.exhausted` | none | none (doc 12 §6.2: no ambient or scripted waves) | Folio entry; hunters use the spawn anchors of non-safe rooms, which doc 12 keeps |
+
 ### 10.1 Folio budget and population plan
 
 Units are milli-SKE (mSKE, standard-kill equivalents): minion 300, standard 1000, elite 3000, champion 6000, boss 20000, editor 40000, hunter 5000, which is `rank_xp_bp / 10`.
@@ -1231,8 +1243,8 @@ Each living Erratum has `intensity_bp` in `0..=10000`:
 | DoT damage taken | half of the above |
 | a hostile dies within 12000 mm | `+ floor_div(400 × rank_xp_bp, 10000)`: minion 120, standard 400, elite 1200, champion 2400 |
 | a control-category status applied to it | +1500 |
-| `ev.player_downed` | set to 10000 |
-| each Director run with no hostile at `aware.alert` toward it | −300 |
+| the Erratum is downed | set to 10000 on its `ev.player_downed` |
+| each Director run with no hostile alerted toward it | −300 (alerted: doc 09 `aware.alert`) |
 | each Director run otherwise | −50 |
 
 All clamp to `0..=10000`. Party intensity `I` is the maximum over living Errata. Example: a 25 HP hit on an 85 HP Erratum adds `floor_div(25000 × 30000, 85000) = 8823`.
@@ -1252,17 +1264,17 @@ All clamp to `0..=10000`. Party intensity `I` is the maximum over living Errata.
 
 `last_wave_tick` starts at the Folio entry tick. A **reserve wave** takes `min(reserve, 3000 + 1000 × volume)` mSKE from the reserve, where `volume = min(5, v(f))` with doc 14 §3.1's Volume `v(f)` (so 5 in Marginalia), filled with reserved standards first and reserved minions for the remainder. In a Seal Folio the reserve belongs to the Seal: its three waves (doc 14 §3.4 hold ticks 0, 600 and 1200) take `floor_div(R0, 3)` mSKE each from the reserve `R0` held at Folio entry, the third taking what is left.
 
-**Scripted waves** fire in every phase, except in a boss Folio before the Editor dies. Every one except the Seal's is in addition to the budget and outside the reserve; all are XP-eligible:
+**Scripted waves** fire in every phase, except in a rest Folio and in a boss Folio before the Editor dies. Every one except the Seal's is in addition to the budget and outside the reserve; all are XP-eligible:
 
-| Source | Amount (mSKE) | Anchor (no draw unless stated) |
-|---|---|---|
-| Seal Rubric (above) | `floor_div(R0, 3)` from the reserve | qualifying anchor nearest the Seal point |
-| `gpv.evt.patrol_shift` (doc 12 §19) | 1000 | anchor nearest the Colophon; the pack walks toward the Incipit |
-| `gpv.evt.ambush`, a dread-meter `ambush` complication (doc 12 §4), each `gp.ambush_extra` ambush (doc 14) | 2000, split 1000 and 1000 | the two anchors doc 12's ambush rule picks (2 draws there) |
-| `gpv.evt.reinforcements` | 3000 | qualifying anchor farthest from every Erratum |
-| `lattice.challenge.siege` | 8 waves of 1500, at 0, 900, …, 6300 ticks after the arena seals | the arena's spawn cells, ascending index |
-| `law.cyberpunk.corporate_response` (doc 12 §4) | `3000 + 1000 × volume`, at once on each camera alarm, at most 2 per Folio, ignoring the 900-tick spacing | qualifying anchor nearest the camera |
-| `law.mythic_antiquity.hubris` Nemesis | one champion with the whole aspect set, once per Folio | anchor farthest from every Erratum |
+| Wave | Source | Amount (mSKE) | Anchor (no draw unless stated) |
+|---|---|---|---|
+| Seal | Seal Rubric (above) | `floor_div(R0, 3)` from the reserve | qualifying anchor nearest the Seal point |
+| patrol shift | `gpv.evt.patrol_shift` (doc 12 §19) | 1000 | anchor nearest the Colophon; the pack walks toward the Incipit |
+| ambush | `gpv.evt.ambush`, a dread-meter `ambush` complication (doc 12 §4), each `gp.ambush_extra` ambush (doc 14) | 2000, split 1000 and 1000 | the two anchors doc 12's ambush rule picks (2 draws there) |
+| reinforcements | `gpv.evt.reinforcements` | 3000 | qualifying anchor farthest from every Erratum |
+| siege | `lattice.challenge.siege` | 8 waves of 1500, at 0, 900, …, 6300 ticks after the arena seals | the arena's spawn cells, ascending index |
+| corporate response | `law.cyberpunk.corporate_response` (doc 12 §4) | `3000 + 1000 × volume`, at once on each camera alarm, at most 2 per Folio, ignoring the 900-tick spacing | qualifying anchor nearest the camera |
+| Nemesis | `law.mythic_antiquity.hubris` | one champion with the whole aspect set, once per Folio | anchor farthest from every Erratum |
 
 A scripted wave's amount is filled with standards `floor_div(amount, 1000)` and then minions `floor_div(remainder, 300)`; the Nemesis is a single champion. Every wave is one pack and one squad (split at 8), scaled by `enemy_count_bp[n]` with the Director's per-rank carry, drawn as §10.2 does: one faction draw for the anchor's zone genre, then the per-member template and promotion draws.
 
@@ -1275,7 +1287,7 @@ A scripted wave's amount is filled with standards `floor_div(amount, 1000)` and 
 `sys.erasure` grants Erasure stacks on doc 14 §3.8's clock: `c = t - clock_start` (Folio entry, or the Editor's death tick in a boss Folio); stack `k` arrives at `c = 25200 + 1800 × (k - 1)` until the Folio's `colophon_entry_tick`. Each Erratum `e` has `threshold(e) = max(6, 10 - red_ink_doses(e))` (Canon §11.6, §16.4), so a threshold of 10 is reached at `c = 41,400` (690 s), 8 at 37,800 and 6 at 34,200.
 
 - **Spawn.** On the tick the first Erratum reaches its threshold, one hunter spawns (`ev.hunter_spawned`); another spawns every 5400 ticks while any Erratum holds at least its threshold, also after Colophon entry (doc 14 §3.8). Hunters skip the Director's wave headroom check.
-- **Template.** `enemy.editors.revisor`, rank hunter, role brute, behavior `ai.set.hunter`, body humanoid, tags `editor`, `breathless`, template HP 70 and damage 12, walk 4400 and run 6200 mm/s, AR 15, resist 2500 to every type, morale-immune, skinned per genre (Inquisitor in Gothic Horror, Liquidator in Cyberpunk, Revenue Agent in Hardboiled Noir; doc 18 owns the other skins). Attacks: `strike_through` (line 10000 mm, w 30, ×2.0 `dmg.slash`), `redact` (`cone` 8192 Bam 8000 mm, w 40, direct `st.silenced` and `st.marked`), `margin_lunge` (`charge`). HP takes doc 14's `hunter_hp_bp` through `diff_hp_bp`.
+- **Template.** `enemy.editors.revisor`, rank hunter, role brute, behavior `ai.set.hunter`, body humanoid, tags `editor`, `breathless`, template HP 70 and damage 12, walk 4400 and run 6200 mm/s, AR 15, resist 2500 to every type, morale-immune, skinned per genre (Inquisitor in Gothic Horror, Liquidator in Cyberpunk, Revenue Agent in Hardboiled Noir; doc 18 owns the other skins). Attacks: `enemy.ab.hunter_strike_through` (line 10000 mm, w 30, ×2.0 `dmg.slash`; distinct from the `strikethrough` squad's `enemy.ab.strike_through`, §8.15), `enemy.ab.redact` (`cone` 8192 Bam 8000 mm, w 40, direct `st.silenced` and `st.marked`), `enemy.ab.margin_lunge` (the brute `enemy.ab.charge` profile of §3). HP takes doc 14's `hunter_hp_bp` through `diff_hp_bp`.
 - **Placement.** Among doc 12 spawn anchors at least 32000 mm in straight line from every living Erratum, the one with the largest minimum path distance to the living Errata; with none, the anchor with the largest minimum straight-line distance; ties to the lower cell index; no draw.
 - **Knowledge.** A hunter always knows the cell of every living Erratum (source `Omniscient`). Its target is the Erratum with the most `st.erasure` stacks, ties to the lower EntityId, re-evaluated each think.
 - **Pathing.** Errata-placed blocks count as passable with cost `1000 + floor_div(10 × run_mm_s, 60)` (the 10 ticks one erasure takes, §10.6). A hunter cannot dig other blocks; it breaks locked doors at the §4.13 breaker cost.
@@ -1309,7 +1321,7 @@ Canon §17.9 fixes opt-in invasions: one player from another session joins as a 
 - **Allegiances.** Natives and wild creatures hold it hostile (§12.2 rule 1). `fac.editors` NPCs treat it as an ally and never target it.
 - **XP.** Killing it pays rank-hunter kill XP to the party under §11.1 (doc 04 §12.3a) on top of Canon §17.9's guaranteed Reliquary roll.
 
-**Editor kits** (`enemy.editors.kit.*`). `InvaderJoin { kit }` names one of these. `revisor` is unlocked for every account; doc 14 owns the account unlocks of the other three (Canon gaps). Each kit binds four attacks to the invader's primary, secondary and two ability inputs; every attack is an `enemy.ab.*` profile of §2.1 with empty `dep`.
+**Editor kits** (`enemy.editors.kit.*`). `InvaderJoin { kit }` names one of these. `revisor` is unlocked for every account; doc 14 owns the account unlocks of the other three (Canon gaps). Each kit binds four attacks to the invader's primary, secondary and two ability inputs; every attack is a §2.1 attack profile with empty `dep` whose ID is `<kit id>.<attack>`, as boss attacks are `<boss id>.<attack>` (for example `enemy.editors.kit.revisor.strike_through`), so kit attacks never share an ID with the NPC profiles of the same name (`enemy.ab.strike_through`, `enemy.ab.redact`, `enemy.ab.annotation`, `enemy.ab.ibid`, `enemy.ab.blot`).
 
 | Kit | Primary | Secondary | Ability 1 | Ability 2 |
 |---|---|---|---|---|
@@ -1383,7 +1395,7 @@ Sensitivity, every row inside 28 ± 3 for the level and inside Canon §7.2 for s
 | Variant | Level on arrival at Folio 25 | Main skill 50 / 75 at Folio |
 |---|---|---|
 | reference | 29 | 10 / 22 |
-| no `room.arena` anywhere (budget champion at position 3 instead of the mini-boss) | 29 | 9 / 20 |
+| no arena room anywhere (budget champion at position 3 instead of the mini-boss) | 29 | 9 / 20 |
 | Seal Rubric instead of keeper everywhere | 29 | 10 / 23 |
 | a rest Folio at position 3 of every Volume | 28 | 10 / 25 |
 | one 2000 mSKE event wave (2 standards) in every standard Folio | 30 | 9 / 22 |
@@ -1508,7 +1520,7 @@ Each standard or challenge Folio whose genre has a trader faction (every genre b
 | Template | Objective | Tier |
 |---|---|---|
 | `npc.quest.hunt` | kill a marked elite of a faction hostile to the giver; the Director promotes one placed standard | 2 |
-| `npc.quest.rescue` | free an `npc.captive` held by a hostile pack and bring it within 4000 mm of the giver | 2 |
+| `npc.quest.rescue` | free an `npc.captive.<genre_suffix>` held by a hostile pack and bring it within 4000 mm of the giver | 2 |
 | `npc.quest.retrieve` | bring back a `cat.quest` item placed in a room at least 48000 mm away | 1 |
 | `npc.quest.deliver` | carry a `cat.quest` item to a named NPC of another non-hostile faction | 1 |
 | `npc.quest.sabotage` | destroy 3 marked blocks in a hostile faction's territory | 2 |
@@ -1751,7 +1763,7 @@ Also exported: the `comp.tags` bit layout (§2.4), the `ai_target` rule (§4.8),
 44. **Hasty floor.** `elite.hasty` on a brute whose `charge` has windup 36 and `dmg_mult_bp` 20000 gives windup 30 (not 29); on a 12-tick windup it gives 10.
 45. **Faction draw.** In Mythic Fantasy with kingsguard at +150, a non-territory room's faction draw is one `weighted([1500, 1500, 3000, 2500])` call over editors, mage_conclave, orc_warband and wild; every member of the room then belongs to the drawn faction. A room whose territory faction is hostile draws `weighted([1])`.
 46. **Director phases.** A standard Folio starts in `build_up`, a boss Folio in `boss`, a rest Folio in `exhausted`. In a Seal Folio with `R0 = 9,900` mSKE the three Seal waves take 3,300 mSKE each and no reserve wave ever fires.
-47. **Invader.** `enemy.editors.invader` at Folio 10 against a party of 4, Grade 0: 10,698,668 mHP; a ×1.0 `strike_through` deals 33,675 mHP after step 2.14; it never erases a block, opens a container or picks up an item; `InvaderJoin { kit }` with an ID outside `enemy.editors.kit.*` is rejected.
+47. **Invader.** `enemy.editors.invader` at Folio 10 against a party of 4, Grade 0: 10,698,668 mHP; a ×1.0 `enemy.editors.kit.revisor.strike_through` deals 33,675 mHP after step 2.14; it never erases a block, opens a container or picks up an item; `InvaderJoin { kit }` with an ID outside `enemy.editors.kit.*` is rejected.
 48. **Prologue hunter.** `enemy.prologue_hunter` takes 0 damage from every type, runs at 5000 mm/s, hits for 6,000 mHP before armor at Folio 1, pays no XP and despawns on the tick the player's origin enters `room.colophon`.
 49. **Hostile summons.** A hostile `summon.herald` spawns at `rank.elite` in `fac.wild.<local genre>` and pays elite kill XP; a hostile `summon.misprint` is in `fac.editors`, erases Errata placeables within 1500 mm and perceives through doc 09.
 50. **Reputation precedence.** Killing a witnessed kingsguard vendor applies only `fac.rep.kill_vendor` (−500), not `fac.rep.kill_member`; every reputation change emits `ev.reputation_changed`.

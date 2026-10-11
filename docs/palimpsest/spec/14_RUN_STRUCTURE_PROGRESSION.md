@@ -26,11 +26,12 @@ This chapter defines how a run starts in the Margin, how each Folio flows from a
 | Canon | §13.6 | `unlock.daily_baseline`, appearance shuffle at run start |
 | Canon | §13.9 | `gear_tier` from the Errata Grade; `illuminated` skin unlocks |
 | Canon | §14 | `cur.lucre`, `cur.quire`, `cur.ink`, `cur.vellum` |
-| Canon | §16.1–§16.3 | 13 Callings with major and minor skills, Origins (secret Origins by meta unlock), Echo roster (24, 2 per core genre), kin |
+| Canon | §16.1–§16.3 | 13 Callings with major and minor skills, Origins (secret Origins by meta unlock), Echo roster (24, 2 per core genre, with the required `echo.sun_wukong`, `echo.loki`, `echo.lilith`, `echo.fenrir` as `body.quadruped` and `echo.jormungandr` as `body.serpentine`), kin |
 | Canon | §17.1 | run constants, the Colophon, `mode.abridged` with `d_eff`, `FOLIO_1_GENRE`, `EXIT_OFFERS`, `GENRE_REPEAT_RULE` |
 | Canon | §17.2, §17.3 | party tables, ranks |
 | Canon | §17.5, §17.6 | co-op modes `mode.ff_off`, `mode.ff_full`, `mode.loot_shared`; Ghosts, Remains and resurrection |
-| Canon | §17.8 | the Margin plot |
+| Canon | §17.8 | the Margin trophies: fixed architecture with cosmetic trophy and decoration slots, no building |
+| Canon | §17.9 | invasions: `mode.invasion_open` (off by default; Daily, Weekly and ranked runs forbid it), the Redacted outcome, invader on replay slot 4 |
 | Canon | §18 | `ev.folio_entered`, `ev.folio_exited`, `ev.entity_killed`, `ev.block_changed`, `ev.player_downed`, `ev.player_revived`, `ev.player_died`, `ev.player_ghosted`, `ev.player_resurrected`, `ev.erasure_stack`, `ev.hunter_spawned`, `ev.run_ended` |
 | Canon | §19 | this chapter owns `run.`, `mode.`, `grade.`, `margin.`, `unlock.`, `echo.`, `score.`, `ach.` |
 | Doc 02 | §6.4–§6.6, §12 | intents (`ChooseExit`, `CommitOffer`), save container kind 1 (run suspend), version-mismatch flow (`prev` branch or Close the Book), headless replay verifier |
@@ -39,7 +40,7 @@ This chapter defines how a run starts in the Margin, how each Folio flows from a
 | Doc 05, 06, 07, 08, 11 | archetypes, glyphs, items | kit item IDs, item values (Interface assumptions) |
 | Doc 12 | worldgen | Folio layout, room tags, lattice draws, Rubric placement, Colophon and Interleaf placement |
 | Doc 13 | director | spawns, elite promotion, Keeper, bosses, telegraphed-attack flags, `sys.erasure` |
-| Doc 15 | §2.2, §2.4, §3.8, §3.13 | Ink and Quire earn rates (a run pays `min(400, floor_div(run_score, 50))` Quires), achievement grade payouts (Quires 10/25/50/100, Ink 40/80/160/320), Folds and Echo kit A/B rule, Echo slot placeholders, Apocrypha rule |
+| Doc 15 | §2.2, §2.4, §3.1.1, §3.1.2, §3.8 | Ink and Quire earn rates (a run pays `min(400, floor_div(run_score, 50))` Quires), achievement grade payouts (Quires 10/25/50/100, Ink 40/80/160/320), Echo binding (Illuminated and Rubricated), the Script catalog whose grants this chapter defines (§2.3), Folds and Echo kit A/B rule, Apocrypha rule |
 | Doc 16 | netcode | lobby, `st.downed`, host migration, ranked submission transport |
 | Doc 17 | UI | Margin screens, exit preview widgets, `access.scribes_mercy` |
 
@@ -95,6 +96,7 @@ pub struct RunState {
     pub gp: GradeParams,                  // §7.2, merged with mutators at run start
     pub mutators: Vec<Id32>,              // run.mut.*, sorted by content ID string
     pub coop: CoopModes,                  // { ff: Default | Off | Full, loot_shared: bool } (Canon §17.5, §8.8)
+    pub invasion_open: bool,              // mode.invasion_open (Canon §17.9, §8.1); fixed at Commit
     pub party: BTreeMap<u8, SlotState>,   // key = party slot 0..=3
     pub folio_index: u32,                 // 0 before Folio 1
     pub phase: FolioPhase,                // §3.2: Exploring | ColophonOpen | InColophon | ExitVote | BossAntechamber
@@ -151,7 +153,7 @@ The Lectern (`margin.lectern`) starts every run. The lobby is client-side meta s
 | `Idle` | Margin loaded | `ModeSelect` | a player interacts with the Lectern |
 | `ModeSelect` | | `ErratumSelect` | the host picks a mode the host's account has unlocked (§8.1) |
 | `ErratumSelect` | | `RunSetup` | every slot has a valid Erratum, a kit it owns (§2.4) and, for an Echo, an owned trait variant (doc 15 Folds); Daily skips this state and fills slots by draw (§8.4) |
-| `RunSetup` | | `ReadyCheck` | host sets structure (Seeded, Custom), Grade (≤ host's unlocked maximum), mutators (Custom), seed (Seeded, Custom) and, with 2 or more slots, the co-op modes `mode.ff_off` or `mode.ff_full` and `mode.loot_shared` (§8.8). When a simulation-affecting mod is loaded the screen first shows doc 15's Apocrypha notice and the run is Apocrypha (§8.1) |
+| `RunSetup` | | `ReadyCheck` | host sets structure (Seeded, Custom), Grade (≤ host's unlocked maximum), mutators (Custom), seed (Seeded, Custom) and, with 2 or more slots, the co-op modes `mode.ff_off` or `mode.ff_full` and `mode.loot_shared` (§8.8), and with any number of slots the invasion overlay `mode.invasion_open` (§8.1). When a simulation-affecting mod is loaded the screen first shows doc 15's Apocrypha notice and the run is Apocrypha (§8.1) |
 | `ReadyCheck` | | `Commit` | every connected player toggles Ready; a slot that disconnects returns the lobby to `ErratumSelect` for that slot |
 | `ReadyCheck` | | `RunSetup` | host edits any setting; every Ready flag clears |
 | `Commit` | | `Folio1` | ranked token obtained if the mode is ranked (§12.3) and `start_run` returns |
@@ -166,6 +168,7 @@ A valid Erratum: Calling and Origin are unlocked on that player's account (or th
 | Structure | Standard, Novella or Abridged; Custom adds Standard with `run.mut.short_book` (§8.7) |
 | Seed | 13-character Canon §3.6 display form (Seeded, Custom) |
 | Co-op modes | none, `mode.ff_off`, `mode.ff_full` (mutually exclusive); `mode.loot_shared` on or off; hidden with 1 slot |
+| Invasions | `mode.invasion_open` on or off, default off; hidden in Daily, Weekly Gauntlet and the Prologue; refused unless every member is online, no simulation-affecting mod is loaded and every member's account permits invasions (doc 15 `juris.flag.invasion_minor_default`, doc 16) |
 
 ### 2.2 Run initialization
 
@@ -202,7 +205,26 @@ fn start_run(cfg: RunConfig) -> RunState {
 | account set | `unlock.set.starter` ∪ content of purchased Bindery nodes ∪ content granted by owned Inkwell Scripts (doc 15) ∪ owned Echoes |
 | `unlock.daily_baseline` | `unlock.set.starter` ∪ all 13 Callings ∪ all 12 core Origins. No alt kits, no Bindery loot, room or event nodes, no Scripts, no Echoes, no Keepsakes, no secret Origins (Canon §13.6, doc 15) |
 
-**Script-granted unlock IDs.** Doc 15's Scripts grant IDs in this chapter's `unlock.` namespace, outside the Bindery: `unlock.kit.<calling>_<name>` (a kit variant `run.kit.<calling>_<name>`, §2.4.2), `unlock.glyph.<family>` (a doc 06 glyph family), `unlock.room.<name>` (a doc 12 room variant) and `unlock.hireling.<type>` (a doc 13 hireling type). They are never sold for Quires. The content validator rejects a Script grant whose ID equals a Bindery node ID or `unlock.kit.<calling>_alt`.
+**Script-granted unlock IDs.** Doc 15's Scripts (doc 15 §3.1.2) grant IDs in this chapter's `unlock.` namespace, outside the Bindery, in four reserved patterns: `unlock.kit.<calling>_<name>` (a kit variant `run.kit.<calling>_<name>`, §2.4.2), `unlock.glyph.<family>` (a doc 06 glyph family), `unlock.room.<name>` (a doc 12 room variant) and `unlock.hireling.<type>` (a doc 13 hireling type). They are never sold for Quires. The content validator rejects a Script grant whose ID equals a Bindery node ID or `unlock.kit.<calling>_alt`. The launch catalog defines these 48 IDs; each Folio Expansion adds its own under the same patterns (doc 15):
+
+| ID | Granted by (doc 15 §3.1.2) | Adds to the account content set |
+|---|---|---|
+| `unlock.room.lost_chapter_<g>` for the 12 core genre suffixes (`mythic_fantasy`, `gothic_horror`, `cosmic_horror`, `space_opera`, `cyberpunk`, `post_apocalypse`, `weird_west`, `hardboiled_noir`, `wuxia`, `steampunk`, `fairy_tale`, `mythic_antiquity`) | `bundle.script.lost_chapter_<g>` (Illuminated) | 3 room variants in genre `g`'s room pool (doc 12) |
+| `unlock.hireling.chapter_<g>` for the same 12 suffixes | `bundle.script.lost_chapter_<g>` (Illuminated) | 1 hireling type native to genre `g` (doc 13) |
+| `unlock.glyph.ember` | `bundle.script.glyphs_ember` (Rubricated) | the 4 glyphs of doc 06 `family.ember` in the glyph loot pool, inside their rarity bands |
+| `unlock.glyph.hollow` | `bundle.script.glyphs_hollow` | the 4 glyphs of `family.hollow` |
+| `unlock.glyph.mirror` | `bundle.script.glyphs_mirror` | the 4 glyphs of `family.mirror` |
+| `unlock.glyph.storm` | `bundle.script.glyphs_storm` | the 4 glyphs of `family.storm` |
+| `unlock.glyph.thorn` | `bundle.script.glyphs_thorn` | the 4 glyphs of `family.thorn` |
+| `unlock.glyph.tide` | `bundle.script.glyphs_tide` | the 4 glyphs of `family.tide` |
+| `unlock.hireling.apothecary` | `bundle.script.hireling_apothecary` (Rubricated) | 1 hireling type in the Hireling Hall pool (doc 13) |
+| `unlock.hireling.cartographer` | `bundle.script.hireling_cartographer` | 1 hireling type in the Hireling Hall pool |
+| `unlock.hireling.lamplighter` | `bundle.script.hireling_lamplighter` | 1 hireling type in the Hireling Hall pool |
+| `unlock.hireling.porter` | `bundle.script.hireling_porter` | 1 hireling type in the Hireling Hall pool |
+| `unlock.hireling.sellsword` | `bundle.script.hireling_sellsword` | 1 hireling type in the Hireling Hall pool |
+| `unlock.kit.<calling>_script` for the 13 Calling suffixes | `bundle.script.kit_<calling>` (Rubricated) | the Script kit `run.kit.<calling>_script` (§2.4.2), selectable in the Dramatis |
+
+Hireling types reach a run only where their pool is used: a Hireling Hall room needs `unlock.room.hireling_hall` on the host's account. Every unlock here is horizontal (§5.2): room variants, glyphs and hirelings enter their pools inside their rarity bands or as options, and a Script kit obeys the 500 Bp kit rule.
 
 The host's set is the run's set (Canon §13.6). A guest whose Calling or Origin is outside the host's set still plays it: Callings and Origins are per-slot choices, not pool content.
 
@@ -225,7 +247,7 @@ Total 94 Lucre of base value at ilvl 1.
 
 #### 2.4.2 Calling kits `run.kit.<calling>` (variant 0)
 
-Armor sets: **light set** = `arch.armor.light_head`, `arch.armor.light_body`, `arch.armor.light_hands`, `arch.armor.light_legs`, `arch.armor.light_feet` (value 80); **medium set** = the same five slots with `medium_` (98). Doc 04's "cloth armor set" is the light set. The first weapon goes to `slot.weapon_1` and any second weapon to `slot.weapon_2`; shields and foci go to `slot.offhand`; armor goes to its slot; consumables fill the quickbar in table order after the universal kit, then the bag; ammunition, tools, books, apparatus and containers go to the bag.
+Armor sets: **light set** = `arch.armor.light_head`, `arch.armor.light_body`, `arch.armor.light_hands`, `arch.armor.light_legs`, `arch.armor.light_feet` (value 80); **medium set** = the same five slots with `medium_` (98); **cloth set** = the same five slots with `cloth_` (52, used only by Script kits). Doc 04's "cloth armor set" is the light set. The first weapon goes to `slot.weapon_1` and any second weapon to `slot.weapon_2`; shields, foci, tomes and lanterns go to `slot.offhand`; armor goes to its slot; accessories go to their slot (`slot.face`, `slot.back`, `slot.belt`); consumables fill the quickbar in table order after the universal kit, then the bag; ammunition, tools, books, apparatus and containers go to the bag. An entry whose slot the Erratum's body plan lacks (doc 04 §13: `body.quadruped` has no `slot.offhand` or `slot.hands`; `body.serpentine` has no `slot.legs` or `slot.feet`) goes to the bag instead.
 
 | Calling | doc 04 §2.5 role list | Exact templates | Calling-part value |
 |---|---|---|---|
@@ -263,7 +285,25 @@ Alt kits `run.kit.<calling>_alt` (variant 1, Bindery shelf A) change only the li
 | Beastbinder | `arch.ranged.sling`, `ammo.stone` ×40 and `arch.offhand.shield_small` replace the spear | 140 | +144 Bp |
 | Monk | `arch.melee.polearm_staff` and `item.throwable.knife` ×4 replace the hand wraps | 138 | +147 Bp |
 
-Kit IDs: `run.kit.<calling>` is variant 0 and `run.kit.<calling>_alt` is variant 1 for each of the 13 Callings. Script kit variants `run.kit.<calling>_<name>` (doc 15) are written the same way, as replacements against the standard kit. An Echo's kit A is its Calling's standard kit and its kit B (doc 15 Fold 3) is its Calling's alt kit; an Echo may use kit B only at Fold 3 or above, whether or not the account owns the alt kit node.
+Script kits `run.kit.<calling>_script` (variant 2, granted by `unlock.kit.<calling>_script` from doc 15's Rubricated `bundle.script.kit_<calling>`, §2.3) are replacements against the standard kit like the alt kits. Values of the swapped templates are doc 11 §3's base values at ilvl 1 (doc 05 §8.1 for ammunition); the difference is `floor_div((added - removed) × 10000, standard Calling-part value)`:
+
+| ID | Script-kit change | Script value | Difference |
+|---|---|---|---|
+| `run.kit.vanguard_script` | `arch.melee.axe` (58) replaces the mace (58); `arch.offhand.shield_buckler` (36), `item.tool.bandage` ×2 (12) and `item.tool.torch` ×2 (4) replace the medium shield (52) | 206 | 0 Bp |
+| `run.kit.duelist_script` | `arch.melee.blade_short` (52) and `item.face.mask` (30) replace the long blade (76) | 192 | +322 Bp |
+| `run.kit.gunslinger_script` | `arch.ranged.pistol_heavy` (84) and `ammo.heavy` ×30 (12) replace the sidearm (70) and `ammo.light` ×60 (12); `arch.armor.light_hands` (10) removed | 186 | +219 Bp |
+| `run.kit.grenadier_script` | `arch.armor.heavy_head`, `arch.armor.heavy_body`, `arch.armor.heavy_legs` (22 + 46 + 28) replace the medium set (98) | 312 | −64 Bp |
+| `run.kit.spellwright_script` | `arch.offhand.tome` (48) replaces the focus (44); the primer is unchanged | 176 | +232 Bp |
+| `run.kit.alchemist_script` | `arch.melee.quarterstaff` (38) replaces the dagger (40) | 82 + apparatus | −239 Bp at most |
+| `run.kit.shade_script` | `arch.melee.dagger` (40) and `item.tool.rope` ×2 (12) replace the short blade (52) | 346 | 0 Bp |
+| `run.kit.artificer_script` | `arch.ranged.smg` (86, fires `ammo.light`) replaces the sidearm (70); the light set (80) replaces the medium set (98) | 246 | −81 Bp |
+| `run.kit.warden_script` | `arch.offhand.shield_buckler` (36) and `item.back.cloak` (40) replace the tower shield (70) | 280 | +218 Bp |
+| `run.kit.oracle_script` | `arch.ranged.wand` (72) and `arch.offhand.lantern` (28) replace the staff (100) | 180 + symbol | 0 Bp |
+| `run.kit.netrunner_script` | the cloth set (52) and `item.face.mask` (30) replace the light set (80) | 164 + deck | +123 Bp at most |
+| `run.kit.beastbinder_script` | `arch.melee.quarterstaff` (38), `item.tool.bandage` ×2 (12), `item.tool.rope` (6) and `item.tool.torch` (2) replace the spear (58) | 138 | 0 Bp |
+| `run.kit.monk_script` | the cloth set (52) and `item.belt.sash` (30, quickbar 5) replace the light set (80) | 138 | +147 Bp |
+
+Kit IDs: `run.kit.universal`; for each of the 13 Callings, `run.kit.<calling>` is variant 0, `run.kit.<calling>_alt` variant 1 and `run.kit.<calling>_script` variant 2. Expansion Script kits `run.kit.<calling>_<name>` (doc 15) are written the same way, as replacements against the standard kit, with the next free variant number. An Echo's kit A is its Calling's standard kit and its kit B (doc 15 Fold 3) is its Calling's alt kit; an Echo may use kit B only at Fold 3 or above, whether or not the account owns the alt kit node.
 
 #### 2.4.3 Calling lore
 
@@ -342,6 +382,21 @@ Kits are not regenerated after Folio 1. A mid-run joiner (§2.5) translates agai
 }
 ```
 
+```json
+{
+  "id": "run.kit.gunslinger_script",
+  "calling": "calling.gunslinger",
+  "variant": 2,
+  "base": "run.kit.gunslinger",
+  "unlock": "unlock.kit.gunslinger_script",
+  "replace": [
+    { "remove": [0, 1, 5],
+      "add": [ { "template": "arch.ranged.pistol_heavy", "slot": "slot.weapon_1", "qty": 1 },
+               { "template": "ammo.heavy", "slot": "bag", "qty": 30 } ] }
+  ]
+}
+```
+
 The kit validator recomputes `consumable_entries` from the rule below and rejects a record that disagrees, and rejects any alt or Script kit whose Calling-part value differs from the standard kit's by more than 500 Bp. `minions` lists doc 13 templates spawned and bound at run start (Beastbinder: `["npc.companion.<origin_suffix>"]`, resolved with the Erratum's Origin suffix). `consumable_entries` lists entry indices removed when `gp.kit_consumables = false` (Grade 10+, §7.1) or `run.mut.bare_kit` is active; `run.mut.bare_kit` also removes every armor entry. Consumable entries are exactly the entries whose template is in `cat.potion`, `cat.throwable`, `cat.text` or `cat.food`; ammunition, tools, books, gadgets, materials and containers are never consumable entries. The universal kit is never removed.
 
 ### 2.5 Mid-run joiners
@@ -391,7 +446,7 @@ Every Folio ends in a Colophon (`room.colophon`, Canon §17.1) placed before its
 
 | From | To | Trigger (evaluated by the run layer at the end of each tick, rows in this order) |
 |---|---|---|
-| any | `Ended(erased)` | no Active Erratum is alive and not `st.downed`; every downed Erratum is killed first (`ev.entity_killed`) |
+| any | `Ended(erased)` | no Active Erratum is alive and not `st.downed`; every downed Erratum is killed first (`ev.entity_killed`). Exception: when the invader of a `mode.invasion_open` run reduced the last living Erratum to 0 HP, the party is Redacted instead (Canon §17.9; doc 13, doc 16) and the phase does not change |
 | any | `Ended(abandoned)` | host issues Abandon (§4.3) |
 | (entry, Normal standard or challenge) | `Exploring` | Folio entry (§3.3) |
 | (entry, Normal rest) | `ColophonOpen` | Folio entry; a rest Folio has no Rubric, so its Colophon entrance is open from entry |
@@ -664,7 +719,18 @@ mutator_bp  = min(MUTATOR_BP_CAP, chain of each active mutator's score_bp)
 
 `victory_bp = 17500` for the Ur-Text and 10000 for a failed run is calibrated with `RUN_SCORE_BP` (§4.6) so doc 15's two reference runs land on its `run_score` targets.
 
-UI breakdown IDs: `score.progress`, `score.editor`, `score.speed`, `score.explore`, `score.notes`, `score.treasure`, `score.hunters`, `score.deaths`.
+Score component IDs (the `RunSummary.components` keys and the UI breakdown, in display order):
+
+| ID | Term | Sign |
+|---|---|---|
+| `score.progress` | `S_progress` | ≥ 0 |
+| `score.editor` | `S_editor` | ≥ 0 |
+| `score.speed` | `S_speed` | ≥ 0 |
+| `score.explore` | `S_explore` | ≥ 0 |
+| `score.notes` | `S_notes` | ≥ 0 |
+| `score.treasure` | `S_treasure` | ≥ 0, at most 8000 |
+| `score.hunters` | `S_hunters` | ≥ 0 |
+| `score.deaths` | `S_deaths` | ≤ 0 |
 
 **Worked examples** (all recomputed in exact integer arithmetic; R is doc 15's reference failed run):
 
@@ -739,7 +805,7 @@ fn end_run(run: &mut RunState, sim: &mut Sim, end: Id32) {
 | Milestones, Grade unlocks, discovered genres, best scores, run history | §5.1, §7.4 |
 | Erratum presets (Origin, Calling, kit, appearance, name) | Dramatis slots |
 | Illuminated item skins | Canon §13.9: picking up an `illuminated` item unlocks its skin account-wide, in every mode except the Prologue |
-| Margin plot contents | Canon §17.8; built in the Margin, never in a run |
+| Trophy alcove arrangement | Canon §17.8, §5.1a; arranged in the Margin, never in a run |
 | Echoes, Folds, Scripts, cosmetics | doc 15 |
 
 Never kept: items, Lucre, character level, XP, skills, sub-attributes, talents, reputation, type knowledge and appearance mappings, Erasure state, boons, Going Native, the Colophon mark and lattice history. Apocrypha runs (simulation-affecting mods, doc 15) keep nothing in this table except run history.
@@ -817,21 +883,42 @@ The Margin is a walkable first-person hub rendered by the client. It runs no gam
 | `margin.vellum_archive` | The Vellum Archive | Vellum shop (doc 15) | `first_vellum` |
 | `margin.recollections` | The Recollection Alcove | Echo trials (§6) | `first_editor_v1` |
 | `margin.proving_page` | The Proving Page | sandbox: target dummies, every unlocked item at ilvl 1, no rewards | purchase of `unlock.facility.proving_page` |
-| `margin.plot` | The Plot | the account's 64 × 32 × 64 building plot (Canon §17.8), built with owned cosmetic block palettes; no gameplay stats | `first_run_end` |
+| `margin.plot` | The Plot | the account's trophy alcove: 32 fixed trophy and decoration slots (§5.1a, Canon §17.8); no building, no gameplay stats | `first_run_end` |
 
-| Milestone ID (`margin.milestone.*`) | Set when |
+In the facility table and below, a short milestone name such as `first_run_end` stands for its full `margin.milestone.*` ID.
+
+| Milestone ID | Set when |
 |---|---|
-| `prologue_done` | the Prologue completes or is skipped |
-| `first_run_end` | any run of any mode other than the Prologue ends |
-| `first_editor_v1` | the account's player is present when `boss.editor_v1` dies |
-| `first_editor_v2` | same for `boss.editor_v2` |
-| `first_victory` | `run.end.victory` in Standard, Abridged or Novella |
-| `first_ur_text_victory` | `run.end.victory` in Standard or Abridged (`boss.ur_editor` killed) |
-| `first_standard_victory` | `run.end.victory` in Standard |
-| `first_reliquary` | the first account Reliquary is credited |
-| `first_vellum` | the first Vellum is credited (doc 15) |
+| `margin.milestone.prologue_done` | the Prologue completes or is skipped |
+| `margin.milestone.first_run_end` | any run of any mode other than the Prologue ends |
+| `margin.milestone.first_editor_v1` | the account's player is present when `boss.editor_v1` dies |
+| `margin.milestone.first_editor_v2` | same for `boss.editor_v2` |
+| `margin.milestone.first_victory` | `run.end.victory` in Standard, Abridged or Novella |
+| `margin.milestone.first_ur_text_victory` | `run.end.victory` in Standard or Abridged (`boss.ur_editor` killed) |
+| `margin.milestone.first_standard_victory` | `run.end.victory` in Standard |
+| `margin.milestone.first_reliquary` | the first account Reliquary is credited |
+| `margin.milestone.first_vellum` | the first Vellum is credited (doc 15) |
 
 Milestones never unset. Apocrypha runs and easing-mutator runs set no milestone except `first_run_end`; the Prologue sets only `prologue_done`.
+
+### 5.1a The trophy alcove
+
+The Margin has fixed architecture: nothing in it is built, placed as a block or broken (Canon §17.8). `margin.plot` is the account's alcove, an interior of 8,000 mm (x, across) × 6,000 mm (z, deep) × 4,000 mm (y, up), origin at the front-left floor corner, entrance in the `z = 0` wall. It holds exactly 32 slots. A slot holds one trophy or decoration of its kind; placing, swapping and clearing are free, instant and saved to the account profile (doc 17 trophy arranger). Trophies come from milestones, achievements and first Editor kills; decorations are doc 15's `cosm.margin.*` (Codex track and Store) and the Bindery's `cosm.binding.<b>` and `cosm.palette.<g>` finishes (§5.3 shelf E). Nothing in the alcove has gameplay stats.
+
+| ID | Kind | Footprint (mm) | Centre `(x, y, z)` (mm) |
+|---|---|---|---|
+| `margin.slot.trophy_01` to `margin.slot.trophy_12` | trophy (floor pedestal) | 600 × 600 (x × z) | `(480 + 640 × (k - 1), 0, 5400)` for `trophy_k` |
+| `margin.slot.wall_01` to `margin.slot.wall_08` | wall (hung panel) | 1000 × 1000 (z × y) | `(0, 1800, 1000 + 1200 × (k - 1))` for `k = 1..=4`; `(8000, 1800, 1000 + 1200 × (k - 5))` for `k = 5..=8` |
+| `margin.slot.floor_01` to `margin.slot.floor_06` | floor (rug or tile) | 1200 × 1200 (x × z) | `(1000 + 1200 × (k - 1), 0, 2700)` |
+| `margin.slot.banner_01` to `margin.slot.banner_03` | banner (back wall, above the trophies) | 800 × 2000 (x × y) | `(2000 × k, 3000, 6000)` |
+| `margin.slot.light_01` to `margin.slot.light_03` | light (ceiling mount) | 400 × 400 (x × z) | `(2000 × k, 4000, 3000)` |
+
+**Opening.** Eight slots open with the facility at `first_run_end`: `trophy_01` to `trophy_04`, `wall_01`, `wall_02`, `floor_01` and `light_01`. The other 24 open in this order, the `n`-th when the account owns `2 × n` achievements (§10): `trophy_05` to `trophy_12`, `wall_03` to `wall_08`, `floor_02` to `floor_06`, `banner_01` to `banner_03`, `light_02`, `light_03`. All 32 are open at 48 of the 58 achievements. No slot costs Quires or money; Quires and the Codex buy what fills them.
+
+```json
+{ "id": "margin.slot.trophy_05", "kind": "trophy", "footprint_mm": [600, 600],
+  "centre_mm": [3040, 0, 5400], "opens": { "achievements": 2 } }
+```
 
 ### 5.2 Bindery rules
 
@@ -908,7 +995,7 @@ Milestones never unset. Apocrypha runs and easing-mutator runs set no milestone 
 |---|---|---|---|
 | `unlock.facility.proving_page` | 75 | gate: `first_editor_v1` | opens `margin.proving_page` |
 | `unlock.binding.<b>` for `vellum`, `lapis`, `verdigris`, `oxblood`, `gilt`, `soot` | 50 each | none | grants cosmetic `cosm.binding.<b>` (UI theme and journal binding, doc 15 catalog) |
-| `unlock.palette.<g>` for the 12 core genre suffixes | 25 each | gate: the account cleared a Folio of genre `g` | grants cosmetic block palette `cosm.palette.<g>` for the Margin plot (Canon §17.8, doc 15 catalog) |
+| `unlock.palette.<g>` for the 12 core genre suffixes | 25 each | gate: the account cleared a Folio of genre `g` | grants decoration finish `cosm.palette.<g>`: genre `g`'s palette on the alcove's wall, floor and banner slots (§5.1a, Canon §17.8, doc 15 catalog) |
 
 Bindery node record:
 
@@ -964,7 +1051,7 @@ Why these prices: doc 15 pays a run `min(400, floor_div(run_score, 50))` Quires 
 
 ### 6.1 Rules
 
-- An Echo (Canon §16) fixes kin, Origin, Calling, signature trait and cosmetics. Its creation preset (allocation, Origin skill, kin) is doc 04's (§2.6). It uses its Calling's standard kit as kit A and the Calling's alt kit as kit B from Fold 3 (§2.4, doc 15 §3.8).
+- An Echo (Canon §16) fixes kin, Origin, Calling, body plan (`body.humanoid` unless §6.3 names another, doc 04 §13), signature trait and cosmetics. Its creation preset (allocation, Origin skill, kin) is doc 04's (§2.6). It uses its Calling's standard kit as kit A and the Calling's alt kit as kit B from Fold 3 (§2.4, doc 15 §3.8).
 - An Echo is acquired through the Inkwell (doc 15) or by completing its Recollection trial here. Both grant identical ownership.
 - Trials open with `margin.recollections`. A trial is available when its Echo's Calling is on the account.
 - At most `RECOLLECTION_ACTIVE_MAX = 2` trials are active. Activation and deactivation happen at the Alcove between runs. Progress persists while a trial is inactive but advances only while active.
@@ -1001,11 +1088,11 @@ Traits are `trait.echo.<suffix>` (suffix = the Echo ID's suffix) in doc 04's `tr
 
 | Echo | Origin, Calling, kin | Signature trait (variant A) | Trial steps (genre steps use the Echo's Origin) | ch |
 |---|---|---|---|---|
-| `echo.aldric_unsworn` | MF, Vanguard, human | block stability +1500 Bp; healing from prayers ×5000 | 6 Folios; V2 as Vanguard; 400 `dmg.blunt` kills | 470 |
+| `echo.fenrir` | MF, Monk, beastkin, `body.quadruped` | unarmed damage +2000 Bp; buy prices ×11000 | 6 Folios; V2 as Monk; 200 sneak kills | 470 |
 | `echo.wren_long_index` | MF, Spellwright, fae | +1 Grimoire slot; complexity budget −1 | 10 Folios; V3 as Spellwright; 1,300 `dmg.arcane` kills | 915 |
-| `echo.vesper_crane` | GH, Shade, undead | sneak multiplier +2000 Bp at `light_at ≤ 4`, −2000 Bp at `light_at ≥ 10` | 6 Folios; 300 sneak kills; V2 as Shade | 520 |
+| `echo.lilith` | GH, Shade, fae | sneak multiplier +2000 Bp at `light_at ≤ 4`, −2000 Bp at `light_at ≥ 10` | 6 Folios; 300 sneak kills; V2 as Shade | 520 |
 | `echo.mother_ilse` | GH, Alchemist, human | brews of 2+ potions yield +1; toxicity decay 300 per s instead of 500 | 10 Folios; 110 brews; V3 as Alchemist | 920 |
-| `echo.dr_halloway` | CH, Oracle, human | composure loss ×7500; Max composure −20 | 6 Folios; 60 identifications; V2 as Oracle | 490 |
+| `echo.jormungandr` | CH, Oracle, beastkin, `body.serpentine` | composure loss ×7500; Max composure −20 | 6 Folios; 60 identifications; V2 as Oracle | 490 |
 | `echo.drowned_clerk` | CH, Spellwright, undead | spell potency +1500 Bp while `st.soaked`; `dmg.fire` spell potency −2000 Bp | 11 Folios; 4 Erasure exits; V4 as Spellwright | 905 |
 | `echo.ostra_vey` | SO, Gunslinger, human | swap speed ×13000; reload speed ×9000 | 6 Folios; 600 `dmg.pierce` kills; V2 as Gunslinger | 520 |
 | `echo.kestrel_unit` | SO, Artificer, construct | gadgets deploy with +1 charge; gadget recharge ×8500 | 10 Folios; 80 crafts; V4 as Artificer | 910 |
@@ -1017,33 +1104,35 @@ Traits are `trait.echo.<suffix>` (suffix = the Echo ID's suffix) in doc 04's `tr
 | `echo.preacher_amos` | WW, Warden, human | restoration heals deal 2000 Bp of the heal as `dmg.radiant` to undead and fiends within 4,000 mm; restoration aether cost ×11500 | 10 Folios; 6 Death's Door saves; V4 as Warden | 910 |
 | `echo.dex_halloran` | HN, Duelist, human | unarmed stun buildup ×13000; blade damage −1000 Bp | 6 Folios; 400 `dmg.blunt` kills; V2 as Duelist | 470 |
 | `echo.vera_lux` | HN, Alchemist, human | thrown poison flasks add +1 `st.poisoned` stack on a direct hit; buy prices ×10500 | 10 Folios; 960 `dmg.toxin` kills; V4 as Alchemist | 910 |
-| `echo.lan_ninth_peak` | WX, Monk, human | dodge distance 4,000 mm; dodge cost 26 stamina | 6 Folios; 12 notes; V2 as Monk | 514 |
+| `echo.sun_wukong` | WX, Monk, beastkin | dodge distance 4,000 mm; dodge cost 26 stamina | 6 Folios; 12 notes; V2 as Monk | 514 |
 | `echo.old_master_huo` | WX, Warden, human | poise +20; move speed multiplier −500 Bp | 10 Folios; 20 notes; V4 as Warden | 910 |
 | `echo.ada_brassvane` | SP, Artificer, human | crafting time ×7500; crafted durability ×9000 | 6 Folios; 40 crafts; V2 as Artificer | 490 |
 | `echo.colonel_wexley` | SP, Grenadier, human | launcher projectile range ×12500; launcher reload ×8500 | 10 Folios; 960 `dmg.fire` kills; V4 as Grenadier | 910 |
 | `echo.briar_thornwood` | FT, Beastbinder, fae | minion Max HP +1500 Bp (summons and tamed beasts); Conjuration aether cost ×11500 | 6 Folios; 6 Rewrites; V2 as Beastbinder | 490 |
 | `echo.wolf_in_wool` | FT, Shade, beastkin | disguise suspicion rate ×7000; Max HP ×9000 | 10 Folios; 480 sneak kills; V4 as Shade | 910 |
 | `echo.kallias_twice_drowned` | MA, Vanguard, human | swim speed ×15000 and no drowning damage for 1800 ticks submerged; `dmg.fire` taken +1000 Bp | 6 Folios; 3 Death's Door saves; V2 as Vanguard | 490 |
-| `echo.sibyl_of_ash` | MA, Oracle, human | exit doors also preview the next Folio's Rubric and notes; Max aether −10 | 11 Folios; 1 secret exit; V3 as Oracle | 925 |
+| `echo.loki` | MA, Oracle, human | Illusion spell potency +2000 Bp; healing from prayers ×7500 | 11 Folios; 1 secret exit; V3 as Oracle | 925 |
 
-Tier 1 is the first Echo of each genre (12 trials, 470 to 520 ch); Tier 2 is the second (12 trials, 905 to 925 ch). Every one of the 13 Callings has 1 to 3 Echoes (Alchemist 3; Netrunner, Beastbinder and Monk 1; every other Calling 2). All 24 trials total 16,839 ch (168.4 hours).
+Tier 1 is the first Echo of each genre (12 trials, 470 to 520 ch); Tier 2 is the second (12 trials, 905 to 925 ch). Every one of the 13 Callings has 1 to 3 Echoes (Alchemist 3; Vanguard, Netrunner and Beastbinder 1; every other Calling 2). All 24 trials total 16,839 ch (168.4 hours).
 
-**Doc 15 slot binding.** Doc 15 §3.13 uses placeholders `echo.slot_<code>_a` (Illuminated, the rarer Inkwell tier: doc 15's reference is 19.6 hours of play per featured Echo) and `echo.slot_<code>_b` (Rubricated: 13.9 hours per specific rate-up Echo). Slot A binds each genre's Tier 2 Echo and slot B its Tier 1 Echo, so both routes stay ordered the same way: the rarer Inkwell tier has the longer trial, and each trial is shorter than the matching Inkwell reference.
+**Public-domain figures** (Canon §16.2). The five required figures hold these roster places: `echo.fenrir` (MF Tier 1), `echo.lilith` (GH Tier 1), `echo.jormungandr` (CH Tier 1), `echo.sun_wukong` (WX Tier 1) and `echo.loki` (MA Tier 2). Their art, voice and source texts are doc 18's. Fenrir uses `body.quadruped` and Jörmungandr `body.serpentine` (doc 04 §13); their natural attacks (Fenrir: bite, claw, pounce; Jörmungandr: bite, constrict, spit) are the unarmed function `arch.melee.unarmed` skinned per body plan, and their kit items follow the §2.4.2 slot rule. Kin traits that need a part the body plan lacks are skipped, and beastkin's added `bp.tail` is not added to `body.serpentine`, which already has one (doc 04 §13). Fenrir takes the Monk Calling because a quadruped has no off-hand for a Vanguard's shield; Monk's standard kit puts the hand wraps in `slot.weapon_1` (the mouth) and its alt kit's staff is Sun Wukong's.
 
-| Doc 15 code | Slot A (Illuminated, Tier 2) | Slot B (Rubricated, Tier 1) |
-|---|---|---|
-| MF | `echo.wren_long_index` | `echo.aldric_unsworn` |
-| GH | `echo.mother_ilse` | `echo.vesper_crane` |
-| CH | `echo.drowned_clerk` | `echo.dr_halloway` |
-| SO | `echo.kestrel_unit` | `echo.ostra_vey` |
-| CY | `echo.ronin_valdez` | `echo.nix_seventeen` |
-| PA | `echo.tallow` | `echo.ma_rust` |
-| WW | `echo.preacher_amos` | `echo.josephine_crowe` |
-| HN | `echo.vera_lux` | `echo.dex_halloran` |
-| WU | `echo.old_master_huo` | `echo.lan_ninth_peak` |
-| ST | `echo.colonel_wexley` | `echo.ada_brassvane` |
-| FT | `echo.wolf_in_wool` | `echo.briar_thornwood` |
-| MA | `echo.sibyl_of_ash` | `echo.kallias_twice_drowned` |
+**Inkwell binding** (doc 15 §3.1.1). Doc 15 makes each genre's Tier 2 Echo Illuminated (slot A, the rarer Inkwell tier: 19.6 hours of play per featured Echo) and its Tier 1 Echo Rubricated (slot B: 13.9 hours per specific rate-up Echo). Both routes stay ordered the same way: the rarer Inkwell tier has the longer trial, and each trial is shorter than the matching Inkwell reference. Genre index `g` is the Canon §5.2 row.
+
+| g | Genre | Slot A (Illuminated, Tier 2) | Slot B (Rubricated, Tier 1) |
+|---|---|---|---|
+| 1 | MF | `echo.wren_long_index` | `echo.fenrir` |
+| 2 | GH | `echo.mother_ilse` | `echo.lilith` |
+| 3 | CH | `echo.drowned_clerk` | `echo.jormungandr` |
+| 4 | SO | `echo.kestrel_unit` | `echo.ostra_vey` |
+| 5 | CP | `echo.ronin_valdez` | `echo.nix_seventeen` |
+| 6 | PA | `echo.tallow` | `echo.ma_rust` |
+| 7 | WW | `echo.preacher_amos` | `echo.josephine_crowe` |
+| 8 | HN | `echo.vera_lux` | `echo.dex_halloran` |
+| 9 | WX | `echo.old_master_huo` | `echo.sun_wukong` |
+| 10 | SP | `echo.colonel_wexley` | `echo.ada_brassvane` |
+| 11 | FT | `echo.wolf_in_wool` | `echo.briar_thornwood` |
+| 12 | MA | `echo.loki` | `echo.kallias_twice_drowned` |
 
 **Fold content binding** (doc 15 §3.8). For every Echo: Fold 1 `cosm.echo.<suffix>.palette`, Fold 2 trait variant B, Fold 3 kit B (the Calling's alt kit), Fold 4 `cosm.echo.<suffix>.outfit`, Fold 5 trait variant C, Fold 6 `cosm.echo.<suffix>.frame`, `cosm.echo.<suffix>.title` and `cosm.echo.<suffix>.trail`. The `cosm.` IDs are doc 15's catalog entries; this chapter fixes only their names.
 
@@ -1051,18 +1140,19 @@ Echo record:
 
 ```json
 {
-  "id": "echo.aldric_unsworn",
+  "id": "echo.fenrir",
   "origin": "genre.mythic_fantasy",
-  "calling": "calling.vanguard",
-  "kin": "kin.human",
-  "trait": "trait.echo.aldric_unsworn",
-  "doc15_slot": "echo.slot_mf_b",
+  "calling": "calling.monk",
+  "kin": "kin.beastkin",
+  "body": "body.quadruped",
+  "trait": "trait.echo.fenrir",
+  "inkwell_tier": "rubricated",
   "tier": 1,
   "est_ch": 470,
   "steps": [
     { "kind": "clear_genre", "genre": "genre.mythic_fantasy", "count": 6 },
-    { "kind": "editor_as", "calling": "calling.vanguard", "volume": 2, "count": 1 },
-    { "kind": "kills_type", "dmg": "dmg.blunt", "count": 400 }
+    { "kind": "editor_as", "calling": "calling.monk", "volume": 2, "count": 1 },
+    { "kind": "sneak", "count": 200 }
   ]
 }
 ```
@@ -1187,7 +1277,16 @@ Grades open with `margin.milestone.first_victory`, which unlocks Grade 1. A vict
 
 **`mode_quire_bp` choices.** Abridged's 7500 brings its Quires per hour (Example E, 141 per hour) in line with Standard's (Example B, 143 per hour); at 10000 it would pay 212 per 67.5 minutes. Seeded and Custom pay 5000 because the player picks the seed or the mutators. The 12 hard mutators multiply to 64,529 Bp, so `MUTATOR_BP_CAP = 20000` (§4.2) bounds them first. Even capped, a Grade-20 `run.mut.short_book` victory (10 Folios at 300 s, 50 minutes) scores 208,200: at 10000 it would pay 400 Quires (480 per hour, eight times `Q_REF`) and at 5000 still 303 (364 per hour). At 2000 it pays 121 Quires, 145 per hour, level with a Standard victory, so the short structure carries 2000.
 
-**Co-op modes** (Canon §17.5, owned here). `mode.ff_off`, `mode.ff_full` and `mode.loot_shared` are lobby overlays, never selected alone, set in `RunSetup` with 2 or more slots and stored in `RunState.coop`. `mode.ff_off` and `mode.ff_full` exclude each other. A run with `mode.ff_off` or `mode.loot_shared` is unranked and otherwise pays and counts normally; `mode.ff_full` keeps ranked eligibility, since it only makes the run harder.
+**Overlays** (Canon §17.5 and §17.9, owned here). These four modes are lobby overlays, never selected alone. They are set in `RunSetup`, fixed at `Commit`, and combine with every base mode except where a row says otherwise. None changes `mode_quire_bp`: an overlay run pays and counts by its base mode's row (doc 15 pays an invasion-open run by its own mode row).
+
+| ID | Slots | Effect | Stored in | Ranked |
+|---|---|---|---|---|
+| `mode.ff_off` | 2..=4 | `FF_DIRECT_BP = 0`, `FF_AREA_BP = 5000` (Canon §17.5); excludes `mode.ff_full` | `RunState.coop` | no |
+| `mode.ff_full` | 2..=4 | `FF_DIRECT_BP = FF_AREA_BP = 10000`; excludes `mode.ff_off` | `RunState.coop` | unchanged, since it only makes the run harder |
+| `mode.loot_shared` | 2..=4 | one drop per kill, first pickup wins (Canon §17.5) | `RunState.coop` | no |
+| `mode.invasion_open` | 1..=4 | Redactor invasions may open under Canon §17.9's window and limits (doc 13, doc 16); a Redaction replaces the run end of §3.2 row 1 | `RunState.invasion_open` | no |
+
+**Invasions.** `mode.invasion_open` is off by default. Daily, the Weekly Gauntlet and the Prologue never offer it, and a ranked token is never issued for a run that has it (Canon §17.9: ranked runs forbid it; doc 16 refuses the token). It needs every party member online, no simulation-affecting mod, and every member's account permitting invasions (doc 15 `juris.flag.invasion_minor_default`). The invader occupies replay slot 4 (Canon §2.4), never a party slot: it never counts toward `n`, `folios_present`, `EXIT_OFFERS`, votes, score or achievements, and its death is not an Erasure-hunter kill for `S_hunters`.
 
 **Apocrypha.** A run with any simulation-affecting mod (doc 02 §13, doc 15 §2.2) is unranked in every mode, earns no account rewards (doc 15), unlocks no Grade, advances no Recollection, achievement or milestone except `first_run_end`, and is marked in run history.
 
@@ -1329,7 +1428,7 @@ At the first Folio of each Marginalia Volume (`f = 26, 31, 36, ...`), before not
 | `score.board.weekly_gauntlet` | best score | fewer `end_tick` | party size; ISO week |
 | `score.board.endless` | deepest Folio cleared | higher score; fewer `end_tick` | party size; all-time and season |
 
-Seasons partition display only; every entry stays in the all-time board forever. Eligible entries: ranked mode (§8.1), no easing mutator, no `access.scribes_mercy`, no `mode.ff_off`, no `mode.loot_shared`, not Apocrypha, `restores <= RANKED_RESTORE_MAX` (§12.3), and a server-verified replay. `score.board.endless` takes Endless runs only; `score.board.standard` takes the run's final score, which for an Endless run is the §4.2 maximum. A season is 12 weeks starting at Monday 00:00 UTC of ISO week 1 of 2027 and every 12 weeks after.
+Seasons partition display only; every entry stays in the all-time board forever. Eligible entries: ranked mode (§8.1), no easing mutator, no `access.scribes_mercy`, no `mode.ff_off`, no `mode.loot_shared`, no `mode.invasion_open`, not Apocrypha, `restores <= RANKED_RESTORE_MAX` (§12.3), and a server-verified replay. `score.board.endless` takes Endless runs only; `score.board.standard` takes the run's final score, which for an Endless run is the §4.2 maximum. A season is 12 weeks starting at Monday 00:00 UTC of ISO week 1 of 2027 and every 12 weeks after.
 
 ```rust
 fn verify(sub: &Submission) -> Result<(), Reject> {
@@ -1470,14 +1569,14 @@ Prologue state machine (one row per room transition, evaluated at the end of eac
 
 ### 12.1 Files and write points
 
-- `run.sav` is a doc 02 §12.1 container of kind 1 (run suspend) in `runs/`. It holds the Canon §2.4 header, the Canon §2.5 simulation save (including `RunState`), the replay log so far, and a version-stable **checkpoint record**: the `RunSummary` fields of §4.6 (JSON, integers only) as of the latest Folio entry, used when the simulation payload cannot be loaded (§12.2). One active run per account per device. Account data lives in the separate signed meta profile (doc 02 §12.4) and is never part of `run.sav`.
-- The Prologue writes only its room checkpoints (§11) to `runs/prologue.sav` and never touches `run.sav`.
+- `runs/run.sav` is a doc 02 §12.1 container of kind 1 (run suspend). It holds the Canon §2.4 header, the Canon §2.5 simulation save (including `RunState`), the replay log so far, and a version-stable **checkpoint record**: the `RunSummary` fields of §4.6 (JSON, integers only) as of the latest Folio entry, used when the simulation payload cannot be loaded (§12.2). One active run per account per device. Account data lives in the separate signed meta profile (doc 02 §12.4) and is never part of `runs/run.sav`.
+- The Prologue writes only its room checkpoints (§11) to `runs/prologue.sav` and never touches `runs/run.sav`.
 - **Single player** writes at every Folio entry, every `AUTOSAVE_PERIOD_TICKS` after it (non-ranked runs only), on Suspend at the exact current tick, and on application quit.
 - **Co-op** writes only at Folio entry (Canon §2.5). Every client keeps a copy of the host's latest Folio-entry save for host migration (doc 16).
 
 ### 12.2 Suspend and resume
 
-- Single-player Suspend works at any tick boundary. Resume continues at that tick; the final `state_hash` equals an uninterrupted run's (Canon acceptance test 32).
+- Single-player Suspend works at any tick boundary. Resume continues at that tick; the final `state_hash` equals an uninterrupted run's (Canon acceptance test 32). In a `mode.invasion_open` run, Suspend is deferred while an invader occupies replay slot 4 and completes on the tick the invasion ends (doc 02).
 - Co-op Suspend (host only) ends the session. Resume loads the latest Folio-entry save, so the in-progress Folio restarts from its entry; the Suspend dialog states this. Absent players' slots resume `Dormant`.
 - Resume requires equal `sim_version` and `content_hash`. On a mismatch the game offers, per doc 02 §12.3, the previous build's branch `prev` (kept 30 days), on which the run resumes normally, or **Close the Book**: the meta layer ends the run `run.end.abandoned_version` from the checkpoint record, with `victory_bp = 10000`, and grants the §4.6 payout through doc 15. The run is never ranked after a mismatch.
 - Content hot reload is refused while a run is active (Canon §2.4).
@@ -1499,32 +1598,32 @@ Save write points, consolidated:
 | Every `AUTOSAVE_PERIOD_TICKS` after entry | write (unranked runs only) | none | none |
 | Suspend | write at the current tick boundary | end session; nothing new written | none |
 | Application quit | write at the current tick boundary (doc 02 §12.3) | as Suspend | none |
-| Run end | delete `run.sav` after the meta layer records `RunSummary` | same | delete its copy |
+| Run end | delete `runs/run.sav` after the meta layer records `RunSummary` | same | delete its copy |
 
 ---
 
 ## Exports
 
-All IDs below are in namespaces Canon §19 assigns to doc 14. All 335 pass the Canon §1.1 grammar, are at most 64 bytes, and have distinct `fnv1a32` (checked with the Canon §1.1 constants).
+All IDs below are in namespaces Canon §19 assigns to doc 14. Every concrete ID is listed. All 429 pass the Canon §1.1 grammar, are at most 64 bytes, and have distinct `fnv1a32` (checked with the Canon §1.1 constants, also against every other ID in the spec).
 
 | Namespace | IDs | Count |
 |---|---|---|
-| `mode.` | `standard`, `abridged`, `novella`, `daily`, `weekly_gauntlet`, `seeded`, `endless`, `custom`, `prologue`, and the Canon §17.5 co-op modes `ff_off`, `ff_full`, `loot_shared` | 12 |
-| `grade.` | `g00` to `g20` | 21 |
-| `run.end.` | `victory`, `erased`, `abandoned`, `abandoned_version`, `margin_closed`, `margin_exhausted`, `departed` | 7 |
-| `run.rubric.` | `keeper`, `catchwords`, `seal` | 3 |
-| `run.note.` | the IDs of §3.5 | 10 |
-| `run.mut.` | the IDs of §8.7 | 16 |
-| `run.marg.` | the IDs of §9.3 | 12 |
-| `run.boon.` | the IDs of §3.9 | 12 |
-| `run.kit.` | `universal`, `<calling>` and `<calling>_alt` for the 13 Callings | 27 |
-| `margin.` | the 16 facilities and 9 `margin.milestone.*` IDs of §5.1 | 25 |
-| `unlock.` | the 91 Bindery nodes of §5.3, `unlock.set.starter`, `unlock.daily_baseline` (ID from Canon §13.6) | 93 |
-| `echo.` | the IDs of §6.3 | 24 |
-| `score.` | 8 component IDs (§4.2) and 7 `score.board.*` IDs (§9.4) | 15 |
-| `ach.` | the IDs of §10 | 58 |
+| `mode.` | base modes (§8.1): `mode.standard`, `mode.abridged`, `mode.novella`, `mode.daily`, `mode.weekly_gauntlet`, `mode.seeded`, `mode.endless`, `mode.custom`, `mode.prologue`; overlays (§8.1): `mode.ff_off`, `mode.ff_full`, `mode.loot_shared`, `mode.invasion_open` | 13 |
+| `grade.` | `grade.g00`, `grade.g01`, `grade.g02`, `grade.g03`, `grade.g04`, `grade.g05`, `grade.g06`, `grade.g07`, `grade.g08`, `grade.g09`, `grade.g10`, `grade.g11`, `grade.g12`, `grade.g13`, `grade.g14`, `grade.g15`, `grade.g16`, `grade.g17`, `grade.g18`, `grade.g19`, `grade.g20` (§7.1) | 21 |
+| `run.end.` | `run.end.victory`, `run.end.margin_closed`, `run.end.erased`, `run.end.abandoned`, `run.end.abandoned_version`, `run.end.margin_exhausted`, `run.end.departed` (§4.3) | 7 |
+| `run.rubric.` | `run.rubric.keeper`, `run.rubric.catchwords`, `run.rubric.seal` (§3.4) | 3 |
+| `run.note.` | `run.note.cartographer`, `run.note.excavate`, `run.note.illuminate`, `run.note.native`, `run.note.purge`, `run.note.rescue`, `run.note.scribe`, `run.note.silent`, `run.note.swift`, `run.note.unbroken` (§3.5) | 10 |
+| `run.mut.` | `run.mut.ambushes`, `run.mut.bare_kit`, `run.mut.blind_exits`, `run.mut.champion_parade`, `run.mut.dear_pages`, `run.mut.elite_ink`, `run.mut.hungry_hunters`, `run.mut.iron_ink`, `run.mut.no_rest`, `run.mut.pauper`, `run.mut.thick_skins`, `run.mut.wild_bleed`, `run.mut.paper_foes`, `run.mut.patron`, `run.mut.short_book`, `run.mut.soft_ink` (§8.7) | 16 |
+| `run.marg.` | `run.marg.ambush_pages`, `run.marg.bleeding_genres`, `run.marg.brittle_kit`, `run.marg.champion_tide`, `run.marg.cramped_hearth`, `run.marg.dear_margins`, `run.marg.editors_wrath`, `run.marg.elite_margins`, `run.marg.hunters_pack`, `run.marg.lean_purse`, `run.marg.red_ink`, `run.marg.thick_vellum` (§9.3) | 12 |
+| `run.boon.` | `run.boon.appraising_eye`, `run.boon.blessing`, `run.boon.deep_pockets`, `run.boon.editors_bane`, `run.boon.hunters_bane`, `run.boon.keen_edge`, `run.boon.provisioned`, `run.boon.quickened`, `run.boon.second_wind`, `run.boon.shadowed`, `run.boon.surveyor`, `run.boon.thick_hide` (§3.9) | 12 |
+| `run.kit.` | `run.kit.universal`, `run.kit.vanguard`, `run.kit.duelist`, `run.kit.gunslinger`, `run.kit.grenadier`, `run.kit.spellwright`, `run.kit.alchemist`, `run.kit.shade`, `run.kit.artificer`, `run.kit.warden`, `run.kit.oracle`, `run.kit.netrunner`, `run.kit.beastbinder`, `run.kit.monk`, `run.kit.vanguard_alt`, `run.kit.duelist_alt`, `run.kit.gunslinger_alt`, `run.kit.grenadier_alt`, `run.kit.spellwright_alt`, `run.kit.alchemist_alt`, `run.kit.shade_alt`, `run.kit.artificer_alt`, `run.kit.warden_alt`, `run.kit.oracle_alt`, `run.kit.netrunner_alt`, `run.kit.beastbinder_alt`, `run.kit.monk_alt`, `run.kit.vanguard_script`, `run.kit.duelist_script`, `run.kit.gunslinger_script`, `run.kit.grenadier_script`, `run.kit.spellwright_script`, `run.kit.alchemist_script`, `run.kit.shade_script`, `run.kit.artificer_script`, `run.kit.warden_script`, `run.kit.oracle_script`, `run.kit.netrunner_script`, `run.kit.beastbinder_script`, `run.kit.monk_script` (§2.4) | 40 |
+| `margin.` | facilities (§5.1): `margin.lectern`, `margin.dramatis`, `margin.index`, `margin.bestiary`, `margin.first_page`, `margin.bindery`, `margin.ledger`, `margin.wardrobe`, `margin.inkwell`, `margin.codex_desk`, `margin.store`, `margin.reliquary_vault`, `margin.vellum_archive`, `margin.recollections`, `margin.proving_page`, `margin.plot`; milestones (§5.1): `margin.milestone.prologue_done`, `margin.milestone.first_run_end`, `margin.milestone.first_editor_v1`, `margin.milestone.first_editor_v2`, `margin.milestone.first_victory`, `margin.milestone.first_ur_text_victory`, `margin.milestone.first_standard_victory`, `margin.milestone.first_reliquary`, `margin.milestone.first_vellum`; alcove slots (§5.1a): `margin.slot.trophy_01`, `margin.slot.trophy_02`, `margin.slot.trophy_03`, `margin.slot.trophy_04`, `margin.slot.trophy_05`, `margin.slot.trophy_06`, `margin.slot.trophy_07`, `margin.slot.trophy_08`, `margin.slot.trophy_09`, `margin.slot.trophy_10`, `margin.slot.trophy_11`, `margin.slot.trophy_12`, `margin.slot.wall_01`, `margin.slot.wall_02`, `margin.slot.wall_03`, `margin.slot.wall_04`, `margin.slot.wall_05`, `margin.slot.wall_06`, `margin.slot.wall_07`, `margin.slot.wall_08`, `margin.slot.floor_01`, `margin.slot.floor_02`, `margin.slot.floor_03`, `margin.slot.floor_04`, `margin.slot.floor_05`, `margin.slot.floor_06`, `margin.slot.banner_01`, `margin.slot.banner_02`, `margin.slot.banner_03`, `margin.slot.light_01`, `margin.slot.light_02`, `margin.slot.light_03` | 57 |
+| `unlock.` | Bindery nodes (§5.3, 91): `unlock.calling.grenadier`, `unlock.calling.alchemist`, `unlock.calling.monk`, `unlock.calling.shade`, `unlock.calling.artificer`, `unlock.calling.netrunner`, `unlock.calling.beastbinder`, `unlock.calling.warden`, `unlock.calling.oracle`, `unlock.origin.space_opera`, `unlock.origin.post_apocalypse`, `unlock.origin.hardboiled_noir`, `unlock.origin.wuxia`, `unlock.origin.steampunk`, `unlock.origin.fairy_tale`, `unlock.origin.mythic_antiquity`, `unlock.origin.cosmic_horror`, `unlock.origin.oneiric`, `unlock.origin.redacted`, `unlock.origin.unwritten`, `unlock.origin.ur_text`, `unlock.kit.vanguard_alt`, `unlock.kit.duelist_alt`, `unlock.kit.gunslinger_alt`, `unlock.kit.grenadier_alt`, `unlock.kit.spellwright_alt`, `unlock.kit.alchemist_alt`, `unlock.kit.shade_alt`, `unlock.kit.artificer_alt`, `unlock.kit.warden_alt`, `unlock.kit.oracle_alt`, `unlock.kit.netrunner_alt`, `unlock.kit.beastbinder_alt`, `unlock.kit.monk_alt`, `unlock.loot.exotic_arms`, `unlock.loot.exotic_armor`, `unlock.loot.legendary_perks_1`, `unlock.loot.legendary_perks_2`, `unlock.loot.cross_glosses`, `unlock.loot.implants_2`, `unlock.loot.relics_2`, `unlock.loot.throwables_2`, `unlock.loot.glyphs_2`, `unlock.loot.recipes_2`, `unlock.loot.brews_2`, `unlock.loot.gadgets_2`, `unlock.room.fortune_engines_2`, `unlock.room.hireling_hall`, `unlock.room.bleed_shrine`, `unlock.room.wandering_scribe`, `unlock.room.illumination_vault`, `unlock.room.duel_page`, `unlock.event.genre_storms`, `unlock.option.seed_journal`, `unlock.option.lens_pocket`, `unlock.option.dramatis_slots`, `unlock.mutator.ambushes`, `unlock.mutator.bare_kit`, `unlock.mutator.blind_exits`, `unlock.mutator.champion_parade`, `unlock.mutator.dear_pages`, `unlock.mutator.elite_ink`, `unlock.mutator.hungry_hunters`, `unlock.mutator.iron_ink`, `unlock.mutator.no_rest`, `unlock.mutator.pauper`, `unlock.mutator.thick_skins`, `unlock.mutator.wild_bleed`, `unlock.mutator.paper_foes`, `unlock.mutator.patron`, `unlock.mutator.short_book`, `unlock.mutator.soft_ink`, `unlock.facility.proving_page`, `unlock.binding.vellum`, `unlock.binding.lapis`, `unlock.binding.verdigris`, `unlock.binding.oxblood`, `unlock.binding.gilt`, `unlock.binding.soot`, `unlock.palette.mythic_fantasy`, `unlock.palette.gothic_horror`, `unlock.palette.cosmic_horror`, `unlock.palette.space_opera`, `unlock.palette.cyberpunk`, `unlock.palette.post_apocalypse`, `unlock.palette.weird_west`, `unlock.palette.hardboiled_noir`, `unlock.palette.wuxia`, `unlock.palette.steampunk`, `unlock.palette.fairy_tale`, `unlock.palette.mythic_antiquity`; content sets (§2.3): `unlock.set.starter`, `unlock.daily_baseline`; Script grants (§2.3, 48): `unlock.room.lost_chapter_mythic_fantasy`, `unlock.room.lost_chapter_gothic_horror`, `unlock.room.lost_chapter_cosmic_horror`, `unlock.room.lost_chapter_space_opera`, `unlock.room.lost_chapter_cyberpunk`, `unlock.room.lost_chapter_post_apocalypse`, `unlock.room.lost_chapter_weird_west`, `unlock.room.lost_chapter_hardboiled_noir`, `unlock.room.lost_chapter_wuxia`, `unlock.room.lost_chapter_steampunk`, `unlock.room.lost_chapter_fairy_tale`, `unlock.room.lost_chapter_mythic_antiquity`, `unlock.hireling.chapter_mythic_fantasy`, `unlock.hireling.chapter_gothic_horror`, `unlock.hireling.chapter_cosmic_horror`, `unlock.hireling.chapter_space_opera`, `unlock.hireling.chapter_cyberpunk`, `unlock.hireling.chapter_post_apocalypse`, `unlock.hireling.chapter_weird_west`, `unlock.hireling.chapter_hardboiled_noir`, `unlock.hireling.chapter_wuxia`, `unlock.hireling.chapter_steampunk`, `unlock.hireling.chapter_fairy_tale`, `unlock.hireling.chapter_mythic_antiquity`, `unlock.glyph.ember`, `unlock.glyph.hollow`, `unlock.glyph.mirror`, `unlock.glyph.storm`, `unlock.glyph.thorn`, `unlock.glyph.tide`, `unlock.hireling.apothecary`, `unlock.hireling.cartographer`, `unlock.hireling.lamplighter`, `unlock.hireling.porter`, `unlock.hireling.sellsword`, `unlock.kit.vanguard_script`, `unlock.kit.duelist_script`, `unlock.kit.gunslinger_script`, `unlock.kit.grenadier_script`, `unlock.kit.spellwright_script`, `unlock.kit.alchemist_script`, `unlock.kit.shade_script`, `unlock.kit.artificer_script`, `unlock.kit.warden_script`, `unlock.kit.oracle_script`, `unlock.kit.netrunner_script`, `unlock.kit.beastbinder_script`, `unlock.kit.monk_script` | 141 |
+| `echo.` | `echo.fenrir`, `echo.wren_long_index`, `echo.lilith`, `echo.mother_ilse`, `echo.jormungandr`, `echo.drowned_clerk`, `echo.ostra_vey`, `echo.kestrel_unit`, `echo.nix_seventeen`, `echo.ronin_valdez`, `echo.ma_rust`, `echo.tallow`, `echo.josephine_crowe`, `echo.preacher_amos`, `echo.dex_halloran`, `echo.vera_lux`, `echo.sun_wukong`, `echo.old_master_huo`, `echo.ada_brassvane`, `echo.colonel_wexley`, `echo.briar_thornwood`, `echo.wolf_in_wool`, `echo.kallias_twice_drowned`, `echo.loki` (§6.3) | 24 |
+| `score.` | components (§4.2): `score.progress`, `score.editor`, `score.speed`, `score.explore`, `score.notes`, `score.treasure`, `score.hunters`, `score.deaths`; boards (§9.4): `score.board.standard`, `score.board.standard_speed`, `score.board.abridged`, `score.board.novella`, `score.board.daily`, `score.board.weekly_gauntlet`, `score.board.endless` | 15 |
+| `ach.` | `ach.first_page`, `ach.turned_page`, `ach.volume_1`, `ach.volume_2`, `ach.volume_3`, `ach.volume_4`, `ach.ur_text`, `ach.abridged`, `ach.novella`, `ach.marginalia_30`, `ach.marginalia_50`, `ach.marginalia_100`, `ach.grade_5`, `ach.grade_10`, `ach.grade_15`, `ach.grade_20`, `ach.callings_v1`, `ach.callings_win`, `ach.origins_v1`, `ach.atlas`, `ach.oneiric`, `ach.redacted`, `ach.unwritten`, `ach.secret_trio`, `ach.anachronist`, `ach.shock_of_new`, `ach.coherent_volume`, `ach.rewritten`, `ach.appraiser`, `ach.connoisseur`, `ach.master`, `ach.triad`, `ach.level_30`, `ach.palimpsestic`, `ach.exotic_pair`, `ach.crafter`, `ach.brewer`, `ach.builder`, `ach.excavator`, `ach.ghost_step`, `ach.deaths_door`, `ach.erasure_10`, `ach.hunter`, `ach.hunter_10`, `ach.swift_volume`, `ach.speed_win`, `ach.party_of_four`, `ach.reviver`, `ach.full_house`, `ach.daily_10`, `ach.gauntlet`, `ach.recollection`, `ach.recollection_all`, `ach.bindery_half`, `ach.bindery_all`, `ach.notes_100`, `ach.cartographer`, `ach.going_native` (§10) | 58 |
 
-Reserved patterns (instances listed by doc 15's Script catalog, validated by §2.3): `unlock.kit.<calling>_<name>`, `unlock.glyph.<family>`, `unlock.room.<name>`, `unlock.hireling.<type>`, `run.kit.<calling>_<name>`.
+Reserved patterns for later Scripts and Folio Expansions (doc 15 §3.1.2, validated by §2.3): `unlock.kit.<calling>_<name>`, `unlock.glyph.<family>`, `unlock.room.<name>`, `unlock.hireling.<type>`, `run.kit.<calling>_<name>`. The launch instances are listed above.
 
 Names this chapter fixes inside other owners' namespaces: `trait.echo.<suffix>`, `_b`, `_c` (doc 04's namespace, authored here at doc 04's request); `cosm.echo.<suffix>.{palette, outfit, frame, title, trail, recollected}`, `cosm.binding.<b>`, `cosm.palette.<g>` (doc 15's catalog).
 
@@ -1536,19 +1635,20 @@ Data constants exported: the §1.1 table, `grade_bp(G)`, `RUN_SCORE_BP = 1460`, 
 |---|---|
 | 02 | save container kind 1 and the `runs/` directory; `prev` branch flow on version mismatch; intents `ChooseExit { door }` and `CommitOffer` applied in `(slot, action_seq)` order; headless verifier for §9.4 |
 | 03 | the run layer runs once per tick after `sys.despawn` (system 34) and before `sys.tick_end` (35), in a system `sys.run_layer` that doc 03 adds to its order; `sys.tick_begin` emits `ev.folio_entered`; `protect` bits for the sealed Colophon entrance; Ghost movement (§5.12) |
-| 04 | Erratum creation and Echo presets; `trait.echo.<suffix>` variants A, B and C for all 24 Echoes under its power-budget validator; the §2.5 role kits this chapter binds; level-up allocation for joiners; Ghost needs frozen; Going Native recomputation (Canon §5.11) |
-| 05 | `arch.melee.{hafted_mace, hafted_maul, blade_long, blade_short, dagger, fist_wraps, polearm_spear, polearm_staff}`, `arch.ranged.{sidearm, longarm, heavy_auto, flamer, wand, staff, sling, hand_crossbow}`, `arch.offhand.{shield_small, shield_medium, shield_tower, focus}`, `arch.armor.{light,medium,heavy}_{head,body,hands,legs,feet}`, `ammo.{light, heavy, fuel, stone}`; step 13 reads `m13` (§7.3) |
-| 06 | `glyph.ess.{flame, frost, storm}` and `glyph.form.{aura, chain}`; the run-start glyphs of doc 06 §8.1 |
+| 04 | Erratum creation and Echo presets; `trait.echo.<suffix>` variants A, B and C for all 24 Echoes under its power-budget validator, including `trait.echo.fenrir` (`damage_dealt.unarmed` add_bp 2000, broad → 2; `buy_price` mul 11000, broad → 1; 2 / 1 / 1) and `trait.echo.loki` (`spell_potency.illusion` add_bp 2000, broad → 2; `prayer_healing` mul 7500, narrow → 1; 2 / 1 / 1); the §13 body plans `body.quadruped` (Fenrir) and `body.serpentine` (Jörmungandr) for launch Echoes, with beastkin's added tail skipped on a plan that already has `bp.tail`; the §2.5 role kits this chapter binds; level-up allocation for joiners; Ghost needs frozen; Going Native recomputation (Canon §5.11) |
+| 05 | `arch.melee.{hafted_mace, hafted_maul, blade_long, blade_short, dagger, fist_wraps, polearm_spear, polearm_staff}`, `arch.ranged.{sidearm, longarm, heavy_auto, flamer, wand, staff, sling, hand_crossbow}`, `arch.offhand.{shield_small, shield_medium, shield_tower, focus}`, `arch.armor.{light,medium,heavy}_{head,body,hands,legs,feet}`, `ammo.{light, heavy, fuel, stone}`; for Script kits `arch.melee.{axe, quarterstaff}`, `arch.ranged.{pistol_heavy, smg}`, `arch.offhand.{shield_buckler, tome, lantern}`, `arch.armor.cloth_{head,body,hands,legs,feet}`; the unarmed function `arch.melee.unarmed` with bite, claw and pounce skins for `body.quadruped` and bite, constrict and spit skins for `body.serpentine`; step 13 reads `m13` (§7.3) |
+| 06 | `glyph.ess.{flame, frost, storm}` and `glyph.form.{aura, chain}`; the run-start glyphs of doc 06 §8.1; 4 glyphs in each of `family.ember`, `family.hollow`, `family.mirror`, `family.storm`, `family.thorn`, `family.tide` behind `unlock.glyph.<family>` |
 | 07 | `gadget.{turret_light, drone_scout}`, `item.tool.{toolkit, hacking_deck}`, durability-loss hook for `run.marg.brittle_kit` |
 | 08 | `apparatus.{mortar, alembic}` at tier 1 |
 | 09 | `aware.alert` for `run.note.silent` |
 | 10 | `appr.reason.kit` for kit and lore type knowledge; boon `run.boon.appraising_eye` raises pickups to `know.appraised` |
-| 11 | every kit item template with its base value; `item.food.ration`; `item.tool.{bandage, pick, lockpicks}`; `item.potion.{healing, haste, focus, fortify, aether, antidote, invisibility, clarity, regeneration, shielding}`; `item.text.{mending, blink, mapping, demolition, appraisal, recharge, sanctify, summoning}`; `item.throwable.{javelin, knife, smoke, frag, fire_flask, poison_flask, disruptor_flask}`; `item.book.{primer_evocation, primer_abjuration}`; `item.container.flask`; `item.trinket.{lattice_lens, holy_symbol}`; `item.quest.catchword`; `item.remains`; `loot.volume_reward`; `offer_rng(slot, context_uid, purpose)` with advance-by-one-on-commit (doc 11 §11.2); `loot.pool.<suffix>` tags renormalized inside rarity bands; `lucre_bp`, `shop_price_bp`, `reliq_key_delta` and `run.boon.deep_pockets` hooks; Colophon shop stock |
-| 12 | `room.{incipit, colophon, interleaf}`, `room.prologue_l1` to `l7`; the Colophon lectern (doc 12's Threshold lectern); `folio_type()` and rest-Folio rules; sanctuary flag; sealed Colophon entrance; Interleaf at `INTERLEAF_PATH_BP`; Rubric draw with weights `[5000, 3000, 2000]`; `generate(seed, f, d, genre, ...)` with depth; `folio_scale_bp`; `ambush_extra`; bleed-zone count hook; `rooms_total`; Illumination vault and rescue flags; lattice draw on demand; secret exits |
-| 13 | `boss.editor_v1..=v4`, `boss.ur_editor`, `enemy.prologue_hunter`, `npc.companion.<origin_suffix>`; `keeper` flag; Seal waves; `elite_promote_add_bp`; `champion_extra`; `telegraphed` attack flag; `final_phase_extra`; `sys.erasure` honouring `clock_start` and `colophon_entry_tick`; Colophon desecration hunters; every `template_hp ≤ 400` HP; kill XP × 16667 in Abridged |
-| 15 | Quires `min(400, floor_div(run_score, 50))` per run; achievement grades paid at 10/25/50/100 Quires and 40/80/160/320 Ink; Ink, Codex XP and Reliquaries from `RunSummary`; Folds and kit A/B rule; `cosm.*` catalog entries named in Exports; Apocrypha flag; Inkwell reference of 19.6 hours (slot A) and 13.9 hours (slot B) |
-| 16 | lobby, Dormant detection, host migration from Folio-entry save copies, ranked tokens, headless verification host |
-| 17 | Margin screens, door previews and forecasts, Ghost spectator UI, boon altar UI, `access.scribes_mercy` |
+| 11 | every kit item template with its base value; `item.food.ration`; `item.tool.{bandage, pick, lockpicks}`; `item.potion.{healing, haste, focus, fortify, aether, antidote, invisibility, clarity, regeneration, shielding}`; `item.text.{mending, blink, mapping, demolition, appraisal, recharge, sanctify, summoning}`; `item.throwable.{javelin, knife, smoke, frag, fire_flask, poison_flask, disruptor_flask}`; `item.book.{primer_evocation, primer_abjuration}`; `item.container.flask`; `item.trinket.{lattice_lens, holy_symbol}`; Script-kit items `item.face.mask`, `item.back.cloak`, `item.belt.sash`, `item.tool.{rope, torch}` at the doc 11 §3 base values §2.4.2 uses; `item.quest.catchword`; `item.remains`; `loot.volume_reward`; `offer_rng(slot, context_uid, purpose)` with advance-by-one-on-commit (doc 11 §11.2); `loot.pool.<suffix>` tags renormalized inside rarity bands; `lucre_bp`, `shop_price_bp`, `reliq_key_delta` and `run.boon.deep_pockets` hooks; Colophon shop stock |
+| 12 | `room.{incipit, colophon, interleaf}`, `room.prologue_l1` to `l7`; the Colophon lectern (doc 12's Threshold lectern); `folio_type()` and rest-Folio rules; sanctuary flag; sealed Colophon entrance; Interleaf at `INTERLEAF_PATH_BP`; Rubric draw with weights `[5000, 3000, 2000]`; `generate(seed, f, d, genre, ...)` with depth; `folio_scale_bp`; `ambush_extra`; bleed-zone count hook; `rooms_total`; Illumination vault and rescue flags; lattice draw on demand; secret exits; 3 room variants per `unlock.room.lost_chapter_<g>` |
+| 13 | `boss.editor_v1..=v4`, `boss.ur_editor`, `enemy.prologue_hunter`, `npc.companion.<origin_suffix>`; `keeper` flag; Seal waves; `elite_promote_add_bp`; `champion_extra`; `telegraphed` attack flag; `final_phase_extra`; `sys.erasure` honouring `clock_start` and `colophon_entry_tick`; Colophon desecration hunters; every `template_hp ≤ 400` HP; kill XP × 16667 in Abridged; the hireling type behind each `unlock.hireling.*` ID of §2.3; the Redactor invader and the Redacted outcome of a `mode.invasion_open` run (Canon §17.9) |
+| 15 | Quires `min(400, floor_div(run_score, 50))` per run; achievement grades paid at 10/25/50/100 Quires and 40/80/160/320 Ink; Ink, Codex XP and Reliquaries from `RunSummary`; Folds and kit A/B rule; `cosm.*` catalog entries named in Exports, including `cosm.margin.*` decorations for §5.1a; Apocrypha flag; Inkwell reference of 19.6 hours (slot A) and 13.9 hours (slot B); the §3.1.2 Script catalog granting exactly the 48 `unlock.` IDs of §2.3; the Echo binding of §6.3 with the five public-domain figures in the places §6.3 gives them; `juris.flag.invasion_minor_default` |
+| 16 | lobby, Dormant detection, host migration from Folio-entry save copies, ranked tokens (refused for `mode.invasion_open`), headless verification host, invasion sessions on replay slot 4 |
+| 17 | Margin screens, the trophy arranger over the 32 `margin.slot.*` records of §5.1a, door previews and forecasts, Ghost spectator UI, boon altar UI, `access.scribes_mercy` |
+| 18 | art, voice and source records for the five public-domain Echoes (§6.3); the alcove's fixed architecture and slot dressing (§5.1a) |
 
 ## Canon gaps
 
@@ -1573,6 +1673,11 @@ Data constants exported: the §1.1 table, `grade_bp(G)`, `RUN_SCORE_BP = 1460`, 
 19. **Run-layer system slot.** Doc 03 §2.2 has no run-layer system. Requested: `sys.run_layer` (logic owner 14) between `sys.despawn` and `sys.tick_end`.
 20. **Version mismatch.** Doc 02 §12.3 names the end reason `abandoned_version`; this chapter exports it as `run.end.abandoned_version`.
 21. **Doc 12 alignment (doc 12 conforms to canon-1.2).** Doc 12's "Threshold" room and lectern are Canon §17.1's Colophon and its lectern. This chapter takes from doc 12: the draw on the first lectern interaction (doc 12 §4.5), Folio types and rest Folios (doc 12 §5), challenge kinds, and the secret-Origin Folio 1 rule. Doc 12 §4.9's door choice (unanimity, or one voter holding interact 180 ticks with everyone inside) is kept as one of the two commit paths of §3.6, which adds the timed majority and single-voter fallbacks so an idle player cannot hold the party forever. Requested: doc 12 §4.9 defers to §3.6. Doc 12's per-Folio Marginalia modifiers (`lattice.marg.*`) and this chapter's cumulative Marginal mutations (`run.marg.*`) both apply; where they touch the same quantity (bleed zones, durability, champions) they add, `lattice.marg.*` first.
+22. **Echo roster (canon-1.6).** Canon §16.2 requires `echo.sun_wukong`, `echo.loki`, `echo.lilith`, `echo.fenrir` and `echo.jormungandr` inside a roster of 24 with 2 per core genre. Applied: each takes one original's roster place, keeping that place's genre, tier, Inkwell tier, trial steps and `est_ch`, so trial totals, tier bounds and doc 15's banner rotation are unchanged. Fenrir replaces `echo.aldric_unsworn` (and moves from Vanguard to Monk, §6.3), Lilith replaces `echo.vesper_crane`, Jörmungandr replaces `echo.dr_halloway`, Sun Wukong replaces `echo.lan_ninth_peak`, and Loki replaces `echo.sibyl_of_ash` (a new trait; the old `exit_preview` trait is retired). The retired IDs are aliased to their successors (`data/aliases.json`, Canon §1.1). Requested: doc 04 §13 drops "no launch Echo uses a non-humanoid plan" and doc 04's budget table scores `fenrir` and `loki`.
+23. **Margin trophies (canon-1.4).** Canon §17.8 replaced the building plot with fixed trophy and decoration slots. Applied: `margin.plot` keeps its ID and becomes the trophy alcove (§5.1a) with 32 `margin.slot.*` records, opened by achievements; `unlock.palette.<g>` keeps its ID and price and now grants an alcove finish. Canon says the slots are "unlocked through Quires, achievements and the Codex": slots open through achievements, and Quires and the Codex buy what fills them, so no Bindery total changes.
+24. **Invasions (canon-1.4).** Canon §17.9 names `mode.invasion_open` and gives docs 13, 14 and 16 the details. Applied: an overlay for 1 to 4 slots (§8.1), never ranked and never offered in Daily, Weekly or the Prologue; a Redaction replaces the §3.2 row 1 run end; single-player Suspend waits for the invasion to end (doc 02 G11).
+25. **Script grants.** Doc 15 §3.1.2 asks this chapter for the `unlock.` IDs its Scripts grant and for `run.kit.<calling>_script`. Applied: the 48 launch IDs of §2.3 and the 13 Script kits of §2.4.2, each within the 500 Bp kit rule using doc 11 §3 values.
+26. **Other canon-1.4 to canon-1.8 changes not yet applied here.** This chapter still conforms to canon-1.3 on: Erasure onset and hunters (canon-1.6: 720 s onset, one elite-strength hunter per Folio at 10 stacks, no repeats; §3.8 and acceptance test 4 use 420 s and repeating hunters); the account Glyph Library (`GLYPH_LIBRARY_START`, canon-1.6, "horizontal meta, doc 14"); fixed terrain (canon-1.4; Prologue room L3 still teaches mining and placing blocks); and the cut of mounts (canon-1.8). These change rules, not IDs, and need a content pass on this chapter.
 
 ## Acceptance tests
 
