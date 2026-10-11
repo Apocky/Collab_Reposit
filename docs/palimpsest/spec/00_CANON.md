@@ -507,7 +507,7 @@ The suffix after `genre.` is the **genre suffix** used in text keys. `gravity_bp
 
 | # | ID | Display name | ARC | TEC | MYT | VRV | aether_axiom | gravity_bp | ambient_light | Lucre skin | Aether skin | Tier |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `genre.mythic_fantasy` | Mythic Fantasy | 8 | 2 | 6 | 6 | arcana | 10000 | 4 | Nobles | Mana | core |
+| 1 | `genre.mythic_fantasy` | Mythic Fantasy | 8 | 2 | 6 | 6 | arcana | 10000 | 4 | Crowns | Mana | core |
 | 2 | `genre.gothic_horror` | Gothic Horror | 5 | 3 | 9 | 3 | mythos | 10000 | 2 | Shillings | Sanguine | core |
 | 3 | `genre.cosmic_horror` | Cosmic Horror | 3 | 6 | 10 | 1 | mythos | 10000 | 1 | Bonds | Gnosis | core |
 | 4 | `genre.space_opera` | Space Opera | 6 | 10 | 3 | 7 | arcana | 8000 | 6 | Credits | Psi | core |
@@ -1951,7 +1951,7 @@ W! LLM text → cosmetic only                                      N! LLM output
 W! glyph dep := origin_genre.aether_axiom                        W! min L1(core axiom vectors) ≥ 6
 W! type-hidden ⇔ listed by an idc class                          W! sneak eligibility := per (attacker, target)
 W! ∀ counter type: ∃ dep-none source ∈ every genre               N! input synthesized for a player
-N! skin name ∈ {brands, third-party currency names, cur./ent. names except its own base currency, "Ink"}
+N! skin name ∈ {brands, third-party currency names, cur./ent. names except its own base currency, "Ink"}  except "Crowns" (Mythic Fantasy Lucre; DECISIONS 90)
 ```
 
 ---
@@ -1966,7 +1966,7 @@ Applied after the canon gap triage (audit/canon_gaps_triage.md).
 - Sessions: named state boundaries for state_hash and snapshots, intents in the replay log, presentation_hash split from content_hash, run_seed carried from commit, saves deferred during an invasion, light overrides in every light read.
 - RNG: range_incl computed in i128, seq allocation, object-keyed draws, rng.check and rng.run, labeled sub-streams, offer generators, explosion draws on sequential streams, account and presentation generators.
 - World: liquid units and gas concentration, the fall-damage and move-speed chains, block.tag.destructible and fixed terrain stopping projectiles.
-- Rules: Somnambule limited to destructible blocks, "Nobles" for Crowns, supernatural alchemy dependency, potion failure and Unmoored, Shock of the New ranks, seam local_genre.
+- Rules: Somnambule limited to destructible blocks, "Crowns" kept as the Mythic Fantasy Lucre skin by product-owner exemption (DECISIONS 90), supernatural alchemy dependency, potion failure and Unmoored, Shock of the New ranks, seam local_genre.
 - Progression: skill XP normalized before party scaling, the 45-unit XP anchor, ghosts and pacification in character XP, Errata limbs severing only from a crippled pool (DECISIONS.md item 84, overriding triage Q5) and added-part donors.
 - Damage: attack factors and manufacturer traits before step 1, st.taunted, fae iron, shield AR on blocks, the 6b split, Scribe's Mercy step 6c, ward profiles, consumable and takedown entry points, blunt poise for mixed hits, two hit batches.
 - Statuses: disruptor duration, downed rules in doc 16, st.marked wording, the Erasure hunter's rank, invaders never erase, substituted commands.

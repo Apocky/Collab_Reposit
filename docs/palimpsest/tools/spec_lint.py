@@ -19,7 +19,9 @@ TICK_RE = re.compile(r"`([^`\n]+)`")
 REQUIRED = ["## Imports", "## Exports", "## Interface assumptions", "## Canon gaps",
             "## Acceptance tests", "## Invariants annex"]
 RETIRED = ["cat.mount", "slot.mount", "st.mounted", "ev.mounted", "ev.dismounted", "room.no_mount",
-           "skill.delving", "cat.block"]
+           "skill.delving", "cat.block",
+           "npc.vendor.stablemaster", "shop.stablemaster", "ai.nav.mounted", "ai.action.remount",
+           "ai.set.cavalry", "enemy.role.cavalry"]
 RETIRED_PREFIX = ["arch.mount."]
 HEDGES = ["might", "could", "consider", "optionally", "TBD", "roughly", "perhaps", "maybe"]
 # Namespaces that look like content IDs. Others (e.g. file names, Rust paths) are ignored.

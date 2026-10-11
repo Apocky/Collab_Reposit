@@ -101,6 +101,10 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 86 | Invader rewards | Kept (triage Q8): cosmetic only (Quires and Red Ink marks), no Codex pass XP | Canon §17.9; docs 14, 15, 16 |
 | 87 | Cosmetic mods in co-op | Kept (triage Q11): presentation_hash split from content_hash; peers may differ in art, audio, VFX, narration, UI and localization | Canon §2; docs 02, 16 |
 | 88 | Somnambule shots | Kept (triage Q4): after 10 m, pass destructible and non-opaque blocks only; fixed terrain stops every projectile | Canon §5.9; docs 05, 11 |
+| 89 | Cavalry | Kept (orchestrator call confirmed): cavalry becomes the unmounted `enemy.role.charger`, fast gap-closers that charge and trample | Canon §17.7; doc 13 |
+| 90 | Mythic Fantasy Lucre skin | **Changed (triage Q9 overruled): keep "Crowns".** It is exempt from the third-party currency-name rule | Canon §5.2, §22; docs 11, 18 |
+| 91 | Erasure hunter identity | Kept (triage Q12): keeps `rank.hunter` identity, music cue and immunities, with `rank.elite` multipliers | Canon §11.6; doc 13 |
+| 92 | Field of view | Kept (triage Q10): 60 to 120 degrees, default 90 | Docs 02, 17 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 
