@@ -121,6 +121,23 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 106 | Second Edition scaling | **New:** Second Edition Folio n uses depth 25 + 2n in the P, T, H and S tables (canon §13.8) | Canon §13.8; docs 13, 14 |
 | 107 | Second Edition party | **New:** every slot enters; ghosts return with their character as it was at death | Docs 14, 16 |
 | 108 | Second Edition stakes | **New: high stakes.** Entering Second Edition is a choice offered at the Ur-Text clear. A party wipe in Second Edition forfeits the run's clear (the run is recorded as a non-clear). A Second Edition clear in which no party member died grants the Ironman reward: an exclusive cosmetic and a leaderboard mark | Docs 14, 15, 17 |
+| 109 | Early Access genre count | **Changed (roadmap question): add more genres to Early Access** instead of relaxing lattice rules; EA ships at least the minimum genre count for which the strict lattice rules always offer 3 exits in every mode | Canon §17; docs 12, 21 |
+| 110 | Lattice fallback rule | **Rejected:** no rule relaxation; the genre count makes the strict rules hold | Canon §17; doc 12 |
+| 111 | Release dates | **Changed: no hard dates.** Milestones are gated only by their exit criteria; the roadmap keeps relative sizes in agent-days; doc 15's T0 is a configuration value set at launch | Docs 15, 21 |
+| 112 | Storefronts | **Changed: Steam only.** No Epic Games Store and no itch.io (itch.io was considered and dropped); EOS crossplay is no longer needed for a second store | Docs 02, 15, 16, 21 |
+| 113 | Demo | **Changed: no demo** and no public playtest build | Docs 15, 21 |
+| 114 | Early Access genres | **Changed (supersedes 41): all 12 core genres at Early Access**, so the 25-Folio Standard run ships at EA; the 4 secret genres follow the canon's unlock rules | Brief §3; docs 12, 14, 21 |
+| 115 | Forced Ur-Text draw | **New:** the exit draw just before the forced Ur-Text Folio is exempt from the Volume no-repeat and per-run cap rules; no player-visible exit changes (its doors are replaced by the Ur-Text door) | Canon §17; doc 12 |
+| 116 | Origin genre fallback | **New:** when the host's Origin genre is not shipped, Folio 1 uses the nearest shipped genre by lattice edge weight (ties by ascending genre ID) | Docs 12, 14 |
+| 117 | Second Edition lattice | **New:** the no-repeat rule applies per fused pair, not per genre: a Volume never repeats a pair, but a genre may appear in two different pairs | Docs 12, 14 |
+| 118 | Early Access feature set | **New:** Second Edition NG+ ships at Early Access; asynchronous traces, streaming audience votes and PvP invasions ship in post-EA updates before 1.0 | Doc 21 |
+| 119 | Early Access cast | Kept (roadmap default): all 12 Origins and 24 Echoes at Early Access, including Sun Wukong, Loki, Lilith, Fenrir and Jörmungandr | Docs 14, 15, 21 |
+| 120 | On-device Scribe model | Kept (roadmap default): ships at 1.0 as an opt-in; Early Access uses the template grammar | Docs 02, 18, 21 |
+| 121 | Kaiju and Mecha expansion | **New: powered armor, no vehicles.** Mechs are worn heavy armor sets and Going Native forms that change the body plan; no piloted vehicles | Docs 12, 21 |
+| 122 | Expansion price | **Changed: USD 9.99** per Folio Expansion (was 9.99 to 14.99) | Brief §8; docs 15, 21 |
+| 123 | Networking stack | **Changed: Steam plus our own verifier.** Steamworks lobbies and Steam Networking Sockets with Datagram Relay for play; our own headless service re-simulates ranked, daily and weekly replays to verify scores; the EOS SDK is dropped | Docs 02, 16, 21 |
+| 124 | Secret-genre mini-bosses | Kept (roadmap default): the Ur-Text and the Unwritten use doc 13's champion substitution, no bespoke mini-bosses | Doc 13 |
+| 125 | Invasions timing | Kept: PvP invasions ship in an update before 1.0, opt-in | Doc 21 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 
