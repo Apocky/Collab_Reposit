@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.1 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.2 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -67,7 +67,7 @@ Simulation state never contains `f32` or `f64`. Rendering, audio and UI may use 
 | `Grams` | `i64` | mass |
 | `Ml` | `i64` milliliters | liquid and gas volume |
 | `DeciC` | `i32`, tenths of a degree Celsius | temperature |
-| `Light` | `u8` 0..=15 | simulation light level |
+| `Light` | two `u8` channels 0..=15: `light_sky` (genre ambient floor and sky) and `light_block` (placed and dynamic sources) | effective light = `max(light_sky, light_block)` |
 | `Db` | `i32` whole decibels | sound level |
 | stats | `i32` | attribute, sub-attribute and skill values |
 | satiation | `i32` whole points | `res.satiation` |
@@ -213,7 +213,7 @@ apply q on this run
   Per-tick systems use `k = 60`. The status pulse uses `k = 4`. Needs use `k = 1`. No rate drifts.
 
 - `in_combat(e, t)` is true when `e` dealt or took non-DoT damage within ticks `(t-300) ..= t`, or any hostile AI held awareness `alerted` toward `e` within that window.
-- `light_at(e)` is the light level of block `fx_floor_block(e.pos + (0, 0.5 m, 0))`.
+- `light_at(e)` is the effective light of block `fx_floor_block(e.pos + (0, 0.5 m, 0))`. Stealth and composure use effective light. Spawn rules use `light_block` only (§12.3).
 
 ### 2.4 Sessions and replays
 
@@ -434,7 +434,9 @@ All values are given in content units (§1.6). Code converts them with `fx_from_
 
 - Ground acceleration is 40000 mm/s². Air acceleration is 8000 mm/s².
 - Backpedal applies when the angle between the input direction and facing exceeds 12288 Bam (67.5°). Strafe applies above 4096 Bam (22.5°). Otherwise the movement is forward.
-- **Jump.** `JUMP_H = 1100 mm + 30 mm × vrv(e)`, so 1100 mm at VERVE 0, 1250 mm at 5 and 1400 mm at 10. Launch speed is `v0 = sqrt_fx(2 × g × JUMP_H) + g × DT / 2`, where `g` is the local gravity. With the §2.1 integrator the apex equals `JUMP_H` within 1 mm for `g` from 12000 to 20000 mm/s². Every core genre can mount a 1-block ledge.
+- **Jump.** `JUMP_H = 1100 + 30 × min(vrv(e), 5) + 150 × max(0, vrv(e) - 5)` mm: 1100, 1250, 1400, 1550, 1700, 1850 and 2000 mm at VERVE 0, 5, 6, 7, 8, 9 and 10. Launch speed is `v0 = sqrt_fx(2 × g × JUMP_H) + g × DT / 2`, where `g` is the local gravity. With the §2.1 integrator the apex equals `JUMP_H` within 1 mm for `g` from 12000 to 20000 mm/s². Every genre can mount a 1-block ledge, and Wuxia clears 2-block walls.
+- **Air jump.** At `vrv(e) >= 9`, every entity gets one air jump per airborne period, with height `mul_bp(JUMP_H, 6000)`. This is genre physics, not a component, and never Contradicts.
+- **Lean.** `move.lean_l` and `move.lean_r` shift the eye 350 mm sideways over 9 ticks. The capsule stays put and the head hitbox follows the eye (doc 05).
 - **Fall damage.** `fall_height = max(0, peak - land)`, measured along the current gravity axis. `peak` is the extreme origin coordinate against gravity since the entity last stood on ground, swam, climbed or had `st.levitating`. `SAFE_FALL = 4000 mm × (10000 + (vrv(e) - 5) × 400) Bp`. If `excess = fall_height - SAFE_FALL > 0`, damage is `mul_bp(max_hp_mhp, ((excess.raw as i128 × 800) >> 32) as i32)` mHP, which is 8% of Max HP per meter of excess. It is a `dmg.blunt` hit entering the damage pipeline at step 4 (§10.5). It skips armor and the chip floor and never crits. Acrobatics (doc 04) multiplies it afterwards.
 - **Dodge.** A 3000 mm burst over 12 ticks costing 20 stamina. Invulnerability starts on the dodge's first tick and lasts `min(12, 8 + floor_div(max(0, AGI - 40), 15))` ticks, never past the dodge's 12th tick. A new dodge cannot start until 18 ticks after the previous one started.
 - **Final move speed** is base speed, then §6.4 row 11, then each active status multiplier in ascending status ID byte order. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
@@ -458,33 +460,37 @@ Each axiom is an integer `0..=10` per genre.
 
 The suffix after `genre.` is the **genre suffix** used in text keys. `gravity_bp` multiplies `GRAVITY_BASE`. `ambient_light` is the simulation light floor in open areas before light sources (doc 03). Doc 12 owns the full Genre Parameter Vector for each genre and must copy these columns exactly.
 
-| # | ID | Display name | ARC | TEC | MYT | VRV | gravity_bp | ambient_light | Lucre skin | Aether skin | Tier |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `genre.mythic_fantasy` | Mythic Fantasy | 8 | 2 | 6 | 6 | 10000 | 4 | Crowns | Mana | core |
-| 2 | `genre.gothic_horror` | Gothic Horror | 5 | 3 | 9 | 3 | 10000 | 2 | Shillings | Sanguine | core |
-| 3 | `genre.cosmic_horror` | Cosmic Horror | 6 | 4 | 10 | 1 | 10000 | 1 | Dollars | Lore | core |
-| 4 | `genre.space_opera` | Space Opera | 3 | 10 | 3 | 7 | 8000 | 6 | Credits | Psi | core |
-| 5 | `genre.cyberpunk` | Cyberpunk | 1 | 9 | 2 | 5 | 10000 | 3 | Cred | Bandwidth | core |
-| 6 | `genre.post_apocalypse` | Post-Apocalypse | 1 | 6 | 2 | 4 | 10000 | 5 | Scrip | Flux | core |
-| 7 | `genre.weird_west` | Weird West | 4 | 4 | 6 | 7 | 10000 | 6 | Bits | Hex | core |
-| 8 | `genre.hardboiled_noir` | Hardboiled Noir | 0 | 5 | 1 | 2 | 10000 | 2 | Bucks | Nerve | core |
-| 9 | `genre.wuxia` | Wuxia | 6 | 2 | 5 | 10 | 8000 | 5 | Taels | Qi | core |
-| 10 | `genre.steampunk` | Steampunk | 3 | 7 | 3 | 6 | 10000 | 4 | Sovereigns | Pressure | core |
-| 11 | `genre.fairy_tale` | Fairy Tale | 10 | 1 | 7 | 5 | 10000 | 6 | Fairy Gold | Glamour | core |
-| 12 | `genre.mythic_antiquity` | Mythic Antiquity | 6 | 2 | 10 | 8 | 10000 | 7 | Drachmae | Ichor | core |
-| 13 | `genre.oneiric` | Oneiric | 9 | 5 | 8 | 9 | 6000 | 4 | Motes | Lucidity | secret |
-| 14 | `genre.redacted` | The Redaction | 2 | 8 | 8 | 0 | 10000 | 9 | Vouchers | Clearance | secret |
-| 15 | `genre.unwritten` | The Unwritten | 0 | 0 | 0 | 0 | 10000 | 8 | none | Ink | secret |
-| 16 | `genre.ur_text` | The Ur-Text | 5 | 5 | 5 | 5 | 10000 | 4 | Words | Ink | secret |
+`aether_axiom` is the axiom that powers native casting in that genre (§5.3, §5.7).
+
+| # | ID | Display name | ARC | TEC | MYT | VRV | aether_axiom | gravity_bp | ambient_light | Lucre skin | Aether skin | Tier |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `genre.mythic_fantasy` | Mythic Fantasy | 8 | 2 | 6 | 6 | arcana | 10000 | 4 | Crowns | Mana | core |
+| 2 | `genre.gothic_horror` | Gothic Horror | 5 | 3 | 9 | 3 | mythos | 10000 | 2 | Shillings | Sanguine | core |
+| 3 | `genre.cosmic_horror` | Cosmic Horror | 3 | 6 | 10 | 1 | mythos | 10000 | 1 | Bonds | Gnosis | core |
+| 4 | `genre.space_opera` | Space Opera | 6 | 10 | 3 | 7 | arcana | 8000 | 6 | Credits | Psi | core |
+| 5 | `genre.cyberpunk` | Cyberpunk | 1 | 9 | 2 | 5 | techne | 10000 | 3 | Chits | Bandwidth | core |
+| 6 | `genre.post_apocalypse` | Post-Apocalypse | 0 | 6 | 5 | 6 | techne | 10000 | 5 | Tins | Static | core |
+| 7 | `genre.weird_west` | Weird West | 4 | 4 | 6 | 7 | mythos | 10000 | 6 | Eagles | Hex | core |
+| 8 | `genre.hardboiled_noir` | Hardboiled Noir | 0 | 5 | 1 | 2 | verve | 10000 | 2 | Bucks | Nerve | core |
+| 9 | `genre.wuxia` | Wuxia | 6 | 2 | 5 | 10 | verve | 8000 | 5 | Taels | Qi | core |
+| 10 | `genre.steampunk` | Steampunk | 3 | 7 | 3 | 6 | techne | 10000 | 4 | Sovereigns | Pressure | core |
+| 11 | `genre.fairy_tale` | Fairy Tale | 10 | 1 | 8 | 3 | arcana | 10000 | 6 | Fairy Gold | Glamour | core |
+| 12 | `genre.mythic_antiquity` | Mythic Antiquity | 6 | 2 | 10 | 8 | mythos | 10000 | 7 | Drachmae | Ichor | core |
+| 13 | `genre.oneiric` | Oneiric | 9 | 5 | 8 | 9 | arcana | 6000 | 4 | Motes | Lucidity | secret |
+| 14 | `genre.redacted` | The Redaction | 2 | 8 | 8 | 0 | techne | 10000 | 9 | Vouchers | Clearance | secret |
+| 15 | `genre.unwritten` | The Unwritten | 0 | 0 | 0 | 0 | none | 10000 | 8 | Lucre | Potential | secret |
+| 16 | `genre.ur_text` | The Ur-Text | 5 | 5 | 5 | 5 | none | 10000 | 4 | Words | Logos | secret |
 
 Special rules:
 
 - `genre.ur_text` is the genre of Folio 25 (§17).
-- `genre.unwritten` has no shops, no Lucre drops and no native enemies except Editors.
+- `genre.unwritten` has no shops and no Lucre drops. Its only enemies are members of `fac.editors`, who count as native there, and every ability of a `fac.editors` member counts as innate for the §5.5 override.
 - `genre.oneiric` has gravity-flip volumes, which doc 12 defines.
 - `genre.redacted` is the Editors' home genre.
 - In any genre whose VERVE is 0 nobody crits (§6.4 row 13).
 - The Contradiction overrides for these genres are in §5.5.
+- **Naming rule.** No Lucre or Aether skin may match a real-world brand, a third-party game's currency or resource name, the display name of any `cur.` or `ent.` entry, or the word Ink. Doc 18 runs a name review against this rule.
+- The minimum pairwise L1 distance between the axiom vectors of the 12 core genres is 6.
 
 ### 5.3 Dependencies and requirements
 
@@ -494,10 +500,14 @@ Every **component** of an item or ability has a dependency set `dep ⊆ {arcana,
 |---|---|
 | Mundane melee base, mundane armor base, bows, slings, thrown blades, food, raw materials, blocks | none |
 | Firearms, energy weapons, gadgets, drones, turrets, implants, electronic tools, hacking, tech consumables | techne |
-| Spells, wands, staves, magic texts, enchantment affixes, grafts, supernatural alchemical effects | arcana |
+| Spell glyphs, wands, staves, magic texts | `{origin_genre.aether_axiom}`; `{arcana}` when the origin's aether_axiom is none |
+| Enchantment affixes, grafts, supernatural alchemical effects | arcana |
 | Prayers, relics, holy or unholy affixes, curse effects, undead-bane, divine favors, mutations of supernatural origin | mythos |
 | Cinematic techniques: wall-run, double jump, qinggong glide, gun-kata, "rule of cool" exotic perks | verve |
 | Mundane alchemical effects: healing, poison, stamina, acid, fire, smoke | none |
+| Kin passive traits, tamed beasts, beast mounts | none |
+| Summons | the summoning glyph's dependency |
+| Mounts other than beasts | from the skin: vehicle techne, broom or carpet arcana, divine steed mythos, cloud verve |
 
 A component's **requirement** on axis `a`:
 
@@ -591,8 +601,8 @@ These terms appear once each, in the formula listed. They are not applied a seco
 
 | Axiom | Effect | Applied in |
 |---|---|---|
-| ARCANA | Aether regeneration × `(10000 + (ARC - 5) × 1000)` Bp | §6.4 row 8 |
-| ARCANA | Spell potency × `(10000 + (ARC - 5) × 200)` Bp | §6.4 row 29 |
+| AETHER | Aether regeneration × `(10000 + (local_axiom[aa] - 5) × 1000)` Bp, where `aa` is the local genre's aether_axiom; × 10000 when it is none | §6.4 row 8 |
+| GLYPH | Each spell glyph's potency × `(10000 + (local_axiom[a] - 5) × 200)` Bp, where `a` is the glyph's single dependency axis; × 10000 if its dependency is empty | §6.4 row 29, per glyph |
 | TECHNE | Energy-weapon and gadget recharge × `(10000 + (TEC - 5) × 1000)` Bp | doc 05, doc 07 |
 | TECHNE | At TEC ≤ 2, worldgen places no electronic locks, cameras or turrets | doc 12 |
 | MYTHOS | Damage × `(10000 + (MYT - 5) × 300)` Bp when the attacker or the target is tagged undead, fiend, divine or eldritch; applied once even if both are | §10.5 step 2.7 |
@@ -646,14 +656,14 @@ All doc-04-owned growth feeds these formulas, and no other document defines a co
 
 | # | Stat | Formula | At all-40, L1, VERVE 5 |
 |---|---|---|---|
-| 1 | Max HP | `40 + TGH + L × (3 + floor_div(TGH, 20))` HP | 85 |
+| 1 | Max HP | `40 + TGH + L × (3 + floor_div(TGH, 20))` HP, plus `gear_hp` (§13.8.2) | 85 |
 | 2 | Natural HP regeneration, after 5 s without taking damage | `mul_bp(max_hp_mhp, max(10, 50 + floor_div(d(RES), 2)))` mHP per s | 425 mHP/s (0.5% per s) |
 | 3 | Healing received | × `10000 + d(RES) × 50` Bp | ×1.00 |
 | 4 | Max stamina | `50 + END + floor_div(L, 2)` | 90 |
 | 5 | Stamina regeneration, after 1 s without spending | `15 + floor_div(END, 5)` per s | 23 per s |
 | 6 | Sprint stamina drain | `max(4, 12 - floor_div(d(END), 10))` per s | 12 per s |
 | 7 | Max aether | `20 + FOC + L` | 61 |
-| 8 | Aether regeneration | `500 + ATN × 20` m-aether per s, then × the ARCANA term of §5.7 | 1.3 per s |
+| 8 | Aether regeneration | `500 + ATN × 20` m-aether per s, then × the AETHER term of §5.7 | 1.3 per s at aether axiom 5 |
 | 9 | Max composure | `50 + RSV` | 90 |
 | 10 | Carry capacity | `25 + floor_div(PWR, 2)` kg | 45 kg |
 | 11 | Move speed multiplier | `clamp(10000 + d(AGI) × 25, 8000, 12500)` Bp | ×1.00 |
@@ -668,19 +678,19 @@ All doc-04-owned growth feeds these formulas, and no other document defines a co
 | 20 | Throw range multiplier | `10000 + d(PWR) × 50` Bp | ×1.00 |
 | 21 | Climb speed multiplier | `10000 + d(GRP) × 50` Bp | ×1.00 |
 | 22 | Body-status threshold: poisoned, diseased, irradiated, withering, corroded, exposed | `max(40, 100 + 2 × d(RES))` | 100 |
-| 23 | Nerve-status threshold: bleeding, burning, frozen, shocked, stunned, blinded | `max(40, 100 + 2 × d(TGH))` | 100 |
-| 24 | Mind-status threshold: feared, charmed, confused, sleeping, dread, berserk | `max(40, 100 + 2 × d(RSV))` | 100 |
+| 23 | Nerve-status threshold: bleeding, burning, frozen, shocked, stunned, blinded, deafened | `max(40, 100 + 2 × d(TGH))` | 100 |
+| 24 | Mind-status threshold: feared, charmed, confused, sleeping, dread, berserk, taunted, hacked | `max(40, 100 + 2 × d(RSV))` | 100 |
 | 25 | Arcane-status threshold: silenced, unraveled | `max(40, 100 + 2 × d(ATN))` | 100 |
 | 26 | Spell complexity budget | `4 + floor_div(LOG, 10)` points | 8 |
 | 27 | Grimoire slots | `2 + floor_div(MEM, 20)` | 4 |
 | 28 | Skill XP multiplier | `10000 + d(MEM) × 50` Bp | ×1.00 |
-| 29 | Spell potency multiplier | `10000 + d(ATN) × 50 + school_skill × 30` Bp, then × the ARCANA term of §5.7 | ×1.00 at skill 0 |
+| 29 | Spell potency multiplier | `10000 + d(ATN) × 50 + school_skill × 30` Bp, then × the GLYPH term of §5.7 for each glyph | ×1.00 at skill 0 |
 | 30 | Cast interruption resistance: chance to keep casting when hit | `clamp(2500 + d(FOC) × 75, 0, 9500)` Bp, keyed `rng.magic` | 25% |
 | 31 | Dark-vision radius | `2 + floor_div(SGT, 20)` m | 4 m |
 | 32 | Visual detection range bonus | `d(SGT) × 50` Bp | +0% |
 | 33 | Hearing sensitivity bonus | `floor_div(d(HRG), 5)` dB | +0 dB |
 | 34 | Footstep indicator radius | `8 + floor_div(HRG, 10)` m | 12 m |
-| 35 | Passive trap and secret detection, per second, within 3 m | `clamp(500 + d(ITU) × 50, 0, 9000)` Bp, keyed `rng.stealth` (§3.3) | 5% |
+| 35 | Passive trap and secret detection, per second, within 3 m | `clamp(500 + d(ITU) × 50 + skill.awareness × 50, 0, 9000)` Bp, keyed `rng.stealth` (§3.3) | 5% |
 | 36 | Curse sense on pickup | `clamp(1000 + d(ITU) × 100, 0, 9000)` Bp, keyed `rng.ident` | 10% |
 | 37 | Buy price multiplier | `clamp(10000 - d(CHM) × 30, 7000, 13000)` Bp | ×1.00 |
 | 38 | Sell price share of base value | `clamp(3000 + d(CHM) × 30, 1500, 5000)` Bp | 30% |
@@ -701,7 +711,7 @@ All doc-04-owned growth feeds these formulas, and no other document defines a co
 
 ## 7. Skills
 
-Skills are integers `0..=100`. Mastery tiers unlock at 25 (Apprentice), 50 (Journeyman), 75 (Expert) and 100 (Master). Doc 04 owns the perks granted at each tier and the XP events table.
+There are 36 skills. Skills are integers `0..=100`. Mastery tiers unlock at 25 (Apprentice), 50 (Journeyman), 75 (Expert) and 100 (Master). Doc 04 owns the perks granted at each tier and the XP events table.
 
 | ID | Name | Governing sub-attribute | Group |
 |---|---|---|---|
@@ -737,6 +747,20 @@ Skills are integers `0..=100`. Mastery tiers unlock at 25 (Apprentice), 50 (Jour
 | `skill.survival` | Survival | SGT | knowledge |
 | `skill.speech` | Speech | CHM | social |
 | `skill.leadership` | Leadership | MEN | social |
+| `skill.hacking` | Hacking | LOG | stealth |
+| `skill.delving` | Delving | END | craft |
+| `skill.awareness` | Awareness | HRG | stealth |
+| `skill.handling` | Handling | CHM | social |
+
+Scope notes:
+
+- **Hacking** covers electronic locks, cameras, turrets, drones and `body.construct` NPCs (§11.1 `st.hacked`).
+- **Delving** covers dig speed, block yield and block placement speed.
+- **Awareness** opposes Sneak in doc 09 and improves §6.4 row 35.
+- **Handling** covers taming, minion command, mounts and vehicles.
+- **Inscription** covers scrolls, runes, enchanting (`ench.`) and Rewriting.
+- **Conjuration** covers all summoning, including undead.
+- FAT and SER govern no skill, so they rise only through level-up allocation, mirroring Morrowind's Luck.
 
 Weapon archetype to skill mapping is owned by doc 05. The mapping is by archetype, never by skin, so a longbow and a railgun both train Marksmanship.
 
@@ -758,8 +782,14 @@ At MEM 40, a Calling major skill used as the main damage source reaches 50 at Fo
 
 - XP to go from level `L` to `L + 1`: `xp_to_next(L) = 50 × L × (L + 3)`. Level 2 needs 200 cumulative. Level 11 needs 27,500. Level 31 needs 542,500.
 - There is no level cap. The design target is level 28 ± 3 on arrival at Folio 25.
-- **Reference kill XP**: `kill_xp = mul_bp(floor_div(7 × e × (e + 3), 5), rank_xp_bp)`, where `e = enemy_level(d)` (§13.8) and `rank_xp_bp` comes from §17.3. At 40 standard-kill equivalents per Folio this gives level 12 after Folio 10, level 29 after Folio 25 and level 47 after Folio 40.
-- **Co-op split**: every party member present in the Folio gains `floor_div(kill_xp × 10000, enemy_count_bp[n])`, where `n` is party size and `enemy_count_bp` is the §17.2 table.
+- **Reference unit**: `kill_xp_std(d) = floor_div(7 × e × (e + 3), 5)`, where `e = enemy_level(d)` (§13.8). At 40 units per Folio this gives level 12 after Folio 10, level 29 after Folio 25 and level 47 after Folio 40.
+- **Character XP sources**, so stealth, crafting and diplomacy builds level too:
+  - Kills: `mul_bp(mul_bp(kill_xp_std(d), rank_xp_bp), 7000)`, with `rank_xp_bp` from §17.3.
+  - Skill-ups: each skill level gained grants `2 × kill_xp_std(d_current)`, counting at most 8 skill levels per character per Folio.
+  - Folio exit: `ev.folio_exited` grants `4 × kill_xp_std(d)`.
+  - Unseen bonus: if no hostile reached `aware.alert` toward any Erratum during the Folio, the exit grants `20 × kill_xp_std(d)` more.
+  - Doc 13 keeps the per-Folio total near 40 units for a combat-typical run, so the level-28 anchor holds.
+- **Co-op split**: for kill XP, every party member present in the Folio gains `floor_div(kill_xp × 10000, enemy_count_bp[n])`, where `n` is party size and `enemy_count_bp` is the §17.2 table.
 - Each level-up grants 4 attribute points. Each point adds +1 to the base value of any sub-attribute, with at most +2 to the same sub-attribute per level-up and never above 100.
 - Each even level grants 1 talent point. Doc 04 owns talents.
 
@@ -786,26 +816,43 @@ Every creature has one body plan. Each body part is a simulation hitbox capsule.
 - **Hitbox poses.** Simulation hitbox capsules are posed only from baked fixed-point pose tables: per animation, per tick, per part, `Fx` endpoints and radius in model space, generated offline and committed as content. Simulation state stores `(animation_id, anim_tick)`. Bevy's skeletal animation never feeds the simulation. The host keeps 32 ticks of pose history for lag compensation (doc 16).
 - **Part condition pools.** Each part's pool max is `mul_bp(max_hp_mhp, share)`. When Max HP changes, pools are recomputed and keep the same amount lost.
 
+### 9.1 Severing
+
+Severing is deterministic and draws no random numbers.
+
+- Severable parts: limbs, tails and wings on every plan, and heads on NPCs. Errata heads never sever.
+- A severable part is severed when its condition pool reaches 0 from a hit whose largest share is `dmg.slash`, or which carries the flag `sever`. Severing an NPC head also requires the attacker's governing weapon skill ≥ 75, and kills single-headed creatures.
+- **Hand bindings.** `bp.arm_r` holds the active weapon slot. `bp.arm_l` holds `slot.offhand` and the second hand of two-handed weapons. `bp.arm_extra_N` grants `slot.hand_extra_N`, which holds a one-handed weapon or an off-hand item.
+- **Effects.** Losing an arm drops the item in that hand, disables two-handed weapons and disables `slot.implant_arms` for that side. Losing a leg multiplies move speed by 5000 and removes sprint, jump and dodge; a crutch tool restores × 7000.
+- A severed part becomes a `cat.body_part` item that rots after 7200 ticks. It can be reattached by Medicine ≥ 25 (600-tick channel), by a Scriptorium service or by a successful prayer, or replaced by an `aug.prosthetic_*` augment skinned per genre: hook, clockwork arm, cyberarm, silver hand, jade arm.
+- Events: `ev.part_severed`, `ev.part_reattached`.
+
 ---
 ## 10. Damage types, resistances, armor and the damage pipeline
 
 ### 10.1 Damage types
 
-| ID | Category | Default color | Builds status | Armor efficiency (Bp) |
-|---|---|---|---|---|
-| `dmg.slash` | physical | `#C9CED6` | `st.bleeding` | 10000 |
-| `dmg.pierce` | physical | `#E8E2C8` | `st.exposed` | 7500 |
-| `dmg.blunt` | physical | `#A68A64` | `st.stunned`; poise damage × 15000 | 5000 |
-| `dmg.fire` | elemental | `#FF6A1A` | `st.burning` | 0 |
-| `dmg.frost` | elemental | `#9BE7FF` | `st.frozen`; each hit also applies `st.chilled` | 0 |
-| `dmg.shock` | elemental | `#FFE14D` | `st.shocked` | 0 |
-| `dmg.acid` | elemental | `#9AE13B` | `st.corroded` | 0 |
-| `dmg.toxin` | biological | `#6B8E23` | `st.poisoned` | 0 |
-| `dmg.radiant` | esoteric | `#FFF4C2` | `st.blinded`; × 15000 against undead and fiends (step 3a) | 0 |
-| `dmg.umbral` | esoteric | `#5B2A86` | `st.withering` | 0 |
-| `dmg.psychic` | esoteric | `#FF5FD2` | `st.dread` | 0 |
-| `dmg.arcane` | esoteric | `#3FE0D0` | `st.unraveled` | 0 |
-| `dmg.true` | true | `#FFFFFF` | none; ignores resistance and armor | 0 |
+`ward_mult` scales how fast each type depletes a ward (§10.5 step 7).
+
+| ID | Category | Default color | Builds status | Armor efficiency (Bp) | ward_mult (Bp) |
+|---|---|---|---|---|---|
+| `dmg.slash` | physical | `#C9CED6` | `st.bleeding` | 10000 | 10000 |
+| `dmg.pierce` | physical | `#E8E2C8` | `st.exposed` | 7500 | 10000 |
+| `dmg.blunt` | physical | `#A68A64` | `st.stunned`; poise damage × 15000 | 5000 | 10000 |
+| `dmg.fire` | elemental | `#FF6A1A` | `st.burning` | 0 | 7500 |
+| `dmg.frost` | elemental | `#9BE7FF` | `st.frozen`; each hit also applies `st.chilled` | 0 | 10000 |
+| `dmg.shock` | elemental | `#FFE14D` | `st.shocked` | 0 | 15000 |
+| `dmg.acid` | elemental | `#9AE13B` | `st.corroded` | 0 | 7500 |
+| `dmg.radiation` | elemental | `#2F6BFF` | `st.irradiated` | 0 | 10000 |
+| `dmg.sonic` | elemental | `#C8B6FF` | `st.deafened`; each hit emits `ev.noise` at `60 + floor_div(d_mhp, 1000)` dB at the impact point and ends `st.frozen` like blunt | 2500 | 10000 |
+| `dmg.toxin` | biological | `#6B8E23` | `st.poisoned` | 0 | 5000 |
+| `dmg.radiant` | esoteric | `#FFF4C2` | `st.blinded`; × 15000 against undead and fiends (step 3a) | 0 | 10000 |
+| `dmg.umbral` | esoteric | `#5B2A86` | `st.withering` | 0 | 10000 |
+| `dmg.psychic` | esoteric | `#FF5FD2` | `st.dread` | 0 | 10000 |
+| `dmg.arcane` | esoteric | `#3FE0D0` | `st.unraveled` | 0 | 12500 |
+| `dmg.true` | true | `#FFFFFF` | none; ignores resistance and armor | 0 | 10000 |
+
+`dmg.sonic` is elemental: Errata resistance to it caps at 7500, and armor applies to it at 2500 efficiency.
 
 - Colors are defaults. UI also shows a unique icon per type, so color is never the only signal (doc 17).
 - Genre skins rename types in text only. For example `dmg.shock` reads "Galvanic" in Steampunk. Doc 18 owns the skin names.
@@ -815,6 +862,7 @@ Every creature has one body plan. Each body part is a simulation hitbox capsule.
 - Each entity has `resist[t]` in Bp for every type except `dmg.true`.
 - Range: −10000 (takes double) up to a cap.
 - Caps: Errata 5000 for slash, pierce and blunt, and 7500 for every other type. NPCs 9000 for every type.
+- Armor applies to every type with armor efficiency above 0: slash, pierce, blunt and sonic.
 - An `immune: [types]` flag makes damage of those types 0 and skips their buildup.
 - Sources add linearly before the cap.
 
@@ -822,7 +870,7 @@ Every creature has one body plan. Each body part is a simulation hitbox capsule.
 
 - **Armor rating (AR)** is an `i64` per body part, summed from equipment covering that part plus natural armor, then multiplied by `st.corroded` and `st.fortified` in ascending status ID order.
 - **Penetration** `pen_bp` (Bp, `0..=10000`) is the share of armor an attack ignores.
-- Armor reduces physical types only, scaled by the type's armor efficiency.
+- Armor reduces only types with armor efficiency above 0, scaled by that efficiency.
 - Armor is strong against many small hits and weak against few large hits, because the hit size is in the denominator.
 - Errata gear AR scales with `T(ilvl)`. Enemy AR scales with `P(d)` (§13.8).
 
@@ -831,11 +879,12 @@ Every creature has one body plan. Each body part is a simulation hitbox capsule.
 Every damaging source computes its base `B` in mHP before the pipeline:
 
 ```
-Errata item source:  B = base_mhp → × P(src_lvl) → × rarity power (§13.3) → × quality (§13.5) → × (10000 + 600 × eff_enh)
+Errata item source:  B = base_mhp → × P(src_lvl) → × rarity power (§13.3) → × quality (§13.5) → × (10000 + 600 × eff_enh) → × material_bp
+Errata armor:        AR = base_ar → × T(ilvl) → × rarity power → × quality → × (10000 + 600 × eff_enh) → × mat_ar_bp
 Enemy source:        B = template_dmg_mhp → × T(d) → × rank damage (§17.3)
 ```
 
-Each arrow is one `mul_bp`, in that order. `src_lvl` follows §13.8.1.
+Each arrow is one `mul_bp`, in that order. `src_lvl` follows §13.8.1. `material_bp` is `dmg_bp` and `mat_ar_bp` is `ar_bp` of the item's primary material (doc 07), each in `7000..=14000` with `mat.iron` at 10000. Doc 05 derives swing and recovery ticks from `mass_g`, so heavy materials hit harder and swing slower.
 
 ### 10.5 The damage pipeline
 
@@ -848,7 +897,9 @@ Inputs: `B`, type shares `share[t]` in Bp summing to 10000, `pen_bp`, the weapon
    1. spell potency (§6.4 row 29), spells and prayers only;
    2. precision multiplier, if the hit part is a precision part;
    3. crit multiplier, if the crit roll succeeded; sneak attacks never roll a crit;
-   4. sneak-attack multiplier (doc 09), if applicable;
+   4. sneak-attack multiplier (doc 09) when, on the impact tick, the target's awareness of the attacker is below `aware.alert` or the target has `st.sleeping`. Eligibility is per (attacker, target) pair; other entities' awareness is irrelevant;
+   4a. elevation: with `dy = attacker.pos.y - target.pos.y`, × 11000 if `dy >= 2500 mm`, × 9500 if `dy <= -2500 mm`; ranged maximum range also grows by `max(0, dy)`;
+   4b. flanking: × 11500 when the attacker is outside the target's frontal cone (`ang_diff(target.yaw, bearing from target to attacker) > 10923` Bam) and the target is not targeting the attacker; Errata targets have no AI target, so only the cone check applies;
    5. Contradiction potency of the base-function component (§5.5);
    6. Anachronism `10000 + edge_bp` of the base-function component, if the target is native (§5.6);
    7. MYTHOS ambient (§5.7), once, if the attacker or the target is tagged undead, fiend, divine or eldritch;
@@ -858,13 +909,14 @@ Inputs: `B`, type shares `share[t]` in Bp summing to 10000, `pen_bp`, the weapon
    11. target statuses in ascending status ID order: `st.exposed` `10000 + 800 × stacks`, then `st.knocked_down` 11000;
    12. attacker statuses in ascending status ID order: `st.berserk` 13000, `st.empowered` 12000, `st.weakened` 7500;
    13. difficulty multiplier (doc 14);
-   14. party-size enemy damage multiplier (§17.2), when the attacker is an NPC and the target is an Erratum.
+   14. party-size enemy damage multiplier (§17.2), when the attacker is an NPC and the target is an Erratum;
+   15. friendly fire, when attacker and target are both `fac.errata` (minions included): `FF_DIRECT_BP` for weapon, spell and gadget hits, `FF_AREA_BP` for explosions, fire spread, surfaces, falling blocks and shock chains (§17.5).
 
    The result is `D2`.
 3. **Split by type.** `d[t] = mul_bp(D2, share[t])`. The flooring remainder `D2 - Σ d[t]` goes to the type with the largest share, ties to the earlier row of §10.1.
    - **3a. Per-type target modifiers:** `d[radiant] × 15000` if the target is tagged undead or fiend. `d[blunt] × 15000` if the target has `st.frozen`, which is then removed.
 4. **Resistance.** For each type, `r = clamp(resist[t], -10000, cap)`. Immune types become 0. Otherwise `d[t] = d[t] - mul_bp(d[t], r)`. `dmg.true` skips this step.
-5. **Armor**, physical types only:
+5. **Armor**, types with armor efficiency above 0 only. A hit flagged `ignore_armor` skips this step (doc 09 grants it to sneak attacks at Sneak 100):
 
    ```
    effAR = mul_bp(floor_div(AR_part × eff[t], 10000), 10000 - pen_bp)          // i64
@@ -876,7 +928,7 @@ Inputs: `B`, type shares `share[t]` in Bp summing to 10000, `pen_bp`, the weapon
    Example: AR 100, `pen_bp` 0, a 20 HP slash hit (20,000 mHP) gives `DR_bp = floor(10^9 / 180,000) = 5555`, so the hit becomes 8,890 mHP.
 6. **Chip floor.** `total = Σ d[t]`. If at least one type is not immune, `floor = floor_div(D2, 10)` for Erratum targets and `floor_div(D2, 20)` for NPC targets. If `total < floor`, the surplus `floor - total` is added to the non-immune type with the largest share, ties to the earlier §10.1 row.
    - **6b. Block** (§10.7), if the hit was blocked.
-7. **Absorption.** `res.ward` absorbs first, then HP takes the rest.
+7. **Ward absorption.** The `st.shielded` pool is consumed first, then the ward generator's ward. For each type in §10.1 order with `d[t] > 0` while ward remains: `w = mul_bp(d[t], ward_mult[t])`. If `w <= ward`, then `ward -= w` and `d[t] = 0`. Otherwise `d[t] -= floor_div(ward × 10000, ward_mult[t])` and `ward = 0`, and `ev.ward_broken` is emitted. HP takes the rest.
 8. **Apply.** Subtract from HP and from the hit part's condition pool. Add poise damage (impact × `S(src_lvl)`, doc 05). Add status buildup (§11.2). Resolve lethal damage (§10.8).
 9. **Emit** `ev.damage_dealt` with the full per-type breakdown. The per-type values sum to the total.
 
@@ -908,11 +960,13 @@ Hits in the same tick resolve in ascending (source EntityId, seq). When an entit
 
 1. **Errata only:** if Death's Door is unused this Folio, roll §6.4 row 43 with keyed `rng.combat`. On success, HP = 1,000 mHP and the Erratum gains `st.deaths_door` for 60 ticks. Death's Door is marked used whether the roll succeeds or fails.
 2. On failure, if at least one other party member is alive and not downed, the Erratum gains `st.downed` with HP 0 and `ev.player_downed` is emitted (doc 16).
-3. Otherwise, emit `ev.entity_killed`. NPCs always go straight to this step.
+3. Otherwise, emit `ev.entity_killed`. NPCs always go straight to this step. An Erratum that dies while another Erratum lives becomes a ghost (§17.6) and emits `ev.player_died` and `ev.player_ghosted`. A downed Erratum that bleeds out follows the same rule.
 
 ### 10.9 Healing
 
 Healing amount × healing received (§6.4 row 3), then × 5000 if the target has `st.withering`, then capped at Max HP. Healing and ward amounts from spells, potions and gadgets are always stated in Bp of the recipient's Max HP, never as flat HP.
+
+Area healing, ward and buff effects, thrown potions included, apply at full effect to every allied Erratum and minion in the area.
 
 ---
 
@@ -948,7 +1002,7 @@ Threshold groups `body`, `nerve`, `mind` and `arcane` use §6.4 rows 22 to 25. `
 | `st.rooted` | control | direct | nerve | refresh | 2 s | cannot move; can act | 06 |
 | `st.slowed` | debuff | direct | nerve | refresh | 4 s | move speed × 7000 | 05 |
 | `st.disarmed` | control | direct | nerve | refresh | 3 s | active weapon unusable | 05 |
-| `st.deafened` | debuff | direct | body | refresh | 6 s | hearing −30 dB; no footstep indicators | 09 |
+| `st.deafened` | debuff | nerve | nerve | refresh | 6 s | hearing −30 dB; no footstep indicators | 09 |
 | `st.silenced` | control | arcane | arcane | refresh | 4 s | cannot cast spells | 06 |
 | `st.unraveled` | debuff | arcane | arcane | refresh | 5 s | aether regeneration 0; −10 aether on application | 06 |
 | `st.sleeping` | control | mind | mind | refresh | 8 s | cannot act; any damage ends it; sneak attacks always apply | 06 |
@@ -972,7 +1026,7 @@ Threshold groups `body`, `nerve`, `mind` and `arcane` use §6.4 rows 22 to 25. `
 | `st.regenerating` | buff | direct | — | refresh | 10 s | heals at rate 200 Bp of Max HP per s | 06 |
 | `st.shielded` | buff | direct | — | pool | 10 s | `res.ward` pool absorbs damage first | 06 |
 | `st.invisible` | buff | direct | — | refresh | 10 s | sight detection × 1000; ends on attack | 09 |
-| `st.hidden` | indicator | special | — | while undetected by every hostile | none | enables sneak attacks | 09 |
+| `st.hidden` | indicator | special | — | while no hostile holds awareness `aware.alert` or higher toward the bearer | none | UI only; never gates sneak attacks (§10.5 step 2.4) | 09 |
 | `st.empowered` | buff | direct | — | refresh | 8 s | damage dealt × 12000 | 06 |
 | `st.fortified` | buff | direct | — | refresh | 10 s | AR × 12000; poise × 12000 | 06 |
 | `st.focused` | buff | direct | — | refresh | 10 s | spread × 7000; aim sway × 5000 | 08 |
@@ -982,6 +1036,15 @@ Threshold groups `body`, `nerve`, `mind` and `arcane` use §6.4 rows 22 to 25. `
 | `st.downed` | special | special | — | until revived or bled out | 30 s bleed-out | crawl only; an ally revives in 3 s | 16 |
 | `st.deaths_door` | special | special | — | refresh | 60 ticks | invulnerable | 04 |
 | `st.erasure` | special | direct | — | intensity 10 | until Folio exit | §11.6 | 13 |
+| `st.hacked` | control | mind | mind | refresh | 6 s | applies only to `body.construct` and electronic entities; fights for the hacker's faction; constructs are immune to every other mind status | 09 |
+| `st.taunted` | control | mind | mind | refresh | 4 s | must target the taunter; damage dealt to others × 7500 | 05 |
+| `st.grappled` | control | direct | nerve | refresh | 3 s | cannot move; can use one-handed actions; ends when the grappler takes at least 10% of its Max HP | 05 |
+| `st.polymorphed` | special | direct | arcane | refresh | 30 s | body plan and base stats replaced by a template; equipment stowed; HP ratio kept | 06 |
+| `st.incubating` | special | direct | — | refresh | 7200 ticks | an affliction incubates; at expiry the affliction takes hold (§16.4) | 04 |
+| `st.suffocating` | DoT | special | — | while `res.breath` = 0 | none | DoT rate 500 Bp as `dmg.true` | 04 |
+| `st.mounted` | indicator | special | — | while riding | none | §17.7 | 05 |
+| `st.bound` | indicator | special | — | while a minion is bound to its owner | none | §15.1 | 13 |
+| `st.ghost` | special | special | — | until resurrected | none | §17.6 | 16 |
 
 `load_bp = floor_div(carried_g × 10000, capacity_g)`.
 
@@ -1022,7 +1085,7 @@ Direct application ignores meters. Its duration is
 duration = mul_bp(base, clamp(floor_div(1_000_000, thr), 2500, 15000))
 ```
 
-where `thr` is the bearer's threshold for the status's scaling group. Unscaled statuses (`—`) use base duration. The result is then multiplied by the bearer's rank control multiplier (§17.3) for statuses of category `control`, and rounded up to at least 1 tick. Bosses, editors and hunters are immune to `st.charmed`, `st.sleeping` and `st.confused`. Their control statuses from buildup also use the rank control multiplier.
+where `thr` is the bearer's threshold for the status's scaling group. Unscaled statuses (`—`) use base duration. The result is then multiplied by the bearer's rank control multiplier (§17.3) for statuses of category `control`, and rounded up to at least 1 tick. Bosses, editors and hunters are immune to `st.charmed`, `st.sleeping`, `st.confused`, `st.hacked` and `st.polymorphed`. Their control statuses from buildup also use the rank control multiplier.
 
 ### 11.5 Shock chains
 
@@ -1035,10 +1098,25 @@ While `st.shocked` is active, each hit the bearer takes (except a `no_chain` hit
 - When the first Erratum reaches 10 stacks, one Editor hunter (`rank.hunter`) spawns for the party. Another spawns every 90 s while any Erratum holds 10 stacks.
 - `st.erasure` is removed from every Erratum on `ev.folio_entered`.
 - Erasure accrual and satiation decay pause in boss Folios while the boss lives.
+- Hunters and every `fac.editors` member erase blocks placed by Errata within 1500 mm of them, at one block per 10 ticks.
+- Each dose of the `afflict.red_ink` affliction (§16.4) lowers the hunter-spawn threshold by 1, from 10 down to a minimum of 6.
 
 ### 11.7 Multiplier order
 
 When several statuses multiply the same stat, they apply after all non-status factors, one `mul_bp` per status, in ascending status ID byte order.
+
+### 11.8 Player-controlled bearers
+
+Input is never synthesized for a player. When the bearer is an Erratum controlled by a player, these rules replace the AI-facing effects:
+
+| Status | Effect on a player-controlled bearer |
+|---|---|
+| `st.charmed` | outgoing damage against the applier's faction × 0; the bearer's hits on allies use × 10000 instead of the friendly-fire scale; the HUD tints allies as hostile |
+| `st.berserk` | cannot block, cast, reload or use items; melee costs 0 stamina; damage dealt × 13000 |
+| `st.feared` | cannot fire or cast while facing within 8192 Bam of the source; move speed × 11000 while moving away from it |
+| `st.sleeping` | input disabled; ends on any damage or after an ally's 30-tick interact; duration × 5000 |
+| `st.confused` | unchanged |
+| `st.taunted` | the HUD marks the taunter; damage dealt to anyone else × 7500 |
 
 ---
 
@@ -1053,10 +1131,55 @@ When several statuses multiply the same stat, they apply after all non-status fa
 | `res.satiation` | i32 | `0..=2400` | −1 per second; starts at 1800 each run; `st.hungry` at ≤ 600; `st.starving` at 0 | 04 |
 | `res.toxicity` | Milli | `0..=100,000` | raised by potions and stims; −500 per second; at 100,000 applies 3 stacks of `st.poisoned` every 5 s | 08 |
 | `res.poise` | Milli | `0..=poise` | reduced by impact; at 0 applies `st.staggered` and refills | 05 |
-| `res.ward` | Milli | `0..=pool` | overshield; absorbs damage before HP | 06 |
+| `res.ward` | Milli | `0..=pool` | the `st.shielded` pool plus the ward generator's ward (§13.2 `slot.ward`); absorbs damage before HP (§10.5 step 7) | 06 |
+| `res.breath` | Milli | `0..=max` | max `10 + floor_div(END, 10)` s, so 14 s at END 40; drains 1000 per s while the eye cell holds liquid or an unbreathable gas; regenerates 5000 per s otherwise; at 0 applies `st.suffocating`; kin that need no breath are exempt; a respirator in `slot.face` makes gases breathable | 04 |
+| `res.favor` | i32 | `-1000..=1000` per patron | run-scoped standing with each genre's patron (§16.5) | 06 |
 
 - **Composure regeneration**: 1 per second while not `in_combat` and `light_at(e) >= 8`.
-- **Max changes.** When a pool's maximum changes by Δ: if Δ > 0, current += Δ. Then current = `min(current, new_max)`. This applies to HP, stamina, aether, composure, poise and part condition pools.
+- **Max changes.** When a pool's maximum changes by Δ: if Δ > 0, current += Δ. Then current = `min(current, new_max)`. This applies to HP, stamina, aether, composure, poise, breath and part condition pools.
+
+### 12.1 Surfaces and reactions
+
+Docs 03, 05, 06 and 08 implement this one table. **Contact** means the feet cell or a body cell holds at least 100 ml of the liquid, or the eye cell holds the gas.
+
+Per status pulse while in contact:
+
+| Surface | Effect |
+|---|---|
+| `liq.water` | `st.soaked` |
+| `liq.oil` | `st.oiled`; ground friction × 3000 |
+| `liq.alcohol` | `st.oiled` |
+| `liq.acid` | 25 `st.corroded` buildup |
+| `liq.lava` | DoT rate 1000 Bp as `dmg.fire`, plus 100 `st.burning` buildup |
+| `liq.red_ink` | +1 `st.erasure` per 300 ticks of contact |
+| `gas.steam` | DoT rate 50 Bp as `dmg.fire` |
+| `gas.miasma` | 20 `st.poisoned` buildup; unbreathable |
+| `gas.smoke` | sight concealment only (§12.2) |
+| `block.ice` | ground acceleration and friction × 1500 |
+| `block.web` | `st.rooted` while inside |
+
+Triggers, each emitting `ev.liquid_reaction`:
+
+| Trigger | Result |
+|---|---|
+| Shock damage on water, blood or alcohol | electrifies the connected body of that liquid (at most 64 cells) for 180 ticks; contact gives 30 `st.shocked` buildup per pulse |
+| Frost damage on water, blood or alcohol | becomes `block.ice` for 1200 ticks |
+| Fire damage on water | becomes `gas.steam`, 1 cell per 1000 ml |
+| Fire damage on oil or alcohol | ignites; a 2 m environmental `dmg.fire` blast of base 10 HP per 1000 ml, capped at 5000 ml |
+| Fire damage on ice | melts back to water |
+| Fire damage on web | burns out in 60 ticks |
+| Fire damage on miasma | a 3 m environmental `dmg.fire` blast of base 20 HP |
+| Radiant damage on red ink | becomes water |
+
+Every blast enters the damage pipeline as an environmental hazard (§10.6).
+
+### 12.2 Sight concealment
+
+Every material (doc 07) and gas (doc 08) has `conceal: u8` in `0..=15`. Reference values: glass 0, tall grass 2 (only against crouched targets), leaves and foliage 3, water 2 per block, smoke 4 per cell at full density scaled linearly by density, steam 3, genre fog 1 per 8 m. A sight ray sums `conceal` over the cells it crosses, excluding both endpoint cells. At a sum of 15 or more, sight is blocked. Below that, sight detection is multiplied by `10000 - 667 × sum` Bp (doc 09).
+
+### 12.3 Spawn light
+
+Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at most the genre's `spawn_block_max` (§5.9). Placed light is therefore a defense, as in Minecraft.
 
 ---
 ## 13. Items
@@ -1066,7 +1189,8 @@ When several statuses multiply the same stat, they apply after all non-status fa
 | ID | Meaning | Owner |
 |---|---|---|
 | `cat.weapon_melee` | melee weapons | 05, 11 |
-| `cat.weapon_ranged` | every ranged weapon archetype, including bows, guns, wands and staves | 05, 11 |
+| `cat.weapon_ranged` | every ranged weapon archetype, including bows, guns and staves | 05, 11 |
+| `cat.wand` | charge-based casting items | 06, 10, 11 |
 | `cat.armor` | head, body, hands, legs and feet pieces | 05, 11 |
 | `cat.offhand` | shields, foci, lanterns, off-hand sidearms | 05, 11 |
 | `cat.accessory` | rings, amulets, trinkets, belts, back items | 11 |
@@ -1086,6 +1210,12 @@ When several statuses multiply the same stat, they apply after all non-status fa
 | `cat.key` | keys and keycards of any skin | 11 |
 | `cat.currency` | Lucre piles | 11 |
 | `cat.quest` | narrative items | 12 |
+| `cat.part` | loose weapon parts and licensed grafts that cross manufacturers | 07, 11 |
+| `cat.ward_gen` | ward generators: shields of every skin, from aegis charms to kinetic barriers | 05, 11 |
+| `cat.mount` | mount tokens: whistles, keys, bridles | 05, 11 |
+| `cat.seed` | plantable seeds | 07, 08 |
+| `cat.corpse` | corpses and Errata Remains: carry, loot, eat, raise, sacrifice | 04, 13, 16 |
+| `cat.body_part` | severed body parts (§9.1) | 04, 07, 08 |
 
 ### 13.2 Equipment slots
 
@@ -1100,6 +1230,10 @@ When several statuses multiply the same stat, they apply after all non-status fa
 | `slot.weapon_1`, `slot.weapon_2`, `slot.weapon_3` | any melee or ranged weapon |
 | `slot.offhand` | off-hand items; empty while a two-handed weapon is active |
 | `slot.implant_head`, `slot.implant_torso`, `slot.implant_arms`, `slot.implant_legs` | implants |
+| `slot.ward` | one ward generator: capacity `mul_bp(cap_base_mhp, T(ilvl))`; recharge starts 180 ticks after the bearer last took damage and restores 2500 Bp of capacity per second; dependency from its skin |
+| `slot.face` | masks, goggles, respirators; respirators make gases breathable; masks serve disguises (doc 09) |
+| `slot.mount` | one mount token (§17.7) |
+| `slot.hand_extra_N` | granted by `bp.arm_extra_N` (§9.1): one one-handed weapon or off-hand item |
 
 The quickbar has 4 slots without a belt and up to 8 with one.
 
@@ -1112,7 +1246,7 @@ The quickbar has 4 slots without a belt and up to 8 with one.
 | `rar.rare` | Rare | `#3D8BFF` | 2 | none | 600 | 11000 | ×4 |
 | `rar.epic` | Epic | `#A64DFF` | 3 | none | 150 | 11500 | ×8 |
 | `rar.legendary` | Legendary | `#FF9A1F` | 3 | one legendary perk | 45 | 12500 | ×16 |
-| `rar.exotic` | Exotic | `#FFD84A` | 2 | one fixed named intrinsic; only one Exotic weapon and one Exotic armor piece equipped at a time | 15 | 12500 | ×32 |
+| `rar.exotic` | Exotic | `#FFD84A` | 2 | one fixed named intrinsic; at most one Exotic among `slot.weapon_1..3` and `slot.offhand`, at most one among the five armor slots, and at most one among every other slot; Palimpsestic items are exempt | 15 | 12500 | ×32 |
 | `rar.palimpsestic` | Palimpsestic | animated prismatic gradient | 4 | immune to Contradiction; re-skins itself to the local genre; effective ilvl `max(ilvl, current Folio index)`, re-evaluated on `ev.folio_entered` | 0 | 13000 | ×64 |
 
 Palimpsestic items come only from Editor bosses, Volume-completion rewards and special secret rooms (doc 11).
@@ -1149,19 +1283,19 @@ Unknown-appearance classes:
 
 | ID | Item types | Appearance pool examples |
 |---|---|---|
-| `idc.potion` | every potion type | colors: crimson, murky green, ... |
-| `idc.text` | every scroll-like text type | sigils, glyph scripts, file hashes |
-| `idc.ring` | every ring type | stones and metals |
-| `idc.amulet` | every amulet type | pendant shapes |
-| `idc.wand` | every wand and staff type | woods and alloys |
-| `idc.implant` | every implant type | manufacturer stamps |
-| `idc.relic` | every trinket type | carvings |
+| `idc.potion` | every `cat.potion` type | colors: crimson, murky green, ... |
+| `idc.text` | every `cat.text` type | sigils, glyph scripts, file hashes |
+| `idc.ring` | every ring type in `cat.accessory` | stones and metals |
+| `idc.amulet` | every amulet type in `cat.accessory` | pendant shapes |
+| `idc.wand` | every `cat.wand` type | woods and alloys |
+| `idc.implant` | every `cat.implant` type | manufacturer stamps |
+| `idc.relic` | every trinket type in `cat.accessory` | carvings |
 
 **Appearance shuffle.** At run start, for each `idc` class in ascending ID byte order: `types` = all item types of that class in the run's content set, sorted by ID; `pool` = all appearance descriptors of that class, sorted by ID; `rng.appearance.shuffle(pool)`; `types[i]` gets `pool[i]`. The run's content set is the host's, fixed at run start and recorded in the save. Daily and weekly runs use the content set `unlock.daily_baseline`, which contains every base item and no account unlocks. Doc 10 guarantees `|pool| >= |types|` for every class.
 
 An appearance descriptor is genre-neutral. The genre skin renders it: a crimson potion is a crimson flask in Fantasy, a crimson-capped injector in Cyberpunk and a crimson pill in Wuxia. Type knowledge is shared across genres and across the whole party.
 
-Weapons, armor, off-hands, accessories other than rings and amulets, tools, materials and blocks are never type-hidden. They start at `know.classified`, because only their magic is hidden, following Barony 5.0. Only the seven unknown-appearance classes start at `know.unknown`.
+An item type is type-hidden if and only if an `idc` class above lists it, and type-hidden items start at `know.unknown`. Every other item, including staves, belts, weapons, armor, tools, materials and blocks, starts at `know.classified`, because only its magic is hidden, following Barony 5.0.
 
 | Knowledge state | Player knows |
 |---|---|
@@ -1185,6 +1319,7 @@ Genre skins rename curse states, for example Blessed / — / Hexed, or Signed / 
 - An **Emendation** is the consumable that raises enhancement, the analog of Shattered Pixel Dungeon's Scroll of Upgrade. Applying one first sets `ilvl = max(ilvl, current Folio index)`, then adds +1 enhancement. Upgrades therefore never become obsolete as the run deepens.
 - An Emendation used on a cursed item instead sets `buc = uncursed`, `curse_penalty = 0`, removes the curse affix and leaves enhancement unchanged.
 - `EMENDATIONS_PER_VOLUME = 3`, placed with guaranteed distribution by doc 11, so a full run yields 15.
+- **Marginalia.** The enhancement cap is `15 + floor_div(d_current - 25, 5)` in Marginalia. Each Erratum receives 1 Emendation on every Marginalia `ev.folio_exited`. With the re-level rule, XP-and-upgrade numbers keep climbing as in Experienced Pixel Dungeon.
 
 ### 13.8 Item level, depth and power tables
 
@@ -1227,7 +1362,7 @@ Genre skins rename curse states, for example Blessed / — / Hexed, or Signed / 
 
 - Enemy level: `enemy_level(d) = d + floor_div(d, 5)`.
 - Enemy effective sub-attributes: template value `+ floor_div(3 × (d - 1), 2)`, capped at 150.
-- `ITEM_MULT_MAX = 37050` Bp: the product of the best rarity power (13000), the best quality (15000) and the best enhancement (19000), a ×3.705 ceiling over a Common Normal +0 item. Doc 05 and doc 13 tune against it.
+- `ITEM_MULT_MAX = 51870` Bp for Folios 1 to 25: the product of the best rarity power (13000), the best quality (15000), the best enhancement (19000) and the best material (14000), a ×5.187 ceiling over a Common Normal +0 iron item. Doc 05 and doc 13 tune against it.
 
 #### 13.8.1 Source level
 
@@ -1242,6 +1377,10 @@ Every damage, ward or summon-stat magnitude is `base × P(src_lvl)` (or `T` wher
 | Innate ability or Echo trait | `d_current` |
 | Environmental hazard not from an item | `d_current` |
 | Every enemy ability | `d_current` through `T(d)` |
+
+#### 13.8.2 Marginalia armor HP
+
+`gear_hp_mhp = Σ over equipped armor pieces of mul_bp(hp_base[slot] × 1000, max(0, T(ilvl) - T(25)))`, with `hp_base`: body 30, head 14, legs 14, hands 6, feet 6. It adds 0 in the main run, 745,143 mHP for a full set at ilvl 60 and 4,538,772 mHP at ilvl 100, which keeps Errata between 70 and 130 HP per threat unit through depth 150.
 
 ### 13.8a One material table
 
@@ -1271,6 +1410,11 @@ Doc 19 owns the full schema. Every item instance carries at least:
 | `stack` | i32 | stackables |
 | `mass_g` | Grams | |
 | `value` | i64 Lucre | base value before buy and sell multipliers; scales with `P(ilvl)` (doc 11) |
+| `manufacturer` | content ID or none | `mfr.` (§5.9, doc 11) |
+| `gear_tier` | i8 `1..=5` | `min(5, 1 + floor_div(errata_grade, 5))` at generation (doc 14) |
+| `perk_columns` | list of {column, options (1..=3 perk IDs), chosen} | options per column by gear tier 1/1/2/2/3; choosing is free at a Scriptorium (doc 11) |
+| `illuminated` | bool | cosmetic shiny variant: one keyed `rng.loot` roll at 5 Bp per Legendary-or-better drop; picking one up unlocks its skin account-wide; no stat effect |
+| `finder_slot` | u8 `0..=3` | the party slot whose instanced roll created it |
 
 ---
 
@@ -1312,27 +1456,77 @@ Reputation per faction is an integer `-1000..=1000` and resets each run.
 | 101..=499 | friendly |
 | 500..=1000 | allied |
 
+### 15.1 Minions
+
+- Minions are summons, tamed beasts and hirelings. They belong to `fac.errata` and carry `owner_slot`. Friendly-fire rules (§17.5) apply to them.
+- `MINION_CAP_PER_PLAYER = min(5, 1 + floor_div(max(skill.conjuration, skill.handling), 25))`. `FOLIO_MINION_CAP = 16`, counted inside `ACTIVE_ACTOR_CAP`.
+- A minion's kill grants kill XP exactly as if its owner had made it.
+- Spell summons despawn on `ev.folio_exited`. Tamed beasts and hirelings follow through an exit if they are within 16 m, persist for the run, and are lost permanently when they die.
+- Commands: `input.minion_follow`, `input.minion_hold`, `input.minion_attack` (doc 17). Events: `ev.minion_bound`, `ev.minion_released`.
+
 ---
 
-## 16. Callings, Origins and Echoes
+## 16. Origins, Callings, Echoes, kin, afflictions and patrons
+
+### 16.1 Origins
 
 - **Origin**: the genre an Erratum fell out of. At creation the player picks one of the 12 core genres. Secret genres become Origin options through meta unlocks (doc 14). The Origin sets tolerance (§5.4), sub-attribute modifiers that sum to 0 and stay within ±6 each, +10 to one Origin skill, and one Origin trait (doc 04).
+### 16.2 Callings and Echoes
+
 - **Calling**: the class. Each Calling sets three major skills to 20 and three minor skills to 10. All other skills start at 0. Doc 04 owns kits and talent trees.
 
 | ID | Identity | Major skills | Minor skills |
 |---|---|---|---|
 | `calling.vanguard` | heavy melee frontliner | hafted, armor, shield | athletics, leadership, smithing |
-| `calling.duelist` | agile swordfighter | blade, acrobatics, unarmed | sneak, speech, throwing |
+| `calling.duelist` | agile swordfighter | blade, acrobatics, speech | sneak, throwing, unarmed |
 | `calling.gunslinger` | precision shooter | marksmanship, acrobatics, throwing | tinkering, speech, security |
-| `calling.grenadier` | heavy weapons and explosives | heavy_arms, throwing, armor | tinkering, athletics, medicine |
+| `calling.grenadier` | heavy weapons, explosives and sapping | heavy_arms, throwing, armor | tinkering, delving, medicine |
 | `calling.spellwright` | spell designer and caster | evocation, spellcraft, alteration | abjuration, inscription, divination |
 | `calling.alchemist` | brewer and bomber | alchemy, throwing, medicine | survival, restoration, appraisal |
 | `calling.shade` | stealth assassin and thief | sneak, blade, security | pickpocket, acrobatics, illusion |
 | `calling.artificer` | crafter, gunsmith, gadgeteer | tinkering, smithing, marksmanship | security, inscription, appraisal |
 | `calling.warden` | protector and healer | shield, abjuration, restoration | polearm, devotion, leadership |
-| `calling.oracle` | seer, priest, summoner | divination, devotion, conjuration | appraisal, illusion, speech |
+| `calling.oracle` | seer and priest | divination, devotion, conjuration | appraisal, illusion, speech |
+| `calling.netrunner` | hacker and infiltrator | hacking, tinkering, sneak | security, awareness, illusion |
+| `calling.beastbinder` | tamer and pack leader | handling, conjuration, survival | polearm, leadership, restoration |
+| `calling.monk` | martial artist | unarmed, acrobatics, athletics | alteration, medicine, awareness |
 
-- **Echo**: a pre-built Erratum. An Echo fixes an Origin, a Calling, a signature trait and cosmetics. It is acquired through the Inkwell (doc 15) or through its Recollection trial (doc 14). Launch roster: 24 Echoes, 2 per core genre. ID pattern `echo.<name>`.
+There are 13 Callings.
+
+- **Echo**: a pre-built Erratum. An Echo fixes a kin, an Origin, a Calling, a signature trait and cosmetics. It is acquired through the Inkwell (doc 15) or through its Recollection trial (doc 14). Launch roster: 24 Echoes, 2 per core genre. ID pattern `echo.<name>`.
+
+### 16.3 Kin
+
+Each Erratum has one kin. Echoes fix it. Kin passive traits have dependency none. Each kin is skinned per Origin, for example construct as golem, clockwork or android, and undead as revenant, jiangshi or ghoul. Doc 04 owns the full trait lists.
+
+| ID | Body plan | Rules |
+|---|---|---|
+| `kin.human` | `body.humanoid` | no changes |
+| `kin.construct` | `body.humanoid` | immune to `st.poisoned`, `st.diseased`, `st.bleeding`; no satiation, refuels from `cat.material` tagged fuel; needs no breath; resist shock −2500; potion healing × 5000; Tinkering repair heals |
+| `kin.undead` | `body.humanoid` | no natural HP regeneration; `dmg.umbral` taken heals 5000 Bp of its amount instead; resist radiant −5000; immune to `st.poisoned`, `st.diseased`; needs no breath |
+| `kin.beastkin` | `body.humanoid` plus `bp.tail` | unarmed attacks carry a 5000 Bp slash share; dark-vision +2 m |
+| `kin.fae` | `body.humanoid` | ARCANA tolerance +1; takes × 12500 damage from `mat.cold_iron` and `mat.iron` weapons |
+| `kin.mutant` | `body.humanoid` | starts with one `aug.` mutation chosen from 3 offered; +1 mutation point every 2 levels |
+
+### 16.4 Afflictions
+
+Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and downsides. They are contracted through body-group buildup from specific status powers, such as bites and ink. Incubation applies `st.incubating` for 7200 ticks, after which the affliction lasts for the rest of the run. Cures: a Scriptorium service for `mul_bp(500, P(d))` Lucre, or a blessed cure potion. Event: `ev.affliction_changed`.
+
+| ID | Skins | Effects |
+|---|---|---|
+| `afflict.hunger` | vampirism, ghoul hunger, jiangshi | dark-vision +2 m; melee heals 1000 Bp of damage dealt; no natural HP regeneration while `light_at ≥ 12`; resist radiant −5000 |
+| `afflict.beast` | lycanthropy, were-forms | once per Folio, or whenever composure is below 25%, gain `st.polymorphed` into a beast template for 30 s: melee × 15000, no items |
+| `afflict.red_ink` | the Editors' forbidden ink | each dose unlocks one Marginalia power (doc 04) and lowers the hunter threshold by 1 (§11.6) |
+
+### 16.5 Patrons and prayer
+
+- Each genre has one patron Author, `patron.<genre_suffix>`, 16 in all, owned by doc 06.
+- `res.favor` per patron is run-scoped, `-1000..=1000`. Each Erratum has a `prayer_timer` in ticks.
+- Prayer resolution follows IVAN's table, with timers of +18000 ticks (pleased), +36000 (displeased), +90000 (helped anyway) and +180000 (angry). Doc 06 owns the table. Rolls use keyed `rng.magic`.
+- Favor gains are × `(100 + devotion) / 100` and losses × `100 / (100 + devotion)`, with integer floor division.
+- Praying to the local genre's patron applies effects × 15000.
+- Prayers are components with dependency mythos whose origin genre is the patron's genre.
+- Sacrifice value is `isqrt(item.value)`, doubled when the item's `origin_genre` equals the patron's genre.
 
 ---
 ## 17. Run structure, party scaling, enemy ranks and reference anchors
@@ -1359,6 +1553,8 @@ Reputation per faction is an integer `-1000..=1000` and resets each run.
 
 Secret genres are never lattice candidates. They are reached only through secret exits (doc 12).
 
+**Abridged mode** (`mode.abridged`, owner 14) is the shorter full-story run. It has 5 Volumes of 3 Folios each: two regular Folios plus the boss. Effective depth `d_eff(v, f) = (v - 1) × 5 + [1, 3, 5][f - 1]` feeds `P`, `T`, `H`, `S`, `ilvl` and `enemy_level`. Kill XP and loot quantity per Folio are × 16667 Bp. `EMENDATIONS_PER_VOLUME` stays 3. The final Folio is the Ur-Text at `d_eff = 25`. Target duration is 60 to 75 minutes. The 25-Folio Standard mode remains the full run.
+
 ### 17.2 Party-size tables (Bp, for party sizes 1, 2, 3, 4)
 
 | Table | 1 | 2 | 3 | 4 |
@@ -1382,6 +1578,19 @@ Enemy count per spawner is `floor_div(n_base × enemy_count_bp + carry, 10000)`,
 | `rank.editor` | 400000 | 18000 | 400000 | 2500 | 2500 | Volume boss; same immunities |
 | `rank.hunter` | 120000 | 20000 | 50000 | 2500 | 2500 | Erasure hunter; same immunities |
 
+### 17.3a Champion counters and elite aspects
+
+| ID | Meaning |
+|---|---|
+| `counter.ward_breaker` | hits deal × 30000 to the target's ward; breaking the ward applies `st.stunned` directly |
+| `counter.disruptor` | applies `st.unraveled` and `st.silenced` directly for 180 ticks and stops the champion's regeneration |
+| `counter.staggerer` | deals poise damage × 30000, even against poise-immune targets |
+| `elite.warded` | ward equal to 50% of Max HP; fully regenerates 180 ticks after it last took damage; countered by `counter.ward_breaker` |
+| `elite.surging` | attack and cast speed × 13000; heals 2% Max HP per second unless `st.unraveled` or `st.shocked`; countered by `counter.disruptor` |
+| `elite.unstoppable` | immune to `st.staggered` from poise; countered by `counter.staggerer` |
+
+Every counter type is available from at least one dependency-none source (an ammo type or a throwable) in every genre's shop and loot pool. The Folio exit preview shows the champion aspects of the next Folio. Doc 13 may add more elite modifiers; only these three are champion aspects.
+
 ### 17.4 Reference anchors
 
 Doc 05, doc 11 and doc 13 tune all content against these Folio-1 anchors.
@@ -1395,6 +1604,41 @@ Doc 05, doc 11 and doc 13 tune all content against these Folio-1 anchors.
 | `REF_PLAYER_DPS_D1` | 30 HP per second sustained, Common Normal +0 Calling weapon, skill 20, all sub-attributes 40 |
 | `REF_STANDARD_TTK_D1` | 2.0 s |
 | `REF_KILLS_PER_FOLIO` | 40 standard-kill equivalents per player |
+
+### 17.5 Friendly fire and co-op modes
+
+| Constant or mode | Value |
+|---|---|
+| `FF_DIRECT_BP` | 5000: weapon, spell and gadget hits between `fac.errata` members |
+| `FF_AREA_BP` | 10000: explosions, fire spread, surfaces, falling blocks and shock chains |
+| `mode.ff_off` | sets the two constants to 0 and 5000 |
+| `mode.ff_full` | sets both to 10000 |
+| `mode.loot_shared` | one drop per kill, first pickup wins, as in Barony; instanced loot stays the default |
+
+### 17.6 Ghosts and resurrection
+
+- A dead Erratum whose party still has a living member becomes a ghost with `st.ghost`. A ghost has no collision, cannot deal damage or pick up items, and cannot be perceived by AI. It can open doors, press switches, ping, and apply `st.marked` (8 s duration, 600-tick cooldown).
+- The body drops Remains, a `cat.corpse` item of 75,000 g.
+- If an ally carries the Remains through the exit, the ghost resurrects at the next `ev.folio_entered` with 50% Max HP. Otherwise it resurrects there with 25% Max HP and loses one random equipped non-weapon item, chosen with keyed `rng.loot` (actor = the ghost's EntityId, seq 0).
+- The run ends when no Erratum is alive. Events: `ev.player_died`, `ev.player_ghosted`, `ev.player_resurrected`.
+
+### 17.7 Mounts
+
+Mount archetypes are owned by doc 05. A mount is an entity with HP `template × H(d)`.
+
+| Archetype | Movement | Seats |
+|---|---|---|
+| `arch.mount.runner` | walk 6000 mm/s; gallop 12000 mm/s, spending the mount's own stamina | 1 |
+| `arch.mount.hover` | 14000 mm/s; crosses liquids | 2; the passenger can shoot |
+| `arch.mount.glider` | horizontal 9000 mm/s; descent 2000 mm/s | 1 |
+
+- Summoning a mount takes 30 ticks and needs 2600 mm of headroom. Doc 12 may tag rooms `room.no_mount`.
+- A mounted Erratum has `st.mounted`, cannot be `st.hidden`, cannot place blocks, and has spread × 13000. A melee charge at 8000 mm/s or faster deals × 12500 damage and × 20000 poise damage.
+- When the mount reaches 0 HP, the rider gains `st.knocked_down`. Events: `ev.mounted`, `ev.dismounted`.
+
+### 17.8 The Margin plot
+
+The Margin contains a persistent 64 × 32 × 64 block plot per account, built with cosmetic block palettes unlocked through Quires and the Codex. It has no gameplay stats.
 
 ---
 
@@ -1435,6 +1679,17 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 | `ev.player_downed` | `st.downed` applied |
 | `ev.player_revived` | `st.downed` removed by an ally |
 | `ev.run_ended` | victory, death of the whole party, or abandonment |
+| `ev.player_died` | an Erratum dies (§10.8) |
+| `ev.player_ghosted` | an Erratum becomes a ghost (§17.6) |
+| `ev.player_resurrected` | a ghost resurrects (§17.6) |
+| `ev.ward_broken` | a ward reaches 0 (§10.5 step 7) |
+| `ev.part_severed` | a body part is severed (§9.1) |
+| `ev.part_reattached` | a severed part is reattached or replaced (§9.1) |
+| `ev.minion_bound` | a minion joins its owner (§15.1) |
+| `ev.minion_released` | a minion leaves or dies (§15.1) |
+| `ev.mounted` | an Erratum mounts (§17.7) |
+| `ev.dismounted` | an Erratum dismounts or is thrown (§17.7) |
+| `ev.affliction_changed` | an affliction begins incubating, takes hold or is cured (§16.4) |
 
 ---
 
@@ -1444,12 +1699,12 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 |---|---|
 | `ax.`, `genre.` | 00 for the core table; 12 for full parameter vectors |
 | `lattice.`, `room.`, `gpv.`, `biome.`, `hazard.`, `secret.` | 12 |
-| `attr.`, `sub.`, `skill.`, `talent.`, `body.`, `bp.`, `wound.`, `trait.`, `origin.`, `calling.`, `aug.` | 04 |
+| `attr.`, `sub.`, `skill.`, `talent.`, `body.`, `bp.`, `wound.`, `trait.`, `origin.`, `calling.`, `aug.`, `kin.`, `afflict.` | 04 |
 | `dmg.`, `st.`, `res.` | 00 for the core lists; owners per §11.1 and §12 for behavior |
-| `arch.melee.`, `arch.ranged.`, `arch.armor.`, `arch.offhand.`, `ammo.`, `move.`, `counter.` | 05 |
-| `glyph.`, `spell.`, `school.`, `prayer.`, `ench.`, `summon.` | 06 |
+| `arch.melee.`, `arch.ranged.`, `arch.armor.`, `arch.offhand.`, `arch.mount.`, `arch.ward.`, `ammo.`, `move.`, `counter.` | 05 |
+| `glyph.`, `spell.`, `school.`, `prayer.`, `ench.`, `summon.`, `patron.` | 06 |
 | `mat.`, `q.`, `station.`, `recipe.`, `part.`, `block.`, `tooltier.`, `gadget.` | 07 (blocks shared with 03) |
-| `liq.`, `ing.`, `alch.`, `apparatus.` | 08 |
+| `liq.`, `gas.`, `ing.`, `alch.`, `apparatus.` | 08 |
 | `noise.`, `aware.`, `disguise.`, `lock.` | 09 |
 | `know.`, `idc.`, `appr.`, `buc.`, `curse.` | 10, with core values in 00 |
 | `item.`, `rar.`, `affix.`, `perk.`, `mfr.`, `loot.`, `reliq.`, `engine.`, `shop.`, `cat.`, `slot.` | 11, with core values in 00 |
@@ -1500,6 +1755,12 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 | Component | one functional part of an item or ability that carries its own dependencies |
 | Keyed draw | a random draw seeded by (stream, Folio, actor, tick, seq) (§3.3) |
 | Rank | an enemy's power tier: minion, standard, elite, champion, boss, editor, hunter |
+| Kin | an Erratum's people: human, construct, undead, beastkin, fae, mutant |
+| Patron | the Author of a genre, who answers prayers |
+| Ghost | a dead Erratum still present while a party member lives |
+| Remains | a dead Erratum's carryable body, which speeds resurrection |
+| Quires | earned account currency for Margin unlocks |
+| Ink | earned account currency for Inkwell pulls |
 
 ---
 ## 21. Acceptance tests
@@ -1527,7 +1788,7 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 21. **Power tables.** `P(25) = 79110`, `T(25) = 36145`, `H(25) = 202521`, `S(25) = 17200`, `P(41) = 200955`. Every committed row 1 to 40 matches §13.8.
 22. **Skill curve.** Cumulative milli-XP from skill 0 to 25 is 220,000, and to 75 is 1,410,000.
 23. **Level curve and kill XP.** Cumulative XP to reach level 11 is 27,500. Reference kill XP for a standard enemy at Folio 25 is 1,386.
-24. **Jump apex.** With VERVE 0 and gravity 20000 mm/s², the simulated apex is at least 1,099 mm. With VERVE 10 it is at most 1,401 mm.
+24. **Jump apex.** With gravity 20000 mm/s², the simulated apex is at least 1,099 mm at VERVE 0 and between 1,999 and 2,001 mm at VERVE 10. With gravity 16000 mm/s² at VERVE 10 it is also between 1,999 and 2,001 mm.
 25. **Zero-VERVE crit.** FAT 100, PRC 100 and `st.blessed` in `genre.redacted` give crit chance 0.
 26. **Death's Door.** PRV 100 at VERVE 10 gives 6000 Bp. PRV 40 at VERVE 5 gives 1000 Bp. NPCs never roll it.
 27. **Dodge.** AGI 150 gives 12 invulnerability ticks.
@@ -1538,6 +1799,14 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 32. **Save and load.** Run 10,000 ticks with a fixed input log, save at tick 4,321, load and continue. The final `state_hash` equals the uninterrupted run's.
 33. **No floats.** A lint step fails the build if `f32` or `f64` appears in `palimpsest_sim` outside `#[cfg(test)]` code and the documented conversion boundary module.
 34. **No floats in content.** The content validator rejects any JSON number with a fraction or exponent part.
+35. **Genre-native aether.** A character with every sub-attribute at 40 in `genre.cyberpunk` (aether axiom techne, TEC 9) regenerates 1,820 m-aether per second.
+36. **Glyph dependency.** A spell glyph generated in Cyberpunk has `dep = {techne}` and `Req[techne] = 7`. One generated in Mythic Fantasy has `dep = {arcana}` and `Req[arcana] = 6`.
+37. **Type hiding.** A generated trinket, ring and wand start at `know.unknown`. A staff, a belt and a longsword start at `know.classified`.
+38. **Per-target sneak eligibility.** Erratum A is at `aware.alert` with guard G1, while guard G2's awareness of A is `aware.unaware`. A's melee hit on G2 is a sneak attack and draws no crit roll.
+39. **Marginalia armor HP.** A full set of body, head, legs, hands and feet armor at ilvl 100 gives `gear_hp` of 4,538,772 mHP. The same set at ilvl 25 or lower gives 0.
+40. **Genre spread.** The minimum pairwise L1 distance between the 12 core axiom vectors is 6, and every row of the §5.4 tolerance table still sums to 4.
+41. **Ward depletion.** A ward of 10,000 mHP hit by 8,000 mHP of shock absorbs it fully only up to 6,666 mHP: `w = 12,000 > 10,000`, so shock damage becomes `8,000 - floor_div(10,000 × 10000, 15000) = 1,334` mHP and the ward breaks.
+42. **Friendly fire.** In default mode, a rifle hit from one Erratum on another whose value before step 2.15 is 10,000 mHP leaves `D2 = 5,000`. A grenade blast with the same value before step 2.15 keeps `D2 = 10,000`.
 
 ---
 
@@ -1560,11 +1829,33 @@ N! premium currency                                              W! juris.paid_r
 W! derived stats := §6.4 only                                    N! competing formula ∈ other docs
 W! rendering reads sim                                           N! rendering → sim feedback
 W! LLM text → cosmetic only                                      N! LLM output → sim state
+W! glyph dep := origin_genre.aether_axiom                        W! min L1(core axiom vectors) ≥ 6
+W! type-hidden ⇔ listed by an idc class                          W! sneak eligibility := per (attacker, target)
+W! ∀ counter type: ∃ dep-none source ∈ every genre               N! input synthesized for a player
+N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ```
 
 ---
 
 ## 23. Changelog
+
+### canon-1.2 (2026-10-11)
+
+Applied after the player-fantasy and inspiration-fidelity review, plus research R3 and R4.
+
+- Adopted Earned Randomness, Paid Certainty: no premium currency; Quires, Ink and Vellum are earned only; the Quill is an entitlement; Fortune Engines are capsule machines.
+- Added `aether_axiom` per genre so casting is native to each genre: Bandwidth runs on TECHNE in Cyberpunk, Qi on VERVE in Wuxia. Replaced the ARCANA ambient rows with AETHER and GLYPH rows.
+- Changed four axiom vectors (Space Opera, Cosmic Horror, Post-Apocalypse, Fairy Tale) so core genres differ by at least 6. Renamed skins that collided with account currencies or third-party names.
+- Added the genre identity table: physics multipliers, spawn light, palettes, music, enemy themes, materials and two manufacturers per genre.
+- Added `cat.wand` and an exact type-hiding rule.
+- Made sneak-attack eligibility per target, and added `ignore_armor`, elevation, flanking and friendly fire to the pipeline.
+- Added per-type ward depletion, ward generators, champion counters and elite aspects.
+- Added materials to item damage and armor, Marginalia armor HP, and Marginalia enhancement growth. Raised `ITEM_MULT_MAX` to 51870.
+- Added item fields: manufacturer, gear tier, perk columns, illuminated, finder slot.
+- Added severing and hand bindings, kin, afflictions, patrons and favor, breath, the surfaces and reactions table, sight concealment, two-channel light and spawn light.
+- Added minions, mounts, ghosts and resurrection, co-op modes, the Margin plot and Abridged mode.
+- Added skills Hacking, Delving, Awareness and Handling (36 total), Callings Netrunner, Beastbinder and Monk (13 total), damage types radiation and sonic (15 total), and statuses hacked, taunted, grappled, polymorphed, incubating, suffocating, mounted, bound and ghost.
+- Added non-kill character XP sources, player-controlled status semantics and a stronger VERVE jump curve with air jumps.
 
 ### canon-1.1 (2026-10-11)
 
