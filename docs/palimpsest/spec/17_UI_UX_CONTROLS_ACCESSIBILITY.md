@@ -1,8 +1,8 @@
 # 17 — UI, UX, Controls and Accessibility
 
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.2.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.5.
 
-This chapter owns everything the player sees and touches that is not the 3D world itself: the genre UI skins, the HUD, every menu, the input action layer and its bindings, the accessibility suite (including the assist mode **Scribe's Mercy**), localization rules, onboarding, tooltips and feedback. It owns the namespaces `ui.`, `input.` and `access.` (Canon §19). The header line is fixed by the document contract; the canon on disk is canon-1.4, and every rule below was checked against canon-1.4 (Canon gaps G1).
+This chapter owns everything the player sees and touches that is not the 3D world itself: the genre UI skins, the HUD, every menu, the input action layer and its bindings, the accessibility suite (including the assist mode **Scribe's Mercy**), localization rules, onboarding, tooltips and feedback. It owns the namespaces `ui.`, `input.` and `access.` (Canon §19). Every rule below was checked against canon-1.5, the canon on disk, including limited building, Margin trophies, invasions and the canon-1.5 display rounding of `Fx` quantities (Canon gaps G1).
 
 Two things in this chapter touch the simulation: the bit layout of the replay command's reserved button bits (§12.2) and the Scribe's Mercy damage step (§13.1). Everything else is presentation. It reads simulation state through doc 02's `ViewFrame` and conversion boundary and changes it only through `PlayerCommand` bits and `PlayerIntent` records. UI code may use floats; content records in this chapter are integers only (Canon §1.6).
 
@@ -13,15 +13,15 @@ At the product owner's request, the closing section "Product-owner question roun
 | Source | Sections | Consumed |
 |---|---|---|
 | DESIGN_BRIEF, DECISIONS | Brief §1, §2, §5, §8; ledger rows 3, 6, 15, 16, 23 | first person with third-person toggle; Archetype × Skin; deterministic sim under a Bevy client; earned-only randomness with exact odds; PC and Deck first; invasions; limited building; per-genre manuscript skins |
-| Canon | §1.1, §1.5, §1.9, §1.10, §2.1–§2.4 | ID grammar; display-unit rule; `Bam`; text keys and name order; 60 Hz tick; the replay command record |
+| Canon | §1.1, §1.5, §1.9, §1.10, §2.1–§2.4, §3.6 | ID grammar; display-unit rule and `Fx` display rounding; `Bam`; text keys and name order; 60 Hz tick; the replay command record; seed display and strict decoding |
 | Canon | §4.1, §4.2, §5.2–§5.9 | eye heights, lean, dodge; genres, skins, palettes, `spawn_block_max`; Contradiction states and torn page; Edge; local genre |
 | Canon | §6.4, §7, §8, §10.1, §10.5, §10.8 | derived-stat rows; skills; XP; damage colors and the icon duty; the pipeline (step 6c added, G3); lethal resolution |
 | Canon | §11.1, §11.8, §12, §13.2–§13.9, §14 | statuses, player-controlled semantics; resources and two-channel light; slots, rarity, quality, knowledge, curses, item contract; currencies |
 | Canon | §15.1, §16.3–§16.5, §17.1, §17.5–§17.9 | minions and their three inputs; kin; afflictions; patrons; Colophon and exits; co-op modes; ghosts; mounts; Margin trophies; invasions |
-| Doc 02 | §5.5, §7.5, §8.4–§8.8, §10, §14, §15 | command bits 0–25 and intents; `conv`; FOV, post stack, page turn; input layer, widgets, 1280 × 800 authoring, Fluent; Deck Verified; UI budget |
-| Docs 04, 05, 06, 08 | 04 §1.1, §2, §6.4, §7, §8; 05 §1.7, §6, §15.4, §17, §18; 06 §3, §4, §6, §8.2, §16; 08 §4.5, §9, §11 | ability slots, creation, level-up, talents, wounds; logical inputs, ADS, lean, wards, mounts, combat feel; Grimoire, wheel, grammar, cost, prayers; respirators, brewing, toxicity |
-| Docs 10, 11, 12, 13 | 10 §2–§6, §9; 11 §2.2, §10–§12, §14; 12 §4.7, §10.2; 13 minions, stalker shimmer | knowledge flags and display formats, Ledger; instance fields, Reliquaries, Engines, shops, inventory; exit preview, light bands; minion behavior |
-| Docs 14, 15, 16 | 14 §2.1, §3, §5, §11; 15 §2.8, §3, §5–§8; 16 §5.7, §5.8, §6.10, §9 | lobby, Folio phases, exit vote, boons, ghosts, Margin, Prologue; hours to earn, Inkwell, Vault, Codex pass, Store, parental, chat safety; intents, sanitizer, party state, co-op rules |
+| Doc 02 | §5.5, §7.2, §7.5, §8.4–§8.8, §9, §10, §14, §15 | command bits 0–25 and intents; `ViewFrame`, `ChunkView.light`; `conv` with `look_add`, `rad_to_bam`, `stick_to_i8`; FOV, post stack, page turn; `ev.noise` heard level and arrival direction; input layer, look state, widgets, 1280 × 800 authoring, Fluent; Deck Verified; UI budget |
+| Docs 03, 04, 05, 06, 07, 08 | 03 `comp.player`, `ev.noise` payload; 04 §1.1, §1.2, §2.1, §2.4, §6.4–§6.6, §7, §8.2, §11.3, §11.5; 05 §1.6, §1.7, §6.3–§6.8, §15.4, §16.3, §17, §18; 06 §3, §4, §5.3, §6, §8.2, §16; 07 §4.1–§4.3, §5.3, §6.1, §6.4, §8.5; 08 §4.3, §9, §11 | Mercy fields, noise payload; ability slots, modifier kinds, creation flow, kin traits, level-up, Interpolation offers, respec, talents, wound tiers, darkness and breath; stance speeds, logical inputs, spread, sway and hold breath, lean, wards, failure outcomes, mounts, combat feel; casting, Grimoire, wheel, lore essences, grammar, cost, prayers; craft quality roll and distribution, station queue, recipe kinds, craft channel, disassembly; respirators, brewing, toxicity |
+| Docs 09, 10, 11, 12, 13 | 09 §2.1–§2.3, §6.1, §7, §8, §12, §13.2; 10 §2–§6, §9; 11 §2.2, §7.1, §10–§12, §14; 12 §5.5, §5.7, §11.3; 13 stalkers, §6 minion contract, §13.4, §13.5 | stealth light, awareness states, noise IDs, `StealthHud`, distractions, manual lockpicking; knowledge flags and display formats, Ledger; instance fields, perk columns, Reliquaries, Engines, shops, inventory; exit offers and preview, light bands; stalker shimmer, minion commands and leash, hirelings, companion approval |
+| Docs 14, 15, 16, 18 | 14 §2.1, §3, §4, §5, §7.4, §9.4, §10, §11; 15 §2.2, §2.8, §3, §5–§8; 16 §2.2, §5.7, §5.8, §6.8–§6.10, §9; 18 §3.1, §3.5, §4.6, §5.4, §9.10, §9.11 | lobby, Folio phases, exit vote, boons, rests, ghosts, score and payout, Margin, Grades, leaderboards, achievements, Prologue; Ink sources, hours to earn, Inkwell, Vault, Codex pass, Store, parental, chat safety; solo pause, intents, sanitizer, snapshot `HUD` section, party state, co-op rules; art palettes, fonts, stealth readability, gore modes, Scribe opt-out, launch locales |
 | R3, R7 | R3 §1 "Accessibility", §5 item 4; R7 §2.7, R-SH7 | Hades God Mode values [VERIFIED]; speed 50–100%, FOV 60–120, UI 75–200%; aim-assist structure [RECALLED], numbers tuned here |
 
 ## 1. UI principles
@@ -32,12 +32,13 @@ At the product owner's request, the closing section "Product-owner question roun
 | P2 | Readable first, manuscript second | Frames, ornaments and titles carry the genre. Body text, numbers and tooltips always use the body font (§2.4) at contrast ≥ 4.5:1. |
 | P3 | Never color alone | Every color-coded signal also has a shape, an icon or text: rarity pips and letters, damage-type glyphs, hostile diamonds, ally circles, band labels, ▲/▼ comparison arrows. |
 | P4 | Every number explains itself | Holding `input.ui_details` on any derived number opens its formula breakdown (§5.6). |
-| P5 | Exact odds | Every random reward or service (Reliquaries, Engines, Inkwell, boons, prayers) shows its exact probability to 4 decimals (`pct4`, doc 15 §3.11.1) before the commit input, with live pity counters; crafting and brewing show their quality range; combat chances (crit, Contradiction failure, Death's Door) show on the sheet and the weapon panel. |
-| P6 | Short paths | Mute, block and report: at most 2 inputs from the party list (doc 15 §8.5). Any setting: at most 3 inputs from the pause menu. Scribe's Mercy: 2 inputs from the pause menu. |
+| P5 | Exact odds | Every random reward or service (Reliquaries, Engines, Inkwell, boon rerolls, prayers) shows its exact probability to 4 decimals (`pct4`, doc 15 §3.11.1) before the commit input, with live pity counters. Crafting and brewing show the exact probability of every quality tier (§6.1, §6.3). Combat chances (crit, Contradiction failure, Death's Door) show on the sheet and the weapon panel. |
+| P6 | Short paths | Mute, block and report: at most 2 inputs from the party list or the scoreboard (doc 15 §8.5). Scribe's Mercy: 2 inputs after the pause menu opens (§11.6). Settings: 3 inputs after the pause menu opens, landing on the Accessibility page. |
 | P7 | Device parity | Every screen is fully usable by keyboard alone, by gamepad alone and by mouse plus keyboard. Steam Deck Verified rules (doc 02 §14) hold on every screen, including first launch. |
-| P8 | Honest time | Solo pauses while a menu is open (doc 16 §2.2). Co-op never pauses; open menus draw a 4 px "live page" border in the skin's `danger` token and the damage-direction ring stays visible above the menu. |
+| P8 | Honest time | Solo pauses while any `ui.menu.*` screen is open (doc 16 §2.2); wheels, the held scoreboard, prompts and tips are HUD and never pause. Co-op never pauses; open menus draw a 4 px "live page" border in the `hostile` token and the damage-direction ring stays visible above the menu. |
 | P9 | No dark patterns | No countdowns on any real-money or account-currency offer, no pop-up offers, no confirm-shaming copy, no pre-ticked boxes, no "are you sure you want to miss out" dialogs (doc 15 §7.5). |
 | P10 | Budget | All UI rendering fits doc 02's 0.5 ms Deck GPU budget and the 128 MiB UI-and-fonts RAM budget. |
+| P11 | Integer display | Every displayed simulation number follows Canon §1.5: `Milli` as `floor(x / 1000)` (current HP as `ceil_div`), `Bp` percentages with one decimal by `round_half_even`, and `Fx` distances and speeds with `round_half_even` at the shown precision ("5.2 m" is `round_half_even(raw_mm, 100)` tenths). |
 
 ---
 
@@ -50,16 +51,18 @@ Every screen and HUD element is themed by exactly one skin record `ui.skin.<genr
 ```
 active_skin(view) =
     if access.consistent_skin                      { ui.skin.margin }
-    else if view.in_run && view.local_player_alive { ui.skin.<suffix of local_genre(local_player.pos)> }   // Canon §5.8
+    else if view.in_run && view.local_player_alive { ui.skin.<suffix of skin_genre(local_player.pos)> }
     else if view.in_run                            { ui.skin.<suffix of the Folio genre> }                 // ghost or loading
     else                                           { ui.skin.margin }
+skin_genre(pos) = if pos lies in the Folio's seam zone { Folio genre }     // Canon §5.8: the Folio genre supplies skins there
+                  else { local_genre(pos) }                                // bleed zones use their own genre
 ```
 
-A change of active skin crossfades all tokens over 500 ms (presentation only). In a seam zone (Canon §5.8) the Folio genre supplies skins, so the skin follows the Folio genre there. A menu captures the active skin when it opens and keeps it until it closes.
+A candidate skin becomes active only after it has been the candidate for 30 consecutive ticks, so a player standing on a bleed boundary never sees the skin flicker. The change then crossfades all tokens over 500 ms (presentation only). A menu captures the active skin when it opens and keeps it until it closes.
 
 ### 2.2 Color tokens
 
-Each skin defines six text-safe tokens. Light-paper skins are Fairy Tale, Mythic Antiquity, The Redaction, The Unwritten and The Ur-Text; the rest use dark paper. Tokens derive from the Canon §5.9 palette (Canon gaps G8): dark skins darken the darkest palette color 55% toward black for `paper` and lighten the brightest toward white until `ink` reaches 7:1; light skins use the lightest palette color as `paper` and darken the darkest toward black until `ink` reaches 7:1. `accent` and `muted` are the closest palette-derived colors reaching 4.5:1 on `paper`. Ratios are WCAG 2.1 relative-luminance ratios, computed and verified by acceptance test 9.
+Each skin defines six text-safe tokens. Light-paper skins are Fairy Tale, Mythic Antiquity, The Redaction, The Unwritten and The Ur-Text; the rest use dark paper. Tokens derive from the Canon §5.9 palette (Canon gaps G8): dark skins darken the darkest palette color 55% toward black for `paper` and lighten the brightest toward white until `ink` reaches 7:1; light skins use the lightest palette color as `paper` and darken the darkest toward black until `ink` reaches 7:1. `accent` and `muted` are the closest palette-derived colors reaching 4.5:1 on `paper`. Ratios are WCAG 2.1 relative-luminance ratios, computed and verified by acceptance test 9. The table below is binding; the derivation only records how it was produced. Doc 18 §3.1's `ink` and `paper` swatches color diegetic manuscript surfaces (title cards, Lore pages, the page-turn texture), never UI chrome or UI text (Canon gaps G8).
 
 | Skin | paper | ink | accent | muted | ink:paper | accent:paper | muted:paper |
 |---|---|---|---|---|---|---|---|
@@ -137,20 +140,21 @@ Every skin names one frame style. Frame metrics are in reference pixels at layou
 | Caption | 12 | body font | the minimum for any text (doc 02 §10) |
 | Numerals | same as context | body font, tabular figures | every column of numbers aligns |
 
-Display fonts per skin (all licensed SIL OFL 1.1 or Apache 2.0; acceptance test 31 checks every font file's license field): Mythic Fantasy **Cinzel**; Gothic Horror **UnifrakturMaguntia**; Cosmic Horror **IM Fell English**; Space Opera **Orbitron**; Cyberpunk **Share Tech Mono**; Post-Apocalypse **Special Elite**; Weird West **Rye**; Hardboiled Noir **Courier Prime**; Wuxia **Ma Shan Zheng**; Steampunk **Playfair Display SC**; Fairy Tale **Uncial Antiqua**; Mythic Antiquity **Marcellus SC**; Oneiric **Fraunces**; The Redaction **IBM Plex Mono**; The Unwritten and the Margin **EB Garamond**; The Ur-Text **Cormorant Garamond**.
+Display fonts are doc 18 §3.5's per-genre heading faces (`art.font.*`, owner doc 18; all SIL OFL 1.1 or Apache 2.0; acceptance test 31 checks every font file's license field), copied here: Mythic Fantasy **Cinzel**; Gothic Horror **UnifrakturCook**; Cosmic Horror **Special Elite**; Space Opera **Orbitron**; Cyberpunk **Bebas Neue**; Post-Apocalypse **Black Ops One**; Weird West **Rye**; Hardboiled Noir **Playfair Display**; Wuxia **Ma Shan Zheng**; Steampunk **Limelight**; Fairy Tale **Berkshire Swash**; Mythic Antiquity **Marcellus**; Oneiric **Caveat**; The Redaction **Space Mono**; The Unwritten **Cormorant Garamond**; The Ur-Text **Cinzel Decorative**; the Margin **EB Garamond**. When doc 18 changes a heading face, doc 18 wins and this list follows. Doc 18's per-genre body and numeral faces set Lore and Journal reading pages and title cards; every functional UI string (HUD, menus, item cards, tooltips, numbers) uses the `access.font` body font below, because P2 puts readability first (Canon gaps G23).
 
-Body fonts (`access.font`): `standard` **Noto Sans** (default), `legible` **Atkinson Hyperlegible Next**, `dyslexic` **OpenDyslexic**. CJK locales always use **Noto Sans CJK** (JP, KR, SC or TC per locale) for body and **Noto Serif CJK** for display; a display font without the glyphs of the active locale falls back to Noto Serif CJK or Noto Serif.
+Body fonts (`access.font`): `standard` **Noto Sans** (default), `legible` **Atkinson Hyperlegible** (the face doc 18 §3.5 ships; it also replaces doc 18's genre body faces on Lore pages), `dyslexic` **OpenDyslexic**. CJK locales always use **Noto Sans CJK** (JP, KR, SC or TC per locale) for body and **Noto Serif CJK** for display; a display font without the glyphs of the active locale falls back to Noto Serif CJK or Noto Serif.
 
-**Effective size** for every text element:
+**Effective size** for every text element. This is presentation code, so floats are allowed; `round` is half away from zero (`f32::round`).
 
 ```
-layout_scale = min(window_w / 1280, window_h / 800)                     // doc 02 §10
-px = round(base_px × layout_scale × text_scale_bp / 10000)
-px = max(px, 12)            // Latin, Cyrillic, Greek
-px = max(px, 14)            // CJK scripts
+base_scale = min(window_w / 1280, window_h / 800)                          // doc 02 §10
+menu_px    = round(base_px × base_scale × access.ui_scale_bp / 10000 × access.text_scale_bp / 10000)   // menus, item cards, tooltips, Journal
+hud_px     = round(base_px × base_scale × s)                               // HUD elements; s from §3.1; text scale does not apply
+sub_px     = round(20 × base_scale × access.subtitle_size_bp / 10000)      // subtitles (§13.2)
+px         = if the string's script is Han, Kana or Hangul { max(px, 14) } else { max(px, 12) }
 ```
 
-Worked examples: Body at 1920 × 1080 has `layout_scale = 1.35` and gives 22 px at text scale 10000; at 15000, `round(16 × 1.35 × 1.5) = 32` px. Body at 1280 × 800 with `access.ui_scale` 7500 applied to the layout scale gives `round(16 × 0.75) = 12` px, exactly the floor; a CJK caption in the same case renders at 14 px.
+Worked examples: Body (16 px) at 1920 × 1080 has `base_scale = 1.35`; at UI scale and text scale 10000 it renders at `round(21.6) = 22` px, and at text scale 15000 at `round(32.4) = 32` px. Body at 1280 × 800 with UI scale 7500 renders at `round(12.0) = 12` px, exactly the floor; Small (14 px) in the same case computes `round(10.5) = 11` and is raised to 12; a CJK Caption (12 px) computes `round(9.0) = 9` and is raised to 14.
 
 ### 2.5 Icon set
 
@@ -161,8 +165,10 @@ Icons are `ui.icon.*` records: a 24 × 24 vector glyph (authored as integer path
 | Damage types (Canon §10.1, required there) | `ui.icon.dmg_slash` diagonal cut; `dmg_pierce` arrowhead; `dmg_blunt` hammer face with impact lines; `dmg_fire` flame; `dmg_frost` six-arm snowflake; `dmg_shock` zig-zag bolt; `dmg_acid` droplet with two bubbles; `dmg_radiation` trefoil; `dmg_sonic` three concentric arcs; `dmg_toxin` droplet with a skull notch; `dmg_radiant` eight-ray sun; `dmg_umbral` crescent; `dmg_psychic` spiral eye; `dmg_arcane` six-point rune star; `dmg_true` hollow diamond |
 | Contradiction (Canon §5.5) | `ui.icon.c_coherent` none drawn; `c_strained` page with one dog-ear (C = 1) or two (C = 2); `c_contradicted` page with a crack (C = 3, 4, 5, crack count = C − 2); `c_disconnected` torn page (canon) ; `ui.icon.edge` forward-pointing quill (Anachronism Edge active against the current target) |
 | Status categories (Canon §11.1) | DoT: droplet frame; debuff: downward chevron frame; control: chain frame; buff: upward chevron frame; mental: eye frame; need: bowl frame; indicator: square frame; special: star frame; affliction (§10.6): thorn-ring frame. Inside each frame sits the status's own glyph from `art.icon.<status>` (doc 18). |
-| Markers | hostile diamond, ally circle, neutral square, minion small circle with owner color stripe, ping danger triangle, objective star, Colophon open book, Scriptorium quill, shop coin, Reliquary chest, Fortune Engine crank |
-| Axioms | ARCANA eight-point star, TECHNE gear, MYTHOS eye-in-triangle, VERVE flame-shaped exclamation |
+| Status frames | `ui.icon.frame_dot`, `frame_debuff`, `frame_control`, `frame_buff`, `frame_mental`, `frame_need`, `frame_indicator`, `frame_special`, `frame_affliction`, the frames of the row above |
+| Resources | `ui.icon.res_hp` heart; `res_stamina` chevron; `res_aether` a slot filled by doc 18's genre Aether glyph; `res_ward` hexagon; `res_composure` eye; `res_toxicity` flask; `res_breath` bubble; `res_satiation` bowl (Fuel can for `kin.construct`); `res_temperature` thermometer; `res_respirator` mask; `xp` quill; `mercy` quill over a heart |
+| Markers | `ui.icon.marker_hostile` diamond; `marker_ally` circle; `marker_neutral` square; `marker_minion` small circle with an owner-color stripe; `marker_ping` circle with a center dot; `marker_danger` triangle; `marker_objective` star; `marker_colophon` open book; `marker_scriptorium` quill; `marker_shop` coin; `marker_reliquary` chest; `marker_engine` crank; `marker_remains` folded page; `marker_exit` door; `marker_hold` banner (minion hold cell); `marker_claw` claw (minion attack target) |
+| Axioms | `ui.icon.ax_arcana` eight-point star, `ax_techne` gear, `ax_mythos` eye-in-triangle, `ax_verve` flame-shaped exclamation |
 
 ---
 
@@ -172,13 +178,14 @@ Icons are `ui.icon.*` records: a 24 × 24 vector glyph (authored as integer path
 
 - The HUD is laid out on a logical canvas of `W × H` logical pixels, where the physical window is divided by `layout_scale` (§2.4): 1280 × 800 on Steam Deck, 1422 × 800 at 1920 × 1080, 1911 × 800 at 3440 × 1440.
 - **Safe rect.** Margins `Mx = My = 24` by default; `access.tv_safe_area` sets `Mx = 64`, `My = 40`. The safe rect is `[Mx, W − Mx] × [My, H − My]`.
-- **HUD scale** `s = min((W − 2·Mx) / 1232, (H − 2·My) / 752) × access.hud_scale_bp / 10000`. At the defaults on Deck, `s = 1.0`; with the TV-safe area, `s = min(1152/1232, 720/752) = 0.935`.
+- **HUD scale.** `s_fit = min((W − 2·Mx) / 1232, (H − 2·My) / 752)`. With `access.hud_layout = standard` (default), `s = s_fit × access.hud_scale_bp / 10000` with `access.hud_scale_bp ∈ 7500..=10000` in steps of 500, and the §3.2 table applies. With `access.hud_layout = large`, `s = s_fit × 12500 / 10000` and the §3.4 table applies. At the defaults on Deck `s = 1.0`; with the TV-safe area `s_fit = min(1152/1232, 720/752) = 0.935`, so the Large layout runs at `s = 1.169`.
+- **Subtitles** are the one element whose size ignores `s`: the box is always 592 × 100 reference px × `s_fit`, its offset scales with `s`, and its text follows `access.subtitle_size_bp` (§13.2).
 - **Anchors** are the nine points TL, TC, TR, ML, C, MR, BL, BC, BR of the safe rect. An element's pivot is the same-named point of the element. Its rectangle is placed so the pivot sits at `anchor + offset × s`, with size `(w × s, h × s)`. Offsets use screen axes: +x right, +y down.
 - Element positions are never computed from simulation coordinates except world-space markers (damage numbers, pings, nameplates), which project through the camera.
 
 ### 3.2 Element table
 
-Rectangles below are at 1280 × 800, `s = 1.0`, margins 24. They are pairwise disjoint (acceptance test 10). Priority decides collisions when `access.hud_scale_bp` exceeds the fit (§3.4); higher keeps.
+Rectangles below are at 1280 × 800, `s = 1.0`, margins 24. They stay pairwise disjoint and inside the safe rect at every `access.hud_scale_bp` step, with the default and the TV-safe margins, at logical sizes 1280 × 800, 1422 × 800, 1911 × 800 and 1280 × 960 (acceptance test 10). Rectangles are half-open, so edges may touch. Priority is the draw order: higher draws above lower, and every world-space marker draws below every HUD element.
 
 | ID | Anchor | Offset | Size | Rect at 1280 × 800 | Priority | Visible when | Content |
 |---|---|---|---|---|---|---|---|
@@ -188,11 +195,13 @@ Rectangles below are at 1280 × 800, `s = 1.0`, margins 24. They are pairwise di
 | `ui.hud.compass` | TC | (0, 0) | 480 × 32 | 400,24–880,56 | 70 | always in a run | 180° heading tape, cardinal letters, pings, party markers, objective markers, Colophon marker once open |
 | `ui.hud.boss_bar` | TC | (0, 40) | 520 × 36 | 380,64–900,100 | 85 | a boss, Editor or hunter is alerted toward the party | name, HP bar with phase ticks, ward bar, champion aspect icons with counter icons |
 | `ui.hud.invasion` | TC | (0, 84) | 480 × 28 | 400,108–880,136 | 90 | an invader is present | "A Redactor is reading this page", invader HP when visible, time left of the 300 s window |
+| `ui.hud.ghost` | TC | (0, 144) | 480 × 28 | 400,168–880,196 | 88 | the local Erratum is a ghost | §10.4 banner and resurrection forecast |
 | `ui.hud.notifications` | TR | (0, 0) | 320 × 196 | 936,24–1256,220 | 30 | events | 5 lines of 36 px, newest on top, 4 s each: pickups, identifications, skill-ups, level-ups, favor changes |
 | `ui.hud.minimap` | TR | (0, 212) | 176 × 176 | 1080,236–1256,412 | 20 | `access.minimap` on (default off) | top-down slice of the visited map at the player's floor (§8) |
 | `ui.hud.crosshair` | C | (0, 0) | 64 × 64 | 608,368–672,432 | 100 | first person, not in a menu | reticle, spread ring from `cone` (doc 05 §6.3), hit markers (doc 05 §18), lean chevrons (§10.9), cast-progress arc |
 | `ui.hud.prompt` | C | (0, 72) | 420 × 48 | 430,448–850,496 | 95 | an interactable is targeted | binding glyph, verb, target name, hold-progress ring for timed interacts |
-| `ui.hud.vote` | C | (0, −128) | 480 × 64 | 400,240–880,304 | 75 | `ExitVote` or `VictoryChoice` | each door's voter count, `need`, hold counter `hold/120` (doc 14 §3.6) |
+| `ui.hud.vote` | C | (0, −128) | 480 × 64 | 400,240–880,304 | 75 | `ExitVote` or `VictoryChoice` | each door's voter count, `need`, hold counter `hold/120` and interact counter `interact_hold/180` (doc 14 §3.6) |
+| `ui.hud.downed` | C | (0, −64) | 360 × 40 | 460,316–820,356 | 92 | the local Erratum holds `st.downed` | §10.4a bleed-out and revive bars |
 | `ui.hud.vitals` | BL | (0, 0) | 320 × 104 | 24,672–344,776 | 100 | always | HP bar 320 × 20 with ward bar 320 × 6 above it; stamina 256 × 10; aether 256 × 10 (skinned name); composure 256 × 10; toxicity 256 × 6 with band ticks; breath bubbles when draining; satiation, temperature and respirator glyphs; Scribe's Mercy quill with its percent when on |
 | `ui.hud.status` | BL | (0, −112) | 320 × 72 | 24,592–344,664 | 65 | ≥ 1 status | 2 rows × 9 icons of 32 px with 4 px gaps; each shows stacks and a remaining-time arc; afflictions first, then control, DoT, debuff, mental, buff, indicator |
 | `ui.hud.mount` | BL | (0, −192) | 320 × 48 | 24,536–344,584 | 55 | `st.mounted` | §10.2 |
@@ -205,40 +214,81 @@ Rectangles below are at 1280 × 800, `s = 1.0`, margins 24. They are pairwise di
 | `ui.hud.spell` | BR | (0, −112) | 320 × 64 | 936,600–1256,664 | 80 | ≥ 1 castable entry | active spell name, cast cost in display aether, cooldown, cast type glyph; prayer readiness and favor with the local patron (§10.7) |
 | `ui.hud.chat` | ML | (0, 78) | 320 × 100 | 24,428–344,528 | 40 | a message in the last 10 s, or chat open | 4 lines; full history in the chat panel |
 
-World-space elements (no rectangle): damage numbers (doc 05 §18), hit direction ring (radius 220 px around the crosshair center), sound visualization ring (radius 260 px, §13.7), pings, nameplates (allies always; hostiles only while targeted or `st.marked`), Remains markers, minion command markers, exit door panels (§9.1), rarity beams on ground items (§16.2).
+Crosshair rings (screen space, centered on the crosshair, radii in reference px × `s`): detection arcs 180 (§10.10), footstep ticks 200 (§10.10), hit direction 220, sound visualization 260 (§13.7); wheels use radius 140 (§6.5).
+
+World-space elements (no rectangle): damage numbers (doc 05 §18), pings, nameplates, Remains markers, minion command markers, exit door panels (§9.1), rarity beams on ground items (§16.2), doc 09 noise rings and doc 18 sound ripples (§13.7). **Nameplates**: allies always; a hostile while it is targeted (under the crosshair on a 48,000 mm ray for at least 6 consecutive frames, or the last hostile the player damaged within 180 ticks) or while it bears `st.marked`. A hostile nameplate shows the skinned name, a rank glyph, an HP bar from `hp_bp`, a ward bar when warded, up to 4 status icons, champion and elite aspect icons with their counter icons, a Contradiction icon when its own components are Strained or worse, and, from the 10th Bestiary kill of its template, its resistance and immunity glyphs (doc 14 §5.5).
+
+**Vitals block** (`ui.hud.vitals`; offsets in reference px from its top-left). Standard: ward bar y 0–6 and HP bar y 8–28, both x 0–320 on one scale, the heart glyph drawn inside the HP bar's left 20 px; stamina y 32–42, aether y 46–56 and composure y 60–70, each a bar x 0–256 with its glyph inside the left end and its value right-aligned in x 260–320; toxicity y 74–80, x 0–256, with ticks at 50,000, 75,000 and 100,000; glyph row y 84–104: breath bubbles (one per 2 s of `res.breath`, shown only while breath is below max), satiation or Fuel, temperature band, the respirator gauge (§6.3), the Mercy quill with its percent. Large (§3.4, 256 × 80): ward y 0–6 and HP y 8–28 (x 0–256), stamina y 32–42, aether y 46–56, glyph row y 60–80, where composure and toxicity appear as glyphs with their values only while composure is below max or toxicity is above 0.
+
+**Erasure clock** (`ui.hud.folio_header`). With `e = t − folio_entry_tick`: before onset it reads "Erasure in M:SS" for `25200 − e` ticks; from onset it reads "Erasure k · next M:SS", where `k` is the local Erratum's `st.erasure` stacks and the next stack lands on tick `folio_entry_tick + 25200 + 1800 × k` (Canon §17.1); in a boss Folio while the boss lives it reads "Erasure held"; once any Erratum has entered the Colophon it reads "Erasure stopped". At `k ≥ max(6, 10 − red_ink_doses) − 2` the clock turns `hostile` and shows the hunter threshold. A party marked for Colophon desecration (doc 14 §3.9) shows a cracked-seal glyph beside the clock for the rest of the run.
 
 ### 3.3 HUD element record
 
 ```json
 { "id": "ui.hud.vitals", "anchor": "BL", "offset_px": [0, 0], "size_px": [320, 104], "priority": 100,
-  "compact": { "size_px": [256, 72], "hides": ["composure", "toxicity"] },
+  "large": { "anchor": "BL", "offset_px": [0, 0], "size_px": [256, 80], "hides": ["composure_bar", "toxicity_bar"] },
   "visible": "always", "opacity_bp": 10000, "backplate": true }
 ```
 
-### 3.4 Overflow resolution
+### 3.4 Large layout (`access.hud_layout = large`)
 
-When `access.hud_scale_bp` is above 10000 the canvas no longer fits every element at full size. The client runs once per layout change:
+The standard table fills 1280 × 800 tightly, so it never scales above `s_fit`. A larger HUD uses this second table at `s = 1.25 × s_fit`. It hides `ui.hud.minimap`, `ui.hud.body` (the body plan stays in the Character sheet's Body tab) and `ui.hud.chat` (chat lines go to the notification list), compacts the content of the listed elements, and moves the stealth meter to the right-hand stack. Base offsets and sizes are multiples of 4, so every rectangle lands on whole pixels at `s = 1.25`.
+
+| ID | Anchor | Offset | Size | Rect at 1280 × 800, `s = 1.25` | Content in Large |
+|---|---|---|---|---|---|
+| `ui.hud.folio_header` | TL | (0, 0) | 256 × 48 | 24,24–344,84 | Folio number, genre sigil and name, Erasure clock; no axiom pips |
+| `ui.hud.party` | TL | (0, 56) | 192 × 136 | 24,94–264,264 | 3 frames of 44 px: name, HP bar, status count, downed or ghost glyph |
+| `ui.hud.minions` | TL | (0, 200) | 192 × 104 | 24,274–264,404 | header plus 4 rows of 20 px; a fifth minion shows as "+1" |
+| `ui.hud.compass` | TC | (0, 0) | 384 × 32 | 400,24–880,64 | full |
+| `ui.hud.boss_bar` | TC | (0, 40) | 416 × 36 | 380,74–900,119 | full |
+| `ui.hud.invasion` | TC | (0, 84) | 384 × 28 | 400,129–880,164 | full |
+| `ui.hud.ghost` | TC | (0, 128) | 384 × 28 | 400,184–880,219 | banner only; the forecast moves to the notification list |
+| `ui.hud.notifications` | TR | (0, 0) | 256 × 112 | 936,24–1256,164 | 3 lines of 36 px |
+| `ui.hud.crosshair` | C | (0, 0) | 64 × 64 | 600,360–680,440 | full |
+| `ui.hud.prompt` | C | (0, 64) | 416 × 40 | 380,455–900,505 | full |
+| `ui.hud.vote` | C | (0, −112) | 384 × 56 | 400,225–880,295 | full |
+| `ui.hud.downed` | C | (0, −52) | 288 × 32 | 460,315–820,355 | full |
+| `ui.hud.vitals` | BL | (0, 0) | 256 × 80 | 24,676–344,776 | §3.2 vitals block, Large row |
+| `ui.hud.status` | BL | (0, −88) | 256 × 36 | 24,621–344,666 | 1 row of 7 icons (32 px, 4 px gaps); more show as "+N" |
+| `ui.hud.mount` | BL | (0, −132) | 256 × 40 | 24,561–344,611 | HP and speed gauge with the Charge notch; no seat line |
+| `ui.hud.quickbar` | BC | (0, 0) | 432 × 56 | 370,706–910,776 | full |
+| `ui.hud.abilities` | BC | (0, −64) | 208 × 48 | 510,636–770,696 | 4 slots of 44 px with 10 px gaps |
+| `ui.hud.subtitles` | BC | (0, −120) | 592 × 100 (fixed, §3.1) | 344,526–936,626 | §13.2 |
+| `ui.hud.weapon` | BR | (0, 0) | 256 × 80 | 936,676–1256,776 | name, ammo or charges or heat, Contradiction icon; no fire mode, durability or counter icons |
+| `ui.hud.spell` | BR | (0, −88) | 256 × 40 | 936,616–1256,666 | spell name, cost, cooldown |
+| `ui.hud.stealth` | BR | (0, −136) | 256 × 44 | 936,551–1256,606 | eye 44, light 136 and noise 76 reference px |
+
+Placement and validation are pure functions over either table:
 
 ```rust
-fn resolve_hud(elems: &mut [HudElem], s: f32) {
-    for e in elems.iter_mut() { e.place(s); e.state = Full; }
-    let mut order: Vec<usize> = (0..elems.len()).collect();
-    order.sort_by_key(|&i| (elems[i].priority, elems[i].id));       // lowest priority first
-    loop {
-        let Some(i) = order.iter().copied().find(|&i| elems[i].state != Hidden
-            && elems.iter().any(|o| o.id != elems[i].id && o.state != Hidden
-                && o.priority >= elems[i].priority && o.rect.overlaps(&elems[i].rect))) else { break };
-        elems[i].state = if elems[i].state == Full && elems[i].compact.is_some() { Compact } else { Hidden };
-        elems[i].place(s);
+/// Pivot fractions: L and T are 0, C and M are 0.5, R and B are 1.
+fn place(e: &HudRow, safe: Rect, s: f32, s_fit: f32) -> Rect {
+    let (ax, ay) = safe.point(e.anchor);                                  // TL, TC, TR, ML, C, MR, BL, BC, BR of the safe rect
+    let (w, h) = if e.id == "ui.hud.subtitles" { (592.0 * s_fit, 100.0 * s_fit) } else { (e.w * s, e.h * s) };
+    let (px, py) = (ax + e.ox * s, ay + e.oy * s);                         // where the element's own pivot lands
+    let (fx, fy) = e.anchor.pivot_fraction();
+    Rect { x0: px - fx * w, y0: py - fy * h, x1: px - fx * w + w, y1: py - fy * h + h }
+}
+fn validate(rows: &[HudRow], safe: Rect, s: f32, s_fit: f32) -> Result<(), LayoutError> {
+    let r: Vec<Rect> = rows.iter().map(|e| place(e, safe, s, s_fit)).collect();
+    for i in 0..r.len() {
+        if !safe.contains_with_tolerance(&r[i], 0.001) { return Err(LayoutError::OutsideSafe(rows[i].id)); }
+        for j in i + 1..r.len() {
+            // half-open rectangles: touching edges are allowed
+            if r[i].x0 < r[j].x1 - 0.001 && r[j].x0 < r[i].x1 - 0.001 && r[i].y0 < r[j].y1 - 0.001 && r[j].y0 < r[i].y1 - 0.001 {
+                return Err(LayoutError::Overlap(rows[i].id, rows[j].id));
+            }
+        }
     }
+    Ok(())
 }
 ```
 
-Example: at `access.hud_scale_bp = 12500` on Deck, the minimap (20) hides first, then the notifications (30) go compact.
+The client runs `place` on every layout change (window resize, layout, scale step, safe area). The content loader runs `validate` for the standard table at every `access.hud_scale_bp` step and for the Large table, each with the default and the TV-safe margins, on the four logical canvases of §3.2, and refuses to load on an error, so neither a mod nor a localized layout can ship overlapping HUD elements.
 
 ### 3.5 HUD presets and opacity
 
-`access.hud_preset`: `full` (default), `minimal` (hides compass, party frames below 100% HP, notifications, abilities with no cooldown running, minions while all are at full HP), `cinematic` (vitals and weapon fade to 0 after 5 s at full resources and out of combat; any change restores them for 5 s). `access.hud_opacity_bp` 2500..=10000 (default 10000). Backplates are `#101010` at `access.hud_backplate_bp` (default 6000; `access.high_contrast` forces 10000).
+`access.hud_preset` applies on top of either layout: `full` (default), `minimal` (hides the compass, party frames of allies at 100% HP, notifications, abilities with no cooldown running, and minions while all are at full HP), `cinematic` (vitals and weapon fade to 0 over 30 frames after 5 s at full resources and out of `in_combat`; any change restores them for 5 s). `access.hud_opacity_bp` 2500..=10000 (default 10000). Backplates are `#101010` at `access.hud_backplate_bp` (default 6000; `access.high_contrast` forces 10000).
 
 ---
 ## 4. Inventory, paper doll and item card
@@ -252,9 +302,9 @@ Example: at `access.hud_scale_bp = 12500` on Deck, the minimap (20) hides first,
 Layout (1280 × 800): left column 400 px paper doll; center 560 px backpack grid; right 320 px item card of the focused item.
 
 - **Paper doll** shows every Canon §13.2 slot around a front silhouette of the body plan: head, face, neck, back, body, hands, legs, feet, belt, ring L, ring R, trinket, weapon 1–3, offhand, ward, mount, four implant slots, and one `slot.hand_extra_N` per extra arm. An empty slot shows its glyph at `muted`. A cursed equipped item shows a chain overlay once `BUC` is known; a Disconnected item shows the torn page.
-- **Backpack**: 20 + pack slots (doc 11 §14.1), 64 px cells in rows of 8. Sort buttons (presentation order only, never changes uids): by category, rarity, value, mass, newest. Filter chips: equipment, consumables, materials, unknown, cursed-known.
+- **Backpack**: 20 slots plus 6, 10 or 14 from the `slot.back` pack (doc 11 §14.1), 64 px cells in rows of 8, so at most 5 rows. Sort buttons (presentation order only, never changes uids): by category, rarity, value, mass, newest. Filter chips: equipment, consumables, materials, unknown, cursed-known.
 - **Footer**: mass `carried / capacity kg` with `load_bp` and the encumbrance band (`st.encumbered` above 10000, `st.overburdened` above 12500); Lucre in the local Lucre skin; keyring count; ammo reserve per type.
-- **Actions** on the focused item, each an intent: Equip / Unequip, Use, Drop (`DropItem`), Drop for ally (`DropItemFor`, co-op), Assign to quickbar (`QuickbarAssign`), Examine (`input.examine`, doc 10 §5.6), Lock appraisal focus (`SetFocusLock`), Split stack. Dragging onto a paper-doll slot equips; onto a quickbar slot assigns.
+- **Actions** on the focused item, each an intent: Equip / Unequip, Use, Drop (`DropItem`), Drop for ally (`DropItemFor`, co-op), Assign to quickbar (`QuickbarAssign`), Examine (`input.examine`: the doc 10 §5.6 120-tick Analysis channel, shown with its cancel reasons and greyed with "Already examined at level L" when `analysis_lvl ≥ level`), Lock appraisal focus (`SetFocusLock`), Split stack. The action list opens with `input.ui_actions` (§12.3, §12.4). Dragging onto a paper-doll slot equips; onto a quickbar slot assigns.
 - **Quick compare**: holding `input.ui_compare` shows the equipped counterpart's card beside the focused one (§4.4).
 
 ### 4.3 Item card
@@ -271,17 +321,18 @@ Layout (1280 × 800): left column 400 px paper doll; center 560 px backpack grid
 | 6 | Core stats | equipment | weapon: damage per hit at the item's `src_lvl` after Canon §10.4 (display HP), type shares with glyphs, fire rate or swing ticks, magazine, precision multiplier, penetration; armor: AR per covered part; ward generator: capacity, recharge per s, depletion profile per type | a stat with an unrevealed contribution shows the revealed value and "?" (doc 10 §9) |
 | 7 | Enhancement | equipment | `+n` and effective enhancement after blessing or curse | "+?" |
 | 8 | Affixes | equipment | one line per affix slot: name, tier, value at its roll, glyph of its type | name unknown: "Unread property"; roll unknown: name with "(?)" |
-| 9 | Perk columns | weapons | 5 columns, chosen option highlighted, others listed (free to change at a Scriptorium) | rarity unknown: "Perks hidden" |
+| 9 | Perk columns | weapons | up to 5 columns: the columns its rarity rolls plus column 5 (doc 11 §7.1); chosen option highlighted, the others listed with "free to change at a Scriptorium"; enhanced magnitudes marked with a small star | rarity unknown: "Perks hidden" |
 | 10 | Legendary perk / Exotic intrinsic | when present | name and full text | rarity unknown: hidden |
 | 11 | Charges | wands, gadgets | `cur/max` | "?/?" |
 | 12 | Curse line | non-mundane | skinned state (Blessed / — / Cursed or genre skins) and penalty | "?", "Ominous" (`OMEN`) or "Clean" (`CLEAN`) |
 | 13 | Durability | items with durability | `cur/max` bar; ▲ warning at ≤ 2500 Bp | — |
 | 14 | Value | always | identified: exact `value` in the local Lucre skin; appraised: doc 10 §6.3 range "≈ 160–340 Crowns"; sell price at the current shop | classified: "Value ?"; unknown: Ledger price group (§4.5) |
-| 15 | Mass | always | kg with one decimal (`mass_g × stack`) | — |
+| 15 | Mass | always | kg with one decimal: `round_half_even(mass_g × stack, 100)` tenths (Canon §1.5); stacks also show `×stack` after the name | — |
+| 15a | Parts and materials | assembled items; items with `materials` | one line per part slot with the part's skinned name and manufacturer logo (Canon §13.9 `parts`), then the primary material and the other materials by skinned name, with the primary material's factor ("×1.15 damage" from `dmg_bp`, or "×1.15 armor" from `ar_bp`, doc 07) | — (public, doc 10 §2.1) |
 | 16 | Flavor | when present | italic flavor text; LLM-written lore is marked with a small quill glyph (doc 02, Brief §5) | — |
 | 17 | Footer | always | `ilvl`, uid tail (last 4 hex digits, for co-op talk), finder slot color in co-op, "Unread Edge +4 SER" when it applies (doc 10 §9), sealed flag | — |
 
-Kin-specific lines (§10.5) append under Core stats, for example "Construct: potion healing ×0.50".
+Kin-specific lines (§10.5) append under Core stats, for example "Construct: potion healing ×0.50". The card reads only `ItemView` (doc 10 §2.8) plus the doc 11 instance fields it lacks today (durability, perk columns, parts, stack, value, `illuminated`, `finder_slot`; Interface assumptions, doc 10 and doc 11).
 
 ### 4.4 Comparisons
 
@@ -315,8 +366,8 @@ A list of the 36 skills grouped as Canon §7: value, mastery tier mark at 25 / 5
 ### 5.4 Talents
 
 - One tree per Calling plus the general tree (doc 04 §7). The own Calling tree is a 4-tier page; the general tree is a facing page.
-- Node states: owned (filled), available (outlined in `accent`), gated (dashed, with the failing gates listed: "needs 5 points in this tree", "needs level 12", "needs FIN 45", "needs Unyielding"), unavailable (other Callings' trees are not shown except through Marginal Notes).
-- **Marginal Note** offers (every 10th level) appear as a 3-card modal from `rng.progress`; the stored offer re-opens unchanged until taken or declined.
+- Node states: owned (filled), available (outlined in `accent`), gated (dashed, with the failing gates listed from doc 04 §7.1: "needs 2 points in this tree" for tier 2; "needs 5 points in this tree", "needs level 12", "needs FIN 45" for tier 3; "needs 8 points", "needs level 20", "needs FIN 50", "needs Unyielding" for tier 4), unavailable (other Callings' trees are not shown except through Interpolation offers).
+- **Interpolation** offers (doc 04 §6.4, every 10th level) appear as a 3-card modal: the first 3 talents of the stored `rng.progress` shuffle, each with its home tree and full text, plus Decline. The stored offer re-opens unchanged until taken or declined; taking one sends `PickTalent { talent }`, which doc 04 resolves against the stored offer.
 - Buying sends `PickTalent { talent }`.
 
 ### 5.5 Ability slots
@@ -346,21 +397,62 @@ The data come from a pure simulation function `explain_row(entity, row) -> Expla
 
 The 11.8% follows Canon §1.5: `round_half_even(1175, 10) = 118`, shown with one decimal. Per-second `Milli` rates below 10 display units show one decimal as `floor_div(x, 100)` tenths (673 mHP/s → 0.6), because the plain `floor(x / 1000)` rule would show 0 (Canon gaps G16).
 
+### 5.7 Character creation and level-up (`ui.menu.creation`)
+
+The screen walks doc 04 §2.1's `CreationState`, one page per state, with Back on `input.ui_back` and choices kept while still valid:
+
+| State | Page |
+|---|---|
+| `ChoosePath` | Custom, Quick start (Custom with the Calling preset filled in PointBuy) or Echo (owned Echoes only) |
+| `Kin` | the 6 kin with their doc 04 §2.4 traits and the kin skin name for each Origin |
+| `Origin` | unlocked Origins with the §5.4 tolerance row, sub-attribute modifiers, Origin skill and trait |
+| `Calling` | unlocked Callings with major and minor skills, kit and talent tree preview |
+| `PointBuy` | the 24 sub-attributes with doc 04 §2.2's point costs and remaining points, and every changed Canon §6.4 row as `old → new` (§5.2 preview) |
+| `PickEcho` | each owned Echo with its fixed kin, Origin, Calling, allocation and signature trait |
+| `Cosmetics` | appearance and owned cosmetics; nothing here changes a number |
+| `Confirm` | the summary; a failed doc 04 §2.7 validation keeps the state and names the failing rule |
+
+Level-up (`ev.level_gained`) never opens a modal: it raises a notification ("Level 7: 4 points to place") and badges the Character tab; batches stay pending until spent (doc 04 §6.4). A mid-run joiner (doc 04 §6.6) gets a join page with every pending batch, talent point and Interpolation offer before the first Folio tick.
+
 ---
 ## 6. Making: crafting, placement, alchemy, spellcraft
 
 ### 6.1 Crafting (`ui.menu.craft`)
 
-Crafting opens at a `station.*` or from the Satchel for station-free recipes. Doc 07 owns recipes; this screen assumes the doc 07 interface in Interface assumptions. Four modes, one tab each:
+Crafting opens at a `station.*` within `CRAFT_REACH_MM`, or from the Satchel for `station.hand` recipes (2 × 2 grid, quality cap Normal). Doc 07 owns recipes. Five modes, one tab each, cover doc 07 §6.1's recipe kinds; every commit is doc 02's `Craft` intent carrying doc 07's `StartCraft { recipe, count }` payload:
 
-| Mode | Layout | Commit |
+| Mode | Recipe kinds | Layout |
 |---|---|---|
-| Grid | a 3 × 3 shaped grid; drag materials in; matching `recipe.*` shown live on the right with output card | `Craft { recipe, inputs: [uid], station }` |
-| Assembly | the frame item centered with one socket per part slot (`parts`, Canon §13.9); compatible loose `cat.part` items listed per socket; the assembled item card updates live | `Craft` with the assembly recipe |
-| Processing | a queue of up to 4 station jobs (smelt, tan, refine), each with input, output, ticks and a progress bar; jobs run in simulation time | `Craft` per job |
-| Materials | browser of every carried material with doc 07 properties (density, hardness, `dmg_bp`, `ar_bp`, `conceal`, flammability) and which recipes take it | none |
+| Grid | `recipe.kind.shaped`, `recipe.kind.shapeless` | a 3 × 3 grid (2 × 2 at `station.hand`); drag materials in; the matching recipe (doc 07 §6.3, horizontal mirror included) and its output card show live on the right, with the count stepper up to the stack limit |
+| Assembly | `recipe.kind.assembly` | the frame item centered with one socket per part slot (`parts`, Canon §13.9); compatible loose `cat.part` items listed per socket; the assembled item card updates live |
+| Processing | `recipe.kind.process` | the station queue of up to `STATION_QUEUE_MAX` = 4 jobs (doc 07 §5.3): input, output, `ticks_each`, fuel left and a progress bar per job; jobs run in simulation time; the tab states "Queued jobs and uncollected outputs are lost when the party leaves the Folio" |
+| Disassembly | `recipe.kind.disassembly` | the item to break down and every material, part and graft it yields (doc 07 §8.5) |
+| Materials | none | every carried material with its doc 07 properties (density, hardness, `dmg_bp`, `ar_bp`, `conceal`, flammability) and the recipes that take it |
 
-Every output card shows the **quality range** the crafter can roll: doc 07 provides `quality_range(crafter, recipe) -> (q_lo, q_hi)` as a pure function; the card shows both quality names and the output stats at each end. The `rng.craft` draw happens only on commit (Canon §3.3), so re-opening shows the same range and never a rolled result.
+**Channel.** While doc 07 §6.4's channel runs, the prompt shows a ring of `progress / needed` and the cancel reasons (moving more than 1000 mm, non-DoT damage, a control status, the station breaking, `input.ui_back`); a cancel consumes nothing. Failing checks are listed before the commit with doc 07's reason text.
+
+**Exact quality odds.** Every output that rolls quality (doc 07 §4.1) shows the probability of each tier. The client evaluates doc 07 §4.2 over every noise outcome instead of drawing: `noise = a + b + c − 210` with `a, b, c ∈ 0..=140`, so the 141³ = 2,803,221 outcomes collapse into 421 sums with counts `cnt[s]`, computed once by convolution. Each sum's score maps to a tier, then the skill and station caps, the Smithing-50 step and the `masterwork` talent apply exactly as in doc 07:
+
+```rust
+fn craft_odds(center: i32, cap: u8, smith50_step: bool, masterwork: bool) -> [u64; 7] {
+    let mut two = [0u64; 281];                                   // counts of a + b
+    for a in 0..=140 { for b in 0..=140 { two[a + b] += 1; } }
+    let mut cnt = [0u64; 421];                                   // counts of a + b + c; sum 2,803,221
+    for s2 in 0..=280 { for c in 0..=140 { cnt[s2 + c] += two[s2]; } }
+    let mut out = [0u64; 7];                                     // q.awful ..= q.peerless
+    for s in 0..=420 {
+        let score = center + s as i32 - 210;
+        let mut q = Q_THRESH.iter().filter(|t| score >= **t).count() as u8;   // doc 07 §4.2 thresholds
+        q = q.min(cap);                                          // min(skill_cap, station_cap)
+        if smith50_step && q == 2 { q = 3; }                     // doc 04 Smithing 50, weapons and armor only
+        if masterwork { q = (q + 1).min(6); }
+        out[q as usize] += cnt[s];
+    }
+    out                                                          // each shown as pct4(out[q], 2_803_221)
+}
+```
+
+Example (doc 07 §4.3, second row): skill 20, tier-1 station, tier-1 toolkit, no material term, no helpers, attribute term 0, center 250, cap Good: Awful 1.3492%, Poor 23.3200%, Normal 50.2190%, Good 25.1119%. The `rng.craft` draws happen only when the channel completes (Canon §3.3), so re-opening shows the same odds and never a rolled result.
 
 ### 6.2 Placement mode (`ui.hud.placement`)
 
@@ -371,13 +463,13 @@ Using a `cat.placeable` enters placement mode (Canon §4.3): a translucent ghost
 Layout: ingredient tray (left), apparatus row (top), brew sheet (center), result preview (right).
 
 - **Inputs** (doc 08 §9.3): 2 to 4 effect ingredients (1 at Alchemy 100), 0 to 3 modifier reagents with their exclusion pairs greyed (Extend/Amplify, Aerosol/Linger, at most one Invert), a base liquid, a vessel kind and a dose count up to `batch`.
-- **Preview**: the shared effects by name for effects already revealed on every contributing ingredient, then "N unknown" for shared effects not yet revealed (doc 08 §8.5); polarity of the primary; for each named effect, magnitude and duration computed through the doc 08 §9.6 chain at both ends of the quality range. The quality range is the tier of `q_score − 500` to the tier of `q_score + 500` with `q_score` computed without `v`, because `v ∈ −500..=500` is the only variance (doc 08 §9.5).
-- **Toxicity per dose** after the drinker's own skill factor, and a projected toxicity bar showing where one dose would put the brewer on the band scale.
+- **Preview**: the shared effects by name for effects already revealed on every contributing ingredient, then "N unknown" for shared effects not yet revealed (doc 08 §8.5); polarity of the primary; for each named effect, magnitude and duration computed through the doc 08 §9.6 chain at both ends of the quality range. The quality range is the tier of `q0 − 500` to the tier of `q0 + 500`, with `q0 = mul_bp(skill_bp, mortar_bp)` computed without `v`, because `v ∈ −500..=500` is the only variance (doc 08 §9.5). The odds are exact: each of the 1,001 values of `v` is equally likely, so a tier shows `pct4(#{v : band(q0 + v) = tier}, 1001)`. Example (doc 08 §9.10, the apprentice healing brew): `q0 = 8685` gives Poor 81.4186% (815 values, `v ≤ 314`) and Normal 18.5814% (186 values).
+- **Toxicity per dose** as stored on the potion (doc 08 §9.6), then the drinker's factors of doc 08 §11.1 (`iron_stomach`, the Alchemy 100 perk, kin 5000 for constructs and undead), and a projected toxicity bar showing where one dose would put the brewer on the band scale.
 - **Brewing** shows the 120- or 150-tick progress (after row 17); any cancel condition (damage, moving 1000 mm, removing an input) shows the reason and consumes nothing.
 
-**Toxicity meter** (HUD vitals): 256 × 6 px bar of `res.toxicity / 100,000`, ticks at 50,000, 75,000 and 100,000, band label on change: clean, queasy, sickened, overdosed (doc 08 §11.2), each with its glyph. Example: four Normal healing doses at Alchemy 20 add `mul_bp(12000, 9500) = 11,400` each, and the projected bar marks 45,600 (still clean).
+**Toxicity meter** (HUD vitals): 256 × 6 px bar of `res.toxicity / 100,000`, ticks at 50,000, 75,000 and 100,000, band label on change: clean, queasy, sickened, overdosed (doc 08 §11.2), each with its glyph. Example (doc 08 §11.3): each Normal healing dose applies 12,000, so four doses put the projected mark at 48,000, still clean (below 50,000); a fifth would read 60,000, "queasy".
 
-**Respirator gauge**: while a respirator is worn, a 48 × 6 px bar under the vitals shows `filter / max_filter` (1800, 3600 or 7200 ticks, doc 08 §4.5), turning `hp` at ≤ 600 ticks with the label "Filter low"; at 0 it shows "Filter spent: refill with charcoal".
+**Respirator gauge**: while a respirator is worn, a 48 × 6 px gauge in the vitals glyph row (§3.2) shows `filter / max_filter` (1800, 3600 or 7200 ticks, doc 08 §4.3), turning `hp` with the label "Filter low" at 600 ticks or fewer; at 0 it shows "Filter spent: refill with charcoal" (`ing.charcoal`, 60 ticks).
 
 ### 6.4 Spellcraft composer (`ui.menu.composer`)
 
@@ -408,7 +500,9 @@ The composer is a glyph-grammar editor over doc 06 §4. It calls the pure `compi
 
 - **Grimoire tab**: `2 + floor_div(MEM, 20)` slots (row 27); locked slots above the count keep their contents and show a lock with "Needs MEM 60" for the next slot. Each slot: name, school, cost, cast type, cooldown, a "Clear" action (instant).
 - **Wheel editor**: 8 sockets; each references a Grimoire slot, tome spell, carried text, carried wand, on-use enchantment or prayer (doc 06 §3.2). Assigning sends `AssignWheelEntry { index, source }`.
-- **Wheel in play** (`ui.hud.cast_wheel`): holding `input.cast_wheel` shows the 8 entries around the crosshair at radius 140 px, entry 0 at the top, clockwise in 8192-Bam sectors. The stick or mouse direction from center selects the sector once deflection exceeds 3000 Bp of full range (or the mouse moves 40 px). Release with a selection encodes `WHEEL_SELECT` (§12.2). The wheel never pauses or slows the simulation (doc 06 §3.2); `access.wheel_dwell` (default off) lets a selection commit after hovering 30 frames without releasing.
+- **Wheel geometry.** Every wheel (`ui.hud.cast_wheel`, `ui.hud.quick_wheel`, `ui.hud.weapon_wheel`, `ui.hud.emote_wheel`, `ui.hud.minion_wheel`) draws 8 sockets of 64 px on a circle of radius 140 px around the crosshair center, socket 0 at the top, clockwise. A selection exists once the stick deflection exceeds 3000 Bp of full range or the mouse has moved more than 40 px from where the wheel opened; then `a` is the clockwise angle in Bam from screen-up to the deflection vector (`rad_to_bam`, doc 02 §7.5) and the socket is `((a + 4096) mod 65536) / 8192`. Example: a stick pushed down-right (135°, `a = 24576`) selects socket `28672 / 8192 = 3`. Releasing without a selection commits nothing. `access.wheel_dwell` (default off) commits a selection held for 30 frames without releasing. No wheel pauses or slows the simulation (doc 06 §3.2).
+- **Cast wheel** (`input.cast_wheel`): releasing with a selection encodes `WHEEL_SELECT` (§12.2). An entry whose spell has a lore essence with the `self` form (doc 06 §5.3) opens a target list of eligible inventory items instead of casting; choosing one sends `SetCastItemTarget { uid }` and the client sets `CAST` on the first command whose tick is at or after the intent's acknowledgement in `OwnerDelta` (Interface assumptions, doc 06).
+- **Quick wheel**: socket `k` is quickbar slot `k + 1` (slots beyond the belt's size are empty); releasing sets `QUICKBAR_INDEX` without using it. **Weapon wheel**: sockets 0, 2 and 6 hold weapon slots 1, 2 and 3; releasing sets `WEAPON_SELECT`. **Emote wheel**: the 8 emotes equipped in the Wardrobe, with `input.whistle` in socket 0 and `input.shout` in socket 1 by default (§12.1). **Minion wheel**: §10.3.
 
 ---
 
@@ -420,7 +514,7 @@ The composer is a glyph-grammar editor over doc 06 §4. It calls the pure `compi
 | Current Folio | Rubric and its progress (Keeper location once seen, catchwords 0/3, Seal held ticks `/1800`), Marginal notes with live completion state (doc 14 §3.5), the Erasure timeline: next stack at `25200 + 1800 × (k − 1)` ticks after the clock start, hunter threshold `max(6, 10 − red_ink_doses)` |
 | Ledger | §4.5 |
 | Index | account item codex (doc 14 §5.5, doc 10 §12): templates seen and identified, familiarity rank, Illuminated skins owned |
-| Bestiary | enemies seen and killed, ranks met, champion aspects seen, resistances revealed by play |
+| Bestiary | per enemy template (doc 14 §5.5): entry, art and lore from the first kill; resistances and immunities from the 10th kill, also shown on that template's nameplates in every run (§3.2); drop categories from the 25th kill; ranks met and champion aspects seen |
 | Glossary | every term of Canon §20 plus every status, axiom, rank and currency, each with its formula links |
 | Lore | flavor texts collected, Folio intro texts |
 
@@ -430,8 +524,8 @@ Every Journal entry the player has not opened carries a dot; "Mark all read" is 
 
 ## 8. Folio map (`ui.menu.map`, `ui.hud.minimap`)
 
-- The map is a client-side 3D cutaway of the Folio's voxel data, built from chunks the client holds and limited to cells inside **visited rooms** and cells the local player has seen within 24 m. `run.boon.surveyor` adds every room outline and the Colophon (doc 14 §3.9).
-- Controls: orbit with the right stick or right mouse drag (yaw 8192 Bam per 100 px), zoom 4 levels (8, 16, 32, 64 px per block), and a **Y-slice** that hides blocks above the chosen height (`input.ui_page_prev` / `input.ui_page_next` move it by 1 block; default the player's eye height). Toggle "Flat" shows a top-down slice.
+- The map is a client-side 3D cutaway of the Folio's voxel data, built from chunks the client holds and limited to **known cells**: every cell of a room the party has visited (doc 14) and every cell the local player has seen. Seen cells: every 6 ticks the client casts 1,152 rays from the local eye (128 yaw directions 512 Bam apart × 9 pitch rows at −8000, −6000, …, 8000 Bam) with doc 02's voxel `dda` out to 24,000 mm, marking every crossed cell and the first opaque cell as seen. Seen cells are per client, are never sent over the network, and are cleared at `ev.folio_exited`. `run.boon.surveyor` adds every room outline and the Colophon (doc 14 §3.9); reading `item.text.mapping` adds every room outline, door and exit for the whole party, secrets excluded (doc 06 §8.3), through the host's `RunState`.
+- Controls: orbit with the right stick or right mouse drag (yaw 8192 Bam per 100 px; pitch 4096 Bam per 100 px of vertical drag, clamped to −15000..=−2000 Bam so the camera always looks down), zoom 4 levels (8, 16, 32, 64 px per block), and a **Y-slice** that hides blocks above the chosen height (`input.ui_page_prev` / `input.ui_page_next` move it by 1 block; default the player's eye height). Toggle "Flat" shows a top-down slice.
 - Markers: the party (ally circles with slot colors), ghosts, Remains, minions, pings, the Incipit, the Colophon, exits once drawn, Scriptoriums, shops, Reliquaries and Fortune Engines seen, locked doors, Rubric targets, bleed zones (hatched in the bleed genre's accent) and the seam zone.
 - **Map ping**: selecting a cell and pressing `input.ui_confirm` sends `MapPing { cell }` (Interface assumptions); it appears for the party as a world ping.
 - **Local pins**: up to 16 player pins per Folio, client-only, with 8 glyph choices.
@@ -443,11 +537,11 @@ Every Journal entry the player has not opened carries a dot; "Mark all read" is 
 
 ### 9.1 Exit choice
 
-Exit doors are world objects in the Colophon with a floating **door panel** (`ui.hud.door_panel`, 320 × 220 px, projected above each lit door) carrying exactly the doc 12 §4.7 fields: genre art and title, Lucre and Aether skins, the four axioms with ▲/▼ deltas, the viewer's Contradiction forecast "N Strained, M Contradicted, K Disconnected", Folio type and challenge icon, champion aspects with counter icons, bleed sigils, Marginalia modifiers, depth, hazard family icons, boss crown. Binding doors carry a seal glyph and "Binding: the Editor's genre". A secret door shows "?". "Close the Book" doors show the run-end summary preview.
+Exit doors are world objects in the Colophon with a floating **door panel** (`ui.hud.door_panel`, 320 × 220 px, projected above each lit door) carrying doc 14 §3.6 item 4 and every doc 12 §5.7 field: genre art and title, Lucre and Aether skins, the four axioms with ▲/▼ deltas, the active World Laws, the viewer's Contradiction forecast "N Strained, M Contradicted, K Disconnected", Folio type and challenge icon, champion aspects with counter icons, bleed sigils, Marginalia modifiers, depth, hazard family icons, boss crown. Binding doors carry a seal glyph and "Binding: the Editor's genre". A secret door shows "?". "Close the Book" doors show the run-end summary preview.
 
 - **Party forecast**: in co-op each door panel also shows, per party member, a single Contradiction icon for that member's worst equipped component (the forecast is computed per viewer and replicated as icons only).
-- **Voting HUD** (`ui.hud.vote`): per door, `voters / need` and a hold ring `hold / 120`; `need` follows doc 14 §3.6 (`n`, then `n/2 + 1` after 3600 ticks, then 1 after 7200 ticks) and the panel names the next threshold time.
-- **Vote from list** (accessibility): while inside the Colophon, `input.menu_exits` opens a list of the doors; choosing one sends `ChooseExit { door }` (doc 14 §3.6), which counts as standing in that door while the voter stays inside the Colophon.
+- **Voting HUD** (`ui.hud.vote`): per door, `voters / need`, a hold ring `hold / 120` and, while one voter holds interact on that door with every living Erratum inside the Colophon, a second ring `interact_hold / 180` (doc 14 §3.6 has both commit paths). `need` follows doc 14 §3.6 (`n`, then `n/2 + 1` from 3,600 ticks, then 1 from 7,200 ticks), and the panel names the next threshold time. When two doors would commit on the same tick the lowest door index wins, and the panel says so.
+- **Vote from list** (accessibility): while inside the Colophon, `input.menu_exits` (keyboard) or the Book menu's Exits tab (every device; the tab exists only inside a Colophon during `ExitVote` or `VictoryChoice`) lists the doors with their panels; choosing one sends `ChooseExit { door }` (doc 14 §3.6), which counts as standing in that door while the voter stays inside the Colophon.
 
 ### 9.2 Shop (`ui.menu.shop`)
 
@@ -457,11 +551,11 @@ Tabs **Buy**, **Sell**, **Buyback**, **Services**. Vendor name and portrait from
 - Price breakdown (§5.6) follows doc 11 §12.2: `value → × markup → × row 37 → × bearer modifiers → × gp.shop_price_bp → × (10000 − haggle_bp)`.
 - **Haggle** (once per player, shop and Folio, via `Haggle { shop }`): the button previews the deterministic outcome before it is pressed: `score = Speech + floor_div(CHM − 40, 2) − (20 + min(60, d))`, then "−19.0%" for `haggle_bp = 1900` (Speech 40, CHM 70, Folio 7, doc 11 §12.2), "no change" for −20..=−1, or "+5.0% (the vendor is offended)" below −20.
 - **Sell** shows the sell price with its halvings named ("unappraised ×0.5", "known cursed ×0.5").
-- **Services** list each Scriptorium service with its price formula evaluated (identify, uncurse, repair, cure, reattach, Rewrite, reforge, perk choice, tuning).
+- **Services** list each Scriptorium service with its price formula evaluated: doc 10 §5.9's appraise, classify, identify and unbind (which replace doc 11's identify and uncurse rows); repair, cure, reattach, Rewrite, reforge, perk choice and tuning (doc 11 §12.3); doc 04 §6.5's talent and attribute respec, for example talent respec at Folio 10 `mul_bp(200 × (n + 1), 21718)` = 434 Lucre, then 868. Every price shows its `gp.shop_price_bp` factor.
 
 ### 9.3 Reliquary opening (in-run)
 
-Focusing a Reliquary shows `ui.menu.reliquary_odds` before any input: tier, key required (and held key count), contents lines, and **per equipment line** the rarity odds from doc 11 §2.3 with the opener's SER, at 4 decimals. Example (doc 11 §10): a plain Reliquary's equipment line at Folio 7, SER 40: Uncommon 68.2854%, Rare 22.2278%, Epic 6.4581%, Legendary 2.2028%, Exotic 0.8260%. Bad-luck lines: "Epic or better within `5 − rq5`", "Legendary or better within `20 − rq20`". A detected mimic shows its tell glyph and "Mimic".
+Focusing a Reliquary shows `ui.menu.reliquary_odds` before any input: tier (`reliq.plain`, `reliq.bound`, `reliq.gilded`, `reliq.illumined`, doc 11 §10), key required (a higher key opens a lower tier; held key count), contents lines, and **per equipment line** the rarity odds from doc 11 §2.3 with the opener's SER, at 4 decimals. Example (doc 11 §10): a plain Reliquary's equipment line at Folio 7, SER 40: Uncommon 68.2854%, Rare 22.2278%, Epic 6.4581%, Legendary 2.2028%, Exotic 0.8260%. Bad-luck lines: "Epic or better within `5 − rq5`", "Legendary or better within `20 − rq20`". A detected mimic shows its tell glyph and "Mimic". An undetected Reliquary states its tier's mimic placement rate: plain 4.0000%, bound 3.0000%, gilded 2.0000%, illumined 0.0000% (doc 11 §10).
 
 Opening is the 90-tick interact (hold ring on the prompt). On `ev.container_opened` the lid animation plays for 45 frames (skippable with any input) and the instanced contents appear as cards that the player takes one by one or with "Take all".
 
@@ -472,13 +566,27 @@ A brass crank and a capsule chute; no reels, symbols, lights, near-miss frames, 
 ### 9.5 Colophon services, boon altar and Volume reward
 
 - **Hearth**: one prompt, "Restore (once per Colophon)".
-- **Boon altar** (doc 14 §3.9): 3 boon cards from the stored offer, a Reroll button showing "1 reroll left", and Commit. The cards state each boon's exact effect and that it lasts one Folio. Reopening shows the same stored offer.
+- **Boon altar** (doc 14 §3.9): 3 boon cards from the stored offer, a Reroll button showing "1 reroll left", and Commit. The cards state each boon's exact effect and that it lasts one Folio. Reopening shows the same stored offer. The Reroll button states its odds: a reroll draws 3 of the 12 boons uniformly without replacement, so each boon, including the three on screen, appears on the new offer with probability 25.0000% (`pct4(3, 12)`).
+- **Interleaf Rest** (doc 14 §3.9): a 600-tick channel (`REST_CHANNEL_TICKS`) whose prompt lists its cancel reasons (damage, attacking, casting, moving 500 mm) and the heal it will give, `mul_bp(mul_bp(max_hp_mhp, INTERLEAF_HEAL_BP), gp.rest_heal_bp)` through Canon §10.9, in display HP.
 - **Going Native** (Canon §5.11): a confirmation page that lists the new Origin tolerance row next to the current one and the native cosmetic form; it states "Once per run. Gear is not translated."
-- **Volume reward** (Endpaper): 3 item cards from the stored offer; commit one; the page states "If you choose nothing, the first card is taken when the Endpaper closes."
+- **Volume reward** (Endpaper): 3 item cards from the stored offer; commit one; the page states "If you choose nothing, the first card is taken in M:SS", counting down `VOLUME_REWARD_TIMEOUT_TICKS` (3,600 ticks) from the Endpaper's start (doc 14 §3.9). P9 does not apply because this in-run countdown sells nothing.
 
 ### 9.6 Trade (`ui.menu.trade`)
 
-Two columns (yours, theirs), up to 8 items each, the doc 16 §9.7 state shown as a banner ("Proposed", "Open", "You locked", "Both locked: confirm"), Lock and Confirm buttons, and the eligibility line ("Too far: 5.2 m of 4.0 m") when a condition fails. Changing either side clears both locks, and the banner says so.
+Two columns (yours, theirs), up to 8 items each, the doc 16 §9.7 state shown as a banner ("Proposed", "Open", "You locked", "Both locked: confirm"), Lock and Confirm buttons, and the eligibility line ("Too far: 5.2 m of 4.0 m", distances by P11) when a condition fails. Changing either side clears both locks, and the banner says so.
+
+### 9.7 Run summary (`ui.menu.run_summary`)
+
+Shown on `ev.run_ended`, and previewed on a "Close the Book" door:
+
+- the end state (doc 14 §4.3), Folios cleared, deepest depth, run time, the lattice ribbon of genre sigils;
+- the score, line by line from doc 14 §4.2 with each accumulator;
+- the account payout: Quires (doc 14 §4.6), Ink lines (doc 15 §2.2: active minutes, Folio exits, Editors, run end or victory, then the per-run and rolling caps), Codex XP lines (doc 15 §6.2) with the rested reserve bonus, and the account Reliquaries recorded;
+- ranked status: "Ranked: submitted" or one line per reason it is not (Scribe's Mercy was on; game speed was below 100%; an easing mutator; Apocrypha; the mode is unranked; doc 14 §9.4);
+- per player: deaths, downs, kills, damage dealt and taken, and the Mercy percent at the end when it was on;
+- buttons: Continue to the Margin, Save replay, and View verification for ranked runs (doc 16 §10.2).
+
+No timer and no offer appears on this screen (P9).
 
 ---
 ## 10. Canon 1.2 systems: HUD and menus
@@ -494,17 +602,18 @@ Two columns (yours, theirs), up to 8 items each, the doc 16 §9.7 state shown as
 ### 10.2 Mounts (`ui.hud.mount`)
 
 - **Summon**: `input.mount` shows a 30-tick channel ring; failures show the reason before the channel starts: "Needs 2.6 m of headroom", "No mounts in this room", "Token inert until the next Folio" (mount at 0 HP, doc 05 §17.2).
-- **Mounted panel** (320 × 48 px): mount name and skin, HP bar, stamina bar (runner), speed gauge in m/s with one decimal and a notch at 8.0 m/s labeled "Charge" (mounted charge and trample threshold, Canon §17.7); the notch lights while speed ≥ 8000 mm/s. Hover mounts show "Seat 2: <name>" and the passenger's fire permission.
+- **Mounted panel** (320 × 48 px): mount name and skin, HP bar, stamina bar (runner 100; glider 50 with a flap glyph that dims while stamina is below the 40 a flap costs; hover has none, doc 05 §17.1), speed gauge in m/s with one decimal (P11) and a notch at 8.0 m/s labeled "Charge" (mounted charge and trample threshold, Canon §17.7); the notch lights while speed ≥ 8000 mm/s. Hover mounts show "Seat 2: <name>" and the passenger's fire permission. A Contradiction **Stall** (doc 05 §16.3) shows "Stall" with a 60-tick ring.
 - **Prompts** while mounted: dismount (15 ticks), couched lance hold ring (up to 180 ticks). Lean and dodge are hidden (doc 05 §17.3). `st.mounted` shows in the status row.
 
 ### 10.3 Minions (`ui.hud.minions`)
 
-- One 28 px row per minion (up to 5): kind glyph (summon, tamed, hireling, companion), name, HP bar, command glyph (F follow, H hold, A attack), a remaining-time bar for spell summons with a duration, and a leash warning glyph beyond 32,000 mm of path. The header reads "Minions 2/3" (`MINION_CAP_PER_PLAYER`).
-- **Commands** (Canon §15.1, doc 13): `input.minion_follow`, `input.minion_hold`, `input.minion_attack`. A tap commands every minion of the owner. Holding the input for 20 frames opens a selector listing the owner's minions; the chosen minion alone receives the command. Each command sends `MinionCommand { kind, minions, cell, target }` (Interface assumptions):
+- A 24 px header reading "Minions 2/3" (`MINION_CAP_PER_PLAYER`, Canon §15.1), then one 24 px row per minion (up to 5): kind glyph (summon, tamed, hireling, companion; doc 13 §6), name, HP bar, command glyph (F follow, H hold, A attack), a remaining-time bar for spell summons with a duration, for companions an approval pip on −100..=100 with the loyalty mark at 60 (doc 13 §13.5), a leash glyph while the minion is more than 16,000 mm from its owner (it drops its target and returns) and a teleport glyph while it is more than 32,000 mm of path away with no target (doc 13 §6).
+- **Commands** (Canon §15.1, doc 13): `input.minion_follow`, `input.minion_hold`, `input.minion_attack`. A tap commands every minion of the owner. Holding the input for 20 frames opens a selector listing the owner's minions; the chosen minion alone receives the command. Each command sends `MinionCommand { kind, minions, cell, target }` (doc 02 intent; Interface assumptions), which doc 13 resolves into its per-minion `Follow`, `Hold(CellIdx)` or `Attack(EntityId)` for each listed minion. On gamepad the minion wheel (§6.5) carries socket 0 follow, socket 2 hold, socket 4 attack (all minions) and socket 6 "Choose minion…", which opens the selector; the other sockets are empty.
   - Follow: `cell` and `target` empty.
   - Hold: `cell` = the block the crosshair ray hits within 48,000 mm, else the owner's feet cell; a world marker stands on that cell.
   - Attack: `target` = the entity under the crosshair (48,000 mm ray, doc 05 hitscan rules); with no entity under the crosshair the input is refused locally with "No target".
-- World markers: each minion's attack target carries a small owner-colored claw glyph; hold cells show a banner glyph.
+- World markers: each minion's attack target carries a small owner-colored claw glyph (`ui.icon.marker_claw`) with a ring for the 600 ticks the order lasts (doc 13 §6); hold cells show a banner glyph (`ui.icon.marker_hold`).
+- **Retinue** (`ui.menu.retinue`, a Book tab while the owner has at least one minion): per minion its name, kind, template skin name, doc 13 profile, HP, AR, damage per hit, current command, Folio rule ("follows through an exit within 16 m" for tamed beasts, hirelings and companions; "despawns at Folio exit" for spell summons), and for companions the approval value with the values it likes and dislikes, the loyalty perk text and whether it is active (approval ≥ 60), the personal quest state (offered at 100) and the warning "Leaves at the next exit" at approval −50 or lower.
 
 ### 10.4 Ghosts (`ui.hud.ghost`)
 
@@ -514,22 +623,27 @@ When `ev.player_ghosted` fires for the local player, the HUD switches to the gho
 |---|---|
 | Banner (TC, under the compass) | "You are a ghost. You return at the next Folio." |
 | Resurrection forecast | "Remains carried: return at 50% HP" or "Remains left behind: return at 25% HP and lose one equipped non-weapon item" (Canon §17.6), updated live from which inventory holds the Remains |
-| Mark | `input.attack` on an entity sends `MarkTarget { target }`: 480-tick `st.marked`, 600-tick cooldown shown as a ring (doc 16 §9.5) |
+| Mark | `input.attack` on a non-ghost entity whose origin is within 30,000 mm and visible from the ghost's eye sends `MarkTarget { target }`: 480-tick `st.marked`, 600-tick cooldown shown as a ring (doc 16 §9.5); out of range the reticle shows "Too far" |
+| Doors and pings | `input.interact` opens doors and presses switches and levers; `input.ping` pings (Canon §17.6) |
 | Spectate | `input.weapon_next` / `input.weapon_prev` cycle the camera through living allies; `input.jump` returns to the free ghost body |
 | Remains marker | always on the compass and map |
 
 The party frames show a ghost glyph for that slot.
 
+### 10.4a Downed (`ui.hud.downed`)
+
+Co-op only, because solo has no downed state (doc 16 §2.2). While the local Erratum holds `st.downed`, the `ui.hud.downed` panel shows "Bleeding out" with `bleed_left` as M:SS and a bar of `bleed_left / max(600, 1800 − 600 × (downs_folio − 1))` (doc 16 §9.4); while a valid reviver acts, a second bar `revive_progress / revive_ticks` names the reviver. Each hit taken while downed shortens the bar by `ceil_div(total_mhp × 1800, max_hp_mhp)` ticks and marks the bar's edge, with no full-screen flash. The weapon panel and quickbar dim to 4000 Bp opacity; context `input.ctx.downed` allows look, crawl, ping and chat. Allies see the downed player's party frame with its `bleed_left` from `PartyState`, a world marker, and, within 1,500 mm and facing it within 8,192 Bam, a revive prompt with a hold ring of `revive_ticks` (180, or fewer with revive talents).
+
 ### 10.5 Kin and Origin
 
-| Kin | HUD change | Menu change |
-|---|---|---|
-| `kin.human` | none | creation shows +4 free points and the bonus skill |
-| `kin.construct` | satiation glyph becomes a fuel gauge; no breath bubbles | potion cards show "Construct: healing ×0.50"; Tinkering repair shows "heals you" |
-| `kin.undead` | no regeneration glyph; umbral damage taken shows as a heal number in `stamina` color with the umbral glyph; no breath bubbles | radiant resistance −50% shown in the Body tab |
-| `kin.beastkin` | the paper doll has a tail | dark-vision +2 m shown on row 31 |
-| `kin.fae` | hostile weapons of `mat.cold_iron` or `mat.iron` show an iron glyph on their nameplate while the player is targeted | "Iron hurts you ×1.25" |
-| `kin.mutant` | none | Mutation points and the 3-offer mutation picker in the Body tab |
+| Kin | ID | HUD change | Menu change (Body tab and cards) |
+|---|---|---|---|
+| Human | `kin.human` | none | creation shows +4 free points and +5 to one chosen skill (doc 04 §2.4) |
+| Construct | `kin.construct` | the satiation glyph becomes the Fuel gauge; no breath bubbles | immune to poisoned, diseased and bleeding; shock resistance −25%; potion cards show "Construct: healing ×0.50"; self-repair shows its heal `mul_bp(max_hp_mhp, 1000 + 20 × tinkering)` (11.9 HP at Tinkering 20 and Max HP 85); natural armor `mul_bp(3, T(d))` |
+| Undead | `kin.undead` | no regeneration glyph; umbral damage taken shows as a heal number in `stamina` color with the umbral glyph; no breath bubbles | radiant resistance −50%; immune to poisoned and diseased; satiation decays ×0.50 and only meat, body parts, corpses and blood restore it |
+| Beastkin | `kin.beastkin` | the paper doll has a tail; a severed tail removes the poise line | dark-vision +2 m on row 31; poise +5 while the tail is attached; hearing +3 dB on row 33; satiation decays ×1.25 |
+| Fae | `kin.fae` | a hostile wielding a weapon whose primary material is `mat.cold_iron` or `mat.iron` shows an iron glyph on its nameplate | "Iron hurts you ×1.25"; ARCANA tolerance +1 in the tolerance row; fall damage ×0.70; footsteps −3 dB; disguise suspicion ×0.80 on row 40 |
+| Mutant | `kin.mutant` | none | mutation points and the 3-offer mutation picker; radiation resistance +25% |
 
 The Kin and Origin tab lists the Origin's tolerance row (Canon §5.4), the Origin trait, Going Native state, and the kin's genre skin name.
 
@@ -537,22 +651,24 @@ The Kin and Origin tab lists the Origin's tolerance row (Canon §5.4), the Origi
 
 - **Status row**: afflictions draw first, in a thorn-ring frame. `st.incubating` shows the incubating affliction's glyph with a 7200-tick countdown.
 - **Afflictions tab**: per affliction, its skinned name in the local genre (vampirism, ghoul hunger, jiangshi; lycanthropy; Red Ink), upsides and downsides as two lists, cure options with live prices: Scriptorium cure `mul_bp(500, P(d))` Lucre (Folio 10: `mul_bp(500, 21718) = 1085`), or a blessed cure potion. For `afflict.red_ink`: doses taken, the Marginalia powers unlocked, and the hunter threshold `max(6, 10 − doses)`.
+- `afflict.hunger` adds a sun glyph to the vitals glyph row while `light_at ≥ 12` ("No regeneration in bright light"). `afflict.beast` shows "Beast form ready" while its once-per-Folio change is unused, the 30 s `st.polymorphed` timer while transformed, and "The beast stirs" while composure is below 25%.
 - `ev.affliction_changed` raises a notification and, the first time per run, a tip (§15).
 
 ### 10.7 Patrons and prayer (`ui.menu.prayer`)
 
 - `input.pray` tap: supplication to the default patron (the local genre's), sent as `Pray { patron, kind: supplication }`. Holding it for 20 frames opens the prayer menu instead.
 - **Prayer menu**: 16 patron rows (patrons of genres the run has visited first), each with favor on a −1000..=1000 bar, the "local ×1.5" badge for the local patron, the signature boon and the taboo text. The header shows `prayer_timer` in seconds.
-- **Exact odds** for a supplication, computed from doc 06 §16.3 with the current favor `f` and timer:
-  - timer 0: `P(pleased) = 1` when `f ≥ 0`, `(500 + f) / 500` when `−500 < f < 0`, else 0. Example `f = −120`: **76.0000%**.
-  - timer > 0: `P(helped) = min(max(f, 0), 500) / 500 × (1,800,000 − timer − 1) / 1,800,000`. Example `f = 300`, timer 20,000: **59.3333%**. The rest is ANGRY, and the panel names the herald risk when `f < −250` (2000 Bp).
+- **Exact odds** for a supplication, from doc 06 §16.3's four draws `r0 = range(500)`, `r1 = range(1,800,000)`, `r2 = range(10000)` with favor `f` and timer `τ`, and the prayer component's Contradiction failure chance `u` in Bp (Canon §5.5; always 0 for the local patron, whose `Req = MYTHOS − 2` never exceeds the local MYTHOS). "Unheard" shows `u`; every other line is multiplied by `(10000 − u) / 10000`:
+  - `τ = 0`: Pleased `p = 1` when `f ≥ 0`, `(500 + f) / 500` when `−500 < f < 0`, else 0; Displeased `1 − p`. Inside Pleased, a friendly herald 5.0000% when `f > 250`, and a Gift (+1 enhancement) 5.0000% when `f > 100`.
+  - `τ > 0`: Helped `h = min(max(f, 0), 500) / 500 × (1,800,000 − τ − 1) / 1,800,000`; Angry `1 − h`; inside Angry, a hostile herald 20.0000% when `f < −250`.
+  - Examples, local patron: `f = −120`, `τ = 0`: Pleased **76.0000%**, Displeased 24.0000%. `f = 300`, `τ = 20,000`: Helped **59.3333%**, Angry 40.6667%. A foreign patron whose prayer has failure 1000 Bp, `f = 0`, `τ = 0`: Unheard 10.0000%, Pleased 90.0000%.
 - **Petitions**: each with favor cost after Devotion scaling (`floor_div(cost × 100, 100 + devotion)`: Benediction 60 at Devotion 50 shows 40), minimum favor, the `timer ≤ 36000` condition, and its effect.
 - **Altar offering**: an item list with each item's favor gain `isqrt(value)`, ×2 for the patron's genre, then Devotion scaling (doc 06 §16.5).
 - **HUD** (`ui.hud.spell` lower line): "Prayer ready" when timer is 0, else the timer in seconds; favor with the local patron.
 
-### 10.8 Margin trophies (`ui.menu.margin_plot`)
+### 10.8 Margin trophies (`ui.menu.margin_trophies`)
 
-Canon §17.8 (canon-1.4) fixes the Margin's architecture and gives each account cosmetic trophy and decoration slots; there is no free-form building (Canon gaps G2). The plot screen is a slot arranger:
+Canon §17.8 (canon-1.4) fixes the Margin's architecture and gives each account cosmetic trophy and decoration slots; there is no free-form building (Canon gaps G2). The trophy screen is a slot arranger built for at most 32 slots per alcove:
 
 - A 3D view of the account's alcove with every slot outlined; slots come from doc 14 records (`margin.slot.*`, Interface assumptions) with `kind` (trophy, wall, floor, banner, light) and a footprint.
 - A drawer lists owned `cosm.margin.*` decorations and earned trophies, filtered to the focused slot's kind. Placing, swapping and clearing are free and instant; changes save to the account profile. Trophies show their source ("Editor of Volume II, first kill, 2026-11-02").
@@ -561,20 +677,26 @@ Canon §17.8 (canon-1.4) fixes the Margin's architecture and gives each account 
 ### 10.9 Lean controls
 
 - `input.lean_l` / `input.lean_r` set `LEAN_LEFT` / `LEAN_RIGHT` (bits 21, 22). Defaults are hold; `access.lean_toggle` makes each a toggle that releases when the opposite lean is pressed, on sprint, or when lean becomes unavailable (sprinting, climbing, swimming, mounted, downed, melee swing; doc 05 §6.8).
-- **Indicator**: chevrons beside the crosshair, one per 3 steps of `|lean_k|` (1 to 3 chevrons). When the eye sphere test shrinks the offset (doc 05 §6.8), the chevrons turn `muted` with a wall glyph.
+- **Indicator**: `ceil_div(|lean_k|, 3)` chevrons beside the crosshair on the lean side (1 to 3; doc 05 §6.8 `lean_k ∈ −9..=9`). When the eye sphere test shrinks the offset (doc 05 §6.8), the chevrons turn `muted` with a wall glyph.
 - The viewmodel and camera roll 3° toward the lean side for readability (presentation only; `access.reduce_motion` sets 0°).
 
 ### 10.10 Stealth meter with two-channel light readout (`ui.hud.stealth`)
 
-264 × 44 px, three parts:
+Doc 09 §8 decides what the host sends each player (`StealthHud { gem, hidden, rings, marks, steps }`); this section decides how it is drawn. The meter is 264 × 44 px in three parts:
 
-1. **Awareness eye** (left, 44 px): the highest awareness any hostile holds toward the player, from doc 09: unaware (closed), returning, suspicious (quarter-open), investigating, searching (half-open), alert (open, `hostile`). `st.hidden` shows a hood glyph. Up to 3 directional ticks on the crosshair ring point at the most aware observers within 30 m.
-2. **Light readout** (center, 140 px): two 15-segment bars, **Sky** (`light_sky`) and **Lamp** (`light_block`), sampled at the Canon §2.3 `light_at` cell. The larger is highlighted as the effective light with its band label from doc 12 §10.2: Dark (≤ 4), Dim (5..=9), Bright (≥ 10). Fixed marks: segment 2 (darkness drains composure after 10 s, doc 04 §11.3), segment 8 (composure regenerates out of combat, Canon §12), and on the Lamp bar the genre's `spawn_block_max` (Canon §5.9). When `light_block > spawn_block_max` a lantern glyph reads "No spawns here" (Canon §12.3).
-3. **Noise** (right, 80 px): the level in dB of the player's own last `ev.noise`, decaying on screen by 20 dB per second, with the gait glyph.
+1. **Awareness eye** (left, 44 px): the highest doc 09 §6.1 state any hostile holds toward the player, read from `StealthHud.marks`: `aware.unaware` closed; `aware.curious` a slit; `aware.suspicious` half open; `aware.searching` half open with a sweeping pupil; `aware.lost` three-quarters open with "?"; `aware.alert` fully open in `hostile` with "!". Openness and the mark carry the state, so color is never the only signal (P3). `StealthHud.hidden` (`st.hidden`) adds a hood over the eye.
+2. **Light readout** (center, 140 px): two 15-segment bars, **Sky** (`light_sky`) and **Lamp** (`light_block`), sampled at the Canon §2.3 `light_at` cell. The larger is highlighted as the effective light with its band label from doc 09 §2.2 and doc 12 §11.3: Dark (≤ 4), Dim (5..=9), Bright (≥ 10). Fixed marks: segment 2 (darkness drains composure after 10 s, doc 04 §11.3), segment 8 (composure regenerates out of combat, Canon §12) and, on the Lamp bar, the genre's `spawn_block_max` (Canon §5.9). When `light_block > spawn_block_max`, a lantern glyph reads "No spawns here" (Canon §12.3). Under the bars sits doc 09 §8.1's **visibility gem**: 5 pips from `StealthHud.gem` (none below 500, then one each from 500, 1500, 3000, 5000 and 8000). When the player's own carried light (doc 09 §2.3 `item_light` of lit equipped and held items, computed on the client) exceeds the effective light, a torch glyph reads "Your light: N".
+3. **Noise** (right, 80 px): the level in dB of the player's own last `ev.noise`, decaying on screen by 20 dB per second, with the gait glyph. Doc 09 §8.2's noise rings (`StealthHud.rings`) draw in the world on the ground plane for 30 ticks, colored by reaction class at 6000 Bp opacity (allies' rings at 3000 Bp).
 
-Example: in Gothic Horror (`ambient_light` 2, `spawn_block_max` 7) beside a placed lantern the bars read Sky 2, Lamp 9: effective 9, "Dim", the composure mark lit, and "No spawns here". In The Redaction (`spawn_block_max` 15) the lantern glyph never appears and the Lamp bar shows "Spawns ignore light here".
+**Crosshair rings.** Doc 09 §8.3's detection arcs draw on the radius-180 ring: one arc per entry of `StealthHud.marks` whose meter rose in the last 20 ticks, centered on the observer's bearing relative to the camera yaw, `meter / 10000` of a quarter circle (16384 Bam) long, in white (curious), yellow (suspicious), orange (searching, lost) or red (alert), with the state letter C, S, ? or ! at the arc's midpoint so color is never the only signal. Footstep ticks (`StealthHud.steps`, Canon §6.4 row 34) draw on the radius-200 ring; none under `st.deafened`. Over-head awareness glyphs are doc 18 §4.6's `vfx.aware.*`.
 
-`access.stealth_meter_always` shows the meter while standing; by default it shows while crouched, while any hostile is above unaware toward the player, or for 3 s after any change of band.
+Example: in Gothic Horror (`ambient_light` 2, `spawn_block_max` 7) beside a placed lantern the bars read Sky 2, Lamp 9: effective 9, "Dim", the composure mark lit, and "No spawns here". In The Redaction and The Unwritten (`spawn_block_max` 15) the lantern glyph never appears and the Lamp bar reads "Spawns ignore light here". A Shade with `gem = 471` shows no pips; with a lantern (`gem = 2467`) it shows two (doc 09 §8.1).
+
+`access.stealth_meter_always` shows the meter for the whole run; by default it shows while crouched, while any hostile holds a state above `aware.unaware` toward the player, and for 3 s after any change of light band.
+
+### 10.11 Locks and hacking (`ui.hud.lockpick`)
+
+`access.lock_mode` (`auto` default, `manual`) is doc 09 §13.3's per-player `lock_mode`. Auto (doc 09 §13.2) shows the attempt's progress ring over its ticks, the success chance `clamp(5000 + (rating − DC) × 200, 500, 9500)` as a percentage with one decimal, the break chance, and the pity bar `progress / lock_hp`. Example: Security 45, SLT 50, normal picks, a tier-3 door: "Success 40.0% · break 12.5%" above an empty pity bar that fills 4 per failure. Manual shows a 40-notch dial per pin (`2 + tier` pins) with the cursor advancing one notch per tick and the pins already set; a pin's tension glyph lights while the cursor is within `W` notches of the pin's target, which the owner's client computes from the same keyed `rng.stealth` draw (it holds the run seed, doc 16 `RunHeader`); `input.attack` sets the pin; misses and the 120-tick timeout show as cracks, and the third crack fails the attempt. Context `input.ctx.lockpick` binds only `input.attack`, `input.ui_back` (abandon) and look.
 
 ---
 
@@ -582,7 +704,18 @@ Example: in Gothic Horror (`ambient_light` 2, `spawn_block_max` 7) beside a plac
 
 ### 11.1 Margin hub
 
-The Margin is walkable (doc 14 §5). Every open facility (doc 14 §5.1) has a lectern prompt. `input.menu_book` in the Margin opens the **Margin index**, a list of every open facility that opens its screen directly without walking (P6, cognitive and motor accessibility). Locked facilities list their opening milestone. The Lectern runs the doc 14 §2.1 lobby with one screen per state.
+The Margin is walkable (doc 14 §5). Every open facility (doc 14 §5.1) has a lectern prompt. `input.menu_book` in the Margin opens the **Margin index**, a list of every open facility that opens its screen directly without walking (P6, cognitive and motor accessibility). Locked facilities list their opening milestone. The trophy and decoration arranger (§10.8) is listed as "Trophies" whatever doc 14 names the facility (Canon gaps G2). The Lectern runs the doc 14 §2.1 lobby (`ui.menu.lobby`) with one screen per state:
+
+| Lobby state | Screen |
+|---|---|
+| `Idle` | the Lectern prompt |
+| `ModeSelect` | every mode with its lock state and unlocking milestone, a ranked mark, and the Daily and Weekly seeds with their dates |
+| `ErratumSelect` | per slot: Custom (opens `ui.menu.creation`, §5.7), Echo or a saved preset; the kit picker; the Satchel editor (§11.3) where doc 15 §5.5 allows it |
+| `RunSetup` | structure, Grade (up to the host's maximum), mutators, seed entry, co-op modes (hidden with 1 slot), the invasion toggle (hidden for Daily, Weekly and ranked runs, Canon §17.9), and doc 15's Apocrypha notice when a mod is loaded |
+| `ReadyCheck` | each slot's Ready state; any host edit clears every Ready flag, and the screen says so |
+| `Commit` | "Opening the book…" while the ranked token and `start_run` resolve |
+
+**Seed entry** (Canon §3.6): one 13-character field shown in 4-4-5 groups, with the Steam on-screen keyboard on Deck. The field strips `-` and ASCII space, uppercases, maps `O` to `0` and `I`, `L` to `1`, and reports the first failing rule in canon order: "Needs 13 characters" (length), "U is not used in seeds", "Character X is not in the seed alphabet", "The first character must be 0–F". Example: `028t 5cy4 tqkff` is accepted as `028T-5CY4-TQKFF`; `G28T-5CY4-TQKFF` reports "The first character must be 0–F".
 
 ### 11.2 Inkwell (`ui.menu.inkwell`)
 
@@ -595,7 +728,7 @@ The Margin is walkable (doc 14 §5). Every open facility (doc 14 §5.1) has a le
 
 ### 11.3 Reliquary Vault (`ui.menu.vault`)
 
-Sealed Keepsakes as silhouettes with source-genre tag and rarity frame (doc 15 §5.5); the rarity table with base and consolidated rates; counters "Epic or better within `5 − c5`" and "Legendary or better within `20 − c20`"; the Satchel editor for the next run (up to 5, at most 1 Legendary or Exotic, refusals with doc 15's text). Opening plays a 45-frame unsealing, skippable.
+Sealed Keepsakes as silhouettes with source-genre tag and rarity frame (doc 15 §5.5); the rarity table with base and consolidated rates; counters "Epic or better within `5 − c5`" and "Legendary or better within `20 − c20`"; the Satchel editor for the next run (up to 5, at most 1 Legendary or Exotic, refusals with doc 15's text, including "Not in this run's pages"). Opening plays a 45-frame unsealing, skippable. The vault holds at most 30 Keepsakes (doc 15 §5.2); at the cap the Open button is disabled with "The vault is full (30/30)", and each Keepsake has Discard with one confirmation and no refund.
 
 ### 11.4 Codex pass (`ui.menu.codex_pass`)
 
@@ -611,6 +744,16 @@ Sealed Keepsakes as silhouettes with source-genre tag and rarity frame (doc 15 �
 - **Set bundles**: the computed price and the sum of the unowned components, both in currency; example (doc 15 §7.1): components 5.99 + 3.99 + 7.99 + 1.99 unowned give USD 16.99 against USD 19.96.
 - **Purchase flow** follows doc 15 §7.6 with one screen per state; the confirm dialog lists every granted item, the refund terms and, where required, the unticked withdrawal checkbox.
 - **Purchases settings** (Settings → Purchases): purchases off by default, the spend summary (lifetime, last 30 days, per SKU), the guardian PIN screens (doc 15 §8.4).
+
+### 11.6 Pause menu, Settings, scoreboard and chat
+
+**Pause menu** (`ui.menu.pause`, `input.pause`). Rows in order, focus on Resume when it opens: Resume; Scribe's Mercy (a toggle row reading "Off" or "On · 26%"); Settings; Controls (opens the Controls page directly); Journal; Party (co-op: the scoreboard list); Save and quit to the Margin (solo: saves at the current tick boundary, Canon §2.5; co-op: leaves the session, doc 16 §9.2); Abandon run (one confirmation, "The run ends here."). Scribe's Mercy is therefore 2 inputs away (down, confirm) and Settings 3 (down, down, confirm), matching P6.
+
+**Settings** (`ui.menu.settings`). Tabs in order, opening on Accessibility: Accessibility (§13, grouped as Assists, Vision, Text, Motion, Audio, Input), Controls (§12: presets, rebinding, sensitivity, deadzones, gyro, aim assist, toggle versus hold), Gameplay (damage numbers, HUD layout, scale and preset, minimap, `access.lock_mode`, gore mode, tips reset), Video (window, FOV and the comfort rows shared with Accessibility), Audio (bus volumes, mono, dynamic range, voice mode, push to talk), Social (chat filters, voice, invasion permission, blocked list), Narrator (the Scribe toggle `flag.scribe.enabled` with its disclosure page and "Delete model and cache", doc 18 §9.10; hidden outside `en-US`, doc 18 §9.11), Purchases (doc 15 §7.3, §8.4), Account (profile, data export and deletion, doc 16 §14). A setting shown on two tabs is one record. Every row shows its value, range, default and a one-line description; "Reset this tab" sits at the bottom of each tab.
+
+**Scoreboard** (`ui.menu.scoreboard`). Holding `input.scoreboard` shows it as an overlay that does not pause; `input.ui_confirm` while it is held pins it open as a menu. One row per slot: persona, level, Calling and Origin sigils, HP, ping in ms (`PartyState.ping_ms`), kills, deaths, downs, the Mercy quill when on, and the speaking glyph. An invader's row (Canon §17.9) shows its persona and Redactor kit. Every row offers Mute, Block and Report within 2 inputs (doc 15 §8.5); blocking the invader ends the invasion (doc 16 §9.13).
+
+**Chat** (`ui.menu.chat`, `input.chat`): a 200-byte text field (doc 16 §9.12) on the Party channel with the on-screen keyboard on Deck. Minor-flagged accounts see quick-chat phrases where doc 15 §8.5 replaces free text. Chat with an invader follows doc 15 §8.5: text carries mute, block and report, voice with an invader starts off, and minor-flagged accounts exchange only pings and emotes with it.
 
 ---
 ## 12. Controls
@@ -638,9 +781,11 @@ Every action is an `input.*` record. Kind: `B` button, `A2` two-axis. Sim column
 | `input.camera` | B | client (first/third person) | `input.menu_book`, `input.menu_map`, `input.menu_journal`, `input.menu_character`, `input.menu_exits` | B | client |
 | `input.pause` | B | client | `input.scoreboard` | B | client |
 | `input.chat`, `input.push_to_talk`, `input.emote_wheel` | B | client and doc 16 | `input.ui_confirm`, `input.ui_back`, `input.ui_tab_next`, `input.ui_tab_prev`, `input.ui_page_next`, `input.ui_page_prev`, `input.ui_details`, `input.ui_compare`, `input.ui_nav` (A2) | B / A2 | client |
-| `input.look_gyro` | A2 | `yaw`, `pitch` | | | |
+| `input.look_gyro` | A2 | `yaw`, `pitch` | `input.hold_breath` | B | `SetBreathHold { on }` intent on press and release |
+| `input.whistle`, `input.shout` | B | `Vocalize { kind }` intent (doc 09 §12) | `input.ui_actions` | B | client |
+| `input.speak_vitals` | B | client (§13.6) | | | |
 
-Contexts (`input.ctx.*`) decide which bindings are live: `on_foot`, `mounted` (adds couched lance hold, hides lean and dodge), `downed` (look, crawl, ping, chat), `ghost` (§10.4), `wheel` (while a wheel is open), `menu`, `placement` (§6.2), `margin`. A binding may repeat across contexts but never within one (§12.8).
+Contexts (`input.ctx.*`) decide which bindings are live: `on_foot`, `mounted` (adds couched lance hold, hides lean and dodge), `casting` (while the local cast machine is outside `Idle`, doc 06 §3.5; overrides one gamepad binding, §12.4), `downed` (look, crawl, ping, chat), `ghost` (§10.4), `wheel` (while a wheel is open), `menu`, `placement` (§6.2), `lockpick` (§10.11), `margin`. When several apply, the most specific wins in the order `menu`, `wheel`, `lockpick`, `placement`, `casting`, `ghost`, `downed`, `mounted`, `on_foot`. A binding may repeat across contexts but never within one (§12.8).
 
 ### 12.2 Command encoding
 
@@ -673,6 +818,8 @@ fn encode(st: &ActionState) -> u32 {
 }
 ```
 
+A Grimoire press needs its bit set, the same bit clear in the predecessor, and the command not to carry bits 19 and 20 together, so a wheel selection never also reads as a Grimoire step, on its own tick or the next (doc 06 counts presses this way; Interface assumptions).
+
 `action_field` is the most recently pressed `input.ability_k` while it stays held (5 while `input.cast_cancel` is held); releasing that key sets it to 0 even if another ability key is still held, so a release never re-triggers another ability.
 
 Worked encodings: ability 3 held alone: `3 << 26 = 201,326,592`. Cast cancel: `335,544,320`. Wheel entry 5 selected with an instant cast: `(5 << 29) | (1 << 20) | (1 << 19) | (1 << 9) = 2,685,927,936`. Wheel entry 0 selected without a cast: `1,572,864`. Quickbar slot 3 (index 2) used: `327,680`. Weapon slot 2: `16,384`.
@@ -700,10 +847,13 @@ Worked encodings: ability 3 held alone: `3 << 26 = 201,326,592`. Cast cancel: `3
 | scoreboard | O (hold) | emote wheel | U (hold) |
 | chat | Enter | push to talk | Y |
 | pause | Esc | UI details, compare | Left Alt (in menus), Left Shift (in menus) |
+| hold breath | P (hold) | whistle, shout | emote wheel sockets 0, 1 |
+| item actions (menus) | Mouse 2, F | examine (menus) | X |
+| speak vitals | unbound | | |
 
-Menu context: arrows or W A S D move focus, Enter or Space confirm, Esc back, Q / E tabs, PageUp / PageDown pages, mouse everywhere. `input.preset.left_hand_kbm` mirrors the layout onto I J K L with the numeric keypad for one-handed play.
+Menu context: arrows or W A S D move focus, Enter or Space confirm, Esc back, Q / E tabs, PageUp / PageDown pages, Left Alt details (hold), Left Shift compare (hold), Mouse 2 or F item actions, X examine, mouse everywhere. Lockpick context: Mouse 1 sets a pin, Esc abandons. `input.preset.left_hand_kbm` mirrors the layout onto I J K L with the numeric keypad for one-handed play.
 
-Mouse look: `yaw_deg = counts × 22 × sens_milli / 1,000,000` (sens 1000 = 0.022° per count), default 1000, range 100..=10000; separate ADS multiplier 2500..=20000 Bp (default 10000); invert Y off.
+Mouse look: `yaw_deg = counts × 22 × sens_milli / 1,000,000` (sens 1000 = 0.022° per count), default 1000, range 100..=10000; separate ADS multiplier 2500..=20000 Bp (default 10000); invert Y off. Each frame's look delta in radians enters doc 02 §10's look state through `look_add` (doc 02 §7.5), and each command's `yaw` and `pitch` are quantized from that state, so look never drifts and the replay holds exactly the Bam values the player aimed with.
 
 ### 12.4 Gamepad (`input.preset.folio_pad`)
 
@@ -714,7 +864,7 @@ Xbox names; PlayStation glyphs map Cross = A, Circle = B, Square = X, Triangle =
 | Left stick | move | move; X-axis beyond 5000 Bp leans left or right (stick move then strafes 0) |
 | L3 | sprint (toggle) | mount |
 | Right stick | look | look; selects wheel sectors while a wheel is open |
-| R3 | crouch (toggle) | camera |
+| R3 | crouch (toggle) | camera (tap); hold breath (hold 15 frames) |
 | RT | attack | cast |
 | LT | alt (block, ADS) | cast wheel (hold; release selects) |
 | RB | heavy | throw (hold to cook) |
@@ -725,12 +875,31 @@ Xbox names; PlayStation glyphs map Cross = A, Circle = B, Square = X, Triangle =
 | D-pad up | ping (double-tap: danger); hold 15 frames: emote wheel | pray (hold 20 frames: prayer menu) |
 | D-pad down | use selected quickbar slot; hold 15 frames: quickbar wheel | minion attack; hold 20 frames: minion command wheel (follow, hold, attack, per-minion) |
 | D-pad left, right | weapon prev, next; hold 15 frames: weapon wheel | grimoire prev, next |
-| View | map; hold 15 frames: scoreboard | push to talk (hold) |
-| Menu | Book menu | pause |
+| View | Book menu; hold 15 frames: map | push to talk (hold) |
+| Menu | pause | scoreboard (hold) |
 
 `input.preset.spellwright_pad` swaps RT and LB+RT (RT casts, LB+RT attacks) and swaps LT and LB+LT, for casters. `input.preset.southpaw_pad` swaps the sticks. Wheels opened from the gamepad select by the right stick.
 
-Stick processing: radial inner deadzone 1200 Bp (range 0..=3000), outer 9500 Bp (8000..=10000), rescaled linearly between them, then `stick_to_i8` (doc 02 §7.5). Look curve options `linear`, `classic` (square of deflection, default), `precise` (cube). Look speed at full deflection: yaw 240°/s, pitch 160°/s (each 60..=600). Vibration 0..=10000 Bp (default 7000). Trigger actuation 2000..=8000 Bp (default 3000).
+**Casting context** (`input.ctx.casting`): B is `input.cast_cancel` instead of dodge; a second B press within 18 frames dodges. Every other weapon, item, interact, sprint, jump, dodge or mount input already cancels a cast (doc 06 §3.5), so B is the one pure cancel. **Whistle and shout** sit in the emote wheel (D-pad up, hold 15 frames), sockets 0 and 1.
+
+**Menu context** (`input.ctx.menu`):
+
+| Input | Action |
+|---|---|
+| D-pad, left stick | `input.ui_nav` |
+| A | `input.ui_confirm` |
+| B | `input.ui_back` |
+| X | `input.ui_actions`: the focused item's action list (Use, Equip, Drop, Drop for ally, Examine, Split, Assign) |
+| Y (hold) | `input.ui_details` |
+| L3 (hold) | `input.ui_compare` |
+| LB, RB | `input.ui_tab_prev`, `input.ui_tab_next` |
+| LT, RT | `input.ui_page_prev`, `input.ui_page_next` (also the map's Y-slice) |
+| Right stick | scroll lists; orbit 3D previews and the map |
+| Menu | close every menu |
+
+The Book menu's tabs replace `input.menu_character`, `input.menu_journal` and `input.menu_exits` on gamepad; those three are unbound there by default and bindable.
+
+Stick processing: radial inner deadzone 1200 Bp (range 0..=3000), outer 9500 Bp (8000..=10000), rescaled linearly between them, then `stick_to_i8` (doc 02 §7.5). Look curve options `linear`, `classic` (square of deflection, default), `precise` (cube), each applied to the rescaled deflection `r ∈ 0..=1` as `r`, `r²` or `r³` along the stick's direction. Look speed at full deflection: yaw 240°/s, pitch 160°/s (each 60..=600). Vibration 0..=10000 Bp (default 7000). Trigger actuation 2000..=8000 Bp (default 3000).
 
 ### 12.5 Steam Deck (`input.preset.folio_deck`)
 
@@ -756,12 +925,17 @@ Aim assist is a client-side filter on stick look deltas; its output is the comma
 eligible(t) = t is hostile ∧ rendered ∧ not culled ∧ client voxel ray from the eye to t's nearest part is clear
               ∧ dist ≤ max_range ∧ (t not st.invisible ∨ dist ≤ 2000 mm)
 inside      = ∃ eligible t: angle(aim, nearest part center of t) ≤ cone
-look_rate   = stick_rate × (inside ? slowdown / 10000 : 1) × weapon.aim_assist_bp / 10000
-if inside ∧ |stick| ≥ 2000 Bp:
-    camera += tracking / 10000 × (angular velocity of t's nearest part relative to the camera this frame)
+slow        = if inside { 10000 − mul_bp(10000 − slowdown, weapon.aim_assist_bp) } else { 10000 }
+look_rate   = stick_rate × slow / 10000
+θ(t)        = bearing (yaw, pitch in Bam) from the eye to the nearest part center of the closest eligible t, this frame
+ω           = θ(t) − θ_prev(t)                         // wrapped Bam; 0 on the first frame t is tracked
+if inside ∧ |stick| ≥ 2000 Bp ∧ sign(ω.yaw) = sign(stick.x):
+    camera.yaw += mul_bp(ω.yaw, mul_bp(tracking, weapon.aim_assist_bp))   // likewise pitch with stick.y
 ```
 
-The weapon factor `aim_assist_bp` comes from doc 05's archetype record (10000 when absent). Against a human-controlled target (an invader, or Errata seen by an invader), tracking share and snap are 0 and the slowdown is at most the `standard` value. Mouse input never receives aim assist.
+The weapon factor scales how much of the assist applies: at `aim_assist_bp = 10000` the table values apply exactly, at 0 there is none. Tracking only helps a stick already moving the same way as the target, so it never pulls an idle or opposing stick.
+
+`aim_assist_bp` comes from doc 05's archetype record (10000 when absent). Against a human-controlled target (an invader, or Errata seen by an invader), tracking share and snap are 0 and the slowdown is at most the `standard` value. Mouse input never receives aim assist.
 
 ### 12.8 Rebinding
 
@@ -779,7 +953,7 @@ The client turns toggles into held bits each tick, so the simulation always sees
 | crouch | hold | toggle | pressed again; sprint, jump or dodge pressed |
 | sprint | hold | toggle | pressed again; movement input below 2000 Bp for 6 frames; any attack, ADS or cast |
 | walk | hold | not bound | pressed again |
-| alt as ADS | hold | hold | pressed again; sprint; weapon swap |
+| alt as ADS | hold | hold | pressed again; weapon swap; sprint, except that sprint while fully aimed with a weapon whose `ads_sway ≥ 27` holds breath (doc 05 §6.7) and keeps ADS |
 | alt as block | hold | hold | pressed again; dodge |
 | lean | hold | hold | opposite lean; sprint; lean unavailable |
 | heavy charge | hold | hold | pressed again (releases the charge) |
@@ -788,6 +962,7 @@ The client turns toggles into held bits each tick, so the simulation always sees
 | interact holds (revive, open, tame, rest) | hold | hold | pressed again; target lost; the channel completes |
 | glyph layer | hold | hold | pressed again; after 120 frames |
 | push to talk | hold | hold | pressed again |
+| hold breath (`input.hold_breath`) | hold | hold | pressed again; `res.breath` reaches 0 (doc 09 §4.6) |
 
 `access.hold_to_toggle` sets every row to toggle at once. Timed interacts never shorten: a 90-tick Reliquary open still takes 90 ticks; the toggle only removes the need to keep the button down.
 
@@ -803,8 +978,8 @@ Scribe's Mercy copies Hades' God Mode exactly (R3 [VERIFIED]): **20% damage resi
 **Run state** (simulation, per party slot, saved and replayed): `mercy_on: bool`, `mercy_bp: i32`, copied from the account at run start or join.
 
 - **Toggle**: Settings → Accessibility → Scribe's Mercy, also on page 1 of the pause menu (2 inputs, P6). In a run it sends `SetScribesMercy { on }` (Interface assumptions), applied at the start of its tick like any intent. Out of a run it changes the account directly. No confirmation dialog and no warning copy.
-- **Death counting**: when the slot's Erratum reaches Canon §10.8 step 3 (run-ending death, ghosting, or a Prologue death that reloads a checkpoint) on a tick where `mercy_on` is true, `mercy_bp = min(8000, mercy_bp + 200)` for that slot. One increment per Erratum per tick. At run end the account takes the slot's `mercy_bp`.
-- **Damage step 6c** (inserted after Canon §10.5 step 6b, before ward absorption; Canon gaps G3). It applies to every entry point of Canon §10.6, because each passes through steps 4 to 8, and to every other HP loss of the bearer (starvation, overdose, suffocation):
+- **Death counting**: when the slot's Erratum reaches Canon §10.8 step 3 (run-ending death, ghosting, or a Prologue death that reloads a checkpoint), or is the Erratum an invader reduced to 0 HP in a Redaction (Canon §17.9), on a tick where `mercy_on` is true, `mercy_bp = min(8000, mercy_bp + 200)` for that slot. One increment per Erratum per tick. Downing and a successful Death's Door are not deaths. At run end the account takes the slot's `mercy_bp`.
+- **Damage step 6c** (inserted after Canon §10.5 step 6b, before ward absorption; Canon gaps G3). It applies to every entry point of Canon §10.6, because each passes through steps 4 to 8, and to every other involuntary HP loss of the bearer: starvation's 1% per 5 s is reduced by the same `mul_bp` before it is subtracted, and overdose and suffocation already enter the pipeline. Voluntary HP costs the bearer chooses to pay (doc 06 self-costs, `mfr.gothic_horror.grimhallow`'s reload cost) are never reduced, as in Hades, where God Mode reduces damage taken and nothing else:
 
 ```rust
 // step 6c: Scribe's Mercy. Target is an Erratum whose slot has mercy_on.
@@ -832,19 +1007,20 @@ Worked examples: a 10,000 mHP hit at 2000 Bp leaves 8,000. After 3 deaths (2600 
 | `access.speaker_names` | on, off | on (name in the speaker's party or faction color plus the name text) |
 | `access.caption_direction` | on, off | on |
 
-- At most 2 lines per block, 42 characters per line for Latin and Cyrillic scripts, 21 for CJK; at most 3 blocks on screen, newest at the bottom.
-- Display time: `max(audio_ms + 500, 67 × characters, 1500)` ms, capped at 9000; a longer line splits into consecutive blocks.
+- The box is 592 × 100 reference px (inner 560 × 96 after padding) at every subtitle size `k = access.subtitle_size_bp / 10000`; text is `round(20 × k)` px with a line height of `24 × k`. A line holds at most `floor(42 / k)` characters for Latin, Cyrillic and Greek scripts and `floor(21 / k)` for CJK, and never wider than 560 px measured; lines break greedily at Unicode line-break opportunities (UAX #14).
+- A block is at most 2 lines. Lines visible at once are `floor(96 / (24 × k))` (4, 3, 2, 2, 2 at `k` = 1.0, 1.25, 1.5, 1.75, 2.0), so 2 blocks show at `k = 1.0` and 1 block at every larger size; the newest is at the bottom.
+- Display time per block: `max(audio_share + 500, ms_per_char × chars, 1500)` ms, capped at 9000, where `chars` counts the block's characters without line breaks, `ms_per_char` is 67 (Latin, Cyrillic, Greek) or 111 (CJK), and `audio_share = floor_div(audio_ms × chars, total_chars)` splits a line's audio across its blocks in proportion to their length.
 - **Sound captions** come from doc 18 `aud.*` records that carry a caption key, for example "[Heavy footsteps]" or "[A gun jams]". With `access.caption_direction`, captions of positional sounds append an arrow from the `ev.noise` arrival direction for the local slot: ←, ↖, ↑, ↗, →, ↘, ↓, ↙ by 8192-Bam sectors relative to the camera yaw, or "(behind)".
 - Captions use only what the local player can hear: noises with a `heard` entry for the local slot (doc 03).
 
 ### 13.3 Color-blind support
 
-`access.colorblind_mode`: `none`, `deuteranopia`, `protanopia`, `tritanopia`, `monochrome`. Modes swap the semantic and rarity tokens (§2.2); damage types keep their colors and always carry glyphs. `access.world_filter` (off by default) adds a matching daltonization LUT after the genre grade (doc 02 §8.6 post stack); it never changes the simulation. Pings, markers and nameplates always carry shapes (§2.5), so every signal survives `monochrome`.
+`access.colorblind_mode`: `none`, `deuteranopia`, `protanopia`, `tritanopia`, `monochrome`. Modes swap the semantic and rarity tokens (§2.2); damage types keep their colors and always carry glyphs. `access.world_filter` (off by default) adds a matching daltonization LUT after the genre grade (doc 02 §8.6 post stack); it never changes the simulation. Pings, markers and nameplates always carry shapes (§2.5), and doc 05 §18's hit markers carry shapes too: normal a plain cross, precision a cross with a center dot, crit a cross with four outward ticks, ward a hexagon, blocked a shield, high armor reduction a dented cross, kill a thick cross. Every signal therefore survives `monochrome`.
 
 ### 13.4 Text, contrast and fonts
 
-- `access.ui_scale_bp` 7500..=20000 step 500 (menus reflow; HUD uses `access.hud_scale_bp` 7500..=12500 with §3.4 overflow).
-- `access.text_scale_bp` 10000..=20000 step 1000; the §2.4 minimums always hold.
+- `access.ui_scale_bp` 7500..=20000 step 500 (menus reflow; the HUD uses `access.hud_scale_bp` 7500..=10000 step 500, or `access.hud_layout = large` for 125%, §3.1).
+- `access.text_scale_bp` 10000..=20000 step 1000 applies to menus, item cards, tooltips and the Journal; the HUD follows `access.hud_scale_bp` and `access.hud_layout`, subtitles follow `access.subtitle_size_bp`; the §2.4 minimums always hold.
 - `access.font`: standard, legible, dyslexic (§2.4).
 - `access.high_contrast`: backplates opaque, 2 px outlines in `ink` around every HUD element, every text pair ≥ 7:1 (light skins already exceed 7:1 for `ink`; `accent` and `muted` text switch to `ink`).
 - `access.consistent_skin`: every screen uses `ui.skin.margin` (§2.1).
@@ -857,10 +1033,11 @@ Worked examples: a 10,000 mHP hit at 2000 Bp leaves 8,000. After 3 deaths (2600 
 | `access.viewmodel_fov_deg` | 45..=75 vertical | 54 (doc 02 §8.4) |
 | `access.camera_shake_bp` | 0..=10000 | 10000; scales doc 05 §18 camera kick and explosion shake |
 | `access.head_bob_bp` | 0..=10000 | 5000 |
-| `access.reduce_motion` | on, off | off: replaces the page-turn transition (doc 02 §8.8) with a 90-tick crossfade, sets lean roll to 0°, stops UI parallax and idle animations, turns off chromatic aberration, scanlines, film grain, vignette and Dutch angles (doc 02 §8.6) |
+| `access.reduce_motion` | on, off | off: the comfort preset of docs 02 and 18. It replaces the page-turn transition (doc 02 §8.8) with a 90-tick crossfade, sets lean roll to 0°, stops UI parallax and idle animations, turns off chromatic aberration, scanlines, film grain, vignette and Dutch angles (doc 02 §8.6), and forces doc 18's `anim_step` to 1 for every entity (doc 18 §3.3) |
 | `access.center_dot` | on, off | off; a 4 px dot always at the screen center, including in menus over the world view (motion-sickness aid) |
 | `access.third_person_distance_mm` | 1500..=4000 | 2500 |
 | `access.hitstop` | on, off | on; off removes doc 05 hitstop visuals only |
+| `access.gore` | `full`, `ink`, `minimal` | `full`; doc 18 §5.4 gore modes (blood decals, ink-colored blood, or no decals) |
 
 ### 13.6 Screen reader for menus
 
@@ -880,20 +1057,25 @@ width   = 4096 Bam
 thick   = clamp(floor_div(heard_db - 20, 4), 2, 12)  // px
 life    = 45 frames, fading linearly
 color   = hostile for noises whose emitter is hostile, ally for allies and minions, neutral otherwise
-glyph   = the doc 09 noise category glyph (footstep, voice, weapon, impact, magic, environment, alarm)
+glyph   = class of the noise ID's second segment (doc 09 §7):
+          footstep ← step, move, surface, mount;  voice ← voice;  weapon ← shot, melee, weapon, takedown;
+          impact ← impact, explosion, block, body, trap;  magic ← spell;  alarm ← alarm;
+          environment ← every other segment (env, door, lock, item, hide, node, light, hack, gadget, …)
 ```
 
-Noises below 20 dB heard draw nothing. The ring shows only sounds the player can hear, so it never reveals more than audio does.
+Noises below 20 dB heard draw nothing. The ring shows only sounds the player can hear, so it never reveals more than audio does. Example: a footstep heard at 33 dB draws an arc `clamp(floor_div(13, 4), 2, 12) = 3` px thick; a gunshot heard at 95 dB draws 12 px.
+
+`access.sound_ripples` (off by default) adds doc 18 §4.6's world-space ripples: each heard `ev.noise` draws a ring at its apparent position (doc 02 §9) of radius `min(3000, 50 × L_lis)` mm for 30 ticks.
 
 ### 13.8 Photosensitivity
 
 - A startup notice on first launch and in Settings describes flashing content.
-- `access.photosensitive` (off by default) applies: no full-screen flashes (ward break, crits, Shock of the New and lightning use edge glyphs instead); muzzle-flash and explosion light intensity × 5000 Bp; and a **flash limiter** on the final image: a flash is a change of mean relative luminance of at least 1000 Bp of full scale over at least 2500 Bp of the screen area; after 3 flashes within any 60 frames, further luminance changes in that window are clamped to 500 Bp per frame (ITU-R BT.1702 thresholds [RECALLED]).
+- `access.photosensitive` (off by default) applies: no full-screen flashes (ward break, crits, Shock of the New and lightning use edge glyphs instead); muzzle-flash and explosion light intensity × 5000 Bp; and a **flash limiter** on the final image: a flash is a pair of opposing changes of mean relative luminance, each at least 1000 Bp of full scale, over at least 2500 Bp of the screen area; after 3 flashes within any 1000 ms window, further luminance change in that window is limited to 500 Bp per 16.67 ms of frame time, scaled by the frame's duration (ITU-R BT.1702 thresholds [RECALLED]). The mode also acts as doc 18's flicker-off setting: nothing on screen alternates faster than 3 Hz, so a Disconnected item shows the static torn-page icon instead of doc 18 §4.1's 4 Hz flicker.
 - Red saturation flashes (danger vignettes) are replaced by a static border under this mode.
 
 ### 13.9 Solo game speed (`access.game_speed_bp`)
 
-Range 5000..=10000 step 1000, default 10000, solo only (co-op lobbies lock it to 10000). It changes only the wall-clock rate at which the solo host steps ticks: `ticks per real second = 60 × game_speed_bp / 10000` (30, 36, 42, 48, 54, 60). The simulation, its tick counts, replays and saves are unchanged (Canon §2.1; Canon gaps G14). Audio pitch stays constant (music and effects time-stretch). Achievements and rewards are unaffected; a run in which the speed was below 10000 on any tick is unranked, stated in its summary.
+Range 5000..=10000 step 1000, default 10000, solo only (co-op lobbies lock it to 10000). It changes only the wall-clock rate at which the solo host steps ticks: `ticks per real second = 60 × game_speed_bp / 10000` (30, 36, 42, 48, 54, 60). The simulation, its tick counts, replays and saves are unchanged (Canon §2.1; Canon gaps G14). Music plays at its normal tempo and pitch; one-shot effects play at normal pitch and speed when their events occur; looping sounds tied to simulation state keep their pitch. Achievements and rewards are unaffected, and nothing is gained by slowing down: Ink and Codex XP count active simulation ticks (doc 15 §2.2), so a slower speed pays the same per tick and less per real hour. A run in which the speed was below 10000 on any tick is unranked, as its summary states (§9.7).
 
 ### 13.10 Assist options
 
@@ -912,26 +1094,35 @@ Range 5000..=10000 step 1000, default 10000, solo only (co-op lobbies lock it to
 | `access.stealth_meter_always` | §10.10 | off |
 | `access.damage_numbers` | off, own hits, all | own hits |
 | `access.damage_numbers_mono` | damage numbers in `ink` with type glyphs | off |
-| `access.tv_safe_area`, `access.hud_preset`, `access.hud_opacity_bp`, `access.hud_backplate_bp` | §3 | off, full, 10000, 6000 |
+| `access.tv_safe_area`, `access.hud_preset`, `access.hud_scale_bp`, `access.hud_opacity_bp`, `access.hud_backplate_bp` | §3 | off, full, 10000, 10000, 6000 |
 | `access.mono_audio` | downmix to mono | off |
+| `access.sound_ripples` | §13.7 world-space ripples | off |
+| `access.hud_layout` | `standard`, `large` (§3.1, §3.4) | standard |
+| `access.lock_mode` | `auto`, `manual` (§10.11) | auto |
 | `access.dynamic_range` | wide, normal, night (compressed) | normal |
 
 Settings records (content, integers only):
 
 ```json
-{ "id": "access.game_speed_bp", "type": "int", "min": 5000, "max": 10000, "step": 1000, "default": 10000,
-  "scope": "solo_only", "affects": "wall_clock", "ranked_eligible_values": [10000] }
+[
+  { "id": "access.game_speed_bp", "type": "int", "min": 5000, "max": 10000, "step": 1000, "default": 10000,
+    "scope": "solo_only", "affects": "wall_clock", "ranked_eligible_values": [10000] },
+  { "id": "access.hud_scale_bp", "type": "int", "min": 7500, "max": 10000, "step": 500, "default": 10000,
+    "scope": "client", "affects": "presentation" },
+  { "id": "access.scribes_mercy", "type": "bool", "default": 0, "scope": "account_and_run", "affects": "simulation_step_6c",
+    "ranked_eligible_values": [0] }
+]
 ```
 
 ---
 
 ## 14. Localization
 
-- **Launch locales** (Canon gaps G7): en-US, fr-FR, de-DE, es-ES, es-419, pt-BR, it-IT, pl-PL, ru-RU, uk-UA, tr-TR, ja-JP, ko-KR, zh-Hans, zh-Hant. Right-to-left scripts are not in the launch set; the anchor system mirrors horizontally (TL ↔ TR, left ↔ right offsets) when a right-to-left locale is added.
+- **Launch locales** are doc 18 §9.11's 12, which doc 02 §10 makes doc 18's decision (Canon gaps G7): en-US (source), fr-FR, de-DE, es-ES, es-419, pt-BR, it-IT, pl-PL, ja-JP, ko-KR, zh-Hans, zh-Hant. The UI also supports Cyrillic and Turkish text from day one (fonts, wrapping and the `en-XA` length test), so ru-RU, uk-UA and tr-TR need only translations. Right-to-left scripts are not in the launch set; when one is added, the anchor system mirrors horizontally (TL ↔ TR, ML ↔ MR, BL ↔ BR, and every x offset negated).
 - **Keys**: every string is a Canon §1.10 text key in Fluent files (doc 02 §10). No text is baked into textures; genre title art carries no words. Pluralization and gender use Fluent selectors, never string concatenation.
 - **Lengths**: every widget fits the pseudo-locale `en-XA` (+30%); German and Russian strings over the widget width wrap to a second line, then shrink to at most 85% size, then ellipsize with the full text in the tooltip. Item names wrap at 2 lines.
 - **Numbers**: Canon §1.5 display rules with the locale's grouping and decimal separator; percentages per locale (`11,8 %` in fr-FR); dates in ISO 8601 in logs and locale long form on screen.
-- **Fonts**: §2.4. CJK line breaking follows Unicode UAX #14; CJK never uses italics or faux bold; Japanese ruby is supported in Lore pages.
+- **Fonts**: §2.4. Line breaking follows Unicode UAX #14 in every script; CJK never uses italics or faux bold; Japanese ruby is supported in Lore pages. A missing glyph falls back to Noto Sans, then Noto Sans CJK for the locale; a glyph missing from every shipped font fails the CI font-coverage check for that locale's strings.
 - **Genre skins**: genre-skinned names resolve in the Canon §1.10 order in every locale; a locale missing a skin string falls back to the archetype name in that locale, then to en-US.
 
 ## 15. Onboarding and tooltips

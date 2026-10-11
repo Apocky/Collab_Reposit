@@ -64,7 +64,10 @@ impl fmt::Display for RegistryError {
                 existing,
                 incoming,
             } if existing == incoming => {
-                write!(f, "{ID32_COLLISION}: `{incoming}` ({id32}) is already registered")
+                write!(
+                    f,
+                    "{ID32_COLLISION}: `{incoming}` ({id32}) is already registered"
+                )
             }
             Self::Id32Collision {
                 id32,
@@ -343,10 +346,15 @@ mod tests {
     #[test]
     fn alias_maps_to_new_id32() {
         let mut reg = IdRegistry::new();
-        let new = reg.insert_content(cid("arch.melee.blade_long")).expect("free");
+        let new = reg
+            .insert_content(cid("arch.melee.blade_long"))
+            .expect("free");
         let old = cid("arch.melee.longsword");
         let old_raw = old.id32();
-        assert_eq!(reg.insert_alias(old, &cid("arch.melee.blade_long")), Ok(new));
+        assert_eq!(
+            reg.insert_alias(old, &cid("arch.melee.blade_long")),
+            Ok(new)
+        );
         assert_eq!(reg.id_of("arch.melee.longsword"), Some(new));
         assert_eq!(reg.canonical(old_raw), Some(new));
         assert_eq!(reg.content_id(old_raw), Some(&cid("arch.melee.blade_long")));
@@ -375,7 +383,8 @@ mod tests {
             }
         );
         let (a1, a2, _) = COLLISION_PAIRS[2];
-        reg.insert_alias(cid(a1), &cid("item.target")).expect("free");
+        reg.insert_alias(cid(a1), &cid("item.target"))
+            .expect("free");
         let err = reg
             .insert_alias(cid(a2), &cid("item.target"))
             .expect_err("alias vs alias");
@@ -396,8 +405,11 @@ mod tests {
     fn alias_target_must_be_content() {
         let mut reg = IdRegistry::new();
         reg.insert_content(cid("item.c")).expect("free");
-        reg.insert_alias(cid("item.b"), &cid("item.c")).expect("free");
-        let err = reg.insert_alias(cid("item.a"), &cid("item.b")).expect_err("chain");
+        reg.insert_alias(cid("item.b"), &cid("item.c"))
+            .expect("free");
+        let err = reg
+            .insert_alias(cid("item.a"), &cid("item.b"))
+            .expect_err("chain");
         assert_eq!(err.code(), ALIAS_TARGET_UNKNOWN);
         let err = reg
             .insert_alias(cid("item.z"), &cid("item.missing"))
@@ -412,7 +424,9 @@ mod tests {
         // The target lookup compares strings, not just id32s.
         let (x, y, _) = COLLISION_PAIRS[3];
         reg.insert_content(cid(x)).expect("free");
-        let err = reg.insert_alias(cid("item.w"), &cid(y)).expect_err("hash twin");
+        let err = reg
+            .insert_alias(cid("item.w"), &cid(y))
+            .expect_err("hash twin");
         assert_eq!(err.code(), ALIAS_TARGET_UNKNOWN);
     }
 

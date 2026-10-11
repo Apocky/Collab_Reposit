@@ -45,10 +45,26 @@ pub(crate) fn first_brute_force_collision() -> (String, String, u32) {
 /// `fnv1a32`, the first four found by the search above (computed
 /// independently with a Python script and re-checked by a test).
 pub(crate) const COLLISION_PAIRS: [(&str, &str, u32); 4] = [
-    ("item.c93fb1c3b7c754cf3", "item.cd16e77dd95ebbaed", 0x1dc7_edb8),
-    ("item.c0640759fbcdbd638", "item.cdc57e8cb2128c8ca", 0x5d0c_a0c8),
-    ("item.c8a651be5c267ee9e", "item.ca63bf2042bd07c1d", 0xc8ee_4dcc),
-    ("item.c2cda799b408e5506", "item.c56ceaf992bc17b30", 0x82a7_fae9),
+    (
+        "item.c93fb1c3b7c754cf3",
+        "item.cd16e77dd95ebbaed",
+        0x1dc7_edb8,
+    ),
+    (
+        "item.c0640759fbcdbd638",
+        "item.cdc57e8cb2128c8ca",
+        0x5d0c_a0c8,
+    ),
+    (
+        "item.c8a651be5c267ee9e",
+        "item.ca63bf2042bd07c1d",
+        0xc8ee_4dcc,
+    ),
+    (
+        "item.c2cda799b408e5506",
+        "item.c56ceaf992bc17b30",
+        0x82a7_fae9,
+    ),
 ];
 
 #[cfg(test)]

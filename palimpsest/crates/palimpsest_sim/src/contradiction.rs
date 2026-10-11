@@ -727,3 +727,413 @@ pub const fn verve_deaths_door_term_bp(vrv: u8) -> i32 {
     10_000 + (vrv as i32 - 5) * 1000
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use palimpsest_math::Rng;
+    use proptest::prelude::*;
+
+    fn smart_pistol() -> Component {
+        Component::new(DepSet::single(Axiom::Techne), Genre::Cyberpunk)
+    }
+
+    /// SPEC: canon §21 test 14 (the §5.6 worked example): a Cyberpunk smart
+    /// pistol in Fairy Tale, Cyberpunk Origin, ATN 60: C = 4, potency 6000,
+    /// failure 1000, `edge_bp` 2400; damage factor against a native is 0.744.
+    #[test]
+    fn canon_t14_contradiction_example() {
+        let pistol = smart_pistol();
+        assert_eq!(requirement(pistol.dep, pistol.origin), [0, 7, 0, 0]);
+        let tol = TolInputs::erratum(Genre::Cyberpunk, 60, [0; 4], [0; 4]);
+        assert_eq!(tol.attune, 0);
+        assert_eq!(tol.total([0; 4])[Axiom::Techne.index()], 2);
+        let local = LocalGenre::Plain(Genre::FairyTale);
+        let k = evaluate_for(&pistol, local, &tol, &[]);
+        assert_eq!(k.raw_gap[Axiom::Techne.index()], 6);
+        assert_eq!(k.gap[Axiom::Techne.index()], 4);
+        assert_eq!(k.c, 4);
+        assert_eq!(k.basis, ContradictionBasis::Formula);
+        let row = k.row(false);
+        assert_eq!(row.state, ContradictionState::Contradicted);
+        assert_eq!(row.potency_bp, 6000);
+        assert_eq!(row.failure_bp, 1000);
+        assert_eq!(k.e, 6);
+        assert_eq!(k.edge_bp(), 2400);
+        // A native wolf: 0.60 × 1.24 = 0.744.
+        assert!(local.is_native(Genre::FairyTale));
+        let factor = mul_bp(mul_bp(10_000, row.potency_bp), edge_multiplier_bp(k.e, true));
+        assert_eq!(factor, 7440);
+        assert!(shock_of_the_new(k.e, true, false, true));
+    }
+
+    /// SPEC: canon §21 test 15: a Fairy Tale wand (`dep = {arcana}`, `Req = 8`)
+    /// in Hardboiled Noir, Fairy Tale Origin, ATN 40: `raw_gap = 8`,
+    /// `Tol = 2`, `C = 6`, Disconnected.
+    #[test]
+    fn canon_t15_disconnection() {
+        let dep = default_dep(ComponentKind::Casting, Genre::FairyTale);
+        assert_eq!(dep, DepSet::single(Axiom::Arcana));
+        let wand = Component::new(dep, Genre::FairyTale);
+        assert_eq!(requirement(dep, Genre::FairyTale)[0], 8);
+        let tol = TolInputs::erratum(Genre::FairyTale, 40, [0; 4], [0; 4]);
+        assert_eq!(tol.total([0; 4])[0], 2);
+        let k = evaluate_for(&wand, LocalGenre::Plain(Genre::HardboiledNoir), &tol, &[]);
+        assert_eq!(k.raw_gap[0], 8);
+        assert_eq!(k.c, 6);
+        assert_eq!(k.e, 0);
+        let row = k.row(false);
+        assert_eq!(row.state, ContradictionState::Disconnected);
+        assert_eq!(row.potency_bp, 0);
+        assert_eq!(apply_potency(5000, row.potency_bp), 0);
+    }
+
+    /// SPEC: canon §21 test 36: a glyph generated in Cyberpunk has
+    /// `dep = {techne}`, `Req[techne] = 7`; in Mythic Fantasy `dep = {arcana}`,
+    /// `Req[arcana] = 6`.
+    #[test]
+    fn canon_t36_glyph_dependency() {
+        let cp = default_dep(ComponentKind::Casting, Genre::Cyberpunk);
+        assert_eq!(cp, DepSet::single(Axiom::Techne));
+        assert_eq!(requirement(cp, Genre::Cyberpunk), [0, 7, 0, 0]);
+        let mf = default_dep(ComponentKind::Casting, Genre::MythicFantasy);
+        assert_eq!(mf, DepSet::single(Axiom::Arcana));
+        assert_eq!(requirement(mf, Genre::MythicFantasy), [6, 0, 0, 0]);
+        // aether_axiom none falls back to arcana; Wuxia casts on VERVE.
+        assert_eq!(default_dep(ComponentKind::Casting, Genre::UrText), DepSet::single(Axiom::Arcana));
+        assert_eq!(default_dep(ComponentKind::Casting, Genre::Wuxia), DepSet::single(Axiom::Verve));
+    }
+
+    /// SPEC: canon §5.3 default dependency table.
+    #[test]
+    fn default_dep_table() {
+        let g = Genre::Steampunk;
+        assert!(default_dep(ComponentKind::Mundane, g).is_empty());
+        assert!(default_dep(ComponentKind::MundaneAlchemy, g).is_empty());
+        assert!(default_dep(ComponentKind::KinOrBeast, g).is_empty());
+        assert_eq!(default_dep(ComponentKind::Tech, g).only(), Some(Axiom::Techne));
+        assert_eq!(default_dep(ComponentKind::Enchantment, g).only(), Some(Axiom::Arcana));
+        assert_eq!(default_dep(ComponentKind::Sacred, g).only(), Some(Axiom::Mythos));
+        assert_eq!(default_dep(ComponentKind::Cinematic, g).only(), Some(Axiom::Verve));
+        let glyph = DepSet::single(Axiom::Mythos);
+        assert_eq!(default_dep(ComponentKind::Summon { glyph_dep: glyph }, g), glyph);
+        let mounts = [
+            (MountSkin::Vehicle, Axiom::Techne),
+            (MountSkin::BroomOrCarpet, Axiom::Arcana),
+            (MountSkin::DivineSteed, Axiom::Mythos),
+            (MountSkin::Cloud, Axiom::Verve),
+        ];
+        for (skin, axis) in mounts {
+            assert_eq!(default_dep(ComponentKind::Mount(skin), g).only(), Some(axis));
+        }
+    }
+
+    /// SPEC: canon §5.3 requirement floor of 1 and the worldgen roll rule.
+    #[test]
+    fn requirement_floor_and_rollable() {
+        let tech = DepSet::single(Axiom::Techne);
+        assert_eq!(requirement(tech, Genre::FairyTale), [0, 1, 0, 0]); // max(1, 1 - 2)
+        assert_eq!(requirement(tech, Genre::SpaceOpera), [0, 8, 0, 0]);
+        assert_eq!(requirement(DepSet::NONE, Genre::SpaceOpera), [0; 4]);
+        let both = DepSet::single(Axiom::Arcana).with(Axiom::Techne);
+        assert_eq!(requirement(both, Genre::Oneiric), [7, 3, 0, 0]);
+        assert!(!component_rollable(DepSet::single(Axiom::Arcana), Genre::HardboiledNoir));
+        assert!(component_rollable(DepSet::single(Axiom::Techne), Genre::HardboiledNoir));
+        assert!(component_rollable(DepSet::NONE, Genre::Unwritten));
+        assert!(!component_rollable(DepSet::single(Axiom::Verve), Genre::Redacted));
+    }
+
+    /// SPEC: canon §5.4 `attune_tol = clamp(floor_div(ATN - 40, 30), 0, 3)`.
+    #[test]
+    fn attune_tol_values() {
+        assert_eq!(attune_tol(1), 0);
+        assert_eq!(attune_tol(40), 0);
+        assert_eq!(attune_tol(60), 0);
+        assert_eq!(attune_tol(69), 0);
+        assert_eq!(attune_tol(70), 1);
+        assert_eq!(attune_tol(100), 2);
+        assert_eq!(attune_tol(130), 3);
+        assert_eq!(attune_tol(150), 3);
+    }
+
+    /// SPEC: canon §5.4 sum and cap of 6; §5.10 grants count before the cap.
+    #[test]
+    fn tolerance_cap() {
+        let t = TolInputs { origin: [2, 0, 1, 1], attune: 3, gear: [1, 0, 0, 0], talent: [1, 0, 0, 0] };
+        assert_eq!(t.total([0; 4]), [6, 3, 4, 4]);
+        assert_eq!(t.total([0, 2, 0, 9]), [6, 5, 4, 6]);
+        let npc = TolInputs::npc(Genre::Cyberpunk);
+        assert_eq!(npc.total([0; 4]), [0, 2, 0, 2]);
+    }
+
+    /// SPEC: canon §5.5 table and the §5.11 Unmoored rule.
+    #[test]
+    fn potency_failure_table() {
+        let expect = [(10_000, 0), (9000, 0), (8000, 0), (7000, 500), (6000, 1000), (5000, 1500), (0, 0), (0, 0)];
+        for (c, (p, f)) in expect.into_iter().enumerate() {
+            let row = contradiction_row(c as u8, false);
+            assert_eq!((row.potency_bp, row.failure_bp), (p, f), "C = {c}");
+        }
+        assert_eq!(contradiction_row(1, false).state, ContradictionState::Strained);
+        assert_eq!(contradiction_row(6, false).state, ContradictionState::Disconnected);
+        assert_eq!(contradiction_row(9, false).state, ContradictionState::Disconnected);
+        // Unmoored: Strained uses the C = 3 row; others unchanged.
+        assert_eq!(contradiction_row(1, true), contradiction_row(3, false));
+        assert_eq!(contradiction_row(2, true), contradiction_row(3, false));
+        assert_eq!(contradiction_row(0, true), contradiction_row(0, false));
+        assert_eq!(contradiction_row(4, true), contradiction_row(4, false));
+    }
+
+    /// SPEC: canon §5.5 overrides: Ur-Text, Unwritten innate, Palimpsestic.
+    #[test]
+    fn overrides() {
+        let tol = TolInputs::default();
+        let pistol = smart_pistol();
+        let k = evaluate_for(&pistol, LocalGenre::Plain(Genre::UrText), &tol, &[]);
+        assert_eq!((k.c, k.e, k.basis), (0, 0, ContradictionBasis::UrText));
+        // Unwritten: only innate abilities are exempt.
+        let k = evaluate_for(&pistol, LocalGenre::Plain(Genre::Unwritten), &tol, &[]);
+        assert_eq!((k.c, k.e), (7, 0));
+        let innate = Component { innate: true, ..pistol };
+        let k = evaluate_for(&innate, LocalGenre::Plain(Genre::Unwritten), &tol, &[]);
+        assert_eq!((k.c, k.e, k.basis), (0, 0, ContradictionBasis::UnwrittenInnate));
+        // Palimpsestic: C = 0 everywhere and never Edge.
+        let pal = Component { palimpsestic: true, ..pistol };
+        for g in Genre::ALL {
+            let k = evaluate_for(&pal, LocalGenre::Plain(g), &tol, &[]);
+            assert_eq!((k.c, k.e), (0, 0));
+        }
+    }
+
+    /// SPEC: canon §5.10 `law_bound`: Disconnected where the Law is inactive,
+    /// whatever the axioms say; active in its genre and in seams including it.
+    #[test]
+    fn law_bound_components() {
+        let qinggong = LawRef { id: LawId::from_id("law.wuxia.qinggong"), genre: Genre::Wuxia };
+        let tech = Component {
+            law_bound: Some(qinggong),
+            ..Component::new(DepSet::single(Axiom::Verve), Genre::Wuxia)
+        };
+        let full = TolInputs { attune: 6, ..TolInputs::default() };
+        let k = evaluate_for(&tech, LocalGenre::Plain(Genre::MythicAntiquity), &full, &[]);
+        assert_eq!((k.c, k.e, k.basis), (6, 0, ContradictionBasis::LawInactive));
+        let k = evaluate_for(&tech, LocalGenre::Plain(Genre::Wuxia), &full, &[]);
+        assert_eq!((k.c, k.basis), (0, ContradictionBasis::Formula));
+        let seam = LocalGenre::Seam { folio: Genre::Steampunk, other: Genre::Wuxia };
+        assert_eq!(evaluate_for(&tech, seam, &full, &[]).c, 0);
+        assert_eq!(law_genre_from_id("law.wuxia.qinggong"), Some(Genre::Wuxia));
+        assert_eq!(law_genre_from_id("law.hardboiled_noir.void_rules"), Some(Genre::HardboiledNoir));
+        assert_eq!(law_genre_from_id("law.nowhere.x"), None);
+        assert_eq!(law_genre_from_id("law.wuxia"), None);
+        for id in REQUIRED_LAWS {
+            assert!(law_genre_from_id(id).is_some(), "{id}");
+        }
+    }
+
+    /// SPEC: canon §5.10 `law_grants`: Steampunk's weird science grants +2
+    /// TECHNE tolerance to gadgets, before the cap, only where active.
+    #[test]
+    fn law_grants() {
+        let laws = [LAW_STEAMPUNK_WEIRD_SCIENCE];
+        let gadget = ComponentClass::from_name("gadget");
+        let rifle = ComponentClass::from_name("firearm");
+        let sp = LocalGenre::Plain(Genre::Steampunk);
+        assert_eq!(law_tol_bonus(&laws, sp, gadget), [0, 2, 0, 0]);
+        assert_eq!(law_tol_bonus(&laws, sp, rifle), [0; 4]);
+        assert_eq!(law_tol_bonus(&laws, LocalGenre::Plain(Genre::Wuxia), gadget), [0; 4]);
+        let seam = LocalGenre::Seam { folio: Genre::Wuxia, other: Genre::Steampunk };
+        assert_eq!(law_tol_bonus(&laws, seam, gadget), [0, 2, 0, 0]);
+        // A Space Opera gadget (Req[techne] = 8) in Steampunk (TEC 7) with a
+        // Fairy Tale Origin (techne tolerance 0): raw_gap 1; the grant clears it.
+        let mut drone = Component::new(DepSet::single(Axiom::Techne), Genre::SpaceOpera);
+        let tol = TolInputs::erratum(Genre::FairyTale, 40, [0; 4], [0; 4]);
+        assert_eq!(evaluate_for(&drone, sp, &tol, &laws).c, 1);
+        drone.class = Some(gadget);
+        let k = evaluate_for(&drone, sp, &tol, &laws);
+        assert_eq!((k.c, k.e), (0, 1));
+    }
+
+    /// SPEC: canon §5.8 seam zones: per-axis maximum, both genres native,
+    /// Folio genre supplies skins.
+    #[test]
+    fn seam_zones() {
+        let seam = LocalGenre::Seam { folio: Genre::Cyberpunk, other: Genre::FairyTale };
+        assert_eq!(seam.axioms(), Axioms([10, 9, 8, 5]));
+        assert!(seam.is_native(Genre::Cyberpunk) && seam.is_native(Genre::FairyTale));
+        assert!(!seam.is_native(Genre::Wuxia));
+        assert_eq!(seam.skin_genre(), Genre::Cyberpunk);
+        // Both toolsets work at full strength: the pistol is Coherent.
+        let tol = TolInputs::default();
+        let k = evaluate_for(&smart_pistol(), seam, &tol, &[]);
+        assert_eq!((k.c, k.e), (0, 0));
+        assert!(!LocalGenre::Plain(Genre::FairyTale).is_native(Genre::Cyberpunk));
+    }
+
+    /// SPEC: canon §5.8 `vrv(e)`.
+    #[test]
+    fn personal_verve() {
+        assert_eq!(vrv(LocalGenre::Plain(Genre::Cyberpunk), false), 5);
+        assert_eq!(vrv(LocalGenre::Plain(Genre::Cyberpunk), true), 7);
+        assert_eq!(vrv(LocalGenre::Plain(Genre::Wuxia), true), 10);
+        assert_eq!(vrv(LocalGenre::Plain(Genre::Oneiric), true), 10);
+        assert_eq!(vrv(LocalGenre::Plain(Genre::Redacted), true), 2);
+    }
+
+    /// SPEC: canon §5.6 Edge, multiplier and Shock of the New conditions.
+    #[test]
+    fn anachronism_edge() {
+        assert_eq!(edge_bp(0), 0);
+        assert_eq!(edge_bp(6), 2400);
+        assert_eq!(edge_multiplier_bp(6, true), 12_400);
+        assert_eq!(edge_multiplier_bp(6, false), 10_000);
+        assert!(shock_of_the_new(3, true, false, true));
+        assert!(!shock_of_the_new(2, true, false, true));
+        assert!(!shock_of_the_new(6, false, false, true));
+        assert!(!shock_of_the_new(6, true, true, true));
+        assert!(!shock_of_the_new(6, true, false, false));
+        // Edge is capped at 6 even when raw_gap is 8.
+        let wand = Component::new(DepSet::single(Axiom::Arcana), Genre::FairyTale);
+        let tol = TolInputs { attune: 3, origin: [2, 0, 0, 0], ..TolInputs::default() };
+        let k = evaluate_for(&wand, LocalGenre::Plain(Genre::HardboiledNoir), &tol, &[]);
+        assert_eq!((k.c, k.e), (3, 6));
+    }
+
+    /// SPEC: canon §5.5: failure draws exactly one value when its chance is
+    /// above 0 and none otherwise.
+    #[test]
+    fn failure_roll_draw_count() {
+        let mut a = Rng::from_seed64(9);
+        let before = a.clone();
+        assert!(!roll_failure(&mut a, &contradiction_row(2, false)));
+        assert_eq!(a, before);
+        let _ = roll_failure(&mut a, &contradiction_row(4, false));
+        let mut b = before.clone();
+        let _ = b.range(10_000);
+        assert_eq!(a, b);
+        assert!(!roll_failure(&mut a, &contradiction_row(6, false)));
+        assert_eq!(a, b);
+    }
+
+    /// SPEC: canon §5.5 failure cadence for automatic weapons.
+    #[test]
+    fn failure_cadence() {
+        assert!(failure_roll_due(30, false, 0));
+        assert!(failure_roll_due(45, false, 0));
+        assert!(failure_roll_due(6, true, 0));
+        assert!(!failure_roll_due(6, false, 24));
+        assert!(failure_roll_due(6, false, 30));
+    }
+
+    /// SPEC: canon §5.11 three failures within 600 ticks.
+    #[test]
+    fn unmoored_window() {
+        assert!(unmoored_triggered(&[400, 700, 1000], 1000));
+        assert!(!unmoored_triggered(&[399, 700, 1000], 1000));
+        assert!(!unmoored_triggered(&[900, 1000], 1000));
+        assert!(unmoored_triggered(&[0, 1, 2], 10));
+    }
+
+    /// SPEC: canon §5.7 ambient axiom terms, with §21 test 35's AETHER term
+    /// (Cyberpunk, TEC 9: 14000) and doc 04's composure example (Cosmic
+    /// Horror: a 5-point loss costs 7,500 milli).
+    #[test]
+    fn ambient_terms() {
+        let cp = LocalGenre::Plain(Genre::Cyberpunk);
+        assert_eq!(aether_regen_term_bp(cp), 14_000);
+        assert_eq!(aether_regen_term_bp(LocalGenre::Plain(Genre::UrText)), 10_000);
+        assert_eq!(aether_regen_term_bp(LocalGenre::Plain(Genre::HardboiledNoir)), 7000);
+        assert_eq!(glyph_term_bp(Some(Axiom::Techne), cp), 10_800);
+        assert_eq!(glyph_term_bp(None, cp), 10_000);
+        assert_eq!(techne_recharge_term_bp(LocalGenre::Plain(Genre::FairyTale)), 6000);
+        let ch = LocalGenre::Plain(Genre::CosmicHorror);
+        assert_eq!(mythos_damage_term_bp(ch, true), 11_500);
+        assert_eq!(mythos_damage_term_bp(ch, false), 10_000);
+        assert_eq!(mythos_curse_chance_term_bp(ch), 17_500);
+        assert_eq!(mul_bp(5000, mythos_composure_loss_term_bp(ch)), 7500);
+        assert_eq!(verve_crit_term_bp(0), -500);
+        assert_eq!(verve_deaths_door_term_bp(10), 15_000);
+        assert!(!electronics_allowed(Genre::FairyTale));
+        assert!(!electronics_allowed(Genre::MythicFantasy));
+        assert!(electronics_allowed(Genre::GothicHorror));
+    }
+
+    /// SPEC: canon §5.3 dependency set helpers.
+    #[test]
+    fn depset_helpers() {
+        let d = DepSet::single(Axiom::Mythos).with(Axiom::Arcana);
+        assert_eq!(d.len(), 2);
+        assert_eq!(d.only(), None);
+        assert_eq!(d.axes().collect::<Vec<_>>(), [Axiom::Arcana, Axiom::Mythos]);
+        assert!(d.contains(Axiom::Arcana) && !d.contains(Axiom::Verve));
+        assert_eq!(DepSet::NONE.only(), None);
+        assert!(DepSet::NONE.is_empty());
+    }
+
+    fn arb_genre() -> impl Strategy<Value = Genre> {
+        (0usize..16).prop_map(|i| Genre::ALL[i])
+    }
+
+    fn arb_local() -> impl Strategy<Value = LocalGenre> {
+        (arb_genre(), arb_genre(), any::<bool>()).prop_map(|(a, b, seam)| {
+            if seam { LocalGenre::Seam { folio: a, other: b } } else { LocalGenre::Plain(a) }
+        })
+    }
+
+    proptest! {
+        /// SPEC: canon §5.5 invariants: raising any tolerance never raises C
+        /// or changes E; C = 0 iff every raw_gap is within tolerance; E <= 6;
+        /// potency never rises with C.
+        #[test]
+        fn contradiction_monotone_in_tolerance(
+            bits in 0u8..16, origin in arb_genre(), local in arb_local(),
+            tol in prop::array::uniform4(0u8..=6), axis in 0usize..4,
+        ) {
+            let comp = Component::new(DepSet(bits), origin);
+            let k = evaluate(&comp, local, tol);
+            let mut more = tol;
+            more[axis] = (more[axis] + 1).min(TOL_CAP);
+            let k2 = evaluate(&comp, local, more);
+            prop_assert!(k2.c <= k.c);
+            prop_assert!(k.e <= EDGE_MAX);
+            if k.c <= 5 && k2.c <= 5 { prop_assert_eq!(k.e, k2.e); }
+            if k.basis == ContradictionBasis::Formula {
+                let within = (0..4).all(|i| k.raw_gap[i] <= tol[i]);
+                prop_assert_eq!(k.c == 0, within);
+            }
+            prop_assert!(contradiction_row(k2.c, false).potency_bp >= contradiction_row(k.c, false).potency_bp);
+        }
+
+        /// SPEC: canon §5.5 table: potency never rises and failure never falls
+        /// as C grows from 0 to 5; Unmoored never raises potency.
+        #[test]
+        fn table_monotone(c in 0u8..6, unmoored in any::<bool>()) {
+            let a = contradiction_row(c, unmoored);
+            let b = contradiction_row(c + 1, unmoored);
+            prop_assert!(b.potency_bp <= a.potency_bp);
+            if b.state != ContradictionState::Disconnected {
+                prop_assert!(b.failure_bp >= a.failure_bp);
+            }
+            prop_assert!(contradiction_row(c, true).potency_bp <= contradiction_row(c, false).potency_bp);
+        }
+
+        /// SPEC: canon §5.8: a seam is never worse than either genre alone.
+        #[test]
+        fn seam_never_worse(a in arb_genre(), b in arb_genre(), bits in 0u8..16, origin in arb_genre()) {
+            let comp = Component::new(DepSet(bits), origin);
+            let seam = evaluate(&comp, LocalGenre::Seam { folio: a, other: b }, [0; 4]);
+            let alone = evaluate(&comp, LocalGenre::Plain(a), [0; 4]);
+            prop_assert!(seam.c <= alone.c);
+            prop_assert_eq!(evaluate(&comp, LocalGenre::Plain(a), [0; 4]), alone);
+        }
+
+        /// SPEC: canon §5.4: tolerance is capped at 6 and attune_tol is in 0..=3
+        /// and non-decreasing in ATN.
+        #[test]
+        fn tolerance_ranges(atn in 1i32..=150, g in arb_genre(), gear in prop::array::uniform4(0u8..=6)) {
+            let t = TolInputs::erratum(g, atn, gear, gear);
+            prop_assert!(t.total(gear).iter().all(|&v| v <= TOL_CAP));
+            prop_assert!(attune_tol(atn) <= 3);
+            prop_assert!(attune_tol(atn + 1) >= attune_tol(atn));
+        }
+    }
+}

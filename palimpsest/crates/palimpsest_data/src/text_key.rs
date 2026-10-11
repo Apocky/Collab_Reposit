@@ -199,7 +199,10 @@ mod tests {
             "loc.0",
         ] {
             assert_eq!(validate_text_key(key), Ok(()), "{key}");
-            assert_eq!(TextKey::new(key).map(|k| k.to_string()), Ok(key.to_string()));
+            assert_eq!(
+                TextKey::new(key).map(|k| k.to_string()),
+                Ok(key.to_string())
+            );
         }
         let cases: [(&str, TextKeyError); 7] = [
             ("", TextKeyError::MissingPrefix),
@@ -207,8 +210,20 @@ mod tests {
             ("Loc.x", TextKeyError::MissingPrefix),
             ("genre.cyberpunk", TextKeyError::MissingPrefix),
             ("loc.", TextKeyError::EmptyBody),
-            ("loc.Name", TextKeyError::InvalidByte { index: 4, byte: b'N' }),
-            ("loc.a-b", TextKeyError::InvalidByte { index: 5, byte: b'-' }),
+            (
+                "loc.Name",
+                TextKeyError::InvalidByte {
+                    index: 4,
+                    byte: b'N',
+                },
+            ),
+            (
+                "loc.a-b",
+                TextKeyError::InvalidByte {
+                    index: 5,
+                    byte: b'-',
+                },
+            ),
         ];
         for (key, err) in cases {
             assert_eq!(validate_text_key(key), Err(err), "{key:?}");
@@ -228,8 +243,14 @@ mod tests {
     fn text_key_derivation() {
         let id = ContentId::new("arch.melee.blade_long").expect("valid");
         let wuxia = ContentId::new("genre.wuxia").expect("valid");
-        assert_eq!(TextKey::name(&id).as_str(), "loc.arch.melee.blade_long.name");
-        assert_eq!(TextKey::desc(&id).as_str(), "loc.arch.melee.blade_long.desc");
+        assert_eq!(
+            TextKey::name(&id).as_str(),
+            "loc.arch.melee.blade_long.name"
+        );
+        assert_eq!(
+            TextKey::desc(&id).as_str(),
+            "loc.arch.melee.blade_long.desc"
+        );
         assert_eq!(
             TextKey::flavor(&id).as_str(),
             "loc.arch.melee.blade_long.flavor"

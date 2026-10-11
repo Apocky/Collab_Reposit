@@ -1,8 +1,8 @@
 # 16 — Multiplayer, Netcode and Online Services
 
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.4.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.5.
 
-This chapter defines how 1 to 4 players share one authoritative simulation: the three topologies, transports and NAT traversal, the wire protocol with exact packet layouts, snapshot replication with delta compression, quantization, interest management and priorities, voxel and field replication, client prediction and reconciliation, lag compensation, the co-op rules this chapter owns (`st.downed`, `st.ghost`, revive, trading, host migration, drop-in), replays, daily-score verification, desync diagnostics, and every backend service with its API. Every rule below was checked against canon-1.4, including §4.3 (fixed terrain, placeables) and §17.9 (invasions).
+This chapter defines how 1 to 4 players share one authoritative simulation: the three topologies, transports and NAT traversal, the wire protocol with exact packet layouts, snapshot replication with delta compression, quantization, interest management and priorities, voxel and field replication, client prediction and reconciliation, lag compensation, the co-op rules this chapter owns (`st.downed`, `st.ghost`, revive, trading, host migration, drop-in), replays, daily-score verification, desync diagnostics, and every backend service with its API. Every rule below was checked against canon-1.5, including §1.3 (checked shifts, non-negating `ceil_div`), §2.5 (length-prefixed multi-field hashing), §3.6 (strict seed and date decoding), §4.3 (fixed terrain, placeables) and §17.9 (invasions).
 
 ## Imports
 
@@ -10,10 +10,10 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 |---|---|---|
 | DESIGN_BRIEF | §5, §8 | host-authoritative co-op with prediction, reconciliation and lag-compensated hits; deterministic input logs for replays and daily verification; offline-complete end-of-service mode |
 | DECISIONS | 2026-10-11 rows 6, 15, 16 | PC and Steam Deck first; opt-in PvP invasions where a player invades as an Editor; limited building (only placeables and destructible-tagged blocks change) |
-| Canon | §1.1, §1.3, §1.6 | ID grammar and `id32`; `floor_div`, `ceil_div`, `mul_bp`; integer-only content, `u64` as hex strings |
+| Canon | §1.1, §1.3, §1.6 | ID grammar and `id32`; `floor_div`, non-negating `ceil_div`, checked shifts (`>>` is floor division by `2^k`), `mul_bp`; integer-only content, `u64` as hex strings |
 | Canon | §1.8, §1.9, §1.11 | Folio box 256 × 64 × 256, chunk slot math; `Bam`, pitch clamp ±16000, `ang_diff`; `EntityId` layout, ascending-ID iteration |
 | Canon | §2.1–§2.5 | 60 Hz tick, no extrapolation except local prediction; tick schedule row "Network snapshot, period 2, phase 0"; session header; replay command record with `view_tick`; save contract; `state_hash` every 60 ticks; co-op saves only at Folio entry |
-| Canon | §3.2, §3.3, §3.6 | sequential and keyed streams (keyed draws make late inputs safe); seed display; daily and weekly seeds |
+| Canon | §2.5, §3.2, §3.3, §3.6 | length-prefixed multi-field hashing; sequential and keyed streams (keyed draws make late inputs safe); seed display; daily and weekly seeds with strict date validation |
 | Canon | §4.1, §4.2 | humanoid capsule, speeds, dodge |
 | Canon | §9 | baked pose tables; 32 ticks of pose history for lag compensation |
 | Canon | §10.8, §11.1 | lethal resolution steps 2–3; `st.downed` (owner 16: 30 s bleed-out, revive in 3 s), `st.ghost` (owner 16) |
@@ -30,7 +30,7 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 | Doc 05 | §2.6, §14.3 | `LAGCOMP_MAX_TICKS = 16`, target state read at the present tick, projectile catch-up steps; downed Errata keep capsules and cannot attack, block or use items; bleed-out shortening `ceil_div(total_mhp × 1800, max_hp_mhp)` |
 | Doc 11 | §2.2, §14.4, §17 | item `visibility` `Instanced(slot)` or `Public`; ground items destroyed at Folio exit; per-slot rolls with `seq = slot` |
 | Doc 12 | §6.1 | `FolioBlueprint`, `blueprint_hash` compared by every co-op peer |
-| Doc 13 | target scoring, §10.7 | downed candidates × 2500 (doc 05 §14.1), ghosts never perceivable; template `enemy.editors.invader`, no AI think, entry at the hunter placement anchor |
+| Doc 13 | target scoring, §10.5, §10.7 | downed candidates × 2500 (doc 05 §14.1), ghosts never perceivable; template `enemy.editors.invader` (scaled by the party's `n`), no AI think, entry at the §10.5 hunter placement anchor; invader kits `enemy.editors.kit.*` |
 | Doc 10 | §2.2, §2.5, §2.8 | party-shared type knowledge; knowledge travels with traded items; host sends only `ItemView` |
 | Doc 14 | §1.1, §1.2, §2.1, §2.5, §3.2, §3.3, §3.6, §3.10, §4.3, §7, §8.4, §8.8, §9.4, §12 | lobby state machine (a lobby whose host leaves disbands); joiner rules; `enter_folio`; phase row 1 (no Active Erratum alive and not downed ends the run, downed ones die first); exit commit rule and constants; ghost restoration HP (`GHOST_REMAINS_HP_BP` 5000, `GHOST_BARE_HP_BP` 2500); `SlotStatus`; Grades 0 to 20; Dormant and Departed slots, `DORMANT_GRACE_S`; ranked Daily attempts; boards, submission JSON and `verify`; `RankedState` with a 32-byte `ranked_token`; `RANKED_RESTORE_MAX` = 2; Folio-entry save copies for host migration |
 | Doc 15 | §2.2–§2.4, §3.4, §3.13, §4, §5.3, §6.2, §6.5, §7, §8.2, §8.4, §8.5, §10, §11 | mode rules and caps; invader Quires (`INVASION_QUIRES` 5, `INVASION_REDACT_QUIRES` 5, `INVASION_MIN_TICKS` 3,600, 60 per 24 h); pull and Reliquary algorithms and records; commit-reveal epochs, Sealed Drafts, signed receipts and their canonical hex forms; Codex XP and switching; store, purchase flow and refunds; `juris.flag.invasion_minor_default`, `juris.flag.minor_chat_default`; minor spend caps; chat safety including invader rules; economy service components, ledger, idem keys (§10.3), the run report schema and `run_id` from the host's OS CSPRNG (§10.4); end-of-service mode |
@@ -101,7 +101,7 @@ This chapter defines how 1 to 4 players share one authoritative simulation: the 
 | `REVIVE_HP_BASE_BP`, `REVIVE_HP_STEP_BP`, `REVIVE_HP_MIN_BP` | 5000, 200, 1000 | revive HP curve over Grade and repeated downs (§9.4) |
 | `TRADE_CONFIRM_TICKS` | 1,800 | longest wait in `both_locked` for both confirmations (§9.7) |
 
-Every numeric constant of this chapter lives in the content record `net.params.default` (`content/16/net/params.json`), loaded with the content set and covered by `content_hash`:
+Every constant of the table above and every co-op tuning value of §9 lives in the content record `net.params.default` (`content/16/net/params.json`), loaded with the content set and covered by `content_hash`. Service-side limits (§11: rate limits, token lifetimes, retention) live in the service configuration instead, because they never touch a simulation or a session:
 
 ```json
 { "id": "net.params.default", "proto": 1, "input_redundancy": 8, "input_buffer_span": 64,
@@ -119,7 +119,8 @@ Every numeric constant of this chapter lives in the content record `net.params.d
   "revive_hp_base_bp": 5000, "revive_hp_step_bp": 200, "revive_hp_min_bp": 1000, "revive_hp_halvings_max": 3,
   "reliable_msg_max": 262144, "voice_streams_max": 2, "voice_queue_max": 8192, "kick_vote_ticks": 1800,
   "trade_range_mm": 4000, "trade_break_mm": 6000, "trade_max_items": 8, "trade_accept_ticks": 600,
-  "trade_confirm_ticks": 1800 }
+  "trade_confirm_ticks": 1800, "ghost_mark_range_mm": 30000, "voice_full_mm": 5000, "voice_zero_mm": 30000,
+  "chat_max_bytes": 200, "chat_burst": 5, "chat_window_ticks": 600 }
 ```
 
 ---
@@ -163,7 +164,7 @@ Dedicated servers use `renet` UDP (§3.4) at launch. Their sim thread uses the s
 | sim | `Sim::step` at 60 Hz; `ReplFrame` extraction on snapshot ticks (budget 0.40 ms, doc 02 §15) | Shadow `Sim` when enabled |
 | net | transport pump, per-client encoding, input buffers, CIL batching | transport pump, decoding, prediction, interpolation buffers |
 | main / render | Bevy (listen host only) | Bevy |
-| worker | hashing (doc 02 §6.5), zstd of Folio-entry state | Folio generation, section-hash verification, CIL replay for warm migration |
+| worker | hashing (doc 02 §6.5), zstd of Folio-entry state, CIL backlog compression | Folio generation, section-hash verification, the migration probe and CIL replay for warm migration (§9.3) |
 
 ---
 
@@ -207,8 +208,8 @@ Implementations and their routes:
 | `net.ch.input` | 1 | unreliable | client → host | 0, 1 | input packets |
 | `net.ch.snapshot` | 2 | unreliable | host → client | 0, 1 | snapshots |
 | `net.ch.world` | 3 | reliable, ordered | host → client | 2, 3 | world edits, keyframes, Folio-entry state, chunk data, full state |
-| `net.ch.cil` | 4 | reliable, ordered | host → client | 2, 1 | Confirmed Input Log |
-| `net.ch.voice` | 5 | unreliable | both | 1, 1 | voice frames |
+| `net.ch.cil` | 4 | reliable, ordered | host → client | 2, 1 | Confirmed Input Log, backlog and unseal messages (§6.14) |
+| `net.ch.voice` | 5 | unreliable | both | 3, 1 | voice frames; lowest priority, dropped first (§9.12) |
 
 On Steam each channel is one lane configured with `ConfigureConnectionLanes` using the priorities and weights above, and messages are sent with `k_nSteamNetworkingSend_Reliable` or `k_nSteamNetworkingSend_UnreliableNoNagle`. On renet each channel is one renet channel: `ReliableOrdered` for 0, 3, 4 and `Unreliable` for 1, 2, 5. The connection send rate is set to minimum 131,072 and maximum 524,288 bytes per second (Steam `SendRateMin`, `SendRateMax`); this chapter's budgets keep the average below 16,000 B/s per client.
 
@@ -224,7 +225,7 @@ On Steam each channel is one lane configured with `ConfigureConnectionLanes` usi
 ### 3.4 Direct and LAN
 
 - The host listens on UDP 27310 (configurable). LAN discovery: the host broadcasts a 32-byte beacon `PALB ‖ proto u16 ‖ sim_version u32 ‖ content_hash[0..8] ‖ port u16 ‖ party u8 ‖ max u8 ‖ mode id32 ‖ 6 zero bytes` to UDP 27311 once per second; clients list beacons seen in the last 3 s.
-- renet runs in unsecure mode on LAN and direct IP; the host password (a lobby setting, default empty) is verified inside `Hello` as `BLAKE3("PALIMPSEST/PW/1" ‖ host_nonce ‖ password)`, where `host_nonce` is the 16 random bytes of the host's `Challenge` message (§3.8), drawn from the host's OS CSPRNG per connection.
+- renet runs in unsecure mode on LAN and direct IP; the host password (a lobby setting, default empty) is verified inside `Hello` as `BLAKE3("PALIMPSEST/PW/1" ‖ host_nonce ‖ le32(len(password)) ‖ password)` (the variable-length field carries Canon §2.5's length prefix), where `host_nonce` is the 16 random bytes of the host's `Challenge` message (§3.8), drawn from the host's OS CSPRNG per connection.
 - No hole punching is attempted. A direct connection that has not completed its handshake after 5,000 ms fails with a message telling the host to forward UDP 27310 or use a Steam or relay session.
 
 ### 3.5 Relay (`svc.relay`)
@@ -526,7 +527,7 @@ The client keeps `slack_ewma` in milli-ticks and updates it on each snapshot wit
 | otherwise | 16,667 µs |
 | `|slack − target_slack| > 30` | hard reset: `P = floor(host_tick_est) + one_way_ticks + target_slack` (§3.9), the prediction ring is cleared and `slack_ewma = target_slack × 1000` |
 
-Example: `target_slack = 2`, `slack_ewma = 2000`, then six snapshots report slack 0: the average falls 1750, 1532, 1341, 1174, 1028, 900; at the sixth, `err = −1100`, so the client switches to 63 Hz and gains 3 ticks of lead per second. Hard-reset example: `host_tick_est` 5000.4, RTT 100 ms (`one_way_ticks` 3), `target_slack` 2 give `P = 5005`; the command for 5005 reaches the host about 3 ticks later, at host tick 5003, 2 ticks early.
+Example: `target_slack = 2`, `slack_ewma = 2000`, then six snapshots report slack 0: the average falls 1750, 1532, 1341, 1174, 1028, 900; at the sixth, `err = −1100`, so the client switches to 63 Hz and gains 3 ticks of lead per second. Hard-reset example: `host_tick_est` 5000.4, RTT 100 ms (`one_way_ticks` 3), `target_slack` 2 give `P = 5005`; with a 50 ms one-way delay the command for 5005 reaches the host 3 ticks later, at host tick 5003, 2 ticks early.
 
 ### 5.7 Intents
 
@@ -566,10 +567,10 @@ Invaders use doc 02's host-issued slot-4 intents `InvaderJoin { kit: Id32 }` and
 | Liquids, gases, fire (presentation) | snapshot `FIELDS` section | as dirty, priority-limited | unreliable, delta |
 | Blocks and crack stages | `WorldEdits` | per tick with edits | reliable, ordered |
 | Inventory, equipment, stats, skills, statuses with timers, Lucre, offers, trade | `OwnerDelta` | ≤ 10 Hz on change | reliable |
-| Party summaries | `PartyState` | 5 Hz | reliable |
-| Folio phase, Rubric, notes, vote holds, Erasure clock, score | `RunState` | on change | reliable |
+| Party summaries | `PartyState` | 2 Hz (every 30 ticks); roster on change | reliable |
+| Folio phase, Rubric, notes, vote holds, Erasure clock, score | `RunView` | on change | reliable |
 | Type knowledge | `KnowledgeDelta` | on change | reliable |
-| Applied inputs | CIL | 10 Hz | reliable |
+| Applied inputs | CIL; backlog; unseal after an invasion | 10 Hz; §6.14 rates | reliable |
 | State hashes | `HashReport` | every 60 ticks | reliable |
 
 The client never receives another player's inventory, unknown item properties (doc 10 §2.8) or any entity outside the relevance rules of §6.6.
@@ -612,7 +613,7 @@ struct ClientRepl {
 - The host encodes snapshot `b` against `views[acked]` and stores `views[b] = views[acked] ⊕ records written`. Entities and pages not written in `b` carry over unchanged from the baseline.
 - `snap_ack` in an input packet acknowledges boundary `k`; if `k > acked` and `views` holds `k`, then `acked = k` and every view older than `k` is dropped.
 - The client decodes snapshot `b` only when it holds the view at `baseline_tick`, then stores `views[b]` and acknowledges `b` in its next input packet. It buffers at most 32 undecodable snapshots.
-- When `b − acked > 64` ticks, or when the host no longer holds `views[acked]`, the host sends a `Keyframe` (§6.13) on the reliable world channel and uses it as the baseline of the following snapshots.
+- When `b − acked >= KEYFRAME_GAP` (64 ticks), or when the host no longer holds `views[acked]`, the host sends a `Keyframe` (§6.13) on the reliable world channel instead of snapshot `b` and uses it as the baseline of the following snapshots. The bound keeps `views[acked]` plus every newer view inside `SNAP_RING`: at `b − acked = 62` the host holds the views of `acked, acked + 2, …, b`, exactly 32.
 - An entity changes in a snapshot only when its current `EntRepl` differs from the baseline's; unchanged groups are omitted by the mask, and an entity with no changed group writes nothing.
 
 ### 6.6 Interest management
@@ -620,9 +621,9 @@ struct ClientRepl {
 Each client's **view origin** is its Erratum; a ghost spectating an ally uses the ally; a loading client uses the Incipit. An entity `e` is relevant to client `c` when the first matching rule says so:
 
 1. **Never** an item drop with visibility `Instanced(s)` and `s ≠ c.slot` (doc 11 §14.4); never a ghost to an invader's client.
-2. **PvP culling** (§9.13): an invader and an Erratum are mutually relevant only while visible: every `PVS_PERIOD` ticks the host tests each such pair; the pair is visible when the distance between origins is at most 16,000 mm, or when either of two rays from the viewer's eye (to the target's eye, and to its origin + 900 mm) reaches the target without crossing a `full` block (doc 03 §5.18). A pair unseen for more than `PVS_GRACE_TICKS` is culled.
+2. **PvP culling** (§9.13): an invader and an Erratum are mutually relevant only while visible. On every tick with `t % PVS_PERIOD == 0` the host tests each such pair with four rays, from each side's eye to the other's eye and to the other's origin + 900 mm; the pair is visible when the origins are at most `pvs_near_mm` (16,000 mm) apart or any ray reaches its end without crossing a `full` block (doc 03 §5.18). `last_seen` is the newest test tick that found the pair visible; at a test tick with `t − last_seen > PVS_GRACE_TICKS` the pair is culled, and the next visible test restores it. A target carrying `st.marked` applied by the viewer's side is never culled, because Canon §11.1 makes it visible through walls to that side.
 3. **Always**: every Erratum; every entity with `owner_slot = c.slot`; every template flagged `net_always` (Editor bosses during `BossFight`, hunters, exit doors); the mount of a relevant rider.
-4. **Window**: `e` is in a chunk column with `|cx − ocx| <= 2` and `|cz − ocz| <= 2`, the doc 03 §15.1 activation window. An entity leaves only when the distance exceeds 3 columns.
+4. **Window**: with column distance `D = max(|cx − ocx|, |cz − ocz|)` between `e`'s chunk column and the view origin's, `e` becomes relevant at `D <= 2` (the doc 03 §15.1 activation window) and stops being relevant only at `D >= 4`, so an entity that drifts to `D = 3` stays.
 5. **Marked**: `e` carries `st.marked` applied by any member of `c`'s party.
 
 Field pages use rule 4. World edits are global. Events use §6.9.
@@ -675,7 +676,7 @@ Per snapshot:
 | 0x04 | `FIELDS` | §6.12 |
 | 0x05 | `EVENTS` | `count: varint`, then a bit stream of §6.9 records |
 
-Entity record: `handle` 13 bits, `op` 2 bits (0 update, 1 create, 2 remove). An update follows with an 8-bit group mask and the groups of §6.4. A create carries `entity_id` 64 bits, `kind` 4 bits (doc 03 §3.2 row index), `owner_slot` 3 bits (7 = none), visual `cidx` 16 bits, then a mask with every group the kind uses and those groups in full. A remove carries nothing more. A walking creature's update is 13 + 2 + 8 + 29 (POS delta: abs bit, two 13-bit axes, one empty axis) + 22 (ROT) = 74 bits; a create is 334 bits.
+Entity record: `handle` 13 bits, `op` 2 bits (0 update, 1 create, 2 remove). An update follows with an 8-bit group mask and the groups of §6.4. A create carries `entity_id` 64 bits, `kind` 4 bits (doc 03 §3.2 row index), `owner_slot` 3 bits (7 = none), visual `cidx` 16 bits, then a mask with every group the kind uses and those groups in full. A remove carries nothing more. A walking creature's update is 13 + 2 + 8 + 29 (POS delta: abs bit, two 13-bit axes, one empty axis) + 22 (ROT) = 74 bits. A create of a kind that uses all 8 groups, with no statuses, is 110 header bits (13 + 2 + 64 + 4 + 3 + 16 + 8) plus 232 group bits (POS 53, ROT 22, ANIM 32, FLAGS 16, HEALTH 12, STATUS 4, EQUIP 68, EXTRA 25) = 342 bits.
 
 ### 6.9 Presentation events
 
@@ -683,10 +684,10 @@ An event record is `kind` 6 bits (row of the table below), `age` 6 bits (`b − 
 
 | Row | Event | Sent to | Payload bits |
 |---|---|---|---|
-| 0 | `ev.damage_dealt` | the attacker's and target's clients; window clients when the target is an Erratum | target 13, attacker 13, display amount 16 (`ceil_div(total_mhp, 1000)`), dominant type 4, flags 6 (crit, precision, sneak, blocked, ward, lethal) |
+| 0 | `ev.damage_dealt` | the attacker's and target's clients; window clients when the target is an Erratum | target 13, attacker 13, display amount 16 (`min(65535, ceil_div(total_mhp, 1000))`), dominant type 4, flags 6 (crit, precision, sneak, blocked, ward, lethal) |
 | 1 | `ev.entity_killed` | window | entity 13, killer 13 |
-| 2 | `ev.explosion` (03) | window, or `listener_db[slot] >= 0` | absolute position 52, radius 8 (250 mm units) |
-| 3 | `ev.noise` | `listener_db[slot] >= 0` (doc 03 payload) | absolute position 52, dB 8, noise `cidx` 16 |
+| 2 | `ev.explosion` (03) | window, or the slot's heard level is at least 0 dB | absolute position 52, radius 8 (250 mm units) |
+| 3 | `ev.noise` | the slot's `heard[slot]` level is at least 0 dB (doc 03 §11.5; doc 03 calls it `listener_db[slot]` in prose) | absolute position 52, dB 8, noise `cidx` 16 |
 | 4 | `ev.footstep` (03) | window | entity 13, gait 2, material `cidx` 12 |
 | 5 | `ev.status_applied` | window | entity 13, status row 7, stacks 4 |
 | 6 | `ev.spell_cast` | window | caster 13, spell visual `cidx` 16 |
@@ -700,13 +701,25 @@ An event record is `kind` 6 bits (row of the table below), `age` 6 bits (`b − 
 | 14 | `ev.item_picked_up`, `ev.item_dropped` | window, Public items only | entity 13, item visual `cidx` 16, variant 1 |
 | 15 | `ev.invasion_started`, `ev.invasion_ended` | all clients, invader included | variant 1, invader entity 13, reason 3 |
 
-Events that only the owner needs (`ev.skill_gained`, `ev.level_gained`, `ev.contradiction_changed`, `ev.item_identified`, `ev.engine_spun`, `ev.erasure_stack`, `ev.affliction_changed`, `ev.container_opened`) travel inside `OwnerDelta`. `ev.block_changed` travels as world edits. `ev.run_ended` travels in `RunState`.
+Events that only the owner needs (`ev.skill_gained`, `ev.level_gained`, `ev.contradiction_changed`, `ev.item_identified`, `ev.engine_spun`, `ev.erasure_stack`, `ev.affliction_changed`, `ev.container_opened`) travel inside `OwnerDelta`. `ev.block_changed` travels as world edits. `ev.run_ended` travels in `RunView`.
 
 ### 6.10 Owner, party and run state
 
 - `OwnerDelta` (postcard), at most every 6 ticks, sent at once after an intent resolves: `{ tick, items: Vec<ItemView> /* upserts, doc 10 */, removed: Vec<u64>, equipment, quickbar, stats, skills /* value and milli-XP */, level, xp, statuses: Vec<StatusView /* id, stacks, expiry */>, lucre, offers, trade: Option<TradeView>, rejected: Vec<u32 /* action_seq */>, owner_events: Vec<NetOwnerEvent> }`. The first `OwnerDelta` after Folio entry is complete.
-- `PartyState` every 12 ticks: per slot `{ status: SlotStatus /* doc 14, plus Waiting and Invader */, persona, level, hp_bp, ward_bp, bleed_left, ping_ms, shadow: bool }` and the ordered `successors: Vec<u8>` (§9.3).
-- `RunState` on change: Folio index and genre, doc 14 §3.2 phase, Rubric progress, marginal notes, the per-door hold counters of `ExitVote`, Erasure clock, displayed score accumulators, run end.
+- `PartyState` every `PARTY_STATE_PERIOD` (30) ticks. Allies' live health bars come from the 30 Hz `HEALTH` group of their entity records (§6.4); `PartyState` carries the slower roster data.
+- `RunView` on change. It is the network view of doc 14's simulation `RunState`, never the state itself.
+
+```rust
+pub struct PartyState { pub tick: u64, pub slots: [Option<SlotSummary>; 5], pub successors: Vec<u8>,   // §9.3
+    pub roster: Option<Vec<(u8 /* slot */, u64 /* account_id */, String /* persona */)>> }       // only when changed
+pub struct SlotSummary { pub status: u8,   // doc 14 SlotStatus 0 Active, 1 Ghost, 2 Dormant, 3 Departed; 4 Waiting, 5 Invader
+    pub level: u16, pub hp_bp: u16, pub ward_bp: u16, pub bleed_left: u16, pub ping_ms: u16,
+    pub flags: u8 }                        // bit 0 Shadow running, bit 1 handheld, bit 2 CIL complete from tick 0
+pub struct RunView { pub tick: u64, pub folio: u32, pub genre: Id32, pub phase: u8 /* doc 14 FolioPhase index */,
+    pub rubric: Vec<(Id32, u32, u32)> /* objective, progress, goal */, pub notes: Vec<(Id32, u8 /* done */)>,
+    pub doors: Vec<(u16 /* hold */, u8 /* voters */)>, pub erasure_next_tick: Option<u64>,
+    pub score: i64, pub end: Option<RunEndRecord> /* doc 14 §4.4 */ }
+```
 
 ### 6.11 Voxel diffs
 
@@ -733,8 +746,8 @@ A field page is the presentation state of one chunk's non-empty fluid and fire c
 
 At each Folio-entry boundary the host sends, in this order:
 
-1. `FolioEnter` (control): `{ folio, genre, gen: GenInput /* doc 12 */, entry_tick, blueprint_hash: [u8; 32], section_hashes: [[u8; 32]; 12], slots: Vec<(u8, SlotStatus)> }`.
-2. `FolioState` (world): zstd of serialization sections 0, 1, 2, 3, 8, 9, 10, 11 at the entry boundary. Every client stores it with the regenerated sections 4–7 as its Folio-entry save copy (doc 14 §12.1).
+1. `FolioEnter` (control): `{ folio, genre, gen: GenInput /* doc 12 */, entry_tick, blueprint_hash: [u8; 32], section_hashes: [[u8; 32]; 13], slots: Vec<(u8, SlotStatus)> }`.
+2. `FolioState` (world): zstd of serialization sections 0, 1, 2, 3, 8, 9, 10, 11 and 12 (doc 02 §6.5; 12 is doc 09's `StealthWorld`) at the entry boundary. Every client stores it with the regenerated sections 4–7 (blocks, light, fluids, thermal) as its Folio-entry save copy (doc 14 §12.1).
 3. `Keyframe` (world): the client's full relevant view at the entry boundary (every relevant entity as a create record, every field page in the window as a full page, `OWNER`, `HUD`), in the snapshot section format, with `baseline_tick = 0`.
 
 The client generates the Folio with doc 12's pure generator, compares `blueprint_hash`, rebuilds sections 4–7 at the entry boundary and compares their section hashes. On any mismatch it sends `FolioReady { gen_ok: false }`, the host sends `ChunkData` (zstd of sections 4–7), and the client counts one generation desync in telemetry (doc 12 I2). Generation runs on a worker thread within doc 02's 1,500 ms load budget.
@@ -748,10 +761,16 @@ The CIL is the exact `TickInputs` the host applied, the same data as the replay 
 | 0 | 4 | `rseq: u32` |
 | 4 | 1 | `msg_type` = 0x30 |
 | 5 | 4 | `first_tick: u32` |
-| 9 | 1 | `ticks: u8` (6 in steady state; up to 255 in a backlog) |
+| 9 | 1 | `ticks: u8` (6 in steady state; up to 255 after a send stall; backlogs use `net.msg.cil_backlog`) |
 | 10 | … | per tick: `slot_mask: u8` (bits 0–4); per slot in the mask: one command as an input-packet delta against that slot's previous CIL command, with mask bit 6 = substitute and bit 7 = full; then `intent_count: varint` and that many `(slot: u8, apply_tick delta: varint, action_seq: varint, postcard IntentKind)` records, session intents first |
 
-A slot's first command after a `SlotJoin`, a resume, or the start of a stream is written full. Clients that join late receive the backlog from tick 0 at 8,000 B/s while they wait for their Folio, so every party member ends the run with the complete log.
+A slot's first command after a `SlotJoin`, a resume, the start of a stream, or the end of an invasion seal is written full.
+
+**Backlog.** A party client missing CIL ticks (a drop-in joiner, a client resuming from Dormant, or a client whose CIL prefix hash failed after a migration, §9.3) receives them as `net.msg.cil_backlog` messages: `first_tick: u64`, `ticks: u16` (at most 3,600), then a zstd frame (level 3) of those ticks in the per-tick encoding above, split into 65,536-byte reliable parts. The stream runs at `CIL_BACKLOG_WAIT_RATE` (8,000 B/s) while the client is not in game (waiting for its Folio, or on the run-end screen) and at `CIL_BACKLOG_PLAY_RATE` (1,000 B/s) while it plays, during which that client's `SNAP_RATE` is lowered by 1,000 B/s so its total stays within `CLIENT_DOWN_BUDGET`. At the replay budget of 2 MB per hour (§10.1), one hour of backlog takes 250 s while waiting. A client writes its replay file only once its CIL is complete, and ranks below every complete client as a successor (§9.3).
+
+**Invasion sealing.** From the tick of `InvaderJoin` through the tick of `InvaderLeave`, CIL messages to party clients carry no slot-4 command (slot_mask bit 4 clear) and no slot-4 intent. The host keeps those records and, in the first CIL batch after `InvaderLeave`, sends `net.msg.cil_unseal`: `rseq: u32`, `msg_type` 0x36, `first_tick: u32`, `ticks: u16`, then per tick the slot-4 command (first one full) and `intent_count: varint` with the slot-4 intents. Each client merges them into its CIL, so its replay is complete. A Shadow stops at the boundary of the `InvaderJoin` tick and catches up from the merged CIL. The invader's own client never receives the CIL. A party client therefore never learns the invader's inputs while the invader is present, which is what makes PvP culling binding (§6.6, decision 9); the cost is that host loss during an invasion migrates cold (§9.3).
+
+**Cold-restart truncation.** A cold migration (§9.3) restarts the current Folio from its entry tick `E`. Every client deletes the CIL records of ticks after `E` and the command records of tick `E`, keeps the session intents of tick `E` (the `SlotJoin`s already inside the Folio-entry save), and the new host appends `FolioRestart { folio }` to tick `E`'s session intents. Tick `E` is then simulated again with new commands, so a verifier re-simulating from tick 0 sees one consistent history.
 
 ---
 
@@ -822,8 +841,10 @@ The renderer draws the predicted position plus a visual offset `o`. A correction
 
 ### 7.5 Remote entities: interpolation and its jitter buffer
 
-- `render_tick = host_tick_est − interp_delay` in µs precision. Each remote entity keeps the samples `(snap_tick, EntRepl)` of the snapshots that wrote it; the renderer interpolates between the two samples that bracket `render_tick` (doc 02 §7.3 rules for yaw and teleports).
-- `interp_delay = clamp(4 + ceil_div(2 × jitter_us, 16667) + 2 × floor_div(loss_bp, 500), 4, 12)` ticks, recomputed every 60 ticks from snapshot arrival jitter (5th-to-95th percentile spread of inter-arrival deviation) and loss over the last 300 snapshots, and moved by at most 1 tick per 60 ticks. Examples: jitter 12 ms, loss 1% → 6; jitter 12 ms, loss 6% → 8; jitter 40 ms, loss 16% → 12; a clean LAN → 4.
+- **Snapshot clock.** On each snapshot arrival at local monotonic time `a_us`, `sample = b × 16667 − a_us` (`i64` µs). The first sample sets `off_us = sample`; afterwards `dev = sample − off_us` is recorded and then `off_us += dev / 16` (truncating toward zero), except that `|dev| > 250,000` resets `off_us = sample`. `snap_tick_est(now) = (now_us + off_us) / 16667`, kept in µs precision, is the boundary of the newest snapshot the client should hold now.
+- `render_tick = snap_tick_est − interp_delay`. The delay is measured from snapshot arrival, not from the host's current tick, so it absorbs jitter and loss only; the one-way delay is already inside `snap_tick_est`. A command for `P = host_tick_est + one_way_ticks + slack` sampled at `render_tick` therefore has `P − view_tick = rtt_ticks + slack + interp_delay` in steady state, which is exactly the `lag` §5.5 permits. Example: RTT 100 ms (`rtt_ticks` 6, `one_way_ticks` 3), `target_slack` 2, `interp_delay` 6, `host_tick_est` 5000.0 at sampling: `P = 5005`, `snap_tick_est` = 4997.0, `render_tick` = 4991.0, `view_tick = 4991`, and the host rewinds `5005 − 4991 = 14` ticks.
+- Each remote entity keeps the samples `(snap_tick, EntRepl)` of the snapshots that wrote it; the renderer interpolates between the two samples that bracket `render_tick` (doc 02 §7.3 rules for yaw and teleports).
+- `interp_delay = clamp(4 + ceil_div(2 × jitter_us, 16667) + 2 × floor_div(loss_bp, 500), 4, 12)` ticks, recomputed every 60 ticks and moved by at most 1 tick per 60 ticks. `jitter_us = s[284] − s[15]` over the sorted last 300 `dev` values (the 5th-to-95th percentile spread); `loss_bp = floor_div(missing × 10000, 300)` over the last 300 expected snapshot boundaries. Examples: jitter 12 ms, loss 1% → 6; jitter 12 ms, loss 6% → 8; jitter 40 ms, loss 16% → 12; a clean LAN → 4.
 - Nothing extrapolates (Canon §2.1). When `render_tick` passes an entity's newest sample, the entity holds that sample; after 6 ticks without a new sample it is drawn as stale (desaturated, doc 17) until one arrives.
 - Events play at `render_tick`; world edits apply at `render_tick` (§6.11).
 
@@ -839,7 +860,7 @@ The host applies doc 05 §2.6 with the clamped `view_tick` of §5.5:
 4. **Missing history.** A target whose `spawn_tick > t_r` is not hittable by that rewound test. A target that died or despawned before `t` is never hit.
 5. **Replays** reproduce every rewound hit from the logged, already clamped `view_tick` (Canon §2.4).
 
-Example: at `t = 5000` a client with RTT 100 ms fires with `view_tick` 4982; §5.5 applies 4984, so `rewind = 16` and the ray tests poses recorded at tick 4984.
+Example: at `t = 5000` a client with RTT 100 ms, whose steady-state `view_tick` is 4986 (§7.5), claims `view_tick` 4982; §5.5 applies 4984, so `rewind = 16` and the ray tests poses recorded at tick 4984.
 
 ---
 
@@ -849,6 +870,12 @@ Example: at `t = 5000` a client with RTT 100 ms fires with `view_tick` 4982; §5
 
 1. A player joins a run in progress when `join_open` is true and a seat is free (party slots 0–3). The host answers `Welcome { slot: None }`; the client enters `awaiting_folio`, receives the CIL backlog, and creates or picks an Erratum on the join screen (doc 14 §2.5 values).
 2. The client sends `JoinRequest { character }`. If it is held at the exit-commit tick of the current Folio (doc 14 §3.6), the host enqueues `SessionIntent::SlotJoin` for the next Folio-entry boundary; otherwise the join waits one more Folio.
+
+   ```rust
+   pub struct JoinCharacter { pub erratum: ErratumChoice /* doc 14 §1.2 */, pub kit: Id32 /* run.kit.* */,
+       pub alloc: Vec<(Id32 /* sub.* */, u8)>,      // doc 14 §2.5 join-level points, ascending sub ID
+       pub satchel: Vec<Keepsake> }                   // doc 15 §5.5, at most 5, materialized from the join Folio on
+   ```
 3. `enter_folio` (doc 14 §3.3) consumes pending `SlotJoin` intents in ascending slot order before the Folio-entry save, so the joiner is in the save, in `n` (§9.10) and in the CIL.
 4. **Ranked runs.** A joiner needs a ranked token for the run (§11.6); for `mode.daily` the token consumes the joiner's attempt for that UTC date, and a joiner whose attempt is used is refused with `net.reject.run_locked`. The board entry uses the largest party size the run reached.
 5. No `SlotJoin` takes effect at the entry of the run's final Folio (`final_folio`, doc 14 §3.1); such a joiner waits for Marginalia or the run's end.
@@ -859,31 +886,43 @@ Example: at `t = 5000` a client with RTT 100 ms fires with `view_tick` 4982; §5
 - **Dormant.** At timeout the host enqueues `SlotDormant` for the next tick; doc 14 §8.8 then removes the Erratum from the world with its inventory. Kill XP and loot rolls skip Dormant slots.
 - **Reconnect.** A Dormant player reconnects with `resume_slot`, waits in `awaiting_folio`, and returns through `SlotResume` at the next Folio entry. After `DORMANT_GRACE_S` (300 s wall clock) the slot becomes `Departed` (`SlotDeparted`).
 - **Steam Deck suspend** looks like transient loss, then Dormant (doc 02 §14).
-- **Kick.** The host kicks with `SlotDeparted` and `Bye { reason: net.reject.kicked }`. In public lobbies any member starts a kick vote; with `m` Active members other than the target, it passes when at least `max(2, m − 1)` of them vote yes within 1,800 ticks (2 of 3 in a full party). A kicked account cannot rejoin that session.
+- **Kick.** The host kicks with `SlotDeparted` and `Bye { reason: net.reject.kicked }`. In public lobbies any member starts a kick vote, and the starter's vote counts as yes; one vote runs at a time. With `m` Active members other than the target, it passes when at least `max(2, m − 1)` of them vote yes within `KICK_VOTE_TICKS` (1,800): 2 of 3 in a full party, 2 of 2 in a party of 3, and never in a party of 2, where only the host can kick. A kicked account cannot rejoin that session.
 
 ### 9.3 Host migration
 
-**Successor list.** Every 300 ticks the host ranks the other Active party clients and publishes the order in `PartyState.successors` and the lobby key `pal_succ`. Rank keys, compared in order: (1) Shadow running and in sync with the last `HashReport`; (2) lower mean estimated RTT to the other members (Steam ping locations, else RTT to the host); (3) not handheld; (4) lower slot. Invaders and Dormant slots are never successors.
+**Successor list.** Every 300 ticks the host ranks the other Active party clients and publishes the order in `PartyState.successors` and the lobby key `pal_succ`. Rank keys, compared in order: (1) Shadow running and in sync with the last `HashReport`; (2) CIL complete from tick 0 (§6.14); (3) lower mean estimated RTT to the other members (Steam ping locations, else RTT to the host); (4) not handheld (`Hello.handheld`); (5) lower slot. Invaders, Dormant slots and clients in `awaiting_folio` are never successors.
 
-**Detection.** A client enters `migrating` when the host's connection reports `Disconnected` or after `NET_TIMEOUT_MS` of silence. The successor at rank `k` (0-based) waits `k × MIGRATE_ANNOUNCE_MS` without seeing a `MigrateAnnounce` before acting.
+**Detection.** A party client enters `migrating` when the host's connection reports `Disconnected`, after `NET_TIMEOUT_MS` of silence, or on `Bye { net.reject.host_left }`. The successor at rank `k` (0-based) waits `k × MIGRATE_ANNOUNCE_MS` without seeing a `MigrateAnnounce` before claiming the session. A client with no rank waits until `(number of successors) × MIGRATE_ANNOUNCE_MS + NET_TIMEOUT_MS` has passed without a `MigrateAnnounce`, then disconnects.
 
-**Catch-up.** Let `L` be the successor's last complete CIL tick.
+**Catch-up.** Let `L` be the claiming successor's last complete CIL tick and `E` the current Folio's `folio_entry_tick`. The first matching row decides the mode:
 
-| Mode | Condition | Procedure |
-|---|---|---|
-| `net.migrate.hot` | a Shadow is running | step the Shadow to boundary `L + 1` |
-| `net.migrate.warm` | no Shadow; estimated time `(L + 1 − entry_tick) × measured_tick_us ≤ MIGRATE_WARM_MAX_MS` | `Sim::deserialize` the Folio-entry save copy, then step every CIL tick to `L + 1` on the worker thread, comparing `HashReport`s along the way |
-| `net.migrate.cold` | otherwise, or any hash mismatch during warm catch-up | restore the Folio-entry save; log `FolioRestart`; the Folio replays from its entry, and ranked runs count one restore (doc 14 §12.3) |
+| Mode | Condition | Procedure | Resume tick |
+|---|---|---|---|
+| `net.migrate.cold` | the successor's CIL lacks sealed slot-4 records at or before `L`: an invasion was in progress, or its `cil_unseal` had not arrived (§6.14) | restore the Folio-entry save; truncate the CIL (§6.14) | `E` |
+| `net.migrate.hot` | a Shadow is running | step the Shadow to boundary `L + 1` | `L + 1` |
+| `net.migrate.warm` | `(L + 1 − E) × measured_tick_us ≤ MIGRATE_WARM_MAX_MS × 1000` | `Sim::deserialize` the Folio-entry save copy, then step every CIL tick to `L + 1` on the worker thread, comparing `HashReport`s along the way | `L + 1` |
+| `net.migrate.cold` | otherwise, or any hash mismatch during warm catch-up | restore the Folio-entry save; truncate the CIL (§6.14) | `E` |
+
+**`measured_tick_us`.** A Shadow measures its own mean step time. Every other party client runs a **probe** after each Folio entry: once its CIL covers the first boundary `p ≥ E + MIGRATE_PROBE_TICKS` with `p ≡ 0 (mod 60)`, its worker thread deserializes the Folio-entry save copy, steps to `p`, and sets `measured_tick_us = floor_div(wall_us, p − E)`. It also compares the result with `HashReport(p)`; a mismatch writes the doc 02 §6.7 dump and counts a desync in telemetry. Before the first probe completes, `measured_tick_us = MIGRATE_TICK_US_DEFAULT` (4,000). A probe re-simulates 600 to 659 ticks on one worker per Folio, at most 0.11 s at 6,000 ticks per second.
 
 At 6,000 ticks per second a 300 s Folio (18,000 ticks) catches up in 3 s; at 500 ticks per second the same Folio needs 36 s, still warm; at 160 ticks per second it needs 112.5 s and migration is cold.
 
 **Takeover.**
 
-1. The successor opens a listen socket (`net.route.sdr`: `CreateListenSocketP2P`; direct: its LAN address from `PartyState`), becomes the Steam lobby owner (the current Steam owner calls `SetLobbyOwner(successor)` when it sees `pal_succ`) and sets `pal_host`.
-2. It posts `MigrateAnnounce { new_host_slot, resume_tick: L + 1, mode, cil_hash }` as a Steam lobby chat message (relay sessions: through `svc.lobby`).
-3. It enqueues `HostChanged { from_slot, to_slot }` and `SlotDormant { from_slot }` for tick `L + 1` and resumes stepping at real time.
-4. The other clients truncate their CIL to `L`, reconnect with `Hello { migrating_from_tick: L }`, and receive `Welcome`, `OwnerDelta` and `Keyframe` (no `FolioEnter`); they keep their Folio-entry save copies. A client that does not reconnect within `NET_TIMEOUT_MS` becomes Dormant on the new host.
-5. An invader is dropped (§9.13).
+1. The claiming successor posts `MigrateAnnounce` at once, before catching up: as a Steam lobby chat message, or as a `svc.lobby` event for relay sessions.
+2. It opens a listen socket (`net.route.sdr`: `CreateListenSocketP2P`; direct: its LAN address from `PartyState`), becomes the Steam lobby owner (the current Steam owner calls `SetLobbyOwner(successor)` when it sees `pal_succ`) and sets `pal_host`.
+3. It catches up, holding every `Hello` that arrives meanwhile.
+4. It enqueues `HostChanged { from_slot, to_slot }` and `SlotDormant { from_slot }` for the resume tick, answers each held `Hello` with `Welcome`, `OwnerDelta` and `Keyframe` (after a cold migration, a full `FolioEnter` sequence instead, §6.13), and resumes stepping at real time.
+5. Every other party client, on `MigrateAnnounce`, truncates its CIL to `L_c = min(L_own, L)`, connects and sends `Hello { migrating_from_tick: L_c, migrating_cil_hash, resume_slot }` with the hash of its CIL up to `L_c`, under a handshake deadline of `eta_ms + NET_TIMEOUT_MS`. The new host compares that hash with its own CIL hash up to `L_c`: on a match it sends the CIL ticks `L_c + 1 ..= L` that the client lacks; on a mismatch the client discards its CIL and receives the new host's from tick 0 as a backlog (§6.14). A client that does not reconnect by its deadline becomes Dormant on the new host.
+6. An invader is dropped with `InvaderLeave { reason: 6 }` (§9.13).
+
+```rust
+pub struct MigrateAnnounce { pub new_host_slot: u8, pub new_host: u64 /* SteamID64, else account_id */,
+    pub mode: Id32 /* net.migrate.* */, pub cil_tick: u64 /* L */, pub resume_tick: u64,
+    pub cil_hash: [u8; 32] /* BLAKE3 of the postcard CIL up to L */, pub eta_ms: u32 }
+```
+
+`eta_ms` is 0 for hot, the warm estimate `(L + 1 − E) × measured_tick_us / 1000` rounded up, and 3,000 for cold.
 
 Inputs the old host applied after `L` are lost: at most `CIL_BATCH_TICKS` plus the one-way delay in ticks, which is 9 ticks at RTT 100 ms.
 
@@ -899,11 +938,19 @@ pub struct Player {                    // comp.player, semantics owned here (doc
 
 - **Entry** (Canon §10.8 step 2): HP 0, `st.downed` without expiry, `downs_folio += 1`, `bleed_left = max(600, 1800 − 600 × (downs_folio − 1))`: 1,800, 1,200, then 600 ticks. Movement mode `downed`, crawl 800 mm/s (doc 03 §5.1). The Erratum keeps its capsules and cannot attack, block, cast, reload, use items, interact, sprint, jump, dodge or mount (doc 05 §14.3); it can look, crawl, ping and chat.
 - **Damage while downed** runs the full pipeline; HP stays 0, and each resolved hit shortens `bleed_left` by `ceil_div(total_mhp × 1800, max_hp_mhp)` (doc 05 §14.3; 17,000 mHP at Max HP 85,000 removes 360 ticks). DoT pulses count as hits.
-- **Bleed.** `sys.coop` (Interface assumptions, doc 03) decrements `bleed_left` by 1 each tick on which no valid reviver acts. At 0, Canon §10.8 step 3 runs (no new Death's Door roll).
+- **Bleed.** `sys.coop` (doc 03 §2.2 row 26b) decrements `bleed_left` by 1 each tick on which no valid reviver acts. At 0, Canon §10.8 step 3 runs (no new Death's Door roll).
 - **Valid reviver** on tick `t`: an Erratum that is alive, not downed, not a ghost, not mounted, free of `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping` and `st.grappled`, holds `INTERACT`, has its origin within 1,500 mm of the downed origin, and faces it within 8,192 Bam. The lowest-`EntityId` valid reviver is the active one; several revivers do not stack.
 - **Progress.** `revive_progress += 1` on every tick with a valid reviver, and resets to 0 on a tick without one. Revival completes when `revive_progress >= revive_ticks = max(30, mul_bp(180, reviver.revive_bp))`, where `revive_bp` is the product of the reviver's talent multipliers (doc 04; Warden `resurgence` 5000 gives 90 ticks). Doc 04's Restoration-100 spell completes revival at once.
-- **Completion.** `st.downed` is removed, HP is set (not healed, so Canon §10.9 does not apply) to `mul_bp(max_hp_mhp, revive_hp_bp)` with `revive_hp_bp = max(2000, 5000 − 150 × grade)` (R7 R-CO3): Grade 0 → 5000 (42,500 mHP at Max HP 85,000), Grade 2 → 4700 (39,950), Grade 10 → 3500, Grade 20 → 2000. Poise refills. `ev.player_revived { entity, slot, reviver }` is emitted.
-- **Folio exit.** A downed Erratum leaves with the party (doc 14 §3.6) and enters the next Folio revived at `revive_hp_bp`. `downs_folio` resets at Folio entry.
+- **Completion.** `st.downed` is removed and HP is set (not healed, so Canon §10.9 does not apply) to `mul_bp(max_hp_mhp, revive_hp_bp)`:
+
+  ```
+  revive_base_bp = max(REVIVE_HP_MIN_BP, REVIVE_HP_BASE_BP − REVIVE_HP_STEP_BP × grade)    // max(1000, 5000 − 200 × grade); grade 0..=20 (doc 14 §7)
+  revive_hp_bp   = max(REVIVE_HP_MIN_BP, revive_base_bp >> min(downs_folio − 1, 3))       // downs_folio >= 1 while downed
+  ```
+
+  At Max HP 85,000: Grade 0 gives 5000, 2500, 1250 and then 1000 Bp for the first to fourth down in one Folio (42,500, 21,250, 10,625 and 8,500 mHP); Grade 2 gives 4600 (39,100 mHP) and then 2300 (19,550); Grade 10 gives 3000; Grade 20 gives 1000. The base follows R7 R-CO3's DRG curve, 50% at the easiest Grade falling to 10% at the hardest (R7's 60% tier lies below Grade 0 and is not used). The halving per repeated down is a balance fix: natural regeneration (Canon §6.4 row 2) already restores 50% of Max HP in 100 s out of combat, so a first revive at 50% is no shortcut, but a flat 50% let a pair trade 3-second revives for unlimited half refills in combat. With halving, the fourth and later revives of a Folio give 10% (8.5 HP at Folio 1), which survives exactly one reference enemy hit: 10 HP before mitigation (Canon §17.4 `REF_ENEMY_HIT_D1`), 11 HP at party size 2 (Canon §17.2), 7.563 HP after the reference 20 AR (`DR_bp` 3125, Canon §10.5 step 5). Poise refills. `ev.player_revived { entity, slot, reviver }` is emitted.
+- **Folio exit.** A downed Erratum leaves with the party (doc 14 §3.6) and enters the next Folio revived at `revive_hp_bp`, computed with the old Folio's `downs_folio`. `downs_folio` resets at Folio entry.
+- **Party wipe.** When no Active Erratum is alive and not downed at the end of a tick, doc 14 §3.2 row 1 kills every downed Erratum (`ev.entity_killed`) and ends the run, so nobody waits out a bleed timer that no ally can stop.
 - Downed, revive and bleed draw no random numbers.
 
 ### 9.5 Ghosts (owner of `st.ghost`)
@@ -912,8 +959,8 @@ Canon §17.6 governs; this section fixes the remaining details.
 
 - The Erratum entity stays in the world with `Kind.flags & GHOST`, flies at walk speed with voxel collision only (doc 03 §5.12), is excluded from every hit, push and perception query, and is replicated to its own party only.
 - Allowed actions: `INTERACT` on doors, switches and levers; `PING`; `MarkTarget { target }`, which applies `st.marked` for 480 ticks to a non-ghost entity whose origin is within 30,000 mm and visible by doc 03 §5.18 from the ghost's eye, at most once per 600 ticks (`mark_cooldown_until`).
-- Remains (`cat.corpse`, 75,000 g) drop at the death position. At the next `ev.folio_entered` the ghost resurrects with `GHOST_REMAINS_HP_BP` (5000) when an ally carried the Remains through the exit, else with `GHOST_BARE_HP_BP` (2500) and the loss of one equipped non-weapon item: one keyed `rng.loot` draw (folio = the new Folio, actor = the ghost's `EntityId`, tick = its `folio_entry_tick`, seq 0), `range(n)` over the eligible items sorted by uid, and 0 draws when `n = 0`. Endpaper restoration follows doc 14 §3.10.
-- Doc 14 §3.10's "the entity leaves the world" is read as leaving the physical world (Canon gaps G8).
+- Remains (`cat.corpse`, 75,000 g) drop at the death position. At the next `ev.folio_entered` the ghost resurrects with doc 14's `GHOST_REMAINS_HP_BP` (5000) when an ally carried the Remains through the exit, else with `GHOST_BARE_HP_BP` (2500) and the loss of one equipped non-weapon item: one keyed `rng.loot` draw (folio = the new Folio, actor = the ghost's `EntityId`, tick = its `folio_entry_tick`, seq 0), `range(n)` over the eligible items sorted by uid, and 0 draws when `n = 0`. No ghost resurrects at an Endpaper (doc 14 §3.10).
+- Doc 14 §3.10 owns the slot status, XP and Remains rules; this section owns the ghost entity's movement, actions and replication.
 
 ### 9.6 Instanced loot
 
@@ -926,23 +973,29 @@ Canon §17.6 governs; this section fixes the remaining details.
 
 A trade swaps items between two Errata atomically. Currencies are never traded (Canon §14).
 
-| State (`net.trade.*`) | Entered when | Event | Next |
-|---|---|---|---|
-| `idle` | | A sends `TradePropose { to_slot: B }` and both are eligible | `proposed` |
-| `proposed` | | B sends `TradeRespond { accept: true }` within 600 ticks | `open` |
-| | | decline, 600 ticks, or eligibility lost | `idle` |
-| `open` | | either side sends `TradeSetItems` (≤ 8 uids) | `open`, both locks cleared |
-| | | one side sends `TradeLock { locked: true }` | `locked` |
-| `locked` | one side locked | the other side locks | `both_locked` |
-| | | any `TradeSetItems` or unlock | `open` |
-| `both_locked` | | both send `TradeConfirm` | `executed` on that tick, then `idle` |
-| any | | `TradeCancel`, eligibility lost, or Folio exit | `idle` |
+| State (`net.trade.*`) | Event | Next |
+|---|---|---|
+| `idle` | A sends `TradePropose { to_slot: B }`, both are eligible and both are `idle` | `proposed` |
+| `proposed` | B sends `TradeRespond { accept: true }` within `trade_accept_ticks` (600) | `open` |
+| | B declines, 600 ticks pass, or eligibility is lost | `idle` |
+| `open` | either side sends `TradeSetItems` (at most 8 uids, all tradeable) | `open`, both locks cleared |
+| | one side sends `TradeLock { locked: true }` | `locked` |
+| `locked` | the other side sends `TradeLock { locked: true }` | `both_locked` |
+| | any `TradeSetItems`, or the locked side sends `TradeLock { locked: false }` | `open` |
+| `both_locked` | `TradeConfirm` from one side sets that side's confirm flag | `both_locked` |
+| | the tick on which both confirm flags are set, and the capacity rule holds | `executed` on that tick, then `idle` |
+| | the tick on which both confirm flags are set, and the capacity rule fails | `open`, locks and confirm flags cleared; each side's `OwnerDelta.rejected` lists the confirming `action_seq` |
+| | any `TradeSetItems` or `TradeLock { locked: false }` | `open`, confirm flags cleared |
+| | `TRADE_CONFIRM_TICKS` (1,800) in `both_locked` without both confirmations | `idle` |
+| any state but `idle` | `TradeCancel`; eligibility lost; an offered item leaves its offerer's backpack (used, dropped, equipped or destroyed); Folio exit | `idle` |
 
-**Eligibility,** checked on every tick of a trade: both alive, not downed, not ghosts, not mounted, not `in_combat` (Canon §2.3), origins within 4,000 mm (a trade in progress breaks beyond 6,000 mm). **Tradeable items:** in the offerer's backpack, not equipped while cursed, not `cat.quest`, not a Keepsake, not `cat.currency`. **Execution:** remove every offered uid from its giver in ascending uid order, then add them to the receivers in the same order; instance knowledge travels with each item (doc 10 §2.5); `finder_slot` is unchanged. The trade emits `ev.item_dropped` for the giver and `ev.item_picked_up` for the receiver per item (Canon gaps G10). Trading draws no random numbers.
+**Capacity rule.** Each side's backpack, after removing its own offered items, must have room for the incoming items under doc 11's inventory rules. Carried mass may exceed capacity; encumbrance then applies (Canon §11.1).
+
+**Eligibility,** checked on every tick of a trade: both alive, not downed, not ghosts, not mounted, not `in_combat` (Canon §2.3), origins within 4,000 mm (a trade in progress breaks beyond 6,000 mm). **Tradeable items:** in the offerer's backpack (equipped items cannot be offered, so a cursed equipped item never can), not `cat.quest`, not a Keepsake, not `cat.currency`. **Execution:** remove every offered uid from its giver in ascending uid order, then add them to the receivers in the same order; instance knowledge travels with each item (doc 10 §2.5); `finder_slot` is unchanged. The trade emits `ev.item_dropped` for the giver and `ev.item_picked_up` for the receiver per item (Canon gaps G10). Trading draws no random numbers.
 
 ### 9.8 Exit voting
 
-Doc 14 §3.6 owns the commit rule (`TURN_HOLD_TICKS` 120, `EXIT_MAJORITY_TICKS` 3,600, `EXIT_ANY_TICKS` 7,200). Votes are positions inside door volumes, so they travel as ordinary movement inputs; there is no vote message. The host replicates each door's hold counter and voter count in `RunState`. Ghosts, Dormant slots and invaders are never voters. A host migration keeps the counters, which are simulation state.
+Doc 14 §3.6 owns the commit rule (`TURN_HOLD_TICKS` 120, `EXIT_MAJORITY_TICKS` 3,600, `EXIT_ANY_TICKS` 7,200). Votes are positions inside door volumes, so they travel as ordinary movement inputs; there is no vote message. The host replicates each door's hold counter and voter count in `RunView`. Ghosts, Dormant slots and invaders are never voters. A host migration keeps the counters, which are simulation state.
 
 ### 9.9 Shared identification knowledge
 
@@ -959,7 +1012,7 @@ The lobby's `ff` setting selects the default constants, `mode.ff_off` (direct 0,
 ### 9.12 Chat, voice and pings
 
 - Text chat: at most 200 bytes, 5 messages per 10 s per sender, filtered and reportable per doc 15 §8.5. The host relays chat; it is never stored by any service.
-- Voice: Steam builds use the Steam voice API, 24 kbit/s per talker, as `net.msg.voice` frames. Modes `net.voice.off`, `net.voice.party` (default; full volume for the party), `net.voice.proximity` (full volume within 5,000 mm, linear to silence at 30,000 mm from the speaker's origin). Minor-flagged accounts default to off and hear friends only (R3 COMMS-1). Every speaker can be muted per session and blocked per account.
+- Voice: Steam builds use the Steam voice API, 24 kbit/s per talker, as `net.msg.voice` frames of 20 ms (60 B of voice plus a 4 B header), relayed by the host. Voice is outside `CLIENT_DOWN_BUDGET` and `HOST_UP_BUDGET` and is best effort: the host forwards at most `VOICE_STREAMS_MAX` (2) talkers to each receiver, the two whose current talk spurt started earliest (ties to the lower slot), and drops any voice frame to a peer whose transport send queue holds more than `VOICE_QUEUE_MAX` (8,192) bytes, so game traffic never waits behind voice. Modes `net.voice.off`, `net.voice.party` (default; full volume for the party), `net.voice.proximity` (full volume within 5,000 mm, linear to silence at 30,000 mm from the speaker's origin). Defaults follow doc 15 §8.5: adults push-to-talk, party only; minor-flagged accounts follow `juris.flag.minor_chat_default` (0 `friends_only`: free text and voice with friends only, quick chat with others; 1 `quick_ping_only`: pings only). Every speaker can be muted per session and blocked per account.
 - World pings are the `PING` button (doc 02 bit 23), handled by the simulation, so they appear in replays.
 
 ### 9.13 Invasions (network and session rules)
@@ -967,14 +1020,15 @@ The lobby's `ff` setting selects the default constants, `mode.ff_off` (direct 0,
 Canon §17.9 fixes what an invasion is; this section fixes how it runs.
 
 - **Opt-in.** The lobby's `invasions` setting puts `mode.invasion_open` into `RunConfig` at run start (default off). Daily, Weekly and every leaderboard-ranked run refuse it. It also requires every party member online, an empty mod set, and every member's account permitting invasions (doc 15 `juris.flag.invasion_minor_default`).
-- **Window.** The host advertises `pal_inv = open` only while all hold: `folio_index >= 3`; the Folio is not a boss Folio; `t − folio_entry_tick >= 7,200`; no Erratum has entered `room.colophon`; no invader is present; no invasion has started in this Folio. The flag closes on the tick any condition fails.
-- **Matchmaking.** An invader chooses Invade in the Margin; while the window is open, a Steam host also owns a separate public **invasion beacon** lobby (1 member, data `pal_kind = beacon`, `pal_ver`, `pal_proto`, `pal_ch`, `pal_grade`, `pal_run` = `run_id`, `pal_host`, `pal_ploc`) and leaves it the tick the window closes, so private and friends-only parties are findable without exposing their party lobby. Invaders search beacons with equal `pal_ver`, `pal_proto`, `pal_ch` and `|pal_grade − invader grade| <= 2`, and connect by `pal_host` to the lowest estimated ping under 150 ms. `svc.lobby` signs the `invasion_ticket` (§11.5); it refuses accounts with invasions disabled and accounts that a member of that party blocked within 30 days (doc 15 §8.5).
-- **Joining mid-Folio,** the one exception to Folio-boundary drop-in: the invader receives `RunHeader` for generation, the world-edit backlog since the Folio entry, and a `Keyframe`. The host enqueues `InvaderJoin { kit }` on slot 4 with the Editor kit the invader picked from its account's kits; doc 13 spawns `enemy.editors.invader`; the entity enters at doc 13's hunter placement anchor, and `ev.invasion_started` is emitted.
+- **Window.** The host keeps its beacon (and the informational `pal_inv = open`) only while all hold: `folio_index >= 3`; the Folio is not a boss Folio; `t − folio_entry_tick >= 7,200`; no Erratum has entered `room.colophon`; no invader is present; no invasion has started in this Folio. The window closes on the tick any condition fails.
+- **Matchmaking** through `svc.lobby` beacons (§11.5), so private and friends-only parties are findable without exposing their party lobby and no client needs a second Steam lobby. While the window is open the host keeps a beacon with `PUT /v1/invasions/beacons/{run_id}`, refreshed every `BEACON_REFRESH_S` (30 s); the service drops a beacon not refreshed for `BEACON_TTL_S` (45 s), and the host deletes it on the tick the window closes. An invader chooses Invade in the Margin, lists beacons with equal `sim_version`, `proto` and content hash prefix and `|grade − invader max grade| <= 2`, estimates ping from each beacon's Steam ping location, requests an `invasion_ticket` for the lowest estimate under 150 ms and connects by the beacon's SteamID through SDR. `svc.lobby` refuses the ticket for accounts with invasions disabled and for accounts that a party member blocked within 30 days (doc 15 §8.5), and hides such beacons from them.
+- **Joining mid-Folio,** the one exception to Folio-boundary drop-in: the invader receives `RunHeader` for generation, the world-edit backlog since the Folio entry, and a `Keyframe`. The host enqueues `InvaderJoin { kit }` on slot 4 with the Editor kit the invader picked from its account's kits; doc 13 spawns `enemy.editors.invader`; the entity enters at doc 13 §10.5's hunter placement anchor on the `InvaderJoin` tick, and `ev.invasion_started` is emitted.
 - **End.** `InvaderLeave { reason }` with reason 0 (left or disconnected), 1 (invader died; the party's guaranteed Reliquary roll follows Canon §17.9), 2 (`INVASION_MAX_TICKS` since entry), 3 (Redacted), 4 (an Erratum entered `room.colophon`), 5 (a party member blocked the invader) or 6 (host migration). Each emits `ev.invasion_ended`; the invader's entity despawns at the end of that tick and its connection closes.
 - **Redaction.** When the invader's hit would bring the last Erratum that is alive and not downed to 0 HP, doc 14 resolves Canon §17.9's Redaction on that tick instead of Canon §10.8 steps 2 and 3; every downed Erratum loses `st.downed` without `ev.player_revived`, and the invasion ends with reason 3.
-- **Information.** The invader receives snapshots under PvP culling, `RunState`, and slot numbers and personas from `PartyState`; never the CIL, `KnowledgeDelta`, another player's `OwnerDelta`, or Errata inventories. It is never a successor, a voter or part of `n`.
+- **Information.** The invader receives snapshots under PvP culling, `RunView`, and slot numbers and personas from `PartyState`; never the CIL, `KnowledgeDelta`, another player's `OwnerDelta`, or Errata inventories. It receives `run_seed` in `RunHeader` because it regenerates the Folio's terrain; the seed reveals the layout and the keys of keyed draws but no Erratum's position or input. Party clients never receive the invader's commands while it is present (§6.14 sealing). It is never a successor, a voter or part of `n`.
+- **Host loss.** The invasion ends with reason 6 and the migration is cold (§9.3), because no party client holds the sealed slot-4 commands; the Folio restarts from its entry. Invasion runs are never ranked, so the restore costs time only.
 - **Chat** (doc 15 §8.5): voice with the invader starts off for every account; minor-flagged accounts exchange only pings and emotes with it; every channel carries mute, block and report, and a block ends the invasion with reason 5.
-- **Outcome report.** At `ev.invasion_ended` the host and the invader each post `POST /v1/invasions/outcome` (§11.5); `svc.econ` pays doc 15 §2.4 invader Quires from the shorter reported length and treats the party as Redacted only when both reports say so.
+- **Outcome report.** At `ev.invasion_ended` the host and the invader each post `POST /v1/invasions/outcome` (§11.5); `svc.econ` pays doc 15 §2.4 invader Quires from the shorter reported length and treats the party as Redacted only when both reports say so. After a host loss, the new host posts reason 6 with the start tick of the `ev.invasion_started` it received, and the invader's client posts reason 6 when it loses the host.
 - **Visibility and hits.** PvP culling (§6.6 rule 2) applies in both directions; lag compensation (§8) applies to both sides.
 
 ---
@@ -983,7 +1037,7 @@ Canon §17.9 fixes what an invasion is; this section fixes how it runs.
 
 ### 10.1 Replay files
 
-Every party client writes `replays/<run_id>.palr` at run end and on Suspend: a doc 02 §12.1 container of kind 3, zstd level 9, holding
+Every party client writes `replays/<run_id>.palr` at run end and on Suspend, once its CIL is complete (§6.14): a doc 02 §12.1 container of kind 3, zstd level 9, holding
 
 ```rust
 pub struct ReplayFile {
@@ -996,14 +1050,14 @@ pub struct ReplayFile {
 }
 ```
 
-`input_log_hash` (doc 15 §10.4) is BLAKE3 of the postcard encoding of `cil`, so it does not depend on how the CIL was batched on the wire. The budget is 2 MB per hour of 4-player play (the raw CIL averages 21 bytes per tick, 4.5 MB per hour before zstd). The viewer re-simulates locally with `EMIT_VIEW`, seeks by restoring the nearest Folio state, plays at 1/4× to 8×, and offers a free camera and each player's view.
+The run report's `input_log_blake3` (doc 15 §10.4) is BLAKE3 of the postcard encoding of `cil`, so it does not depend on how the CIL was batched on the wire. The budget is 2 MB per hour of 4-player play after zstd; the raw CIL is 22 bytes per tick (a slot mask, four 5-byte command deltas and an intent count), 4,752,000 bytes per hour before zstd. The viewer re-simulates locally with `EMIT_VIEW`, seeks by restoring the nearest Folio state, plays at 1/4× to 8×, and offers a free camera and each player's view.
 
 ### 10.2 Daily and ranked score verification
 
 1. At `Commit`, the host requests a ranked token for the party (§11.6). The service computes the Daily or Weekly seed itself (Canon §3.6), checks and consumes each member's attempt (doc 14 §8.4) and signs the token.
-2. At run end, the host uploads the replay and the doc 14 §9.4 submission; if no upload arrives within 600 s, any other member's client uploads its own copy. Duplicate submissions per `run_id` are ignored.
-3. A `svc.verify` worker runs `palimpsest_server verify`: it checks the token, `sim_version` and `content_hash` against released builds, re-simulates the whole CIL from tick 0 (doc 14 `verify`), compares every checkpoint, the final `state_hash` and the score, and requires the BLAKE3 of the CIL to equal the `input_log_hash` of at least one run report from a different party member (doc 15 §10.4) when the party had 2 or more accounts.
-4. Verdicts: accept, or reject with `svc.err.replay_mismatch`, `svc.err.token_invalid`, `svc.err.sim_version_unknown` or `svc.err.content_hash_unknown`. 95% of submissions are verified within 600 s. A Daily of 90,000 ticks costs 15 s of one core at 6,000 ticks per second.
+2. At run end, the host uploads the replay and the doc 14 §9.4 submission. Every other member's client calls `GET /v1/leaderboards/runs/{run_id}` 600 s after run end and uploads its own copy when the state is `none`. A further complete submission for the same `run_id` returns the first submission's ID and is not re-verified.
+3. A `svc.verify` worker runs `palimpsest_server verify`: it checks the token, `sim_version` and `content_hash` against released builds, re-simulates the whole CIL from tick 0 (doc 14 `verify`), compares every checkpoint, the final `state_hash` and the score, and requires the BLAKE3 of the CIL to equal the `input_log_blake3` of at least one run report from a different party member (doc 15 §10.4) when the party had 2 or more accounts.
+4. Verdicts: accept, or reject with `svc.err.replay_mismatch`, `svc.err.token_invalid`, `svc.err.sim_version_unknown` or `svc.err.content_hash_unknown`. 95% of submissions are verified within 600 s. The doc 14 §9.4 example Daily (`end_tick` 99,000) costs 16.5 s of one core at 6,000 ticks per second (doc 02 `perf.ci.bot_tps`).
 
 ### 10.3 Desync diagnostics
 
@@ -1011,6 +1065,7 @@ pub struct ReplayFile {
 |---|---|---|
 | Shadow client | its state hash at each `HashReport` boundary | doc 02 §6.7: `SectionHashRequest`, dump `desync_<b>_shadow.pald`, then `FullStateRequest`; the host serializes at its next hash boundary and streams `FullState` at ≤ 64 KiB per tick; the Shadow restores it and continues from the CIL; presentation never pauses |
 | Every client at Folio entry | `blueprint_hash` and sections 4–7 | §6.13 chunk data; telemetry counter `gen_desync` |
+| Non-Shadow client probe (§9.3) | its state hash at the first boundary `p ≥ E + 600`, `p ≡ 0 (mod 60)` | doc 02 §6.7 dump; telemetry counter `desync`; no gameplay effect |
 | Warm migration | hashes along the catch-up | cold migration (§9.3) |
 | Verifier | checkpoints | reject and keep the dump for 30 days |
 | CI | golden replays, SyncTest, 4-player bot runs over NetSim (§16) | build fails |
@@ -1028,7 +1083,7 @@ With crash-report consent, a client uploads its dump to `svc.crash`; player name
 | `svc.auth` | sign-in through platform tickets, access and refresh tokens, identity linking |
 | `svc.profile` | account profile (unlocks, Codex, Echo roster, settings references, Margin trophies), export and deletion |
 | `svc.econ` | doc 15 economy (`econ-api`, `econ-db`, `econ-verify`, `econ-platform`, `econ-signer`) |
-| `svc.lobby` | non-Steam lobbies, relay session setup, invasion tickets |
+| `svc.lobby` | non-Steam lobbies, relay session setup, invasion beacons, tickets and outcome matching |
 | `svc.relay` | UDP relays for `net.route.relay` |
 | `svc.leaderboard` | ranked tokens, submissions, boards |
 | `svc.verify` | headless replay re-simulation workers (`palimpsest_server verify`) |
@@ -1042,14 +1097,14 @@ With crash-report consent, a client uploads its dump to `svc.crash`; player name
 | Concern | Choice |
 |---|---|
 | Language and API | Rust; `axum` 0.8.9 on `tokio` 1.53.2; `rustls` 0.23.45; JSON over HTTPS; one binary `palimpsest_services` with a role flag per service (doc 02 `crate.services`) |
-| Database | PostgreSQL 18 through `sqlx` 0.9.0; serializable isolation for `svc.econ` and `svc.leaderboard` |
+| Database | PostgreSQL 18 through `sqlx` 0.9.0; serializable isolation for `svc.econ` and `svc.leaderboard`; doc 15 §10.2's ledger tables in schema `econ`; continuous WAL archiving to object storage with point-in-time recovery (recovery point 5 minutes, recovery time 1 hour) and a nightly logical dump kept 35 days |
 | Jobs | a Postgres job table polled with `FOR UPDATE SKIP LOCKED` (verification, exports, deletions); no separate broker |
 | Objects | S3-compatible object storage in `eu-central` with server-side encryption: replays, dumps, cloud saves, exports |
 | Keys | KMS (doc 15 §4.6): receipt keys `rk_`, token keys `tk_`, ranked keys `lk_`, invasion keys `ik_`, relay keys; one key per calendar year, public keys embedded in the client |
 | Hosting | containers in a managed Kubernetes cluster in `eu-central` across 2 zones; relays on UDP hosts in `eu-central`, `us-east`, `ap-southeast`; a CDN serves `/v1/econ/odds/*` and `/audit/*` |
 | Observability | `tracing` logs and Prometheus metrics, EU-hosted; IP addresses truncated to /24 (IPv4) or /48 (IPv6) at ingest |
 
-**API conventions.** Base path `/v1`. `Authorization: Bearer <access token>` on every endpoint except the public ones. Integers only; `u64` values as `"0x"` + 16 lowercase hex digits (doc 15 canonical form); times in Unix seconds. Every write carries `req_id` (a client-random `u64`); the service derives doc 15's `idem_key = SHA-256(canonical_json({source_kind, source_id: req_id, account_id}))`, so retries are safe. Errors: an HTTP status plus `{ "error": "<svc.err.* ID>", "retry_after_s": 0 }`. Rate limits per account: 10 reads per second (burst 30), 2 economy writes per second (burst 10); excess returns 429 with `svc.err.rate_limited`.
+**API conventions.** Base path `/v1`. `Authorization: Bearer <access token>` on every endpoint except the public ones. JSON numbers are integers only; `u64` values are `"0x"` + 16 lowercase hex digits; 32-byte hashes, seeds and keys are 64 lowercase hex digits without a prefix; Ed25519 signatures are 128 lowercase hex digits (doc 15 §4.6 and §10.4 forms); any other hex form is refused with `svc.err.bad_request`; times are Unix seconds. Every write except a run report and the `/v1/auth/*` calls carries `req_id`, a client-random `u64`: the service stores `(account_id, method, path, req_id) → (SHA-256 of the body, response)` for 7 days, returns the stored response for a repeat with the same body and `svc.err.idem_conflict` for a different body, so retries are safe. Ledger postings additionally use doc 15 §10.3's `idem_key`, whose `s` for an Archive purchase is this `req_id` in its hex form; a run report's idempotency is doc 15 §10.3 row `run` (`s = run_id`) alone. Errors: an HTTP status plus `{ "error": "<svc.err.* ID>", "retry_after_s": 0 }`. Rate limits per account: 10 reads per second (burst 30), 2 economy writes per second (burst 10); excess returns 429 with `svc.err.rate_limited`.
 
 ### 11.2 Accounts and authentication
 
@@ -1061,87 +1116,102 @@ With crash-report consent, a client uploads its dump to `svc.crash`; player name
 ### 11.3 Profiles and cloud saves
 
 - `GET /v1/profile` → `{ "version": 37, "profile": { … } }`; `PUT /v1/profile/settings` with `If-Match: <version>` writes only client-owned settings. Unlocks, Codex, Echoes and balances are written only by `svc.econ` and `svc.profile` grant paths.
-- `GET /v1/cloud/{key}` and `PUT /v1/cloud/{key}` with `If-Match` ETags, keys `profile` and `run` (doc 14 `run.sav`), at most 16 MiB per object and 64 MiB per account. A `PUT` with a stale ETag returns 409 `svc.err.cloud_conflict`; the client keeps the save with the higher `save_seq`, then the higher boundary tick (doc 14 §12.3). Steam builds also keep Steam Auto-Cloud (doc 02 §12.2); `svc.cloud` adds cross-platform saves.
+- `GET /v1/cloud/{key}` and `PUT /v1/cloud/{key}` with `If-Match` ETags, keys `profile` and `run` (doc 14's run save file), at most 16 MiB per object and 64 MiB per account. A `PUT` with a stale ETag returns 409 `svc.err.cloud_conflict`; the client keeps the save with the higher `save_seq`, then the higher boundary tick (doc 14 §12.3). Steam builds also keep Steam Auto-Cloud (doc 02 §12.2); `svc.cloud` adds cross-platform saves.
 
 ### 11.4 Economy API (`svc.econ`)
 
-Doc 15 owns every rule; these are the endpoints.
+Doc 15 owns every rule; this section fixes the wire schemas. Types: `u64h` is `"0x"` + 16 lowercase hex digits; `h32` is 64 lowercase hex digits; `sigh` is 128 lowercase hex digits; `id` is a content ID; `int` is a JSON integer; `bool` is `true` or `false`; `T?` may be `null`; `[T]` is an array. Every object is closed (no other keys). `content/16/schema/econ_api.json` holds one JSON Schema per request and response, generated from these tables, and both the service and the client validate against it.
 
-| Method and path | Request | Response |
-|---|---|---|
-| `GET /v1/econ/wallet` | none | balances, rolling caps, signed `wallet` receipt |
-| `GET /v1/econ/banners` | none | active banner records (doc 15 §3.13), own pity and spark per family, open epoch commitments |
-| `GET /v1/econ/odds/{banner_id}` (public) | none | doc 15 §3.11 odds table |
-| `POST /v1/econ/inkwell/pull` | `req_id`, `banner`, `count` (1 or 10), `expect_cost` | results per nonce, wallet, pity after, receipts |
-| `POST /v1/econ/fairness/client_seed` | `req_id`, `banner`, `client_seed_hex` | the revealed epoch (`server_seed`, `commitment`) and the new commitment |
-| `GET /v1/econ/fairness/epochs/{epoch_id}` | none | `commitment`, state, `server_seed` once revealed |
-| `POST /v1/econ/reliquary/open` | `req_id`, `count` | results, counters after, Keepsake records |
-| `POST /v1/econ/archive/purchase` | `req_id`, `entry`, `expect_cost` | grant, wallet, receipt |
-| `GET /v1/econ/codex` | none | track states, tier, XP, catch-up reserve |
-| `POST /v1/econ/codex/redeem_quill` | `req_id`, `pass` | track unlocked, receipt |
-| `POST /v1/econ/runs/report` | doc 15 §10.4 run report | grants, Codex XP, wallet, receipts |
-| `POST /v1/econ/drafts/sync` | queued Sealed Drafts and run reports (doc 15 §4.5) | one resolution per draft |
-| `GET /v1/econ/receipts?since_seq=N` | none | receipts with `seq > N` |
-| `GET /v1/econ/history/pulls?banner=&cursor=` | none | pull records (doc 15 §3.12) |
-| `GET /v1/econ/store/catalog` | none | SKUs with regional fiat prices (doc 15 §7) |
-| `POST /v1/econ/store/purchase/init` | `req_id`, `sku`, `platform` | `order_id` and platform parameters |
-| `POST /v1/econ/store/purchase/finalize` | `req_id`, `order_id` | grants and receipts after server-to-server verification |
-| `POST /v1/econ/store/refund` | `req_id`, `order_id` | revocations and receipts (doc 15 §7.4) |
-| `GET /audit/{YYYY-MM-DD}` (public) | none | signed daily Merkle root (doc 15 §4.4) |
+Shared objects:
 
-Pull, request and response (doc 15 acceptance test 8: client seed `errata`, nonce 0, `u_tier` 344, `u_feat` 3861, rate-up Rubricated index 1):
+| Object | Fields |
+|---|---|
+| `Wallet` | `ink`, `quire`, `vellum`, `reliquary`, `quill`: int; `debt`: [{`asset`: `"INK"` \| `"QUIRE"` \| `"VELLUM"` \| `"RELIQUARY"`, `amount`: int}] (doc 15 §10.2 `econ_debt`) |
+| `Caps` | `ink_play_24h_used`, `ink_play_24h_cap` (4000), `codex_xp_24h_used`, `codex_xp_24h_cap` (200000), `invasion_quires_24h_used`, `invasion_quires_24h_cap` (60): int (doc 15 §2.3) |
+| `Receipt` | doc 15 §4.6: `v` int, `kind` string, `rid` u64h, `acct` u64h, `item` id?, `qty` int, `src` id?, `seq` int, `iat` int, `kid` string; plus `sig` sigh over doc 15's signed message. `wallet` receipts add `balances` (a `Wallet` without `debt`); `pity` receipts add `pity` [`Pity`], `spark` [{`banner` id, `points` int}] and `reliquary_counters` {`c5` int, `c20` int} |
+| `Pity` | `family` id; `top_since`, `mid_since` int; `top_guarantee`, `mid_guarantee` bool (doc 15 §3.4) |
+| `Epoch` | `id` u64h; `banner` id; `period` int; `state` `"committed"` \| `"active"` \| `"revealed"`; `commitment` h32; `config_hash` h32; `next_nonce` int; `client_seed_hex` string? (2 to 128 lowercase hex digits, set once bound); `server_seed` h32? (set once revealed) (doc 15 §4.1) |
+| `PullResult` | `nonce`, `u_tier`, `u_feat`, `idx` int; `tier` id (`banner.tier.*`); `entry` id; `featured` bool (featured or rate-up); `grant` {`kind` `"new"` \| `"fold"` \| `"vellum"`, `item` id, `fold` int, `vellum` int} (doc 15 §3.8) |
+| `Grant` | exactly one of `asset` (`"INK"` \| `"QUIRE"` \| `"VELLUM"` \| `"RELIQUARY"` \| `"QUILL"`) or `item` (id), plus `qty` int |
+
+Endpoints (errors are `svc.err.` IDs; every endpoint can also return `unauthorized`, `rate_limited`, `maintenance`, `version_too_old` and `internal`):
+
+| Method and path | Request body | Response body | Endpoint errors |
+|---|---|---|---|
+| `GET /v1/econ/wallet` | none | {`wallet` Wallet, `caps` Caps, `receipt` Receipt (kind `wallet`)} | |
+| `GET /v1/econ/banners` | none | {`banners` [doc 15 §3.13 banner record plus `state` `"scheduled"` \| `"live"` \| `"ended"`], `pity` [Pity], `spark` [{`banner` id, `points` int}], `epochs` [Epoch]} | |
+| `GET /v1/econ/odds/{banner_id}` (public) | none | {`banner` id, `rows` [{`entry` id, `tier` id, `base_pct4` int, `consolidated_pct4` int}]}, doc 15 §3.11 values in units of 0.0001% | `not_found` |
+| `POST /v1/econ/fairness/epoch` | {`req_id` u64h, `banner` id} | {`epoch` Epoch, `pity_receipt` Receipt (kind `pity`)}: the open epoch, or a new `committed` one | `banner_ended`, `banner_not_started`, `requires_sku` |
+| `POST /v1/econ/fairness/reveal` | {`req_id` u64h, `epoch` u64h} | {`epoch` Epoch} in state `revealed` | `epoch_mismatch` |
+| `POST /v1/econ/fairness/client_seed` | {`req_id` u64h, `mode` `"fresh"` \| `"pinned"`, `client_seed_hex` string?} (required for `pinned`) | {`revealed` [Epoch]}, every `active` epoch revealed by the change | `bad_request` |
+| `GET /v1/econ/fairness/epochs/{epoch_id}` | none | Epoch | `not_found` |
+| `POST /v1/econ/inkwell/pull` | {`req_id` u64h, `banner` id, `count` 1 \| 10, `expect_cost` int, `epoch` u64h, `commitment` h32, `client_seed_hex` string?, `beginner_target` id?}; `client_seed_hex` is present exactly when the epoch is `committed` | {`epoch` {`id` u64h, `commitment` h32, `nonce_first` int, `nonce_last` int}, `results` [PullResult], `wallet` Wallet, `pity_after` Pity, `spark_after` int, `receipts` [Receipt]} | `insufficient_ink`, `banner_ended`, `banner_not_started`, `requires_sku`, `beginner_target_required`, `beginner_closed`, `epoch_mismatch`, `cost_changed` |
+| `POST /v1/econ/reliquary/open` | {`req_id` u64h, `reliquaries` [u64h] (1 to 10 unopened instance IDs), `epoch` u64h, `commitment` h32, `client_seed_hex` string?} | {`results` [{`nonce` int, `reliquary` u64h, `u_rarity` int, `u_upgrade` int?, `rarity` id, `item_seed` u64h, `keepsake` {`vault_id` u64h, `item` object}}], `counters_after` {`c5` int, `c20` int}, `wallet` Wallet, `receipts` [Receipt]}; `item` is the Canon §13.9 instance in doc 19's schema with `uid` 0; `u_upgrade` is null when draw 2 was the discarded `uniform(1)` | `vault_full`, `not_found`, `epoch_mismatch`, `forbidden` (`juris.flag.minor_inkwell_block`) |
+| `POST /v1/econ/archive/purchase` | {`req_id` u64h, `entry` id, `shelf` `"unlock"` \| `"fold"`, `expect_cost` int} | {`grant` Grant, `wallet` Wallet, `receipts` [Receipt]} | `insufficient_vellum`, `requires_sku`, `cost_changed`, `not_found` |
+| `GET /v1/econ/codex` | none | {`active` id, `codexes` [{`pass` id, `xp` int, `tier` int, `premium` bool}], `reserve` int, `coda_xp` int, `quills` int} | |
+| `POST /v1/econ/codex/activate` | {`req_id` u64h, `pass` id} | {`active` id} (doc 15 §6.5 switching) | `not_found` |
+| `POST /v1/econ/codex/redeem_quill` | {`req_id` u64h, `pass` id} | {`pass` id, `premium` true, `grants` [Grant], `wallet` Wallet, `receipts` [Receipt]}, including late-purchase grants (doc 15 §6.5) | `bad_request` (no Quill held, or track already owned) |
+| `POST /v1/econ/runs/report` | the doc 15 §10.4 run report, without `req_id` | {`state` `"accepted"` \| `"held_for_host"` \| `"held_for_review"`, `grants` [Grant], `codex` {`pass` id, `xp_base` int, `xp_bonus` int, `xp_after` int, `tier_after` int, `reserve_after` int}, `wallet` Wallet, `caps` Caps, `receipts` [Receipt], `verify_sampled` bool} | `report_malformed`, `sim_version_unknown`, `content_mismatch`, `host_mismatch` |
+| `POST /v1/econ/drafts/sync` | {`req_id` u64h, `reports` [run report], `drafts` [{`draft_id` u64h, `banner` id, `client_seed_hex` string, `count` int, `queued_at` int}]} | {`reports` [{`run_id` u64h, `state` string, `error` string?}], `drafts` [{`draft_id` u64h, `state` `"resolved"` \| `"cancelled"`, `results` [PullResult], `error` string?}], `wallet` Wallet}; reports first, then drafts in queue order (doc 15 §4.5) | per entry |
+| `GET /v1/econ/receipts?since_seq=N` | none | {`receipts` [Receipt], `next_since_seq` int}, at most 500 per page | |
+| `GET /v1/econ/history/pulls?banner=&cursor=` | none | {`rows` [doc 15 §3.4 `PullRecord` fields plus `utc` int], `cursor` string?}, 50 rows per page | |
+| `GET /v1/econ/store/catalog` | none | {`currency` string (ISO 4217), `skus` [{`sku` id, `price_minor` int, `owned` bool, `bundle` id, `requires_sku` id?}]} (doc 15 §7) | |
+| `POST /v1/econ/store/purchase/init` | {`req_id` u64h, `sku` id, `platform` `"steam"`} | {`order_id` u64h, `platform_params` {`steam_orderid` u64h}} | `purchase_locked`, `minor_cap_tx`, `minor_cap_month`, `minor_store_blocked`, `forbidden` (already owned) |
+| `POST /v1/econ/store/purchase/finalize` | {`req_id` u64h, `order_id` u64h} | {`state` `"granted"` \| `"failed"`, `grants` [Grant], `receipts` [Receipt]} | `platform_verify_failed` |
+| `POST /v1/econ/store/refund` | {`req_id` u64h, `order_id` u64h, `reason` `"policy"` \| `"withdrawal"` \| `"minor"`} | {`state` `"refunded"` \| `"refused"`, `revocations` [Grant], `receipts` [Receipt]} (doc 15 §7.4) | `forbidden` (outside the window) |
+| `GET /audit/{YYYY-MM-DD}` (public) | none | {`date` string, `root` h32, `leaves` int, `kid` string, `sig` sigh} (doc 15 §4.4) | `not_found` |
+
+Pull, request and response (doc 15 acceptance test 8 and §3.14 example F: `server_seed` bytes `00..1f`, client seed ASCII `errata`, nonce 0, `u_tier` 344, `u_feat` 3861, rate-up Rubricated, `uniform(3) = 1`; the receipt's `iat` lies inside `banner.echo.p001`'s window `[1792886400, 1795305600)`; signatures elided):
 
 ```json
-{ "req_id": "0x5f1e00000000002a", "banner": "banner.echo.p001", "count": 1, "expect_cost": 160 }
+{ "req_id": "0x5f1e00000000002a", "banner": "banner.echo.p001", "count": 1, "expect_cost": 160,
+  "epoch": "0x0000000000000011",
+  "commitment": "630dcd2966c4336691125448bbb25b4ff412a49c732db2c8abc1b8581bd710dd",
+  "client_seed_hex": "657272617461", "beginner_target": null }
 ```
 
 ```json
 { "epoch": { "id": "0x0000000000000011", "commitment": "630dcd2966c4336691125448bbb25b4ff412a49c732db2c8abc1b8581bd710dd",
              "nonce_first": 0, "nonce_last": 0 },
-  "results": [ { "nonce": 0, "tier": "banner.tier.rubricated", "entry": "echo.slot_cy_b", "featured": true,
-                 "grant": { "kind": "echo", "item": "echo.slot_cy_b", "qty": 1 }, "vellum": 0 } ],
-  "wallet": { "ink": 2240, "quire": 310, "vellum": 12, "reliquary": 1, "quill": 0 },
-  "pity_after": { "family": "banner.family.echo", "top_since": 1, "mid_since": 0, "top_guarantee": false,
-                  "mid_guarantee": false, "spark": 1 },
-  "receipts": [ { "acct": "0x0123456789abcdef", "iat": 1791763200, "item": "echo.slot_cy_b", "kid": "rk_2026a",
+  "results": [ { "nonce": 0, "u_tier": 344, "u_feat": 3861, "idx": 1, "tier": "banner.tier.rubricated",
+                 "entry": "echo.lan_ninth_peak", "featured": true,
+                 "grant": { "kind": "new", "item": "echo.lan_ninth_peak", "fold": 0, "vellum": 0 } } ],
+  "wallet": { "ink": 2240, "quire": 310, "vellum": 12, "reliquary": 1, "quill": 0, "debt": [] },
+  "pity_after": { "family": "banner.family.echo", "top_since": 1, "mid_since": 0,
+                  "top_guarantee": false, "mid_guarantee": false },
+  "spark_after": 1,
+  "receipts": [ { "acct": "0x0123456789abcdef", "iat": 1792890000, "item": "echo.lan_ninth_peak", "kid": "rk_2026a",
                   "kind": "grant", "qty": 1, "rid": "0x00000000000003ea", "seq": 8, "src": "banner.echo.p001", "v": 1,
-                  "sig": "<128 hex>" } ] }
+                  "sig": "<128 hex digits>" } ] }
 ```
 
-Run report, request and response (the reference failed run of doc 15: 400 Ink, 60 Quires):
+The wallet held 2,400 Ink before the pull. Run report: the request body is doc 15 §10.4's example verbatim (a solo Standard death in Folio 4, `run_id` `0x00000000075bcd15`). For an account whose Codex XP, catch-up reserve and 24-hour windows were all 0 and whose wallet held 2,240 Ink and 310 Quires, the response is:
 
 ```json
-{ "req_id": "0x5f1e00000000002b", "run_id": "0xdba5cd5ae5eebfe8", "slot": 0, "sim_version": 1,
-  "content_hash": "0x9f00000000000000000000000000000000000000000000000000000000000001",
-  "run_seed": "0xc6f2e12ddca712ab", "mode": "mode.standard", "grade": 2, "outcome": "run.end.erased",
-  "score": 3000, "active_ticks": 216000, "party_size_max": 2,
-  "folio_exits": [ { "folio": 1, "genre": "genre.cyberpunk" }, { "folio": 2, "genre": "genre.wuxia" } ],
-  "editor_kills": 0, "kills": [ { "rank": "rank.standard", "party_size": 2, "count": 61 } ],
-  "types_identified": 6, "crafts": 2, "revives": 1, "apocrypha": false,
-  "input_log_hash": "0x1b00000000000000000000000000000000000000000000000000000000000004",
-  "final_state_hash": "0x1a00000000000000000000000000000000000000000000000000000000000002" }
+{ "state": "accepted",
+  "grants": [ { "asset": "INK", "qty": 95 }, { "asset": "QUIRE", "qty": 14 } ],
+  "codex": { "pass": "pass.codex_001", "xp_base": 5025, "xp_bonus": 0, "xp_after": 5025, "tier_after": 0, "reserve_after": 0 },
+  "wallet": { "ink": 2335, "quire": 324, "vellum": 12, "reliquary": 1, "quill": 0, "debt": [] },
+  "caps": { "ink_play_24h_used": 95, "ink_play_24h_cap": 4000, "codex_xp_24h_used": 5025, "codex_xp_24h_cap": 200000,
+            "invasion_quires_24h_used": 0, "invasion_quires_24h_cap": 60 },
+  "receipts": [], "verify_sampled": false }
 ```
 
-```json
-{ "grants": [ { "asset": "INK", "qty": 400 }, { "asset": "QUIRE", "qty": 60 } ], "codex_xp": 20000,
-  "wallet": { "ink": 2640, "quire": 370, "vellum": 12, "reliquary": 1, "quill": 0 },
-  "caps": { "ink_play_24h_used": 400, "ink_play_24h_cap": 4000, "codex_xp_24h_used": 20000, "codex_xp_24h_cap": 200000 },
-  "receipts": [], "sampled_for_verify": false }
-```
-
-`sampled_for_verify` is true when `fnv1a64(run_id) mod 100 < 5` or the report reaches 90% of a cap (doc 15 §10.4). Economy error IDs: `svc.err.insufficient_ink`, `svc.err.insufficient_vellum`, `svc.err.banner_ended`, `svc.err.banner_not_started`, `svc.err.cap_reached`, `svc.err.cost_changed` (when `expect_cost` differs), `svc.err.idem_conflict` (same `req_id`, different body), `svc.err.report_mismatch` (header or `final_state_hash` disagrees with the host's report), `svc.err.purchase_locked`, `svc.err.platform_verify_failed`.
+`verify_sampled` is true when `mix64(run_id) mod 100 < 5`, when the report reaches 90% of any cap, or when the account has `econ_review = true` (doc 15 §10.4); for `0x00000000075bcd15`, `mix64` mod 100 is 84. A co-op report that arrives before the host's returns `held_for_host` and posts nothing until the host's report matches or 7 days pass (doc 15 §10.4 step 5). Economy error IDs map doc 15's codes one to one: `svc.err.insufficient_ink`, `svc.err.insufficient_vellum`, `svc.err.banner_ended`, `svc.err.banner_not_started`, `svc.err.requires_sku`, `svc.err.beginner_target_required`, `svc.err.beginner_closed`, `svc.err.epoch_mismatch`, `svc.err.vault_full`, `svc.err.cost_changed` (when `expect_cost` differs), `svc.err.idem_conflict` (same `req_id`, different body), `svc.err.report_malformed`, `svc.err.content_mismatch`, `svc.err.host_mismatch` (header or `state_hash` disagrees with the host's report), `svc.err.purchase_locked`, `svc.err.minor_cap_tx`, `svc.err.minor_cap_month`, `svc.err.minor_store_blocked`, `svc.err.platform_verify_failed`. Caps never produce an error: they clip grants (doc 15 §2.3).
 
 ### 11.5 Lobbies, relay and invasion tickets
 
-- Steam sessions use Steam lobbies (§3.3); `svc.lobby` is not involved except for invasion tickets.
+- Steam sessions use Steam lobbies (§3.3); `svc.lobby` is involved only for invasion beacons, tickets and outcomes.
 - Non-Steam sessions: `POST /v1/lobbies` `{ "req_id", "settings": LobbySettings, "region_rtt_ms": [31, 104, 212] }` → `{ "lobby_id", "relay": "eu-central", "host_token": "<base64 netcode token>" }`; `GET /v1/lobbies?mode=&grade=&cursor=` lists public lobbies; `POST /v1/lobbies/{id}/join` → `{ "relay", "token" }`; `GET /v1/lobbies/{id}/events` (WebSocket) carries membership changes and `MigrateAnnounce`.
-- `POST /v1/invasions/ticket` `{ "req_id", "host_run_id": "0x…" }` → `{ "exp": 1791763260, "sig": "<128 hex>" }`, an Ed25519 signature by an `ik_` key over `"PALIMPSEST/INVADE/v1" ‖ 0x00 ‖ le64(invader account_id) ‖ le64(host_run_id) ‖ le64(exp)`, valid for 60 s.
+- Invasion beacons (§9.13): `PUT /v1/invasions/beacons/{run_id}` `{ "req_id": "0x…", "sim_version": 1, "proto": 1, "content_hash16": "9f00000000000000", "grade": 4, "host_steamid": "0x0110000100000001", "ping_location": "<Steam ping location>", "accounts": ["0x0123456789abcdef"] }` → `{ "ttl_s": 45 }`; the caller's account must be in `accounts`, and a beacon not refreshed within 45 s disappears. `DELETE /v1/invasions/beacons/{run_id}` → `{}`. `GET /v1/invasions/beacons?sim_version=1&proto=1&content_hash16=…&grade_min=2&grade_max=6&cursor=` → `{ "beacons": [ { "run_id": "0x…", "grade": 4, "party_size": 2, "host_steamid": "0x…", "ping_location": "…" } ], "cursor": null }`, at most 50 per page, never listing a beacon whose party blocked the caller or a beacon to an account with invasions disabled.
+- `POST /v1/invasions/ticket` `{ "req_id", "host_run_id": "0x…" }` → `{ "exp": 1791763260, "sig": "<128 hex>" }`, an Ed25519 signature by an `ik_` key over `"PALIMPSEST/INVADE/v1" ‖ 0x00 ‖ le64(invader account_id) ‖ le64(host_run_id) ‖ le64(exp)`, valid for 60 s. Refusals: `svc.err.not_found` (no live beacon), `svc.err.forbidden` (invasions disabled for the account, or a party member blocked it within 30 days).
 - `POST /v1/invasions/outcome` `{ "req_id", "host_run_id": "0x…", "invader": "0x…", "start_tick": 41000, "end_tick": 53000, "reason": 3 }` from the host and from the invader → `{ "matched": true }`. Both reports must arrive within 900 s of each other; a report without its pair grants nothing. The example (12,000 ticks, Redacted) pays the invader 10 Quires under doc 15 §2.4.
 
 ### 11.6 Leaderboards and ranked tokens
 
-- `POST /v1/ranked/tokens` `{ "req_id", "mode": "mode.daily", "period": "2026-10-11", "accounts": ["0x…", "0x…"], "sim_version": 1, "content_hash": "0x…" }` → `{ "run_seed": "0xc6f2e12ddca712ab", "token": "<base64>", "exp": 1791936000 }`. The token is canonical JSON of the request fields plus `run_seed` and `exp`, signed by an `lk_` key; it lives 48 hours. `period` is the UTC date for `mode.daily`, the ISO week for `mode.weekly_gauntlet`, and absent for other ranked modes. A drop-in joiner of a ranked run requests a token with the run's `run_id` and its own account only; for `mode.daily` this consumes that account's attempt. Refusals: `svc.err.attempt_used`, `svc.err.sim_version_unknown`, `svc.err.content_hash_unknown`, and `svc.err.forbidden` for a run with `mode.invasion_open`.
+- `POST /v1/ranked/tokens` `{ "req_id", "mode": "mode.daily", "period": "2026-10-11", "run_id": "0x00000000075bcd15", "accounts": ["0x…", "0x…"], "sim_version": 1, "content_hash": "<h32>" }` → `{ "run_seed": "0xc6f2e12ddca712ab", "token": "<h32>", "exp": 1791914400, "sig": "<sigh>" }`. `token` is 32 bytes from the service's OS CSPRNG, stored server-side with the request fields, `run_seed` and `exp`; it is doc 14's `RankedState.ranked_token`. `sig` is an Ed25519 signature by an `lk_` key over `"PALIMPSEST/RANKED/v1" ‖ 0x00 ‖ token ‖ le64(run_id) ‖ le64(run_seed) ‖ le64(exp)`, so every party member verifies the host's token offline against the embedded public keys. A token lives 48 hours: issued at 2026-10-11 18:00:00 UTC (1791741600), it expires at 1791914400. `period` is the UTC date for `mode.daily`, the ISO week for `mode.weekly_gauntlet`, and absent for other ranked modes; it is validated as strictly as Canon §3.6 requires (a real calendar date, an uppercase `W`, a week the ISO year has) and must be the current UTC date or ISO week, else `svc.err.bad_request`. A drop-in joiner of a ranked run requests a token with the run's `run_id` and its own account only; for `mode.daily` this consumes that account's attempt. Refusals: `svc.err.attempt_used`, `svc.err.sim_version_unknown`, `svc.err.content_hash_unknown`, and `svc.err.forbidden` for a run with `mode.invasion_open`.
 - `POST /v1/leaderboards/submissions` with the doc 14 §9.4 JSON → `{ "submission_id", "upload_url" }`; the client `PUT`s the replay to `upload_url` (valid 900 s); `GET /v1/leaderboards/submissions/{id}` → `{ "state": "queued" | "accepted" | "rejected", "error": null }`.
+- `GET /v1/leaderboards/runs/{run_id}` → `{ "state": "none" | "queued" | "accepted" | "rejected", "submission_id": "0x…" | null }`, used by non-host members (§10.2).
 - `GET /v1/leaderboards/{board}?period=&party_size=&cursor=` → 50 entries per page with rank, party personas, score, `end_tick`, and a replay link for the top 100.
 
 ### 11.7 Telemetry and crash reports
@@ -1165,10 +1235,11 @@ PALIMPSEST ships no kernel or client anti-cheat (doc 02 §14, Steam Deck Verifie
 | Boundary | Trusted | Defense |
 |---|---|---|
 | Client → host | nothing | commands sanitized (§5.8); `view_tick` clamped to measured lag (§5.5); intents validated by their owning document; rate limits and violation kicks |
-| Host → clients | only what the client may know | instanced items, other inventories, unknown item properties, culled PvP players and out-of-interest entities never leave the host (§6.6, doc 10 §2.8) |
+| Host → party clients | presentation data, not secrets (decision 9) | instanced items, other inventories, unknown item properties and out-of-interest entities are never replicated (§6.6, doc 10 §2.8), but every party member holds the run seed and the CIL and can derive them with a modified client; inside a party this protects bandwidth and honest presentation only |
+| Host → invader, and party → invader | nothing beyond its own view | the invader gets no CIL, knowledge or inventories, and snapshots under PvP culling; party clients get no slot-4 commands while it is present (§6.14 sealing), so no client of either side, modified or not, receives a culled opponent's position; only the host itself holds both, which is why a cheating host affects only its own session; the invader holds the run seed for terrain only |
 | Host's own session | the host, for its own party | a host that edits its process changes only its party's game; its ranked submission fails re-simulation, and its run reports earn at most doc 15's per-run and 24-hour caps |
 | Ranked boards | nothing until verified | full re-simulation of the CIL from tick 0 and cross-checked input-log hashes (§10.2) |
-| Economy | platform tickets, server ledger | doc 15 caps, idempotent grants, 5% re-simulation sampling, run reports matched against the host's `final_state_hash` |
+| Economy | platform tickets, server ledger | doc 15 caps, idempotent grants, 5% re-simulation sampling, co-op run reports matched against the host's report (`host_mismatch`, doc 15 §10.4) |
 | Invasions (PvP) | nothing | signed tickets, empty mod set, equal `content_hash`, PvP culling, lag-compensation cap of 16 ticks, reports to `svc.moderation`; statistical flags (aim-snap rate, reaction time) go to human review only; a cheating host affects only invasions into its own session, whose invader rewards doc 15 caps at 60 Quires per 24 hours |
 
 Input automation inside one's own co-op session is not detected. Sanctions are per account and online only: hidden from boards, barred from invasions, or both; offline play is never restricted.
@@ -1201,7 +1272,8 @@ A session never waits on a service: service calls run on the net or worker threa
 | Rejected or unranked submissions | anti-cheat | (f) legitimate interest | 30 days |
 | Telemetry | balance and stability | (a) consent | raw 180 days (doc 02 §17.4), aggregates forever |
 | Crash and desync dumps | stability | (a) consent | 90 days |
-| Moderation reports with the last 50 chat lines | safety | (f) | 365 days |
+| Moderation reports with the last 100 text lines held by the reporter (doc 15 §8.5) | safety | (f) | 365 days |
+| Invasion beacons: account IDs, SteamID, Steam ping location | invasion matchmaking | (b) | until the window closes or 45 s after the last refresh (§9.13) |
 | Service logs | security | (f) | 14 days, IPs truncated (§11.1) |
 | Chat, voice, game traffic | none | — | never stored by any service |
 
@@ -1215,20 +1287,35 @@ Budgets count message bytes plus `DATAGRAM_OVERHEAD` (48 bytes) per datagram.
 
 | Flow | Per client | Notes |
 |---|---|---|
-| Snapshots, host → client | 12,000 B/s (96 kbit/s) | 30 datagrams/s; 10,560 B/s payload; mean 352 B per snapshot; combat estimate 304 B (24 entity updates at 74 bits, 6 events, owner, HUD, header); calm 87 B |
-| World edits | 1,500 B/s average | keyframes and Folio state are exempt and occur at Folio entry |
-| CIL | 1,800 B/s | 10 messages/s of 132 B (6 ticks × 21 B + 6 B) |
-| Control (owner, party, run, hashes, chat) | 700 B/s | |
+| Snapshots, host → client | 12,000 B/s (96 kbit/s) | 30 datagrams/s; 10,560 B/s payload; mean 352 B per snapshot. Combat estimate 329 B: 16-byte header; `ENTITIES` with 24 walking updates at 74 bits (226 B with framing); `EVENTS` with 6 `ev.damage_dealt` records at 80 bits (63 B); `OWNER` 16 B; `HUD` 8 B. Calm estimate 99 B (6 updates, no events) |
+| World edits | 1,400 B/s average | keyframes and Folio state are exempt and occur at Folio entry |
+| CIL | 1,900 B/s | 10 messages/s of 142 B (10-byte header plus 6 ticks × 22 B) plus 48 B overhead each |
+| Control (owner, party, run, hashes, knowledge, chat) | 700 B/s | `PartyState` of 70 B with 4 Active slots and no roster change, at 2 Hz (236 B/s with overhead), `HashReport` of 40 B at 1 Hz (88 B/s), and `OwnerDelta`, `RunView`, `KnowledgeDelta` and chat within the remaining 376 B/s average |
 | **Down total** | **16,000 B/s (128 kbit/s)** | listen host with 3 clients: 48,000 B/s = 384 kbit/s up (doc 02 `perf.deck.net.host_kbps`); with 3 clients and an invader each peer gets `floor_div(48000, 4) = 12,000` B/s, so `SNAP_RATE = 6,560` and refill 218 B; dedicated with 4 clients and an invader: 80,000 B/s |
+| CIL backlog | 8,000 B/s while not in game; 1,000 B/s in game | the in-game rate comes out of that client's `SNAP_RATE` (9,560 B/s meanwhile), so the total stays 16,000 B/s |
 | Inputs, client → host | 6,480 B/s (51.8 kbit/s) | 60 packets/s of 60 B; host down from 3 clients 155.5 kbit/s |
-| Voice while talking | 5,600 B/s | 50 frames/s of 64 B (60 B at 24 kbit/s plus a 4 B header) |
-| Folio entry burst | ≤ 64 KiB per tick | `FolioState`, `Keyframe` (≈ 12.5 KB for 300 entities), `ChunkData` only on mismatch |
+| Voice while talking | 5,600 B/s per forwarded talker | 50 frames/s of 64 B (60 B at 24 kbit/s plus a 4 B header) plus overhead; outside the game budgets; at most 2 talkers per receiver, so a listen host's worst case is 3 × 2 × 5,600 = 33,600 B/s up, dropped first under congestion (§9.12) |
+| Folio entry burst | ≤ 64 KiB per tick | `FolioState`, `Keyframe` (12,825 B of entity records for 300 creates at 342 bits), `ChunkData` only on mismatch |
 
 ---
 
 ## 16. Network test plan
 
-**NetSim.** A link conditioner inside `net.route.in_process` delays, drops, duplicates and caps datagrams per direction. Per datagram it draws, in order, from `Rng::from_seed64(mix64(scenario_seed ^ link_id))` (outside the simulation): 1 burst-state transition `roll_bp`, 1 loss `roll_bp`, 1 duplicate `roll_bp`, 1 jitter `range(J + 1)` ms: 4 draws always.
+**NetSim.** A link conditioner inside `net.route.in_process` delays, drops, duplicates and caps datagrams per direction, with `rng = Rng::from_seed64(mix64(scenario_seed ^ link_id))` (outside the simulation) and exactly 4 calls per datagram whatever the outcome:
+
+```rust
+fn condition(l: &mut Link, dg: Datagram, now_ms: u64) {
+    l.burst = if l.burst { !l.rng.roll_bp(l.sc.burst_leave_bp) } else { l.rng.roll_bp(l.sc.burst_enter_bp) };  // call 1
+    let loss = l.rng.roll_bp(l.sc.loss_bp);                                                                  // call 2
+    let dup  = l.rng.roll_bp(l.sc.dup_bp);                                                                   // call 3
+    let at   = now_ms + l.sc.rtt_ms / 2 + l.rng.range(l.sc.jitter_ms as u64 + 1);                           // call 4
+    if l.burst || loss { return; }                          // in the burst state every datagram is lost
+    l.enqueue(at, dg.clone());                              // delivery queue ordered by (at, enqueue order)
+    if dup { l.enqueue(at + 1, dg); }
+    // cap: a token bucket of cap B/s with capacity cap / 10 drains the delivery queue in order;
+    // datagrams waiting beyond 65,536 queued bytes are tail-dropped
+}
+```
 
 | Scenario | RTT ms | One-way jitter ms | Loss Bp | Burst enter / leave Bp | Duplicate Bp | Cap B/s |
 |---|---|---|---|---|---|---|
@@ -1249,68 +1336,76 @@ In the burst state every datagram is lost. **Nightly runs:** 4 Pilgrim bots (doc
 | Entity-frames held past their newest sample | ≤ 0.5% | ≤ 1% | ≤ 5% | reported only |
 | Snapshot payload over 1,150 B, or a 600-tick window over 16,000 B/s | 0 | 0 | 0 | 0 |
 
-**Scripted cases:** host killed at a random tick (hot, warm and cold modes each resume with equal hashes); a client Dormant for 20 s then resuming at the next Folio entry; a drop-in at Folio 3; a trade under 8% loss; an invasion with PvP culling; a generation mismatch forced by a corrupted chunk. **Soak:** a dedicated server cycles 4-bot runs for 24 h with flat memory. **Live:** a weekly playtest over Steam Datagram Relay between `eu-central` and `us-east` and between `eu-central` and `ap-southeast`. **Services:** 10,000 concurrent simulated clients; `POST /v1/econ/inkwell/pull` 99th-percentile latency ≤ 300 ms; zero ledger invariant violations. **Fuzzing:** every decoder of §5.1, §6.8, §6.11, §6.12 and §6.14 (doc 02 §16 item 5).
+**Scripted cases:** host killed at a random tick (hot, warm and cold modes each resume with equal hashes); host killed during an invasion (cold, invasion reason 6, sealed slot-4 records never reach a party client); a client Dormant for 20 s then resuming at the next Folio entry; a drop-in at Folio 3 with a full CIL backlog; a trade under 8% loss; an invasion with PvP culling; a generation mismatch forced by a corrupted chunk; a kick vote in a full party. **Soak:** a dedicated server cycles 4-bot runs for 24 h with flat memory. **Live:** a weekly playtest over Steam Datagram Relay between `eu-central` and `us-east` and between `eu-central` and `ap-southeast`. **Services:** 10,000 concurrent simulated clients; `POST /v1/econ/inkwell/pull` 99th-percentile latency ≤ 300 ms; zero ledger invariant violations. **Fuzzing:** every decoder of §5.1, §6.8, §6.11, §6.12 and §6.14 (doc 02 §16 item 5).
 
 ---
 
 ## Exports
 
-All 138 IDs below follow Canon §1.1, sit in `net.` and `svc.` (Canon §19, doc 16), and have no `fnv1a32` collision among themselves or with the 2,749 ID tokens of the other spec documents on disk (`fnv1a32("net.ch.snapshot") = 0xe092c335`, `fnv1a32("svc.econ") = 0x71dea0e0`).
+All 153 IDs below follow Canon §1.1, sit in `net.` and `svc.` (Canon §19, doc 16), and have no `fnv1a32` collision among themselves or with the 3,547 ID-shaped tokens of the other spec documents on disk (`fnv1a32("net.ch.snapshot") = 0xe092c335`, `fnv1a32("svc.econ") = 0x71dea0e0`).
 
 | Prefix | IDs |
 |---|---|
-| `net.params.` | `default` |
-| `net.topo.` | `solo`, `listen`, `dedicated` |
-| `net.route.` | `sdr`, `direct`, `relay`, `in_process` |
-| `net.ch.` | `control`, `input`, `snapshot`, `world`, `cil`, `voice` |
-| `net.msg.` | `hello`, `welcome`, `reject`, `ping`, `pong`, `bye`, `input`, `intent`, `snapshot`, `keyframe`, `world_edits`, `folio_enter`, `folio_state`, `chunk_data`, `folio_ready`, `cil`, `hash_report`, `section_hash_request`, `section_hashes`, `full_state_request`, `full_state`, `owner_delta`, `party_state`, `run_state`, `knowledge_delta`, `chat`, `voice`, `join_request`, `join_ready`, `migrate_announce`, `kick_vote`, `lobby_settings`, `lobby_pick`, `lobby_ready`, `run_header` |
-| `net.reject.` | `proto_mismatch`, `sim_version_mismatch`, `content_mismatch`, `auth_failed`, `wrong_password`, `banned`, `party_full`, `run_locked`, `protocol_violation`, `kicked`, `timeout` |
-| `net.cstate.` | `disconnected`, `connecting`, `handshaking`, `lobby`, `awaiting_folio`, `loading`, `playing`, `stalled`, `migrating` |
-| `net.peer.` | `pending`, `lobby`, `waiting`, `loading`, `in_game`, `lost` |
-| `net.migrate.` | `hot`, `warm`, `cold` |
-| `net.trade.` | `idle`, `proposed`, `open`, `locked`, `both_locked`, `executed` |
-| `net.lobby.` | `private`, `friends`, `public` |
-| `net.voice.` | `off`, `party`, `proximity` |
-| `net.session.` | `slot_join`, `slot_dormant`, `slot_resume`, `slot_departed`, `host_changed`, `folio_restart` |
-| `net.netsim.` | `lan`, `good`, `typical`, `poor`, `bad` |
-| `svc.` | `auth`, `profile`, `econ`, `lobby`, `relay`, `leaderboard`, `verify`, `telemetry`, `crash`, `cloud`, `workshop`, `status`, `moderation` |
-| `svc.err.` | `bad_request`, `unauthorized`, `forbidden`, `not_found`, `rate_limited`, `version_too_old`, `maintenance`, `internal`, `insufficient_ink`, `insufficient_vellum`, `banner_ended`, `banner_not_started`, `cap_reached`, `cost_changed`, `idem_conflict`, `report_mismatch`, `purchase_locked`, `platform_verify_failed`, `cloud_conflict`, `attempt_used`, `token_invalid`, `replay_mismatch`, `sim_version_unknown`, `content_hash_unknown` |
+| `net.params.` (1) | `net.params.default` |
+| `net.topo.` (3) | `net.topo.solo`, `net.topo.listen`, `net.topo.dedicated` |
+| `net.route.` (4) | `net.route.sdr`, `net.route.direct`, `net.route.relay`, `net.route.in_process` |
+| `net.ch.` (6) | `net.ch.control`, `net.ch.input`, `net.ch.snapshot`, `net.ch.world`, `net.ch.cil`, `net.ch.voice` |
+| `net.msg.` (38) | `net.msg.hello`, `net.msg.welcome`, `net.msg.reject`, `net.msg.ping`, `net.msg.pong`, `net.msg.bye`, `net.msg.input`, `net.msg.intent`, `net.msg.snapshot`, `net.msg.keyframe`, `net.msg.world_edits`, `net.msg.folio_enter`, `net.msg.folio_state`, `net.msg.chunk_data`, `net.msg.folio_ready`, `net.msg.cil`, `net.msg.hash_report`, `net.msg.section_hash_request`, `net.msg.section_hashes`, `net.msg.full_state_request`, `net.msg.full_state`, `net.msg.owner_delta`, `net.msg.party_state`, `net.msg.run_state`, `net.msg.knowledge_delta`, `net.msg.chat`, `net.msg.voice`, `net.msg.join_request`, `net.msg.join_ready`, `net.msg.migrate_announce`, `net.msg.kick_vote`, `net.msg.lobby_settings`, `net.msg.lobby_pick`, `net.msg.lobby_ready`, `net.msg.run_header`, `net.msg.challenge`, `net.msg.cil_unseal`, `net.msg.cil_backlog` |
+| `net.reject.` (14) | `net.reject.proto_mismatch`, `net.reject.sim_version_mismatch`, `net.reject.content_mismatch`, `net.reject.auth_failed`, `net.reject.wrong_password`, `net.reject.banned`, `net.reject.party_full`, `net.reject.run_locked`, `net.reject.protocol_violation`, `net.reject.kicked`, `net.reject.timeout`, `net.reject.invasion_closed`, `net.reject.host_left`, `net.reject.session_ended` |
+| `net.cstate.` (9) | `net.cstate.disconnected`, `net.cstate.connecting`, `net.cstate.handshaking`, `net.cstate.lobby`, `net.cstate.awaiting_folio`, `net.cstate.loading`, `net.cstate.playing`, `net.cstate.stalled`, `net.cstate.migrating` |
+| `net.peer.` (6) | `net.peer.pending`, `net.peer.lobby`, `net.peer.waiting`, `net.peer.loading`, `net.peer.in_game`, `net.peer.lost` |
+| `net.migrate.` (3) | `net.migrate.hot`, `net.migrate.warm`, `net.migrate.cold` |
+| `net.trade.` (6) | `net.trade.idle`, `net.trade.proposed`, `net.trade.open`, `net.trade.locked`, `net.trade.both_locked`, `net.trade.executed` |
+| `net.lobby.` (3) | `net.lobby.private`, `net.lobby.friends`, `net.lobby.public` |
+| `net.voice.` (3) | `net.voice.off`, `net.voice.party`, `net.voice.proximity` |
+| `net.session.` (6) | `net.session.slot_join`, `net.session.slot_dormant`, `net.session.slot_resume`, `net.session.slot_departed`, `net.session.host_changed`, `net.session.folio_restart` |
+| `net.netsim.` (5) | `net.netsim.lan`, `net.netsim.good`, `net.netsim.typical`, `net.netsim.poor`, `net.netsim.bad` |
+| `svc.` (13) | `svc.auth`, `svc.profile`, `svc.econ`, `svc.lobby`, `svc.relay`, `svc.leaderboard`, `svc.verify`, `svc.telemetry`, `svc.crash`, `svc.cloud`, `svc.workshop`, `svc.status`, `svc.moderation` |
+| `svc.err.` (33) | `svc.err.bad_request`, `svc.err.unauthorized`, `svc.err.forbidden`, `svc.err.not_found`, `svc.err.rate_limited`, `svc.err.version_too_old`, `svc.err.maintenance`, `svc.err.internal`, `svc.err.insufficient_ink`, `svc.err.insufficient_vellum`, `svc.err.banner_ended`, `svc.err.banner_not_started`, `svc.err.requires_sku`, `svc.err.beginner_target_required`, `svc.err.beginner_closed`, `svc.err.epoch_mismatch`, `svc.err.vault_full`, `svc.err.cost_changed`, `svc.err.idem_conflict`, `svc.err.report_malformed`, `svc.err.content_mismatch`, `svc.err.host_mismatch`, `svc.err.purchase_locked`, `svc.err.minor_cap_tx`, `svc.err.minor_cap_month`, `svc.err.minor_store_blocked`, `svc.err.platform_verify_failed`, `svc.err.cloud_conflict`, `svc.err.attempt_used`, `svc.err.token_invalid`, `svc.err.replay_mismatch`, `svc.err.sim_version_unknown`, `svc.err.content_hash_unknown` |
 
-Non-ID interfaces: the `Transport` trait, the message table of §3.7 and every layout in §5.1, §6.8, §6.11, §6.12, §6.14; `MoverSnap`; `Player` (`comp.player` semantics); `SessionIntent`; the intent kinds of §5.7; `ReplayFile`; the HTTP API of §11; behavior of `st.downed` and `st.ghost` and the payloads of `ev.player_revived`, `ev.player_ghosted`, `ev.player_resurrected` (doc 03 §14.2).
+Non-ID interfaces: the `Transport` trait, `reconstruct_tick`, the message table of §3.7 and every layout in §5.1, §6.8, §6.11, §6.12, §6.14; `MoverSnap`; `Player` (the semantics of doc 03's `player` component); `SessionIntent`; `JoinCharacter`; `MigrateAnnounce`; `PartyState`, `SlotSummary`, `RunView`; the intent kinds of §5.7; `ReplayFile`; the HTTP API of §11 with the economy schemas of §11.4 (`content/16/schema/econ_api.json`); the content record `net.params.default`; behavior of `st.downed` and `st.ghost` and the payloads of `ev.player_revived`, `ev.player_ghosted`, `ev.player_resurrected` (doc 03 §14.2).
 
 ## Interface assumptions
 
 | Doc | Assumed to provide |
 |---|---|
-| 02 | §3.1's `Transport` trait replacing the sketch; the intent kinds of §5.7 in `IntentKind` (doc 02 already has 5 command slots and `InvaderJoin`, `InvaderLeave`); flags `flag.net.shadow` (int: 0 off, 1 auto = on with ≥ 6 physical cores and not handheld, 2 on; default 1), `flag.net.voice` (bool, true), `flag.net.crossplay` (bool, true), `flag.net.netsim` (int scenario index, dev builds only, 0 = off); container kind 3 holding `ReplayFile`; `palimpsest_server` subcommands `host`, `verify`, `replay` |
-| 03 | the pure controller `step_mover` that `sys.movement` runs for Errata; system `sys.coop` (logic owner 16, period 1, phase 0) between `sys.damage_late` and `sys.needs`, running §9.4 and §9.5 and trade validation; `ReplFrame` extraction as a read-only pass; `ev.noise.listener_db` with 5 entries; `ev.item_dropped` and `ev.item_picked_up` payloads carrying `cause: u8` (0 normal, 1 trade) |
+| 02 | §3.1's `Transport` trait replacing the sketch; the intent kinds of §5.7 in `IntentKind` (doc 02 already has 5 command slots and `InvaderJoin`, `InvaderLeave`); the flags `flag.net.shadow` (int: 0 off, 1 auto = on with ≥ 6 physical cores and not handheld, 2 on; default 1), `flag.net.voice` (bool, true), `flag.net.crossplay` (bool, true), `flag.net.netsim` (int scenario index, dev builds only, 0 = off), which doc 02's Exports now list; container kind 3 holding `ReplayFile`; `palimpsest_server` subcommands `host`, `verify`, `replay`; §14's invader session search read as the `svc.lobby` beacon search (G18); `Platform::is_handheld` feeding `Hello.handheld` |
+| 03 | the pure controller `step_mover` that `sys.movement` runs for Errata; system `sys.coop` (row 26b, logic owner 16, period 1, phase 0), which doc 03 §2.2 now lists, running §9.4 and §9.5 and trade validation; `ReplFrame` extraction as a read-only pass; the `heard` field of `ev.noise` with 5 entries for slots 0 to 4, as doc 03 §11.5 states (its §14.2 payload row still shows 4); a trade marker on both item events: `ev.item_picked_up.from = 3` and `cause: u8` (0 normal, 1 trade) on `ev.item_dropped` (G10) |
 | 04 | `revive_bp` per Erratum (product of talent multipliers, 10000 default); the Restoration-100 revive calls §9.4 completion |
 | 05 | §2.6 reading the already clamped `view_tick`; a client-callable cosmetic fire model (interval, recoil, spread from keyed `rng.combat`) |
 | 10 | `ItemView` encoding; `KnowledgeDelta` contents |
-| 11 | `DropItemFor` producing `Instanced(to_slot)`; a Keepsake flag on item instances; loot rolls skipping Dormant and ghost slots |
+| 11 | `DropItemFor` producing `Instanced(to_slot)`; a Keepsake flag on item instances; loot rolls skipping Dormant and ghost slots; the backpack capacity rule that §9.7's trade execution checks |
 | 12 | `generate_folio` as a pure function returning `blueprint_hash`; the `net_always` flag on exit doors |
-| 13 | `net_always` on Editor bosses during `BossFight` and on hunters; the account Editor kits that `InvaderJoin { kit }` names; `enemy.editors.invader` spawning at the hunter anchor |
-| 14 | slot-status effects of each `SessionIntent`; `SlotJoin` consumed inside `enter_folio`; `FolioRestart` counted in `restores`; the Redaction resolution of Canon §17.9, including ghosts |
-| 15 | endpoint semantics of §11.4; invader Quires from matched outcome reports (§11.5); the `minor` flag and `juris.flag.invasion_minor_default`; Keepsakes untradeable |
+| 13 | `net_always` on Editor bosses during `BossFight` and on hunters; the account Editor kits (`enemy.editors.kit.*`) that `InvaderJoin { kit }` names; `enemy.editors.invader` spawning at the §10.5 hunter anchor |
+| 14 | slot-status effects of each `SessionIntent`; `SlotJoin` consumed inside `enter_folio`; `FolioRestart` counted in `restores`; the Redaction resolution of Canon §17.9, including ghosts; §8.8's migration bullet aligned with hot, warm and cold (G15); §9.4's submission example in the API's hex forms (G20) |
+| 15 | endpoint semantics of §11.4 and every error code it names, as `svc.err.<code>`; Archive idem key `s` = `req_id` (G19); invader Quires from matched outcome reports (§11.5); the `minor` flag, `juris.flag.invasion_minor_default` and `juris.flag.minor_chat_default`; Keepsakes untradeable |
 | 17 | stalled and migration overlays, stale-entity rendering, trade window, kick vote, voice and crossplay settings, friend codes, ping display |
 | 18 | `loc.` keys for every `net.reject.*` and `svc.err.*` ID |
 
 ## Canon gaps
 
-- **G1.** The contract fixes the header at canon-1.1; the canon on disk is canon-1.4, and this chapter was checked against it.
+- **G1 (resolved).** The header now states canon-1.5, the canon on disk, against which every rule was checked.
 - **G2.** Canon §2.4 logs only commands. The CIL and replays also log intents and session intents with their applied ticks (doc 02 G4). Requested: add both to Canon §2.4.
 - **G3.** Canon §17.9 says the party is Redacted when the invader "reduces the last living Erratum to 0 HP" without relating it to `st.downed`. Assumed: the last Erratum alive and not downed; downed Errata lose `st.downed` without `ev.player_revived` when the party respawns; ghosts during a Redaction are doc 14's. Canon §17.9 gives no reason codes for `ev.invasion_ended`; §9.13 defines 0 to 6.
 - **G4.** Canon §22 forbids synthesized input. The §5.4 substitute contains no movement and no press edge, so it starts nothing; this chapter reads it as the absence of input. Requested: say so in Canon §11.8.
 - **G5.** Canon §2.2 gives the snapshot period and phase without naming the boundary. Assumed: boundary `b = t + 1` for every even `t`, so snapshot boundaries are odd.
 - **G6.** Canon §9 keeps 32 ticks of pose history; doc 05 caps rewind at 16. Added: a target whose `spawn_tick` is later than `t_r` cannot be hit by that rewound test.
 - **G7.** Canon §2.4 puts `run_seed` in the lobby handshake, but no seed exists before `Commit`; `RunHeader` carries it then.
-- **G8.** Doc 14 §3.10 says a dead Erratum's entity "leaves the world"; Canon §17.6 gives ghosts doors, pings and marks in the world. The canon governs; doc 14's text needs to read "leaves the physical world".
+- **G8 (resolved).** Doc 14 §3.10 now keeps the ghost entity in the world with Canon §17.6's doors, pings and marks; no ruling remains.
 - **G9.** Doc 03 §5.19 rewinds Errata projectiles on their first tick only; doc 05 §2.6 integrates catch-up steps. This chapter follows doc 05 and asks doc 03 to align. Doc 03 gives downed crawl 800 mm/s and doc 05 600 mm/s; as owner of `st.downed` this chapter fixes 800 (doc 03, the controller's owner).
-- **G10.** Canon §18 has no trade event. Assumed: each traded item emits `ev.item_dropped` and `ev.item_picked_up` with `cause = 1`.
+- **G10.** Canon §18 has no trade event. Assumed: each traded item emits `ev.item_dropped` with `cause = 1` and `ev.item_picked_up` with `from = 3`; doc 03 §14.2's payloads (`from` 0 to 2 only, no `cause` on `ev.item_dropped`) need these values.
 - **G11.** Canon §14 says no currency can be traded or gifted; doc 11 §17 lets players pass Lucre piles by dropping them. This chapter's trade and `DropItemFor` refuse `cat.currency`; doc 11's Public Lucre drops conflict with the canon and need a ruling.
-- **G12.** Canon §11.1 fixes a 30 s bleed-out and a 3 s revive. Added: 1,200 and 600 ticks for the second and later downs in a Folio, damage shortening (doc 05 §14.3), talent multipliers, and `revive_hp_bp = max(2000, 5000 − 150 × grade)`.
-- **G13.** `flag.` belongs to doc 02; the flags this chapter needs are requested in Interface assumptions.
-- **G14.** Doc 02 §15 budgets 384 kbit/s of host upstream and describes it as 96 kbit/s per remote peer (R4's snapshot figure). This chapter keeps the 384 kbit/s total and splits each of 3 peers' 128 kbit/s into 96 kbit/s of snapshots and 32 kbit/s of reliable channels; with 4 remote peers (an invader present) each peer gets exactly 96 kbit/s (§15). Doc 02's wording needs that split.
+- **G12.** Canon §11.1 fixes a 30 s bleed-out and a 3 s revive. Added: 1,200 and 600 ticks for the second and later downs in a Folio, damage shortening (doc 05 §14.3), talent multipliers, and `revive_hp_bp = max(1000, max(1000, 5000 − 200 × grade) >> min(downs_folio − 1, 3))` (§9.4), which halves revive HP for each repeated down in one Folio. Requested: Canon §11.1's `st.downed` row may cite §9.4 for these values.
+- **G13 (resolved).** `flag.` belongs to doc 02, whose Exports now list `flag.net.shadow`, `flag.net.voice`, `flag.net.crossplay` and `flag.net.netsim`.
+- **G14 (resolved).** Doc 02 `perf.deck.net.host_kbps` now states this chapter's split: with 3 clients, 128 kbit/s per peer (96 kbit/s snapshots, 32 kbit/s reliable channels); with an invader as well, 96 kbit/s per peer.
+- **G15.** Doc 14 §8.8 says host migration "resumes from the latest Folio-entry save copy … the Folio in progress restarts from its entry". This chapter owns migration: hot and warm migrations continue the Folio at `L + 1`, and only cold migration restarts it (§9.3). Doc 14 §8.8 needs that wording.
+- **G16.** Doc 04 §6.2 gives ghosts a share of kill XP; doc 14 §3.10 gives them none. Neither rule is this chapter's; this chapter depends only on Dormant and Departed slots receiving nothing (§9.6). Docs 04 and 14 need one ruling.
+- **G17.** Canon §17.9 and §2.4 say nothing about what party clients may learn of the invader. This chapter seals slot-4 commands from party clients until the invasion ends (§6.14), which makes host loss during an invasion a cold migration (§9.3). Requested: Canon §17.9 may state that party clients never receive the invader's inputs during an invasion.
+- **G18.** Doc 02 §14 says invaders find sessions "through a separate lobby search". This chapter uses `svc.lobby` beacons (§9.13, §11.5), so no client needs a second Steam lobby and invasion matchmaking sits with the service that already signs tickets. Doc 02 needs that wording.
+- **G19.** Doc 15 §10.4 draws `run_id` from the host's OS CSPRNG; an earlier draft of this chapter derived it from the seed, the host account and the time. This chapter follows doc 15. Doc 15 names its error codes without a namespace; §11.4 maps each to `svc.err.<code>`, and maps doc 15 §10.3's "client request UUID" for Archive purchases to this chapter's `u64` `req_id`.
+- **G20.** Doc 14 §9.4's submission example writes `run_seed` in uppercase hex and 32-byte values with a `0x` prefix; the API accepts only doc 15's canonical forms (§11.1) and refuses others with `svc.err.bad_request`, so doc 14's example needs the canonical forms. Doc 14's `RankedState.ranked_token: [u8; 32]` is adopted as the token itself (§11.6).
+- **G21.** Doc 02 §17.4 bars telemetry only for accounts below `juris.flag.child_data_consent_age` without guardian consent; §14 also bars every minor-flagged account. The stricter rule applies, and doc 02 may adopt it.
+- **G22 (resolved).** Doc 03 §2.2 now lists `sys.coop` as row 26b between `sys.damage_late` and `sys.needs`, logic owner 16. Doc 03's `ev.noise` payload row still declares 4 `heard` entries while its §11.5 text and this chapter use 5 (slot 4 is the invader); doc 03 needs to align the row.
 
 ## Acceptance tests
 
@@ -1323,36 +1418,53 @@ Non-ID interfaces: the `Transport` trait, the message table of §3.7 and every l
 7. **Snapshot cadence.** Over ticks 0 to 9 the host emits snapshots for boundaries 1, 3, 5, 7, 9 and no others.
 8. **Priority.** The five §6.7 rows give 697, 1000, 60, 577, 266.
 9. **Quantization.** (12.3456 m, 3.0 m, 200.0004 m) → (12345, 3000, 200000); yaw 16400 → 1025 → 16408; pitch −300 → 490 → −304; HP 42,500 of 85,000 → 128; HP 400 of 85,000 → 2; pitch ±16000 quantize to 1000 and 0.
-10. **Record sizes.** A walking update (two 11-bit axes, rotation) is 74 bits; a full create is 334 bits.
+10. **Record sizes.** A walking update (two 11-bit axes, rotation) is 74 bits; a create with all 8 groups and no statuses is 342 bits; 300 such creates take 12,825 bytes.
 11. **World edit.** The §6.11 edit encodes as `08 00 00 03`; a 5,000-edit tick splits into parts of 4,096 and 904 with the more-parts bit set on the first.
 12. **Field cell.** The §6.12 cell encodes as `a2 08 07 00 02`; the same cell becoming empty in a delta page encodes `a2 08 00 00`.
-13. **Keyframe rule.** With `acked = 1001`, a snapshot at boundary 1065 is encoded against 1001, and boundary 1067 triggers a `Keyframe`.
+13. **Keyframe rule.** With `acked = 1001`, a snapshot at boundary 1063 is encoded against 1001 while the host holds 32 views, and boundary 1065 triggers a `Keyframe`.
 14. **Handles.** A handle removed in snapshot 2001 is not reallocated before the client acknowledges 2001, then is the lowest free handle.
 15. **Relevance.** An `Instanced(2)` item 1 m from slot 1's Erratum never appears in slot 1's snapshots; an Erratum 200 m away always does; an entity entering chunk distance 3 stays relevant and leaves at distance 4.
-16. **PvP culling.** An invader 20 m away behind a wall of `full` blocks, unseen for 31 ticks, is removed from every Erratum client's view; at 15 m it stays relevant through the wall.
+16. **PvP culling.** An invader 20 m away behind a wall of `full` blocks, last seen at test tick 600, stays relevant at test ticks 606 to 630 and is culled at 636; at 15 m it stays relevant through the wall; carrying `st.marked` applied by an Erratum, it is never culled for the party.
 17. **Bleed.** Successive downs in one Folio start at 1800, 1200, 600, 600 ticks. With Max HP 85,000 a 17,000 mHP hit removes 360 ticks and a 20,000 mHP hit removes 424.
 18. **Revive.** Default revive takes 180 ticks; with `revive_bp` 5000, 90; with 1000, 30. Releasing `INTERACT` at progress 179 resets progress to 0 and bleeding resumes on that tick.
-19. **Revive HP.** At Max HP 85,000: Grade 2 gives 39,950 mHP, Grade 20 gives 17,000; a target with `st.withering` still gets 39,950 at Grade 2.
+19. **Revive HP.** At Max HP 85,000 and Grade 2, the first, second and fourth revives in one Folio set 39,100, 19,550 and 8,500 mHP; Grade 0's first revive sets 42,500; Grade 20 always sets 8,500; a target with `st.withering` still gets 39,100 at Grade 2; a downed Erratum carried through the exit after its second down enters the next Folio at 19,550.
 20. **Ghost loss.** A bare resurrection with 0 eligible items draws nothing from `rng.loot`; with 3 eligible items it draws exactly one `range(3)`.
 21. **Trade.** A Lucre pile, a Keepsake, a quest item and an equipped cursed item are each refused; a trade breaks when origins reach 6,001 mm; an executed trade moves uids in ascending order and leaves `finder_slot` unchanged.
-22. **Migration mode.** With a Shadow: hot. Without, 18,000 ticks at 500 ticks/s (36 s): warm. At 160 ticks/s (112.5 s): cold, and a ranked run's `restores` increases by 1.
-23. **Successors.** Slot 1 (handheld, no Shadow, 40 ms), slot 2 (Shadow in sync, 90 ms), slot 3 (desktop, no Shadow, 30 ms) rank as 2, 3, 1.
+22. **Migration mode.** With a Shadow: hot. Without, 18,000 ticks at 500 ticks/s (36 s): warm. At 160 ticks/s (112.5 s): cold, and a ranked run's `restores` increases by 1. During an invasion: cold even with a Shadow. Before any probe completes, `measured_tick_us` is 4,000, so 11,250 ticks since entry is the warm limit.
+23. **Successors.** Slot 1 (handheld, no Shadow, 40 ms), slot 2 (Shadow in sync, 90 ms), slot 3 (desktop, no Shadow, 30 ms), all with complete CILs, rank as 2, 3, 1; with slot 3's backlog incomplete they rank 2, 1, 3.
 24. **Migration continuity.** In NetSim `typical`, killing the host at a random tick resumes warm play with the successor's state hash at the resume boundary equal to an uninterrupted replay of the truncated CIL.
 25. **Handshake.** A client with a different mod set is refused with `net.reject.content_mismatch`; a fifth party member with `net.reject.party_full`; a client failing both proto and content checks gets `net.reject.proto_mismatch`.
-26. **Identity.** Account `0x0123456789abcdef` has friend code `WKNV-A49C`; the §3.8 inputs give `run_id = 0xdba5cd5ae5eebfe8`.
+26. **Identity.** Account `0x0123456789abcdef` has friend code `WKNV-A49C` (`mix64` = `0xb2c058e4ebb5112c`, low 40 bits `0xe4ebb5112c`); a hot migration keeps `run_id` unchanged.
 27. **Replay verification.** The verifier accepts an untouched 4-player replay and rejects it with `svc.err.replay_mismatch` after one changed yaw at tick 5,000.
 28. **Ranked token.** A second token request for the same account and UTC date returns `svc.err.attempt_used`.
 29. **Idempotency.** Repeating a pull with the same `req_id` and body returns the first response and posts one journal transaction; the same `req_id` with a different body returns `svc.err.idem_conflict`.
-30. **Run report.** The §11.4 example grants 400 Ink and 60 Quires.
+30. **Run report.** The doc 15 §10.4 example report returns `accepted` with grants of 95 Ink and 14 Quires, `codex.xp_base` 5,025 and `verify_sampled` false (`mix64(0x00000000075bcd15) mod 100 = 84`).
 31. **Invasion ticket.** A ticket verifies over the 20-byte domain, separator and three little-endian `u64`s; it is refused 61 s after issue and refused for a different `host_run_id`.
 32. **NetSim determinism.** The same scenario seed delivers the identical datagram sequence on two runs, with exactly 4 draws per datagram.
 33. **Late targets.** A target spawned at tick 4990 is not hit by a rewound ray applied at `t = 5000` with `t_r = 4984`.
 34. **Instanced Lucre.** A kill in a 3-player party with one Dormant slot produces Lucre piles for the 2 Active slots only, each sent only to its owner.
 35. **Telemetry.** With telemetry at its default, and for any minor-flagged account, a full online session makes zero requests to `/v1/telemetry/batch`.
-36. **Budgets.** In NetSim `typical`, no snapshot payload exceeds 1,150 bytes and no 600-tick window exceeds 16,000 B/s per client. A listen host with 4 remote peers gives each 12,000 B/s, `SNAP_RATE` 6,560 and refill 218, and its total upstream stays at or below 48,000 B/s.
+36. **Budgets.** In NetSim `typical`, no snapshot payload exceeds 1,150 bytes and no 600-tick window exceeds 16,000 B/s per client. A listen host with 4 remote peers gives each 12,000 B/s, `SNAP_RATE` 6,560 and refill 218, and its total upstream, voice excluded, stays at or below 48,000 B/s.
 37. **Invasion window.** With `mode.invasion_open`: Folio 2 at entry + 9,000 ticks is closed; Folio 3 at entry + 7,199 is closed and at entry + 7,200 is open; a boss Folio is closed; the tick after any Erratum enters `room.colophon` is closed; after one invasion has started in a Folio, that Folio stays closed. A Daily or ranked lobby refuses `mode.invasion_open`.
 38. **Invasion end.** An invader present for 18,000 ticks receives `InvaderLeave { reason: 2 }` on that tick and `ev.invasion_ended` is emitted; outcome reports of 12,000 ticks with reason 3 from both host and invader pay 10 Quires (doc 15 §2.4), and a lone report pays nothing.
 39. **Redaction and downed.** With two Errata downed and the third alive, an invader hit that brings the third to 0 HP triggers the Redaction instead of a run end, and both downed Errata lose `st.downed` without `ev.player_revived`.
+40. **Wire tick windows.** `reconstruct_tick(5, 0xFFFF_FFFE)` returns `0x1_0000_0005`; `reconstruct_tick(7, 3)` returns 7.
+41. **Lag budget.** In an in-process session with a fixed 50 ms one-way delay and no jitter or loss, after 600 ticks every applied command has `t − view_tick` between 11 and 14 (`rtt_ticks` 6, slack 2 to 4, `interp_delay` 4, minus at most 1 tick of fractional clock phase) and no `view_tick` is clamped. With RTT 100 ms, `target_slack` 2 and `interp_delay` 6 the steady-state rewind is 14 (§7.5 example).
+42. **Hard reset.** `host_tick_est` 5000.4, RTT 100 ms and `target_slack` 2 give `P = 5005`.
+43. **Cold-restart log.** Folio 8 entered at `E = 90,000` with one `SlotJoin`, then a cold migration with `L = 95,000`: the CIL holds no command record at any tick ≥ 90,000 before the restart, tick 90,000 holds the `SlotJoin` followed by `FolioRestart`, `restores` rises by 1, and re-simulating the final CIL from tick 0 reproduces every later `HashReport` of the resumed session.
+44. **Invasion sealing.** For an invasion from tick 41,000 to 53,000, no CIL message to a party client sets slot_mask bit 4 for those ticks; `cil_unseal` covering ticks 41,000 to 53,000 follows the first batch after 53,000; afterwards every client's CIL hash equals the host's, and a Shadow paused at 41,000 matches the next `HashReport`.
+45. **Invasion host loss.** Killing the host during an invasion gives `net.migrate.cold` even with a Shadow and `InvaderLeave { reason: 6 }`, and no party client ever held a slot-4 command of the sealed ticks.
+46. **Trade closure.** In `both_locked`, the offerer drinking an offered potion returns the trade to `idle`; both confirming while a receiver's backpack lacks room returns it to `open` with the confirming `action_seq` in each `OwnerDelta.rejected`; 1,800 ticks in `both_locked` with one confirmation return it to `idle`.
+47. **Kick vote.** With 4 Active members, a vote against slot 3 passes with 2 yes votes (the starter's included) within 1,800 ticks; with 3 members it needs both others; with 2 members no vote passes.
+48. **Voice.** With 4 talkers each receiver gets frames from exactly the 2 earliest talk spurts; a peer whose send queue holds 8,193 bytes receives no voice frame while its snapshots continue.
+49. **Backlog.** A 2,000,000-byte compressed backlog to a waiting joiner completes in 250 s; one still incomplete at Folio entry streams at 1,000 B/s with that client's `SNAP_RATE` at 9,560 until it completes; the client writes no replay file before then.
+50. **Economy schemas.** Every request and response example of §11.4 validates against `content/16/schema/econ_api.json`; a pull whose `commitment` is uppercase is refused with `svc.err.bad_request`; a pull on a `committed` epoch without `client_seed_hex` is refused with `svc.err.epoch_mismatch` and posts nothing.
+51. **Pull vector.** The §11.4 pull request on a fresh Echo family returns `u_tier` 344, `u_feat` 3861, `idx` 1, `echo.lan_ninth_peak`, `pity_after` (1, 0, false, false), `spark_after` 1, and debits 160 Ink (doc 15 acceptance test 8).
+52. **Beacons.** A beacon not refreshed for 45 s is absent from the listing; a beacon whose party blocked the caller is never listed to it; the host deletes its beacon on the tick the window closes, and a ticket requested afterwards is refused with `svc.err.not_found`.
+53. **Ranked token signature.** The §11.6 signature verifies over the 20-byte domain `PALIMPSEST/RANKED/v1`, the separator, the 32-byte token and three little-endian `u64`s; changing `run_seed` makes it fail.
+54. **Party wipe.** In a 2-player party with slot 0 downed, a lethal hit on slot 1 makes slot 1 a ghost, then kills slot 0 (`ev.entity_killed`) and ends the run on the same tick, with no bleed wait.
+55. **Challenge.** A `password_proof` computed over any nonce other than the connection's `Challenge` nonce is refused with `net.reject.wrong_password`; a client that receives no `Challenge` within 5,000 ms disconnects.
+56. **State machines closed.** For every state of §4.1, §4.2 and §9.7 and every event listed anywhere in those tables, a table-driven test finds exactly one next state (or the documented "ignored").
 
 ## Invariants annex
 
@@ -1361,18 +1473,24 @@ Non-ID interfaces: the `Transport` trait, the message table of §3.7 and every l
 W! one authoritative Sim per session                       N! client state → host sim, except commands and intents
 W! applied command logged (real | substitute)              N! substitute with movement | press edge
 W! view_tick ∈ [t − min(16, lag + 4), t]                    N! rewind of blocks | target state | NPC attacks
-W! snapshot boundaries b = t + 1, t even                   W! delta vs acked baseline | keyframe when b − acked > 64
+W! snapshot boundaries b = t + 1, t even                   W! delta vs acked baseline | keyframe when b − acked ≥ 64
 W! snapshot payload ≤ 1150 B ∧ client down ≤ 16000 B/s     N! Instanced(s) item → client ≠ s
 W! predicted mover == host mover (exact) or corrected      N! extrapolation of remote entities
 W! blocks global ∧ reliable ordered                        W! fields | entities interest-managed
-W! every client holds CIL from tick 0 ∧ Folio-entry state  W! blueprint_hash checked at every Folio entry
+W! every party client completes CIL from tick 0 (backlog) ∧ holds Folio-entry state   W! blueprint_hash checked at every Folio entry
 W! drop-in at Folio entry (invader: only exception)        N! invader ∈ {voters, successors, n}
 W! migration ∈ {hot, warm, cold}; cold ⇒ restores += 1     N! migration that skips hash checks
 W! downed, revive, trade draw 0 random numbers             W! ghost item loss: keyed rng.loot, ≤ 1 draw
 N! currency in trades                                      W! trade atomic, ascending uid
 W! ranked ⇒ server re-simulation from tick 0               N! ranked accept without matching hashes
-W! service writes idempotent by req_id                     N! telemetry without consent | from minors
+W! service writes idempotent by req_id | doc 15 idem_key   N! telemetry without consent | from minors
 N! chat | voice | game traffic stored by services          N! IP address in logs beyond truncation
 W! offline: every gameplay system runs                     N! session waits on a service call
 W! invasion ⇒ mode.invasion_open ∧ Canon §17.9 window       N! invasion in Daily | Weekly | ranked runs
+N! slot-4 command → party client while invader present      W! host loss during invasion ⇒ cold migration
+W! render_tick := snap_tick_est − interp_delay              W! hard reset P := host_tick_est + one_way_ticks + target_slack
+W! revive_hp_bp ≥ 1000 ∧ halves per repeated down           W! cold ⇒ CIL cut to E ∧ FolioRestart at E
+N! voice ∈ game budgets                                     W! voice dropped before game traffic
+W! run_id := host OS CSPRNG                                 W! every economy body ⊨ econ_api.json ∧ canonical hex
+W! ∀ state ∈ §4.1 ∪ §4.2 ∪ §9.7: every event → one next      N! replay file written before CIL complete
 ```

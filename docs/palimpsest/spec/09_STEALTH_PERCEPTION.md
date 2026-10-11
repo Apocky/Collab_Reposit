@@ -1,7 +1,7 @@
 # 09 — Stealth and Perception
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.2.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.4, including the canon-1.2 additions this chapter owns.
 
-This chapter owns how every simulated observer sees, hears, smells and feels the world, the per-pair detection meter and the awareness state machine, the noise catalog and its conversion into `ev.noise`, sneak attacks and takedowns, hiding, bodies, disguises, distractions, light manipulation, locks, hacking, traps, pickpocketing, co-op stealth and the genre stealth flavors. Everything here runs inside `palimpsest_sim` on integers. Detection is deterministic: it draws no random numbers. Only lockpicking, hacking, trap work, pickpocketing and passive trap and secret detection draw, all from keyed `rng.stealth`. The canon on disk at writing time is canon-1.4; every rule below was checked against it (Canon gaps G1).
+This chapter owns how every simulated observer sees, hears, smells and feels the world, the per-pair detection meter and the awareness state machine, the noise catalog and its conversion into `ev.noise`, sneak attacks and takedowns, hiding, bodies, disguises, distractions, light manipulation, locks, hacking, traps, pickpocketing, co-op stealth and the genre stealth flavors. Everything here runs inside `palimpsest_sim` on integers. Detection is deterministic: it draws no random numbers. Only lockpicking, hacking, trap work, pickpocketing, disguise bluffs and passive trap and secret detection draw, all from keyed `rng.stealth`. The canon on disk at writing time is canon-1.4; every rule below was checked against it (Canon gaps G1).
 
 ## Imports
 
@@ -22,15 +22,16 @@ This chapter owns how every simulated observer sees, hears, smells and feels the
 | Canon | §13.2 | `slot.face` masks; `slot.body`, `slot.back` |
 | Canon | §15, §17.3, §17.6, §17.7, §17.9 | factions and stances; ranks; ghosts imperceptible; mounted cannot be hidden; invaders |
 | Canon | §18 | `ev.noise`, `ev.awareness_changed`, `ev.damage_dealt`, `ev.block_changed`, `ev.entity_killed`, `ev.folio_entered`, `ev.mounted` |
-| Doc 03 | §2.2, §3.3, §5.8, §5.15, §5.18, §7.6, §10, §11, §12.5, §14.2, §15.2 | system slots `sys.perception` (#5) and `sys.hearing` (#31); `comp.perception`; lean offset; `ev.footstep`, `ev.entity_landed`; `raycast_blocks`; `cell_conceal`; light grid and `flashes`; `emit_noise`, sound propagation, `HeardNoise`; explosion noise and flash; payload schemas; sleep query |
-| Doc 04 | §4.2, §5.2, §5.3, §7.2 | check formula and DC ladder; stealth XP events; mastery perks of Sneak, Security, Pickpocket, Hacking, Awareness, Illusion, Divination; Shade and Netrunner talents; `light_step`, `fair_folk`, `wired`, `gumshoe` traits |
-| Doc 05 | §1.6, §3.2, §4.9, §5.2, §6.8, §11.1, §11.4 | archetype `sneak_tier`; stance speeds; lean; armor `noise_db`; the tier values 1 = 30000, 2 = 22500, 3 = 15000 that doc 05 assumes |
+| Doc 03 | §2.2, §3.3, §5.8, §5.12, §5.15, §5.18, §7.6, §10, §11, §12.5, §13.4, §13.6, §14.2, §15.2 | system slots `sys.perception` (#5) and `sys.hearing` (#31); `comp.perception`; lean offset; downed crawl; `ev.footstep`, `ev.entity_landed`; `raycast_blocks`; `cell_conceal`; light grid and `flashes`; `emit_noise`, sound propagation, `HeardNoise`; explosion noise and flash; door toggles; `grid.cause.fell` and `grid.cause.landed`; payload schemas and `DmgFlags`; sleep query |
+| Doc 04 | §2.4, §4.2, §5.2, §5.3, §7.2, §10.1 | check chance curve, DC ladder and the Deceive check rating; stealth XP events; mastery perks of Sneak, Security, Pickpocket, Hacking, Awareness, Illusion, Divination; Shade and Netrunner talents; `light_step`, `night_eyes`, `fair_folk`, `wired`, `gumshoe` traits; `res.breath` drain while holding breath; `avatar_of_fate` double draws |
+| Doc 05 | §1.6, §3.2, §4.9, §5.2, §6.8, §9.3, §10.2, §10.3, §11.1, §11.4 | archetype `sneak_tier` and hands; grenade archetypes; stance speeds; lean; armor `noise_db`; the hit pipeline's call into `sneak_eligible` and `sneak_mult`; the tier values 1 = 30000, 2 = 22500, 3 = 15000 that doc 05 assumes |
 | Doc 06 | §5.2, §7.1, §13, §14 | form cast noise; schools; shadow essence darkness; `glyph.ess.veil`; hushed; sight essence; `st.sleeping` awareness drop |
-| Doc 08 | §3, §4, §6.3, §7 | liquid and gas conceal; respirators and their hearing penalty; shatter noise; phosphor; mind vision; invisibility potions |
+| Doc 07 | §2, §10, §11.1, §12 | material `conceal` and `acoustic` class; block records with `light_emit`, `destructible`, door shapes; placeables and traps as `cat.placeable`; Errata gadgets immune to `st.hacked`; lockpick, toolkit and hacking-deck durability and quality |
+| Doc 08 | §3, §4.3, §6.3, §7 | liquid and gas conceal; respirators and their hearing penalty; shatter noise; phosphor; mind vision; night-eye; invisibility potions |
 | Doc 10 | §5.3, curse table | witness sight pass; `curse.loud`, `curse.beacon` |
-| Doc 11 | items, affixes, manufacturers | `item.face.mask`, `item.tool.lockpicks`, `item.trinket.warning_bell`, `affix.quiet`, `affix.soft_step`, `affix.ambusher`, `perk.leg.shadowweave`, Silverbough and Midnight Avenue traits |
-| Doc 12 | §2.1, §10.2, §16.3, §17 | GPV `fog`, `sound_bp`; light bands; `room.stealth`; hiding methods of secrets; `hazard.camera`, `hazard.alarm`, trap DC placement |
-| Doc 13 | §2.1, §2.4, §4.2, §4.7, §5.4, §5.7, §9.1, §10.5 | template `senses`, tags, roles, ranks; blackboard `last_known`; investigate, search and call_allies actions; stalkers; hacked constructs; boss arena omniscience; hunters |
+| Doc 11 | items, affixes, manufacturers | `item.face.mask`, `item.tool.lockpicks`, `item.tool.hacking_deck`, `item.tool.toolkit`, `item.tool.torch`, `item.trinket.warning_bell`, `item.exotic.quietus`, `item.exotic.dead_drop`, `affix.quiet`, `affix.soft_step`, `affix.ambusher`, `perk.leg.shadowweave`, Silverbough and Midnight Avenue traits; `cat.key` key tags |
+| Doc 12 | §2.3, §10.2, §16.3, §17, §19 | GPV `fog` (§2.3); light bands; `room.stealth`, `room.electronic`; hiding methods of secrets; `hazard.camera`, `hazard.alarm`, trap placement; `gpv.evt.weather_front` (fog +1 per 8 m, sound attenuation × 12000) and `lattice.marg.silent` (sound attenuation × 7000), both multiplying this chapter's `SOUND_BP` (§15.1) |
+| Doc 13 | §2.1, §2.2, §2.4, §4.2, §4.7, §5.4, §5.7, §9.1, §10.5 | template `senses`, `perception`, tags (closed vocabulary incl. `flier`, `breathless`, `electronic`, `enforcer`), roles, ranks; blackboard `last_known`; investigate, search (`min(3, n)` draws), call_allies, raise_alarm, relight and wake_ally actions; reaction delay; stalkers; hacked constructs; boss arena omniscience; hunters |
 | R5 | §2, §9.2 | per-pair meter, zone rates, light table, footstep dB, hysteresis, callouts, Vigilance, darkness defense |
 | R2 | §2.10, §2.11, §3.6 | Oblivion detection hysteresis and sneak perks; tumbler pity; BG3 obscurement |
 | R7 | §1.4 C2, R-BA2, R-BA4 | the R5 meter as the base model; lock-health pity; engineered noise counts as stealth |
@@ -57,8 +58,8 @@ Everything listed in the introduction, the stealth HUD data contract (§8), and 
 |---|---|---|
 | #5 `sys.perception` (period 3, per-entity phase) | for each due, awake, perceiving observer: candidate gathering, sight rays, sight fill, scent, breath, `st.marked`, decay, timers, sight-driven transitions, corpse and light-change discovery, camera timers, Errata reveal meters | ascending `EntityId`, then the backlog (§1.6) |
 | #7 `sys.actions` (doc 05, 06, 07, 11 action code) | calls `noise_level()` (§7.1) when those chapters emit noise; lock, hack, disarm, pickpocket, takedown, hide and bluff actions run their doc 09 state machines here | ascending `EntityId` |
-| #30 `sys.sound`, prelude | `convert_events()` (§7.9) turns this tick's `ev.footstep`, `ev.entity_landed`, `ev.block_changed`, `ev.entity_killed`, `ev.fire_started` into `emit_noise` requests, in event `seq` order, before doc 03 propagates | event order |
-| #31 `sys.hearing` | contact from `ev.damage_dealt`, then `HeardNoise` reactions, tremor, callouts, alarms, pickpocket and takedown results, `st.hidden`, `ev.awareness_changed` flush | listener ascending `EntityId`, records in list order |
+| #30 `sys.sound`, prelude | `convert_events()` (§7.9) turns this tick's `ev.footstep`, `ev.entity_landed`, `ev.block_changed`, `ev.entity_killed`, `ev.fire_started` and sonic `ev.damage_dealt` into `emit_noise` requests, in event `seq` order, before doc 03 propagates; then copies `flashes` into `flash_ring[0]` after shifting the ring | event order |
+| #31 `sys.hearing` | (1) this tick's `ev.status_applied` for `st.blinded` (§4.3) and for `st.sleeping` and `st.hacked` (T12); (2) contact from `ev.damage_dealt` (§5.4); (3) radio messages with `due == now`; (4) `HeardNoise` and tremor records (§4.6, §5.3), callouts (§6.6) and alarms; (5) pickpocket and takedown results; (6) `st.hidden`; (7) `ev.awareness_changed` flush | steps in order; inside a step, events in `seq` order, then listener ascending `EntityId`, records in list order |
 
 Awareness read by doc 05 at #17 `sys.damage` is the state after #5 of the same tick and after #31 of the previous tick.
 
@@ -69,43 +70,73 @@ Awareness read by doc 05 at #17 `sys.damage` is the state after #5 of the same t
 ```rust
 pub struct PerceptionState {
     pub profile: Id32,                 // aware.profile.* (§4.1)
-    pub senses: u8,                    // bit 0 sight, 1 hearing, 2 breath, 3 tremor, 4 thermal, 5 scent
-    pub pairs: Vec<PairAware>,         // sorted by subject EntityId; at most 16
+    pub senses: u8,                    // bit 0 sight, 1 hearing, 2 breath, 3 tremor, 4 thermal, 5 scent (doc 13 order)
+    pub pairs: Vec<PairAware>,         // sorted by subject EntityId; at most 16 (§6.8)
     pub disturb: Option<Disturbance>,  // subject 0: the environment (§6.4)
     pub wary_until: Tick,              // Vigilance (§6.3)
-    pub corpse: Option<(EntityId, i32)>, // body under evaluation and its discovery meter (§10.4)
-    pub search: Option<SearchPlan>,    // §6.7
+    pub corpse: Option<CorpseEval>,    // body under evaluation (§10.4)
+    pub search: Option<SearchPlan>,    // §6.7; one plan per observer, for its highest-ordinal searching stimulus
     pub cam_seen: i32,                 // camera sight ticks (§15.2)
+    pub cam_hold: Option<(EntityId, Tick)>, // camera yaw locked on a target until this tick (§15.2)
     pub subdued_until: Tick,           // non-lethal takedown (§9.4)
     pub bluffs: u8, pub satisfied_until: Tick,   // disguise bluffs (§11.4)
-    pub acc_decay: i64,                // shared decay accumulator for the disturbance
+    pub challenge: Option<(EntityId, Tick)>,     // disguise challenge: wearer and answer deadline (§11.4)
+    pub last_bark: Tick,               // BARK_COOLDOWN (§6.3)
+    pub distracted_until: Tick,        // food lure (§12)
 }
 pub struct PairAware {
     pub subject: EntityId,
     pub state: u8,                     // awareness ordinal 0..=5 (§6.1)
     pub meter: i32,                    // 0..=10000
     pub suspicion: i32,                // disguise suspicion 0..=10000 (§11.2)
-    pub acc: i64,                      // decay accumulator, Canon §2.3, k = 20
-    pub last_gain: Tick, pub last_contact: Tick, pub state_since: Tick,
-    pub lkp: Fx3, pub lkp_vel: Fx3, pub lkp_tick: Tick, pub lkp_src: u8,  // src: 0 sight, 1 sound, 2 callout, 3 damage, 4 scent, 5 marked
-    pub flags: u8,                     // 0 SIGHT_PASS (latest check), 1 HEARD_THIS_TICK, 2 ARRIVED, 3 CALLED_OUT
+    pub acc: i64,                      // meter decay accumulator, Canon §2.3, k = 20
+    pub s_acc: i64,                    // suspicion decay accumulator, k = 20
+    pub last_gain: Tick, pub last_contact: Tick, pub state_since: Tick, pub last_s_gain: Tick,
+    pub lkp: Fx3, pub lkp_vel: Fx3, pub lkp_tick: Tick, pub lkp_src: u8,  // src: 0 sight, 1 sound, 2 callout, 3 damage, 4 scent, 5 marked, 6 alarm
+    pub flags: u8,                     // 0 SIGHT_PASS (latest check), 1 HEARD_THIS_TICK, 2 ARRIVED, 3 CALLED_OUT, 4 HUNTED (§9.2)
 }
-pub struct Disturbance { pub pos: Fx3, pub tick: Tick, pub state: u8, pub meter: i32, pub since: Tick }
+pub struct Disturbance { pub pos: Fx3, pub tick: Tick, pub state: u8, pub meter: i32, pub since: Tick,
+                         pub last_gain: Tick, pub acc: i64 }
+pub struct CorpseEval { pub body: EntityId, pub meter: i32, pub last_pass: Tick }
+pub struct SearchPlan { pub subject: EntityId /* 0 = disturbance */, pub center: Fx3,
+                        pub points: Vec<(Fx3, u16 /* weight */, u8 /* 0 P0, 1 P1, 2 ring, 3 hide */)>,
+                        pub search_ticks: u32 /* 1200, or 1800 after an alarm */ }
+pub struct ScentMark { pub cell: Gidx, pub tick: Tick, pub s0: i32 }
+pub struct Trail { pub marks: [Option<ScentMark>; 120], pub head: u8, pub next_mark: Tick }   // ring, oldest overwritten (§4.5)
+pub struct HackState { pub kind: u8 /* 0 loop, 1 seize, 2 disabled, 3 power_cut */, pub hacker: EntityId,
+                       pub until: Tick /* Tick::MAX = until Folio exit */ }
+pub struct StealthAction { pub kind: u8 /* 0 pick, 1 pick_manual, 2 hack_device, 3 hack_seize, 4 disarm, 5 steal, 6 plant,
+                           7 takedown_lethal, 8 takedown_subdue, 9 hide_enter, 10 hide_exit, 11 body_pickup, 12 body_drop,
+                           13 strip, 14 snuff, 15 relight, 16 bluff, 17 active_search */,
+                           pub target: u64 /* EntityId or Gidx */, pub start: Tick, pub end: Tick,
+                           pub origin: Fx3 /* actor position at start, for the 500 mm cancel rule */,
+                           pub pins: [u8; 8], pub pin: u8, pub pin_start: Tick, pub misses: u8, pub item: u64 }
+pub struct RadioMsg { pub due: Tick, pub receiver: EntityId, pub callout: Callout }
 pub struct StealthWorld {
     pub locks: BTreeMap<u64, LockState>,          // key: door Gidx (lower half) or container EntityId (§13.1)
     pub hides: BTreeMap<u64, HideState>,          // hiding spots (§10.1)
-    pub scent: VecDeque<ScentMark>,               // ring, capacity 4096 (§4.5)
+    pub scent: BTreeMap<EntityId, Trail>,         // per-owner scent trails (§4.5)
     pub revealed: BTreeMap<u64, u8>,              // hidden objects (traps, secrets, mimics, wards) → party-slot mask
     pub reveal: BTreeMap<(EntityId, EntityId), RevealMeter>, // (erratum, stealthy NPC) (§4.8)
     pub blown: BTreeSet<(EntityId, Id32)>,        // (erratum, faction) disguises blown this Folio (§11.4)
     pub discovered: BTreeSet<EntityId>,           // bodies already reported (§10.4)
+    pub blood_seen: BTreeSet<Gidx>,               // blood cells already reported (§10.4)
     pub alarms: BTreeMap<u64, Tick>,              // alarm source → cooldown end (§6.6)
-    pub callouts: Vec<Callout>,                   // this tick's callout payloads, cleared at sys.tick_begin
+    pub callout_log: BTreeMap<(u64, EntityId), Tick>, // (squad id, or faction id32 | 1 << 63 without a squad; subject) → last callout tick (§6.6)
+    pub callouts: Vec<Callout>,                   // this tick's callout payloads; cleared at sys.tick_begin
+    pub radio: VecDeque<RadioMsg>,                // radio callouts in flight, ordered by (due, receiver) (§6.6)
+    pub flash_ring: [Vec<(Gidx, u8)>; 3],         // flashes of the three most recent completed ticks, newest first (§2.1)
     pub backlog: VecDeque<EntityId>,              // deferred perception checks (§1.6)
-    pub hacked: BTreeMap<EntityId, HackState>,    // hacked devices and constructs (§13.4, §13.5)
+    pub hacked: BTreeMap<u64, HackState>,         // hacked devices and seized units, keyed by EntityId or Gidx (§13.4, §13.5)
+    pub hack_fails: BTreeMap<u64, u8>,            // consecutive failed hacks per device (§13.4)
+    pub power_cuts: BTreeMap<u32, Tick>,          // doc 12 room id → relight tick (§2.4)
+    pub actions: BTreeMap<EntityId, StealthAction>, // at most one running stealth action per actor
+    pub emote_ready: BTreeMap<EntityId, Tick>,    // whistle and shout cooldowns (§12)
     pub folio_alerted: bool, pub run_alerted: bool,
 }
 ```
+
+Every map and set above is cleared on `ev.folio_entered` except `run_alerted`. A boundary save (Canon §2.5) holds all of it, the flash ring included, so a loaded game reproduces muzzle-flash exposure and radio delays exactly.
 
 `folio_alerted` resets on `ev.folio_entered`; `run_alerted` never resets during a run. Both become true the first time any pair toward an Erratum reaches `aware.alert`. Canon §8's Unseen bonus reads `!folio_alerted` at exit; doc 14's `run.note.silent` reads `!run_alerted`.
 
@@ -122,12 +153,15 @@ Every draw uses `keyed_rng("rng.stealth", folio, actor, now, seq)` (Canon §3.3)
 | 1003 | the thief | pickpocket or plant: success roll | 1 |
 | 1004 | the picker | manual lock minigame layout: one `range(40)` per pin | `2 + tier` |
 | 1005 | the picker | manual minigame pick-break roll, one per missed pin, in miss order | 0..=3 |
+| 1006 | the disguised Erratum | disguise bluff: the Deceive success roll (§11.4) | 1 |
 
-Perception, meters, transitions, scent, hearing, search patterns and corpse discovery draw nothing.
+Perception, meters, transitions, scent, hearing, search patterns and corpse discovery draw nothing. Under doc 04's `avatar_of_fate`, every **success** roll in this table (lockpick, hack, disarm, steal, bluff, passive detection) draws twice from the same keyed generator and keeps the result better for the roller; break, trigger and layout draws are unchanged. Each such roll therefore adds exactly 1 to its row's count. A pick-break roll succeeds when its value is below `break_bp`, and a disarm trigger roll fires the trap when its value is below 5000; neither is a success roll.
 
 ### 1.6 Budget
 
-`sys.perception` casts at most `RAY_BUDGET = 1536` sight rays per tick. Each observer check gathers at most 8 subjects, nearest first by `dist2`, ties by lower `EntityId`. When the next observer's worst case (3 rays per subject) would exceed the remaining budget, that observer and every later due observer are pushed to `backlog` in ascending `EntityId`; the next tick processes the backlog first, then its own due observers. A deferred check runs with `now` of the tick it actually runs. Reference cost: 85 due observers × 2 subjects × 3 rays = 510 rays per tick in a typical Folio.
+`sys.perception` casts at most `RAY_BUDGET = 1536` sight rays per tick.
+
+**Candidates.** A check considers as sight candidates the live, non-ghost entities `s` with all of: `s` is hostile to `o` by Canon §15 stance, or wears a disguise of `o`'s faction or of a faction friendly or allied to it (§11.1), or is the subject of an existing pair of `o`; `dist2(o_eye, torso(s)) ≤ (max(R_far(o), dv(o)) as i128)²`, with `R_far` and `dv` from §3.3 and §4.3; and, for a civilian, `s` is an Erratum. Each check gathers at most 8 candidates, nearest first by `dist2`, ties by lower `EntityId`. Every existing pair is still processed for decay, timers and removal on every check (§6.2); a pair whose subject is not among the 8 candidates gets `V = 0` that check. When the next observer's worst case (3 rays per subject) would exceed the remaining budget, that observer and every later due observer are pushed to `backlog` in ascending `EntityId`; the next tick processes the backlog first, then its own due observers. A deferred check runs with `now` of the tick it actually runs and does not change the observer's phase. Reference cost: 85 due observers × 2 subjects × 3 rays = 510 rays per tick in a typical Folio.
 
 ---
 
@@ -143,14 +177,15 @@ fn stealth_light(e, now) -> u8:
     dark  = 8 if e's light cell lies in a doc 06 shadow area (field or linger) else 0
     env   = max(0, env - dark)
     own   = max(0, max over e's lit equipment and held items of item_light(i))   // §2.3 table
-    fl    = max(0, max over this tick's and the previous 2 ticks' flashes f of (f.level - taxicab(cell(e), f.cell)))
+    fl    = max(0, max over flashes f in flash_ring[0..3] of (f.level - taxicab(cell(e), f.cell)))
     ph    = 9 if e is phosphor-marked (doc 08) else 0
-    min(15, max(env, own, fl, ph))
+    spot  = 12 if any drone (aware.profile.drone, not hacked by e's faction) had SIGHT_PASS on e at its latest check else 0   // §15.2
+    min(15, max(env, own, fl, ph, spot))
 ```
 
-Flashes come from doc 03 §10.4's per-tick list; doc 09 copies each tick's list into a 3-tick ring so an observer whose check falls 1 or 2 ticks later still sees the muzzle flash.
+Flashes come from doc 03 §10.4's per-tick list, which the systems after #5 fill. At the end of the `sys.sound` prelude of tick `t`, the ring shifts (`[2] = [1]`, `[1] = [0]`) and `[0]` receives tick `t`'s list. A check at tick `t + 1` therefore sees the flashes of ticks `t`, `t − 1` and `t − 2`, so every observer, whose checks are exactly 3 ticks apart, sees every flash on exactly one check. `taxicab` is the sum of the absolute block-coordinate differences.
 
-**Example.** A Gothic Horror crypt corridor (`ambient_light` 2, no fixtures) has effective light 2. An Erratum holding a torch (`own` 12) has `L_s = 12`. Without the torch, a muzzle flash of level 12 in its own cell gives `L_s = 12` for 3 ticks, then 2 again. Standing 2 cells (taxicab) from an ally's flash gives `12 − 2 = 10`. Inside a doc 06 shadow field the dark corridor stays `max(0, 2 − 8) = 0`, but the torch still gives 12.
+**Example.** A Gothic Horror crypt corridor (`ambient_light` 2, no fixtures) has effective light 2. An Erratum holding a torch (`own` 12) has `L_s = 12`. Without the torch, a muzzle flash of level 12 fired on tick `t` in its own cell gives `L_s = 12` on ticks `t + 1` to `t + 3`, then 2 again. Standing 2 cells (taxicab) from an ally's flash gives `12 − 2 = 10`. Inside a doc 06 shadow field the dark corridor stays `max(0, 2 − 8) = 0`, but the torch still gives 12.
 
 ### 2.2 Light factor and bands
 
@@ -187,11 +222,11 @@ Light blocks are doc 07 records with `light_emit > 0`. Doc 09 classifies them by
 | Relight (`input.interact` with a flame source or `dmg.fire` hit) | flame | 30 | `noise.light.snuff` 20 dB | lit state |
 | Switch (`input.interact` on `block.light_switch`) | electric circuit | 6 | `noise.light.switch` 25 dB | every electric fixture of the room toggles |
 | Break | any destructible fixture | weapon | block break noise of its acoustic class (§7.5) | fixture removed; light gone |
-| Power cut: hack or break `block.fuse_box` | electric, whole room | §13.4 | `noise.light.power` 45 dB | every electric fixture of the room unlit for 1800 ticks, then relit unless the box is broken |
+| Power cut: hack or break `block.fuse_box` | electric, whole room | §13.4 | `noise.light.power` 45 dB | every electric fixture of the room unlit; `power_cuts[room] = now + 1800`; on that tick `sys.hearing` relights each fixture through `set_block` unless the box is broken, which keeps the room dark until Folio exit |
 
 Every change goes through `set_block`, so doc 03 relights the grid within its 4,096-pop budget and both channels stay correct. Worldgen fixtures are destructible (doc 12 §2.2).
 
-**AI reaction to darkness.** On every `ev.block_changed` whose old state emitted light and whose new state emits less by at least 4 levels, each awake sapient NPC within 16000 mm of the cell whose eye has a clear `raycast_blocks` line to the cell center gains a disturbance (§6.4) at `aware.suspicious` with position the cell. On arrival the NPC relights a flame source if its template carries `uses_items`, or walks to the room's fuse box for an electric cut; relighting takes 60 ticks. Doc 13 runs the walk; doc 09 sets the goal. Beasts, undead and constructs ignore light changes.
+**AI reaction to darkness.** On every `ev.block_changed` whose old state emitted light and whose new state emits less by at least 4 levels, each awake sapient NPC within 16000 mm of the cell whose eye has a clear line to the cell gains a disturbance (§6.4) at `aware.suspicious` with position the cell. A clear line means `raycast_blocks` from the eye toward the cell center reports no hit before the ray enters the fixture cell; a hit on the fixture's own box counts as clear. The change is evaluated in `sys.hearing` from this tick's `ev.block_changed`, comparing `light_emit` of `old` and `new`. On arrival the NPC relights a flame source if its template carries `uses_items`, or walks to the room's fuse box for an electric cut; relighting takes 60 ticks. Doc 13 runs the walk; doc 09 sets the goal. Beasts, undead and constructs ignore light changes.
 
 **Example.** A Shade snuffs one of two wall torches (`light_emit` 14) in a Mythic Fantasy hall. The guard 9 m away sees the torch cell, so its disturbance becomes suspicious at the torch: it walks over, spends 60 ticks relighting and, if it found nothing, searches (§6.2 T7). A second guard behind a wall gains nothing.
 
@@ -246,13 +281,14 @@ Families are `aware.camo.shadow`, `.earth`, `.foliage`, `.urban`, `.pale`, `.neo
 
 **Invisibility** `f_invis(o)`: 10000 without `st.invisible`. With it, 1000 (Canon §11.1). Wards and lasers do not use sight, so invisibility never affects them. `f_invis = 10000` when the observer sees invisible: an Erratum with Awareness ≥ 75 within 4000 mm (doc 04), with the doc 06 Divination hook within 12000 mm.
 
-**Gear and talents** `f_gear(o)`, every applicable factor in ascending source content-ID byte order:
+**Gear and talents** `f_gear(o)`: every applicable row, one `mul_bp` each, in table order (the three content-ID rows are in ascending byte order; the crowd row and the carry row follow):
 
 | Source | Condition | Bp |
 |---|---|---|
 | `perk.leg.shadowweave` (doc 11) | crouched and `L_s ≤ 4` | 7000 |
 | `talent.netrunner.ghost_signal` (doc 04) | observer profile camera, turret or drone | 7000 |
 | `talent.shade.ghost_walk` (doc 04) | gait crouch and `s > 300` | 8000 |
+| crowd (§15.2) | three or more `fac.neutral` civilians within 3000 mm, gait walk or slower or still, no weapon raised, observer farther than 6000 mm | 4000 |
 | carrying a body or Remains (§10.3) | always | 15000 |
 
 ### 3.2 Sight rays, visible fraction and concealment
@@ -293,11 +329,11 @@ dist   = to_mm(sqrt_fx(dist2(o_eye, torso(t))))
 | Zone | Condition (`θ_v ≤ 10923` for every cone) | `f_zone` | `f_dist` |
 |---|---|---|---|
 | near | `dist ≤ R_near` and `θ_h ≤ near_half` | 10000 | 10000 |
-| far | `dist ≤ R_far` and `θ_h ≤ far_half`, not near | 2000 | `10000 − floor_div(7000 × (dist − R_near), R_far − R_near)` |
+| far | `dist ≤ R_far` and `θ_h ≤ far_half`, not near | 2000 | `10000 − floor_div(7000 × max(0, dist − R_near), R_far − R_near)` |
 | peripheral | `dist ≤ R_near` and `θ_h ≤ periph_half`, not near | 1000 | 10000 |
 | outside | anything else | 0 | — |
 
-Posture rules (Shadow Tactics zones, R5 §2.4): in the **far** zone a crouched, downed or submerged target with `L_eff ≤ 7` gives `f_zone = 0`; in the **peripheral** zone a target with `s ≤ 300` or gait crouch gives `f_zone = 0`. Cameras and turrets sweep `o.yaw` (§15.2); every other observer uses `comp.pos` yaw and pitch.
+Rows are tested in table order and the first match wins, so a target inside `R_near` but between `near_half` and `far_half` is in the far zone with `f_dist = 10000`; the `max(0, ·)` keeps `f_dist` at most 10000. When `R_far = R_near` (cameras, tattlers) the far row never matches before the near row and its `f_dist` is not evaluated. Posture rules (Shadow Tactics zones, R5 §2.4): in the **far** zone a crouched, downed or submerged target with `L_eff ≤ 7` gives `f_zone = 0`; in the **peripheral** zone a target with `s ≤ 300` or gait crouch gives `f_zone = 0`. Cameras and turrets sweep `o.yaw` (§15.2); every other observer uses `comp.pos` yaw and pitch.
 
 **Example.** A guard with SGT 45 has `r32 = 250`, `R_near = 8200`, `R_far = 24600`. A target 20000 mm away in the far cone has `f_dist = 10000 − floor_div(7000 × 11800, 16400) = 4964`.
 
@@ -359,43 +395,56 @@ NPC footstep offset `step_db`: humanoid, sentry, civilian, editor 0; stalker −
 
 ### 4.2 Default assignment
 
-A doc 13 template may name `perception`. Otherwise the first matching rule wins: (1) rank boss or editor → boss; rank hunter → editor. (2) tag `editor` → editor. (3) gadget archetypes: turret → turret, drone → drone; `hazard.camera` → camera; `hazard.alarm` by skin dependency → laser (techne), ward (arcana or mythos), tattler (none in Fairy Tale and Mythic Fantasy), otherwise a tripwire segment that uses the laser rules without visibility. (4) tag `swarm` → swarm. (5) tag `eldritch` with no `sight` sense → horror. (6) role stalker → stalker; role sniper or guardian → sentry. (7) tag `construct` → construct. (8) tag `flying` → flier. (9) tag `beast` → beast. (10) tags `undead` and `mindless` → undead. (11) faction `fac.neutral` → civilian. (12) humanoid. Hounds are named explicitly by their templates.
+A doc 13 template may name `perception`. Otherwise the first matching rule wins: (1) rank boss or editor → boss; rank hunter → editor. (2) tag `editor` → editor. (3) gadget archetypes: turret → turret, drone → drone; `hazard.camera` → camera; `hazard.alarm` by skin dependency → laser (techne), ward (arcana or mythos), tattler (none in Fairy Tale and Mythic Fantasy), otherwise a tripwire segment that uses the laser rules without visibility. (4) tag `swarm` → swarm. (5) tag `eldritch` with no `sight` sense → horror. (6) role stalker → stalker; role sniper or guardian → sentry. (7) tag `construct` → construct. (8) tag `flier` → flier. (9) tag `beast` → beast. (10) tags `undead` and `mindless` → undead. (11) faction `fac.neutral` → civilian. (12) humanoid. Hounds are named explicitly by their templates.
 
 ### 4.3 Dark vision and blinding
 
-`dv(o) = 1000 × (2 + floor_div(SGT_o, 20)) + profile.dv_mm + RowFlat(31) terms` in mm (Canon §6.4 row 31; kin beastkin, `nightborn`, `afflict.hunger` and doc 08 night-eye add to it). Within `dv(o)` the observer reads `L_eff = max(L_s, 8)`: darkness stops protecting up close. Example: SGT 40 gives 4000 mm; an undead with SGT 40 sees at light 8 out to 10000 mm.
+`dv(o) = 1000 × (2 + floor_div(SGT_o, 20) + Σ RowFlat(31)) + profile.dv_mm + Σ dv_mm effects` in mm (Canon §6.4 row 31). `RowFlat(31)` terms are whole meters: `trait.kin.beastkin.night_eyes` +2, `talent.shade.nightborn` +3, `aug.eye_lowlight` +3 per rank, `bp.head` tier-4 wound −2 (doc 04). `dv_mm` effects are millimeters: Canon §16.4 `afflict.hunger` +2000, doc 08 `alch.eff.night_eye` + its magnitude, doc 08 `liq.phosphor` +2000. NPCs use row 31 from their effective SGT (Canon §6.5) plus the profile term. Within `dv(o)` the observer reads `L_eff = max(L_s, 8)`: darkness stops protecting up close. Example: SGT 40 gives 4000 mm; an undead with SGT 40 sees at light 8 out to 10000 mm.
 
 `st.blinded` (Canon §11.1): sight only within 2000 mm. On the tick it is applied, every pair at `aware.alert` whose last contact was sight moves to `aware.lost` (§6.2 T4 with no wait), with `lkp` the subject's current position. `noise.explosion.flash` and doc 05's flash grenade apply it through nerve buildup.
 
 ### 4.4 Hearing thresholds and ambient masking
 
 ```
-thr(o)  = profile.hear_db − floor_div(d(HRG_o), 5) − RowFlat(33) + 30 × [o has st.deafened] + resp_db(o)
-amb(o)  = AMBIENT_DB[local_genre(o.pos)] + 10 × [weather front active in o's room]
-gate    = max(thr(o), amb(o) + 3)
+thr(o)     = profile.hear_db − floor_div(d(HRG_o), 5) − Σ RowFlat(33) + 30 × [o has st.deafened] + resp_db(o)
+amb(o)     = AMBIENT_DB[local_genre(o.pos)] + 10 × [weather front active in o's room]
+gate(o, e) = max(thr(o) + od, amb(o) + 3 + max(0, od))
+od         = opp_db(o, e) (§5.1) when the noise is a body noise (§7.1) of a hostile emitter e, else 0
 ```
 
-`resp_db` is doc 08's respirator penalty (cloth 0, mask 3, rebreather 5). `AMBIENT_DB` is in §15.1; a noise below `amb + 3` is inaudible (Splinter Cell rule, R5 §2.4). Example: a humanoid with HRG 40 in Steampunk (ambient 40) has `thr = 20` and `gate = 43`; in The Unwritten (ambient 0) `gate = 20`.
+`resp_db` is doc 08's respirator penalty (cloth 0, mask 3, rebreather 5). `AMBIENT_DB` is in §15.1; a noise below `amb + 3` is inaudible (Splinter Cell rule, R5 §2.4). A negative `od` (a clumsy emitter) lowers only the threshold term, so no Sneak value ever makes a noise audible under the ambient mask; a positive `od` raises both terms, so Sneak still helps in loud places. Example: a humanoid with HRG 40 in Steampunk (ambient 40) has `thr = 20` and, for a non-body noise, `gate = 43`; in The Unwritten (ambient 0) `gate = 20`. For a footstep of an emitter with `od = −3` the Steampunk gate stays 43 and the Unwritten gate falls to 17; with `od = +2` they are 45 and 22.
 
-Genre `sound_bp` (doc 12 §2.1) scales path attenuation. `sys.hearing` reconstructs each `HeardNoise` record's path cost and rescales it, using the local genre of the noise position:
+**Genre sound.** Path attenuation scales with
+
+```
+sound_bp_eff(pos) = SOUND_BP[local_genre(pos)]              // §15.1, owned here
+                    → × 12000 while a doc 12 weather front is active in pos's room
+                    → × 7000 in a Folio carrying lattice.marg.silent (doc 12)
+```
+
+each arrow one `mul_bp`. `sys.hearing` reconstructs each `HeardNoise` record's path cost and rescales it with `sound_bp_eff` at the noise position, which it reads with the source level through `HeardNoise.req` (doc 03 interface, Canon gaps G15):
 
 ```
 L0    = 10 × source_db;  cost = L0 − 10 × heard_db
-L_eff = floor_div(L0 − mul_bp(cost, sound_bp), 10)
+L_eff = floor_div(L0 − mul_bp(cost, sound_bp_eff(noise.pos)), 10)
 ```
 
-Example: a 45 dB step heard at 25 dB in Hardboiled Noir (13000): `cost = 200`, `L_eff = floor_div(450 − 260, 10) = 19`. In The Redaction (6000): `floor_div(450 − 120, 10) = 33`. Noises doc 03 already dropped (heard ≤ 0) stay inaudible.
+Example: a 45 dB step heard at 25 dB in Hardboiled Noir (13000): `cost = 200`, `L_eff = floor_div(450 − 260, 10) = 19`. In The Redaction (6000): `floor_div(450 − 120, 10) = 33`. In Mythic Fantasy during a weather front (`mul_bp(10000, 12000) = 12000`): `floor_div(450 − 240, 10) = 21`. Noises doc 03 already dropped (heard ≤ 0) stay inaudible.
 
 ### 4.5 Scent trails
 
-Every living, non-ghost Erratum, minion and NPC with the scented flag (every creature except `construct`, `elemental`, `editor` tags) lays a **scent mark** every 30 ticks on ground: `ScentMark { cell: Gidx of its feet cell, tick, owner, s0 }`. `s0 = 10000`, × 5000 with `st.soaked`, × 15000 for kin undead; no mark while the feet cell holds ≥ 1 liquid unit or the body is airborne, swimming or mounted (the mount lays its own). The ring holds 4096 marks; the oldest is evicted. Strength at `now` is `s(m) = s0 − floor_div(s0 × (now − m.tick), 3600)`; a weather front halves the lifetime to 1800 ticks.
+**Scented creatures.** Every living, non-ghost creature is scented except those tagged `construct`, `elemental` or `editor` (doc 13 §2.2). Every Erratum is scented; kin traits that change this belong to doc 04.
 
-Scent observers (`scent` flag) on each check evaluate marks within 4000 mm of their origin, owned by a hostile, with `s(m) ≥ 1000`. The freshest such mark (largest `tick`, ties lower `owner`, then lower `cell`) sets the pair for its owner to at least `aware.suspicious` with `lkp` the mark cell and `lkp_src = 4`, and resets that pair's decay delay. Following marks one by one is the trail; sight takes over when it passes. Example: a mark laid at tick 1000 with `s0 = 10000` reads 5000 at tick 2800 and drops below 1000 after tick 4240; a soaked target's mark (`s0 = 5000`) is lost after tick 3880. Swimming across a canal breaks the trail.
+**Layers.** A scented creature lays marks only when something could track it: every Erratum, every `fac.errata` minion, the invader, a mount while it carries an Erratum, and every other scented creature only while at least one living `fac.errata` minion with the `scent` sense is in the Folio. A layer owns one `Trail` in `StealthWorld.scent`, created on its first mark. On ticks where `(now + (id & 0xFF_FFFF_FFFF) % 30) % 30 == 0` (its §1.11 phase with period 30), while grounded and not mounted, it writes `ScentMark { cell: Gidx of its feet cell, tick: now, s0 }` at `head` and advances `head` modulo 120, overwriting the oldest mark. `s0 = 10000 → × 5000 with st.soaked → × 15000 for kin undead`, one `mul_bp` each. No mark is written while the feet cell holds ≥ 1 liquid unit or the body is airborne, swimming or mounted. 120 marks × 30 ticks = 3600 ticks, the full lifetime, so no live mark is ever overwritten. A trail is deleted when its owner dies, despawns or leaves the Folio.
+
+**Strength** at `now` is `s(m) = s0 − floor_div(s0 × (now − m.tick), life)`, with `life = 3600`, or 1800 while a weather front is active in the mark cell's room at the time of evaluation.
+
+**Tracking.** Scent observers (`scent` sense) on each check consider every layer hostile to them whose origin lies within `SCENT_OWNER_RANGE = 64000` mm of the observer's origin, and in each such trail every mark whose cell center lies within 4000 mm of the observer's origin with `s(m) ≥ 1000`. The freshest such mark over all considered trails (largest `tick`, ties lower owner `EntityId`, then lower `cell`) sets the pair for its owner to at least `aware.suspicious` with `lkp` the mark cell center and `lkp_src = 4`, and sets that pair's `last_gain = now`, which restarts its decay delay. A scent observer with `now < distracted_until` (§12) skips tracking. Following marks one by one is the trail; sight takes over when it passes. Example: a mark laid at tick 1000 with `s0 = 10000` reads 5000 at tick 2800 and drops below 1000 after tick 4240; a soaked target's mark (`s0 = 5000`) is lost after tick 3880. Swimming across a canal breaks the trail.
 
 ### 4.6 Tremor, breath and thermal
 
-- **Tremor** (doc 13). For each footstep or landing noise of a grounded emitter with source level ≥ 25 dB, every tremor observer within 12000 mm (origin to origin) receives a hearing record with `L_rx = L − floor_div(2 × dist_mm, 1000)`, `exact = true`, ignoring walls, ambient masking and `sound_bp`. It is processed as hearing (§5.3). A crouch-walk on grass (25 − 6 = 19 dB) never registers.
-- **Breath** (doc 13, the jiangshi rule). Each check, every hostile within 6000 mm that breathes counts as a near-zone sight pass with `V = 10000`, ignoring walls and light. Breathless entities (kin construct and undead, tags `construct`, `undead`, `elemental`) and an Erratum holding its breath are undetectable. **Holding breath** (`input.hold_breath`, doc 17) drains `res.breath` at 1000 per second like submersion (doc 04) and ends when breath reaches 0 or the input is released.
+- **Tremor** (doc 13). For each footstep or landing noise of a grounded emitter with source level ≥ 25 dB, every tremor observer within 12000 mm (origin to origin) receives a hearing record with `L_rx = L − floor_div(2 × dist_mm, 1000)`, `exact = true`, ignoring walls, ambient masking and `sound_bp`. It is processed as hearing (§5.3), with `sound_bp_eff` not applied. When a tremor observer also received a `HeardNoise` record for the same request, only the record with the larger level is processed. Example: a 40 dB walk on dirt 8000 mm away arrives at `40 − 16 = 24` dB through any number of walls. A crouch-walk on grass (25 − 6 = 19 dB) never registers.
+- **Breath** (doc 13, the jiangshi rule). Each check, every hostile within 6000 mm that breathes counts as a near-zone sight pass with `V = 10000`, ignoring walls and light. Breathless entities (Errata of kin construct or undead, the `machine_body` and `deathless` traits of doc 04, NPCs tagged `breathless`, `construct`, `undead` or `elemental`) and an Erratum holding its breath are undetectable to it. **Holding breath** (`input.hold_breath`, doc 17) drains `res.breath` at 1000 per second like submersion (doc 04) and ends when breath reaches 0 or the input is released.
 - **Thermal** (doc 13) ignores gas concealment in §3.2. It also reads `L_eff = max(L_s, 8)` at any distance for targets that are not undead, construct or elemental.
 
 ### 4.7 Marking, mind vision and seeing the invisible
@@ -437,7 +486,7 @@ On each check, for each candidate subject with a sight pass:
 ```
 gain = profile.fill → × V(o, t) → × opp(o, t) → × STATE_MULT[state] → × (12500 if now < wary_until)
 M    = min(10000, M + gain);  if gain > 0 { last_gain = now; last_contact = now; lkp = t.pos; lkp_src = 0 }
-STATE_MULT: unaware 10000, curious 12500, suspicious 15000, searching 15000, lost 20000
+STATE_MULT: unaware 10000, curious 12500, suspicious 15000, searching 15000, lost 20000, alert 10000
 ```
 
 Cameras use a sight timer, wards, lasers and tattlers trip (§15.2); disguised subjects in front of their outfit's faction use suspicion instead (§11.2); civilians fill only through crimes (§15.2). An alert pair keeps contact only when `V ≥ ALERT_KEEP_V = 300`.
@@ -447,7 +496,7 @@ Cameras use a sight timer, wards, lasers and tattlers trip (§15.2); disguised s
 `sys.hearing` handles each `HeardNoise` record for a perceiving listener (doc 03 §11.5) after the §4.4 rescale:
 
 ```
-gate   = max(thr(o), amb(o) + 3) + (opp_db(o, emitter) if the noise is a body noise of the emitter, §7.1)
+gate   = gate(o, emitter)                                       // §4.4; od = 0 for every non-body or unattributed noise
 if L_eff < gate: inaudible; stop
 margin = L_eff − gate
 gain   = clamp((margin + 1) × 250, 250, 5000) → × CLASS_FILL → × STATE_MULT[state] → × wary 12500
@@ -456,7 +505,7 @@ cap    = 10000 if profile.hear_alerts else max(M, 7499)                    // so
 M      = min(cap, M + gain); last_gain = now
 ```
 
-An attributed noise (§7.7) feeds the emitter's pair. An unattributed noise feeds the disturbance (§6.4) with the same gain and no `opp_db`. Allied noises feed nothing except through callouts (§6.6).
+An attributed noise (§7.7) feeds the emitter's pair, creating it if absent. An unattributed noise feeds the disturbance (§6.4) with the same gain and `od = 0`. Allied noises feed nothing except through callouts (§6.6). `lkp` follows §6.5. `HeardNoise.req` gives `sys.hearing` the request's position, source level, emitter and callout payload (doc 03 interface).
 
 ### 5.4 Contact
 
@@ -468,7 +517,7 @@ elif dist(target, attacker) ≤ 3000 mm or pair had SIGHT_PASS on the latest che
 else: → lost, M = max(M, 9000), lkp = attacker.pos, quantized to 4000 mm when dist > 20000 mm (§6.5), lkp_src = 3
 ```
 
-A hit from an unseen attacker beyond 3000 mm therefore leaves the target lost: still below alert, so the next hit is still a sneak attack (Canon §10.5 step 2.4), but the target now runs at the shot's origin. Damage with no entity attacker (hazards, falls) sets the disturbance to suspicious at the target's position. Doc 03 §5.14 push contact between a perceiver and a hostile body adds 5000 to `M` with exact `lkp` and forces at least suspicious.
+A hit from an unseen attacker beyond 3000 mm therefore leaves the target lost: still below alert, so the next hit is still a sneak attack (Canon §10.5 step 2.4), but the target now runs at the shot's origin. Every transition to lost from this rule sets the pair's `HUNTED` flag (§9.2). Damage with no entity attacker (hazards, falls) sets the disturbance to suspicious at the target's position. Doc 03 §5.14 push contact between a perceiver and a hostile body adds 5000 to `M` with exact `lkp` and forces at least suspicious; doc 03 reports each push pair of the tick to `sys.hearing`. `attacker` here is the hit's owner as §9.1 defines it.
 
 ### 5.5 Decay
 
@@ -512,15 +561,15 @@ In V1 the guard turns suspicious at tick 126 (2.1 s) and walks over; a Shade who
 | T1 | unaware | curious | `M ≥ 2500` | bark; head turn |
 | T2 | unaware, curious | suspicious | `M ≥ 5000`; or an investigate- or alarm-class attributed noise with margin ≥ 10 dB; or a scent mark; or a callout (§6.6); or push contact | `M = max(M, 5000)`; doc 13 investigates `lkp` |
 | T3 | any of 0–4 | alert | `M` reaches 10000; or §5.4 contact; or disguise compromise (§11.4) | `M = 10000`; `alert_since = now` (doc 13 reaction delay); callout (§6.6); `folio_alerted = run_alerted = true` if the subject is an Erratum |
-| T4 | alert | lost | `now − last_contact ≥ LOST_AFTER (90)`; immediately when the observer gains `st.blinded` | `lkp` = predicted position (§6.5); `M = 9000` |
+| T4 | alert | lost | `now − last_contact ≥ LOST_AFTER (90)`; immediately when the observer gains `st.blinded` | `lkp` = predicted position (§6.5); `M = 9000`; set `HUNTED` |
 | T5 | lost | alert | a sight pass with `V ≥ 300`; an attributed noise with margin ≥ 10; §5.4 contact | as T3, no new callout |
-| T6 | lost | searching | within 1500 mm of `lkp`; or `now − state_since ≥ LOST_MAX (600)` | build the search plan |
-| T7 | suspicious | searching | within 1500 mm of `lkp` and 120 ticks of look-around elapsed (`SUSP_LOOK`); or `now − state_since ≥ SUSP_MAX (900)` | build the search plan |
-| T8 | searching | unaware | `now − state_since ≥ search_ticks` (1200; 1800 after an alarm) and `M < 2500` | `wary_until = now + 5400`; doc 13 returns to post |
-| T9 | searching | suspicious | a new stimulus whose position is more than 6000 mm from the plan center | new `lkp`; a stimulus within 6000 mm instead updates `lkp` and restarts the plan |
+| T6 | lost | searching | within 1500 mm of `lkp`; or `now − state_since ≥ LOST_MAX (600)` | build the search plan (§6.7); check enclosed spots near `lkp` first (§10.2) |
+| T7 | suspicious | searching | within 1500 mm of `lkp` and 120 ticks of look-around elapsed (`SUSP_LOOK`); or `now − state_since ≥ SUSP_MAX (900)` | build the search plan (§6.7); check enclosed spots near `lkp` first (§10.2) |
+| T8 | searching | unaware | `now − state_since ≥ search_ticks` (1200; 1800 after an alarm) and `M < 2500` | `wary_until = now + 5400`; clear `HUNTED`; drop the plan; doc 13 returns to post |
+| T9 | searching | suspicious | a new stimulus whose position is more than 6000 mm from the plan center | new `lkp`; a stimulus within 6000 mm instead updates `lkp`, rebuilds the plan around it and sets `state_since = now`, staying searching |
 | T10 | curious | unaware | `M < 1000` and `now − last_gain ≥ CURIOUS_HOLD (240)` | none |
 | T11 | any | (pair removed) | subject dead, despawned, a ghost, out of the Folio, no longer hostile and not disguised, or pacified | `ev.awareness_changed` to unaware |
-| T12 | any | unaware, `M = 0` for every pair and the disturbance | observer gains `st.sleeping` (doc 06 §14), is subdued (§9.4) or hacked (§13.5) | — |
+| T12 | any | unaware, `M = 0` for every pair and the disturbance | observer gains `st.sleeping` (doc 06 §14), is subdued (§9.4) or gains `st.hacked` (§13.4, §13.5) | suspicion 0, `HUNTED` cleared, plan dropped; no `ev.awareness_changed` for pairs already unaware |
 
 Each check evaluates a pair in this order: removal (T11), sight fill, T3, T5, T4, T2, T1, decay, T6, T7, T8, T10. `sys.hearing` evaluates contact, hearing fill, T3, T5, T2, T1, T9. A state change emits `ev.awareness_changed { observer, subject, from, to }` immediately, with `subject = 0` for the disturbance. A pair that reached a state stays there until a listed exit fires: hysteresis comes from the thresholds being crossed one way and the exits being timers or lower thresholds.
 
@@ -539,7 +588,7 @@ Vigilance (MGS Caution, R5 §9.2) multiplies every gain by 12500 while `now < wa
 
 ### 6.4 Disturbances
 
-The disturbance is the observer's awareness of a place rather than of an entity: unattributed noises (thrown objects, impacts, explosions, alarms with no known subject), light changes (§2.4), discovered bodies (§10.4) and environmental damage. It uses ordinals 0–3, the same thresholds (T1, T2), the same hearing gain without `opp_db`, and exits T7, T8 and T10 with its own position. It never reaches lost or alert. An observer's overall posture is the highest ordinal among its pairs and its disturbance; doc 13 acts on the highest, ties broken by the newest `lkp_tick`, then the lower subject `EntityId`, with the disturbance as subject 0.
+The disturbance is the observer's awareness of a place rather than of an entity: unattributed noises (thrown objects, impacts, explosions, alarms with no known subject), light changes (§2.4), discovered bodies (§10.4) and environmental damage. It uses ordinals 0–3, the same thresholds (T1, T2), the same hearing gain with `od = 0`, its own decay (§5.5 rates by ordinal, with its `last_gain` and `acc`), and the exits T7, T8, T9 and T10 with its own position. It never reaches lost or alert. An observer's overall posture is the highest ordinal among its pairs and its disturbance; doc 13 acts on the highest, ties broken by the newest `lkp_tick`, then the lower subject `EntityId`, with the disturbance as subject 0.
 
 ### 6.5 Last known position
 
@@ -559,11 +608,23 @@ Doc 13's blackboard copies `lkp`, `lkp_tick` and `lkp_src` each think (doc 13 §
 
 ### 6.6 Group alert propagation
 
-- **Callout.** On T3, a sapient observer emits `noise.voice.callout` (85 dB) at its eye, unless its squad (doc 13 §4.10), or without a squad any same-faction NPC within 32000 mm, called out the same subject within `CALLOUT_COOLDOWN`. The payload `Callout { emitter, subject, lkp, tick }` rides with the noise request. Doc 13's `ai.action.call_allies` re-emits it under the same cooldown.
+- **Callout.** On T3, a sapient observer emits `noise.voice.callout` (85 dB) at its eye, unless `callout_log[(key, subject)] > now − CALLOUT_COOLDOWN`, where `key` is its squad id (doc 13 §4.10) or, without a squad, `faction.id32 as u64 | 1 << 63`; emitting writes `callout_log[(key, subject)] = now`. The payload `Callout { emitter, subject, lkp, tick, disguise_blown: bool }` rides with the noise request and is pushed to `StealthWorld.callouts`. Doc 13's `ai.action.call_allies` re-emits it under the same cooldown.
 - **Hearing a callout.** A listener of the emitter's faction, or of a faction friendly or allied to it (Canon §15), that hears the callout above its gate: a pair for the subject below suspicious becomes suspicious with `M = max(M, 7000)` and the payload `lkp`; a pair at suspicious, searching or lost takes the newer `lkp` and restarts its state timer; alert is unchanged. Every such listener sets `wary_until = now + 5400`.
-- **Radio.** When the emitter's faction carries the doc 13 `radio` flag and the local TEC at the emitter is ≥ 5, every member of its squad receives the callout at `now + 30` without a hearing check, and each receiver emits `noise.alarm.radio` (50 dB) at itself, which Errata can hear.
+- **Radio.** When the emitter's faction carries the doc 13 `radio` flag and the local TEC at the emitter is ≥ 5, the callout pushes `RadioMsg { due: now + RADIO_DELAY, receiver, callout }` for every other living member of its squad in ascending receiver `EntityId`. At `due`, `sys.hearing` step 3 applies each message as a heard callout without a hearing check, and the receiver emits `noise.alarm.radio` (50 dB) at itself, which Errata can hear. A message whose receiver died or became pacified is dropped.
 - **Allied combat noise.** An alarm-class noise (gunfire, explosion, scream) emitted by an allied NPC that holds some subject at alert is processed by allied listeners as a callout about that subject.
-- **Alarms.** `raise_alarm(faction, pos, subject, source)` does nothing while `alarms[source] > now`; otherwise it sets the cooldown, emits the source's alarm noise, and for every awake member of the faction and of friendly or allied factions within 48000 mm of `pos`: `wary_until = now + 5400`; the pair for `subject`, when known and below searching, becomes searching at `pos` with `search_ticks = 1800`; with no subject, the disturbance becomes searching at `pos`. Doc 13's Director receives `alarm_raised(pos, faction)`. Sources: cameras, lasers, wards, tattlers, `hazard.alarm`, a hound's bark, a civilian's scream, a guard ringing a bell (`noise.alarm.bell`, a 60-tick doc 13 action at a bell or klaxon prop).
+- **Alarms.** `raise_alarm(faction, pos, subject, source)` does nothing while `alarms[source] > now`; otherwise it sets `alarms[source] = now + ALARM_COOLDOWN`, emits the source's alarm noise from the table below at the source, and for every awake member of the faction and of friendly or allied factions within 48000 mm of `pos`, in ascending `EntityId`: `wary_until = now + 5400`; when `subject ≠ 0`, the pair for `subject` (created if absent) becomes searching at `pos` with `lkp_src = 6` and `search_ticks = 1800` if its ordinal is below searching; when `subject = 0`, the disturbance does the same. Doc 13's Director receives `alarm_raised(pos, faction)`. `source` is the device's `EntityId` (or `Gidx` for a block device), or the raising creature's `EntityId`. A device's faction is the faction doc 12 records when placing it, by default the Folio's primary native faction (doc 13).
+
+| Source | Trigger | Alarm noise | `subject` |
+|---|---|---|---|
+| camera (§15.2) | `cam_seen` reaches 60, or a disguise trigger seen (§11.3) | `noise.alarm` 90 dB | the seen target |
+| laser or tripwire, `hazard.alarm` techne and mundane skins (§15.2) | a body capsule crosses the segment | `noise.alarm` 90 dB | the crossing body |
+| ward, `hazard.alarm` arcana and mythos skins (§15.2) | a hostile body center within 4000 mm | `noise.alarm` 90 dB (chime skin) | that body |
+| tattler, `hazard.alarm` dependency-none skin in Fairy Tale and Mythic Fantasy (§15.2) | an Erratum enters 6000 mm, not crouch-walking at ≤ 2000 mm/s and not still | `noise.voice.squawk` 90 dB | 0 |
+| alarm panel "test" (§13.4) | Hacking success with the test verb | `noise.alarm` 90 dB | 0 |
+| hound (§15.2) | a hound pair at suspicious or above | `noise.voice.dog_bark` 90 dB | that pair's subject |
+| civilian (§15.2) | a civilian meter reaches 10000, or a civilian discovers a body | `noise.voice.scream` 95 dB | the criminal, or 0 for a body |
+| bell or klaxon (doc 13 `ai.action.raise_alarm`) | 60-tick channel at the prop | `noise.alarm.bell` 100 dB | the NPC's target |
+| third consecutive failed hack on one device (§13.4) | the failure | none beyond the `noise.hack.fail` already emitted | the hacker |
 - **Bodies** (§10.4) start a disturbance search and a body callout (`noise.voice.callout` with subject 0); listeners set their disturbance to suspicious at the body.
 
 Example: guard A at tick 5000 goes alert on Erratum E and calls out at 85 dB. Guard B 25 m away down a corridor hears it at 85 − 50 = 35 dB, above its Mythic Fantasy gate of 23, so B's pair for E becomes suspicious at A's `lkp` with `M = 7000` and Vigilance until tick 10400. B's further sight gains are × 15000 × 12500, so a glimpse of E at `V = 300` (gain `2500 × 300 × 10000 × 15000 × 12500` = 140 per check) alerts B within 22 checks.
@@ -582,7 +643,7 @@ snap   = nearest walkable cell (floor with 2 air cells above) within 2000 mm hor
 weight = 1, +2 if effective light ≤ 4, +1 if 5..=9, +3 for P1, +2 for a hiding spot
 ```
 
-Doc 13's `ai.action.search` visits P0, then draws 3 points without replacement with its keyed `rng.ai` (seq 1) from the list in the order P1, RING (k, then r), HIDES, using these weights. At each point the searcher looks around for 60 ticks (4 yaw steps of 16384 Bam, 15 ticks each); at a hiding spot it performs the 60-tick check of §10.2. **Squad split:** when `n ≥ 2` squad members search centers within 2000 mm of each other for the same subject, the member with rank `i` (ascending `EntityId`) keeps P0 only if `i = 0`, ring points with `k mod n = i mod n`, and hiding spots with list index `mod n = i mod n`.
+Doc 13's `ai.action.search` visits P0, then draws `min(3, n)` points, `n` being the plan points other than P0, without replacement: `min(3, n)` `weighted` calls on its keyed `rng.ai` (seq 1) over the list in the order P1, RING (k, then r), HIDES, using these weights, a chosen point's weight set to 0 before the next call. At each point the searcher looks around for 60 ticks (4 yaw steps of 16384 Bam, 15 ticks each); at a hiding spot it performs the 60-tick check of §10.2. **Squad split:** when `n ≥ 2` squad members search centers within 2000 mm of each other for the same subject, the member with rank `i` (ascending `EntityId`) keeps P0 only if `i = 0`, ring points with `k mod n = i mod n`, and hiding spots with list index `mod n = i mod n`.
 
 Example: center (100.5, 8.0, 60.5) m, last velocity east. P1 is (106.5, 8, 60.5). Ring point k = 0, r = 4000 is (100.5, 8, 56.5) (yaw 0 faces −Z); k = 2 (yaw 16384, facing −X), r = 8000 is (92.5, 8, 60.5). A dark ring cell has weight 3, P1 weight 4, a closet weight 3.
 

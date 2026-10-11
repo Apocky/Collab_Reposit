@@ -165,7 +165,7 @@ pub fn namespace_of(id: &str) -> Option<&str> {
 
 /// SPEC: canon §1.1 compact content identifier `id32 = fnv1a32(utf8(id))`,
 /// used in saves and packets. Doc 02 §3.4 gives it a public `u32` field.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct Id32(pub u32);
 
@@ -342,7 +342,13 @@ mod tests {
         let cases: [(&str, IdError); 14] = [
             ("", IdError::Empty),
             ("Genre.Cyberpunk", IdError::InvalidFirstByte { byte: b'G' }),
-            ("genre.Cyberpunk", IdError::InvalidByte { index: 6, byte: b'C' }),
+            (
+                "genre.Cyberpunk",
+                IdError::InvalidByte {
+                    index: 6,
+                    byte: b'C',
+                },
+            ),
             ("genre..x", IdError::EmptySegment { segment: 1 }),
             ("genre.x.", IdError::EmptySegment { segment: 2 }),
             (".genre.x", IdError::InvalidFirstByte { byte: b'.' }),
@@ -350,9 +356,27 @@ mod tests {
             ("_genre.x", IdError::InvalidFirstByte { byte: b'_' }),
             ("genre", IdError::TooFewSegments),
             ("a.b.c.d.e.f.g", IdError::TooManySegments { count: 7 }),
-            ("genre.cyber-punk", IdError::InvalidByte { index: 11, byte: b'-' }),
-            ("genre.caf\u{e9}", IdError::InvalidByte { index: 9, byte: 0xc3 }),
-            ("genre.x y", IdError::InvalidByte { index: 7, byte: b' ' }),
+            (
+                "genre.cyber-punk",
+                IdError::InvalidByte {
+                    index: 11,
+                    byte: b'-',
+                },
+            ),
+            (
+                "genre.caf\u{e9}",
+                IdError::InvalidByte {
+                    index: 9,
+                    byte: 0xc3,
+                },
+            ),
+            (
+                "genre.x y",
+                IdError::InvalidByte {
+                    index: 7,
+                    byte: b' ',
+                },
+            ),
             ("loc.item.sword", IdError::TextKeyNamespace),
         ];
         for (id, err) in cases {
