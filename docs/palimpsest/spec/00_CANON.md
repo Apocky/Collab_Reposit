@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.3 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.4 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -220,7 +220,7 @@ apply q on this run
 - Every save, replay and lobby handshake carries `sim_version: u32`, `content_hash: [u8; 32]` and `run_seed: u64`.
 - `content_hash` is BLAKE3 over the canonical serialization of all loaded content sorted by content ID, including mods and the run's unlock set.
 - Hot reload of content is refused while a run is active, except in dev builds.
-- The replay log records the host's applied command per (tick, player slot): `{ tick: u64, slot: u8, move_x: i8, move_z: i8, yaw: u16, pitch: i16, buttons: u32, action_seq: u32, view_tick: u64 }`.
+- The replay log records the host's applied command per (tick, player slot), with slots `0..=3` for the party and slot 4 for an invader (§17.9): `{ tick: u64, slot: u8, move_x: i8, move_z: i8, yaw: u16, pitch: i16, buttons: u32, action_seq: u32, view_tick: u64 }`.
 - Lag-compensated hit tests rewind to `view_tick`. Replays use the logged `view_tick`, so a replay reproduces exactly the hits the live host computed.
 
 ### 2.5 Saves and state hash
@@ -440,6 +440,15 @@ All values are given in content units (§1.6). Code converts them with `fx_from_
 - **Fall damage.** `fall_height = max(0, peak - land)`, measured along the current gravity axis. `peak` is the extreme origin coordinate against gravity since the entity last stood on ground, swam, climbed or had `st.levitating`. `SAFE_FALL = 4000 mm × (10000 + (vrv(e) - 5) × 400) Bp`. If `excess = fall_height - SAFE_FALL > 0`, damage is `mul_bp(max_hp_mhp, ((excess.raw as i128 × 800) >> 32) as i32)` mHP, which is 8% of Max HP per meter of excess. It is a `dmg.blunt` hit entering the damage pipeline at step 4 (§10.5). It skips armor and the chip floor and never crits. Acrobatics (doc 04) multiplies it afterwards.
 - **Dodge.** A 3000 mm burst over 12 ticks costing 20 stamina. Invulnerability starts on the dodge's first tick and lasts `min(12, 8 + floor_div(max(0, AGI - 40), 15))` ticks, never past the dodge's 12th tick. A new dodge cannot start until 18 ticks after the previous one started.
 - **Final move speed** is base speed, then §6.4 row 11, then each active status multiplier in ascending status ID byte order. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
+
+### 4.3 Terrain and placeables
+
+Building is limited (DECISIONS.md, item 16).
+
+- **Terrain is fixed.** Worldgen blocks are indestructible unless their block definition carries the tag `destructible`. Destructible blocks are doors, crates, barrels, cracked walls that hide secrets, wooden structures, glass, ice, webs and every Errata placeable. Explosions, melee and projectiles damage only destructible blocks.
+- **Placeables.** Errata place only `cat.placeable` items: barricades, bridge spans, ladders, traps, light sources and deployable cover. Doc 07 owns placement rules, anchors, block HP and costs. Placing takes ticks scaled by `skill.fieldcraft`.
+- **Resource nodes.** Materials come from resource nodes (ore veins, plants, salvage piles) that are interactable props, not from digging terrain.
+- Liquids, gases, fire, light and sound still simulate on the block grid (doc 03).
 
 ---
 
@@ -805,14 +814,14 @@ There are 36 skills. Skills are integers `0..=100`. Mastery tiers unlock at 25 (
 | `skill.speech` | Speech | CHM | social |
 | `skill.leadership` | Leadership | MEN | social |
 | `skill.hacking` | Hacking | LOG | stealth |
-| `skill.delving` | Delving | END | craft |
+| `skill.fieldcraft` | Fieldcraft | END | craft |
 | `skill.awareness` | Awareness | HRG | stealth |
 | `skill.handling` | Handling | CHM | social |
 
 Scope notes:
 
 - **Hacking** covers electronic locks, cameras, turrets, drones and `body.construct` NPCs (§11.1 `st.hacked`).
-- **Delving** covers dig speed, block yield and block placement speed.
+- **Fieldcraft** covers placing and repairing placeables, their block HP, breaking destructible blocks, setting traps and demolition charges.
 - **Awareness** opposes Sneak in doc 09 and improves §6.4 row 35.
 - **Handling** covers taming, minion command, mounts and vehicles.
 - **Inscription** covers scrolls, runes, enchanting (`ench.`) and Rewriting.
@@ -1156,7 +1165,7 @@ While `st.shocked` is active, each hit the bearer takes (except a `no_chain` hit
 - When the first Erratum reaches 10 stacks, one Editor hunter (`rank.hunter`) spawns for the party. Another spawns every 90 s while any Erratum holds 10 stacks.
 - `st.erasure` is removed from every Erratum on `ev.folio_entered`.
 - Erasure accrual and satiation decay pause in boss Folios while the boss lives.
-- Hunters and every `fac.editors` member erase blocks placed by Errata within 1500 mm of them, at one block per 10 ticks.
+- Hunters and every `fac.editors` member erase Errata placeables within 1500 mm of them, at one placeable block per 10 ticks.
 - Each dose of the `afflict.red_ink` affliction (§16.4) lowers the hunter-spawn threshold by 1, from 10 down to a minimum of 6.
 
 ### 11.7 Multiplier order
@@ -1237,7 +1246,7 @@ Every material (doc 07) and gas (doc 08) has `conceal: u8` in `0..=15`. Referenc
 
 ### 12.3 Spawn light
 
-Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at most the genre's `spawn_block_max` (§5.9). Placed light is therefore a defense, as in Minecraft.
+Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at most the genre's `spawn_block_max` (§5.9). Placed light sources (`cat.placeable`) are therefore a defense, as in Minecraft.
 
 ---
 ## 13. Items
@@ -1264,7 +1273,7 @@ Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at m
 | `cat.material` | crafting materials | 07 |
 | `cat.ingredient` | alchemical ingredients | 08 |
 | `cat.container` | bottles, flasks, bags, satchels | 08, 11 |
-| `cat.block` | placeable blocks | 03, 07 |
+| `cat.placeable` | barricades, bridge spans, ladders, traps, light sources, deployable cover (§4.3) | 07 |
 | `cat.key` | keys and keycards of any skin | 11 |
 | `cat.currency` | Lucre piles | 11 |
 | `cat.quest` | narrative items | 12 |
@@ -1442,7 +1451,7 @@ Every damage, ward or summon-stat magnitude is `base × P(src_lvl)` (or `T` wher
 
 ### 13.8a One material table
 
-Blocks and items share one material table owned by doc 07, following IVAN. A block is a material plus a shape. An item component is a material plus a volume. Mining a block yields that block's material. An item's mass is its volume times its material density.
+Blocks and items share one material table owned by doc 07, following IVAN. A block is a material plus a shape. An item component is a material plus a volume. Harvesting a resource node yields its material. An item's mass is its volume times its material density.
 
 ### 13.9 Item instance contract
 
@@ -1538,7 +1547,7 @@ Reputation per faction is an integer `-1000..=1000` and resets each run.
 | `calling.vanguard` | heavy melee frontliner | hafted, armor, shield | athletics, leadership, smithing |
 | `calling.duelist` | agile swordfighter | blade, acrobatics, speech | sneak, throwing, unarmed |
 | `calling.gunslinger` | precision shooter | marksmanship, acrobatics, throwing | tinkering, speech, security |
-| `calling.grenadier` | heavy weapons, explosives and sapping | heavy_arms, throwing, armor | tinkering, delving, medicine |
+| `calling.grenadier` | heavy weapons, explosives and sapping | heavy_arms, throwing, armor | tinkering, fieldcraft, medicine |
 | `calling.spellwright` | spell designer and caster | evocation, spellcraft, alteration | abjuration, inscription, divination |
 | `calling.alchemist` | brewer and bomber | alchemy, throwing, medicine | survival, restoration, appraisal |
 | `calling.shade` | stealth assassin and thief | sneak, blade, security | pickpocket, acrobatics, illusion |
@@ -1696,9 +1705,21 @@ Mount archetypes are owned by doc 05. A mount is an entity with HP `template × 
 - A mounted Erratum has `st.mounted`, cannot be `st.hidden`, cannot place blocks, and has spread × 13000. A melee charge at 8000 mm/s or faster deals × 12500 damage and × 20000 poise damage.
 - When the mount reaches 0 HP, the rider gains `st.knocked_down`. Events: `ev.mounted`, `ev.dismounted`.
 
-### 17.8 The Margin plot
+### 17.8 The Margin trophies
 
-The Margin contains a persistent 64 × 32 × 64 block plot per account, built with cosmetic block palettes unlocked through Quires and the Codex. It has no gameplay stats.
+The Margin has fixed architecture with cosmetic trophy and decoration slots per account, unlocked through Quires, achievements and the Codex. There is no free-form building in the hub. Trophies have no gameplay stats.
+
+### 17.9 Invasions
+
+Opt-in PvP by product-owner decision (DECISIONS.md, item 15). Docs 13, 14 and 16 own the details.
+
+- **Opt-in.** The host sets `mode.invasion_open` at run start; the default is off. Daily, Weekly and every leaderboard-ranked run forbid it.
+- **The invader** is a player from another session who joins as a Redactor: `fac.editors`, rank `rank.hunter`, scaled with `H(d)` and `T(d)` at the host's depth and the party-size tables of §17.2. The invader uses a fixed Editor kit chosen from kits unlocked on their account (doc 13), never their own run gear.
+- **Window.** From Folio 3 onward, at most one invader per Folio, never in boss Folios, never earlier than 120 s after entry, never after any Erratum enters the Colophon. An invasion lasts at most 300 s.
+- **Limits.** The invader cannot place or break blocks, open containers or pick up items.
+- **Outcome.** If the invader reduces the last living Erratum to 0 HP, the party is Redacted instead of ending the run: every Erratum loses all Lucre and one random equipped non-weapon item (keyed `rng.loot`, actor = that Erratum, seq 0), then respawns at the Folio entrance with 50% Max HP. If the party kills the invader, every Erratum gets one guaranteed in-run Reliquary roll. Invader rewards are Quires and cosmetic Red Ink marks only.
+- **Determinism.** The invader is replay slot 4 (§2.4). Invaders are the one exception to Folio-boundary drop-in: they join and leave mid-Folio.
+- **Safety.** Text and voice chat with an invader require mute, block and report controls (doc 15 compliance).
 
 ---
 
@@ -1750,6 +1771,8 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 | `ev.mounted` | an Erratum mounts (§17.7) |
 | `ev.dismounted` | an Erratum dismounts or is thrown (§17.7) |
 | `ev.affliction_changed` | an affliction begins incubating, takes hold or is cured (§16.4) |
+| `ev.invasion_started` | an invader joins (§17.9) |
+| `ev.invasion_ended` | an invader leaves, dies, times out, or the party is Redacted (§17.9) |
 
 ---
 
@@ -1898,6 +1921,13 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ---
 
 ## 23. Changelog
+
+### canon-1.4 (2026-10-11)
+
+Applied after the product owner's per-system decisions (DECISIONS.md).
+
+- Limited building: fixed terrain with `destructible` tags, `cat.placeable` replacing `cat.block`, resource nodes, `skill.fieldcraft` replacing Delving, and Margin trophies replacing the building plot.
+- Opt-in PvP invasions with Redactor invaders, windows, limits, the Redacted outcome and replay slot 4.
 
 ### canon-1.3 (2026-10-11)
 

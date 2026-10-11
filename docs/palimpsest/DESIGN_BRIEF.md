@@ -14,8 +14,8 @@ The player characters are **Errata**. They are characters who fell out of their 
 
 - Perspective: first person, with a third-person toggle. Full-body awareness in first person.
 - Real-time action, like Barony, Oblivion, Destiny 2 and Borderlands.
-- Players: 1 to 4 in co-op, like Barony.
-- World: block-based, destructible and buildable, like Minecraft.
+- Players: 1 to 4 in co-op, like Barony. Runs can opt in to PvP invasions, in which a player from another session invades as an Editor (DECISIONS.md).
+- World: block-based, like Minecraft in look and in its light and liquid simulation. Building is limited by product-owner decision: players place barricades, bridges, ladders, traps, light sources and deployable cover. Terrain is otherwise fixed, and only blocks tagged destructible break.
 - Systemic simulation: materials, liquids, gases, temperature, body parts, light and sound, like Caves of Qud and IVAN.
 - Loot: procedural, part-based and rarity-tiered, like Borderlands and Destiny 2.
 - Growth: use-based skills, like Morrowind and Oblivion, plus character levels and talents, like Shattered Pixel Dungeon.
