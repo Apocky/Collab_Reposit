@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.2 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.3 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -619,7 +619,64 @@ All axiom values here are local axioms at the relevant entity's position (§5.8)
 - `local_genre(pos)` is the genre of the bleed zone containing block `fx_floor_block(pos)`, or the Folio's genre outside bleed zones. Doc 12 defines bleed zones.
 - `local_axiom(pos, a)` is the axiom value of `local_genre(pos)`.
 - §5.5 to §5.7 always use local values at the wielder's position, except that "native" uses the target's position.
+- **Seam zones.** Doc 12 may place at most one `zone.seam` per Folio, covering 1 or 2 rooms, where two genres are stitched together. Inside a seam zone, `local_axiom(pos, a)` is the larger of the two genres' axiom values for each `a`, both genres' World Laws (§5.10) are active, entities of either genre count as native, and the Folio's genre supplies skins. This is the only place where both toolsets work at full strength.
 - `vrv(e) = min(10, local_axiom(e.pos, verve) + 2 × [e has st.inspired])`. Jump, safe fall, crit chance and Death's Door use `vrv(e)`. Contradiction requirements always use the unmodified local axiom.
+
+### 5.9 Genre identity
+
+Doc 12 copies this table into the full Genre Parameter Vectors. Doc 07 defines every listed material. Doc 11 owns manufacturer mechanics and adds one more manufacturer per core genre plus the Errata manufacturer. Physics columns multiply the base constants of §4: `air_accel_bp` multiplies air acceleration, `fall_dmg_bp` multiplies fall damage, `ground_friction_bp` multiplies ground deceleration. `spawn_block_max` is the highest block-light level in which ambient and wave spawns may occur (§12.3).
+
+| Genre | air_accel_bp | fall_dmg_bp | ground_friction_bp | spawn_block_max | Palette | Music register | Enemy themes | Materials |
+|---|---|---|---|---|---|---|---|---|
+| mythic_fantasy | 10000 | 10000 | 10000 | 0 | `#3B6E3B #C9A227 #8FB3D9` | horns, strings, choir | orcs, dragons, wyverns | `mat.steel` `mat.moonsilver` `mat.oak` `mat.dragonbone` |
+| gothic_horror | 10000 | 10000 | 10000 | 7 | `#3A1F2B #7A0E14 #C8C3B4` | organ, string quartet, harpsichord | vampires, werewolves, ghouls | `mat.silver` `mat.blackwood` `mat.bone` |
+| cosmic_horror | 8000 | 12500 | 10000 | 7 | `#0E2A2E #4F7F6A #B8E986` | drones, detuned strings, theremin | cultists, deep things, formless spawn | `mat.obsidian` `mat.star_metal` `mat.chitin` |
+| space_opera | 12500 | 7500 | 10000 | 0 | `#0B1026 #3D7BFF #FF8A3D` | synth-orchestral, brass | boarders, xeno hives, war droids | `mat.plasteel` `mat.titanium` `mat.psi_crystal` |
+| cyberpunk | 11000 | 10000 | 10000 | 0 | `#120B1F #FF2E88 #00E5FF` | darksynth, industrial | gangers, corporate security, rogue AIs | `mat.carbon_fiber` `mat.polymer` `mat.nanoweave` |
+| post_apocalypse | 10000 | 10000 | 9000 | 0 | `#6B4E2E #C2A36B #E04E1B` | distorted guitar, junk percussion | raiders, mutants, scrap golems, rad-cults | `mat.scrap_iron` `mat.rubber` `mat.rad_glass` |
+| weird_west | 11000 | 10000 | 10000 | 0 | `#8C4A2F #E0B776 #2F3E4E` | slide guitar, whistle | outlaws, revenants, sand wyrms | `mat.iron` `mat.leather` `mat.hexed_silver` |
+| hardboiled_noir | 8000 | 12500 | 8500 | 0 | `#101010 #6E6E6E #C22B2B` | smoky jazz, muted trumpet | mobsters, crooked cops, hired killers | `mat.steel` `mat.brass` `mat.tweed` |
+| wuxia | 20000 | 5000 | 10000 | 0 | `#1F3A2E #D9C9A3 #B32020` | guzheng, dizi, erhu, taiko | rival sects, jiangshi, fox spirits | `mat.jade` `mat.bronze` `mat.silk` |
+| steampunk | 10000 | 10000 | 10000 | 0 | `#4A3A28 #B5793A #5FA8A0` | brass band, calliope | automata, sky pirates, clockwork beasts | `mat.brass` `mat.copper` `mat.aetherium` |
+| fairy_tale | 12500 | 7500 | 10000 | 0 | `#F2D7E8 #6FBF73 #E8C547` | celesta, woodwinds, waltz | wolves, witches, trolls | `mat.cold_iron` `mat.glass` `mat.elderwood` |
+| mythic_antiquity | 12500 | 10000 | 10000 | 0 | `#F0E6D2 #2E5A88 #C9792B` | lyre, aulos, chant | shades, hydras, harpies | `mat.bronze` `mat.orichalcum` `mat.marble` |
+| oneiric | 15000 | 2500 | 10000 | 0 | `#2B1B4D #8E7CFF #FFC2E0` | reversed piano, choir pads | nightmares, doppelgangers, sleepwalkers | `mat.dreamstuff` |
+| redacted | 6000 | 15000 | 10000 | 15 | `#F2F2F2 #1A1A1A #D7262E` | office hum, sine tones | agents, anomalies, containment drones | `mat.redacted_alloy` |
+| unwritten | 10000 | 10000 | 10000 | 15 | `#FFFFFF #E6E6E6 #CCCCCC` | silence | Editors only | `mat.vellum` |
+| ur_text | 10000 | 10000 | 10000 | 0 | `#1C1408 #E8D9B0 #B8862B` | every register in counterpoint | every roster | `mat.vellum` `mat.gold_leaf` |
+
+Core manufacturers (doc 11 owns the full mechanics):
+
+| Genre | Manufacturer IDs and signature trait |
+|---|---|
+| mythic_fantasy | `mfr.mythic_fantasy.deepanvil`: poise damage × 15000, attack speed × 9000. `mfr.mythic_fantasy.silverbough`: attack noise −20 dB. |
+| gothic_horror | `mfr.gothic_horror.vesper_sons`: 2000 Bp of each hit converted to `dmg.radiant`. `mfr.gothic_horror.grimhallow`: instant reload for 3% Max HP. |
+| cosmic_horror | `mfr.cosmic_horror.hollow_lantern`: hits apply `st.marked` for 4 s. `mfr.cosmic_horror.outer_choir`: 2500 Bp `dmg.psychic` share, +1500 Bp damage, costs 1 composure per shot. |
+| space_opera | `mfr.space_opera.perihelion`: a 30-tick charged shot deals × 15000. `mfr.space_opera.umbra`: no magazine; heat; overheating locks the weapon for 90 ticks. |
+| cyberpunk | `mfr.cyberpunk.ghostline`: projectiles home on `st.marked` targets at 16384 Bam/s. `mfr.cyberpunk.neon_saint`: charged shots pierce 1000 mm of blocks. |
+| post_apocalypse | `mfr.post_apocalypse.rustmaw`: magazine × 20000, durability × 5000. `mfr.post_apocalypse.lastditch`: 2000 Bp chance per shot to use no ammo. |
+| weird_west | `mfr.weird_west.coffin_creek`: crits ricochet 5000 Bp of their damage to the nearest other hostile within 8 m. `mfr.weird_west.seven_seals`: 2000 Bp `dmg.umbral` share with dependency mythos. |
+| hardboiled_noir | `mfr.hardboiled_noir.midnight_avenue`: shot noise capped at 50 dB. `mfr.hardboiled_noir.rainslick`: × 12000 against staggered or knocked-down targets. |
+| wuxia | `mfr.wuxia.jade_lotus`: thrown weapons return after 30 ticks. `mfr.wuxia.iron_crane`: a block within 6 ticks of impact reflects 5000 Bp of the damage. |
+| steampunk | `mfr.steampunk.brassworth`: +200 Bp per consecutive hit, maximum +3000. `mfr.steampunk.aetherline`: every 4th hit chains 3000 Bp of its damage as `dmg.shock` to 2 targets within 5 m. |
+| fairy_tale | `mfr.fairy_tale.thimbleweald`: × 13000 against targets with a larger capsule radius than the wielder. `mfr.fairy_tale.thornwood`: 1000 Bp chance per hit to apply `st.rooted`. |
+| mythic_antiquity | `mfr.mythic_antiquity.hephaesteum`: no durability loss; immune to `st.disarmed`. `mfr.mythic_antiquity.argive`: +1500 Bp damage while an allied Erratum is within 3 m. |
+| oneiric | `mfr.oneiric.somnambule`: projectiles pass through blocks after 10 m of flight. |
+| redacted | `mfr.redacted.bureau`: never rolls Contradiction failure; the potency loss still applies. |
+| ur_text | `mfr.ur_text.first_press`: Palimpsestic items only. |
+
+### 5.10 World Laws
+
+Each genre has 1 to 3 **World Laws** (`law.<genre_suffix>.<name>`, owned by doc 12), following Torg's World Laws. A Law is active wherever the local genre is its genre, and in seam zones that include its genre.
+
+- A component may carry `law_bound: <law ID>`. If that Law is not active at the wielder's position, the component has `C = 6` (Disconnected), whatever the axioms say. This keeps genre signature verbs, such as qinggong or the High Noon duel, native to their genre without inflating axioms.
+- A Law may carry `law_grants: [{component_class, axis, tol_bonus}]`. Each grant adds to `Tol[axis]` for components of that class before the cap of 6. Example: Steampunk's weird-science Law grants +2 TECHNE tolerance to gadgets.
+- At most one Law per genre changes a canon constant. Every other Law is additive. Doc 12 lists every Law with exact effects. Required Laws include `law.wuxia.qinggong`, `law.weird_west.high_noon`, `law.steampunk.weird_science`, `law.gothic_horror.dread_escalation`, `law.cosmic_horror.dread_escalation`, `law.redacted.dread_escalation` and `law.hardboiled_noir.void_rules`.
+
+### 5.11 Going Native and being Unmoored
+
+- **Going Native.** Once per run, at a Colophon (§17.1), an Erratum may permanently set its Origin to the current Folio's genre. Origin tolerance is recomputed by §5.4 and a cosmetic native form is applied. Gear is not translated.
+- **Unmoored.** Three Contradiction failures (jams, fizzles, sparks) by one character within 600 ticks apply `st.unmoored` for 300 ticks. While it lasts, Fortune-derived effects (Death's Door, Serendipity procs) are off, and Strained components use the C = 3 row of §5.5. It clears early on entering a Colophon or a seam zone.
 
 ---
 ## 6. Attributes and sub-attributes
@@ -1045,6 +1102,7 @@ Threshold groups `body`, `nerve`, `mind` and `arcane` use §6.4 rows 22 to 25. `
 | `st.mounted` | indicator | special | — | while riding | none | §17.7 | 05 |
 | `st.bound` | indicator | special | — | while a minion is bound to its owner | none | §15.1 | 13 |
 | `st.ghost` | special | special | — | until resurrected | none | §17.6 | 16 |
+| `st.unmoored` | special | special | — | refresh | 300 ticks | §5.11 | 12 |
 
 `load_bp = floor_div(carried_g × 10000, capacity_g)`.
 
@@ -1553,6 +1611,8 @@ Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and
 
 Secret genres are never lattice candidates. They are reached only through secret exits (doc 12).
 
+**Colophon.** Every Folio ends in a Colophon room (`room.colophon`, docs 12 and 14), the analog of Noita's Holy Mountain, placed before the exits. It offers one full heal, a full aether refresh, a shop, an altar of 3 boons with 1 reroll, and a Scriptorium station. Erasure accrual stops for the rest of the Folio once any Erratum enters it. Damaging its blocks marks the party for the run: an Editor hunter waits in every later Colophon, and after 3 hunter kills it becomes an elite hunter.
+
 **Abridged mode** (`mode.abridged`, owner 14) is the shorter full-story run. It has 5 Volumes of 3 Folios each: two regular Folios plus the boss. Effective depth `d_eff(v, f) = (v - 1) × 5 + [1, 3, 5][f - 1]` feeds `P`, `T`, `H`, `S`, `ilvl` and `enemy_level`. Kill XP and loot quantity per Folio are × 16667 Bp. `EMENDATIONS_PER_VOLUME` stays 3. The final Folio is the Ur-Text at `d_eff = 25`. Target duration is 60 to 75 minutes. The 25-Folio Standard mode remains the full run.
 
 ### 17.2 Party-size tables (Bp, for party sizes 1, 2, 3, 4)
@@ -1698,7 +1758,7 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 | Namespace prefix | Owning document |
 |---|---|
 | `ax.`, `genre.` | 00 for the core table; 12 for full parameter vectors |
-| `lattice.`, `room.`, `gpv.`, `biome.`, `hazard.`, `secret.` | 12 |
+| `lattice.`, `room.`, `gpv.`, `biome.`, `hazard.`, `secret.`, `law.`, `zone.` | 12 |
 | `attr.`, `sub.`, `skill.`, `talent.`, `body.`, `bp.`, `wound.`, `trait.`, `origin.`, `calling.`, `aug.`, `kin.`, `afflict.` | 04 |
 | `dmg.`, `st.`, `res.` | 00 for the core lists; owners per §11.1 and §12 for behavior |
 | `arch.melee.`, `arch.ranged.`, `arch.armor.`, `arch.offhand.`, `arch.mount.`, `arch.ward.`, `ammo.`, `move.`, `counter.` | 05 |
@@ -1838,6 +1898,13 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ---
 
 ## 23. Changelog
+
+### canon-1.3 (2026-10-11)
+
+Applied after research R6.
+
+- Added World Laws with law-bound components and tolerance grants, seam zones, Going Native, `st.unmoored`, and the Colophon room that ends every Folio.
+- Restored the §5.9 genre identity table, which the 1.2 edit had failed to insert.
 
 ### canon-1.2 (2026-10-11)
 

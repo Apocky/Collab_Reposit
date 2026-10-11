@@ -38,7 +38,7 @@
 
 - `OMW` = `https://raw.githubusercontent.com/OpenMW/openmw/master/`. OpenMW is a re-implementation of the Morrowind engine whose stated goal is matching vanilla behavior. GMST defaults come from `apps/opencs/model/world/defaultgmsts.cpp`. Files read: `apps/openmw/mwmechanics/{spellutil,alchemy,mechanicsmanagerimp,npcstats,combat,creaturestats}.cpp`, `apps/openmw/mwclass/npc.cpp`.
 - `F2CE` = `https://raw.githubusercontent.com/alexbatalov/fallout2-ce/main/src/`. A reverse-engineered re-implementation of the Fallout 2 engine. The code comments carry the original binary addresses. Files read: `stat.cc`, `skill.cc`, `combat.cc`, `combat_defs.h`.
-- `SPD` = `https://raw.githubusercontent.com/00-Evan/shattered-pixel-dungeon/master/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/`. Files read: `items/{Item,Generator}.java`, `items/weapon/Weapon.java`, `items/armor/Armor.java`, `items/rings/Ring.java`, `items/wands/Wand.java`, `items/potions/Potion.java`.
+- `SPD` = `https://raw.githubusercontent.com/00-Evan/shattered-pixel-dungeon/master/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/`. Files read: `items/weapon/Weapon.java`, `items/armor/Armor.java`, `items/rings/Ring.java`, `items/wands/Wand.java`, `items/potions/Potion.java`. `items/Item.java` and `items/Generator.java` were fetched but not cited.
 - `ARX` = `https://raw.githubusercontent.com/arx/ArxLibertatis/master/src/game/magic/`. Arx Libertatis is the open-source continuation of Arx Fatalis. File read: `SpellRecognition.cpp`.
 
 **Access failures this session.** These shape which claims are `[RECALLED]`:
@@ -322,7 +322,7 @@ round(magnitude), round(duration); effects with NoMagnitude/NoDuration use 1
 |---|---|---|---|
 | Retort or alembic + calcinator | `+ (2r + c)` | `+ (2/3)(r + c) + 0.5` | `÷ (2a + 3c)` |
 | Retort or alembic only | `+ r` | `+ r + 0.5` | `÷ (1 + a)` |
-| Calcinator only | `+ c` | `+ c + 0.5` | `+ c` (calcinator *raises* poison strength) |
+| Calcinator only | `+ c` | `+ c + 0.5` | `+ c`, or `+ c + 0.5` if single-axis (the calcinator *raises* poison strength) |
 
 **Eating a raw ingredient** (`rollIngredientEffect`) [VERIFIED-SRC]:
 
@@ -496,7 +496,7 @@ This reduces to `(min+max)×(dur+1)×BaseCost/40 + area×BaseCost/40`.
 castChance = 2 × skill(lowest-school effect) − spellCost + 0.2×WIL + 0.1×LCK
 ```
 
-The effective school is the effect whose `2×skill − effectCost` is lowest. The result is then multiplied by `fatigueTerm`.
+The effective school is the effect whose `2×skill − effectCost` is lowest. The result is then multiplied by `fatigueTerm` [XREF R2 §1.10].
 
 **Enchanted items:**
 - Cast cost = `castCost − castCost/100 × (Enchant − 10)`, minimum 1.
@@ -598,7 +598,7 @@ The effective school is the effect whose `2×skill − effectCost` is lowest. Th
 **Generator model** [COMPUTED fit to the wiki table]:
 - Model: `tier = clamp(floor(N(c_s, σ)), 0, 5)`, with Legendary folded into Masterwork.
 - Centers: `c_s = [0.7, 1.1, 1.5, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 2.95, 3.1, 3.25, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.2]` for skill 0..20. This is the table I recall from decompiled `QualityUtility` [RECALLED].
-- With **σ = 0.7**, the model reproduces the wiki within ≤ 5.3 percentage points in every cell. Free per-skill fits give centers that match the recalled table to within 0.05.
+- With **σ = 0.7**, the model reproduces the wiki within ≤ 5.3 percentage points in every cell. Free per-skill fits give centers that match the recalled table to within 0.06.
 - My recollection of σ = 1.25 does **not** fit the wiki table. Treat 0.7 as the empirical value.
 
 ### 5.2 Dwarf Fortress item quality [VERIFIED https://dwarffortresswiki.org/index.php/Quality]
@@ -886,7 +886,7 @@ These are opinionated and written in CANON units: Bp, mHP, 60 Hz ticks, percepti
     - Fields: `cast_delay_ticks, recharge_ticks, capacity, spells_per_cast, shuffle, spread_mdeg, speed_bp, always_cast[]`.
     - Deck/Hand/Discard with depth-first draw, wrap and reload exactly as in §4.1. The wait is `max(cast_delay, recharge)`.
     - Trigger and timer payloads carry the next glyph, and their aether is charged up front.
-    - CANON row 26 (complexity budget) caps glyphs per sentence. Row 27 (grimoire slots) caps implements' loadouts carried.
+    - CANON row 26 (complexity budget) caps glyphs per sentence. Row 27 (grimoire slots) caps how many sentences can be inscribed at once.
 21. **Glyph grammar from Arx and Ars Magica.**
     - Verb: Create, Negate, Raise, Lower, Perceive, Control.
     - Form: CANON damage types plus matter (water, stone, flesh, mind, light, metal).
@@ -901,31 +901,31 @@ These are opinionated and written in CANON units: Bp, mHP, 60 Hz ticks, percepti
 
 24. **Quality roll uses RimWorld's distribution with deterministic integers.**
     - Map skill 0..100 to `s = skill/5`, and interpolate the center `c(s)` from §5.1's table (0.7 to 4.2) in milli.
-    - `z_milli = Σ_{i=1..12} rng.craft.range(1000) − 6000` (Irwin–Hall, σ ≈ 1000).
+    - `z_milli = Σ_{i=1..12} rng.craft.range(1000) − 5994` (Irwin–Hall: mean 12 × 499.5 = 5994, σ = 1000.0).
     - `v = c + station_bonus + material_bonus + mul(z, 700)/1000`.
     - Tier = `clamp(floor(v/1000), 0, 5)` over `q.awful..q.masterwork`.
     - `q.peerless` comes only from Inspiration (+2 tiers) or a Specialist station (+1).
-24a. **Station tiers (Valheim).** Level 1..5, raised by placing extensions within 8 m. Upgrading an item to quality step n needs station level ≥ n.
-25. **Anti-reroll escalation (Minecraft).** The n-th affix reroll on one item costs `base × 2^n`, and the 7th is refused ("the page will not take more ink"). This is the crafting-side guardrail that keeps loot-box-like rerolling honest.
-26. **Masterwork chronicle (DF).** Every masterwork or Peerless craft logs the crafter, Folio and material to the run chronicle and the score screen.
-27. **Patterns as meta, not power (Destiny Deepsight).** Five "Deepsight" extractions of one archetype unlock its pattern in the hub as a crafting *option* (skin, perk pool access), never a stat bonus.
+25. **Station tiers (Valheim).** Level 1..5, raised by placing extensions within 8 m. Upgrading an item to quality step n needs station level ≥ n.
+26. **Anti-reroll escalation (Minecraft).** The n-th affix reroll on one item costs `base × 2^n`, and the 7th is refused ("the page will not take more ink"). This is the crafting-side guardrail that keeps loot-box-like rerolling honest.
+27. **Masterwork chronicle (DF).** Every masterwork or Peerless craft logs the crafter, Folio and material to the run chronicle and the score screen.
+28. **Patterns as meta, not power (Destiny Deepsight).** Five "Deepsight" extractions of one archetype unlock its pattern in the hub as a crafting *option* (skin, perk pool access), never a stat bonus.
 
 ### 9.6 Identification (doc 10)
 
-28. **Formal ID scrolls use NetHack's odds exactly.**
+29. **Formal ID scrolls use NetHack's odds exactly.**
     - Uncursed: 1 item 84%, 2/3/4/all 4% each.
     - Blessed: 20% each.
     - Cursed: always 1 item.
     - The spell version counts as blessed at skill 50.
-29. **Item identification uses SPD's use-count exactly:** weapons 20 hits dealt, armor 10 hits taken, implements 10 casts, rings, amulets and implants 1 character level. The bank holds half the requirement and refills **only from XP**, so ID cannot be farmed on a wall.
-30. **Curios, with the right tool from Darkest Dungeon.** Each Folio places 2–4 curios with roll tables. A genre-matched provision gives a fixed outcome, and **1 in 4 tool–curio pairs has a known downside**, so the table never becomes a solved lookup.
-31. **Price-ID stays automatic, with no hidden per-object surcharge.** NetHack's 1-in-4 random surcharge adds noise without deduction in co-op. Use CANON rows 37–38 and the R1 Appraisal Ledger.
+30. **Item identification uses SPD's use-count exactly:** weapons 20 hits dealt, armor 10 hits taken, implements 10 casts, rings, amulets and implants 1 character level. The bank holds half the requirement and refills **only from XP**, so ID cannot be farmed on a wall.
+31. **Curios, with the right tool from Darkest Dungeon.** Each Folio places 2–4 curios with roll tables. A genre-matched provision gives a fixed outcome, and **1 in 4 tool–curio pairs has a known downside**, so the table never becomes a solved lookup.
+32. **Price-ID stays automatic, with no hidden per-object surcharge.** NetHack's 1-in-4 random surcharge adds noise without deduction in co-op. Use CANON rows 37–38 and the R1 Appraisal Ledger.
 
 ### 9.7 Damage, poise, hit locations (doc 05)
 
-32. **Keep CANON's ratio armor and reject Qud dice for kinetic damage.** OpenMW's code confirms that the ratio family (Morrowind, PoE, CANON) behaves well. Qud's per-hit penetration dice suit a turn grid, but at 600 rounds per minute they turn into noise.
-33. **Poise.** Errata poise resets 8 s after the last hit; Elden Ring's 30 s is tuned for a slower game. NPC stance regenerates after `clamp(6 + 0.075 × (P − 80), 4, 20)` s (§7.3). Bull-Goat-style affixes cap at −45% poise damage taken.
-34. **Called shots (an optional Focus mode, VATS-like).** Fallout's table becomes aim-assist and Focus-cost multipliers: head 14000, eyes or weakpoint 16000, groin and arms 13000, legs 12000, torso 10000. Melee uses half the surcharge.
+33. **Keep CANON's ratio armor and reject Qud dice for kinetic damage.** OpenMW's code confirms that the ratio family (Morrowind, PoE, CANON) behaves well. Qud's per-hit penetration dice suit a turn grid, but at 600 rounds per minute they turn into noise.
+34. **Poise.** Errata poise resets 8 s after the last hit; Elden Ring's 30 s is tuned for a slower game. NPC stance regenerates after `clamp(6 + 0.075 × (P − 80), 4, 20)` s (§7.3). Bull-Goat-style affixes cap at −45% poise damage taken.
+35. **Called shots (an optional Focus mode, VATS-like).** Fallout's table becomes aim-assist and Focus-cost multipliers: head 14000, eyes or weakpoint 16000, groin and arms 13000, legs 12000, torso 10000. Melee uses half the surcharge.
 
 **Avoid:**
 - Morrowind's light-blind stealth.
