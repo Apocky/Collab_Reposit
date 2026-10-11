@@ -435,6 +435,17 @@ mod tests {
     }
 
     #[test]
+    fn doc02_t01_isqrt_values() {
+        // Doc 02 acceptance test 1 (the 100,000-input cross-check is in
+        // isqrt_iteration_bound_and_random_cross_check).
+        let inputs = [0u128, 1, 2, 3, 4, 99, 100, 1 << 64, u128::MAX];
+        let want = [0u128, 1, 1, 1, 2, 9, 10, 1 << 32, (1 << 64) - 1];
+        for (n, w) in inputs.iter().zip(want) {
+            assert_eq!(isqrt_u128(*n), w, "n = {n}");
+        }
+    }
+
+    #[test]
     fn isqrt_examples() {
         // Doc 02 §4.2 examples.
         assert_eq!(isqrt_u128(0), 0);

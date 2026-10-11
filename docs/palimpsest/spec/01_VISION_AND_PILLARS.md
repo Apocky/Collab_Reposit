@@ -16,13 +16,18 @@ This chapter fixes what PALIMPSEST is, what it must feel like, which games it le
 | Canon | §13.3–§13.9 | rarity, Illuminated, Emendations, power tables, item contract |
 | Canon | §14, §16, §17 | currencies, Callings and Echoes, run constants, party tables, anchors, ghosts, invasions |
 | Canon | §19, §22 | this chapter owns `pillar.` and `kpi.`; monetization invariants |
-| Doc 02 | §1, §8.10, §14, §15, Exports | offline-complete rule, Deck targets, platforms, `perf.` budgets, `flag.telemetry.usage` default false |
-| Docs 05, 06, 10, 11 | 05 §1, §4, §16; 06 §3, §16; 10 §5, §11, §12; 11 §5, §10, §11, §15, §17 | inputs, moveset, jams; casting, prayer; identification, Sealed contents, Index; manufacturers, Reliquaries, Fortune Engines, Rewrite, co-op loot |
-| Docs 12, 13 | 12 §4, §13, §16; 13 §9.2 | Lattice, bleed, secret exits; the five Editors |
-| Doc 14 | §3, §4.2, §5, §6, §7, §8, §9, §11 | Folio flow, score, Margin, Echoes, Grades, modes, Marginalia, Prologue |
-| Doc 15 | §1, §2.7–§2.8, §3, §6, §8.6, §9, §11, §12 | business model, income, Inkwell, Codex, ratings, anti-predatory rules, end of service, economy KPIs |
-| Doc 16 | §1.1, §3.6, §5.7 | topologies, crossplay default, intents |
-| Research | R1, R2, R3, R5, R6, R7 as cited | facts, peer bar, law, precedents |
+| Doc 02 | §5.5, §6.4, §14, §15, §17.3, §17.4, Exports | `PlayerCommand` bits and intents; the 5-target determinism matrix; platforms; `perf.` budgets including `perf.ci.bot_tps`; `flag.telemetry.usage` (default false), `flag.telemetry.crash_mode`, `flag.scribe.enabled` (default false); opt-in aggregate telemetry |
+| Doc 03 | §18 event table (`ev.damage_dealt`, `ev.entity_killed`, `DmgFlags`) | lethal-hit linkage through `damage_seq`; flag bits `dot` 2, `area` 5, `env` 7, `fall` 8 used by `kpi.pillar.systemic_kill_share` |
+| Docs 04, 05, 06 | 04 §10, §12; 05 §1.7, §4; 06 §6.2, §16 | Red Ink Marginalia powers, Death's Door; logical inputs and moveset; cast cost falling with skill; IVAN-table supplication and petitions |
+| Docs 08, 09, 10 | 08 §12.1, §12.4; 09 §5, §6, §9; 10 §5, §11, §12 | `alch.potion.liquid_flame` and identification by throwing; detection meter, awareness state machine, sneak attacks; identification methods, Sealed contents, Index |
+| Doc 11 | §4, §5, §9.7, §10, §11, §14.4, §15, §17 | genre-skin records; manufacturers; treasure bags; in-run Reliquaries and mimics; Fortune Engines and engine pity; ground-item visibility; Rewrite; co-op loot |
+| Doc 12 | §2.4, §3.3–§3.5, §4, §5, §14, §17.4 | placed light as defense; GPV layout, physics and verb weights; World Laws; Genre Lattice and exit preview; bleed and seam zones; secret exits |
+| Doc 13 | §9.2, §10.5, §10.7 | the five Editors `boss.editor_v1` … `boss.ur_editor`; Erasure hunters; the invader template |
+| Doc 14 | §1.1, §3, §4.2, §5, §6, §7, §8, §9, §11 | `Q_REF`, `Q_WIN`, `TURN_HOLD_TICKS`; Folio flow and Erasure timeline; score and Example B; Margin facilities and Bindery totals; Echoes; Grades; modes; Marginalia; Prologue |
+| Doc 15 | §1, §2.7–§2.8, §3.3–§3.6, §4.3, §4.5, §6.7, §8.6, §9, §11, §12 | business model and the separation wall; income and hours to earn; hazards, featured split, spark; verifier; offline operation; Codex completion; ratings; anti-predatory rules; end of service; economy KPIs |
+| Doc 16 | §3.6, §5.7, §9.1, §11.7, §13 | crossplay default; intents `ChooseExit`, `TradePropose`, `DropItemFor`, `MarkTarget`; drop-in at Folio boundaries; telemetry endpoint; offline mode |
+| Doc 17 | §12.1–§12.9, §13.1 | the `input.` action list, `input.preset.folio_kbm` and `input.preset.folio_pad` bindings; Scribe's Mercy |
+| Research | R1, R2, R3 (Part A, §0, D5, D6), R5, R6 (§1, §2), R7 (§9) as cited | facts, peer bar, law, precedents, syntactic genre channels |
 
 ---
 
@@ -45,13 +50,15 @@ You are an Erratum: a character your story dropped. With up to three friends you
 | Volume | five Folios bound together; the fifth holds an Editor | Canon §17.1 |
 | Genre | the rules a page was written under | axiom vector, World Laws, skins (Canon §5) |
 | Errata | characters who fell out of their stories when the page was scraped; they belong to no story, so they carry anything anywhere | player characters; Origin tolerance (Canon §5.4) |
-| Editors | the manuscript's correctors; they treat Errata as mistakes and erase them | `fac.editors`, Erasure, Volume bosses (Canon §11.6; doc 13) |
+| Editors | the manuscript's correctors; they treat Errata as mistakes and erase them | `fac.editors`, Erasure, Volume bosses `boss.editor_v1` … `boss.editor_v4` and `boss.ur_editor` (Canon §11.6; doc 13 §9.2) |
+| Red Ink | the Editors' correcting fluid and their servants | `liq.red_ink`, `afflict.red_ink`, Erasure hunters (`rank.hunter`) (Canon §11.6, §12.1, §16.4) |
+| redactors | junior Editors on loan from the Redactor's office, sent into a page another reader is reading | opt-in PvP invaders: a player as `fac.editors`, `rank.hunter`, replay slot 4 (Canon §17.9) |
 | Colophon | the sign-off at the end of every page, where the scribe rests | sanctuary room before the exits (Canon §17.1) |
 | The Margin | the blank edge of the page where Errata gather between descents | meta hub (doc 14 §5) |
 | The Ur-Text | the first text, under every other one; all axioms 5, nothing contradicts | Folio 25, `genre.ur_text`, C = 0 and E = 0 (Canon §5.5) |
 | Marginalia | notes written past the end of the book | endless Folios 26 onward (doc 14 §9) |
 
-**Premise.** Stories do not end in the Palimpsest; they are scraped thin and written over. When a page is scraped, a few characters slip through the knife and fall out of their plot. They wake in the Margin remembering one genre (their Origin), able to wield any other. The Editors see them as typographical sin. Five Editors guard the Volumes: the Proofreader, the Redactor, the Continuity Editor, the Abridger and the Last Word (doc 13 §9.2). Under every page lies the Ur-Text. An Erratum who reaches it can read the first sentence and choose: **Close the Book** and be written back into a story, or step through a Margins door and keep writing where no Editor has authority (doc 14 §9.1).
+**Premise.** Stories do not end in the Palimpsest; they are scraped thin and written over. When a page is scraped, a few characters slip through the knife and fall out of their plot. They wake in the Margin remembering one genre (their Origin), able to wield any other. The Editors see them as typographical sin. Five Editors guard the Volumes: the Proofreader (`boss.editor_v1`, Folio 5), the Redactor (`boss.editor_v2`, Folio 10), the Continuity Editor (`boss.editor_v3`, Folio 15), the Abridger (`boss.editor_v4`, Folio 20) and the Last Word (`boss.ur_editor`, Folio 25) (doc 13 §9.2). The Redactor keeps an office of junior redactors; when a party opens its page to invasion (Canon §17.9), another reader can take one of their desks. Under every page lies the Ur-Text. An Erratum who reaches it can read the first sentence and choose: **Close the Book** and be written back into a story, or step through a Margins door and keep writing where no Editor has authority (doc 14 §9.1).
 
 **Fiction rules.**
 
@@ -74,8 +81,20 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 | Test | Pass condition | Method |
 |---|---|---|
 | `pillar.one_ruleset.t1` | 0 genre-skin records (doc 11 §4) carry a numeric mechanic field other than `dep`, `law_bound` and perk-pool entries | content validator, every build |
-| `pillar.one_ruleset.t2` | all 66 pairs of core genres differ in at least 3 of 5 syntactic channels (signature verb, World Laws, §5.9 physics columns, layout style, roster behavior) and have axiom L1 distance ≥ 6 (Canon §5.2) | content lint over doc 12 GPVs |
-| `pillar.one_ruleset.t3` | in a blind playtest of ≥ 20 testers, ≥ 8000 Bp name each core genre correctly within 10 s of Folio entry | playtest protocol, before EA |
+| `pillar.one_ruleset.t2` | for all 66 pairs of core genres, `syntax_delta(g, h) >= 3` (below) and the axiom L1 distance is ≥ 6 (Canon §5.2) | content lint over doc 12 GPVs and doc 13 rosters, every build |
+| `pillar.one_ruleset.t3` | blind recognition: ≥ 20 testers who have not seen the game each enter all 12 core genres once in a per-tester order drawn by the test harness; within 600 ticks (10 s) of `ev.folio_entered` each names the genre from the 12 display names; for every genre, `floor_div(correct × 10000, testers) >= 8000` | playtest protocol, before EA and on every added or reskinned genre |
+
+`syntax_delta(g, h)` counts the R6 §1 syntactic channels in which two genres differ, each computed from content:
+
+| Channel | Differs when | Source |
+|---|---|---|
+| Structure | `layout` differs | doc 12 §3.3 |
+| Laws | the sets of Law names (the last ID segment of each `law.*`) differ | doc 12 §4 |
+| Physics | the tuple (`gravity_bp`, `air_accel_bp`, `fall_dmg_bp`, `ground_friction_bp`, VRV) differs | Canon §5.2, §5.9 |
+| Verbs | `Σ |verbs_g[i] - verbs_h[i]| >= 10000` over the 10 verb weights | doc 12 §3.5 |
+| Enemy behavior | the sets of doc 13 behavior-set IDs used by the two rosters differ | doc 13 §4.7, §8 |
+
+With the doc 12 data on disk the first four channels alone give every pair at least 3: Structure and Laws differ for all 66 pairs; Physics is equal only for Mythic Fantasy and Steampunk (both `(10000, 10000, 10000, 10000, 6)`), whose Verbs distance is 48,000; the smallest Verbs distance is 13,000 (Post-Apocalypse and Steampunk). The lint therefore passes today with margin from the fifth channel.
 
 **Anti-patterns.** Per-genre damage formulas; a genre that is a palette swap (Ultrakill Encore pattern outside bleed and Marginalia); genre-specific currencies with their own rules (Lucre is one value with 16 skins, Canon §14).
 
@@ -88,7 +107,7 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 |---|---|---|
 | `pillar.out_of_story.t1` | in 1,000 solo Standard bot runs, ≥ 9000 Bp contain at least one exit offer whose doors give the bot different forecast `C` (doc 14 §3.6) | headless bot sweep |
 | `pillar.out_of_story.t2` | for all 12 core genres × 13 Callings, the Folio-1 shop plus guaranteed loot holds ≥ 1 weapon with empty `dep` usable by a Calling major combat skill | generator sweep, 100 seeds per pair |
-| `pillar.out_of_story.t3` | 10000 Bp of item views and HUD weapon widgets show the component state icon (Coherent, Strained, Contradicted, Disconnected) on the tick of `ev.contradiction_changed` | UI automation |
+| `pillar.out_of_story.t3` | 10000 Bp of item cards and HUD weapon widgets show the component state icon (Coherent, Strained, Contradicted, Disconnected) matching the simulation state, on the first rendered frame whose interpolated simulation tick is ≥ the tick of `ev.contradiction_changed` | UI automation over 1,000 scripted genre changes |
 
 **Anti-patterns.** Binary bans of foreign gear; hidden Contradiction math; Edge above +24% (Canon §5.6); a genre in which no Calling can fight.
 
@@ -99,9 +118,9 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 
 | Test | Pass condition | Method |
 |---|---|---|
-| `pillar.living_page.t1` | ≥ 800 Bp of kills in bot and opt-in live runs land from a surface, liquid reaction, fire spread, fall, gas or placed trap (`kpi.pillar.systemic_kill_share`) | event tally on `ev.entity_killed` sources |
-| `pillar.living_page.t2` | golden replays give identical `state_hash` on all 5 CI targets (doc 02 §6.4) | determinism CI |
-| `pillar.living_page.t3` | each Rubric type (`run.rubric.keeper`, `.catchwords`, `.seal`) is completed in every core genre by each of 3 bot policies: combat-led, stealth-led, environment-led | bot sweep, 200 seeds per cell |
+| `pillar.living_page.t1` | `systemic_share >= 800` Bp of NPC kills (definition in §10.3, `kpi.pillar.systemic_kill_share`); before EA measured over 1,000 solo and 1,000 four-player Standard bot runs, after EA over opt-in live runs | event tally joining `ev.entity_killed.damage_seq` to the lethal `ev.damage_dealt` |
+| `pillar.living_page.t2` | the doc 02 §6.4 determinism set (50 golden replays of 3,600 ticks per pull request, 500 of 18,000 ticks nightly) writes byte-identical `hashes.json` on all 5 targets | determinism CI |
+| `pillar.living_page.t3` | each Rubric type (`run.rubric.keeper`, `run.rubric.catchwords`, `run.rubric.seal`) in each core genre is completed by the combat-led bot policy in ≥ 6000 Bp of 200 seeds, and by the stealth-led and the environment-led policies in ≥ 3000 Bp each (108 cells) | headless bot sweep (doc 02 §16 bots) |
 
 **Anti-patterns.** Scripted set-piece hazards that ignore the grid; floats or `HashMap` in simulation state; effects that only the renderer knows (Canon §22).
 
@@ -112,9 +131,9 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 
 | Test | Pass condition | Method |
 |---|---|---|
-| `pillar.party_of_errata.t1` | Volume I clear rate per party size is within ±1000 Bp of the four-size mean (`kpi.coop.party_parity`) | bot sweep before EA; live KPI after |
-| `pillar.party_of_errata.t2` | 13 of 13 Calling kits contain ≥ 1 verb that targets or benefits an ally | content audit against doc 04 kits |
-| `pillar.party_of_errata.t3` | in default co-op, 0 equipment drops are collectable by more than one slot, except a killed mimic's Lootable state (doc 11 §10, §17) | sim test, 10,000 drops |
+| `pillar.party_of_errata.t1` | the Volume I clear rate (share of runs in which `boss.editor_v1` dies) per party size 1..=4 is within ±1000 Bp of the four-size mean (`kpi.coop.party_parity`) | before EA: 1,000 Standard Grade-0 bot runs per party size; after EA: the live KPI |
+| `pillar.party_of_errata.t2` | 13 of 13 Calling kits contain ≥ 1 verb that targets or benefits an ally (heal, ward, buff, revive speed, taunt, mark, thrown potion with area effect) | content audit against doc 04 kits and doc 14 §2.4 kit records |
+| `pillar.party_of_errata.t3` | in default co-op (instanced loot), across 10,000 generated item drops in 4-player runs, 0 items in ground state `Instanced(s)` are visible to or pickable by any slot other than `s`; only an owner's `DropItem` makes an item `Public` (doc 11 §14.4, §17) | sim test |
 
 **Anti-patterns.** Solo-tuned encounters with HP multiplied; shared loot by default; a dead player watching a spectator camera for 20 minutes (ghosts act, Canon §17.6).
 
@@ -125,9 +144,9 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 
 | Test | Pass condition | Method |
 |---|---|---|
-| `pillar.every_find_a_question.t1` | every type-hidden item type is identifiable by ≥ 3 distinct methods among use, appraisal text, Examine, price, Scriptorium service (doc 10 §5) | content audit |
-| `pillar.every_find_a_question.t2` | for each weapon archetype, 100,000 generated drops at Folio 10 give ≥ 1,000 distinct (manufacturer, affix set, perk options) tuples | generator sweep |
-| `pillar.every_find_a_question.t3` | on one Daily seed (`unlock.daily_baseline`), a fresh account and a fully unlocked account produce byte-identical item records at every Folio | sim test |
+| `pillar.every_find_a_question.t1` | every type-hidden item type is identifiable by ≥ 3 distinct methods among use or zap or throw, equip, witness, a doc 10 text, appraisal, an Analysis check (Examine), price observation, a Scriptorium or altar service, a divination glyph (doc 10 §5.1–§5.10) | content audit |
+| `pillar.every_find_a_question.t2` | for each weapon archetype, 100,000 generated drops at Folio 10 give ≥ 1,000 distinct (manufacturer, sorted affix-ID set, perk-option set) tuples | generator sweep |
+| `pillar.every_find_a_question.t3` | (a) on one Daily seed (`unlock.daily_baseline`), a fresh account and a fully unlocked account produce byte-identical item records at every Folio; (b) for every loot table, the rarity weight vector at every depth 1..=40 is identical for the fresh and the fully unlocked content set (doc 14 §5.2 band renormalization) | sim test and content lint |
 
 **Anti-patterns.** Raw stat unlocks in the Bindery; identification busywork for base types (Barony 5.0 rule, Canon §13.6); flat per-hit combat XP (Canon §7.1).
 
@@ -139,127 +158,184 @@ Six pillars, in priority order. Pillar 6 is a hard constraint and wins every con
 | Test | Pass condition | Method |
 |---|---|---|
 | `pillar.fair_page.t1` | SEP-1 to SEP-7 (doc 15 §1.2) pass; `juris.paid_random_items_enabled` is the compile-time constant `false` | content validator, ledger tests, build assert |
-| `pillar.fair_page.t2` | Inkwell, account Reliquaries, in-run Reliquaries and Fortune Engines each show per-outcome odds to 4 decimals on the confirm screen plus live pity counters; doc 15 §4.3 verifier reproduces 10,000 logged pulls | UI automation, verifier run |
-| `pillar.fair_page.t3` | with the network disabled, a bot completes the Prologue, Standard Folios 1–10, a LAN co-op Folio, an end-of-service Inkwell pull and Codex XP accrual; only invasions and ranked boards are refused | offline integration test |
+| `pillar.fair_page.t2` | the Inkwell, account Reliquaries, in-run Reliquaries and Fortune Engines each show every outcome's probability through `pct4` (doc 15 §3.11) before the commit input, plus every live pity counter the system has (Inkwell `top_since`, `mid_since` and spark; Reliquary counters; Engine `need − pity`); `palimpsest-verify` (doc 15 §4.3) returns `PASS` for 10,000 logged pulls and 10,000 logged Reliquary opens | UI automation, verifier run |
+| `pillar.fair_page.t3` | with the network disabled: a bot completes the Prologue, Standard Folios 1–10 and a LAN co-op Folio; an online account queues an Inkwell pull as a Sealed Draft; an offline-only profile pulls the Retrospective banner and verifies it locally; Codex XP accrues locally; only leaderboards, invasions, cloud saves and telemetry are unavailable (doc 15 §4.5, §11.3; doc 16 §13) | offline integration test |
 
 **Anti-patterns.** Premium currency; timers on paid offers; streak rewards; odds hidden behind a link; content that needs a server to exist.
 
 ### 2.7 Pillar records and the release gate
 
+The registry is `content/01/pillar/pillars.json`, one record per pillar. Fields: `id` (content ID), `order` (`1..=6`; the Statement order of §2.1 to §2.6), `hard_constraint` (`true` only for order 6), `tests` (exactly 3 test IDs `<id>.t1..t3`), `owner_docs` (doc numbers that implement the pillar's tests).
+
 ```json
-{ "id": "pillar.out_of_story", "order": 2, "hard_constraint": false,
-  "tests": ["pillar.out_of_story.t1", "pillar.out_of_story.t2", "pillar.out_of_story.t3"],
-  "owner_docs": [5, 6, 11, 12, 14, 17] }
+[
+  { "id": "pillar.one_ruleset", "order": 1, "hard_constraint": false,
+    "tests": ["pillar.one_ruleset.t1", "pillar.one_ruleset.t2", "pillar.one_ruleset.t3"], "owner_docs": [11, 12, 13, 18] },
+  { "id": "pillar.out_of_story", "order": 2, "hard_constraint": false,
+    "tests": ["pillar.out_of_story.t1", "pillar.out_of_story.t2", "pillar.out_of_story.t3"], "owner_docs": [5, 6, 11, 12, 14, 17] },
+  { "id": "pillar.living_page", "order": 3, "hard_constraint": false,
+    "tests": ["pillar.living_page.t1", "pillar.living_page.t2", "pillar.living_page.t3"], "owner_docs": [2, 3, 8, 9, 12] },
+  { "id": "pillar.party_of_errata", "order": 4, "hard_constraint": false,
+    "tests": ["pillar.party_of_errata.t1", "pillar.party_of_errata.t2", "pillar.party_of_errata.t3"], "owner_docs": [4, 11, 13, 14, 16] },
+  { "id": "pillar.every_find_a_question", "order": 5, "hard_constraint": false,
+    "tests": ["pillar.every_find_a_question.t1", "pillar.every_find_a_question.t2", "pillar.every_find_a_question.t3"], "owner_docs": [4, 10, 11, 14] },
+  { "id": "pillar.fair_page", "order": 6, "hard_constraint": true,
+    "tests": ["pillar.fair_page.t1", "pillar.fair_page.t2", "pillar.fair_page.t3"], "owner_docs": [2, 14, 15, 16] }
+]
 ```
+
+Every test result is stored with the build number that produced it. The **EA gate** needs all 18 tests `Pass` on the EA candidate build. Every **later release gate** needs all 18 `Pass` on that build, except `pillar.one_ruleset.t3` (a human playtest), whose most recent `Pass` carries forward while the set of shipped genres and genre skins is unchanged since that playtest.
 
 ```rust
-pub enum Verdict { Pass, Fail, NotRun }
-/// EA gate: all 18 tests Pass. A later release gate: all 18 Pass on that build,
-/// except `pillar.one_ruleset.t3`, which reruns only when a genre is added or reskinned.
-pub fn release_gate(pillars: &[Pillar], results: &BTreeMap<Id32, Verdict>) -> bool {
-    pillars.iter().all(|p| p.tests.iter().all(|t| matches!(results.get(t), Some(Verdict::Pass))))
+pub type Id32 = u32;                                         // fnv1a32 of the content ID (Canon §1.1)
+#[derive(Copy, Clone, PartialEq, Eq, Debug)] pub enum Verdict { Pass, Fail, NotRun }
+pub struct Pillar { pub id: Id32, pub order: u8, pub hard_constraint: bool, pub tests: [Id32; 3], pub owner_docs: Vec<u8> }
+pub struct TestResult { pub verdict: Verdict, pub build: u32 }
+#[derive(Copy, Clone)] pub enum Gate { EarlyAccess, Later { genres_changed_since_t3: bool } }
+
+pub fn release_gate(pillars: &[Pillar], results: &BTreeMap<Id32, TestResult>, build: u32, gate: Gate) -> bool {
+    let t3 = fnv1a32("pillar.one_ruleset.t3");
+    pillars.iter().all(|p| p.tests.iter().all(|&t| match results.get(&t) {
+        Some(r) if r.verdict == Verdict::Pass =>
+            r.build == build || (t == t3 && matches!(gate, Gate::Later { genres_changed_since_t3: false })),
+        _ => false,                                         // Fail, NotRun or missing
+    }))
 }
-/// Conflict rule between two design options a and b that each fail some pillar test.
-pub fn prefer(a_fails: &[u8], b_fails: &[u8]) -> Choice {      // pillar orders 1..=6
-    let worst = |f: &[u8]| (f.contains(&6), f.iter().copied().min().unwrap_or(7));
-    // An option failing pillar 6 always loses; otherwise the option whose best-ranked
-    // failed pillar has the higher order number (less important) wins.
-    match (worst(a_fails), worst(b_fails)) {
-        ((true, _), (false, _)) => Choice::B, ((false, _), (true, _)) => Choice::A,
-        ((_, x), (_, y)) if x > y => Choice::A, ((_, x), (_, y)) if y > x => Choice::B,
-        _ => Choice::Escalate,                                     // product owner decides
+
+#[derive(Copy, Clone, PartialEq, Eq, Debug)] pub enum Choice { A, B, Escalate, Neither }
+/// Conflict rule between design options a and b. Each slice lists the `order` of every pillar
+/// with at least one failed test under that option, in any order, duplicates allowed.
+pub fn prefer(a_fails: &[u8], b_fails: &[u8]) -> Choice {
+    let norm = |f: &[u8]| { let mut v = f.to_vec(); v.sort_unstable(); v.dedup(); v };
+    let (a, b) = (norm(a_fails), norm(b_fails));
+    match (a.contains(&6), b.contains(&6)) {
+        (true, true) => return Choice::Neither,             // pillar 6 is a hard constraint: both options are rejected
+        (true, false) => return Choice::B,
+        (false, true) => return Choice::A,
+        (false, false) => {}
     }
+    // Walk both ascending lists together. At the first difference, the option whose failed pillar
+    // has the higher order number (less important) wins; an option whose list ends first wins.
+    for i in 0..=a.len().max(b.len()) {
+        match (a.get(i), b.get(i)) {
+            (None, None) => break,
+            (None, Some(_)) => return Choice::A,
+            (Some(_), None) => return Choice::B,
+            (Some(x), Some(y)) if x > y => return Choice::A,
+            (Some(x), Some(y)) if x < y => return Choice::B,
+            _ => {}
+        }
+    }
+    Choice::Escalate                                        // identical failure sets: the product owner decides
 }
 ```
 
-Example: option A fails `pillar.living_page.t1` (order 3); option B fails `pillar.party_of_errata.t1` (order 4). `worst(A) = (false, 3)`, `worst(B) = (false, 4)`; `4 > 3`, so B wins, because breaking Pillar 4 costs less than breaking Pillar 3.
+Examples: option A fails `pillar.living_page.t1` (order 3) and option B fails `pillar.party_of_errata.t1` (order 4). The lists are `[3]` and `[4]`; at index 0, `3 < 4`, so B wins, because breaking Pillar 4 costs less than breaking Pillar 3. Option A failing orders `[2, 3]` against B failing `[2]`: index 0 ties, B's list ends first, so B wins. A failing `[6]` against B failing `[6, 1]` gives `Neither`: no option may break the Fair Page.
 
 ---
 
 ## 3. Inspiration ledger
 
-Each entry lists what we take exactly (with the owning doc), improve, reject, and the signature moment the game must reproduce as a scripted release check. Facts: R1, R2, R7.
+Each entry lists what we take exactly (with the owning doc), what we improve, what we reject, and the signature moment the game must reproduce. Every signature moment is also an automated scenario test, `SM-01` to `SM-11` in §3.13. Facts: R1, R2, R7.
 
 ### 3.1 Barony (Turning Wheel; 5.0.2 on 2026-02-18)
 
 - **Take exactly:** first-person real-time 1–4 co-op roguelike frame (brief §1; docs 05, 16); dead players become ghosts who open doors and mark targets (Canon §17.6; doc 16); only an item's magic is hidden, never its base type (Barony 5.0 Lore; Canon §13.6; doc 10); blessed/uncursed/cursed states (doc 10); real-time hunger (`res.satiation`; doc 04); shared-loot co-op as the opt-in `mode.loot_shared` (Canon §17.5; doc 14).
 - **Improve:** per-party-size tables for HP, count and damage (Canon §17.2); instanced loot by default; host-authoritative replays; 25 genre-distinct Folios instead of biome swaps.
 - **Reject:** full-strength friendly fire on direct hits (default 5000 Bp, Canon §17.5); appraising mundane gear.
-- **Signature moment — "The Ghost Opens the Door":** a party member dies in a trap room, floats ahead as a ghost, opens the far door and applies `st.marked` to the elite; the survivors carry the Remains through the exit and the ghost returns at 50% Max HP (docs 14, 16).
+- **Signature moment — "The Ghost Opens the Door" (SM-01):** a party member dies in a trap room, floats ahead as a ghost, opens the far door and applies `st.marked` (480 ticks) to the elite; the survivors carry the 75,000 g Remains through the exit and the ghost returns at the next `ev.folio_entered` with 5000 Bp of Max HP (Canon §17.6; docs 14 §3.10, 16 §9.5).
 
 ### 3.2 Shattered Pixel Dungeon (00-Evan; v4.0.2 on 2026-10-07)
 
 - **Take exactly:** per-seed unknown appearances shuffled at run start (Canon §13.6; doc 10); the Scroll of Upgrade as the Emendation, 3 per Volume with the re-level rule (Canon §13.7; doc 11); strength requirement as attribute shortfall (Canon §6.3; doc 04); seeds and a daily seed (Canon §3.6; doc 14); deck-based category pacing (doc 11); same-ingredient brews that auto-identify (doc 08).
 - **Improve:** real time and co-op; type knowledge shared across the party and across all 16 genre skins.
 - **Reject:** turn-based clock; a run that ends at a fixed depth with no endless continuation.
-- **Signature moment — "The Gamble Read":** cornered at low HP, the player drinks an unknown crimson flask; it is liquid flame, the room burns, the enemies burn with it, and the flask type is now known to the whole party in every genre's skin (docs 08, 10).
+- **Signature moment — "The Gamble Read" (SM-02):** cornered at low HP, the player throws an unknown crimson flask at the pack; it is `alch.potion.liquid_flame`, the oil splash ignites, the pack burns, and because the splash applied an effect the type is classified for the whole party in every genre's skin (docs 08 §12.4, 10 §2.2).
 
 ### 3.3 Experienced Pixel Dungeon (TrashboxBobylev; 2.19 final, archived)
 
-- **Take exactly:** no level cap (Canon §8); endless depth with numbers that keep climbing, one Emendation per Marginalia exit and a rising enhancement cap (Canon §13.7; doc 14 §9); 64-bit resources from day one (Canon §1.2); boss loot bags as the Endpaper Illumined Reliquary and gilt Fortune Engine (doc 11 §10, §11).
+- **Take exactly:** no level cap (Canon §8); endless depth with numbers that keep climbing, one Emendation per Marginalia exit and a rising enhancement cap (Canon §13.7; doc 14 §9); 64-bit resources from day one (Canon §1.2); treasure bags `item.bag.{boss, editor, lucky, elite, refined, burnt}`, including a lucky bag that burns into a refined bag at 1000 Bp or a burnt one (doc 11 §9.7).
 - **Improve:** bounded inflation through `d_pow ≤ 300`, `DIFF_CAP_BP` and a proven overflow bound (doc 14 §9.2); Marginal mutations for variety (doc 14 §9.3).
 - **Reject:** XP-to-upgrade grind in the main run; NG+ cycles with ×40,000 virtual depth.
-- **Signature moment — "Numbers That Never Stop":** at Folio 50 the favored weapon reaches +20 (`15 + floor_div(50 - 25, 5) = 20`) and a Marginalia Editor falls to it (docs 11, 14).
+- **Signature moment — "Numbers That Never Stop" (SM-03):** at Folio 50 the favored weapon reaches +20, the cap `15 + floor_div(50 - 25, 5) = 20`, using 20 of the at least 39 Emendations a run has received by then (15 from Volumes I to V plus one per Marginalia exit from Folio 26 to Folio 49), and `boss.ur_editor`, the Folio-50 Marginalia Editor (doc 14 §9.1 rotation), falls to it (Canon §13.7; docs 11, 14).
 
 ### 3.4 Oblivion (2006; Remastered 2025)
 
-- **Take exactly:** mastery tiers at 25/50/75/100 (Canon §7; doc 04); XP from every skill and from non-combat play (Canon §8; doc 04); detection as a meter with hysteresis thresholds (doc 09); spell cost rising superlinearly with magnitude (doc 06 §6).
+- **Take exactly:** mastery tiers at 25/50/75/100 (Canon §7; doc 04); character XP from every skill and from non-combat play, as in the Remaster (Canon §8; doc 04 §6); the Remaster's anti-grind rule that skill XP scales with magnitude and zero-cost actions grant 0 (Canon §7.1; doc 06 §6.1, §7.4); detection as a meter with hysteresis thresholds (doc 09 §5, §6); the armor reduction cap of 85% (`DR_bp ≤ 8500`, Canon §10.5 step 5); sneak attacks that replace the crit roll instead of multiplying with it, as Oblivion's `max(SneakMult, PowerAttackMult)` (Canon §10.5 steps 2.3–2.4); spell cost falling with school skill from × 12500 at skill 0 to × 7500 at skill 100 (doc 06 §6.2).
 - **Improve:** enemies scale with depth through `H(d)` and `T(d)`, never with player level (Canon §13.8); sound travels through the sound grid, not through walls (doc 03 §11).
-- **Reject:** player-level enemy scaling; level-up bookkeeping; multiplying sneak and power multipliers.
-- **Signature moment — "The Sleeping Guard":** crouched at light 2, the Shade's dagger sneak attack on a sleeping guard needs no crit roll, kills it, and the noise reaches only the open doorway (docs 05, 09).
+- **Reject:** player-level enemy scaling and leveled lists; the level-up multiplier bookkeeping of the original; a non-combat build that levels into harder enemies without getting stronger (depth, not level, sets threat).
+- **Signature moment — "The Sleeping Guard" (SM-04):** crouched at effective light 2, the Shade's dagger sneak attack on a `st.sleeping` guard draws no crit roll, kills it, and its `ev.noise` reaches the guard in the next room only through the open doorway (Canon §10.5 step 2.4; docs 05, 09 §7, §9).
 
 ### 3.5 Morrowind (2002)
 
 - **Take exactly:** use-based skills that train their governing sub-attribute through marks (Canon §7.1; doc 04); spellmaking from effect parameters and enchanting (doc 06 §4, §9); levitation as a route-breaking verb (`st.levitating`; doc 06); FAT and SER govern no skill, like Luck (Canon §7).
 - **Improve:** automatic training marks instead of rest-time multipliers; checked integer arithmetic instead of 16-bit wraparound (Canon §1.3).
 - **Reject:** dice-rolled misses on a visible contact; unbounded spell magnitude.
-- **Signature moment — "The Spell You Wrote":** the Spellwright composes a levitation glyph sentence within the complexity budget `4 + floor_div(LOG, 10)` (Canon §6.4 row 26) and floats the party over a chasm the layout expected them to walk around (doc 06).
+- **Signature moment — "The Spell You Wrote" (SM-05):** the Spellwright composes a levitation glyph sentence within the complexity budget `4 + floor_div(LOG, 10)` (Canon §6.4 row 26) and floats the party over a chasm the layout expected them to walk around (doc 06).
 
 ### 3.6 Baldur's Gate 1–3 (1998, 2000, 2023; BG3 Patch 8 final)
 
-- **Take exactly:** surfaces and elemental reactions (Canon §12.1; docs 03, 08); high ground ×11000 at ≥ 2,500 mm (Canon §10.5 step 4a; doc 05); visible sight cones and last-known position (docs 09, 17); rest between fights as the Interleaf (doc 14 §3.9); a forbidden power path as Red Ink Marginalia powers (Canon §16.4; doc 04 §10); faction reputation (Canon §15; doc 13).
+- **Take exactly:** surfaces and elemental reactions (Canon §12.1; docs 03, 08); high ground ×11000 at `dy ≥ 2500 mm` (Canon §10.5 step 2.4a; doc 05); visible sight cones and last-known position (docs 09, 17); rest between fights as the Interleaf (doc 14 §3.9); a forbidden power path as Red Ink Marginalia powers (Canon §16.4; doc 04 §10); faction reputation (Canon §15; doc 13).
 - **Improve:** real time with tactical depth carried by surfaces, verticality and party roles; a reaction graph small enough to memorize (11 surfaces, 8 triggers).
 - **Reject:** turn-based combat; parties of 6; dialogue trees as the primary verb.
-- **Signature moment — "Grease and Fire from the Balcony":** the Alchemist oils a stair (`st.oiled`, fire buildup ×20000), the Gunslinger fires from a balcony 3 m above (×11000), and the Spellwright's fire glyph ignites the oil in a 2 m blast (docs 05, 06, 08).
+- **Signature moment — "Grease and Fire from the Balcony" (SM-06):** the Alchemist oils a stair (`liq.oil`, `st.oiled`, fire buildup ×20000), the Gunslinger fires from a balcony 3 m above (`dy ≥ 2500 mm`, ×11000), and the Spellwright's fire glyph ignites the oil in a 2 m environmental `dmg.fire` blast of base 10 HP per 1000 ml, capped at 5000 ml (Canon §10.5 step 2.4a, §12.1; docs 05, 06, 08).
 
 ### 3.7 Caves of Qud (Freehold; 1.0 on 2024-12-05)
 
 - **Take exactly:** liquids as data (doc 08); per-part bodies, severing and reattachment (Canon §9.1; doc 04); mutations and implants (`kin.mutant`, `aug.`; doc 04); reputation bands (Canon §15); temperature (doc 03 §9); artifact examination as Examine (doc 10 §5); tinkering mods (doc 07).
 - **Improve:** closed-form regeneration and every formula published (Canon §6.4); real-time 3D.
 - **Reject:** penetration dice (R7 C1, Canon §10.5 wins); world-map travel.
-- **Signature moment — "Losing an Arm and Keeping the Run":** a champion's cleaver severs the Gunslinger's left arm, the off-hand pistol drops, and the Warden sews the arm back on with a 600-tick Medicine channel before it rots at 7200 ticks (docs 04, 05).
+- **Signature moment — "Losing an Arm and Keeping the Run" (SM-07):** a champion's cleaver hit, largest share `dmg.slash`, empties the Gunslinger's `bp.arm_l` condition pool and severs it; the `slot.offhand` pistol drops, and the party's Alchemist (Medicine is an Alchemist major skill, here raised to 25) sews the arm back on with a 600-tick channel before it rots at 7200 ticks (Canon §9.1; docs 04 §8, 05).
 
 ### 3.8 IVAN (Iter Vehemens ad Necem)
 
-- **Take exactly:** one material table for blocks and items (Canon §13.8a; doc 07); mass from material × volume; IVAN's prayer table with favor and timers (Canon §16.5; doc 06 §16); sacrifice value `isqrt(value)`, doubled for the matching patron.
+- **Take exactly:** one material table for blocks and items (Canon §13.8a; doc 07); mass from material × volume; IVAN's prayer table with favor and timers (Canon §16.5; doc 06 §16); sacrifice value `isqrt(value)`, doubled for the matching patron (Canon §16.5; doc 06 §16.5).
 - **Improve:** integer timers in ticks; one patron Author per genre; local-patron prayers × 15000.
 - **Reject:** floating-point asymptotic attribute experience; misery without legibility.
-- **Signature moment — "The Prayer at One HP":** with Death's Door spent, the Oracle prays to the local patron at favor 600; the patron heals the party; the next prayer before its timer expires angers it (doc 06).
+- **Signature moment — "The Prayer at One HP" (SM-08):** with Death's Door spent and HP below 3333 Bp of Max HP, the Oracle, `prayer_timer` 0 and favor 600, supplicates the local patron: PLEASED, HP to max (need 1), timer +18,000 ticks. Praying again 60 s later is IVAN's gamble: HELPED (timer +90,000) when `favor > r0` and `timer < r1`, otherwise ANGRY (timer +180,000, wrath with doubled durations) (doc 06 §16.3).
 
 ### 3.9 Borderlands 1–4 (BL4 on 2025-09-12; level cap 70 on 2026-09-10)
 
 - **Take exactly:** part-built weapons with manufacturer traits, two per core genre plus the Errata maker (Canon §5.9; doc 11 §5); a seven-step rarity ladder with colors (Canon §13.3); licensed cross-manufacturer parts (`cat.part`; docs 07, 11); cosmetic jackpots as Illuminated drops at 5 Bp (Canon §13.9); instanced co-op loot (Canon §17.1); a non-expiring pass in the Vault Card mould (doc 15 §6).
 - **Improve:** published 4-decimal odds on every container (doc 11 §10); perk columns that are chosen, not rerolled; cross-genre legibility through Contradiction icons.
 - **Reject:** slot machines with "nothing" outcomes and casino presentation (R7 C6; brief §8); gear obsolescence (the Emendation re-level answers it); shipping before PC performance is stable (doc 02 §15).
-- **Signature moment — "The Orange Beam":** a Legendary drops with its `#FF9A1F` light column, one-sentence manufacturer trait and, at 5 Bp, an Illuminated skin that unlocks account-wide (docs 11, 18).
+- **Signature moment — "The Orange Beam" (SM-09):** a Legendary drops with its `#FF9A1F` light column, one-sentence manufacturer trait and, at 5 Bp, an Illuminated skin that unlocks account-wide (docs 11, 18).
 
 ### 3.10 Minecraft (Java 26.3 "Wilderness Bound", 2026-09-15)
 
 - **Take exactly:** 1 m blocks in 32³ chunks; two-channel integer light 0–15 (Canon §1.2); spawns gated by block light, so placed light is defense (Canon §12.3); liquids on the grid (doc 03 §6); random block ticks (Canon §2.2); commit-only offer streams (Canon §3.5); placeable bridges, ladders, barricades and lights (Canon §4.3; doc 07).
 - **Improve:** authored structure stays intact because terrain is fixed except `destructible` blocks (DECISIONS #16); fixed-point determinism.
 - **Reject:** terraforming and mining terrain; a goalless sandbox; rerolling offers by reopening a menu.
-- **Signature moment — "Torch the Dark":** in a Gothic Horror Folio (`spawn_block_max` 7) the party plants lanterns until `light_block` exceeds 7 along a corridor, and the ambient spawns there stop (docs 03, 07, 12).
+- **Signature moment — "Torch the Dark" (SM-10):** in a Gothic Horror Folio (`spawn_block_max` 7) the party plants lanterns until `light_block` exceeds 7 along a corridor, and the ambient spawns there stop (docs 03, 07, 12).
 
 ### 3.11 Destiny 2 (final content update 2026-06-09)
 
 - **Take exactly:** gear tier orthogonal to rarity, setting perk options per column (Canon §13.9; doc 11); one Exotic per slot group (Canon §13.3); champions with counters shown in the exit preview (Canon §17.3a; docs 05, 12, 13); four ability slots (doc 04); rewards that never expire (doc 15).
 - **Improve:** no Power grind; nothing vaulted; offline-complete end of service from day one (brief §8; doc 15 §11).
 - **Reject:** premium currency (Silver); seasonal expiry; content that dies with the servers.
-- **Signature moment — "Champion Check":** the exit preview shows an Unstoppable champion ahead; the party slots a `counter.staggerer` source, staggers it on cue and wins the room by preparation (docs 05, 12, 13).
+- **Signature moment — "Champion Check" (SM-11):** the exit preview shows an Unstoppable champion ahead; the party slots a `counter.staggerer` source, staggers it on cue and wins the room by preparation (docs 05, 12, 13).
 
 ### 3.12 Secondary precedents
 
 Torg Eternity (axioms, World Laws), Noita (Holy Mountain, bleed), Hades II (God Mode), Slay the Spire 2 (co-op interdependence), Dungeon Crawler Carl (floor clock), Spider-Verse (foreign render styles); R6 §2–§6, R3 A3.
+
+### 3.13 Signature-moment scenario tests
+
+Each signature moment is a committed headless scenario `tests/moments/sm_NN.json`: a run seed, a mode, a party (Calling, Origin, sub-attributes, skills, equipment), a fixture layout or a seeded Folio, and a scripted input log. The doc 02 §16 harness runs it in `palimpsest_sim` without a renderer, except SM-09's light column, which a UI screenshot test checks. A scenario passes when every listed assertion holds on the event stream. Scenarios run on every pull request; a failing scenario blocks merge in the owning docs.
+
+| ID | Setup | Pass when |
+|---|---|---|
+| SM-01 | 2 players, Standard, Folio 3; slot 1 dies to a `hazard.*` trap while slot 0 lives | `ev.player_died` and `ev.player_ghosted` for slot 1; the ghost opens a door and applies `st.marked` (480 ticks) to an elite; slot 0 picks up the `cat.corpse` Remains and commits an exit; on the next `ev.folio_entered`, `ev.player_resurrected` for slot 1 with HP `mul_bp(max_hp_mhp, 5000)` |
+| SM-02 | solo, an unknown `alch.potion.liquid_flame` in the satchel, 3 hostiles within 3 m of the throw point | the throw emits `ev.item_used`; at least one hostile gains `st.burning`; `ev.item_identified` for the type; the type is at least `know.classified` for every party slot and renders under every genre skin's appearance name |
+| SM-03 | Endless fixture at Folio 50 (`boss.ur_editor`), a weapon at enhancement 19 and 1 Emendation | applying the Emendation gives 20; a second Emendation on the same weapon is refused at the cap 20; `ev.entity_killed` of `boss.ur_editor` carries a lethal `ev.damage_dealt` with that weapon's `item_uid` |
+| SM-04 | Shade (dagger, Sneak 50) crouched at effective light 2 behind a `st.sleeping` guard; a second guard in the next room; run twice, door open and door shut | the stab's `ev.damage_dealt` has flag `sneak` and not `crit`, and the action draws 0 crit values from `rng.combat`; `ev.entity_killed` for the guard; with the door open the second guard emits `ev.awareness_changed`, with the door shut it does not |
+| SM-05 | Spellwright, LOG 40 (budget 8), a 6 m chasm with no walkable bridge | the composed levitation spell compiles at complexity ≤ 8; `ev.spell_cast`; the caster gains `st.levitating`, reaches the far ledge and takes no fall damage |
+| SM-06 | Alchemist, Gunslinger and Spellwright; 3 hostiles on a stair; the balcony 3,000 mm above the stair | each hostile on the oil gains `st.oiled`; the Gunslinger's hit applies the ×11000 elevation step; the fire glyph emits `ev.liquid_reaction` (oil ignites); at least one hostile takes an `ev.damage_dealt` with flag `env` from the blast |
+| SM-07 | Gunslinger with an off-hand pistol; a champion with a slash cleaver; an Alchemist with Medicine 25 | `ev.part_severed` for `bp.arm_l`; `ev.item_dropped` of the off-hand pistol on the same tick; `ev.part_reattached` after a 600-tick channel, before tick `t_sever + 7200` |
+| SM-08 | Oracle (Devotion 20), favor 600, `prayer_timer` 0, HP below 3333 Bp of Max HP, Death's Door used this Folio | first supplication: PLEASED, HP to max, timer 18,000, favor 660 (`50 × 120 / 100 = 60` gained); second supplication 3,600 ticks later (timer 14,400): the outcome equals doc 06 §16.3 evaluated on that action's 4 keyed `rng.magic` draws |
+| SM-09 | a forced Legendary drop with a fixture whose `illuminated` roll succeeds | the drop is `rar.legendary`; its light column renders `#FF9A1F`; exactly one keyed `rng.loot` value is drawn for the 5 Bp roll; the account unlock list gains the skin |
+| SM-10 | Gothic Horror (`spawn_block_max` 7), a corridor of 24 cells with spawn-eligible floors, run twice for 3,600 ticks | with placed lanterns raising every corridor cell to `light_block ≥ 8`, 0 ambient or wave spawns occur in the corridor; without them, at least 1 does |
+| SM-11 | the next Folio holds a champion with `elite.unstoppable` | the exit preview lists the aspect before the vote; the party carries a `counter.staggerer` source; in the next Folio the champion gains `st.staggered` from that source |
 
 ---
 

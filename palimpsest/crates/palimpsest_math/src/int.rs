@@ -356,7 +356,11 @@ impl I256 {
             hi: m.hi as i128, // < 2^126, so the bit pattern is non-negative
             lo: m.lo,
         };
-        if (a < 0) != (b < 0) { v.wrapping_neg() } else { v }
+        if (a < 0) != (b < 0) {
+            v.wrapping_neg()
+        } else {
+            v
+        }
     }
 
     #[inline]
@@ -434,7 +438,11 @@ impl I256 {
 
     /// Magnitude as an unsigned 256-bit value (exact, including the minimum).
     pub(crate) const fn unsigned_abs(self) -> U256 {
-        let v = if self.is_negative() { self.wrapping_neg() } else { self };
+        let v = if self.is_negative() {
+            self.wrapping_neg()
+        } else {
+            self
+        };
         U256 {
             hi: v.hi as u128,
             lo: v.lo,
@@ -450,7 +458,10 @@ impl I256 {
 #[must_use]
 #[track_caller]
 pub fn floor_div_i256(n: I256, d: I256) -> i128 {
-    assert!(!d.is_negative() && d != I256::ZERO, "floor_div_i256: divisor must be > 0");
+    assert!(
+        !d.is_negative() && d != I256::ZERO,
+        "floor_div_i256: divisor must be > 0"
+    );
     let mn = n.unsigned_abs();
     let md = d.unsigned_abs();
     let mut rem = U256::ZERO;
@@ -476,9 +487,15 @@ pub fn floor_div_i256(n: I256, d: I256) -> i128 {
         q.lo as i128
     } else {
         let bump = u128::from(rem != U256::ZERO);
-        let mag = q.lo.checked_add(bump).expect("floor_div_i256: quotient out of i128 range");
+        let mag =
+            q.lo.checked_add(bump)
+                .expect("floor_div_i256: quotient out of i128 range");
         assert!(mag <= top, "floor_div_i256: quotient out of i128 range");
-        if mag == top { i128::MIN } else { -(mag as i128) }
+        if mag == top {
+            i128::MIN
+        } else {
+            -(mag as i128)
+        }
     }
 }
 
@@ -640,7 +657,13 @@ mod tests {
 
     #[test]
     fn i256_basics() {
-        assert_eq!(I256::from(-1i128), I256 { hi: -1, lo: u128::MAX });
+        assert_eq!(
+            I256::from(-1i128),
+            I256 {
+                hi: -1,
+                lo: u128::MAX
+            }
+        );
         assert_eq!(I256::from(5i128).to_i128(), Some(5));
         assert_eq!(I256::from(i128::MIN).to_i128(), Some(i128::MIN));
         assert_eq!(I256::from(i128::MAX).to_i128(), Some(i128::MAX));
@@ -651,8 +674,20 @@ mod tests {
         assert_eq!(i256_value(I256::mul(-(3 << 64), 1 << 64)), (-3, 0));
         // Extremes: MIN * MIN = 2^254, MIN * MAX = -(2^254 - 2^127).
         assert_eq!(i256_value(I256::mul(i128::MIN, i128::MIN)), (1 << 126, 0));
-        assert_eq!(I256::mul(i128::MIN, i128::MAX), I256 { hi: -(1 << 126), lo: 1 << 127 });
-        assert_eq!(I256::mul(i128::MAX, i128::MAX), I256 { hi: (1 << 126) - 1, lo: 1 });
+        assert_eq!(
+            I256::mul(i128::MIN, i128::MAX),
+            I256 {
+                hi: -(1 << 126),
+                lo: 1 << 127
+            }
+        );
+        assert_eq!(
+            I256::mul(i128::MAX, i128::MAX),
+            I256 {
+                hi: (1 << 126) - 1,
+                lo: 1
+            }
+        );
         assert_eq!(I256::mul(-7, 6).to_i128(), Some(-42));
         assert_eq!(I256::mul(0, i128::MIN), I256::ZERO);
         assert!(I256::from(-3i128) < I256::from(2i128));
@@ -663,22 +698,105 @@ mod tests {
         assert_eq!(I256::from(-1i128).shl32().to_i128(), Some(-(1 << 32)));
         assert_eq!(i256_value(I256::from(1i128 << 100).shl32()), (1 << 4, 0));
         assert_eq!(I256::from(-5i128).sar(1).to_i128(), Some(-3));
-        assert_eq!(I256 { hi: 1, lo: 0 }.sar(1), I256 { hi: 0, lo: 1 << 127 });
+        assert_eq!(
+            I256 { hi: 1, lo: 0 }.sar(1),
+            I256 {
+                hi: 0,
+                lo: 1 << 127
+            }
+        );
         assert_eq!(I256 { hi: -2, lo: 0 }.sar(1), I256 { hi: -1, lo: 0 });
-        assert_eq!(I256 { hi: -1, lo: 0 }.sar(127), I256 { hi: -1, lo: u128::MAX - 1 });
+        assert_eq!(
+            I256 { hi: -1, lo: 0 }.sar(127),
+            I256 {
+                hi: -1,
+                lo: u128::MAX - 1
+            }
+        );
+    }
+
+    /// Independent reference: two's-complement product of two i128 as eight
+    /// little-endian u32 limbs (schoolbook on 32-bit limbs of the sign-extended
+    /// 256-bit operands, truncated to 256 bits).
+    fn ref_mul_limbs(a: i128, b: i128) -> [u32; 8] {
+        let ext = |v: i128| -> [u32; 8] {
+            let mut out = [if v < 0 { u32::MAX } else { 0 }; 8];
+            for (i, o) in out.iter_mut().enumerate().take(4) {
+                *o = ((v as u128) >> (32 * i)) as u32;
+            }
+            out
+        };
+        let (x, y) = (ext(a), ext(b));
+        let mut acc = [0u64; 9];
+        for i in 0..8 {
+            let mut carry = 0u64;
+            for j in 0..(8 - i) {
+                let t = acc[i + j] + u64::from(x[i]) * u64::from(y[j]) + carry;
+                acc[i + j] = t & 0xFFFF_FFFF;
+                carry = t >> 32;
+            }
+        }
+        core::array::from_fn(|i| acc[i] as u32)
+    }
+
+    fn i256_limbs(v: I256) -> [u32; 8] {
+        core::array::from_fn(|i| {
+            if i < 4 {
+                (v.lo >> (32 * i)) as u32
+            } else {
+                ((v.hi as u128) >> (32 * (i - 4))) as u32
+            }
+        })
+    }
+
+    #[test]
+    fn doc02_t36_i256_mul_reference() {
+        // Doc 02 acceptance test 36 (I256::mul part): 100,000 random i128 pairs.
+        let mut rng = crate::rng::Rng::from_seed64(36);
+        let mut draw = || -> i128 {
+            ((u128::from(rng.next_u64()) << 64) | u128::from(rng.next_u64())) as i128
+        };
+        for _ in 0..100_000 {
+            let (a, b) = (draw(), draw());
+            assert_eq!(
+                i256_limbs(I256::mul(a, b)),
+                ref_mul_limbs(a, b),
+                "{a} * {b}"
+            );
+        }
+        for (a, b) in [
+            (i128::MIN, i128::MIN),
+            (i128::MIN, i128::MAX),
+            (i128::MAX, i128::MAX),
+            (i128::MIN, -1),
+            (-1, -1),
+            (0, i128::MIN),
+        ] {
+            assert_eq!(
+                i256_limbs(I256::mul(a, b)),
+                ref_mul_limbs(a, b),
+                "{a} * {b}"
+            );
+        }
     }
 
     #[test]
     #[should_panic(expected = "I256 add overflow")]
     fn i256_add_overflow_panics() {
-        let max = I256 { hi: i128::MAX, lo: u128::MAX };
+        let max = I256 {
+            hi: i128::MAX,
+            lo: u128::MAX,
+        };
         let _ = max.add(I256::from(1i128));
     }
 
     #[test]
     #[should_panic(expected = "I256 sub overflow")]
     fn i256_neg_min_panics() {
-        let min = I256 { hi: i128::MIN, lo: 0 };
+        let min = I256 {
+            hi: i128::MIN,
+            lo: 0,
+        };
         let _ = min.neg();
     }
 
@@ -693,12 +811,36 @@ mod tests {
         assert_eq!(floor_div_i256(I256::from(7i128), I256::from(2i128)), 3);
         assert_eq!(floor_div_i256(I256::from(-7i128), I256::from(2i128)), -4);
         assert_eq!(floor_div_i256(I256::from(-8i128), I256::from(2i128)), -4);
-        assert_eq!(floor_div_i256(I256::mul(3 << 64, 1 << 64).shl32(), I256::mul(4 << 64, 1 << 64)), 3_221_225_472);
-        assert_eq!(floor_div_i256(I256::mul(i128::MIN, 2), I256::from(2i128)), i128::MIN);
-        assert_eq!(floor_div_i256(I256::mul(i128::MAX, 4), I256::from(4i128)), i128::MAX);
-        assert_eq!(floor_div_i256(I256::mul(i128::MIN, i128::MAX), I256::from(i128::MAX)), i128::MIN);
-        assert_eq!(floor_div_i256(I256::mul(i128::MAX, i128::MAX), I256::from(i128::MAX)), i128::MAX);
-        assert_eq!(floor_div_i256(I256::mul(i128::MIN, i128::MAX).add(I256::from(1i128)), I256::from(i128::MAX)), i128::MIN);
+        assert_eq!(
+            floor_div_i256(
+                I256::mul(3 << 64, 1 << 64).shl32(),
+                I256::mul(4 << 64, 1 << 64)
+            ),
+            3_221_225_472
+        );
+        assert_eq!(
+            floor_div_i256(I256::mul(i128::MIN, 2), I256::from(2i128)),
+            i128::MIN
+        );
+        assert_eq!(
+            floor_div_i256(I256::mul(i128::MAX, 4), I256::from(4i128)),
+            i128::MAX
+        );
+        assert_eq!(
+            floor_div_i256(I256::mul(i128::MIN, i128::MAX), I256::from(i128::MAX)),
+            i128::MIN
+        );
+        assert_eq!(
+            floor_div_i256(I256::mul(i128::MAX, i128::MAX), I256::from(i128::MAX)),
+            i128::MAX
+        );
+        assert_eq!(
+            floor_div_i256(
+                I256::mul(i128::MIN, i128::MAX).add(I256::from(1i128)),
+                I256::from(i128::MAX)
+            ),
+            i128::MIN
+        );
     }
 
     #[test]

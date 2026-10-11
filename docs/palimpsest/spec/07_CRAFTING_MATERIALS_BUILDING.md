@@ -243,8 +243,8 @@ Properties: **density** (kg/m³, equal to g/l) gives mass; **hardness** gives mi
 | glass | 1 | 1..=20 | 4 | 2 | 8000 | 11000 | 7000 | 3 | 4 | FT HN | bl fo | brittle |
 | rad_glass | 2 | 4.. | 10 | 6 | 10000 | 11500 | 7000 | 1 | 6 | PA | bl fo | brittle luminous |
 | psi_crystal | 4 | 14.. | 150 | 99 | 36000 | 12500 | 9000 | 10 | 8 | SO | bl fo | brittle arcane_reagent luminous |
-| bone | 1 | 1..=20 | 2 | 1 | 7000 | 8500 | 8500 | 5 | 1 | GH * | bl hd ha li | ricochet |
-| dragonbone | 4 | 14.. | 70 | 105 | 36000 | 13500 | 13500 | 8 | 1 | MF | bl hd ha li pl | arcane_reagent |
+| bone | 1 | 1..=20 | 2 | 1 | 7000 | 8500 | 8500 | 5 | 1 | GH * | bl hd li | ricochet |
+| dragonbone | 4 | 14.. | 70 | 105 | 36000 | 13500 | 13500 | 8 | 1 | MF | bl hd li pl | arcane_reagent |
 | chitin | 2 | 4.. | 8 | 10 | 10000 | 10000 | 11000 | 3 | 2 | CH | bl li pl so | acid_soluble |
 | hide | 0 | 1..=8 | 4 | 4 | 6000 | 7000 | 8500 | 2 | 1 | * | so | flammable acid_soluble |
 | leather | 1 | 1..=20 | 8 | 6 | 8000 | 9000 | 10000 | 3 | 2 | WW * | so ha | flammable acid_soluble |
@@ -338,7 +338,7 @@ fn pick_material(g: GenreId, tmpl: &Template, ilvl: i32, rng: &mut Rng) -> MatId
 }
 ```
 
-The secondary component never draws: it is the highest-weight entry of the same procedure for the secondary role, ties to the lower ID. Example, Weird West frame at ilvl 7: `[copper 6000, hexed_silver 9000, iron 18000, steel 3000]`; the haft pool is `[birch 2000, bone 6000, leather 18000, oak 6000, pine 2000]`, so the secondary is `mat.leather`. In Marginalia (`ilvl >= 26`) every band test passes for materials with `max_d = 0`.
+The secondary component never draws: it is the highest-weight entry of the same procedure for the secondary role, ties to the lower ID. Example, Weird West frame at ilvl 7: `[copper 6000, hexed_silver 9000, iron 18000, steel 3000]`; the haft pool is `[birch 2000, leather 18000, oak 6000, pine 2000]`, so the secondary is `mat.leather`. In Marginalia (`ilvl >= 26`) every band test passes for materials with `max_d = 0`.
 
 ### 2.8 Material equivalence for Rewrite
 
@@ -377,13 +377,13 @@ Each archetype has a primary and an optional secondary component. Volumes give t
 | `arch.melee.blade_great` | blade 367 | haft 150 | 3000 | 3 + 1 |
 | `arch.melee.axe` | blade 133 | haft 600 | 1496 | 1 + 1 |
 | `arch.melee.axe_great` | blade 292 | haft 1200 | 3198 | 2 + 2 |
-| `arch.melee.mace` | head 181 | haft 500 | 1799 | 1 + 1 |
-| `arch.melee.warhammer` | head 375 | haft 1400 | 4001 | 2 + 2 |
+| `arch.melee.mace` | head 181 | haft 500 | 1799 | 1 + 2 |
+| `arch.melee.warhammer` | head 375 | haft 1400 | 4001 | 4 + 1 |
 | `arch.melee.spear` | blade 57 | haft 1800 | 1798 | 1 + 2 |
-| `arch.melee.halberd` | blade 140 | haft 2800 | 3201 | 1 + 3 |
-| `arch.melee.quarterstaff` | haft 2295 | head 10 | 1799 | 3 + 1 |
+| `arch.melee.halberd` | blade 140 | haft 2800 | 3201 | 2 + 2 |
+| `arch.melee.quarterstaff` | haft 2400 | — | 1800 | 3 |
 | `arch.melee.fist` | head 60 | soft 150 | 601 | 1 + 1 |
-| `arch.melee.whip` | soft 683 | haft 150 | 699 | 1 + 1 |
+| `arch.melee.whip` | soft 683 | haft 150 | 699 | 2 + 1 |
 | `arch.melee.chain` | head 269 | soft 100 | 2203 | 2 + 1 |
 | `arch.ranged.pistol` | frame 118 | haft 100 | 1003 | 1 + 1 |
 | `arch.ranged.pistol_heavy` | frame 189 | haft 150 | 1599 | 1 + 1 |
@@ -404,7 +404,7 @@ Each archetype has a primary and an optional secondary component. Volumes give t
 | `arch.offhand.focus` | focus 800 | — | 600 | 1 |
 | `arch.offhand.tome` | soft 959 | focus 100 | 899 | 1 + 1 |
 | `arch.ward.aegis` / `kinetic` / `reflector` / `bulwark` | frame 34 / 147 / 96 / 372 | focus 40 / 60 / 60 / 100 | 297 / 1201 / 800 / 3002 | 1+1 / 1+1 / 1+1 / 2+1 |
-| `item.tool.pick` | head 203 | haft 1200 | 2497 | 1 + 2 |
+| `item.tool.pick` | head 203 | haft 1200 | 2497 | 3 + 2 |
 | `item.tool.toolkit` | frame 30 | haft 80 | 296 | 1 + 1 |
 
 Armor has one component. Its volume is `ceil_div(ref_mass_g × 1000, ref_density)` with doc 05 Table 11.1b masses and reference materials cloth `mat.linen`, light `mat.leather`, medium and heavy `mat.iron`. Cells (head, body, hands, legs, feet): cloth 1/1/1/1/1, light 1/5/1/3/2, medium 1/5/1/3/1, heavy 2/8/1/4/2. Example: medium body is `ceil_div(8000000, 7870) = 1017` ml.
@@ -430,3 +430,316 @@ mass_g = Σ components floor_div(vol_ml × density(material), 1000)
 4. **Mass** is `vol × density`; doc 04 §11.6 counts it.
 
 Example: a medium body piece in `mat.bronze`, ilvl 4, Common, Normal, +0: torso AR `20 → × T(4) = 23 → 23 → 23 → 23 → × 9000 = 20`; mass `floor_div(1017 × 8800, 1000) = 8949` g; poise 6 (bronze toughness 6).
+
+## 4. Crafting quality
+
+### 4.1 Which outputs roll
+
+Weapons, armor, off-hands, ward generators, tools, gadgets and parts roll quality. Material units, placeables, food and other consumables are `q.normal` and draw nothing.
+
+### 4.2 Roll
+
+```rust
+const TOOL_TERM: [i32; 6] = [-60, 0, 10, 20, 30, 40];             // tooltier.t0..t5 of the best toolkit carried
+const Q_THRESH: [i32; 6] = [100, 200, 300, 400, 500, 650];         // Poor, Normal, Good, Excellent, Masterwork, Peerless
+fn craft_quality(c: &Crafter, st: &Station, r: &Recipe, mat_tier: u8, helpers: &[i32], rng: &mut Rng) -> u8 {
+    let skill = c.skill(r.skill);
+    let center = 200 + floor_div(5 * skill, 2)
+        + 30 * (st.tier as i32 - 1)                                 // station.hand counts as tier 1
+        + TOOL_TERM[c.toolkit_tier() as usize]
+        + 15 * min(2, st.tier as i32 - mat_tier as i32)             // st.tier >= mat_tier is required
+        + helpers.iter().take(2).map(|h| min(25, floor_div(*h, 4))).sum::<i32>()   // two highest helper skills
+        + clamp(c.sub(r.skill.governing()) - 40, -20, 40);
+    let noise = rng.bell3(141) as i32 - 210;                        // 3 draws, mean 0, s.d. 70.5
+    let score = center + noise;
+    let mut q = Q_THRESH.iter().filter(|t| score >= **t).count() as u8;   // 0 = q.awful .. 6 = q.peerless
+    q = min(q, min(skill_cap(skill), station_cap(st)));
+    if r.skill == SMITHING && c.skill(SMITHING) >= 50 && r.output.is_weapon_or_armor() && q == 2 { q = 3; }  // doc 04 Smithing 50
+    if c.has_talent(ARTIFICER_MASTERWORK) { q = min(6, q + 1); }    // doc 04 talent; ignores caps
+    q
+}
+```
+
+`mat_tier` is the highest tier among the output's component materials; a station of lower tier refuses the recipe. `skill_cap`: skill 0..=24 Good, 25..=49 Excellent, 50..=74 Masterwork, 75 and above Peerless. `station_cap`: `station.hand` Normal, tier 1 Good, tier 2 Excellent, tier 3 Masterwork, tiers 4 and 5 Peerless. Helpers are other Errata within `CRAFT_REACH_MM` of the station for the whole channel, not channeling and not `in_combat`; each contributes its own level in the recipe's skill.
+
+### 4.3 Distribution table
+
+Exact by enumeration of the 141³ noise outcomes. `attr` is `d(governing sub)`.
+
+| Skill | Station | Toolkit | Material term | Helpers | attr | Center | Cap | Awful | Poor | Normal | Good | Excellent | Masterwork | Peerless |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | T1 | t1 | 0 | 0 | 0 | 200 | Good | 8.13 | 41.60 | 41.91 | 8.35 | 0 | 0 | 0 |
+| 20 | T1 | t1 | 0 | 0 | 0 | 250 | Good | 1.35 | 23.32 | 50.22 | 25.11 | 0 | 0 | 0 |
+| 20 | T2 | t1 | 15 | 0 | 0 | 295 | Good | 0.02 | 9.26 | 43.11 | 47.61 | 0 | 0 | 0 |
+| 35 | T2 | t2 | 15 | 0 | 5 | 347 | Excellent | 0 | 1.56 | 24.45 | 50.20 | 23.79 | 0 | 0 |
+| 50 | T2 | t2 | 15 | 0 | 10 | 390 | Excellent | 0 | 0.05 | 10.48 | 44.51 | 44.96 | 0 | 0 |
+| 50 | T3 | t3 | 30 | 0 | 10 | 445 | Masterwork | 0 | 0 | 1.71 | 25.21 | 50.15 | 22.93 | 0 |
+| 75 | T3 | t3 | 15 | 0 | 20 | 502 | Masterwork | 0 | 0 | 0 | 7.69 | 40.97 | 51.33 | 0 |
+| 75 | T4 | t4 | 30 | 0 | 20 | 557 | Peerless | 0 | 0 | 0 | 0.94 | 20.74 | 68.31 | 10.02 |
+| 100 | T4 | t4 | 30 | 0 | 30 | 630 | Peerless | 0 | 0 | 0 | 0 | 3.16 | 57.13 | 39.72 |
+| 100 | T5 | t5 | 30 | 50 | 40 | 730 | Peerless | 0 | 0 | 0 | 0 | 0 | 13.37 | 86.63 |
+
+Percentages, before the Smithing 50 and talent shifts. Crafting reaches Peerless only at skill 75, a tier-4 station and a tier-4 toolkit, matching the R5 RimWorld fit (σ 0.7 tier).
+
+### 4.4 Crafted item fields
+
+`rarity = rar.common`; `buc = buc.uncursed`; `ilvl` = current Folio index (`d_eff` in Abridged mode), which is also its `src_lvl` (Canon §13.8.1); `origin_genre` = the local genre at the crafter, or the Folio's genre in a seam zone; knowledge fully identified (doc 10); `finder_slot` = crafter's slot; `crafted = 1`; manufacturer per §7.4; `gear_tier` per doc 11. Weapons get perk columns 1 to `n`, where `n` is 1 at Normal or below, 2 at Good or Excellent, 3 at Masterwork, 4 at Peerless; the fourth `rng.craft` draw (`next_u64`) seeds doc 11 `roll_perks(sub(seed, "loot.perk"))`, and column 5 holds the genre trait. Other outputs ignore the fourth draw, so the count stays 4.
+
+Skill XP per completed craft (doc 04 §5.2): `1000 × input_units + 2000 × recipe_tier`, × 15000 if quality ≥ Excellent. Process recipes have `recipe_tier` 0.
+
+## 5. Stations
+
+### 5.1 Station list
+
+| ID | Functions | Tiers | Buildable | Found in | Fuel |
+|---|---|---|---|---|---|
+| `station.hand` | 2×2 grid; recipes marked hand; quality cap Normal | — | always available | — | no |
+| `station.campfire` | cooking tier 1; smelting with melt cap 12000; charcoal | 1 | yes, `block.campfire` (a light source, Canon §4.3) | `room.campfire` service | yes |
+| `station.workbench` | 3×3 grid; assembly; fabrication; Tinkering repair; salvage; graft extraction; implants (doc 04 Tinkering 75) | 1–5 | no | `room.workshop`, Colophon | no |
+| `station.forge` | smelting and alloying with melt cap; 3×3 smithing grid; shields; Smithing repair; forge reforge; recast | 1–5 | no | `room.forge` | yes |
+| `station.loom` | tanning, weaving, cloth and light armor | 1–5 | no | `room.workshop`, `room.stable` | no |
+| `station.kitchen` | every cooking recipe | 1–5 | no | `room.larder` | yes |
+| `station.alchemy` | doc 08 brewing with installed apparatus | 1–5 | no | `room.alchemy_lab` | no |
+| `station.enchanting` | doc 06 §9 enchanting; ritual processes | 1–5 | no | `room.shrine`, `room.library` | no |
+| `station.scriptorium` | doc 11 Rewrite and reforge; doc 10 services | 1 | no | `room.scriptorium`, Colophon | no |
+
+Forge melt caps by tier: 16000, 18000, 20000, 32000, 40000 DeciC. A smelting, alloying or glass recipe requires `melt_cap >= melt_decic(output)`.
+
+Tier at worldgen: `clamp(1 + floor_div(d_eff - 1, 5), 1, 5)`, plus 1 (maximum 5) when doc 12's `room_bias` for that room kind in that genre is at least 15000 (Steampunk forge and workshop, Post-Apocalypse workshop). Marginalia stations are tier 5. The Colophon workbench takes the Folio's tier. Stations are world fixtures with dependency none and never Contradict.
+
+### 5.2 Genre skins
+
+| Genre | Workbench | Forge | Loom | Kitchen | Campfire |
+|---|---|---|---|---|---|
+| Mythic Fantasy | Joiner's Bench | Dwarf Forge | Weaver's Frame | Hearth Kitchen | Campfire |
+| Gothic Horror | Undertaker's Bench | Iron Furnace | Tanner's Rack | Scullery | Grave Brazier |
+| Cosmic Horror | Expedition Table | Abyssal Kiln | Net-Mender | Galley | Signal Fire |
+| Space Opera | Fabricator Bay | Fusion Smelter | Synthweave Loom | Galley Unit | Thermal Beacon |
+| Cyberpunk | Fab Station | Arc Smelter | Print Loom | Noodle Cart | Barrel Fire |
+| Post-Apocalypse | Scrap Bench | Junk Furnace | Hide Rack | Can Cooker | Burn Barrel |
+| Weird West | Gunsmith's Bench | Blacksmith's Forge | Tanning Rack | Chuckwagon | Cookfire |
+| Hardboiled Noir | Back-Room Bench | Foundry Pot | Tailor's Table | Diner Grill | Trash Fire |
+| Wuxia | Artisan's Table | Sword Furnace | Silk Loom | Wok Stove | Cooking Fire |
+| Steampunk | Tinker's Bench | Steam Foundry | Mechanical Loom | Boiler Range | Coal Stove |
+| Fairy Tale | Cobbler's Bench | Witch's Anvil | Spinning Wheel | Gingerbread Oven | Hearthfire |
+| Mythic Antiquity | Artisan's Bench | Hephaestian Forge | Penelope's Loom | Hearth of Hestia | Altar Fire |
+| Oneiric | Dream Bench | Ember of Sleep | Thread of Morning | Dream Feast | Night Light |
+| The Redaction | Form Desk | Shredder Furnace | Binding Press | Break Room | Incinerator |
+| The Unwritten | Margin Desk | Blank Forge | Blank Loom | Blank Table | Blank Fire |
+| The Ur-Text | First Bench | First Forge | First Loom | First Table | First Fire |
+
+### 5.3 Station state and process queue
+
+```rust
+struct StationState { id: Id32, tier: u8, fuel_ticks: u32, fuel_slot: Option<ItemStack>,
+                      queue: Vec<ProcessJob> /* <= 4 */, out: Vec<(u8 /* slot */, ItemStack)> }
+struct ProcessJob { recipe: Id32, owner_slot: u8, ticks_each: u32, remaining: u32, batch_left: u16 }
+
+fn station_tick(s: &mut StationState) {                                  // sys.crafting, ascending Gidx
+    let Some(j) = s.queue.first_mut() else { return };
+    if recipe(j.recipe).fueled {
+        if s.fuel_ticks == 0 {
+            match s.fuel_slot.take_one() { Some(u) => s.fuel_ticks = fuel_value(u), None => return } // stalled
+        }
+        s.fuel_ticks -= 1;
+    }
+    j.remaining -= 1;
+    if j.remaining == 0 {
+        s.out.push((j.owner_slot, recipe(j.recipe).output()));            // instanced to the owner
+        j.batch_left -= 1;
+        if j.batch_left == 0 { s.queue.remove(0); } else { j.remaining = j.ticks_each; }
+    }
+}
+```
+
+`ticks_each = ceil_div(base_ticks × 10000, min(25000, 10000 + 50 × skill + 1000 × (station.tier - recipe.station_tier)))`, with the owner's skill snapshotted when queued. Inputs are removed when the job is queued. Fuel values: `mat.coal` 1200, any `wood` 300, `mat.polymer` and `mat.rubber` 450, `mat.paper` 60, `mat.leaves` 30. A campfire whose `fuel_ticks` reaches 0 becomes `block.campfire_out` and turns back into `block.campfire` when fuel is added (cause `grid.cause.toggled`). Queued jobs and uncollected outputs are lost at `ev.folio_exited`.
+
+### 5.4 Genre legality
+
+A crafted output takes the local genre as `origin_genre`. The craft is refused when that genre has no skin for the output archetype (doc 11 §4) or when the skin's dependency set contains an axis whose local axiom is 0 (Canon §5.3). Ritual processes state their own axiom minimums. In `genre.unwritten` only the Colophon scriptorium exists; hand recipes still work there.
+
+## 6. Recipes
+
+### 6.1 Kinds
+
+| Kind | Rule |
+|---|---|
+| `recipe.kind.shaped` | 3×3 grid (2×2 at `station.hand`); the trimmed grid must equal the pattern or its horizontal mirror |
+| `recipe.kind.shapeless` | the grid holds exactly the listed keys and counts, in any cells |
+| `recipe.kind.assembly` | named component cells plus optional part slots (§7) |
+| `recipe.kind.process` | queued, timed, at a station (§5.3); never rolls quality |
+| `recipe.kind.disassembly` | reverses gear into materials, parts or grafts (§8.5) |
+
+### 6.2 Schema
+
+```json
+[
+  { "id": "recipe.forge.blade_long", "kind": "recipe.kind.shaped",
+    "station": "station.forge", "station_tier": 1, "skill": "skill.smithing", "skill_min": 10,
+    "recipe_tier": 1, "ticks": 360, "pool": "base", "learn": 0, "fuel": 0,
+    "pattern": ["B", "B", "H"],
+    "keys": { "B": { "role": "mat.role.blade" }, "H": { "role": "mat.role.haft" } },
+    "output": { "template": "arch.melee.blade_long", "count": 1, "primary": "B", "secondary": "H" } },
+  { "id": "recipe.alloy.steel", "kind": "recipe.kind.process",
+    "station": "station.forge", "station_tier": 2, "skill": "skill.smithing", "skill_min": 25,
+    "recipe_tier": 0, "ticks": 600, "pool": "base", "learn": 0, "fuel": 1,
+    "inputs": [ { "mat": "mat.iron", "count": 2 }, { "mat": "mat.coal", "count": 1 } ],
+    "output": { "template": "mat.steel", "count": 2 } },
+  { "id": "recipe.bench.pistol", "kind": "recipe.kind.assembly",
+    "station": "station.workbench", "station_tier": 1, "skill": "skill.tinkering", "skill_min": 10,
+    "recipe_tier": 1, "ticks": 360, "pool": "base", "learn": 0, "fuel": 0,
+    "components": { "primary": { "role": "mat.role.frame", "count": 1 }, "secondary": { "role": "mat.role.haft", "count": 1 } },
+    "slots": ["barrel", "feed", "optic", "stock", "graft"],
+    "output": { "template": "arch.ranged.pistol", "count": 1 } }
+]
+```
+
+Key kinds: `{"mat"}`, `{"role"}`, `{"tag"}`, `{"template"}`, `{"liquid", "ml"}` (drawn from held containers, doc 08). Every cell bound to one key letter must hold the same template. Station `S` with tier `t` runs a recipe when `S` is the recipe's station (a `station.hand` recipe runs anywhere, and a campfire recipe also runs at a kitchen or forge) and `t >= station_tier`.
+
+### 6.3 Matching
+
+```rust
+fn match_shaped(grid: &Grid, r: &Recipe) -> Option<BTreeMap<char, Id32>> {
+    let g = grid.trimmed();                                          // drop empty outer rows and columns
+    for pat in [r.pattern.clone(), r.pattern.mirrored()] {
+        if g.dims() != pat.dims() { continue; }
+        let mut bind = BTreeMap::new();
+        let ok = g.cells().zip(pat.cells()).all(|(cell, key)| match (cell, key) {
+            (None, None) => true,
+            (Some(it), Some(k)) => r.keys[&k].accepts(it) && *bind.entry(k).or_insert(it.template) == it.template,
+            _ => false,
+        });
+        if ok { return Some(bind); }
+    }
+    None
+}
+```
+
+Lookup tries recipes in ascending ID among those the crafter knows and the station runs; the first match wins. The content loader rejects two shaped recipes whose masks (or a mirror) are equal while every cell pair's accepted material sets intersect (`recipe_overlap`), so at most one recipe ever matches.
+
+### 6.4 Craft channel state machine
+
+| State | Event | Next |
+|---|---|---|
+| Idle | `StartCraft{recipe, count ≤ stack limit}` passing every check below | Channeling |
+| Idle | any check fails | Idle, with the failing reason |
+| Channeling | each tick, all conditions hold | Channeling, `progress += 1` |
+| Channeling | `progress >= needed` | Done |
+| Channeling | moved more than 1000 mm from the start point; took non-DoT damage; gained `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping` or `st.downed`; the station broke; cancel input | Idle; nothing consumed |
+| Done | same tick | Idle: inputs consumed, quality rolled per output (seq = output index), items created, `ev.item_crafted` per item, skill XP |
+
+Checks: recipe known (§6.5); station within `CRAFT_REACH_MM` and of sufficient tier and melt cap; `skill >= skill_min`; station tier at least the highest input material tier; genre legality (§5.4); inputs present (they stay reserved while channeling).
+
+```
+needed = ceil_div(ticks × count × 10000, min(30000, 10000 + 50 × skill + 1000 × (station_tier - recipe.station_tier) + 1500 × helpers))
+```
+
+### 6.5 Knowledge
+
+Every recipe in the run content set with `learn: 0` is known by every Erratum. A recipe with `learn: 1` must be learned once per run: reading a schematic book (doc 11 `item.book.schematic` with `teaches`, a 60-tick read that consumes it), an NPC `teach_recipe` effect (doc 13) or a doc 04 kit grant. `unlock.loot.recipes_2` (doc 14) adds the 12 recipes marked `r2` below to the content set and their schematics to the loot pool.
+
+### 6.6 Catalog
+
+Keys: B blade, D head, H haft, L limb, F frame, P plate, S soft, O focus (roles); W wood, M metal, K stone, T fabric (tags); C `mat.coal`, G `mat.glass`, Y `mat.sand`, E `mat.web`. Patterns list rows top to bottom separated by `/`; `.` is empty. Columns: station and minimum tier, skill and minimum, ticks, `recipe_tier`. Flags: `L` learn, `r2` pool `loot.pool.recipes_2`, `F` fueled.
+
+**Process recipes** (`recipe_tier` 0, quality never rolls)
+
+| ID | Station | Skill | Inputs → output | Ticks | Flags |
+|---|---|---|---|---|---|
+| `recipe.smelt.copper` | forge 1 or campfire | smithing 0 | 1 `mat.copper.ore` → 1 `mat.copper` | 200 | F |
+| `recipe.smelt.tin` | forge 1 or campfire | smithing 0 | 1 `mat.tin.ore` → 1 `mat.tin` | 160 | F |
+| `recipe.smelt.zinc` | forge 1 or campfire | smithing 0 | 1 `mat.zinc.ore` → 1 `mat.zinc` | 160 | F |
+| `recipe.smelt.iron` | forge 1 | smithing 0 | 1 `mat.iron.ore` → 1 `mat.iron` | 240 | F |
+| `recipe.smelt.silver` | forge 1 | smithing 10 | 1 `mat.silver.ore` → 1 `mat.silver` | 240 | F |
+| `recipe.smelt.gold` | forge 1 | smithing 10 | 1 `mat.gold.ore` → 1 `mat.gold` | 240 | F |
+| `recipe.smelt.titanium` | forge 2 | smithing 40 | 1 `mat.titanium.ore` → 1 `mat.titanium` | 480 | F |
+| `recipe.smelt.orichalcum` | forge 3 | smithing 50 | 1 `mat.orichalcum.ore` → 1 `mat.orichalcum` | 600 | F |
+| `recipe.smelt.aetherium` | forge 3 | smithing 50 | 1 `mat.aetherium.ore` → 1 `mat.aetherium` | 600 | F |
+| `recipe.smelt.star_metal` | forge 4 | smithing 60 | 1 `mat.star_metal.ore` → 1 `mat.star_metal` | 720 | F |
+| `recipe.alloy.bronze` | forge 1 | smithing 10 | 3 copper + 1 tin → 4 `mat.bronze` | 360 | F |
+| `recipe.alloy.brass` | forge 1 | smithing 10 | 2 copper + 1 zinc → 3 `mat.brass` | 360 | F |
+| `recipe.alloy.steel` | forge 2 | smithing 25 | 2 iron + 1 coal → 2 `mat.steel` | 600 | F |
+| `recipe.alloy.cast_iron` | forge 1 | smithing 10 | 1 `mat.iron.ore` + 1 coal → 1 `mat.cast_iron` | 300 | F |
+| `recipe.forge.cold_iron` | forge 2 | smithing 25 | 1 iron → 1 `mat.cold_iron` (cold-hammered, no fuel) | 600 | L |
+| `recipe.ritual.hexed_silver` | enchanting 2 | inscription 20 | 1 silver + 1 bone → 1 `mat.hexed_silver`; local MYT ≥ 4 | 900 | L |
+| `recipe.ritual.moonsilver` | enchanting 3 | inscription 40 | 2 silver + 1 glass → 1 `mat.moonsilver`; local ARC ≥ 6 | 1200 | L r2 |
+| `recipe.kiln.glass` | forge 1 | smithing 0 | 2 sand → 1 `mat.glass` | 300 | F |
+| `recipe.kiln.brick` | forge 1 | smithing 0 | 2 soil → 2 `mat.brick` | 300 | F |
+| `recipe.kiln.charcoal` | campfire | survival 0 | 2 W → 1 `mat.coal` | 300 | — |
+| `recipe.loom.tan_leather` | loom 1 | survival 0 | 1 `mat.hide` → 1 `mat.leather` | 600 | — |
+| `recipe.loom.weave_silk` | loom 2 | survival 20 | 3 web → 1 `mat.silk` | 600 | — |
+| `recipe.fab.polymer` | workbench 2 | tinkering 25 | 1 rubber + 1 coal → 2 `mat.polymer` | 600 | — |
+| `recipe.fab.carbon_fiber` | workbench 3 | tinkering 50 | 2 polymer + 1 coal → 1 `mat.carbon_fiber` | 900 | L |
+| `recipe.fab.plasteel` | workbench 3 | tinkering 50 | 1 steel + 1 polymer → 1 `mat.plasteel` | 900 | L |
+| `recipe.fab.nanoweave` | workbench 4 | tinkering 75 | 1 carbon fiber + 1 silk → 1 `mat.nanoweave` | 1200 | L r2 |
+
+**Shaped and shapeless recipes** (quality rolls for gear and tools only)
+
+| ID | Station | Skill | Pattern or inputs → output | Ticks | Tier | Flags |
+|---|---|---|---|---|---|---|
+| `recipe.forge.dagger` | forge 1 | smithing 0 | `B/H` → `arch.melee.dagger` | 240 | 1 | |
+| `recipe.forge.blade_short` | forge 1 | smithing 5 | `.B/H.` → `arch.melee.blade_short` | 300 | 1 | |
+| `recipe.forge.blade_long` | forge 1 | smithing 10 | `B/B/H` → `arch.melee.blade_long` | 360 | 1 | |
+| `recipe.forge.blade_great` | forge 2 | smithing 25 | `.B/BB/H.` → `arch.melee.blade_great` | 480 | 2 | |
+| `recipe.forge.axe` | forge 1 | smithing 5 | `BH` → `arch.melee.axe` | 300 | 1 | |
+| `recipe.forge.axe_great` | forge 2 | smithing 25 | `BB/.H/.H` → `arch.melee.axe_great` | 480 | 2 | L r2 |
+| `recipe.forge.mace` | forge 1 | smithing 5 | `DH/.H` → `arch.melee.mace` | 300 | 1 | |
+| `recipe.forge.warhammer` | forge 2 | smithing 25 | `DD/DD/.H` → `arch.melee.warhammer` | 480 | 2 | |
+| `recipe.forge.spear` | forge 1 | smithing 5 | `..B/.H./H..` → `arch.melee.spear` | 300 | 1 | |
+| `recipe.forge.halberd` | forge 2 | smithing 25 | `.B/BH/.H` → `arch.melee.halberd` | 480 | 2 | L r2 |
+| `recipe.bench.quarterstaff` | workbench 1 | smithing 0 | `HHH` → `arch.melee.quarterstaff` | 240 | 1 | |
+| `recipe.forge.fist` | forge 1 | smithing 10 | `S.D` → `arch.melee.fist` | 240 | 1 | L r2 |
+| `recipe.loom.whip` | loom 1 | smithing 10 | `S./.S/H.` → `arch.melee.whip` | 300 | 1 | L r2 |
+| `recipe.forge.chain` | forge 2 | smithing 25 | `DD./..S` → `arch.melee.chain` | 420 | 2 | L r2 |
+| `recipe.forge.thrown` | forge 1 | throwing 0 | `B/B` → 3 `arch.ranged.thrown` | 240 | 1 | |
+| `recipe.forge.pick` | forge 1 | smithing 0 | `DDD/.H./.H.` → `item.tool.pick` | 240 | 1 | |
+| `recipe.bench.toolkit` | workbench 1 | tinkering 0 | shapeless 1 F + 1 H → `item.tool.toolkit` | 180 | 1 | |
+| `recipe.hand.torch` | hand | fieldcraft 0 | `C/W` → 4 `item.tool.torch` | 30 | 0 | |
+| `recipe.hand.bandage` | hand | medicine 0 | shapeless 1 T → 3 `item.tool.bandage` | 30 | 0 | |
+| `recipe.hand.barricade_wood` | hand | fieldcraft 0 | `WWW/WWW` → 4 `block.barricade.wood` | 120 | 0 | |
+| `recipe.hand.barricade_stone` | hand | fieldcraft 0 | `KK/KK` → 2 `block.barricade.stone` | 120 | 0 | |
+| `recipe.hand.barricade_gate` | hand | fieldcraft 10 | `WW/WW/WW` → 1 `block.barricade.gate` | 120 | 0 | |
+| `recipe.forge.barricade_metal` | forge 1 | fieldcraft 10 | `MMM/M.M/MMM` → 4 `block.barricade.metal` | 300 | 1 | |
+| `recipe.hand.ladder_wood` | hand | fieldcraft 0 | `W.W/WWW/W.W` → 4 `block.ladder.wood` | 60 | 0 | |
+| `recipe.loom.ladder_rope` | loom 1 | fieldcraft 10 | `T.T/TTT/T.T` → 4 `block.ladder.rope` | 120 | 0 | |
+| `recipe.forge.ladder_metal` | forge 1 | fieldcraft 10 | `M.M/MMM/M.M` → 4 `block.ladder.metal` | 120 | 1 | |
+| `recipe.hand.bridge_plank` | hand | fieldcraft 0 | `WWW/W.W` → 4 `block.bridge.plank` | 90 | 0 | |
+| `recipe.forge.bridge_metal` | forge 1 | fieldcraft 10 | `MMM/M.M` → 4 `block.bridge.metal` | 180 | 1 | |
+| `recipe.hand.campfire` | hand | fieldcraft 0 | `.C./WWW` → 1 `block.campfire` | 60 | 0 | |
+| `recipe.bench.lantern` | workbench 1 | tinkering 0 | `.M./MGM/.M.` → 1 `block.lantern` | 180 | 1 | |
+| `recipe.bench.cover_sandbag` | workbench 1 | fieldcraft 0 | shapeless 2 Y + 1 T → 2 `block.cover.sandbag` | 120 | 0 | |
+| `recipe.forge.cover_plate` | forge 1 | fieldcraft 10 | `MM/MM` → 2 `block.cover.plate` | 240 | 1 | |
+| `recipe.bench.trap_spikes` | workbench 1 | fieldcraft 10 | `BBB` → 2 `block.trap.spikes` | 180 | 1 | |
+| `recipe.hand.web_trap` | hand | fieldcraft 0 | shapeless 3 E → 1 `block.web` | 60 | 0 | |
+| `recipe.bench.shrine_lamp` | workbench 2 | inscription 10 | shapeless 1 G + 1 `arcane_reagent` + 1 M → 1 `block.shrine_lamp` | 300 | 2 | L r2 |
+| `recipe.loom.armor_cloth` | loom 1 | smithing 0 | shapeless T × (1/1/1/1/1) → `arch.armor.<slot>_cloth` | 240 | 1 | |
+| `recipe.loom.armor_light` | loom 1 | smithing 10 | shapeless non-fabric S × (1/5/1/3/2) → `arch.armor.<slot>_light` | 360 | 1 | |
+| `recipe.forge.armor_medium` | forge 1 | smithing 15 | shapeless P × (1/5/1/3/1) → `arch.armor.<slot>_medium` | 480 | 1 | |
+| `recipe.forge.armor_heavy` | forge 2 | smithing 30 | shapeless P × (2/8/1/4/2) → `arch.armor.<slot>_heavy` | 600 | 2 | |
+
+Armor counts are head/body/hands/legs/feet; the player picks the slot. The torch, bandage and pick outputs are doc 11 templates whose instance carries the materials used.
+
+**Assembly recipes** (components, then optional part slots of §7.1)
+
+| ID | Station | Skill | Components → output | Ticks | Tier | Flags |
+|---|---|---|---|---|---|---|
+| `recipe.bench.pistol` | workbench 1 | tinkering 10 | F1 H1 → `arch.ranged.pistol` | 360 | 1 | |
+| `recipe.bench.pistol_heavy` | workbench 2 | tinkering 25 | F1 H1 → `arch.ranged.pistol_heavy` | 420 | 2 | |
+| `recipe.bench.smg` | workbench 2 | tinkering 25 | F2 H1 → `arch.ranged.smg` | 480 | 2 | |
+| `recipe.bench.rifle_auto` | workbench 2 | tinkering 30 | F2 H2 → `arch.ranged.rifle_auto` | 540 | 2 | |
+| `recipe.bench.rifle_marksman` | workbench 2 | tinkering 30 | F2 H2 → `arch.ranged.rifle_marksman` | 540 | 2 | |
+| `recipe.bench.shotgun` | workbench 2 | tinkering 25 | F2 H2 → `arch.ranged.shotgun` | 480 | 2 | |
+| `recipe.bench.sniper` | workbench 3 | tinkering 50 | F3 H2 → `arch.ranged.sniper` | 720 | 3 | L r2 |
+| `recipe.bench.launcher` | workbench 3 | tinkering 50 | F4 H1 → `arch.ranged.launcher` | 720 | 3 | L |
+| `recipe.bench.beam` | workbench 3 | tinkering 50 | F3 O1 → `arch.ranged.beam` | 720 | 3 | L |
+| `recipe.bench.charge_rifle` | workbench 1 | smithing 10 | L2 S1 → `arch.ranged.charge_rifle` | 360 | 1 | |
+| `recipe.bench.crossbow` | workbench 2 | tinkering 25 | L2 H4 → `arch.ranged.crossbow` | 480 | 2 | L r2 |
+| `recipe.bench.staff` | workbench 1 | inscription 10 | H2 O1 → `arch.ranged.staff` | 300 | 1 | |
+| `recipe.bench.focus` | enchanting 1 | inscription 10 | O1 → `arch.offhand.focus` | 240 | 1 | |
+| `recipe.loom.tome` | loom 1 | inscription 10 | S1 O1 → `arch.offhand.tome` | 300 | 1 | |
+| `recipe.bench.lantern_held` | workbench 1 | tinkering 0 | F1 + 1 glass → `arch.offhand.lantern` | 180 | 1 | |
+| `recipe.forge.shield` | forge 1 | smithing 10 | buckler P1 H1, heater P2 H1, tower P5 H1 → `arch.offhand.shield_*` | 360 | 1 | |
+| `recipe.bench.ward` | workbench 2 | tinkering 25 | aegis, kinetic, reflector F1 O1; bulwark F2 O1 → `arch.ward.*` | 480 | 2 | |
+| `recipe.bench.modify` | workbench or forge 1 | item's governing skill (§8.4) | install or remove parts on any compatible item | 60 per part | 0 | |
+
+Gadget assembly recipes are in §11.2, part recipes in §7.2, disassembly in §8.5 and cooking in §12.2.

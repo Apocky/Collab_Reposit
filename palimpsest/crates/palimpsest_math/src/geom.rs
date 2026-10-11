@@ -7,8 +7,8 @@
 use core::ops::{Add, Index, Neg, Sub};
 
 use crate::fx::{Fx, div_fx, fx_floor_block, isqrt_u128, mul_fx};
-use crate::int::{U256, floor_div_i128, floor_div_i256, narrow_i64};
 pub use crate::int::I256;
+use crate::int::{U256, floor_div_i128, floor_div_i256, narrow_i64};
 
 /// SPEC: canon §1.8, doc 02 §4.6 `EPS = Fx(256)` (2^-24 m²), the degeneracy threshold for
 /// squared segment lengths and the capsule-ray quadratic.
@@ -414,11 +414,16 @@ impl VCapsule {
 #[track_caller]
 pub fn div128(n: i128, d: i128) -> Fx {
     let (n, d) = if d < 0 {
-        (n.checked_neg().expect("div128: overflow"), d.checked_neg().expect("div128: overflow"))
+        (
+            n.checked_neg().expect("div128: overflow"),
+            d.checked_neg().expect("div128: overflow"),
+        )
     } else {
         (n, d)
     };
-    let shifted = n.checked_mul(1i128 << 32).expect("div128: n << 32 overflows i128");
+    let shifted = n
+        .checked_mul(1i128 << 32)
+        .expect("div128: n << 32 overflows i128");
     Fx::from_raw(i64::try_from(floor_div_i128(shifted, d)).expect("invariant: div128 range"))
 }
 
@@ -428,7 +433,11 @@ pub fn div128(n: i128, d: i128) -> Fx {
 #[must_use]
 #[track_caller]
 pub fn div256(n: I256, d: I256) -> Fx {
-    let (n, d) = if d.is_negative() { (n.neg(), d.neg()) } else { (n, d) };
+    let (n, d) = if d.is_negative() {
+        (n.neg(), d.neg())
+    } else {
+        (n, d)
+    };
     Fx::from_raw(i64::try_from(floor_div_i256(n.shl32(), d)).expect("invariant: div256 range"))
 }
 
@@ -438,7 +447,11 @@ pub fn div256(n: I256, d: I256) -> Fx {
 #[track_caller]
 fn ratio01(n: I256, d: I256) -> Fx {
     assert!(d != I256::ZERO, "ratio01: zero divisor");
-    let (n, d) = if d.is_negative() { (n.neg(), d.neg()) } else { (n, d) };
+    let (n, d) = if d.is_negative() {
+        (n.neg(), d.neg())
+    } else {
+        (n, d)
+    };
     if n.is_negative() || n == I256::ZERO {
         Fx::ZERO // floor(n * 2^32 / d) <= 0
     } else if n >= d {
@@ -934,6 +947,83 @@ mod tests {
     }
 
     #[test]
+    fn closest_seg_seg_example_2_clamped() {
+        // Doc 02 §4.6 example 2: unclamped s = 3 clamps to 1, t = -1 clamps to
+        // 0, and s is recomputed as clamp01(-c / a) = 1.
+        let (s, t, c1, c2) = closest_seg_seg(
+            Fx3::from_ints(0, 0, 0),
+            Fx3::from_ints(1, 0, 0),
+            Fx3::from_ints(3, 1, 0),
+            Fx3::from_ints(3, 2, 0),
+        );
+        assert_eq!(s.raw(), 4_294_967_296);
+        assert_eq!(t, Fx::ZERO);
+        assert_eq!(c1, Fx3::from_ints(1, 0, 0));
+        assert_eq!(c2, Fx3::from_ints(3, 1, 0));
+        assert_eq!(dist2(c1, c2), 5i128 << 64);
+    }
+
+    /// Doc 02 §4.6 `closest_seg_seg`, transcribed literally (panics where it panics).
+    fn closest_seg_seg_doc(p1: Fx3, q1: Fx3, p2: Fx3, q2: Fx3) -> (Fx, Fx) {
+        let (d1, d2, r) = (q1.sub(p1), q2.sub(p2), p1.sub(p2));
+        let (a, e, f) = (d1.dot_wide(d1), d2.dot_wide(d2), d2.dot_wide(r));
+        if a == 0 && e == 0 {
+            (Fx::ZERO, Fx::ZERO)
+        } else if a == 0 {
+            (Fx::ZERO, clamp01(div128(f, e)))
+        } else {
+            let c = d1.dot_wide(r);
+            if e == 0 {
+                (clamp01(div128(-c, a)), Fx::ZERO)
+            } else {
+                let b = d1.dot_wide(d2);
+                let denom = I256::mul(a, e).sub(I256::mul(b, b));
+                let mut s = if denom != I256::ZERO {
+                    clamp01(div256(I256::mul(b, f).sub(I256::mul(c, e)), denom))
+                } else {
+                    Fx::ZERO
+                };
+                let mut t = div128(((b * i128::from(s.raw())) >> 32) + f, e);
+                if t < Fx::ZERO {
+                    t = Fx::ZERO;
+                    s = clamp01(div128(-c, a));
+                } else if t > Fx::ONE {
+                    t = Fx::ONE;
+                    s = clamp01(div128(b - c, a));
+                }
+                (s, t)
+            }
+        }
+    }
+
+    #[test]
+    fn closest_seg_seg_where_doc_code_panics() {
+        // Nearly parallel segments: the unclamped s is about -2^32, which the
+        // doc 02 code's div256 cannot narrow to Fx ("invariant: div256 range").
+        let (p1, q1) = (Fx3::ZERO, Fx3::from_ints(1, 0, 0));
+        let (p2, q2) = (
+            Fx3::from_ints(5, 1, 0),
+            Fx3::new(Fx::from_int(6), Fx::from_raw((1 << 32) + 1), Fx::ZERO),
+        );
+        assert!(std::panic::catch_unwind(|| closest_seg_seg_doc(p1, q1, p2, q2)).is_err());
+        let (s, t, c1, c2) = closest_seg_seg(p1, q1, p2, q2);
+        assert_eq!((s, t), (Fx::ONE, Fx::ZERO));
+        assert_eq!((c1, c2), (Fx3::from_ints(1, 0, 0), p2));
+        // A point against a 1-raw-long segment 5 m away: f / e = 5 * 2^32 in Fx
+        // does not fit ("invariant: div128 range"); the clamped answer is t = 1.
+        let (p2, q2) = (
+            Fx3::from_ints(-5, 0, 0),
+            Fx3::new(Fx::from_raw((-5i64 << 32) + 1), Fx::ZERO, Fx::ZERO),
+        );
+        assert!(
+            std::panic::catch_unwind(|| closest_seg_seg_doc(Fx3::ZERO, Fx3::ZERO, p2, q2)).is_err()
+        );
+        let (s, t, _, c2) = closest_seg_seg(Fx3::ZERO, Fx3::ZERO, p2, q2);
+        assert_eq!((s, t), (Fx::ZERO, Fx::ONE));
+        assert_eq!(c2, q2);
+    }
+
+    #[test]
     fn closest_seg_seg_degenerate_and_parallel() {
         // Two points.
         let (s, t, c1, c2) = closest_seg_seg(
@@ -1158,6 +1248,19 @@ mod tests {
                 IVec3::new(2, 1, -3),
             ]
         );
+        // Doc 02 acceptance test 11: exact raw t values.
+        let ts: Vec<i64> = seen.iter().map(|s| s.t.raw()).collect();
+        assert_eq!(
+            ts,
+            [
+                0,
+                2_684_354_559,
+                3_579_139_414,
+                8_053_063_678,
+                10_737_418_242,
+                13_421_772_797
+            ]
+        );
         assert_eq!(seen[0].t, Fx::ZERO);
         assert_eq!(seen[0].face, None);
         assert_eq!(seen[1].t.raw(), 2_684_354_559);
@@ -1311,9 +1414,21 @@ mod tests {
         assert_eq!(div128(2 << 64, 4 << 64).raw(), 2_147_483_648);
         assert_eq!(div128(-1, 3).raw(), -1_431_655_766);
         assert_eq!(div128(1, -3).raw(), -1_431_655_766);
-        assert_eq!(div256(I256::mul(3 << 64, 1 << 64), I256::mul(4 << 64, 1 << 64)).raw(), 3_221_225_472);
-        assert_eq!(div256(I256::mul(3 << 64, 1 << 64), I256::mul(-(4 << 64), 1 << 64)).raw(), -3_221_225_472);
-        for (n, d) in [(1i128, 2i128), (1, 3), (2, 3), (5, 7), (123_456_789, 987_654_321)] {
+        assert_eq!(
+            div256(I256::mul(3 << 64, 1 << 64), I256::mul(4 << 64, 1 << 64)).raw(),
+            3_221_225_472
+        );
+        assert_eq!(
+            div256(I256::mul(3 << 64, 1 << 64), I256::mul(-(4 << 64), 1 << 64)).raw(),
+            -3_221_225_472
+        );
+        for (n, d) in [
+            (1i128, 2i128),
+            (1, 3),
+            (2, 3),
+            (5, 7),
+            (123_456_789, 987_654_321),
+        ] {
             let q = U256::frac_q32(I256::from(n).unsigned_abs(), I256::from(d).unsigned_abs());
             assert_eq!(i128::from(q), (n << 32) / d);
             assert_eq!(ratio01(I256::from(n), I256::from(d)), div128(n, d));
@@ -1322,7 +1437,10 @@ mod tests {
         assert_eq!(ratio01(I256::from(5i128), I256::from(3i128)), Fx::ONE);
         assert_eq!(ratio01(I256::from(3i128), I256::from(3i128)), Fx::ONE);
         assert_eq!(ratio01(I256::from(1i128), I256::from(-3i128)), Fx::ZERO);
-        assert_eq!(ratio01(I256::from(-1i128), I256::from(-3i128)), div128(1, 3));
+        assert_eq!(
+            ratio01(I256::from(-1i128), I256::from(-3i128)),
+            div128(1, 3)
+        );
     }
 
     #[test]
@@ -1335,6 +1453,19 @@ mod tests {
     #[should_panic(expected = "n << 32 overflows")]
     fn div128_shift_overflow_panics() {
         let _ = div128(1 << 100, 1 << 100);
+    }
+
+    fn v3_folio() -> impl Strategy<Value = Fx3> {
+        // Folio-local coordinates: 0..=256 m on each axis, any raw value.
+        let c = || 0i64..=(256i64 << 32);
+        (c(), c(), c())
+            .prop_map(|(x, y, z)| Fx3::new(Fx::from_raw(x), Fx::from_raw(y), Fx::from_raw(z)))
+    }
+
+    fn v3_tiny() -> impl Strategy<Value = Fx3> {
+        let c = || -4096i64..=4096;
+        (c(), c(), c())
+            .prop_map(|(x, y, z)| Fx3::new(Fx::from_raw(x), Fx::from_raw(y), Fx::from_raw(z)))
     }
 
     fn small() -> impl Strategy<Value = i64> {
@@ -1372,6 +1503,37 @@ mod tests {
             let l = i128::from(p.length().raw());
             let w = p.dot_wide(p);
             prop_assert!(l * l <= w && (l + 1) * (l + 1) > w);
+        }
+
+        #[test]
+        fn closest_seg_seg_matches_doc_code(p1 in v3_folio(), q1 in v3_folio(), p2 in v3_folio(), q2 in v3_folio()) {
+            // Wherever the literal doc 02 code completes, the results agree exactly.
+            if let Ok(doc) = std::panic::catch_unwind(|| closest_seg_seg_doc(p1, q1, p2, q2)) {
+                let (s, t, _, _) = closest_seg_seg(p1, q1, p2, q2);
+                prop_assert_eq!((s, t), doc);
+            }
+        }
+
+        #[test]
+        fn closest_seg_seg_matches_doc_code_short_segments(p1 in v3_folio(), d1 in v3_tiny(), p2 in v3_folio(), d2 in v3_tiny()) {
+            let (q1, q2) = (p1.add(d1), p2.add(d2));
+            if let Ok(doc) = std::panic::catch_unwind(|| closest_seg_seg_doc(p1, q1, p2, q2)) {
+                let (s, t, _, _) = closest_seg_seg(p1, q1, p2, q2);
+                prop_assert_eq!((s, t), doc);
+            }
+        }
+
+        #[test]
+        fn closest_points_not_beaten_by_endpoints(p1 in v3_folio(), q1 in v3_folio(), p2 in v3_folio(), q2 in v3_folio()) {
+            // The returned pair is no farther apart than any endpoint-to-segment
+            // pair, up to the rounding of the Fx parameters (a few raw units).
+            let (_, _, c1, c2) = closest_seg_seg(p1, q1, p2, q2);
+            let best = dist2(c1, c2);
+            let slack: i128 = 1i128 << 52;
+            for (pa, pb, qa, qb) in [(p1, p1, p2, q2), (q1, q1, p2, q2), (p2, p2, p1, q1), (q2, q2, p1, q1)] {
+                let (_, _, x, y) = closest_seg_seg(pa, pb, qa, qb);
+                prop_assert!(best <= dist2(x, y) + slack, "best {} vs {}", best, dist2(x, y));
+            }
         }
 
         #[test]

@@ -150,6 +150,45 @@ mod tests {
     }
 
     #[test]
+    fn doc02_t05_atan2_values() {
+        // Doc 02 acceptance test 5.
+        let cases = [
+            (1, 1),
+            (3, 4),
+            (4, 3),
+            (7, -24),
+            (-5, -5),
+            (2, -1),
+            (1, 1_000_000),
+            (5, 0),
+            (0, -3),
+            (0, 0),
+        ];
+        let want = [
+            8192u16, 6712, 9672, 29_808, 40_960, 21_220, 0, 16_384, 32_768, 0,
+        ];
+        for ((y, x), w) in cases.iter().zip(want) {
+            assert_eq!(atan2_bam(*y, *x), w, "atan2_bam({y}, {x})");
+        }
+    }
+
+    #[test]
+    fn doc02_t06_million_random_pairs_within_one_bam() {
+        // Doc 02 acceptance test 6: 1,000,000 pairs drawn as next_u64() as i64
+        // from Rng::from_seed64(7), checked with integer cross products only.
+        let mut rng = crate::rng::Rng::from_seed64(7);
+        for _ in 0..1_000_000 {
+            let y = rng.next_u64() as i64;
+            let x = rng.next_u64() as i64;
+            if x == 0 && y == 0 {
+                continue;
+            }
+            let b = atan2_bam(y, x);
+            assert!(within_one_bam(y, x, b), "({x}, {y}) -> {b}");
+        }
+    }
+
+    #[test]
     fn yaw_and_pitch_examples() {
         // Doc 02 §4.4 yaw examples.
         let one = Fx::ONE;
