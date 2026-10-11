@@ -242,6 +242,7 @@ name = "palimpsest_data"
 version = "0.1.0"
 dependencies = [
  "palimpsest_math",
+ "proptest",
  "serde_json",
 ]
 

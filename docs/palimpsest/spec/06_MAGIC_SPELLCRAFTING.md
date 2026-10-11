@@ -1,11 +1,11 @@
 # 06 — Magic and Spellcrafting
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.2.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.4.
 
 This chapter owns aether, casting, the glyph grammar, the glyph catalog, spell cost and potency, magic schools, glyph learning, the Grimoire, texts, wands, enchanting, summons, polymorph, dispel and anti-magic, prayer and Devotion, and the 16 patrons. Every number here is final for implementation. Where this chapter needs something the canon or another chapter has not yet defined, the need is stated under Interface assumptions or Canon gaps, together with the value this chapter uses.
 
 ## Imports
 
-From `spec/00_CANON.md` (canon-1.2):
+From `spec/00_CANON.md` (canon-1.4):
 
 | Canon section | What this chapter consumes |
 |---|---|
@@ -14,8 +14,10 @@ From `spec/00_CANON.md` (canon-1.2):
 | §2.2, §2.3 | tick schedule (status pulse 15, AI think 6), "N s = 60N ticks", active-interval semantics, refresh rule, rate accumulator, `in_combat`, `light_at` |
 | §3.3, §3.4 | keyed draws; `rng.magic` (owner 06), `rng.combat` (Contradiction failure, crits), `rng.status` (`st.confused`); fixed draw counts |
 | §4.1, §4.2 | humanoid capsule, walk 4300 mm/s, dodge, jump, final move speed rule |
+| §4.3 | fixed terrain, the `destructible` block tag, Errata placeables (spells break only `destructible` blocks, §13) |
 | §5.2, §5.3 | genre table with `aether_axiom` and Aether skins; component dependency defaults; `Req[a] = max(1, origin_axiom − 2)` |
-| §5.4 to §5.8 | tolerance, Contradiction table and overrides, Anachronism Edge, AETHER, GLYPH and MYTHOS ambient rows, local genre |
+| §5.4 to §5.8 | tolerance, Contradiction table and overrides, Anachronism Edge, AETHER, GLYPH and MYTHOS ambient rows, local genre, seam zones |
+| §5.10, §5.11 | World Laws (`law_bound`, `law_grants`); `st.unmoored` after three Contradiction failures in 600 ticks |
 | §6.4 rows 3, 7, 8, 13, 17, 24, 25, 26, 27, 29, 30, 41 | healing received, max aether, aether regeneration, crit, use-item speed, mind and arcane thresholds, complexity budget, Grimoire slots, spell potency, cast interruption resistance, buildup multiplier |
 | §6.5 | NPCs never use rows 26 to 29 |
 | §7, §7.1 | magic skills, Devotion, Inscription, Handling, Conjuration scope; skill XP rules |
@@ -26,12 +28,26 @@ From `spec/00_CANON.md` (canon-1.2):
 | §13.1, §13.3, §13.5 to §13.9 | `cat.wand`, `cat.text`, `cat.book`, `cat.offhand`; rarity power; quality; knowledge; enhancement; `P`, `T`, `S`; source level; item instance contract (`charges`) |
 | §15, §15.1 | factions, stance bands, minion contract and caps |
 | §16.4, §16.5 | `afflict.beast` polymorph; patrons, favor, prayer timers, sacrifice |
-| §17.2, §17.3, §17.5, §17.6 | party tables, rank control multipliers and immunities, friendly fire, ghosts |
+| §17.1, §17.2, §17.3, §17.5, §17.6, §17.9 | Colophon aether refresh, party tables, rank control multipliers and immunities, friendly fire, ghosts, invaders |
 | §18, §19 | core events; namespace ownership (`glyph.`, `spell.`, `school.`, `prayer.`, `ench.`, `summon.`, `patron.` belong to 06) |
 
-From `DESIGN_BRIEF.md` §1 and `DECISIONS.md` (2026-10-11): limited building (decision 16: terrain is fixed, only blocks tagged destructible break, players place barricades, bridges, ladders, traps, lights and cover) and opt-in PvP invasions as Editors (decision 15).
+Limited building and opt-in invasions, decided in `DECISIONS.md` items 16 and 15, are canon since canon-1.4 (§4.3, §17.9) and are consumed through the canon rows above.
 
-From other chapters: no other chapter exists at the time of writing. Every value this chapter reads from docs 03, 04, 05, 07, 08, 09, 10, 11, 12, 13, 16, 17 and 18 is listed under Interface assumptions with the exact shape this chapter calls.
+From other chapters, checked against the files in `spec/` on 2026-10-11. Docs 07, 09, 17 and 18 do not exist yet; every value read from them is listed under Interface assumptions with the exact shape this chapter calls.
+
+| Doc | What this chapter consumes |
+|---|---|
+| 03 | system order: `sys.actions` (system 7) runs aether regeneration and casts, `sys.damage` (17) resolves the hit queue, `sys.env_sample` (10) re-evaluates Contradiction; the per-tick action `seq` reset in `sys.tick_begin`; `comp.pools.aether`; payloads of `ev.spell_cast` (with `fizzled`), `ev.healed`, `ev.status_expired` (reason 1 cleansed) and `ev.minion_released` (reasons 0 dismissed, 1 died, 2 folio exit); `raycast_blocks` for line of effect |
+| 04 | mastery perk IDs `skill.<name>.m25` to `.m100` and their effects (§5.3), whose exact hooks §7.3 fixes; the XP event table (§5.2); Spellwright, Oracle and Netrunner talents; `aug.blood_battery`; Origin traits `favored` and `lucid`; wounds treated by Restoration 50 |
+| 05 | `arch.offhand.focus`; the combat phase and hit queue; `HitRecord`; keyed-draw allocation (seq 0 primary action, `16 + i` hits); stance base speeds and their minimum rule (§1.6); projectiles and sweeps; friendly-fire classes |
+| 08 | `liq.mana`, `alch.eff.restore_aether` and aether potions; `liq.holy_water`; liquid and gas placement |
+| 10 | `cat.wand` classification and type key (`wand_pool` spells, at most 16); the `appr.eff.*` effects of the divination essences (§5.10); text `use_id` and `observable`; blessed and cursed consumables (§7.5); the wand curses `curse.misfire`, `curse.backfire`, `curse.leaking`, `curse.bloodprice` |
+| 11 | `arch.ranged.staff`, `arch.ranged.wand` and `arch.offhand.focus` loot fields and tendency C; implement affixes, perks and parts (`affix.spell_dmg`, `affix.aether_cost`, `affix.kill_aether`, `perk.*_conduit`, `perk.deep_reservoir`, `perk.quick_siphon`, `perk.stable_reservoir`, `perk.arcane_surge`, `perk.overflow`, `perk.leg.spellweaver`, `part.focus.*`); `item.text.*`; `item.book.primer_*`; `item.trinket.holy_symbol` |
+| 12 | World Laws, among them `law.mythic_antiquity.favor` and `law.mythic_antiquity.hubris`; `room.shrine` and `secret.room.shrine` altars; the Scriptorium; campfires that refill aether |
+| 13 | NPC template fields `aether_max_mae`, `aether_regen_mae_s` (default 2,000 per second) and `spells`; NPC interrupting statuses (§4); the minion contract (§6): profiles, leash, owner states; `enemy.editors.invader` |
+| 14 | Calling kits (`item.book.primer_evocation` teaches flame and frost, the alternate kit storm and chain; `item.book.primer_abjuration` teaches aura); `unlock.loot.glyphs_2`; Echo traits that touch spells; the Colophon Hearth (aether set to max) |
+| 15 | Script unlocks `unlock.glyph.<family>` for `ember`, `hollow`, `mirror`, `storm`, `thorn`, `tide` |
+| 16 | `st.downed` forbids casting and praying; Restoration 100 completes revival at once; cast prediction with keyed draws |
 
 ## 1. Principles
 
@@ -51,7 +67,8 @@ From other chapters: no other chapter exists at the time of writing. Every value
 - Fairy Tale Bargain Debt (§10.11) is repaid before the pool rises.
 
 ```rust
-// palimpsest_sim::magic::aether — runs in the per-tick resource step (doc 03 order), ascending EntityId.
+// palimpsest_sim::magic::aether — runs first in sys.actions (doc 03 system 7) for each entity, ascending EntityId,
+// before that entity's cast machine advances. NPCs regenerate their template rate instead (§6.5).
 fn aether_tick(e: &mut Caster, local: &Genre) {
     if e.has(ST_UNRAVELED) { e.aether_acc = 0; return; }
     let aa = local.aether_axiom;                                   // Canon §5.2
@@ -95,9 +112,9 @@ Worked check: a glyph generated in Cyberpunk has `dep = {techne}`, `Req = max(1,
 
 ### 2.3 Paying aether
 
-- A cast debits `res.aether` at the moment §3.3 names. A cast never starts unless the caster can pay, except under Blood Price (§10.2) and Credit (§10.11).
+- A cast debits `res.aether` at the moment §3.3 names. A cast never starts unless the caster can pay, except through `aug.blood_battery` (doc 04), Blood Price (§10.2) or Credit (§10.11). `can_pay` checks them in that order: an Erratum with `aug.blood_battery` pays any shortfall at 1 mHP per m-aether for every register, never below 1,000 mHP; otherwise a Sanguine Rite uses Blood Price; otherwise a Bargain uses Credit; otherwise the cast fails with `Aether`.
 - Aether never goes below 0 and never above max.
-- Aether sources besides regeneration: aether potions (doc 08), `glyph.mod.siphon` (§6.6), `ench.siphoning` (§9.4), prayer results (§16.3, §16.4), the Colophon refresh (doc 12) and the surge entry Aether Burn (which removes aether).
+- Aether sources besides regeneration: aether potions and `liq.mana` (doc 08), `glyph.mod.siphon` (§6.6), `ench.siphoning` (§9.4), item affixes and perks that restore aether on kill (doc 11), the Netrunner talent `feedback` (doc 04), prayer results (§16.3, §16.4), campfires (doc 12) and the Colophon Hearth (Canon §17.1, doc 14). The surge entry Aether Burn and `st.unraveled` remove aether.
 
 ## 3. Casting
 
@@ -107,17 +124,19 @@ Worked check: a glyph generated in Cyberpunk has `dep = {techne}`, `Req = max(1,
 |---|---|---|---|---|
 | Grimoire spell | a compiled spell in a Grimoire slot (§8.2) | aether | caster row 29 | active implement `ilvl`, else `max(1, d_current − 3)` |
 | Tome spell | a spell inscribed in a held tome implement (§8.5) | aether | caster row 29 | tome `ilvl` |
-| Text (`cat.text`) | one inscribed or authored spell; consumed | nothing | reader row 29 | text `ilvl` |
+| Text (`cat.text`) | one inscribed or authored spell, or a doc 10 effect (§8.3); consumed | nothing | reader row 29 | text `ilvl` (Canon gap G16) |
 | Wand (`cat.wand`) | one authored or inscribed spell; charges | one charge | wielder row 29 | wand `ilvl` |
-| On-use enchantment | `ench.spellstore` and other on-use entries (§9.4) | one use per Folio | wielder row 29 | item `ilvl` |
-| Prayer (`prayer.`) | supplication or petition (§16) | favor and prayer timer | row 29 with school skill = Devotion | holy-symbol implement `ilvl`, else `max(1, d_current − 3)` |
+| On-use enchantment | `ench.spellstore` and other on-use entries (§9.4) | one use per Folio | wielder row 29 | item `ilvl` (Canon gap G16) |
+| Prayer (`prayer.`) | supplication or petition (§16) | favor and prayer timer | row 29 with school skill = Devotion | `ilvl` of an equipped `item.trinket.holy_symbol` (doc 11), else the active implement's `ilvl`, else `max(1, d_current − 3)` (Canon gap G16) |
+
+Step 0 of every source uses that source item's rarity power, quality, `eff_enh` and primary-material `dmg_bp` (Canon §10.4): the implement for Grimoire, tome and prayer casts (the holy symbol for prayers when one is equipped), the wand for zaps, the enchanted item for on-use enchantments, and the text for texts with material factor 10000. With no implement every factor is 10000.
 
 ### 3.2 Inputs: Grimoire and quick-cast wheel
 
 - The **Grimoire** has `2 + floor_div(MEM, 20)` slots (Canon §6.4 row 27). Each slot holds one compiled spell. Slot contents persist for the run.
 - The **active spell** is the Grimoire slot or wheel entry most recently selected. `input.cast` (doc 17) casts it: press for instant and cast-time spells, hold for channel and charge spells.
 - The **quick-cast wheel** has 8 entries. Each entry references one of: a Grimoire slot, a tome spell, a carried text, a carried wand, an on-use enchantment, or a prayer. Selecting an entry sets the active spell and casts it on release of the wheel button in the same input command. Opening the wheel never pauses or slows the simulation, in single player or co-op.
-- The replay command (Canon §2.4) carries the cast press in `buttons` and the selected entry in the command; doc 17 assigns the bits. The cast's RNG key uses the command's `tick` and `action_seq` (§3.9).
+- The replay command (Canon §2.4) carries the cast press in `buttons` and the selected entry in the command; doc 17 assigns the bits. The cast's RNG key is `(caster, input tick, seq 0)` (§3.9, §19.2). Seq 0 is the doc 05 §1.4 primary-action slot; a cast start and a weapon action start never share a tick (§3.5).
 
 ### 3.3 Cast types
 
@@ -128,13 +147,16 @@ Worked check: a glyph generated in Cyberpunk has `dep = {techne}`, `Req = max(1,
 | instant | touch, self, any form reduced to 0 cast ticks | resolves on the tick its input is applied | at resolution |
 | cast_time | bolt, orb, cone, aura, field, wall, rune, nova, chain, manifest | Winding for `ct` ticks; resolves on the last Winding tick; a single press starts it | at Winding start |
 | channel | beam | Winding for `ct` ticks (windup, no debit), then Channeling while held, up to the form's duration (300 ticks); a pulse fires on the first Channeling tick and every `pulse` ticks after | per tick during Channeling: the cast cost (§6.2) is a per-second rate through a `k = 60` accumulator |
-| charge | any cast_time form with `glyph.mod.charged` | Charging while held: counter `c` rises by 1 per tick up to 90; release resolves; at `c = 150` it auto-releases | at release: `mul_bp(cast_cost, charge_bp)` |
+| charge | any cast_time form with `glyph.mod.charged` | Charging while held: `held` counts ticks from the press; a release at `held < ct` cancels; a release at `held >= ct` resolves; at `held = ct + 120` it auto-releases | at release: `mul_bp(cast_cost, charge_bp(c))` |
 
 ```
-charge_bp(c) = 5000 + floor_div(10000 × min(c, 90), 90)        // 5000 at c = 0, 10000 at 45, 15000 at 90
+c            = min(held − ct, 60) once held >= ct; it stops rising as described below   // charge ticks past the normal cast time
+charge_bp(c) = 10000 + floor_div(5000 × c, 60)                                           // 10000 at c = 0, 12500 at 30, 15000 at 60
 ```
 
-Charging starts only if `aether >= mul_bp(cast_cost, 5000)`. While Charging, `c` stops rising on any tick where `mul_bp(cast_cost, charge_bp(c + 1)) > aether`. Magnitude is multiplied by the same `charge_bp` at resolution (§6.4).
+Charging starts only if `aether >= cast_cost`. While Charging, `c` stops rising on any tick where `mul_bp(cast_cost, charge_bp(c + 1)) > aether`. At release the debit is `mul_bp(cast_cost, charge_bp(c))`. If aether has fallen below that debit since `c` stopped rising (for example through `st.unraveled`), `c` drops to the largest value whose debit is payable; if even `cast_cost` is unpayable, the release is a cancel. Magnitude is multiplied by the same `charge_bp` at resolution (§6.4). A release at `held < ct` is a voluntary cancel: nothing is debited and the 30-tick lockout applies.
+
+Balance note: the curve starts at the normal cast time, so charging never beats the plain cast's damage rate. A charged bolt released at `c = 60` deals magnitude 15000 per `24 + 60 + 20 = 104` ticks (144 per tick) against 10000 per 44 ticks (227 per tick) uncharged, at the same aether per point of magnitude: it trades sustained damage for one larger hit. The earlier curve (5000 at `c = 0` with no Winding) let a charged bolt fire at half magnitude every 21 ticks, 5% above the uncharged rate and with no cast time, which made `glyph.mod.charged` a strict upgrade.
 
 A Channeling tick whose drain `q` exceeds current aether ends the channel. Releasing the input ends it. Duration modifiers extend the 300-tick limit.
 
@@ -143,51 +165,66 @@ A Channeling tick whose drain `q` exceeds current aether ends the channel. Relea
 ```
 ct_raw   = form.cast_ticks + Σ essence.cast_add + Σ modifier.cast_add      // root stage only
 ct_q     = if quicken { mul_bp(ct_raw, 5000) } else { ct_raw };  if quicken && ct_q <= 6 { ct_q = 0 }
-speed_bp = 10000 → × implement.cast_speed_bp → × 11500 if st.hasted → × ench.celerity      // one mul_bp each
-ct       = if ct_q == 0 { 0 } else { max(1, ceil_div(ct_q × 10000, speed_bp)) }
-recovery = ceil_div(CAST_RECOVERY_TICKS × 10000, speed_bp)                   // CAST_RECOVERY_TICKS = 20
+ct_m     = ct_q → × 5000 if Quick-Draw is active (§10.7) → × each [T] cast-tick factor in ascending ID byte order
+speed_bp = 10000 → × implement.cast_speed_bp → × ench.celerity → × 13000 if elite.surging (NPC) → × 11500 if st.hasted
+           // one mul_bp each: non-status factors first, then statuses in ascending ID order (Canon §11.7)
+ct       = if ct_m == 0 { 0 } else { max(1, ceil_div(ct_m × 10000, speed_bp)) }
+R        = if ct == 0 { INSTANT_RECOVERY_TICKS } else { CAST_RECOVERY_TICKS }   // 45 and 20
+recovery = ceil_div(R × 10000, speed_bp)
 cooldown = form.cooldown + Σ essence.cd_add + Σ modifier.cd_add                 // root stage; never scaled
 ```
 
+`[T]` cast-tick factors: doc 11 `perk.swift_conduit`, `perk.stable_reservoir` and `part.focus.conduit` on the active implement; doc 04's Spellwright talent `quicken` (8500) and Spellcraft 100 (8500, self-designed spells only, §7.3). `[T]` marks, here and in §6, a slot where doc 04 talents and perks, doc 11 item modifiers and doc 14 Echo traits enter, one `mul_bp` each, in ascending ID byte order.
+
 - A form with cast ticks 0 is instant. A cast-time form reduced to 0 by quicken is instant.
 - **Recovery** follows every resolution and every channel end. No new cast starts during recovery.
-- **Cooldown** is stored per caster in `BTreeMap<u64 spell_hash, Tick>` (§4.2). It starts on the resolution tick, or the first Channeling tick for channels. Texts, wands and payload stages ignore cooldowns. `st.chilled` does not change cast speed (Canon §11.1 limits it to move and attack speed).
+- **Cooldown keys.** A spell's cooldown keys are its root form when `form.cooldown > 0` and each root essence or modifier whose `cd_add > 0`. Each caster stores `BTreeMap<u32 glyph id32, Tick>`. A cast starts only when every key of the spell is ready. On the resolution tick (the first Channeling tick for channels) every key of the spell is set to `max(current, t + cooldown)`. Keying by glyph instead of by `spell_hash` closes the bypass of copying a spell with one extra modifier to get a second cooldown. Texts, wands, on-use enchantments and payload stages ignore cooldowns. `st.chilled` does not change cast speed (Canon §11.1 limits it to move and attack speed).
+- **Instant recovery.** An instant cast (`ct = 0`) recovers for 45 ticks instead of 20. With 20 ticks, `touch flame` in Mythic Fantasy at Folio 1 (skill 20, ATN 40, magnitude 13000, no cast time) dealt 37,159 mHP every 21 ticks, 106 HP per second, 3.5 times `REF_PLAYER_DPS_D1` (Canon §17.4). With 45 ticks it deals 48 HP per second, a 1.24 × premium for melee range over the 39 HP per second of `bolt flame`, and both are limited by aether.
 - **Interrupt lockout** after an interruption or cancel: 30 ticks, replacing recovery.
 - Example: an orb (36 ticks) with quicken: `ct_q = 18`; with `st.hasted` and a focus of cast speed 10000: `speed_bp = 11500`, `ct = ceil_div(180000, 11500) = 16`, `recovery = ceil_div(200000, 11500) = 18`.
 
 ### 3.5 Cast state machine
 
-States: `Idle`, `Winding`, `Channeling`, `Charging`, `Recovering`.
+States: `Idle`, `Winding`, `Overcasting`, `Channeling`, `Charging`, `Recovering`. "Casting states" are `Winding`, `Overcasting`, `Channeling` and `Charging`.
 
-| From | Event | Guard | To | Side effects |
-|---|---|---|---|---|
-| Idle | cast press | spell castable (§3.9 `try_start_cast`) | Winding (cast_time, channel), Charging (charge), or resolve now (instant) | cast_time: debit aether; record cast key |
-| Winding | Winding timer reaches `ct` | cast_time | Recovering | resolve (§3.9); start cooldown |
-| Winding | Winding timer reaches `ct` | channel | Channeling | start cooldown; fizzle check (§3.9 step 4); first pulse |
-| Channeling | tick with `(t − start) % pulse == 0` | aether pays the tick's drain | Channeling | pulse |
-| Channeling | release, duration end, drain unpaid | — | Recovering | `ev.spell_cast` with `channel_ticks` |
-| Charging | release, or `c = 150` | — | Recovering | debit at `charge_bp(c)`; resolve |
-| Winding, Channeling, Charging | interruption (§3.7) or voluntary cancel | — | Recovering with 30-tick lockout | Winding refund `floor_div(debited, 2)`; Charging debits nothing; Channeling keeps what it drained |
-| any casting state | `st.downed`, death, `st.ghost` | — | Idle | no refund |
-| Recovering | recovery or lockout elapsed | — | Idle | — |
+| # | From | Event | Guard | To | Side effects |
+|---|---|---|---|---|---|
+| 1 | Idle | cast input on tick `t` | `try_start_cast` fails | Idle | nothing; the UI shows the `CastError` |
+| 2 | Idle | cast input on tick `t` | `try_start_cast` succeeds; `ct = 0` (instant) | Recovering for `recovery` ticks | debit `cast_cost`; resolve on tick `t` (§3.9); set cooldown keys |
+| 3 | Idle | cast input on tick `t` | succeeds; cast_time or channel, `ct >= 1` | Winding | cast_time: debit `cast_cost`; channel: no debit; record key `(caster, t, 0)` |
+| 4 | Idle | cast input held on tick `t` | succeeds; charge | Charging | `held = 0`; record key; no debit |
+| 5 | Winding | Winding timer reaches `ct` | cast_time; not the row 6 guard | Recovering | resolve (§3.9); set cooldown keys |
+| 6 | Winding | Winding timer reaches `ct` | cast_time; the caster has `skill.evocation.m100`; the spell's school is evocation; the cast input is held on that tick; `aether >= cast_cost` | Overcasting | none |
+| 7 | Overcasting | input released before 60 Overcasting ticks | — | Recovering | resolve normally; set cooldown keys |
+| 8 | Overcasting | 60 Overcasting ticks elapse | — | Recovering | debit `cast_cost` again if payable; if paid, resolve with +5000 Bp in Canon §10.5 step 1 (doc 04 Evocation 100), else resolve normally; set cooldown keys |
+| 9 | Winding | Winding timer reaches `ct` | channel | Channeling | set cooldown keys; Contradiction roll (§3.9 steps 1 to 4); on success, first pulse on this tick |
+| 10 | Channeling | tick with `(t − start) % pulse == 0` | the tick's drain is paid | Channeling | pulse |
+| 11 | Channeling | release, duration end, or a drain the caster cannot pay | — | Recovering | `ev.spell_cast` with `channel_ticks` |
+| 12 | Charging | tick with input held | `held + 1 < ct + 120` | Charging | `held += 1`; `c` rises per §3.3 |
+| 13 | Charging | release with `held >= ct`, or `held + 1 = ct + 120` | — | Recovering | debit at `charge_bp(c)`; resolve; set cooldown keys |
+| 14 | Charging | release with `held < ct` | — | Recovering with 30-tick lockout | nothing debited |
+| 15 | any casting state | hard or failed soft interruption (§3.7), or a voluntary cancel: `input.cast_cancel`, sprint, jump, dodge, or any weapon, item, interact or mount input | — | Recovering with 30-tick lockout | Winding and Overcasting refund `floor_div(first debit, 2)`; Charging debits nothing; Channeling keeps what it drained |
+| 16 | any casting state, Recovering | `st.downed`, death or `st.ghost` | — | Idle | no refund; no resolution |
+| 17 | Recovering | recovery or lockout elapsed | — | Idle | none |
+| 18 | Recovering | cast input | — | Recovering | ignored and not buffered |
 
-A caster holds at most one cast at a time. Wands, texts and on-use enchantments use the same machine with their own timing (§8.3, §8.4).
+A caster holds at most one cast at a time. A cast and a doc 05 weapon action never start on the same tick: when both inputs arrive, the cast wins and the weapon input is ignored; `try_start_cast` fails with `Busy` while the weapon state machine is outside its idle state; and while the cast machine is outside `Idle`, the weapon state machine accepts no new action. Rows 15 and 16 cover every way out of a casting state, so no cast is left without a resolution, a refund rule or a cancel. A core glyph that becomes Disconnected during Winding or Charging does not interrupt; the resolution then fizzles without a roll (§3.9). Wands, texts, on-use enchantments and prayers use this machine with their own timing (§8.3, §8.4, §16).
 
 ### 3.6 Movement while casting
 
 | State | Base move speed (mm/s) | Sprint | Jump, dodge |
 |---|---|---|---|
-| Winding, Charging | 2150 (walk × 5000) | pressing sprint cancels the cast | cancel the cast |
+| Winding, Overcasting, Charging | 2150 (walk × 5000) | pressing sprint cancels the cast | cancel the cast |
 | Channeling | 1720 (walk × 4000) | cancels | cancel |
 | Recovering, instant casts | normal | normal | normal |
 
-These are base-speed modes like crouch walk; the Canon §4.2 final-speed rule applies on top (row 11, then statuses). The Wuxia Technique rider (§10.9) removes every restriction in this table for Techniques. Canon gap G6 records the two new base speeds.
+These are base-speed stances in the sense of doc 05 §1.6: when several stances apply, the lowest base speed wins, crouch walk (2000 mm/s) included, and the Canon §4.2 final-speed rule applies on top (row 11, then statuses). The Wuxia Technique rider (§10.9) removes every restriction in this table for Techniques. Canon gap G6 records the two new base speeds.
 
 ### 3.7 Interruption
 
 Interruption is checked for a caster in `Winding`, `Channeling` or `Charging`.
 
-**Hard interrupts** end the cast with no roll: gaining `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping`, `st.polymorphed`, `st.feared` (player casters only while facing the source, Canon §11.8), or `st.silenced` (except Programs, §10.5); counterspell (§14.3); entering a null field (§14.4).
+**Hard interrupts** end the cast with no roll: gaining `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping`, `st.polymorphed`, `st.berserk` (Canon §11.8 for players, doc 13 §4 for NPCs), `st.feared` (player casters only while facing within 8192 Bam of the source, Canon §11.8; NPC casters always), `st.silenced` (except Programs, §10.5), and for NPC casters also `st.charmed` and `st.hacked` (doc 13 §4); counterspell (§14.3); entering a null field (§14.4). Gaining `st.downed`, dying or becoming a ghost ends the cast through §3.5 row 16.
 
 **Soft interrupts**: each hit on the caster that reduces HP by at least 1 mHP after ward (Canon §10.5 step 7) and is not a DoT pulse or a self-cost (§10.2) rolls Canon §6.4 row 30 once:
 
@@ -203,55 +240,64 @@ FOC 40 keeps 25.0%; FOC 60 keeps 40.0%; FOC 150 keeps 95.0%. Steampunk Devices s
 
 The **active implement** is the staff in the active weapon slot if any; otherwise the item in `slot.offhand` if it is a focus or a tome; otherwise none. A wand is the implement only for its own spell.
 
-| Implement | Doc 05 archetype (assumed IDs) | `cost_bp` | `cast_speed_bp` | Other |
+| Implement | Archetype | `cost_bp` | `cast_speed_bp` | Other |
 |---|---|---|---|---|
-| Focus: orb, crystal, cyberdeck, jade disc, gauge-box | `arch.offhand.focus` | 9500 | 10000 | — |
-| Tome | `arch.offhand.tome` | 10000 | 9000 | holds 2 inscribed spells (§8.5) |
-| Staff | `arch.ranged.staff` (two-handed) | 9000 | 10500 | also a weapon (doc 05) |
+| Focus: orb, crystal, cyberdeck, jade disc, gauge-box | `arch.offhand.focus` (doc 05 exports it) | 9500 | 10000 | — |
+| Tome | `arch.offhand.tome` (requested from doc 05, Canon gap G5) | 10000 | 9000 | holds 2 inscribed spells (§8.5) |
+| Staff | `arch.ranged.staff`, two-handed (doc 11 §3.2 lists it; requested from doc 05, Canon gap G5) | 9000 | 10500 | also a weapon (doc 05) |
 | None | — | 11000 | 10000 | `src_lvl = max(1, d_current − 3)`; rarity, quality, enhancement factors 10000 |
 
 - The implement supplies step 0 of spell damage: `P(ilvl)`, rarity power, quality and `10000 + 600 × eff_enh` (§6.4).
-- Legendary and Exotic implements carry one **bound glyph**: a modifier ID applied to every compatible spell cast through the implement at 0 complexity and 0 cost. It is never written into the spell and never counts toward the complexity budget. An incompatible bound glyph is ignored for that spell.
-- Affixes from doc 11 that read "+X% spell damage" enter Canon §10.5 step 1. Affixes that read "−X% spell cost" multiply `cost_bp`.
+- Legendary and Exotic implements carry one **bound glyph**: a modifier ID applied to every compatible spell cast through the implement at 0 complexity. Its positive cost add is waived; a negative one (`glyph.mod.thrift`) applies, so a bound thrift is never a pure penalty. It is never written into the spell, never counts toward the complexity budget, adds no GLYPH term to `spell_pot` (it is a component of the implement, with the implement's dependency and potency), and never forms a cooldown key. An incompatible bound glyph is ignored for that spell.
+- Doc 11 implement modifiers: `affix.spell_dmg`, `perk.focused_conduit`, `part.focus.crystal` and `perk.leg.spellweaver` enter Canon §10.5 step 1; `affix.aether_cost`, `perk.stable_reservoir`, `perk.deep_reservoir` (staff) and manufacturer tendency C multiply `cost_bp` (tendencies are folded in at generation); `perk.swift_conduit`, `perk.stable_reservoir` and `part.focus.conduit` are `[T]` cast-tick factors (§3.4); `perk.wide_conduit` multiplies area radii after widen (§6.4); `perk.arcane_surge` and `item.palimpsestic.authors_quill` make the casts they name free (§6.2).
 - Contradiction of the implement's own base function: Disconnected makes it count as None. Otherwise its `cost_bp` and `cast_speed_bp` deviations from 10000 scale by its potency: `eff = 10000 + mul_bp(field − 10000, potency)`.
 
 ### 3.9 Cast resolution
 
 ```rust
-fn try_start_cast(c: &mut Caster, src: CastSource, cmd: &Command) -> Result<(), CastError> {
+fn try_start_cast(c: &mut Caster, src: CastSource, t: Tick) -> Result<(), CastError> {
     let sp = src.compiled_spell();                                     // §4.5, cached; recompiled on stat change
-    if c.state != Idle { return Err(Busy); }
-    if src.is_grimoire_or_tome() && c.cooldown_until(sp.hash) > now() { return Err(Cooldown); }
+    if c.state != Idle || !c.weapon_idle() { return Err(Busy); }       // §3.5 mutual exclusion with doc 05 actions
+    if c.cannot_cast() { return Err(Disabled); }                       // st.downed, st.ghost, st.polymorphed, every §3.7 hard-interrupt
+                                                                       // status, player st.feared while facing the source
+    if src.uses_cooldown() && sp.cooldown_keys().any(|k| c.cooldown_until(k) > t) { return Err(Cooldown); } // §3.4
     if c.has(ST_SILENCED) && src.needs_voice() && sp.register != CYBERPUNK { return Err(Silenced); }   // §14.2
     if sp.register == CYBERPUNK && (c.has(ST_SHOCKED) || c.has(ST_HACKED)) { return Err(Jammed); } // §10.5
     if in_null_field(c.pos) { return Err(Nullified); }                 // §14.4
     if any_core_glyph_disconnected(sp, c) { return Err(Disconnected); } // §11
-    let cost = cast_cost(sp, c);                                       // §6.2
+    if sp.root_form() == MANIFEST && folio_minions() >= FOLIO_MINION_CAP && !c.has_spell_summon() {
+        return Err(MinionCap);                                          // §12.1
+    }
+    let cost = cast_cost(sp, c, src);                                  // §6.2; 0 for texts, wands, on-use enchantments, prayers, free casts
     if !can_pay(c, cost, sp.register) { return Err(Aether); }          // §2.3, §10.2, §10.11
-    c.cast = CastState { spell: sp, key: (c.id, cmd.tick, cmd.action_seq), cost, started: now(), .. };
-    // transition per §3.5
-    Ok(())
+    c.cast = CastState { spell: sp, key: (c.id, t, 0), cost, started: t, .. };   // seq 0: §19.2
+    Ok(())                                                             // transition per §3.5 rows 2 to 4
 }
 
 fn resolve_root(c: &mut Caster, cs: &CastState) {
-    // 1. Contradiction of the spell = max C over the root stage's core glyphs (form + essences), §11.1
-    let (cc, e) = spell_contradiction(cs.spell.root(), c);
+    // 1. Contradiction at the resolution tick = max C over the root stage's core glyphs (form + essences), §11.1
+    let (mut cc, e) = spell_contradiction(cs.spell.root(), c);
+    if c.has(ST_UNMOORED) && (cc == 1 || cc == 2) { cc = 3; }          // Canon §5.11: Strained uses the C = 3 row
     // 2. rng.magic: exactly 4 draws, always, in this order
     let mut rm = keyed_rng("rng.magic", folio(), cs.key.0, cs.key.1, cs.key.2);
     let v0 = rm.range(10000); let v1 = rm.range(10000); let v2 = rm.range(65536); let v3 = rm.range(10000);
-    // 3. rng.combat: 1 draw only when the failure chance is above 0 (Canon §5.5)
-    let fail_bp = [0, 0, 0, 500, 1000, 1500][cc as usize];
+    if cc >= 6 { fizzle(c, cs, FizzleCause::Disconnected); return; } // went Disconnected mid-cast: no roll, no Unmoored count
+    // 3. rng.combat: 1 draw only when the failure chance is above 0 (Canon §5.5); a wand adds its curse.misfire m (doc 10)
+    let fail_bp = [0, 0, 0, 500, 1000, 1500][cc as usize] + cs.source.misfire_bp();
     let failed = fail_bp > 0 && keyed_rng("rng.combat", folio(), cs.key.0, cs.key.1, cs.key.2).roll_bp(fail_bp);
     // 4. outcome
-    if failed && cc == 3 { fizzle(c, cs); return; }                   // §11.2: full aether spent
-    if failed && cc >= 4 { wild_surge(c, cs, cc, v1, v2); return; }   // §11.3
-    let wild_growth = cs.spell.register == ONEIRIC && v3 < 500;       // §10.13
+    if failed && cc >= 3 { c.note_contradiction_failure(now()); }      // Canon §5.11: 3 within 600 ticks → st.unmoored 300 ticks
+    if failed && (cc <= 3 || c.is_npc()) { fizzle(c, cs, FizzleCause::Rolled); return; } // §11.2; NPCs never surge (doc 13 §5)
+    if failed { wild_surge(c, cs, cc, v1, v2); return; }               // §11.3, C ∈ {4, 5}
+    let wild_growth = cs.spell.register == ONEIRIC && v3 < 500;        // §10.13
     resolve_stage(c, cs.spell.root(), Origin::caster(c), Ctx { depth: 0, v0, wild_growth, c_spell: cc, e_spell: e });
-    emit(EV_SPELL_CAST, ..);                                           // Canon §18
+    emit(EV_SPELL_CAST, ..);                                            // Canon §18, fizzled = false
 }
 ```
 
-Payload stages (§4.2) resolve through `resolve_stage` on the tick after their trigger event, with no failure roll, no cooldown, no cost, and one draw `v0 = keyed_rng("rng.magic", folio, caster, event_tick, 0x4000 | (stage_index << 8) | fire_index).range(10000)`. Their potency and Contradiction are computed fresh at the caster's position on that tick. A Twinned stage reuses the root's `v0`.
+A misfire caused only by a wand curse (`cc <= 2`) is a fizzle but not a Contradiction failure, so it never counts toward `st.unmoored`.
+
+Payload stages (§4.2) resolve through `resolve_stage` on the tick after their trigger event, with no failure roll, no cooldown, no cost, and one draw `v0 = keyed_rng("rng.magic", folio, caster, event_tick, 0x4000 | (stage_index << 8) | fire_index).range(10000)`. `fire_index` counts that stage's fires within one cast, across split projectiles and twin repeats, from 0 in order of event tick, then ascending host `EntityId` (at most 255). Their potency and Contradiction are computed fresh at the caster's position on that tick; a payload whose core glyph is Disconnected there resolves nothing. A Twinned stage reuses the root's `v0`.
 
 ## 4. Spell grammar
 
@@ -307,7 +353,7 @@ Validation runs these checks in this order and reports the first failure. Author
 | 10 | `E_TRIGGER_HOST` | the trigger's host forms (§5.5) exclude the stage form, or the stage lacks what the trigger needs: on_kill needs a damage essence, on_status needs a status-applying essence, on_struck needs a helpful essence |
 | 11 | `E_PAYLOAD_FORM` | a payload stage uses beam or aura, or a manifest payload sits under `glyph.trig.pulse` |
 | 12 | `E_TIER` | the caster's skill is below a glyph's tier gate: tier 1, 2, 3, 4 need 0, 25, 50, 75 in the glyph's school; triggers and conditions gate on Spellcraft |
-| 13 | `E_COMPLEXITY` | spell complexity (§4.4) exceeds the budget `4 + floor_div(LOG, 10)` (Canon §6.4 row 26) |
+| 13 | `E_COMPLEXITY` | spell complexity (§4.4) exceeds the budget: Canon §6.4 row 26, `4 + floor_div(LOG, 10)`, plus doc 04 `RowFlat(26, ·)` grants (Spellcraft 25 and 100, talents `complex_lattice` and `grand_design`) and Echo traits (`echo.wren_long_index` −1) |
 
 #### 4.3.1 Form–essence compatibility
 
@@ -326,12 +372,15 @@ Validation runs these checks in this order and reports the first failure. Author
 | gale | bolt, beam, cone, aura, nova |
 | lumen | self, touch, bolt, orb, aura, field |
 | sight | self, bolt, orb, field, nova |
+| appraise | self, touch |
+| omen | self, nova |
+| psychometry | self |
 
 ### 4.4 Complexity
 
 ```
 complexity(stage, depth) = form.cx + Σ essence.cx + Σ modifier.cx + trigger.cx + condition.cx
-                         + (if depth >= 1 { max(0, 2 × depth − spellcraft_hook) } else { 0 })    // spellcraft_hook = 1 with the Spellcraft 50 perk (§7.3), else 0
+                         + 2 × depth                                                  // depth surcharge: 0 root, 2 at depth 1, 4 at depth 2
                          + complexity(payload, depth + 1)
 ```
 
@@ -362,8 +411,8 @@ pub fn compile(refs: &[GlyphRef], caster: Option<&CasterStats>) -> Result<Compil
     if let Some(c) = caster { check_lexicon(&tree, c)?; }     // check 3
     validate_stages(&tree)?;                                  // checks 4 to 11, stage by stage, depth-first
     if let Some(c) = caster { check_tiers(&tree, c)?; }       // check 12
-    let cx = complexity(&tree.root, 0, caster.map_or(0, |c| c.spellcraft_hook()));
-    if let Some(c) = caster { if cx > 4 + floor_div(c.log(), 10) { return Err(E_COMPLEXITY); } }  // check 13
+    let cx = complexity(&tree.root, 0);
+    if let Some(c) = caster { if cx > c.row26_budget() { return Err(E_COMPLEXITY); } }   // check 13
     let stages = flatten_depth_first(&tree).map(compute_stage_stats);   // §6.1, §6.4
     let base_cost = tree_cost(&tree);                         // §6.1
     let canonical = canonical_text(&tree);
@@ -378,7 +427,7 @@ Compilation is pure: the same glyph references and the same caster stats always 
 Glyph record (one per glyph, `data/magic/glyphs.json`, validated by JSON Schema; integers only):
 
 ```json
-{ "id": "glyph.form.orb", "class": "form", "school": "school.evocation", "tier": 1, "cx": 2,
+{ "id": "glyph.form.orb", "class": "form", "school": "school.evocation", "tier": 1, "cx": 2, "pool": "base",
   "cost_maero": 2000, "cast_type": "cast_time", "cast_ticks": 36, "mag_bp": 8000,
   "range_mm": 30000, "speed_mm_s": 15000, "radius_mm": 2000, "duration_ticks": 0,
   "pulse_ticks": 0, "cooldown_ticks": 0, "noise_db": 60 }
@@ -419,7 +468,35 @@ Authored spell record (`spell.` content; used by wands, texts, NPCs and Echo kit
           "min_targets": 1, "avoid_allies_mm": 5000 } }
 ```
 
-An authored spell's glyphs all take the record's `origin_genre` unless a glyph entry is written as `{ "id": ..., "origin": "genre.x" }`. When a wand, text or NPC is generated or Rewritten in another genre, every glyph origin of its spell becomes that genre.
+An authored spell's glyphs all take the record's `origin_genre` unless a glyph entry is written as `{ "id": ..., "origin": "genre.x" }`. When a wand, text or NPC is generated or Rewritten in another genre, every glyph origin of its spell becomes that genre. `pool` is `base`, `glyphs_2` or `family.<name>` (§8.1). Authored spells skip checks 3, 12 and 13 at cast time, so wands, texts and NPCs cast them whatever the caster's Lexicon, skills and LOG.
+
+A wand-pool spell carries its tag and draw weight (doc 10 §4.2, doc 11):
+
+```json
+{ "id": "spell.wand_striking", "origin_genre": "genre.mythic_fantasy", "tags": ["wand_pool"], "wand_weight": 800,
+  "root": { "form": "glyph.form.bolt", "essences": ["glyph.ess.force"], "modifiers": [],
+            "trigger": null, "condition": null, "payload": null },
+  "ai": { "tags": ["damage_single"], "min_range_mm": 2000, "max_range_mm": 40000, "min_targets": 1, "avoid_allies_mm": 0 } }
+```
+
+Summon template (`data/magic/summons.json`; values at `P = 10000` and `pot = 10000`, §12.2):
+
+```json
+{ "id": "summon.elemental", "body": "body.amorphous", "hp_mhp": 60000, "ar": 0,
+  "attack": { "base_mhp": 8000, "type_from": "secondary_essence", "interval_ticks": 45, "reach_mm": 8000,
+              "kind": "projectile", "status_power": 30 },
+  "move_mm_s": 4000, "flies": false, "profile": "artillery", "duration_ticks": 3600, "light": 0,
+  "secondary": ["glyph.ess.flame", "glyph.ess.frost", "glyph.ess.storm", "glyph.ess.acid", "glyph.ess.thunder", "glyph.ess.arcane"],
+  "immune_own_type": true, "tags": [] }
+```
+
+Polymorph template (§12.3):
+
+```json
+{ "id": "summon.poly.toad", "registers": ["genre.fairy_tale", "genre.wuxia"], "body": "body.quadruped",
+  "capsule_r_mm": 200, "capsule_h_mm": 400, "move_mm_s": 2400, "jump_mm": 1500, "swim_mm_s": 3000,
+  "attack": { "reach_mm": 1500, "ref_bp": 1000, "interval_ticks": 60 }, "resist": {} }
+```
 
 Runtime Grimoire slot (part of the saved simulation state):
 
@@ -433,7 +510,7 @@ Runtime Grimoire slot (part of the saved simulation state):
 
 ### 5.1 Dependency and skin of every glyph
 
-Every glyph in this catalog has exactly one dependency axis, set by its glyph origin through the §2.2 table, and that table is the full per-genre dependency list for all 81 glyphs. Its display name in a genre is `loc.glyph.<class>.<name>.skin.<genre_suffix>.name` (Canon §1.10). §5.7 gives the skin names in five genres. Doc 18 writes the other eleven genres in the register voice of §2.2, with the archetype name (the Mythic Fantasy column) as the fallback. Names resolve in the Canon §1.10 order: local genre skin, then glyph-origin skin, then archetype name.
+Every glyph in this catalog has exactly one dependency axis, set by its glyph origin through the §2.2 table, and that table is the full per-genre dependency list for all 84 glyphs. Its display name in a genre is `loc.glyph.<class>.<name>.skin.<genre_suffix>.name` (Canon §1.10). §5.7 gives the canonical English skin of every glyph in all 14 genres that have a register; doc 18 owns the localization tables and translates these strings. `genre.unwritten` and `genre.ur_text` have no glyph skins. There the Canon §1.10 resolution falls through to the glyph-origin skin, so in the Ur-Text every spell speaks in its own origin's voice, and a glyph whose origin is `genre.ur_text` (an Unwritten Origin's run-start glyphs, §8.1) shows its archetype name, which is the Mythic Fantasy column.
 
 Glyph tiers gate compilation (§4.3 check 12). Cost columns are in m-aether. Cx is complexity points. Magnitude is the stage multiplier of §6.4. Pulse forms state magnitude per pulse.
 
@@ -469,7 +546,7 @@ Form behavior. **Line of effect** means the segment between two points crosses n
 | field | Placed on top of the first collision block the aim ray meets within 25000 mm: a cylinder of radius 3000 mm and height 3000 mm. Pulses every 30 ticks for 480 ticks. Two active fields per caster; a third ends the oldest. |
 | wall | A plane of 5 × 3 cells centered on the aimed ground cell, perpendicular to the caster yaw rounded to the nearest multiple of 16384 Bam. Occupies air and liquid cells only. Damage walls pulse on entities inside their cells. One active wall per caster. |
 | rune | Placed on the block face the aim ray meets within 4000 mm. Arms 60 ticks after placement. Bursts when a hostile origin is within 1500 mm (checked every tick), as a sphere of radius 2500 mm at the rune magnitude. Lasts 3600 ticks. Three armed runes per caster; a fourth ends the oldest. Hostiles see runes only through doc 09 trap detection. |
-| nova | Sphere of radius 5000 mm around the caster center (or the payload origin), excluding the caster. |
+| nova | Sphere of radius 5000 mm around the caster center (or the payload origin). A harmful nova excludes the caster; a helpful or neutral nova includes it. |
 | chain | Hitscan to the first hostile on the aim ray within 25000 mm, then up to 3 jumps, each to the hostile not yet hit with minimum `dist2` from the previous target within 6000 mm (ties to lower EntityId), each with line of effect. First hit magnitude 8000; each jump × 7500 of the previous hit. A helpful chain starts on an ally and jumps among allies. |
 | manifest | Spawns the summon (§12) at the aimed standable cell within 15000 mm with the template's headroom. |
 
@@ -506,14 +583,19 @@ Form behavior. **Line of effect** means the segment between two points crosses n
 | `glyph.ess.tide` | world | neutral | conjuration | 1 | 3000 | 1 | 0 | 0 | creates `liq.water`, 2000 ml per bolt impact (§13.1) |
 | `glyph.ess.gale` | world | neutral | alteration | 1 | 3000 | 1 | 0 | 0 | impulse 8000 mm/s; moves gas cells (§13.1) |
 | `glyph.ess.lumen` | world | neutral | divination | 1 | 2000 | 1 | 0 | 0 | light source level 14 (§13.1) |
-| `glyph.ess.sight` | world | neutral | divination | 1 | 4000 | 1 | 0 | 0 | direct `st.marked` 480 ticks; reveals hidden objects (§13.1) |
+| `glyph.ess.sight` | world | neutral | divination | 1 | 4000 | 1 | 0 | 0 | direct `st.marked` 480 ticks; reveals hidden objects (§13.1); applies doc 10's `appr.eff.aura` to items within the omen radius (doc 10 §5.10) |
+| `glyph.ess.appraise` | lore | neutral | divination | 2 | 8000 | 2 | 60 | 3600 | doc 10 `appr.eff.divine_identify` on one chosen item (doc 10 §5.10) |
+| `glyph.ess.omen` | lore | neutral | divination | 1 | 4000 | 1 | 0 | 600 | doc 10 `appr.eff.divine_omen` within `4000 + 2000 × div_tier` mm |
+| `glyph.ess.psychometry` | lore | neutral | divination | 2 | 5000 | 2 | 30 | 1800 | doc 10 `appr.eff.psychometry`: one unknown type-hidden item in the caster's inventory; 1 keyed `rng.ident` draw |
+
 Essence rules:
 
 - **Damage essences** produce one hit per target per resolution (per pulse for pulse forms) through Canon §10.5. `glyph.ess.frost` hits also apply `st.chilled` (Canon §10.1). `glyph.ess.force` adds a knockback impulse of 5000 mm/s horizontally along the hit direction plus 2000 mm/s upward to targets with body mass at most 400,000 g that are not of rank boss, editor or hunter. `glyph.ess.thunder` hits emit noise by Canon §10.1. Block effects are in §13.
-- **Status power on pulse forms** uses `max(form magnitude, 2500)` Bp instead of the form magnitude, so an aura, field or wall carries 2500 Bp of the essence's status power per pulse.
+- **Status power on aura, field and wall pulses** uses `max(form magnitude, 2500)` Bp instead of the form magnitude, so each pulse carries 2500 Bp of the essence's status power. Beam pulses use the beam magnitude (3000).
+- **Lore essences** (appraise, omen, psychometry) produce no hit. Their item target is fixed at cast start: for `self`, the inventory item uid carried in the cast command (a doc 17 wheel sub-selection; when doc 10 rejects the target the cast does not start); for `touch`, the ground item nearest the aim ray within 2500 mm. Contradiction potency multiplies their radii and chances (doc 10 §5.10). Their 3600, 1800 and 600-tick cooldown keys (§3.4) keep spells from replacing doc 10's identification economy.
 - **Carrier.** A control essence's hit carries 0 damage and the listed carrier type for the Canon §11.2 resistance factor. Immunity to the carrier type blocks the status.
 - **Direct statuses** use Canon §11.4 with base `mul_bp(status base, duration_bp)` (§6.4). Area forms of `glyph.ess.bind` apply `st.slowed` (base 240 ticks); single-target forms apply `st.rooted` (base 120 ticks). On pulse forms every pulse re-applies with refresh semantics.
-- **Polarity** decides targets: harmful stages affect hostiles, and allies only through friendly fire (Canon §17.5); helpful stages affect the caster and `fac.errata` members only; neutral stages affect everything in the area, and their world effects ignore faction.
+- **Polarity** decides targets. A stage is harmful if any essence is harmful, helpful if any essence is helpful (check 7 forbids both), and neutral otherwise. Harmful stages affect hostiles, and allies only through friendly fire (Canon §17.5); helpful stages affect the caster and `fac.errata` members only; neutral stages affect everything in the area, and their world effects ignore faction. A harmful root resolution ends the caster's `st.invisible` (§15).
 
 ### 5.4 Modifiers
 
@@ -530,7 +612,7 @@ Essence rules:
 | `glyph.mod.pierce` | 1 | 2 | evocation | +3000 | bolt, beam | passes through 2 more entities; each later hit × 8000 of the previous |
 | `glyph.mod.ricochet` | 1 | 2 | spellcraft | +2000 | bolt, orb | bounces off up to 3 solid blocks; magnitude × 9000 per bounce |
 | `glyph.mod.linger` | 2 | 2 | conjuration | +5000 | bolt, orb, nova, rune | impact leaves a 2000 mm field of the stage essences for 300 ticks at pulse magnitude 800 per 30 ticks, plus surfaces (§13.1) |
-| `glyph.mod.delay` | 1 | 2 | spellcraft | +0 | bolt, orb, nova | resolution waits 60 ticks after impact or completion; magnitude × 12000 |
+| `glyph.mod.delay` | 1 | 2 | spellcraft | +2000 | bolt, orb, nova | resolution waits 60 ticks (rules below); magnitude × 12000 |
 | `glyph.mod.hushed` | 1 | 1 | illusion | +3000 | all forms | every noise of the stage −30 dB, floor 0 |
 | `glyph.mod.thrift` | 1 | 1 | spellcraft | -2500 | all forms | magnitude × 8500 |
 | `glyph.mod.volatile` | 1 | 1 | evocation | +0 | stages with magnitude | magnitude × (5000 + v0), v0 from rng.magic (§3.9) |
@@ -549,6 +631,9 @@ Modifier rules:
 - `glyph.mod.split` projectiles each count toward `PROJECTILE_CAP` and each can carry the stage's trigger independently.
 - `glyph.mod.twin` repeats the whole stage, including its trigger; it never repeats the cost, the failure roll or the cooldown.
 - `glyph.mod.volatile` uses `v0` of §3.9: factor `5000 + v0`, so 5000 to 14999 Bp.
+- Modifiers add 0 cast ticks and 0 cooldown; the only cast-tick changes are quicken's and charged's, given in the table.
+- `glyph.mod.delay`: a bolt sticks to the entity or block it hits and the stage resolves 60 ticks later on that entity if it is alive, else at the stuck point; an orb bursts 60 ticks after impact at the impact point; a nova resolves 60 ticks after the cast completes, centered on the caster's position at that tick. Triggers of the stage fire from the delayed resolution. Its cost add was +0, which made +20% magnitude free on every single-target bolt; at +2000 its cost rises in step with its magnitude.
+- `glyph.mod.siphon` and `glyph.mod.leech` are capped per root resolution (§6.6).
 
 ### 5.5 Triggers
 
@@ -638,6 +723,9 @@ Forms and essences:
 | `glyph.ess.gale` | Wind | Fan Array | Wind Palm | Breath of Void | Bellows |
 | `glyph.ess.lumen` | Light | Floodlight | Lantern Qi | Witchlight | Arc Lamp |
 | `glyph.ess.sight` | Scrying | Scan | Heavenly Eye | Second Sight | Spectroscope |
+| `glyph.ess.appraise` | Appraisal | Metadata Read | Discerning Eye | Unwelcome Knowledge | Assay |
+| `glyph.ess.omen` | Omen | Threat Scan | Fortune Reading | Portent | Divining Rod |
+| `glyph.ess.psychometry` | Psychometry | Data Recovery | Object Memory | Echoes of the Owner | Spectrograph |
 
 Modifiers, triggers and conditions:
 
@@ -688,6 +776,117 @@ Modifiers, triggers and conditions:
 | `glyph.cond.dark` | if Dark | if(lowlight) | In Shadow | If the Light Fails | Photometer |
 | `glyph.cond.unaware` | if Unaware | if(undetected) | Against the Unwary | If It Does Not See | Blind-Side Gauge |
 
+Skins in the other nine register genres. Together with the five columns above, every glyph has a canonical skin in all 14 genres that carry a register (§2.2). The skin is cosmetic text; its dependency comes from the glyph origin through §2.2.
+
+Forms:
+
+| Glyph | Gothic Horror | Space Opera | Post-Apocalypse | Weird West | Hardboiled Noir | Fairy Tale | Mythic Antiquity | Oneiric | The Redaction |
+|---|---|---|---|---|---|---|---|---|---|
+| `glyph.form.bolt` | Blood Dart | Psi Lance | Junk Slug | Hex Bullet | Cheap Shot | Elf-Shot | Divine Javelin | Paper Plane | Memo |
+| `glyph.form.orb` | Clot | Plasma Sphere | Scrap Bomb | Powder Keg | Pineapple | Glass Apple | Thunderstone | Soap Bubble | Parcel |
+| `glyph.form.beam` | Hemorrhage | Mind Beam | Arc Welder | Evil Eye | Hard Stare | Moonbeam | Gaze of Helios | Long Stare | Line Item |
+| `glyph.form.cone` | Blood Spray | Psi Wave | Blunderblast | Scattergun Hex | Spray and Pray | Witch's Breath | Breath of Typhon | Yawn | Broadcast Notice |
+| `glyph.form.touch` | Bloody Hand | Mind Touch | Live Wire | Hoodoo Hand | Shakedown | Kiss | Hand of the God | Brush of Fingers | Pat-Down |
+| `glyph.form.self` | Vein | Inner Discipline | Self-Rig | Gut | Number One | Heart | Soul | Dreamer | Personnel File |
+| `glyph.form.aura` | Sanguine Mantle | Psi Field | Rad Halo | Dust Devil | Presence | Enchanted Air | Mantle of Olympus | Dream Haze | Clearance Radius |
+| `glyph.form.field` | Blood Circle | Containment Field | Hot Zone | Medicine Wheel | Turf | Fairy Ring | Sacred Precinct | Dreamscape | Restricted Area |
+| `glyph.form.wall` | Ward of Bone | Force Barrier | Scrap Wall | Palisade Hex | Stonewall | Thorn Hedge | Cyclopean Wall | Folded Wall | Partition |
+| `glyph.form.rune` | Hex Sigil | Psi Mine | Booby Trap | Witch Bottle | Setup | Hidden Thorn | Curse Tablet | Dream Snare | Tripwire Clause |
+| `glyph.form.nova` | Blood Burst | Psionic Storm | Meltdown | Brimstone Burst | Blowup | Midnight Chime | Wrath of Olympus | Wake-Up | Blackout Order |
+| `glyph.form.chain` | Bloodline | Synapse Chain | Jumper Cables | Posse | Grapevine | Rhyme Chain | Thread of the Fates | Domino Dream | Routing Slip |
+| `glyph.form.manifest` | Raising | Psi Construct | Scrap Build | Haint Calling | Muscle | Fetching | Theophany | Dream Figure | Requisition |
+
+Essences:
+
+| Glyph | Gothic Horror | Space Opera | Post-Apocalypse | Weird West | Hardboiled Noir | Fairy Tale | Mythic Antiquity | Oneiric | The Redaction |
+|---|---|---|---|---|---|---|---|---|---|
+| `glyph.ess.flame` | Hellfire | Plasma | Napalm | Brimstone | Torch Job | Hearthfire | Promethean Fire | Fever Dream | Incineration |
+| `glyph.ess.frost` | Grave Chill | Absolute Zero | Cold Snap | Blue Norther | Cold Shoulder | Jack Frost | Breath of Boreas | Cold Sweat | Freeze Order |
+| `glyph.ess.storm` | Galvanism | Ion Storm | Live Current | Heat Lightning | Jolt | Will-o'-Spark | Bolt of Zeus | Static Dream | Power Surge |
+| `glyph.ess.acid` | Embalming Fluid | Xeno-Acid | Battery Acid | Rotgut | Acid Bath | Bitter Brew | Hydra Bile | Melting | Solvent |
+| `glyph.ess.force` | Crushing Weight | Telekinesis | Sledge | Mule Kick | Knuckle Sandwich | Giant's Hand | Strength of Heracles | Falling Dream | Blunt Instrument |
+| `glyph.ess.edge` | Razor | Mind Blade | Scrap Shards | Bowie Hex | Shiv | Briar Thorns | Harpe | Paper Cuts | Red Pen |
+| `glyph.ess.radiance` | Holy Light | Starfire | Saint's Glow | Preacher's Light | Spotlight | Dawn | Light of Apollo | Waking Light | Disclosure |
+| `glyph.ess.shadow` | Grave Shadow | Dark Matter | Fallout Shadow | Gloaming | Dark Alley | Wicked Shadow | Shade of Erebus | Nightmare | Black Bar |
+| `glyph.ess.mind` | Mesmerism | Psychic Lance | Rad Madness | Spook | Mind Games | Bewitchment | Madness of Lyssa | Night Terror | Cognitohazard |
+| `glyph.ess.arcane` | Occult Force | Raw Psi | Weird Energy | Hoodoo | Moxie | Old Magic | Divine Spark | Dreamstuff | Anomaly |
+| `glyph.ess.venom` | Belladonna | Bio-Toxin | Rad Sludge | Snake Oil | Mickey Finn | Poison Apple | Hydra Venom | Bad Taste | Toxic Memo |
+| `glyph.ess.thunder` | Banshee Wail | Sonic Boom | Air Horn | Rebel Yell | Loud Mouth | Giant's Roar | Shout of Stentor | Alarm Clock | Public Address |
+| `glyph.ess.mend` | Transfusion | Psi Healing | Duct Tape | Sawbones | Patch-Up | Mother's Remedy | Touch of Asclepius | Sweet Dream | Medical Leave |
+| `glyph.ess.ward` | Holy Ward | Deflector Shield | Scrap Plating | Lucky Charm | Protection Racket | Silver Thread | Shield of Athena | Blanket | Indemnity |
+| `glyph.ess.swiftness` | Quickening Blood | Hyperdrive | Adrenaline | Greased Lightning | Getaway | Seven-League Stride | Sandals of Hermes | Running Dream | Expedite |
+| `glyph.ess.levitate` | Bat's Wing | Zero-G | Updraft Rig | Tumbleweed | Walking on Air | Thistledown | Wings of Icarus | Flying Dream | Elevated Clearance |
+| `glyph.ess.veil` | Shroud | Cloaking | Camo Rags | Ghost Walk | Fade Out | Fern-Seed Cloak | Helm of Hades | Forgotten Face | Need-to-Know |
+| `glyph.ess.bind` | Grasping Dead | Tractor Beam | Razorwire | Lasso | Cuffs | Spindle Thread | Chains of Hephaestus | Paralysis Dream | Hold Order |
+| `glyph.ess.dread` | Terror | Psi Fear | Rad Panic | Haunting | Intimidation | Bogeyman | Phobos | Dread Dream | Threat Notice |
+| `glyph.ess.dominion` | Thrall | Mind Control | Cult Brand | Snake Charm | Leverage | Love Spell | Will of Aphrodite | Puppet Dream | Reassignment |
+| `glyph.ess.slumber` | Coffin Sleep | Stasis | Knockout Gas | Sandman Hex | Sap | Hundred-Year Sleep | Gift of Hypnos | Deep Sleep | Sedation Order |
+| `glyph.ess.hush` | Vow of Silence | Psi Damper | Signal Killer | Tongue-Tie | Hush Money | Mute Curse | Oath of Harpocrates | Silent Scream | Gag Order |
+| `glyph.ess.polymorph` | Beast Curse | Bio-Rewrite | Mutagen | Varmint Hex | Frame-Up | Frog Curse | Wrath of Circe | Shapeshift Dream | Reclassification |
+| `glyph.ess.unmaking` | Exorcism | Psi Disruption | EMP | Cleansing | Cleanup | Unweaving | Atropos' Cut | Waking | Retraction |
+| `glyph.ess.summon` | Raised Servant | Drone Call | Scrap Critter | Haint | Hired Gun | Helper | Servant of the Gods | Imaginary Friend | Field Agent |
+| `glyph.ess.shape` | Grave Digging | Matter Shaping | Demolition | Prospecting | Construction Job | Giant's Spade | Hephaestian Craft | Clay Dream | Renovation |
+| `glyph.ess.tide` | Black Rain | Hydro-Burst | Flash Flood | Rainmaker | Downpour | Wishing Well | Wrath of Poseidon | Drowning Dream | Sprinkler System |
+| `glyph.ess.gale` | Ill Wind | Vacuum Breach | Dust Storm | Twister | Hot Air | North Wind | Bag of Aeolus | Dream Wind | Ventilation |
+| `glyph.ess.lumen` | Candlelight | Lumen Drone | Glow Stick | Lantern Hex | Flashlight | Fairy Light | Torch of Hecate | Night-Light | Fluorescent Tube |
+| `glyph.ess.sight` | Spirit Sight | Sensor Sweep | Geiger Sense | Tracker's Eye | Stakeout | Magic Mirror | Eye of Argus | Lucid Sight | Surveillance |
+| `glyph.ess.appraise` | Provenance | Analysis Scan | Salvage Read | Assayer's Eye | Fence's Eye | Truth-Telling | Gift of Athena | Recognition | Audit |
+| `glyph.ess.omen` | Tarot | Precog | Bad Feeling | Bone Reading | Hunch | Black Cat | Augury | Premonition | Risk Assessment |
+| `glyph.ess.psychometry` | Touch of the Dead | Psi Imprint | Old World Memory | Object Reading | Fingerprints | Remembering Thing | Memory of Mnemosyne | Déjà Vu | Chain of Custody |
+
+Modifiers:
+
+| Glyph | Gothic Horror | Space Opera | Post-Apocalypse | Weird West | Hardboiled Noir | Fairy Tale | Mythic Antiquity | Oneiric | The Redaction |
+|---|---|---|---|---|---|---|---|---|---|
+| `glyph.mod.empower` | Engorged | Overcharged | Souped-Up | Double-Loaded | Heavy-Handed | Thrice-Spoken | Heroic | Vivid | Priority |
+| `glyph.mod.extend` | Undying | Sustained | Long-Haul | Long-Running | Drawn-Out | Till Midnight | Eternal | Endless | Extended Term |
+| `glyph.mod.widen` | Spreading | Wide-Field | Sprawling | Wide-Open | Citywide | Far and Wide | Titanic | Ballooning | Department-Wide |
+| `glyph.mod.reach` | Far-Cast | Light-Year | Scoped | Long Rifle | Long-Distance | Over the Hills | Far-Darting | Faraway | Remote |
+| `glyph.mod.quicken` | Hasty | Hyper | Quick-and-Dirty | Fast-Draw | Snap | Quick as a Wink | Swift-Footed | Instant | Expedited |
+| `glyph.mod.charged` | Swelling | Charged-Up | Juiced | Cocked | Wound-Up | Gathering | Gathered Wrath | Building | Pending |
+| `glyph.mod.split` | Splintered | Multi-Vector | Shotgunned | Fanned | Spread | Three Sisters | Many-Headed | Kaleidoscope | Carbon-Copied |
+| `glyph.mod.homing` | Bloodhound | Lock-On | Heat-Seeking | Dead-Eye | Tailing | Finds Its Way | Unerring | Inevitable | Addressed |
+| `glyph.mod.pierce` | Staking | Phase-Piercing | Rebar-Tipped | Through-and-Through | Clean Through | Needle-Sharp | Achillean | Passing-Through | Cross-Departmental |
+| `glyph.mod.ricochet` | Restless | Deflecting | Pinballing | Caroming | Bank Shot | Skipping Stone | Resounding | Bouncing | Rerouted |
+| `glyph.mod.linger` | Festering | Residual | Contaminating | Smoldering | Stale | Lasting | Ever-Burning | Aftertaste | Permanent Record |
+| `glyph.mod.delay` | Midnight | Timed | Fused | Slow-Burning | Time Bomb | When the Clock Strikes | Fated | Later | Deferred |
+| `glyph.mod.hushed` | Graveside | Silent-Running | Suppressed | Quiet | On the Q.T. | Mouse-Quiet | Unsung | Dreamquiet | Confidential |
+| `glyph.mod.thrift` | Anemic | Efficient | Scavenged | Cheap | Cut-Rate | Humble | Ascetic | Faint | Budget |
+| `glyph.mod.volatile` | Feverish | Overloaded | Haywire | Loose Cannon | Hot-Headed | Capricious | Dionysian | Surreal | Uncontrolled |
+| `glyph.mod.keen` | Surgical | Targeted | Sharp-Eyed | Sure-Shot | Below-the-Belt | Clever | Far-Sighted | Lucid | Precise |
+| `glyph.mod.siphon` | Draining | Energy-Siphoning | Scavenging | Soul-Taking | Skimming | Pilfering | Tithing | Dream-Eating | Garnishing |
+| `glyph.mod.leech` | Sanguinary | Bio-Siphon | Blood-Bag | Bloodsucking | Bleeding Dry | Life-Borrowing | Lamia's | Sapping | Reimbursed |
+| `glyph.mod.sculpt` | Sparing | Friendly-Lock | Careful | Sharpshooter's | Discreet | Kind-Hearted | Just | Selective | Authorized |
+| `glyph.mod.anchor` | Consecrated | Stationary | Staked-Down | Planted | Stationed | Hearth-Bound | Founded | Recurring | On-Site |
+| `glyph.mod.heavy` | Leaden | Gravitic | Sledgehammer | Hard-Hitting | Brass-Knuckled | Ogre's | Titan's | Weighted | Load-Bearing |
+| `glyph.mod.twin` | Doppel | Mirrored | Doubled | Two-Gun | Double-Cross | Twin-Born | Dioscuri | Echoed | Duplicate |
+
+Triggers:
+
+| Glyph | Gothic Horror | Space Opera | Post-Apocalypse | Weird West | Hardboiled Noir | Fairy Tale | Mythic Antiquity | Oneiric | The Redaction |
+|---|---|---|---|---|---|---|---|---|---|
+| `glyph.trig.on_impact` | upon the Wound | On Contact | Impact Fuse | upon the Hit | When It Lands | When It Touches | When It Strikes | Upon Arrival | Upon Delivery |
+| `glyph.trig.on_kill` | upon the Last Breath | On Kill Confirmed | Body Count | Boot Hill | When They Drop | When It Falls | Upon Triumph | When the Dream Ends | Upon Termination |
+| `glyph.trig.on_expire` | upon the Fading | On Power-Down | Burn-Out | At Sundown | When Time's Up | At the Last Petal | When the Thread Is Cut | On Waking | Upon Expiry |
+| `glyph.trig.timer` | at the Stroke | T-Minus | Egg Timer | Pocket-Watch | Count of Three | At the Third Chime | When Chronos Wills | In a Moment | Scheduled Release |
+| `glyph.trig.proximity` | upon the Threshold | Proximity Alert | Motion Sensor | Rattlesnake | Too Close | Who Comes Near | Upon Trespass | When It Draws Near | Unauthorized Entry |
+| `glyph.trig.on_struck` | Blood for Blood | Counter-Protocol | Payback Rig | Eye for an Eye | Payback | Tit for Tat | Nemesis | Startle | Incident Response |
+| `glyph.trig.on_status` | upon the Taint | On Condition | Symptom Trigger | Hex-Mark | When It Sticks | When the Spell Takes | When the Curse Takes | When It Sinks In | Upon Flagging |
+| `glyph.trig.pulse` | Heartbeat | Pulse Cycle | Generator Hum | Drumbeat | On the Hour | Round and Round | Eternal Return | Recurring Dream | Routine Review |
+
+Conditions:
+
+| Glyph | Gothic Horror | Space Opera | Post-Apocalypse | Weird West | Hardboiled Noir | Fairy Tale | Mythic Antiquity | Oneiric | The Redaction |
+|---|---|---|---|---|---|---|---|---|---|
+| `glyph.cond.foe` | if Enemy | If Hostile Signature | If Raider | If Outlaw | If Mark | If Wicked | If Foe of the Gods | If Nightmare | If Unauthorized |
+| `glyph.cond.ally` | if Kin | If Crewmate | If Crew | If Posse | If Family | If Friend of the Forest | If Guest-Friend | If Dreamer | If Cleared |
+| `glyph.cond.wounded` | if Weakened | If Hull Breached | If Busted | If Winged | If Hurting | If Pricked | If Laid Low | If Fading | If Damaged |
+| `glyph.cond.native` | if of This Night | If Local Species | If Wastelander | If Homesteader | If From Around Here | If Born in the Wood | If Earth-Born | If Dreamt Here | If On File |
+| `glyph.cond.wet` | if Rain-Soaked | If Moisture Detected | If Soaked | If Wet Behind the Ears | If Rained On | If Dewy | If Touched by Poseidon | If Dripping | If Water-Damaged |
+| `glyph.cond.burning` | if Pyre | If Overheating | If On Fire | If Branded | If Smoking | If Kindled | If Ablaze | If Feverish | If Flagged Flammable |
+| `glyph.cond.dark` | if Moonless | If Unlit Sector | If Pitch-Black | If After Dark | If In the Shadows | If Night | If Under Nyx | If Lights Out | If Off the Record |
+| `glyph.cond.unaware` | if Unsuspecting | If Off Sensors | If Napping | If Bushwhacked | If Blindsided | If Unwitting | If Unforeseen | If Sleepwalking | If Uninformed |
+
 ## 6. Cost and potency
 
 ### 6.1 Base cost (skill-independent)
@@ -706,19 +905,28 @@ For a beam the root `stage_cost` is a per-second drain. `base_cost` feeds skill 
 ```
 cost_skill = floor_div(3 × school_skill + skill.spellcraft, 4)
 cast_cost  = base_cost → × (12500 − 50 × cost_skill) → × implement cost_bp (§3.8) → × register rider cost_bp (§10)
-                       → × ench.thrift (§9.4)                                         // one mul_bp each, this order
+                       → × ench.thrift (§9.4) → × each [T] aether factor in ascending ID byte order   // one mul_bp each, this order
 cast_cost  = max(1000, cast_cost) when base_cost > 0
+cast_cost  = 0 for a free cast; the 1000 floor does not apply to it
 ```
 
 The skill factor runs from 12500 at skill 0 to 7500 at skill 100.
 
+- `[T]` aether factors: doc 04 Spellcraft 50 (9000, self-designed spells), talents `efficient_casting` (9000), `overchannel` (15000 while toggled on) and `grand_design` (7000, the Signature spell only); doc 14 Echo traits `echo.preacher_amos` (11500, restoration spells) and `echo.briar_thornwood` (11500, conjuration spells).
+- **Free casts**: doc 04 Alteration 75 (one self-targeted alteration cast per 600 ticks) and talent `spell_echo` (every 5th effective cast); doc 11 `perk.arcane_surge` (every 5th cast through the item) and `item.palimpsestic.authors_quill` (once per 600 ticks). When several free-cast counters are due on one cast, the cast is free once and every due counter is consumed.
+- Texts, wands, on-use enchantments and prayers have `cast_cost = 0`.
+- Doc 04 §5.3 also states a school cost factor of `10000 − 25 × skill`. Spell cost belongs to this chapter, so this formula stands and doc 04 is asked to cite it (Interface assumptions).
+
 ### 6.3 Potency
 
 ```
-row29      = 10000 + (ATN − 40) × 50 + school_skill × 30                              // Canon §6.4 row 29
+row29      = 10000 + (ATN − 40) × 50 + school_skill × 30 + Σ [T] flat potency terms       // Canon §6.4 row 29
 spell_pot  = row29 → × glyph_term(g) for each glyph g of the stage, in grammar order → × rider_pot (§10)
+                   → × scribe_bp (texts only, §8.3)
 glyph_term = 10000 + (local_axiom(caster.pos, dep(g)) − 5) × 200                      // Canon §5.7 GLYPH
 ```
+
+`[T]` flat potency terms are Bp added inside row 29, for example `echo.drowned_clerk` (+1500 while `st.soaked`; −2000 for stages whose damage type is `dmg.fire`). A bound glyph (§3.8) adds no glyph term. A stage holds at most 8 glyphs, so its product of glyph terms lies between `9000^8` and `11000^8` (×0.43 to ×2.14); each added glyph also adds at least 1 complexity and its own cost (§6.1), so the home-genre bonus grows only with a larger and dearer spell.
 
 Each stage of a spell computes its own `spell_pot` from its own glyphs (Canon gap G2). NPC casters never use row 29 (Canon §6.5), so NPC `spell_pot = 10000` (§6.5).
 
@@ -730,21 +938,21 @@ Each stage of a spell computes its own `spell_pot` from its own glyphs (Canon ga
 |---|---|
 | Damage base | `dmg_base = mag_chain(b_0 + mul_bp(b_1, 7500))`, where `b_i` is the base mHP of damage essence `i` |
 | Type shares | one damage essence: 10000; two: `share_0 = floor_div(b_0 × 10000, b_0 + mul_bp(b_1, 7500))`, `share_1 = 10000 − share_0` |
-| Step 0 (Canon §10.4) | `B = dmg_base → × P(src_lvl) → × implement rarity power → × implement quality → × (10000 + 600 × implement eff_enh) → × 10000` (material factor 10000 for spells, Canon gap G1) |
+| Step 0 (Canon §10.4) | `B = dmg_base → × P(src_lvl) → × source rarity power → × source quality → × (10000 + 600 × source eff_enh) → × source material dmg_bp`, with the source item of §3.1 (10000 for each factor with no implement) |
 | Pipeline | Canon §10.5 from step 1; step 2.1 multiplies by `spell_pot`; step 2.5 by the spell's Contradiction potency; step 2.6 by `10000 + edge_bp` against natives |
-| Status power | `p = essence power (× 7500 if secondary) → × mag_chain with p_form in place of the form magnitude → × spell_pot`, with `p_form` the form magnitude, or `max(form magnitude, 2500)` for aura, field and wall; then Canon §11.2 from `S(src_lvl)` on (Canon gap G14) |
-| Heal | `heal_bp = mag_chain(2000, or 1500 if secondary) → × spell_pot → × C potency`; amount `mul_bp(recipient Max HP, heal_bp)`, then Canon §10.9 |
-| Ward | `ward_bp = mag_chain(2500, or 1875 if secondary) → × spell_pot → × C potency`; `st.shielded` pool `mul_bp(recipient Max HP, ward_bp)` for 600 ticks × `duration_bp` |
-| `duration_bp` | 10000, × 20000 per extend, × 15000 per anchor (aura, field, wall, rune) |
+| Status power | `p = (essence power + 10 when the stage's school is evocation and the caster has Evocation 25) (× 7500 if secondary) → × mag_chain with p_form in place of the form magnitude → × spell_pot → × 12500 for mind-group statuses when the caster has Illusion 75`, with `p_form` the form magnitude, or `max(form magnitude, 2500)` for aura, field and wall; then Canon §11.2 from `S(src_lvl)` on (Canon gap G14) |
+| Heal | `heal_bp = mag_chain(2000, or 1500 if secondary) → × spell_pot → × C potency → × 11000 with Restoration 25`; amount `mul_bp(recipient Max HP, heal_bp)`, then Canon §10.9 (row 3 after the Restoration 25 factor, as doc 04 states) |
+| Ward | `ward_bp = mag_chain(2500, or 1875 if secondary) → × spell_pot → × C potency → × 11000 with Abjuration 25`; `st.shielded` pool `mul_bp(recipient Max HP, ward_bp)` for 600 ticks × `duration_bp` |
+| `duration_bp` | 10000, × 20000 per extend, × 15000 per anchor (aura, field, wall, rune), × 12500 for alteration-school stages when the caster has Alteration 25 |
 | Helpful direct duration | `status base → × duration_bp → × min(spell_pot, 20000) → × C potency`, at least 1 tick |
 | Harmful direct duration | Canon §11.4 with `base = status base → × duration_bp → × C potency` |
 | Persistent entity duration | `form or template duration → × duration_bp → × C potency` |
-| Radius, half-angle, jump range | form value × 15000 per widen; half-angle capped at 16384 Bam |
-| Range, speed | form value × 20000 range and × 15000 speed per reach; speed × 7500 per heavy |
+| Radius, half-angle, jump range | form value × 15000 per widen → × doc 11 `perk.wide_conduit` for radii; half-angle capped at 16384 Bam |
+| Range, speed | form value × 20000 range and × 15000 speed per reach; speed × 7500 per heavy; projectile speed × 12500 for evocation-school stages when the caster has Evocation 50 |
 
 ### 6.5 NPC spells
 
-An NPC casts authored `spell.` IDs from its template (doc 13). Its spell damage is an enemy source (Canon §10.4): `B = mul_bp(dmg_base, NPC_SPELL_SCALE_BP) → × T(d) → × rank damage`, with `NPC_SPELL_SCALE_BP = 4500`, so a standard Folio-1 bolt of flame hits for `mul_bp(24000, 4500) = 10,800` mHP, matching `REF_ENEMY_HIT_D1` (Canon §17.4). Step 2.1 is 10000. Status power is `p × p_form × modifier mags`, then Canon §11.2 with `S(d)`. NPC aether is a template pool and regeneration (doc 13); NPC cast cost is `base_cost` with no skill factor. Canon §6.4 row 30 applies to NPC interruption. Contradiction applies to foreign NPC casters (Canon §5.5) with NPC tolerance (Canon §5.4).
+An NPC casts authored `spell.` IDs from its template (doc 13). Its spell damage is an enemy source (Canon §10.4): `B = mul_bp(dmg_base, NPC_SPELL_SCALE_BP) → × T(d) → × rank damage`, with `NPC_SPELL_SCALE_BP = 4500`, so a standard Folio-1 bolt of flame hits for `mul_bp(24000, 4500) = 10,800` mHP, matching `REF_ENEMY_HIT_D1` (Canon §17.4). Step 2.1 is 10000. Status power is `p × p_form × modifier mags`, then Canon §11.2 with `S(d)`. NPC aether is the template's `aether_max_mae` and `aether_regen_mae_s` (default 2,000 per second, doc 13 §2), regenerated each tick through the `k = 60` accumulator with no AETHER term, because Canon §6.5 makes NPC aether a template constant. NPC cast cost is `base_cost` with no skill factor. Canon §6.4 row 30 applies to NPC interruption. Contradiction applies to foreign NPC casters (Canon §5.5) with NPC tolerance (Canon §5.4); a failed NPC roll always fizzles and never surges, as doc 13 §5 states. Doc 13 §5 writes NPC spell damage as `template_dmg_mhp × T(d) × rank`; for a spell, `template_dmg_mhp` is `mul_bp(dmg_base, NPC_SPELL_SCALE_BP)`.
 
 ### 6.6 Siphon and leech
 
@@ -756,9 +964,18 @@ leech_mhp    = mul_bp(caster_max_hp_mhp, leech_bp)                              
 
 `hp_lost_mhp` is HP removed after ward (Canon §10.5 step 7). Example at `d_current = 3`: a 36,523 mHP hit siphons `floor_div(5478 × 10000, 11881) = 4610` m-aether; against a target of 80,000 mHP Max HP it leeches `floor_div(36523 × 2500, 80000) = 1141` Bp, which heals a 105 HP caster for 11,980 mHP.
 
+Caps per root resolution, summed over every stage, hit and twin repeat of that cast:
+
+```
+siphon_total ≤ mul_bp(cast_cost, 5000)          // 0 for texts, wands, on-use enchantments, prayers and free casts
+leech_total  ≤ 2500 Bp of the caster's Max HP
+```
+
+Only hits on hostile entities count; allies, the caster, own minions, entities tagged `summoned` (doc 13) and blocks give nothing. Without the caps, a caster at ATN 100 and school skill 100 casting `nova flame siphon` refunded 85% of its cast cost from one target and over 4 times its cost from five, so aether never ran out; a five-target `nova leech` healed 67% of Max HP per cast at Folio 1. Example: Ref-A's `bolt flame siphon` costs 7011 m-aether and its bolt hit of 38,713 mHP siphons `floor_div(mul_bp(38713, 1500) × 10000, 11881) = 4886`, capped at `mul_bp(7011, 5000) = 3505`.
+
 ### 6.7 Worked spells
 
-**Reference caster Ref-A**: Origin Mythic Fantasy, level 5, ATN 50, FOC 45, LOG 50, MEM 40, other sub-attributes 40. Max HP 105, max aether 70, budget 9, 4 Grimoire slots, regeneration `mul_bp(1500, 13000) = 1950` m-aether per second in Mythic Fantasy. Skills: Evocation 30, Spellcraft 24, Conjuration 25, Abjuration 25 (only for the aura's tier-2 gate), Restoration 12. Implement: Common Normal +0 focus, `ilvl` 3 (`P(3) = 11881`), `cost_bp` 9500. Location `genre.mythic_fantasy` (ARC 8), `d = 3`. All glyphs have Mythic Fantasy origin: `Req[arcana] = 6 <= 8`, so `C = 0`, `E = 0`, glyph term `10000 + 3 × 200 = 10600`. Register rider Ley-Bound: cost × 9500 with an implement. Target: a standard Folio-3 NPC with 0 resistance and 0 AR to the types shown, nerve threshold `100 + 2 × 3 = 106`.
+**Reference caster Ref-A**: Origin Mythic Fantasy, level 5, ATN 50, FOC 45, LOG 50, MEM 40, other sub-attributes 40. Max HP 105, max aether 70, budget 9, 4 Grimoire slots, regeneration `mul_bp(1500, 13000) = 1950` m-aether per second in Mythic Fantasy. Skills: Evocation 30, Spellcraft 24, Conjuration 25, Abjuration 25 (only for the aura's tier-2 gate), Restoration 12. Doc 04 perks in play: `skill.evocation.m25` (+10 status power on evocation hits) and `skill.conjuration.m25` (summon Max HP × 11500); `skill.abjuration.m25` affects only wards. Implement: Common Normal +0 focus of a material with `dmg_bp` 10000, `ilvl` 3 (`P(3) = 11881`), `cost_bp` 9500. Location `genre.mythic_fantasy` (ARC 8), `d = 3`. All glyphs have Mythic Fantasy origin: `Req[arcana] = 6 <= 8`, so `C = 0`, `E = 0`, glyph term `10000 + 3 × 200 = 10600`. Register rider Ley-Bound: cost × 9500 with an implement. Target: a standard Folio-3 NPC with 0 resistance and 0 AR to the types shown, nerve threshold `100 + 2 × 3 = 106`.
 
 **W1 Searing Bolt** `bolt flame` (Evocation)
 
@@ -768,7 +985,7 @@ cost_skill floor_div(90 + 24, 4) = 28 → 12500 − 1400 = 11100
 cast_cost 5000 → 5550 → ×9500 5272 → ×9500 5008 m-aether;  cast ticks 24, recovery 20
 row29 10000 + 500 + 900 = 11400 → ×10600 (bolt) 12084 → ×10600 (flame) 12809 = spell_pot
 dmg_base 24000;  B = mul_bp(24000, 11881) = 28514;  step 2.1: mul_bp(28514, 12809) = 36523 mHP
-st.burning p: 40 → ×10000 → ×12809 = 51 → ×S(3)=10600 → 54 per hit; 2 hits fill 106
+st.burning p: (40 + 10 Evocation 25) = 50 → ×10000 → ×12809 = 64 → ×S(3)=10600 → 67 per hit; 2 hits fill 106
 ```
 
 **W2 Widened Frost Orb** `orb frost widen`
@@ -777,7 +994,7 @@ st.burning p: 40 → ×10000 → ×12809 = 51 → ×S(3)=10600 → 54 per hit; 2
 complexity 2 + 1 + 1 = 4;  base (2000 + 4000) × (10000 + 4000) = 8400;  cast 8400 → 9324 → 8857 → 8414
 spell_pot 11400 → 12084 → 12809 → ×10600 (widen) 13577;  radius 2000 × 15000 = 3000 mm
 dmg_base 20000 → ×8000 16000 → ×9000 14400;  B 17108;  step 2.1: 23227 mHP to every hostile within 3000 mm
-st.frozen p: 35 → ×8000 28 → ×9000 25 → ×13577 33 → ×S(3) 34;  every hit also applies st.chilled
+st.frozen p: (35 + 10) = 45 → ×8000 36 → ×9000 32 → ×13577 43 → ×S(3) 45;  every hit also applies st.chilled
 ```
 
 **W3 Storm Ray** `beam storm` (channel)
@@ -786,7 +1003,7 @@ st.frozen p: 35 → ×8000 28 → ×9000 25 → ×13577 33 → ×S(3) 34;  every
 complexity 3;  base 2000 + 4500 = 6500 per second;  cast 6511 per second
 drain: accumulator k = 60, first Channeling tick q = floor_div(6511, 60) = 108; exactly 6511 per 60 ticks
 spell_pot 12809;  per pulse dmg_base 22000 × 3000 = 6600;  B 7841;  step 2.1: 10043 mHP every 15 ticks = 40172 mHP per s
-full 300-tick channel: 20 pulses, 32555 m-aether drained;  st.shocked p per pulse 35 → ×3000 10 → ×12809 12 → ×S(3) 12
+full 300-tick channel: 20 pulses, 32555 m-aether drained;  st.shocked p per pulse (35 + 10) = 45 → ×3000 13 → ×12809 16 → ×S(3) 16
 ```
 
 **W4 Empowered Firestorm Bolt** `bolt flame storm empower` (two damage essences)
@@ -796,7 +1013,7 @@ complexity 4;  core 1000 + 4000 + mul_bp(4500, 12500) = 10625;  base mul_bp(1062
 spell_pot 11400 → 12084 → 12809 → 13577 (storm) → 14391 (empower)
 dmg_base (24000 + mul_bp(22000, 7500) = 16500) = 40500 → ×13000 = 52650;  shares fire 5925, shock 4075
 B 62553;  step 2.1: 90020;  step 3: fire 53336 + 1 remainder = 53337, shock 36683
-p: burning 40 → ×13000 52 → ×14391 74 → ×S(3) 78;  shocked 35 × 7500 = 26 → ×13000 33 → ×14391 47 → ×S(3) 49
+p: burning (40 + 10) = 50 → ×13000 65 → ×14391 93 → ×S(3) 98;  shocked (35 + 10) × 7500 = 33 → ×13000 42 → ×14391 60 → ×S(3) 63
 ```
 
 **W5 Cinder Bolt** `bolt flame on_impact ( nova frost )` (trigger, depth 1)
@@ -807,7 +1024,7 @@ root stage_cost 5000 + 1000 = 6000;  payload stage_cost 3000 + 4000 = 7000 → �
 base 11250;  cast 11250 → 12487 → 11862 → 11268
 root spell_pot 11400 → 12084 → 12809 → ×10600 (on_impact) 13577;  bolt hit: B 28514 → 38713 mHP
 payload (tick after impact) spell_pot 12809;  nova dmg_base 20000 × 7000 = 14000;  B 16633 → 21305 mHP to every entity
-  within 5000 mm of the impact point, allies at FF_DIRECT_BP;  st.frozen p 35 → ×7000 24 → ×12809 30 → ×S(3) 31
+  within 5000 mm of the impact point, allies at FF_DIRECT_BP;  st.frozen p (35 + 10) = 45 → ×7000 31 → ×12809 39 → ×S(3) 41
 ```
 
 **W6 Flame Conjuration** `manifest summon flame` (Conjuration 25)
@@ -816,7 +1033,7 @@ payload (tick after impact) spell_pot 12809;  nova dmg_base 20000 × 7000 = 1400
 complexity 2 + 2 + 1 = 5;  base 3000 + 8000 + mul_bp(4000, 12500) = 16000
 cost_skill floor_div(75 + 24, 4) = 24 → 11300;  cast 16000 → 18080 → 17176 → 16317;  cast ticks 60;  cooldown 600
 row29 10000 + 500 + 750 = 11250 → 11925 → 12640 → 13398 = spell_pot (snapshot for the summon)
-summon.elemental (§12.2): HP 60000 → ×P(3) 71286 → ×13398 95508 mHP;  attack 8000 → 9504 → 12733 mHP dmg.fire every 45 ticks
+summon.elemental (§12.2): HP 60000 → ×P(3) 71286 → ×13398 95508 → ×11500 (Conjuration 25) 109834 mHP;  attack 8000 → 9504 → 12733 mHP dmg.fire every 45 ticks
 attack status p 30 → ×13398 40 → ×S(3) 42;  duration 3600 × (10000 + 50 × 25) = 4050 ticks;  cap min(5, 1 + 1) = 2
 ```
 
@@ -874,36 +1091,64 @@ A glyph's school sets its tier gate. A spell's school (its primary essence's sch
 
 ### 7.3 Mastery hooks for doc 04 perks
 
-Doc 04 owns the perk IDs and grants them at mastery tiers 25, 50, 75 and 100. This chapter defines the effect each magic-skill perk has:
+Doc 04 §5.3 owns the perk IDs `skill.<name>.m25` to `.m100` and their effects. This table fixes where each magic, faith and Inscription perk enters this chapter's formulas. A perk with no hook here belongs wholly to another chapter.
 
-| Skill | 25 | 50 | 75 | 100 |
-|---|---|---|---|---|
-| Evocation | damage-essence status power × 12000 | charge factor caps at 17500 at `c = 90` | chain +1 jump | orb, nova and rune radius × 12500 |
-| Abjuration | ward magnitude × 12000 | dispel count +1 | counterspell silence 180 ticks instead of 60 | a ward cast also applies `st.fortified` for 300 ticks |
-| Alteration | helpful direct durations × 12500 | shape power +2 | polymorph break threshold 4000 Bp instead of 2000 | swiftness and levitate cost × 5000 |
-| Conjuration | summon duration × 15000 | summon HP × 12500 | summons resist every type +1500 Bp | summon attacks carry status power × 20000 |
-| Illusion | veil duration × 15000 | control status power × 12500 | `st.charmed` targets deal damage × 12000 | phantasm spawns 2 copies |
-| Restoration | heal magnitude × 11000 | mend also ends one DoT status (lowest status ID) | overheal becomes `st.shielded` up to 1000 Bp of Max HP | mend on a downed ally revives at 2500 Bp of Max HP |
-| Divination | sight radius × 15000 | keen costs 0 | conditions cost 0 complexity | see `st.invisible` entities within 12000 mm |
-| Spellcraft | modifier cost adds × 8000 | depth surcharge −1 (§4.4) | trigger `max_fires` +1 | a stage holds 4 modifiers |
-| Devotion | petition favor cost × 8000 | supplication pleased resolves 2 needs | non-local patrons apply × 12500 | the first supplication each Folio ignores the prayer timer |
-| Inscription | +1 enchantment capacity point per item | text inscription aether × 7500 | 4 enchantments per item | on-use enchantments +1 use per Folio |
+| Perk | Doc 04 effect | Hook in this chapter |
+|---|---|---|
+| `skill.evocation.m25` | evocation hits +10 status power | added to the essence's status power before the §6.4 chain, for evocation-school stages |
+| `skill.evocation.m50` | evocation projectile speed × 12500 | bolt and orb speed of evocation-school stages, after reach and heavy (§6.4) |
+| `skill.evocation.m75` | +1000 Bp crit chance on evocation hits | Canon §6.4 row 13 gear term, for hits of evocation-school stages |
+| `skill.evocation.m100` | holding a cast 60 extra ticks gives `DmgAdd +5000` at 2× aether cost | Overcasting, §3.5 rows 6 to 8; +5000 Bp in Canon §10.5 step 1 |
+| `skill.abjuration.m25` | wards you grant × 11000 | `ward_bp` chain (§6.4) |
+| `skill.abjuration.m50` | each abjuration cast removes `st.unraveled` and `st.silenced` from its target | every entity that an abjuration-school stage affects and that is the caster or a `fac.errata` member loses both (`ev.status_expired` reason 1) |
+| `skill.abjuration.m75` | your `st.shielded` pools last until depleted or Folio exit | pools this caster grants get no expiry tick (§15) |
+| `skill.abjuration.m100` | your ward pools use `mul_bp(ward_mult, 8000)` for every type | Canon §10.5 step 7 uses `mul_bp(ward_mult[t], 8000)` while it consumes a `st.shielded` pool this caster granted |
+| `skill.alteration.m25` | alteration durations × 12500 | `duration_bp` of alteration-school stages (§6.4) |
+| `skill.alteration.m50` | `st.levitating` vertical control × 15000 | 2250 mm/s instead of 1500 for levitation this caster grants (§15) |
+| `skill.alteration.m75` | one self-targeted alteration cast per 600 ticks costs 0 aether | a free cast (§6.2) for a spell whose root form is `self` and whose school is alteration; one per-caster ready tick |
+| `skill.alteration.m100` | Transmute | none; doc 07 owns it |
+| `skill.conjuration.m25` | summon Max HP × 11500 | summon Max HP chain (§12.1) |
+| `skill.conjuration.m50` | summon duration × 15000 | summon duration chain (§12.1) |
+| `skill.conjuration.m75` | summons add 2500 Bp of each of your resistances | each spell summon gets `resist[t] += mul_bp(owner.resist[t], 2500)`, clamped to the NPC cap 9000 (§12.1) |
+| `skill.conjuration.m100` | raise a humanoid corpse as a minion | `summon.risen` (§12.2) |
+| `skill.illusion.m25` | your `st.charmed`, `st.feared`, `st.confused` durations × 12500 | multiplies the duration of those statuses when this caster's illusion-school stage applies them, by buildup or directly |
+| `skill.illusion.m50` | illusion casts do not end `st.invisible` | §15 `st.invisible` row |
+| `skill.illusion.m75` | mind-group status power × 12500 | §6.4 status power, for statuses of the mind threshold group (Canon §6.4 row 24) |
+| `skill.illusion.m100` | each illusion cast grants `st.invisible` for 60 ticks | direct and unscaled on every root resolution of an illusion-school spell |
+| `skill.restoration.m25` | healing you cause × 11000, before row 3 | heal chain (§6.4) |
+| `skill.restoration.m50` | your heals treat one untreated wound of tier ≤ 2 | each mend resolution treats the target's lowest-tier untreated wound of tier ≤ 2, ties to the lower part ID (doc 04 §8) |
+| `skill.restoration.m75` | healing beyond Max HP becomes `st.shielded` up to 1000 Bp of Max HP | the overheal of a mend is added to the target's `st.shielded` pool, at most 1000 Bp of Max HP from this source, expiry 600 ticks |
+| `skill.restoration.m100` | once per Folio, a restoration spell on a downed ally revives it at once | the first restoration-school heal each Folio that reaches a `st.downed` ally completes its revival (doc 16) and then heals |
+| `skill.divination.m25` to `.m100` | identification and perception displays; `RowFlat(35, 1000)` | none; doc 10 reads `div_tier` for the omen radius (§5.3) |
+| `skill.spellcraft.m25` | `RowFlat(26, 1)` | complexity budget +1 (§4.3 check 13) |
+| `skill.spellcraft.m50` | self-designed spells' aether × 9000 | `[T]` aether factor (§6.2); self-designed means a Grimoire or tome spell |
+| `skill.spellcraft.m75` | `RowFlat(27, 1)` | one more Grimoire slot (§8.2) |
+| `skill.spellcraft.m100` | `RowFlat(26, 2)`; self-designed spells' cast ticks × 8500 | budget +2; `[T]` cast-tick factor (§3.4) |
+| `skill.devotion.m25` | prayer timer increments × 9000 | every `prayer_timer` increment of §16.3 and §16.4 |
+| `skill.devotion.m50` | curse state of picked-up items known | none; doc 10 |
+| `skill.devotion.m75` | sacrifice value × 12500 | §16.5, after the genre doubling |
+| `skill.devotion.m100` | once per run, one prayer resolves as pleased | the first supplication of the run whose outcome would be DISPLEASED or ANGRY resolves PLEASED instead (§16.3) |
+| `skill.inscription.m25` | scribed scrolls × 12000 potency | texts this Erratum inscribes carry `scribe_bp = 12000` (§6.3, §8.3); every other text 10000 |
+| `skill.inscription.m50` | +1 enchantment slot on items you enchant | an item may hold a 4th enchantment if this Erratum applies it (§9.1) |
+| `skill.inscription.m75` | Scriptorium Rewrite cost × 5000 | also halves the glyph Rewrite price (§8.1) |
+| `skill.inscription.m100` | once per Folio, Rewrite without a Scriptorium | also allows one glyph Rewrite per Folio anywhere: 300-tick channel, not `in_combat` (§8.1) |
+
+Doc 04 §5.3 also gives Spellcraft "glyphs per spell `2 + floor_div(skill, 25)` (doc 06)". This chapter does not adopt that limit. The complexity budget (Canon §6.4 row 26) is the grammar's single size limit, and a 2-glyph cap below Spellcraft 25 would forbid every modifier and trigger for every starting Calling, the Spellwright included (Interface assumptions).
 
 ### 7.4 Skill XP
 
-Doc 04 owns the XP table. This chapter requests these rows:
+Doc 04 §5.2 owns the XP table. This chapter supplies its inputs:
 
-| Action | Skill | Milli-XP |
-|---|---|---|
-| spell, wand, text or summon damage | the stage school (summons: Conjuration) | Canon §7.1 damage-normalized formula, per hit |
-| non-damaging root resolution | spell school | `floor_div(base_cost, 20)` |
-| any root resolution | Spellcraft | 100 per modifier, trigger and condition glyph in the spell, at most 500 |
-| fizzle or surge | any | 0 |
-| supplication answered pleased or helped | Devotion | 2000 |
-| petition | Devotion | `20 × favor cost` before scaling |
-| sacrifice | Devotion | `10 × favor gained` |
-| text inscription | Inscription | `floor_div(base_cost, 10)` |
-| enchantment applied | Inscription | `2000 × points` |
+| Doc 04 row | Input this chapter defines |
+|---|---|
+| school skill: effective cast of a spell of that school, `100 × cost` | `cost = floor_div(base_cost, 1000)` (§6.1, display aether); the school is the root stage's; "effective" is doc 04's definition; texts, wands and on-use enchantments count; fizzles and wild surges never do |
+| conjuration: hit by your spell summon or raised minion | spell summons of §12.2 and `summon.risen` |
+| spellcraft: effective cast with `g ≥ 2` glyphs, `40 × cost × (g − 1)` | `g` is the glyph count over every stage of the spell; a bound glyph does not count |
+| spellcraft: first cast of a new self-designed spell this run, `2000 × g` | self-designed means a Grimoire or tome spell; "new" means its `spell_hash` has not resolved before in this run for this Erratum |
+| devotion: favor gained; prayer answered pleased or helped; effective prayer-component activation `100 × cost` | favor gains of §16.2; answered means PLEASED or HELPED (§16.3); `cost` of a petition is its favor cost before Devotion scaling; supplication and offering have `cost = 0` |
+| inscription: craft completed, `1000 × input_units + 2000 × recipe_tier` | text inscription: `input_units = 1`, `recipe_tier` = the highest glyph tier in the spell; enchanting: `input_units` = the enchantment's points, `recipe_tier` = its tier (1 to 3) |
+
+Example: W1 (base 5000) that hits grants Evocation `100 × 5 = 500` and Spellcraft `40 × 5 × 1 = 200` milli-XP before row 28.
 
 ## 8. Learning, Grimoire, texts, wands and implements
 
@@ -914,10 +1159,37 @@ The **Lexicon** is a per-Erratum `BTreeSet<(glyph id32, origin id32)>` in run st
 | Source | Teaches | Rules |
 |---|---|---|
 | Run start | `glyph.form.self`, `glyph.form.touch`, `glyph.form.bolt`, `glyph.ess.mend`, `glyph.ess.lumen` | origin = the Erratum's Origin genre (`genre.ur_text` for an Unwritten Origin); Calling and Echo kits (doc 04, doc 14) add more |
-| Glyph tome (`cat.book`) | its 1 to 3 glyphs, origin = tome `origin_genre` | read for 600 ticks while not `in_combat`; not consumed, so every party member can read it |
+| Glyph tome (`cat.book`) | its 1 to 3 glyphs, origin = tome `origin_genre` | read for 600 ticks while not `in_combat`; not consumed, so every party member can read it. Doc 11's `item.book.primer_<school>` templates are glyph tomes: Calling kits fix their glyphs (doc 14), and loot fills them with `glyph_tome` below |
 | Text study | the text's highest-tier unknown glyph (ties to lower ID), with that glyph's origin in the text | 300 ticks, not `in_combat`, Inscription ≥ 25; consumes the text |
-| Trainer (shop service, doc 11) | one glyph, origin = local genre | `mul_bp(100 × tier, P(d_current))` Lucre |
-| Scriptorium Rewrite (doc 12) | a known glyph re-originated to the local genre, added beside the old entry | `mul_bp(25 × tier, P(d_current))` Lucre; refused where the local axiom of the new dependency is 0 |
+| Trainer (shop service, doc 11) | one glyph from the loot pool, origin = local genre | `mul_bp(100 × tier, P(d_current))` Lucre |
+| Scriptorium Rewrite (doc 12) | a known glyph re-originated to the local genre, added beside the old entry | `mul_bp(25 × tier, P(d_current))` Lucre, × 5000 with Inscription 75; once per Folio without a Scriptorium with Inscription 100 (§7.3); refused where the local axiom of the new dependency is 0 |
+
+**Glyph loot pool.** The loot pool decides only what glyph tomes, trainers and text study can teach. Calling kits (doc 14), Echo kits, authored spells (wands, texts, NPCs) and inscribed texts use any glyph. The content set (Canon §13.6) holds `base` always and each other pool only when its unlock is owned; `unlock.daily_baseline` holds `base` only.
+
+| Pool | Glyphs | Added by |
+|---|---|---|
+| `base` | the 52 glyphs not listed below: 11 forms, 23 essences, 11 modifiers, triggers on_impact, on_expire and timer, conditions foe, ally, wounded and native | always |
+| `glyphs_2` | form rune, form wall, essences slumber and hush, modifiers homing and sculpt, trigger on_status, condition unaware | `unlock.loot.glyphs_2` (doc 14) |
+| `family.ember` | modifiers linger and volatile, trigger on_kill, condition burning | `unlock.glyph.ember` (doc 15 Script) |
+| `family.hollow` | essence shadow, modifiers siphon and leech, condition dark | `unlock.glyph.hollow` |
+| `family.mirror` | essences veil and dominion, modifiers twin and split | `unlock.glyph.mirror` |
+| `family.storm` | essences thunder and gale, modifier ricochet, trigger proximity | `unlock.glyph.storm` |
+| `family.thorn` | essences venom and polymorph, modifier delay, trigger on_struck | `unlock.glyph.thorn` |
+| `family.tide` | essence tide, condition wet, modifier anchor, trigger pulse | `unlock.glyph.tide` |
+| `family.<exp_genre_suffix>` | the 4 glyphs a Folio Expansion adds | that expansion's Script (doc 15) |
+
+```rust
+/// Contents of a looted glyph tome. `rng` is the stream doc 11 uses for that drop
+/// (rng.loot_place for placed tomes, keyed rng.loot for drops). Exactly n draws.
+fn glyph_tome(school: SchoolId, d: i32, set: &ContentSet, rng: &mut Rng) -> Vec<GlyphId> {
+    let max_tier = min(3, 1 + floor_div(d - 1, 5));          // tier 1 from Folio 1, tier 2 from 6, tier 3 from 11
+    let mut pool: Vec<GlyphId> = set.loot_pool_glyphs()        // triggers and conditions count as school.spellcraft
+        .filter(|g| g.school == school && g.tier <= max_tier).sorted_by_id();
+    if pool.is_empty() { return glyph_tome(SCHOOL_EVOCATION, d, set, rng); }   // evocation tier 1 is never empty
+    let n = min(2, pool.len());
+    (0..n).map(|_| pool.remove(rng.range(pool.len() as u64) as usize)).collect()
+}
+```
 
 ### 8.2 Grimoire
 
@@ -927,8 +1199,22 @@ The **Lexicon** is a per-Erratum `BTreeSet<(glyph id32, origin id32)>` in run st
 
 ### 8.3 Texts
 
-- **Reading** casts the text's spell at 0 aether. Read time is `max(1, ceil_div(30 × 10000, row17))` ticks (Canon §6.4 row 17) in the Winding state; it is interrupted like a cast. `st.blinded` or `st.silenced` forbids reading. The reader's row 29 applies; `src_lvl` is the text `ilvl`; the text's glyph origins set Contradiction. The text is consumed on resolution; an interrupted read keeps it.
-- **Inscribing** turns a blank text (doc 11) into a text holding a spell the inscriber can compile: 180 ticks, not `in_combat`, complexity at most `min(row 26 budget, 4 + floor_div(inscription, 10))`, aether `mul_bp(base_cost, 20000 − 100 × inscription)`. The new text has `ilvl = d_current`, item `origin_genre` = local genre, glyph origins from the inscriber's Lexicon, and starts `know.identified` for the party. Example: Inscription 10 inscribing W5 (base 11250) costs `mul_bp(11250, 19000) = 21375` m-aether.
+- **Reading** casts the text's spell at 0 aether. Read time is `max(1, ceil_div(30 × 10000, row17))` ticks (Canon §6.4 row 17) in the Winding state; it is interrupted like a cast. `st.blinded` or `st.silenced` forbids reading. The reader's row 29 applies; `src_lvl` is the text `ilvl`; the text's glyph origins set Contradiction. The text is consumed on resolution; an interrupted read keeps it. A blessed text multiplies its positive magnitudes (`mag_chain`, heal and ward) by 12500; a cursed text multiplies them by 7500 and carries `curse.misprint` (doc 10 §7.5). `scribe_bp` is 12000 on a text inscribed by an Erratum with Inscription 25 (§7.3) and 10000 otherwise.
+- **Inscribing** scrapes one identified `cat.text` of any type, consuming it as a palimpsest, and writes onto it a spell the inscriber can compile, producing one `item.text.inscribed` (a doc 11 template, Interface assumptions) that carries the glyph references: 180 ticks, not `in_combat`, complexity at most `min(row 26 budget, 4 + floor_div(inscription, 10))`, aether `mul_bp(base_cost, 20000 − 100 × inscription)`. The new text has `ilvl = d_current`, item `origin_genre` = local genre, glyph origins from the inscriber's Lexicon, and starts `know.identified` for the party. Example: Inscription 10 inscribing W5 (base 11250) costs `mul_bp(11250, 19000) = 21375` m-aether.
+
+Effects of doc 11's text templates (doc 10 owns `item.text.appraisal`, `item.text.sanctify` and its five proposed texts). Each spell text is an authored `spell.` record whose glyph origins are the text's `origin_genre`; `use_id` is the doc 10 §5.1 rule.
+
+| Template | Effect | Targeted | `use_id` |
+|---|---|---|---|
+| `item.text.mending` | `spell.text_mending` = `nova mend`: heals the reader and every ally within 5000 mm | no | `appr.use.on_effect` |
+| `item.text.blink` | the reader teleports up to 8000 mm along the aim to the farthest standable cell with line of effect (the `ench.blink` rule) | no | `appr.use.always` |
+| `item.text.mapping` | every room outline, door and exit of the current Folio appears on the party map (doc 17); secrets stay hidden | no | `appr.use.always` |
+| `item.text.demolition` | `spell.text_demolition` = `nova force shape`: force damage to hostiles and shape against `destructible` blocks within the nova | no | `appr.use.on_effect` |
+| `item.text.recharge` | the chosen wand: uncursed sets charges to max and lowers max by 1 (never below 1); blessed sets charges to max and keeps max; cursed sets charges to `mul_bp(max, 7500)` and lowers max by 1 | yes, `cat.wand` | `appr.use.always` |
+| `item.text.warding` | `spell.text_warding` = `nova ward`: a `st.shielded` pool on the reader and every ally within 5000 mm | no | `appr.use.on_effect` |
+| `item.text.silence` | `spell.text_silence` = `field hush`: a null field at the aimed point (§14.4) | no | `appr.use.always` |
+| `item.text.summoning` | `spell.text_summoning` = `manifest summon edge`: one `summon.hound` | no | `appr.use.always` |
+| `item.text.inscribed` | the inscribed spell | as the spell | never type-hidden; created identified (doc 10 §2) |
 
 ### 8.4 Wands
 
@@ -942,6 +1228,29 @@ The **Lexicon** is a per-Erratum `BTreeSet<(glyph id32, origin id32)>` in run st
 - **Zap**: spends 1 charge at Winding start; Winding lasts `max(1, ceil_div(12 × 10000, row17))` ticks; the wielder's row 29 applies; `src_lvl` is the wand `ilvl`; step 0 uses the wand's rarity, quality and enhancement. No aether, no cooldown. Zapping an unknown wand identifies its type (doc 10).
 - **Recharge**: +1 charge per 2400 ticks while carried. A recharge service or recharge text sets charges to max and lowers max by 1, never below 1.
 - **Snap**: hold use for 60 ticks to destroy the wand; its spell's essences resolve as a nova of radius 3000 mm centered on the wielder, including the wielder, at magnitude × `(5000 + 2500 × charges)`. A wand with 0 charges cannot be snapped.
+- A wand is zapped from the inventory through the quick-cast wheel or equipped in `slot.offhand` (doc 10 §4.3). Its Contradiction and misfire roll use `rng.combat` with the zap's key (§19.2); a failed zap is a fizzle and its charge is spent. Cursed wands carry one doc 10 §7.3 zap curse: `curse.misfire` adds its `m` to the failure chance (§3.9), `curse.backfire` makes the effect originate at and target the zapper on a successful `rng.ident` roll, `curse.leaking` spends an extra charge, `curse.bloodprice` costs HP.
+
+**Wand pool.** These 15 authored spells carry the tag `wand_pool` (doc 10 §4.2 allows at most 16). Doc 11 draws a generated wand's spell with `weighted` over `wand_weight`; every glyph origin becomes the wand's `origin_genre`. All are complexity 8 or less.
+
+| Spell | Glyphs | Complexity | `wand_weight` |
+|---|---|---|---|
+| `spell.searing_bolt` | bolt flame | 2 | 1000 |
+| `spell.frost_orb` | orb frost widen | 4 | 900 |
+| `spell.packet_surge` | bolt storm quicken | 3 | 900 |
+| `spell.thorn_sleep` | bolt slumber | 2 | 700 |
+| `spell.wand_striking` | bolt force | 2 | 800 |
+| `spell.wand_digging` | bolt shape | 3 | 600 |
+| `spell.wand_light` | bolt lumen | 2 | 700 |
+| `spell.wand_haste` | self swiftness | 2 | 600 |
+| `spell.wand_polymorph` | bolt polymorph | 4 | 300 |
+| `spell.wand_dispel` | bolt unmaking | 3 | 600 |
+| `spell.wand_fear` | cone dread | 2 | 600 |
+| `spell.wand_lightning` | chain storm | 3 | 700 |
+| `spell.wand_venom` | cone venom | 2 | 700 |
+| `spell.wand_conjure` | manifest summon edge | 5 | 400 |
+| `spell.wand_invisibility` | self veil | 2 | 500 |
+
+The weights sum to 10000. Beams and channels never enter the pool, because a zap spends one charge per activation.
 
 ### 8.5 Implements and tome spells
 
@@ -965,7 +1274,7 @@ capacity_points = floor_div(slot_base × (4 + arc_aff), 4) + rarity_bonus      /
 | hands, feet, back, belt, face | 2 | Palimpsestic | 3 |
 | wands, texts, consumables | 0 (never enchantable) | | |
 
-An item holds at most 3 enchantments with total points at most its capacity. Examples: an iron longsword with `arc_aff` 2 has `floor_div(4 × 6, 4) = 6` points, 7 if Rare. A silver ring with `arc_aff` 8 has `floor_div(3 × 12, 4) = 9`.
+An item holds at most 3 enchantments, or 4 when the 4th is applied by an Erratum with Inscription 50 (§7.3), with total points at most its capacity. Examples: an iron longsword with `arc_aff` 2 has `floor_div(4 × 6, 4) = 6` points, 7 if Rare. A silver ring with `arc_aff` 8 has `floor_div(3 × 12, 4) = 9`.
 
 ### 9.2 Modes and dependency
 
@@ -979,7 +1288,9 @@ Each enchantment is a component with `dep = {arcana}` (Canon §5.3) and origin =
 
 ### 9.3 Procedure
 
-At an enchanting station (doc 07), while not `in_combat`: a 300-tick channel; Inscription at least 0, 25 or 50 for tier I, II or III; `5000 × points` m-aether; one arcane reagent material (doc 07) per point. Enchanting is deterministic and never fails. The station refuses where local ARCANA is 0. Removing an enchantment takes 60 ticks and returns nothing. Instance record: `{ "ench": "ench.searing", "tier": 2, "origin": "genre.mythic_fantasy", "param": null, "uses_left": 0 }`.
+At an enchanting station (doc 07), while not `in_combat`: a 300-tick channel; Inscription at least 0, 25 or 50 and local ARCANA at least 1, 4 or 7 for tier I, II or III; `5000 × points` m-aether; one arcane reagent material (doc 07) per point. Enchanting is deterministic and never fails. The station refuses where local ARCANA is 0.
+
+Balance note on the ARCANA gate: an enchantment's `Req` comes from the genre where it was applied, and nothing else depended on that genre, so without the gate every player enchanted in the lowest-ARCANA genre that still allowed it (Cyberpunk, ARC 1, `Req` 1) and got Coherent enchantments everywhere at full strength. With the gate, tier III needs Mythic Fantasy, Fairy Tale or Oneiric (`Req` 6 to 8), tier II also allows ARCANA 4 to 6 genres (`Req` 2 to 4), and the portable `Req` 1 enchantments of ARCANA 1 to 3 genres are tier I only. Removing an enchantment takes 60 ticks and returns nothing. Instance record: `{ "ench": "ench.searing", "tier": 2, "origin": "genre.mythic_fantasy", "param": null, "uses_left": 0 }`.
 
 ### 9.4 Enchantment catalog
 
@@ -1024,7 +1335,7 @@ A spell's register is the origin of its root Form (§4.2). Every rider is part o
 | § | Register | Rider | Exact effect |
 |---|---|---|---|
 | 10.1 | Spell (Mythic Fantasy) | Ley-Bound | `rider cost_bp` 9500 while an implement is active |
-| 10.2 | Sanguine Rite (Gothic Horror) | Blood Price | when aether is below `cast_cost` at cast start, the shortfall `s` is paid as `mul_bp(s, 15000)` mHP removed directly from HP (no pipeline, no ward, `ev.damage_dealt` flag `self_cost`); allowed only if HP stays at least 1000 mHP; never triggers Death's Door |
+| 10.2 | Sanguine Rite (Gothic Horror) | Blood Price | for a caster without `aug.blood_battery` (§2.3): when aether is below `cast_cost` at cast start, the shortfall `s` is paid as `mul_bp(s, 15000)` mHP removed directly from HP (no pipeline, no ward, `ev.damage_dealt` flag `self_cost`); allowed only if HP stays at least 1000 mHP; never triggers Death's Door |
 | 10.3 | Gnostic Rite (Cosmic Horror) | Composure Toll | `rider_pot` 11500; each root resolution is a composure loss of `mul_bp(cast_cost, 5000)` m-composure, which doc 04 multiplies by the MYTHOS composure term (Canon §5.7) |
 | 10.4 | Discipline (Space Opera) | Focused Channel | channel drain × 8000 |
 | 10.5 | Program (Cyberpunk) | Silent Execution | ignores `st.silenced`; cannot start under `st.shocked` or `st.hacked`; gaining `st.shocked` hard-interrupts it; cast noise −20 dB |
@@ -1039,14 +1350,16 @@ A spell's register is the origin of its root Form (§4.2). Every rider is part o
 | 10.14 | Procedure (The Redaction) | Redundant Copy | the first soft interrupt of each cast restarts Winding from tick 0 instead of ending the cast |
 | 10.15 | Word (The Ur-Text) | none | — |
 
+Riders travel with the register: they apply wherever the spell is cast, and none is `law_bound` (Canon §5.10). No launch World Law (doc 12 §4) grants tolerance to spell glyphs, prayers or enchantments.
+
 Worked flavor spells (each with `C = 0`, home genre, glyph term from §2.2):
 
 | Spell | Caster and place | Cost | Potency | Result |
 |---|---|---|---|---|
-| **W9 Palm of Mountain Force** `touch force heavy`, a Wuxia Technique | Wuxia Origin, ATN 45, Alteration 30, Spellcraft 10, no implement, `d = 6` so `src_lvl = 3` | base `3500 × 13000 = 4550`; `cost_skill 25 → 11250`; 5118 m-aether (no-implement factor 10000 by Flowing Body) | `11150 → 12265 → 13491 → 14840` (glyph term 11000) | `dmg_base 22000 × 13000 = 28600`; `B = 33979`; 50424 mHP `dmg.blunt`, instant, full move speed; knockback 9000 mm/s; poise × 20000; `st.stunned` p 47, ×S(3) 49 |
+| **W9 Palm of Mountain Force** `touch force heavy`, a Wuxia Technique | Wuxia Origin, ATN 45, Alteration 30, Spellcraft 10, no implement, `d = 6` so `src_lvl = 3` | base `3500 × 13000 = 4550`; `cost_skill 25 → 11250`; 5118 m-aether (no-implement factor 10000 by Flowing Body) | `11150 → 12265 → 13491 → 14840` (glyph term 11000) | `dmg_base 22000 × 13000 = 28600`; `B = 33979`; 50424 mHP `dmg.blunt`, instant with 45 recovery ticks, full move speed; knockback 9000 mm/s; poise × 20000; `st.stunned` p 47, ×S(3) 49 |
 | **W10 Gaze of Madness** `cone mind`, a Gnostic Rite | Cosmic Horror Origin, ATN 55, Illusion 40, Spellcraft 20, Rare focus `ilvl` 12, `d = 12` | base 6500; `cost_skill 35 → 10750`; 6987 → ×9500 = 6637 m-aether; composure toll 3318, × 15000 MYTHOS term = 4977 m-composure | `11950 → 13145 → 14459 → ×11500 = 16627` | `dmg_base 14000`; `B = 14000 → ×25804 36125 → ×11000 39737`; 66070 mHP `dmg.psychic` to every target in the cone; `st.dread` p `45 → ×7000 31 → ×16627 51 → ×S(12) 67` |
 | **W11 Thorn-Sleep on credit** `bolt slumber`, a Bargain | Fairy Tale Origin, ATN 40, Illusion 25 (slumber's tier-2 gate), Spellcraft 10, focus `ilvl` 4, 2000 m-aether left | base 6000; `cost_skill 21 → 11450`; 6870 → ×9500 = 6526; shortfall 4526, `Debt = mul_bp(4526, 12500) = 5657` | `10750 → 11825 → 13007` | `st.sleeping` p `50 → ×13007 65 → ×S(4) 70`; regeneration 1950 m-aether per s repays the Debt in 175 ticks; leaving the Folio before then costs `ceil_div(5657, 1000) = 6` favor |
-| **W12 Boiler Burst** `nova thunder`, a Device | Steampunk Origin, ATN 40, Evocation 25, Spellcraft 15, Common focus `ilvl` 10, `d = 10` | base 7500; `cost_skill 22 → 11400`; 8550 → ×9500 = 8122 m-aether | `10750 → 11180 → 11627` (glyph term 10400) | `dmg_base 14000`; `B = 30405`; 35351 mHP `dmg.sonic` within 5000 mm; `st.deafened` p `40 → ×7000 28 → ×11627 32 → ×S(10) 40`; no interruption rolls; one `gas.steam` cell vents at the caster's feet |
+| **W12 Boiler Burst** `nova thunder`, a Device | Steampunk Origin, ATN 40, Evocation 25, Spellcraft 15, Common focus `ilvl` 10, `d = 10` | base 7500; `cost_skill 22 → 11400`; 8550 → ×9500 = 8122 m-aether | `10750 → 11180 → 11627` (glyph term 10400) | `dmg_base 14000`; `B = 30405`; 35351 mHP `dmg.sonic` within 5000 mm; `st.deafened` p `(40 + 10 Evocation 25) = 50 → ×7000 35 → ×11627 40 → ×S(10) 50`; no interruption rolls; one `gas.steam` cell vents at the caster's feet |
 
 ## 11. Contradiction for spells
 
@@ -1056,7 +1369,7 @@ Every glyph is a component (Canon §5.3) with `dep = {glyph-origin aether axis}`
 
 ### 11.2 Fizzle (C = 3)
 
-A failed roll at C = 3 is a **fizzle**: the full cast cost stays spent, nothing resolves, the cooldown starts, a 70 dB noise and a puff of the register's VFX occur at the caster, and `ev.spell_fizzled` is emitted (Canon gap G3).
+A failed roll at C = 3 is a **fizzle**: the full cast cost stays spent, nothing resolves, the cooldown keys are set, a 70 dB noise and a puff of the register's VFX occur at the caster, and `ev.spell_cast` is emitted with `fizzled = true` (doc 03 payload). The same fizzle follows a failed roll by an NPC at any C (doc 13 §5), a curse misfire (§3.9), and a resolution whose core glyph went Disconnected during the cast (no roll). Every failed roll at C ≥ 3 by an Erratum counts as a Contradiction failure toward `st.unmoored` (Canon §5.11): the third within 600 ticks applies it for 300 ticks, and while it lasts a Strained spell (C 1 or 2) rolls as C = 3.
 
 ### 11.3 Wild surge (C >= 4)
 
@@ -1072,7 +1385,7 @@ A failed roll at C = 4 or C = 5 is a **wild surge**: the cost stays spent, the c
 | 6 | Aether Burn | 1000 | 1000 | aether set to 0; the caster takes a `dmg.arcane` hit of 500 Bp of Max HP entering at Canon §10.5 step 4 |
 | 7 | Tongue-Tied | 700 | 700 | `st.silenced` direct on the caster, base 240 ticks |
 | 8 | Blink | 600 | 600 | the caster teleports 8000 mm toward yaw `v2` to the farthest standable cell with line of effect |
-| 9 | Toad | 400 | 600 | the caster gains `st.polymorphed` as `summon.poly.toad` for 300 ticks (unscaled) |
+| 9 | Toad | 400 | 600 | the caster gains `st.polymorphed` as `summon.poly.toad` by direct application, base 300 ticks (Canon §11.4, arcane scaling) |
 | 10 | Red Ink | 500 | 800 | the caster gains 1 stack of `st.erasure` |
 | 11 | Misprint | 300 | 500 | a hostile `summon.misprint` spawns at the standable cell nearest to 3000 mm from the caster toward yaw `v2` |
 | 12 | Flash | 700 | 800 | `st.blinded` direct on every entity within 6000 mm, the caster included |
@@ -1085,8 +1398,10 @@ Selection: cumulative weights in table order; entry `i` is chosen when `v1` fall
 
 - A spell summon is a minion (Canon §15.1): `fac.errata`, `owner_slot`, `st.bound`, `ev.minion_bound` on spawn and `ev.minion_released` on death, release or despawn. It despawns on `ev.folio_exited`.
 - Cap `MINION_CAP_PER_PLAYER = min(5, 1 + floor_div(max(conjuration, handling), 25))`. Summoning at the cap first releases the owner's lowest-EntityId spell summon. At `FOLIO_MINION_CAP = 16` the cast cannot start unless the owner has a spell summon to release.
-- **Stats** with `pot` = the summoning stage's `spell_pot` snapshot: Max HP `template_hp → × P(src_lvl) → × pot`; AR `template_ar → × T(src_lvl)`; attack base `template_dmg → × P(src_lvl) → × pot`, entering Canon §10.5 at step 1 (no step 2.1); status power `template_p → × pot`, then Canon §11.2 with `S(src_lvl)`; effective sub-attributes `40 + floor_div(3 × (src_lvl − 1), 2)`, capped 150, for NPC-row formulas (Canon §6.5).
-- **Duration** `3600 → × (10000 + 50 × conjuration) → × duration_bp → × C potency` ticks. The familiar has no duration.
+- **Stats** with `pot` = the summoning stage's `spell_pot` snapshot: Max HP `template_hp → × P(src_lvl) → × pot → × each [T] summon HP factor in ascending ID byte order` (doc 04 Conjuration 25 11500, Leadership 25 11500, Oracle talent `spirit_guide` 12000; doc 14 `echo.briar_thornwood` 11500); AR `template_ar → × T(src_lvl)`; attack base `template_dmg → × P(src_lvl) → × pot`, entering Canon §10.5 at step 1 (no step 2.1); status power `template_p → × pot`, then Canon §11.2 with `S(src_lvl)`; effective sub-attributes `40 + floor_div(3 × (src_lvl − 1), 2)`, capped 150, for NPC-row formulas (Canon §6.5).
+- **Duration** `3600 → × (10000 + 50 × conjuration) → × duration_bp → × C potency → × 15000 with Conjuration 50` ticks. The familiar and `summon.risen` last until Folio exit.
+- **Resistances**: template resistances, plus `mul_bp(owner.resist[t], 2500)` per type with Conjuration 75, clamped to the NPC cap 9000 (Canon §10.2). Doc 04's Oracle talent `consecrated` converts 3000 Bp of each summon hit's shares to `dmg.radiant` by the §9.4 conversion rule.
+- **Owner states** (doc 13 §6): owner downed, the summon guards the owner; owner dead or a ghost, every spell summon of that owner despawns (`ev.minion_released`, reason 0).
 - **Contradiction**: the summon's components depend on the summon glyph's axis and origin, evaluated at the summon's position with the owner's tolerance. Step 2.5 of its hits uses that potency. Disconnected makes the summon inert (no attacks, no specials) until reconnected.
 - **AI hooks** (doc 13 runs them): think every 6 ticks. Target priority: the `input.minion_attack` target; else the most recent attacker of the owner within 12000 mm; else the nearest hostile within 12000 mm of the summon (minimum `dist2`, ties to lower EntityId). Leash 16000 mm from the owner. `input.minion_hold` holds position; `input.minion_follow` follows at 3000 mm. Profiles: `support`, `artillery` (keeps 6000 to 8000 mm), `guardian` (stays within 4000 mm of the owner), `skirmisher`, `healer`, `decoy`, `bodyguard` (stays between the owner and the owner's nearest attacker).
 
@@ -1106,7 +1421,8 @@ Values are at `P = 10000` and `pot = 10000`. The summon template is chosen by th
 | `summon.phantasm` | mind | humanoid | 40000 | 0 | none | 4300 | decoy | on spawn `st.taunted` direct to hostiles within 6000 mm; on death `st.confused` power 60 (carrier psychic) within 3000 mm and 100 dB noise |
 | `summon.sentinel` | ward | construct | 80000 | 30 | none | 6500, flies | bodyguard | a hostile projectile whose path passes within 1500 mm of it hits it instead |
 | `summon.herald` | prayer only (§16.3) | humanoid | 150000 | 30 | 16000, radiant, 60, 2500 | 6000, flies | guardian | friendly: 3600 ticks; hostile: an NPC of `rank.elite` |
-| `summon.misprint` | surge only (§11.3) | amorphous | 50000 | 0 | 10000, arcane, 60, 2000 | 5000 | hunter | `fac.editors`, `rank.standard`; erases Errata-placed blocks like an Editor (Canon §11.6) |
+| `summon.misprint` | surge only (§11.3) | amorphous | 50000 | 0 | 10000, arcane, 60, 2000 | 5000 | hostile (doc 13 hunter behavior) | `fac.editors`, `rank.standard`; erases Errata-placed blocks like an Editor (Canon §11.6) |
+| `summon.risen` | Conjuration 100 only (doc 04) | humanoid | 70000 | 10 | 10000, blunt, 60, 2000 | 4300 | guardian | raised from a humanoid corpse dead under 600 ticks, which it consumes; 50 aether, 120-tick Winding; `pot` = row 29 with Conjuration and no glyph terms; `src_lvl` = the active implement's `ilvl`, else `max(1, d_current − 3)`; tagged undead; counts toward the minion cap; lasts until Folio exit |
 
 A hostile herald or misprint is an enemy: HP `template → × H(d_current) → × rank HP → × party HP`, damage `template → × T(d_current) → × rank damage`.
 
@@ -1126,7 +1442,7 @@ Rules:
 
 - `glyph.ess.polymorph` applies the template of the spell's register by direct application: base `1800 → × duration_bp → × C potency`, then Canon §11.4 with the arcane threshold, then the rank control multiplier. Bosses, editors and hunters are immune (Canon §11.4).
 - While polymorphed: equipment is stowed (no item component works, enchantments included); no casting, prayer, item use, block, sprint or dodge; movement, capsule, jump and attack come from the template; AR 0 on every part; Max HP is unchanged, so the HP ratio is kept; parts map to the template body plan with every pool at the current HP ratio. The **reference** attack B is the bearer's primary attack B (NPC: template damage × `T(d)` × rank; Erratum: `10000 × P(d_current)`).
-- The status ends at expiry, by dispel, or when damage taken since application reaches 2000 Bp of Max HP (4000 with the Alteration 75 hook). On revert, original parts take the current HP ratio; severed parts stay severed.
+- The status ends at expiry, by dispel, or when damage taken since application reaches 2000 Bp of Max HP. On revert, original parts take the current HP ratio; severed parts stay severed.
 
 ## 13. Spells and the world
 
@@ -1156,7 +1472,7 @@ Spell noise: every root resolution emits `ev.noise` at the caster with the form'
 
 ### 13.2 Shaping stone
 
-`shape_power = 3 + floor_div(alteration, 25)` (+2 with the Alteration 50 hook). Bolt and touch remove the first collision block they meet if it is tagged `destructible` and its doc 07 hardness is at most `shape_power`; the block drops as if mined (doc 07). Nova removes every such block within 2000 mm, at most 27 in ascending local index. Wall places 15 **conjured** blocks of the local genre's stone (doc 07), a temporary barricade under decision 16, in the wall's air and liquid cells; conjured blocks vanish at the wall's expiry, drop nothing, count as Errata-placed for Editor erasure (Canon §11.6) and emit `ev.block_changed`. Wall with bind places `block.web` cells; wall with frost places `block.ice` cells; both vanish at expiry. Damage walls of other essences place no blocks.
+`shape_power = 3 + floor_div(alteration, 25)`. Bolt and touch remove the first collision block they meet if it is tagged `destructible` and its doc 07 hardness is at most `shape_power`; the block drops as if mined (doc 07). Nova removes every such block within 2000 mm, at most 27 in ascending local index. Wall places 15 **conjured** blocks of the local genre's stone (doc 07), a temporary barricade under Canon §4.3, in the wall's air and liquid cells; conjured blocks vanish at the wall's expiry, drop nothing, count as Errata-placed for Editor erasure (Canon §11.6) and emit `ev.block_changed`. Wall with bind places `block.web` cells; wall with frost places `block.ice` cells; both vanish at expiry. Damage walls of other essences place no blocks.
 
 ## 14. Dispel, silence, counterspell and anti-magic
 
@@ -1170,7 +1486,7 @@ A status instance is **dispellable** when a spell, prayer, wand, text, enchantme
 
 ### 14.3 Counterspell
 
-An unmaking hit on an entity in Winding, Channeling or Charging hard-interrupts the cast with no roll, the target's debited aether stays spent, and the target gains `st.silenced` by direct application with base 60 ticks (180 with the Abjuration 75 hook). Unmaking projectiles and areas also destroy hostile spell projectiles they touch. NPC casters counterspell Errata by the same rule.
+An unmaking hit on an entity in Winding, Channeling or Charging hard-interrupts the cast with no roll, the target's debited aether stays spent, and the target gains `st.silenced` by direct application with base 60 ticks. Unmaking projectiles and areas also destroy hostile spell projectiles they touch. NPC casters counterspell Errata by the same rule.
 
 ### 14.4 Anti-magic
 
@@ -1194,9 +1510,10 @@ Canon §11.1 fixes stacking, base duration and the canonical effect; these are t
 | `st.dread` | players: composure −15 on application, regeneration 0; NPCs have no composure: doc 13 raises flee utility, no numeric effect |
 | `st.hasted` | includes cast speed (§3.4) |
 | `st.regenerating` | 200 Bp of Max HP per s through the Canon §11.3 accumulator (`k = 4`) |
-| `st.shielded` | reapplication sets the pool to `max(current, new)` and refreshes expiry; pool at most 5000 Bp of Max HP |
+| `st.shielded` | reapplication sets the pool to `max(current, new)` and refreshes expiry; pool at most 5000 Bp of Max HP; a pool granted by a caster with Abjuration 75 has no expiry until depleted or Folio exit, and with Abjuration 100 it is consumed with `mul_bp(ward_mult[t], 8000)` (§7.3) |
+| `st.invisible` | a harmful root resolution by the bearer ends it (Canon §11.1 "ends on attack"), except an illusion-school spell when the bearer has Illusion 50; Illusion 100 grants it for 60 ticks on each illusion cast (§7.3) |
 | `st.empowered`, `st.fortified`, `st.blessed` | as canon |
-| `st.levitating` | gravity 0; jump input rises and crouch input descends at 1500 mm/s; on expiry the fall peak is the expiry position |
+| `st.levitating` | gravity 0; jump input rises and crouch input descends at 1500 mm/s (2250 when granted by a caster with Alteration 50); on expiry the fall peak is the expiry position |
 | `st.polymorphed` | §12.3 |
 
 ## 16. Prayers and Devotion
@@ -1217,28 +1534,38 @@ Each patron `patron.<genre_suffix>` is the Author of its genre. Prayers to a pat
 | `patron.hardboiled_noir` | The Witness | `st.marked` 480 on every hostile within 30000 mm | lose 1000 Bp of carried Lucre | each successful pickpocket: 10 |
 | `patron.wuxia` | The Sage of the Ninth Peak | `st.inspired` 1800 | `st.confused` 300 | each sneak-attack kill: 5 |
 | `patron.steampunk` | The Grand Engineer | `st.fortified` 1800 | `st.burning` 240 | an equipped item reaching durability 0: 20 |
-| `patron.fairy_tale` | The Godmother of Thorns | `st.blessed` 900 and Bargain Debt cleared | `st.polymorphed` as toad, 300 (unscaled) | Folio exit with Debt: `ceil_div(Debt, 1000)` |
-| `patron.mythic_antiquity` | The Laurel-Crowned | `st.empowered` 1200 | a `dmg.radiant` hit of 2000 Bp of Max HP entering Canon §10.5 at step 4 | 40 kills since the last sacrifice to this patron: 100, counter resets |
+| `patron.fairy_tale` | The Godmother of Thorns | `st.blessed` 900 and Bargain Debt cleared | `st.polymorphed` as toad, direct, base 300 (Canon §11.4) | Folio exit with Debt: `ceil_div(Debt, 1000)` |
+| `patron.mythic_antiquity` | The Laurel-Crowned | `st.empowered` 1200 | a `dmg.radiant` hit of 2000 Bp of Max HP entering Canon §10.5 at step 4 | 40 kills since the last sacrifice or shrine prayer to this patron: 100, counter resets (the per-Erratum mirror of doc 12's `law.mythic_antiquity.hubris`) |
 | `patron.oneiric` | The Dreamer Who Writes Us | aether to max and `st.levitating` 600 | `st.sleeping` 240 | waking a `st.sleeping` creature with damage: 5 |
 | `patron.redacted` | The Censor | removes 2 stacks of `st.erasure` | adds 2 stacks of `st.erasure` | reading a `cat.text`: 5 |
-| `patron.unwritten` | The Blank Page | prayer timer set to 0 | none | none |
+| `patron.unwritten` | The Blank Page | removes `st.unmoored`, clears the Canon §5.11 failure count, and `st.blessed` 900 | none | none |
 | `patron.ur_text` | The First Author | removes every DoT, debuff, control and mental status; HP to max | `st.dread` | none |
 
-An Erratum who breaks an altar block loses 200 favor with that altar's patron.
+An Erratum who breaks an altar block loses 200 favor with that altar's patron. The Blank Page's boon used to set the prayer timer to 0, which let a full-health Erratum pray to it every 60 ticks for +50 favor each time and reach 1000 favor in 20 prayers; its boon now leaves the timer alone.
 
 ### 16.2 Favor
 
 - `res.favor` is per Erratum and per patron: 16 values, `−1000..=1000`, starting 0 each run (Canon gap G12).
 - Gains × `(100 + devotion) / 100`, losses × `100 / (100 + devotion)`, integer floor (Canon §16.5). Devotion 20: a gain of 50 becomes 60, a loss of 100 becomes 83.
+
+```
+gain(x) = floor_div(x × (100 + devotion), 100) → × each [T] favor-gain factor in ascending ID byte order
+          // doc 04 Oracle talent devout 12500; Origin trait favored 12500 (Mythic Antiquity Origin)
+loss(x) = floor_div(x × 100, 100 + devotion)
+favor   = clamp(favor ± result, −1000, 1000)
+```
+
+- **Shrines.** A supplication, petition or offering made within 3000 mm of an altar block of the chosen patron is made at a shrine. Doc 12's `law.mythic_antiquity.favor` adds +50 before scaling to each Erratum's first prayer per Folio at a `room.shrine`, and a `secret.room.shrine` altar adds +100 before scaling to its first prayer.
+- **Prayer timer increments** (§16.3, §16.4) are multiplied, one `mul_bp` each, by 9000 with Devotion 25 and by 7500 with the Oracle talent `divine_favor` (doc 04).
 - Sources: sacrifice (§16.5); exiting a Folio whose genre is the patron's: +25; each `fac.editors` kill: +10 to the local patron; Heard Above (§10.12); prayer outcomes; taboos; altar breaking; Bargain Debt (§10.11). Each change emits `ev.favor_changed` (Canon gap G3).
 
 ### 16.3 Supplication
 
-`prayer.supplication` asks the chosen patron (default: the local genre's) for help. It is a 60-tick Winding cast, interruptible by §3.7, forbidden by `st.silenced`, and allowed while `st.downed`. Each Erratum has `prayer_timer: Ticks`, starting 0 and falling by 1 per tick to 0. Contradiction of the prayer is rolled like a spell (`rng.combat`); a failure is **Unheard**: no effect, timer +3600, favor unchanged.
+`prayer.supplication` asks the chosen patron (default: the local genre's) for help. It is a 60-tick Winding cast, interruptible by §3.7 and forbidden by `st.silenced` and `st.downed` (doc 16 forbids every cast while downed). Each Erratum has `prayer_timer: Ticks`, starting 0 and falling by 1 per tick to 0. Contradiction of the prayer is rolled like a spell (`rng.combat`, key `(erratum, input tick, 0)`); a failure is **Unheard**: no effect, timer +3600, favor unchanged, and it counts toward `st.unmoored` like a fizzle.
 
 ```
-r  = keyed_rng("rng.magic", folio, erratum, input_tick, action_seq)        // exactly 4 draws, always
-r0 = r.range(500); r1 = r.range(1_800_000); r2 = r.range(10000); r3 = r.range(65536)
+r  = keyed_rng("rng.magic", folio, erratum, input_tick, 0)                 // exactly 4 draws, always
+r0 = r.range(500); r1 = r.range(180_000); r2 = r.range(10000); r3 = r.range(65536)
 f  = favor before this prayer
 if timer == 0:
     if f >= -(r0 as i32): PLEASED   timer += 18000; favor += gain(50); resolve one need
@@ -1249,23 +1576,28 @@ else:
           if f < -250 && r2 < 2000: a hostile summon.herald spawns 6000 mm away toward yaw r3
 if PLEASED && f > 250 && r2 < 500:        a friendly summon.herald for 3600 ticks
 else if PLEASED && f > 100 && 500 <= r2 && r2 < 1000:
-    Gift: +1 enhancement to the active weapon or implement (within Canon §13.7 caps); if f >= 500, also +1 to the lowest-uid other equipped item
+    Gift: +1 enhancement to the active weapon or implement (within Canon §13.7 caps, ilvl unchanged, so a Gift is
+          weaker than an Emendation); if f >= 500, also +1 to the lowest-uid other equipped item
+if Devotion 100 unused this run && outcome ∈ {DISPLEASED, ANGRY}: outcome = PLEASED, with its timer, favor and need
+          // doc 04 skill.devotion.m100; the herald and gift lines above then use the PLEASED branch
 ```
 
-Needs, resolved in this priority (the first that applies): (1) HP below 3333 Bp of Max HP: HP to max and `st.downed` removed; (2) a severed part: every severed part reattached (Canon §9.1); (3) `st.madness` or composure below 2500 Bp: composure to max; (4) a cursed equipped item: the lowest-uid one uncursed (Canon §13.7 Emendation rule without the Emendation); (5) any DoT status: all removed; (6) satiation at most 600: set to 1800; (7) aether below 3333 Bp: aether to max; (8) otherwise the signature boon. Praying to the local genre's patron multiplies boon and wrath durations and petition magnitudes by 15000 (Canon §16.5).
+Balance note on `r1`: Canon §16.5 scales IVAN's timers by 3.6, which would make IVAN's `Timer < RAND_N(500000)` into `range(1_800_000)`. In real time that is 500 minutes, so an Erratum with 500 favor could pray again right after a PLEASED answer and be HELPED with 99% chance, then again with 94%, about ten full heals in one fight. With `range(180_000)` a second prayer right after PLEASED (timer 18000) is HELPED with 90% chance, a third (timer 108000) with 40%, and a fourth never.
 
-Worked draws (run seed `0x0123456789ABCDEF`, Folio 5, Erratum `(5 << 40) | 2`, tick 18000, seq 0): `r0..r3 = 299, 1254114, 2047, 7972`. Favor 120, timer 0: `120 >= −299`, PLEASED; `r2 = 2047` gives no herald and no gift. Favor −300, timer 0: `−300 < −299`, DISPLEASED. Favor 300, timer 20000: `300 > 299` and `20000 < 1254114`, HELPED. At tick 18002 (`r0 = 491`) the same favor 300 and timer 20000 give ANGRY.
+Needs, resolved in this priority (the first that applies): (1) HP below 3333 Bp of Max HP: HP to max; (2) a severed part: every severed part reattached (Canon §9.1); (3) `st.madness` or composure below 2500 Bp: composure to max; (4) a cursed equipped item: the lowest-uid one uncursed (Canon §13.7 Emendation rule without the Emendation); (5) any DoT status: all removed; (6) satiation at most 600: set to 1800; (7) aether below 3333 Bp: aether to max; (8) otherwise the signature boon. Praying to the local genre's patron multiplies boon and wrath durations and petition magnitudes by 15000 (Canon §16.5).
+
+Worked draws (run seed `0x0123456789ABCDEF`, Folio 5, Erratum `(5 << 40) | 2`, tick 18000, seq 0): `r0..r3 = 299, 125411, 2047, 7972`. Favor 120, timer 0: `120 >= −299`, PLEASED; `r2 = 2047` gives no herald and no gift. Favor −300, timer 0: `−300 < −299`, DISPLEASED. Favor 300, timer 20000: `300 > 299` and `20000 < 125411`, HELPED. At tick 18002 the draws are `491, 36979, 9278, 14839`; the same favor 300 and timer 20000 fail `300 > 491` and give ANGRY.
 
 ### 16.4 Petitions
 
-A petition spends favor for a fixed effect, with no outcome roll. It needs favor at least the minimum and `prayer_timer <= 36000`; it is a 30-tick Winding cast; it costs its favor as a loss (scaled by Devotion) and adds 3600 ticks to `prayer_timer`. A Contradiction failure is Unheard and spends no favor. Magnitudes multiply by row 29 with school skill = Devotion, then × 15000 for the local patron, then by Contradiction potency.
+A petition spends favor for a fixed effect, with no outcome roll. It needs favor at least the minimum and `prayer_timer <= 7200`; it is a 30-tick Winding cast; it costs its favor as a loss (scaled by Devotion) and adds 3600 ticks to `prayer_timer`, so from a timer of 0 three petitions chain and the fourth waits 60 s. The gate was `prayer_timer <= 36000`, which allowed ten petitions back to back: at 1000 favor and Devotion 50 that was ten heals of 52% of Max HP in five seconds. A Contradiction failure is Unheard and spends no favor. Magnitudes multiply by row 29 with school skill = Devotion, then × 15000 for the local patron, then by Contradiction potency.
 
 | ID | Favor cost | Minimum favor | Effect |
 |---|---|---|---|
 | `prayer.benediction` | 60 | 0 | `st.blessed` 1800 ticks on the petitioner and allies within 8000 mm |
 | `prayer.smite` | 40 | 0 | a `dmg.radiant` hit on the aimed target within 20000 mm, `dmg_base` 30000 mHP, step 0 with the prayer `src_lvl` |
 | `prayer.sanctuary` | 80 | 100 | a field of radius 4000 mm for 600 ticks; hostile NPCs inside gain `st.feared` (direct, base 60) every 30 ticks |
-| `prayer.mending` | 50 | 0 | heals 3500 Bp of Max HP on the petitioner or a touched ally |
+| `prayer.mending` | 50 | 0 | heals 2500 Bp of Max HP on the petitioner or a touched ally (4312 Bp at ATN 40, Devotion 50, local patron) |
 | `prayer.reattachment` | 150 | 200 | reattaches every severed part of the petitioner or a touched ally |
 | `prayer.absolution` | 200 | 300 | uncurses the lowest-uid cursed equipped item |
 | `prayer.turning` | 50 | 0 | undead- and fiend-tagged hostiles within 10000 mm gain `st.feared` (direct, base 240) |
@@ -1279,7 +1611,15 @@ Example: Devotion 50 pays `floor_div(60 × 100, 150) = 40` favor for `prayer.ben
 
 ### 16.5 Sacrifice
 
-`prayer.offering` places items on an altar block (doc 07, doc 12) of a patron. An Erratum-placed altar takes the patron chosen at placement. Each item gives a favor gain of `isqrt(item.value)`, doubled when `item.origin_genre` is the patron's genre (Canon §16.5), then Devotion scaling. Example: value 2500 from the patron's genre gives `2 × 50 = 100`, and with Devotion 20 `floor_div(100 × 120, 100) = 120`. A value-99 item from another genre gives 9. Sacrifice resets the Laurel-Crowned hubris counter for that patron.
+`prayer.offering` places items on an altar block (doc 07, doc 12) of a patron. An Erratum-placed altar takes the patron chosen at placement. Each item gives a favor gain:
+
+```
+v      = item.value × stack                         // a stack is one offering
+base   = isqrt(v) → × 2 if item.origin_genre is the patron's genre → × 12500 with Devotion 75 (one mul_bp)
+favor += gain(base)                                  // §16.2
+```
+
+Items of `cat.currency`, `cat.key` and `cat.quest`, items of value 0 and Errata Remains cannot be offered. A `cat.corpse` of a killed NPC can, with `value = mul_bp(mul_bp(100, P(d_current)), rank_xp_bp)` (Canon §17.3) and `origin_genre` = the NPC's; a corpse tagged `summoned` (doc 13) cannot. A standard-rank corpse at Folio 10 has value 217 and gives `isqrt(217) = 14` before doubling and scaling. Example: value 2500 from the patron's genre gives `2 × 50 = 100`, and with Devotion 20 `floor_div(100 × 120, 100) = 120`. A value-99 item from another genre gives 9. Sacrifice resets the Laurel-Crowned hubris counter for that patron.
 
 ## 17. Spell name generator
 

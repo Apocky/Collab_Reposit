@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.4 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.5 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -82,7 +82,8 @@ Simulation state never contains `f32` or `f64`. Rendering, audio and UI may use 
 `palimpsest_sim` sets `overflow-checks = true` in every Cargo profile, so overflow panics in debug and release alike.
 
 - `floor_div(a, b)` requires `b > 0` and panics otherwise. It equals `a.div_euclid(b)`, which is floor division when `b > 0`.
-- `ceil_div(a, b) = -floor_div(-a, b)`, with `b > 0`.
+- `ceil_div(a, b)`, with `b > 0`, returns the smallest integer `q` with `q × b >= a`. It equals `-floor_div(-a, b)` wherever that does not overflow; implementations use a non-negating form so `a = i64::MIN` is defined.
+- **Shifts.** Rust's `<<` is not covered by overflow checks. Every `x << k` in a normative formula means a checked multiplication by `2^k` that panics on overflow. `>>` on a signed integer is an arithmetic shift, which is floor division by `2^k`.
 - `round_half_even(a, b)` for `b > 0`: `q = floor_div(a, b)`, `r = a - b*q`. Return `q + 1` if `2r > b`, `q` if `2r < b`, otherwise `q + (q & 1)`.
 - `mul_bp(x, bp) = floor_div(x as i128 * bp as i128, 10000)`, narrowed back to the input width with a checked conversion that panics on overflow.
 - Several Bp multipliers chain left to right, rounding after each step, in the exact order a formula lists them. Implementations must not reorder for speed.
@@ -106,10 +107,13 @@ Simulation state never contains `f32` or `f64`. Rendering, audio and UI may use 
 
 `isqrt_u128` is the integer floor square root by Newton's method, specified in doc 02.
 
+**Coordinate range.** Every `Fx` position, offset and direction in simulation state satisfies `|raw| < 2^62`, which keeps `dist2` and dot products inside `i128`. Folio coordinates are far inside this range.
+
 ### 1.5 Units and display units
 
 - Units: meters, seconds, grams, milliliters, tenths of a degree Celsius, decibels. One block is 1 m on each side.
 - **Display-unit rule.** Any quantity of a `Milli` resource written in this canon or any spec without an "m" prefix is in display units and is stored × 1000. Max HP 85 is stored as 85,000 mHP. A dodge cost of 20 stamina is 20,000. Composure −15 is −15,000. Death's Door sets HP to 1,000 mHP.
+- `Fx` quantities shown to players, such as distances, display with `round_half_even` at the shown precision.
 - `Milli` values display as `floor(x / 1000)`, except current HP, which displays as `ceil_div(x, 1000)` so a living entity never shows 0 HP. Percentages from `Bp` display with one decimal place via `round_half_even`.
 
 ### 1.6 Content numeric encoding
@@ -140,8 +144,8 @@ Ranges use Rust syntax. `a..=b` is inclusive and `a..b` is half-open.
 - **Sine table.** `T` is a committed table of 16,385 `i32` values in Q2.30 for `i ∈ 0..=16384`: `T[i] = round_half_even(sin(2π·i/65536) · 2^30)`, so `T[16384] = 1073741824`. `tools/gen_trig.py` generates it once with `mpmath` at 50 digits, and the file is committed.
 - `sin_bam(a)`: `q = a >> 14`, `r = a & 0x3FFF`. `q = 0 → T[r]`, `q = 1 → T[16384 - r]`, `q = 2 → -T[r]`, `q = 3 → -T[16384 - r]`.
 - `cos_bam(a) = sin_bam(a.wrapping_add(16384))`.
-- Forward vector in Q2.30: `fwd(yaw, pitch) = (-sin_bam(yaw)·cos_bam(pitch), sin_bam(pitch), -cos_bam(yaw)·cos_bam(pitch))`, with each two-factor product shifted right by 30.
-- `atan2_bam(y, x)` uses 16-iteration CORDIC on `i64` with a committed arctangent table. Doc 02 specifies it.
+- Forward vector in Q2.30: `fwd(yaw, pitch) = (((-sin_bam(yaw)) × cos_bam(pitch)) >> 30, sin_bam(pitch), ((-cos_bam(yaw)) × cos_bam(pitch)) >> 30)`, computed in `i64`. The negation happens before the multiply and the shift. `pitch` is the `i16` pitch reinterpreted as `Bam`; `fwd` does not clamp, because the simulation clamps pitch when it applies input.
+- `atan2_bam(y, x)` uses 16-iteration CORDIC on `i64` with a committed arctangent table. Doc 02 specifies it. Its accuracy contract is ±1 Bam, which is sufficient for aim and facing.
 
 ### 1.10 Text keys
 
@@ -226,7 +230,8 @@ apply q on this run
 ### 2.5 Saves and state hash
 
 - A save is the canonical serialization of the entire `palimpsest_sim` state at a tick boundary, in sorted-key order, preceded by the §2.4 header. It includes every RNG state, every accumulator, buildup meters and timers, status expiry ticks, Death's Door flags, the Shock of the New set, EntityId and uid counters, the light relight FIFO, the liquid, gas, temperature and fire grids, AI state and the lattice history.
-- `state_hash = BLAKE3(serialization)`. The host broadcasts `state_hash` every 60 ticks for desync detection (doc 16).
+- `state_hash = BLAKE3(serialization)`. The canonical serialization is hand-written and self-delimiting (doc 02 §6.5); it does not depend on serde. Any other hash over several variable-length fields prefixes each field with its byte length as a little-endian `u32`.
+- Debug builds may count draws per stream inside `palimpsest_sim` for diagnostics. Those counters never enter simulation state, saves or hashes. The host broadcasts `state_hash` every 60 ticks for desync detection (doc 16).
 - Single player may save at any tick boundary. Co-op saves only at Folio entry.
 
 ---
@@ -382,9 +387,10 @@ Offers a player can re-open, such as Scriptorium rewrite choices, reforge option
 
 - A run seed is a `u64`. Its display form is 13 characters of Crockford Base32 in groups 4-4-5, for example `028T-5CY4-TQKFF`.
 - Alphabet `0123456789ABCDEFGHJKMNPQRSTVWXYZ`, most-significant 5-bit group first. The first character carries only the top 4 bits, so it is `0` to `F`.
-- Decoding strips hyphens and spaces, uppercases, maps `O → 0` and `I`, `L → 1`, then requires exactly 13 characters. It rejects a first character above `F` and any `U`.
+- Decoding strips `-` and ASCII space only, uppercases, maps `O → 0` and `I`, `L → 1`, then requires exactly 13 characters. Errors are checked in this order: length, then any `U`, then any character outside the alphabet, then a first character above `F`. Every other character is rejected.
 - Daily seed: `fnv1a64("PALIMPSEST/DAILY/" + "YYYY-MM-DD")`, with the date in UTC.
 - Weekly seed: `fnv1a64("PALIMPSEST/WEEKLY/" + "YYYY-Www")`, using the ISO week.
+- Date strings are validated strictly: `YYYY-MM-DD` must be a real calendar date with year `0001..=9999`, and `YYYY-Www` must use an uppercase `W` and a week number no higher than that ISO year's week count. Invalid strings are rejected, never hashed.
 - Paid gacha never uses this generator. Doc 15 specifies a server-side ChaCha20 generator with commit-reveal.
 
 ### 3.7 Mods
@@ -1393,7 +1399,8 @@ Genre skins rename curse states, for example Blessed / — / Hexed, or Signed / 
 - Item level `ilvl` is the Folio index where the item was generated: 1 to 25 for the main run, 26 or more in Marginalia. Rewriting keeps `ilvl`.
 - Every table is `i64` Bp. Rows 1 to 40 are committed literal constants and are never regenerated at runtime. Rows 1 to 25 were generated in exact integer arithmetic as `floor_div(10000 × 10900^(d-1), 10000^(d-1))` for P and `floor_div(10000 × 10550^(d-1), 10000^(d-1))` for T. Rows 26 to 40 follow the recurrence.
 - For `d > 40`: `P(d) = mul_bp(P(d-1), 10600)` and `T(d) = mul_bp(T(d-1), 10400)`, computed with `i128` intermediates.
-- **Power depth cap.** Every table uses `d_pow = min(d, 300)`. Deeper Marginalia scales only through doc 14 difficulty multipliers.
+- **Power depth cap.** Every table, including `S`, uses `min(d, 300)` (or `min(lvl, 300)`). Deeper Marginalia scales only through doc 14 difficulty multipliers. Depths, item levels and source levels are `u32` values of at least 1.
+- `base × P(d)` and every other table product is `mul_bp` with an `i64` multiplier: `floor_div(base as i128 × P(d) as i128, 10000)`, narrowed with a check.
 - `H(d) = mul_bp(P(d), 10000 + 650 × (min(d, 25) - 1) + 250 × max(0, d - 25))`.
 - `S(lvl) = 10000 + 300 × (lvl - 1)`.
 
@@ -1890,6 +1897,8 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 40. **Genre spread.** The minimum pairwise L1 distance between the 12 core axiom vectors is 6, and every row of the §5.4 tolerance table still sums to 4.
 41. **Ward depletion.** A ward of 10,000 mHP hit by 8,000 mHP of shock absorbs it fully only up to 6,666 mHP: `w = 12,000 > 10,000`, so shock damage becomes `8,000 - floor_div(10,000 × 10000, 15000) = 1,334` mHP and the ward breaks.
 42. **Friendly fire.** In default mode, a rifle hit from one Erratum on another whose value before step 2.15 is 10,000 mHP leaves `D2 = 5,000`. A grenade blast with the same value before step 2.15 keeps `D2 = 10,000`.
+43. **Forward vector.** `fwd(8192, 8192).x = -536870913` (negate first). `T[8192] = 759250125`.
+44. **Weekly seed.** `fnv1a64("PALIMPSEST/WEEKLY/2026-W41") = 0x2e7e2bae906b8339`. The date 2026-10-11 falls in ISO week 2026-W41.
 
 ---
 
@@ -1921,6 +1930,12 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ---
 
 ## 23. Changelog
+
+### canon-1.5 (2026-10-11)
+
+Applied after implementing the Rust math crate.
+
+- Defined checked shifts, a non-negating `ceil_div`, the simulation coordinate range, negate-first `fwd`, Fx display rounding, length-prefixed multi-field hashing, debug-only draw counters, strict seed and date decoding, the depth cap on `S`, `mul_bp` with `i64` table multipliers, and the ±1 Bam `atan2_bam` contract. Added tests 43 and 44.
 
 ### canon-1.4 (2026-10-11)
 

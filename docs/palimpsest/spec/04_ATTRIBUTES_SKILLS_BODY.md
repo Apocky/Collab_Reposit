@@ -23,20 +23,23 @@ Scope note. The original commission named 32 skills, 128 perks and 10 Callings. 
 | §13.8, §13.8.1, §15.1 | `P`, `T`, `S`, innate source level; minion cap |
 | §16, §17 | Origins, Callings, Echoes, kin, afflictions; run constants, the Colophon, `mode.abridged` kill-XP factor 16667, party tables, ranks, anchors, ghosts, invasions and the Redacted outcome (§17.9) |
 
-Peer chapters consumed, checked against the files on disk on 2026-10-11. Chapters 07, 09, 17 and 18 do not exist yet; what this document needs from them is listed under Interface assumptions.
+Peer chapters consumed, checked against the files on disk on 2026-10-11. Chapter 18 does not exist yet and chapter 07 is still being written; what this document needs from them is listed under Interface assumptions.
 
 | Doc | Sections | Consumed |
 |---|---|---|
 | 03 | §2.2, §3.3, §5.1–§5.2, §5.15, §5.20, §9.4, §14 | system order (`sys.needs`, period 60, phase 7, runs satiation, toxicity, composure and breath), `comp.body_plan`, `comp.pools`, `comp.stats`, the wish-velocity chain, `ev.entity_landed`, `Env.temp`, `eye_submerged`, the temperature hazard layer, the event bus |
 | 05 | §1.4, §3.2, §11.3–§11.4, §12.1–§12.2, §14.3, §19 | keyed `seq` allocation, `arch.melee.unarmed`, armor weight score, shield parry ticks and `shield_stab`, damage while downed, the severing hook |
 | 06 | §6.2, §7.1–§7.4, §12.3, §14.1, §16.3 | `cost_skill`, glyph tier gates, magic mastery hooks and XP inputs, `summon.poly.beast`, dispellability, supplication needs |
+| 07 | §2.4–§2.5, §4.2, §4.4, §5.1 | material tags (`fuel`, `edible`), block HP from hardness, Smithing 50 and `masterwork` quality hooks, craft XP inputs, the workbench implant hook |
 | 08 | §4.5, §8.5, §9.3–§9.7, §9.11, §11.1 | respirators and rebreathers, ingredient reveal tiers, brew batch, single-ingredient brewing, alchemy XP basis, toxicity skill factor |
+| 09 | §4.6, §8.3, §9.2–§9.4, §11.4, §13.2–§13.7 | holding breath, awareness icons, sneak multiplier and takedowns, disguise Deceive checks, lock tiers, hacking, traps, pickpocketing |
 | 10 | §5.5–§5.6 | appraisal tiers and rate, Examine |
 | 11 | §3.5, §12.2–§12.3 | food, tool and treatment item IDs, haggling, Scriptorium service prices |
 | 13 | §4.9, §6, §11, §13.3, §13.7, invader | surrender, minion contract and taming threshold, defeats and the kill-XP reference plan, quest tiers, deterministic dialogue checks, the Redactor invader |
 | 14 | §2.4–§2.5, §3.1, §3.4–§3.5, §3.9, §6.3 | kit templates, mid-run joiners, Rubric, marginal notes, Colophon services, Echo roster and signature traits |
 | 15 | §3.8 | Fold variants B and C of Echo traits |
 | 16 | §9.4–§9.6 | `st.downed` revive progress and revived HP, ghosts, instanced loot and Dormant slots |
+| 17 | §5.2–§5.6 | allocation, skill, talent and ability-slot screens; breakdown tooltips calling `explain_row` |
 
 ---
 
@@ -66,6 +69,8 @@ Talents, perks, traits, augments, afflictions and wounds change stats only throu
 Allowed rows: **flat** on rows 4, 7, 9, 10, 13, 14, 18, 19, 22, 23, 24, 25, 26, 27, 30, 31, 33, 34, 35, 36, 44 and on `res.breath` max (seconds). **post** on rows 2, 5, 6, 8, 15, 16, 17, 20, 21, 28, 37, 38, 40. Rows 1, 3, 11, 12, 29, 32, 39, 41, 42 and 43 take no doc-04 modifier: they change only through their inputs.
 
 All `RowPost` factors on one row multiply from 10000 in ascending source content-ID byte order, one `mul_bp` each. The product is clamped to `5000..=20000` and then applied once. Example: `talent.gunslinger.steady_aim` (row 15 × 9000) and `aug.eye_targeting` (row 15 × 9000) give `mul_bp(mul_bp(10000, 9000), 9000) = 8100`; spread `10000` becomes `8100`.
+
+**Explanations.** `explain_row(entity, row) -> Explanation` is a pure function of simulation state that doc 17 §5.6 renders: the row's formula text key, every input value, each intermediate result in evaluation order (Canon §1.3 rounding), every `SubFlat`, `RowFlat` and `RowPost` with its source ID and potency, the status multipliers in Canon §11.7 order, and the final value. It draws no random numbers and writes nothing.
 
 Every numeric modifier from an augment or other dependent component is first multiplied by that component's Contradiction potency (Canon §5.5) and is 0 when Disconnected. A binary effect (an immunity, an added part, an unlocked action) is on while `C <= 5` and off when Disconnected.
 
@@ -139,7 +144,7 @@ Origin traits (`trait.origin.*`, dependency none):
 6. `scavenger` (Post-Apocalypse): satiation loss × 7500 (§11.1); stale and rotten food add no `st.diseased` buildup.
 7. `quickdraw` (Weird West): weapon swaps take `max(1, ceil_div(swap_ticks × 5000, 10000))` ticks; the first hit within 60 ticks after a swap completes gets `DmgAdd +2500`.
 8. `gumshoe` (Hardboiled Noir): `RowFlat(35, 1000)`; appraisal work `need` × 5000 (doc 10 §5.5). The row-35 roll keeps Canon §3.3's cadence of once per 60 ticks.
-9. `qinggong` (Wuxia): one extra air jump per airborne period at height `mul_bp(JUMP_H, 6000)`, in addition to Canon's VERVE-9 air jump; fall damage × 7500.
+9. `qinggong` (Wuxia): one extra air jump per airborne period at height `mul_bp(JUMP_H, 6000)`, in addition to Canon's VERVE-9 air jump; fall damage × 7500. Air jumps are counted by `air_jump_max(e) = [vrv(e) >= 9] + [qinggong] + [aug.spring_tendons is on]`, which doc 03 §5.7 compares with its `air_jumps` counter; every air jump uses `mul_bp(JUMP_H, 6000)`.
 10. `gearwright` (Steampunk): your deployed `cat.gadget` entities have Max HP × 12500 and recharge × 12000.
 11. `courtesy` (Fairy Tale): doc 13 §13.7 dialogue checks add +10 to `value`; Handling counts +10 toward doc 13 §6 taming thresholds; at run start every `fac.native.fairy_tale.*` faction gains +100 reputation (party-shared, Canon §15; applied once per run however many party members carry `courtesy`).
 12. `favored` (Mythic Antiquity): favor gains × 12500 after the Canon §16.5 Devotion term; prayers to `patron.mythic_antiquity` count as prayers to the local patron (× 15000).
@@ -350,7 +355,7 @@ Base values come from creation, level-up points (§6.4) and training marks (Cano
 
 - **Charm** (`sub.charm`, CHM). Governs Speech, Handling. Rows 37, 38. Doc 13 §13.7 Persuade `value`. Tooltip: "Charm {v}: buy ×{r37}, sell {r38} of value."
 - **Menace** (`sub.menace`, MEN). Governs Leadership. Row 39 (threat). Doc 13 §13.7 Intimidate `value`. Tooltip: "Menace {v}: threat ×{r39}."
-- **Guile** (`sub.guile`, GUI). Governs Illusion, Pickpocket. Row 40 (disguise). Doc 13 §13.7 Deceive `value`; Bluff checks (§4.2). Tooltip: "Guile {v}: disguise suspicion ×{r40}."
+- **Guile** (`sub.guile`, GUI). Governs Illusion, Pickpocket. Row 40 (disguise). Doc 13 §13.7 Deceive `value`; disguise Deceive checks (§4.2). Tooltip: "Guile {v}: disguise suspicion ×{r40}."
 
 **FORTUNE** (`attr.fortune`). In-run effects only; never paid odds or account currency (Canon §22).
 
@@ -379,7 +384,7 @@ Primaries (Canon §6.1, from effective values) are used for:
 ```
 rating    = attr_value + (if skill named { floor_div(skill × 6, 10) } else { 0 }) + Σ situational
 chance_bp = clamp(5000 + (rating - DC) × 200, 500, 9500)
-success   = keyed_rng("rng.check", folio, actor, tick, seq).roll_bp(chance_bp)    // exactly 1 draw
+success   = keyed_rng("rng.check", folio, actor, tick, seq).roll_bp(chance_bp)    // exactly 1 draw (2 under avatar_of_fate, §7.2)
 ```
 
 `attr_value` is the named effective sub-attribute or primary. Situational modifiers: talent and trait bonuses as written; `st.exhausted` −10; `st.madness` −10; each untreated wound of tier ≥ 2 on the part the check uses (arms for Force, Lift, Climb, Squeeze; legs for Balance; head for Recall, Decipher, Investigate) −5.
@@ -414,7 +419,7 @@ Check catalog (docs 12 and 13 place the targets and their DCs):
 | Steady | RSV | resist a scripted horror event (failure: composure −10) |
 | Sense | ITU + awareness | sense an ambush trigger before it fires |
 | Spot | SGT + survival | see a distant marked detail |
-| Bluff | GUI + speech | talk past a disguise challenge outside dialogue (doc 09) |
+| Deceive | GUI + speech | answer a disguise challenge (doc 09 §11.4, `DC = 40 + 10 × bluffs`); dialogue Deceive choices use doc 13 §13.7 instead |
 | Fortune | FAT | scripted luck events |
 
 Example: Force with PWR 46 against a Hard bar (55): `5000 + (46 - 55) × 200 = 3200` Bp; after two failures on the same bar it is `3200 + 2000 = 5200` Bp. Climb with GRP 38 and Athletics 30: `rating = 38 + floor_div(180, 10) = 56`; against Standard 40, `5000 + 16 × 200 = 8200` Bp.
@@ -474,7 +479,8 @@ Values are milli-XP before row 28. `dmg` is HP actually removed after ward (Cano
 | devotion | supplication answered pleased or helped; petition; sacrifice (doc 06 §16) | 2000; `20 × favor_cost` before Devotion scaling; `10 × favor_gained` |
 | any | fizzle or wild surge | 0 |
 | sneak | each Needs tick while crouched or `st.hidden`, moving, with `n` hostiles within 10 m below `aware.alert` | `40 × min(3, n)`; cap 24,000 per Folio |
-| sneak | sneak-attack kill; Folio exit that earns the Unseen bonus | 1500; 10,000 |
+| sneak | sneak-attack kill or lethal takedown (doc 09 §9.4); Folio exit that earns the Unseen bonus | 1500; 10,000 |
+| sneak | kill of a target below `aware.alert` toward you that your own thrown item, noisemaker or alarm test lured within the last 600 ticks (doc 09 §12) | 750, in addition to other rows |
 | security | lock picked or trap disarmed | `150 × DC` |
 | pickpocket | item stolen from a hostile or neutral; item planted | `min(8000, 1500 + 40 × val_n)`; 1500 |
 | smithing, tinkering, inscription | craft completed (doc 07 recipe, `recipe_tier` 1..=5) | `1000 × input_units + 2000 × recipe_tier`, × 15000 if quality ≥ `q.excellent` |
@@ -491,7 +497,7 @@ Values are milli-XP before row 28. `dmg` is HP actually removed after ward (Cano
 | survival | each Needs tick outside the comfort band (§11.4) | 20; cap 6,000 per Folio |
 | speech | shop trade completed (each item uid once per run) | `5 × val_n` |
 | speech | haggle with `score >= 0` (doc 11 §12.2, once per shop per Folio) | `100 × (20 + min(60, d_cur))` |
-| speech, leadership | passed dialogue check (doc 13 §13.7: Persuade and Deceive train Speech, Intimidate trains Leadership); successful Bluff | `100 × dc`; `100 × DC` |
+| speech, leadership | passed dialogue check (doc 13 §13.7: Persuade and Deceive train Speech, Intimidate trains Leadership); successful disguise Deceive check (§4.2) | `100 × dc`; `100 × DC` |
 | speech | reputation gained | 10 per point |
 | leadership | ally hit while that ally is in your aura | `min(375, floor_div(375 × dmg, max))` |
 | leadership | Rally removes ≥ 1 status | 1500 |
@@ -538,14 +544,14 @@ These ten perk sets are doc 06 §7.3's hook table; doc 06 owns the mechanics the
 - **Conjuration** (MEM). Summon duration × `10000 + 50 × skill`; Canon §15.1 minion cap. 25: summon duration × 15000. 50: summon Max HP × 12500. 75: summons resist every type +1500 Bp, within their caps. 100: summon attacks carry status power × 20000.
 - **Illusion** (GUI). 25: veil duration × 15000. 50: control status power × 12500. 75: targets you charm deal damage × 12000. 100: phantasm spawns 2 copies.
 - **Restoration** (RES). 25: heal magnitude × 11000, before row 3. 50: mend also ends one DoT status (the lowest status ID). 75: healing beyond Max HP becomes `st.shielded` up to 1000 Bp of Max HP. 100: a mend that reaches a downed ally completes its revival at once under doc 16 §9.4 (HP set to doc 16's `revive_hp_bp`), once per ally per Folio.
-- **Divination** (ITU). 25: sight radius × 15000. 50: the keen modifier costs 0. 75: condition glyphs cost 0 complexity. 100: you see `st.invisible` entities within 12000 mm.
+- **Divination** (ITU). 25: sight radius × 15000. 50: the keen modifier costs 0 (doc 06), and every hostile within 30000 mm shows its awareness-state icon toward you through walls (doc 09 §8.3). 75: condition glyphs cost 0 complexity. 100: you see `st.invisible` entities within 12000 mm.
 - **Spellcraft** (LOG). A 25% weight in every spell's `cost_skill`; tier gates of triggers, conditions and Spellcraft modifiers. 25: modifier cost addends × 8000. 50: depth surcharge −1 (doc 06 §4.4). 75: trigger `max_fires` +1. 100: a stage holds 4 modifiers.
 - **Devotion** (PRV). Favor terms (Canon §16.5); prayer potency is row 29 with Devotion as the school skill (doc 06). 25: petition favor cost × 8000. 50: a supplication answered pleased resolves 2 needs. 75: prayers to non-local patrons apply × 12500. 100: the first supplication each Folio ignores the prayer timer.
 
 **Stealth**
 
 - **Sneak** (AGI). Input to doc 09 detection. 25: crouched movement noise −3 dB. 50: sneak-attack multiplier +5000 Bp (doc 09). 75: awareness decay toward you after line of sight breaks × 15000 (doc 09). 100: sneak attacks carry `ignore_armor` (Canon §10.5 step 5).
-- **Security** (SLT). Input to doc 09 locks. 25: lockpick break chance × 5000. 50: disarmed traps become redeployable `cat.placeable` trap items (Canon §4.3). 75: doc 09 lock DCs are −15 for you. 100: non-quest mechanical locks open in 60 ticks without picks.
+- **Security** (SLT). Input to doc 09 locks. 25: lockpick break chance × 5000. 50: disarmed traps become redeployable `cat.placeable` trap items (Canon §4.3). 75: your lock tier (doc 09 §13.2 `your_tier`) +1, so you may attempt locks one ladder tier higher. 100: non-quest mechanical locks open in 60 ticks without picks.
 - **Pickpocket** (GUI). 25: steal time × 7500. 50: plant items, primed throwables included. 75: steal equipped non-weapon items. 100: a failed steal sets awareness to `aware.suspicious`, never `aware.alert`.
 - **Hacking** (LOG). Hack time × `10000 - 50 × skill` (doc 09). 25: hack cameras from 10 m. 50: hacked constructs `DmgAdd +2000`. 75: two hacked units at once. 100: `st.hacked` on non-boss constructs lasts until Folio exit.
 - **Awareness** (HRG). Row 35 term and doc 09's opposed check. 25: `RowFlat(34, 4)`. 50: `RowFlat(33, 5)`. 75: you see `st.invisible` entities within 4 m. 100: hostiles within 6 m that are hidden from your party gain `st.marked` for you (8 s, refreshed each Needs tick).
@@ -566,7 +572,7 @@ These ten perk sets are doc 06 §7.3's hook table; doc 06 owns the mechanics the
 
 **Social**
 
-- **Speech** (CHM). The skill term of doc 13 §13.7 Persuade and Deceive `value`; Bluff rating; `RowPost(37, 10000 - 10 × skill)` and `RowPost(38, 10000 + 10 × skill)`. 25: shops show one extra hidden stock item. 50: bribe a sapient non-boss hostile for `mul_bp(floor_div(100 × rank_xp_bp, 10000), P(d_cur))` Lucre; it is pacified (§6.1). 75: reputation gains × 15000. 100: doc 13 dialogue checks you make use `dc - 15`.
+- **Speech** (CHM). The skill term of doc 13 §13.7 Persuade and Deceive `value`; disguise Deceive rating; `RowPost(37, 10000 - 10 × skill)` and `RowPost(38, 10000 + 10 × skill)`. 25: shops show one extra hidden stock item. 50: bribe a sapient non-boss hostile for `mul_bp(floor_div(100 × rank_xp_bp, 10000), P(d_cur))` Lucre; it is pacified (§6.1). 75: reputation gains × 15000. 100: doc 13 dialogue checks you make use `dc - 15`.
 - **Leadership** (MEN). The skill term of doc 13 §13.7 Intimidate `value`. Allied Errata and minions within 10 m get `DmgAdd +5 × skill` (max +500). 25: minion Max HP × 11500. 50: active Rally removes `st.feared` and `st.dread` from allies within 12 m; cooldown 1800. 75: aura radius 15 m. 100: allies in the aura +500 Bp crit chance (gear term).
 - **Handling** (CHM). Minion cap (Canon §15.1); doc 13 §6 taming threshold. 25: mount summon 15 ticks. 50: tamed beasts Max HP × 12000. 75: beasts of rank elite can be tamed; doc 13 §6's threshold adds +30 for them. 100: any tamed `body.quadruped` beast can be ridden as `arch.mount.runner`.
 
@@ -580,7 +586,7 @@ Canon §8 fixes kills, skill-ups, Folio exit and Unseen. Doc 04 adds the capped 
 | Source | XP | Owner |
 |---|---|---|
 | Kill | `mul_bp(mul_bp(K(d), rank_xp_bp), 7000)`, `e = enemy_level(d) = d + floor_div(d, 5)` | Canon |
-| Pacify: a hostile made non-hostile for the rest of the Folio by a spared surrender (doc 13 §4.9), a dialogue Persuade, Intimidate or bribe (doc 13 §13.7; Speech 50), a Tame (doc 13 §6) or a Hacking-100 hack | exactly the kill XP of that entity, paid as a doc 13 §11.1 defeat; once per entity; the entity can never also grant kill XP | 04 |
+| Pacify: a hostile made non-hostile for the rest of the Folio by a spared surrender (doc 13 §4.9), a subdue takedown (doc 09 §9.4), a dialogue Persuade, Intimidate or bribe (doc 13 §13.7; Speech 50), a Tame (doc 13 §6) or a Hacking-100 hack | exactly the kill XP of that entity, paid as a doc 13 §11.1 defeat; once per entity; the entity can never also grant kill XP | 04 |
 | Skill-up | `2 × K(d_cur)`, at most 8 per Folio | Canon |
 | Folio exit | `4 × K(d)` | Canon |
 | Unseen | `20 × K(d)` | Canon |
@@ -764,7 +770,7 @@ Example: a human joining at level 9 in Folio 8 gets 8 batches (32 points), 4 tal
 
 **Vanguard.** T1: `heavy_hand` hafted hits `DmgAdd +1000`; `bulwark` `RowFlat(18, 10)`; `shield_wall` `RowFlat(19, 1000)` while a shield is equipped; `second_wind` when stamina reaches 0, restore 50% of max stamina, cooldown 3600. T2: `crushing_blow` heavy hafted poise damage × 13000; `taunting_roar` (active) `st.taunted` directly on hostiles within 8 m, 20 stamina, cooldown 1200; `plated` natural armor `mul_bp(4, T(d_cur))` on every part; `unyielding` immune to `st.knocked_down` while blocking. T3: `juggernaut` while you sprint, the first tick your capsule touches a non-boss hostile's capsule (doc 03 §5.14) applies `st.staggered` directly to it, once per target per 300 ticks; `retaliation` perfect parries reflect `mul_bp(blocked, 3000)` as thorns; `rallying_presence` allies within 10 m get `RowFlat(18, 10)` and +1 composure per s. T4: `last_bastion` (needs `unyielding`) below 2500 Bp HP gain `st.fortified` and `st.empowered` for 600 ticks, cooldown 5400.
 
-**Duelist.** T1: `riposte` the next blade hit within 60 ticks of a parry `DmgAdd +5000`; `fleet_foot` dodge cost −3 stamina (§11.5); `en_garde` +500 Bp crit chance with one-handed blades (gear term); `flourish` blade killing blows restore 10 stamina. T2: `lunge` (active) 4 m dash into a blade attack, 25 stamina, cooldown 360; `feint` a dodge that negates a hit makes your next hit within 60 ticks apply 1 `st.exposed` stack; `challenge` (active) one hostile within 20 m takes `DmgAdd +1500` from you for 600 ticks, cooldown 1800; `silver_tongue` doc 13 dialogue `value` +10 and Bluff rating +10, `RowPost(37, 9500)`. T3: `blade_dance` each blade hit within 90 ticks of the previous adds `DmgAdd +300`, max 5 stacks; `uncanny_dodge` dodge invulnerability +2 ticks (cap 12); `coup_de_grace` blade hits on targets below 2000 Bp HP use the precision multiplier on any part. T4: `thousand_cuts` (needs `blade_dance`) every 5th consecutive blade hit on one target within 120 ticks applies 3 `st.bleeding` stacks directly and crits (roll drawn, result replaced).
+**Duelist.** T1: `riposte` the next blade hit within 60 ticks of a parry `DmgAdd +5000`; `fleet_foot` dodge cost −3 stamina (§11.5); `en_garde` +500 Bp crit chance with one-handed blades (gear term); `flourish` blade killing blows restore 10 stamina. T2: `lunge` (active) 4 m dash into a blade attack, 25 stamina, cooldown 360; `feint` a dodge that negates a hit makes your next hit within 60 ticks apply 1 `st.exposed` stack; `challenge` (active) one hostile within 20 m takes `DmgAdd +1500` from you for 600 ticks, cooldown 1800; `silver_tongue` doc 13 dialogue `value` +10 and disguise Deceive rating +10, `RowPost(37, 9500)`. T3: `blade_dance` each blade hit within 90 ticks of the previous adds `DmgAdd +300`, max 5 stacks; `uncanny_dodge` dodge invulnerability +2 ticks (cap 12); `coup_de_grace` blade hits on targets below 2000 Bp HP use the precision multiplier on any part. T4: `thousand_cuts` (needs `blade_dance`) every 5th consecutive blade hit on one target within 120 ticks applies 3 `st.bleeding` stacks directly and crits (roll drawn, result replaced).
 
 **Gunslinger.** T1: `steady_aim` `RowPost(15, 9000)` while crouched or still; `fast_hands` `RowPost(17, 11000)`; `long_shot` `DmgAdd +1000` beyond 20 m; `trick_toss` thrown hits `DmgAdd +1500`. T2: `fan_the_hammer` the first 3 pistol shots after a reload fire at interval × 8000; `deadeye` ranged precision multiplier +2500 Bp; `dive_shot` shots during a dodge ignore movement spread; `quick_draw` swap ticks × 7000. T3: `mark_for_death` (active) `st.marked` on a target within 40 m and your hits on it `DmgAdd +1500` for 480 ticks, cooldown 1200; `ricochet` a bullet hitting a block bounces once to the nearest hostile within 6 m at × 5000; `high_noon` crits with a magazine weapon refund 1 round. T4: `dead_mans_hand` (needs `deadeye`) each kill within 300 ticks of your previous kill adds +500 Bp crit chance, max +2500, cleared 300 ticks after the last kill.
 
@@ -780,7 +786,7 @@ Example: a human joining at level 9 in Folio 8 gets 8 batches (32 points), 4 tal
 
 **Warden.** T1: `guardian` hits on allies within 2 m that cross your front block arc strike your block instead; `mender` healing you cause × 11000; `warding` wards you create × 12000; `steadfast` `RowFlat(24, 20)`. T2: `intercept` (active) dash up to 8 m to an ally and give it `st.shielded` of 1500 Bp of its Max HP, cooldown 1200; `purge` your restoration casts remove one status of category debuff or DoT; `aegis_bash` shield bash staggers elites too; `sanctuary` while you block, allies within 4 m regain 2 composure per s. T3: `martyr` 3000 Bp of HP loss of allies within 10 m (after their step 7) is moved to you as `dmg.true` with no further mitigation; moved loss is never moved again, so two Wardens cannot pass it back and forth; `resurgence` revive time × 5000 (doc 16 hook); `bastion` `st.shielded` you apply lasts × 15000. T4: `last_light` (needs `martyr`) once per Folio, when an ally within 15 m would be downed it instead heals 3000 Bp of its Max HP and you lose that much HP, never below 1,000 mHP.
 
-**Oracle.** T1: `foresight` `RowFlat(35, 1000)`; `devout` favor gains × 12500; `spirit_guide` summon Max HP × 12000; `omen_reader` counts as a Lattice Lens (Canon §17.1). T2: `prophecy` once per Folio identify the type of one unknown carried item; `divine_favor` prayer timer increments × 7500; `spectral_host` Conjuration counts +25 in the minion cap formula; `glimpse` (active) hostiles within 25 m gain `st.marked` for 300 ticks, cooldown 1800. T3: `fated` `SubFlat(PRV, 10)`; `omen_ward` one hit of at least 3000 Bp of your Max HP is × 5000, once per 1800 ticks; `consecrated` your summons convert 3000 Bp of each hit's share to `dmg.radiant`. T4: `avatar_of_fate` (needs `fated`, active, once per Folio) for 600 ticks: `RowFlat(13, 2000)` inside the row's 7500 cap, and every "X Bp chance" proc you roll uses `min(10000, mul_bp(X, 15000))`. Every roll keeps its Canon §3.4 draw count. It is Fortune-derived, so `st.unmoored` suspends it (Canon §5.11).
+**Oracle.** T1: `foresight` `RowFlat(35, 1000)`; `devout` favor gains × 12500; `spirit_guide` summon Max HP × 12000; `omen_reader` counts as a Lattice Lens (Canon §17.1). T2: `prophecy` once per Folio identify the type of one unknown carried item; `divine_favor` prayer timer increments × 7500; `spectral_host` Conjuration counts +25 in the minion cap formula; `glimpse` (active) hostiles within 25 m gain `st.marked` for 300 ticks, cooldown 1800. T3: `fated` `SubFlat(PRV, 10)`; `omen_ward` one hit of at least 3000 Bp of your Max HP is × 5000, once per 1800 ticks; `consecrated` your summons convert 3000 Bp of each hit's share to `dmg.radiant`. T4: `avatar_of_fate` (needs `fated`, active, once per Folio) for 600 ticks: (1) every success roll you make on keyed `rng.ident`, `rng.check` or `rng.stealth` draws twice from the same keyed generator (exactly 2 draws per roll, as doc 10 §5.12 lists for its rolls) and keeps the result better for you; (2) on `rng.combat` and `rng.status`, where Canon §3.4 fixes one crit draw per hit, it instead grants `RowFlat(13, 2000)` inside the row's 7500 cap and makes every "X Bp chance" proc you roll use `min(10000, mul_bp(X, 15000))`, with draw counts unchanged. It is Fortune-derived, so `st.unmoored` suspends it (Canon §5.11).
 
 **Netrunner.** T1: `backdoor` hack time × 7500; `ghost_signal` camera and turret detection of you × 7000; `overload` when your `st.hacked` ends on a unit it bursts, 2 m, `B = mul_bp(10000, P(d_cur))`, `dmg.shock`; `firewall` immune to `st.hacked`, resist `dmg.psychic` +1500. T2: `puppet_master` your `st.hacked` lasts × 15000; `daemon` (active) a construct or device within 15 m takes 60 `st.shocked` buildup, cooldown 600; `jammer` electronic hostiles within 6 m take 10 `st.blinded` buildup per status pulse; `remote_access` hack range 15 m. T3: `botnet` +1 simultaneous hacked unit; `feedback` a unit you hacked dying restores 10 aether; `data_thief` hacking a terminal grants `mul_bp(50, P(d_cur))` Lucre once per terminal. T4: `system_crash` (needs `daemon`, active) every construct or electronic hostile within 12 m gains `st.stunned` directly, cooldown 3600.
 
@@ -1129,7 +1135,7 @@ Example: END 40 at −400 DeciC with no insulation: `lo = 50`, `dev = 450`, so s
 ### 11.5 Stamina, breath and suffocation
 
 - Stamina costs: sprint row 6; dodge `max(10, 20 - reductions)` (Canon §4.2's 20 minus Acrobatics 25's 3 and `fleet_foot`'s 3); swim 5 per s; climb 4 per s; jump 0; melee and block costs per doc 05. Regeneration (row 5) starts after 60 ticks without spending. Reaching 0 applies `st.exhausted` for 120 ticks.
-- `res.breath` max = `(10 + floor_div(END, 10) + Σ RowFlat breath) × 1000`. It updates on each Needs tick (doc 03 §2.2 `sys.needs`, `k = 1`): −1000 while doc 03's `eye_submerged` is true or the eye cell holds a gas flagged unbreathable (doc 08), else +5000, clamped to `0..=max`. Exempt from draining: `machine_body`, `deathless`, `aug.gills` while submerged in `liq.water` (its implant skin also makes gases breathable), a doc 08 respirator with `filter > 0` for gases, and a doc 08 rebreather with `filter > 0` while submerged. When breath is 0 after the update, `st.suffocating` applies (DoT 500 Bp `dmg.true`, Canon); the first Needs tick that ends with breath above 0 removes it. Example: END 40 gives 14,000 and reaches 0 on the 14th submerged Needs tick; suffocation at 85 HP costs `mul_bp(85000, 500) = 4250` mHP per s; the first Needs tick in air raises breath to 5,000 and removes it.
+- `res.breath` max = `(10 + floor_div(END, 10) + Σ RowFlat breath) × 1000`. It updates on each Needs tick (doc 03 §2.2 `sys.needs`, `k = 1`): −1000 while doc 03's `eye_submerged` is true, the eye cell holds a gas flagged unbreathable (doc 08), or the player holds `input.hold_breath` (doc 09 §4.6), else +5000, clamped to `0..=max`. Exempt from draining: `machine_body`, `deathless`, `aug.gills` while submerged in `liq.water` (its implant skin also makes gases breathable), a doc 08 respirator with `filter > 0` for gases, and a doc 08 rebreather with `filter > 0` while submerged. When breath is 0 after the update, `st.suffocating` applies (DoT 500 Bp `dmg.true`, Canon); the first Needs tick that ends with breath above 0 removes it. Example: END 40 gives 14,000 and reaches 0 on the 14th submerged Needs tick; suffocation at 85 HP costs `mul_bp(85000, 500) = 4250` mHP per s; the first Needs tick in air raises breath to 5,000 and removes it.
 
 ### 11.6 Encumbrance
 
@@ -1254,11 +1260,11 @@ All in namespaces Canon §19 assigns to doc 04.
 | `aug.` | 33 augments (§9.4), including `aug.prosthetic_arm` and `aug.prosthetic_leg`; 27 have an implant form, which doc 10 counts for `idc.implant` |
 | `afflict.` | the 3 Canon afflictions: contraction, effects, cure (§10) |
 | `wound.` | tiers `wound.bruised`, `wound.wounded`, `wound.crippled`, `wound.disabled`, `wound.severed`; kinds `wound.laceration`, `wound.fracture`, `wound.burn`, `wound.trauma` |
-| `body.`, `bp.` | Canon plans and parts: wound effects, mass shares, Echo body rules (§8, §13); uses of `bp.tail`, `bp.arm_extra_1`, `bp.arm_extra_2`, `bp.wing_l`, `bp.wing_r` as added parts |
+| `body.`, `bp.` | Canon plans and parts: wound effects, mass shares, Echo body rules (§8, §13); uses of `bp.tail`, `bp.arm_extra_N` (N from 1), `bp.wing_l`, `bp.wing_r` as added parts |
 
 Behavior is also given for the Canon statuses and resources doc 04 owns (Canon §11.1, §12).
 
-Functions exported to other docs: `grant_skill_xp`, `grant_char_xp`, `check(attr, skill, dc)`, `revive_bp(reviver)` (doc 16), `on_part_damage` with its severing branch (doc 05 §19.1), `on_heal`, `body_move_bp` (doc 03 §5.2), `anl_speed_bp` (doc 10), `treatment_ticks`, `aug_cap`, `trait_budget(trait) -> (benefit, drawback, net)` (content validator, docs 14 and 15), `going_native(e, genre)` (doc 14 Colophon), `add_affliction_dose(e, afflict)` and `cure_affliction(e, afflict)` (doc 08, doc 11 Scriptorium).
+Functions exported to other docs: `grant_skill_xp`, `grant_char_xp`, `check(attr, skill, dc)`, `revive_bp(reviver)` (doc 16), `on_part_damage` with its severing branch (doc 05 §19.1), `on_heal`, `body_move_bp` (doc 03 §5.2), `anl_speed_bp` (doc 10), `treatment_ticks`, `aug_cap`, `trait_budget(trait) -> (benefit, drawback, net)` (content validator, docs 14 and 15), `going_native(e, genre)` (doc 14 Colophon), `add_affliction_dose(e, afflict)` and `cure_affliction(e, afflict)` (doc 08, doc 11 Scriptorium), `explain_row(entity, row)` (doc 17), `air_jump_max(e)` (doc 03 §5.7).
 
 Constants exported: `DOC04_ROW_CAP_TENTHS = 40` (§6.1), `CHECK_PERSIST_BP = 1000` and its cap 3000 (§4.2), seq values 0xFFFE (madness) and 0xFFFF (Death's Door) reserved on their streams.
 
@@ -1267,12 +1273,12 @@ Constants exported: `DOC04_ROW_CAP_TENTHS = 40` (§6.1), `CHECK_PERSIST_BP = 100
 | Doc | Provides, or must match |
 |---|---|
 | 02 | the bots harness that replays §6.3; `isqrt` and fixed-point helpers |
-| 03 | event payloads; `Env.temp`, `eye_submerged`, `light_at`; `sys.needs` after the status pulse; §5.2 applies `body_move_bp(e)` exactly once in place of its "× 5000 for a severed leg (7000 with a crutch)" term; `comp.body_plan` mirrors §8.1; §9.4's hazard layer is the only source of temperature damage and temperature statuses |
+| 03 | event payloads; `Env.temp`, `eye_submerged`, `light_at`; §5.7 allows an air jump while `air_jumps < air_jump_max(e)` and supports the Acrobatics 50 wall jump and the Monk `wind_step` wall-run; `sys.needs` after the status pulse; §5.2 applies `body_move_bp(e)` exactly once in place of its "× 5000 for a severed leg (7000 with a crutch)" term; `comp.body_plan` mirrors §8.1; §9.4's hazard layer is the only source of temperature damage and temperature statuses |
 | 05 | archetype → skill map; `arch.melee.unarmed`; shield parry ticks and `shield_stab`, to which Shield adds `floor_div(skill, 25)` parry ticks; block arcs; aim sway; heavy attacks; firing move penalty; swap ticks; armor `insul_cold`, `insul_heat`; crutch; `harness` weapons; `SEVER` flags; §19.1 calls `on_part_damage`; §11.4's armor-XP line must read §5.2's row here (`2000 × d_armor`), which this document owns; keyed `seq` values stay below 0xFF00 so 0xFFFE and 0xFFFF are free |
 | 06 | `base_cost`, `cost_skill`, tier gates, the §7.3 hook table (identical to §5.3 here except Restoration 100, where doc 16's revival HP replaces the 2500 Bp figure), `summon.poly.beast` (the beast form ignores the damage-taken break), supplication needs, the `st.confused` angle, summons |
-| 07 | body materials (`mat.flesh`, `mat.bone`, …), recipe tiers 1..=5, quality shift, placeable `base_ticks` and block HP, resource nodes, the augment station, `fuel` and `repair_kit` tags with tool uses, scout drone, material tiers |
+| 07 | body materials (`mat.flesh`, `mat.bone`, …), recipe tiers 1..=5, quality shift, placeable `base_ticks` and block HP, resource nodes and their yields (Fieldcraft 75 adds +1 unit), the augment station, `fuel` and `repair_kit` tags with tool uses, scout drone, material tiers |
 | 08 | `afflict_power` sources; mutagens; `red_dose` calling `add_affliction_dose`; cure potions and the `st.incubating` abort calling `cure_affliction`; the unbreathable gas flag; respirator and rebreather filters; ingredient reveal tiers, batch and single-ingredient brewing as §5.3 states; `talent.alchemist.double_batch` and `echo.mother_ilse` add +1 to its batch, past its 4-dose ceiling |
-| 09 | lock and device DCs on the §4.2 ladder; Sneak, Awareness, Security, Pickpocket and Hacking effects; noise adjustments; Bluff targets |
+| 09 | §13.6's passive-detection cadence "30 with `gumshoe`" must read 60, because Canon §3.3 fixes the row-35 cadence and `gumshoe` is now `RowFlat(35, 1000)`; lock and device DCs on the §4.2 ladder; Sneak, Awareness, Security, Pickpocket and Hacking effects as §5.3 states; noise adjustments; disguise Deceive checks on `rng.check`; subdue takedowns as pacification; `input.hold_breath`; §13.6's "redeployable `cat.gadget`" for Security 50 must read `cat.placeable` (Canon §4.3) |
 | 10 | appraisal using `anl_speed_bp`; appraisal completion and Examine success events for §5.2; curse-state reveal; `idc.implant` covers the 27 implant-form augments |
 | 11 | item IDs for food, kits and treatments (`item.tool.bandage` exists; splint, salve and surgical kit still need IDs), repair kits, implants, grafts and prosthetics; Scriptorium prices (reattach 200 and cure 500 exist; "Emend the Flesh" at `mul_bp(400, P(d))` still needs a row); haggling `score` |
 | 12 | `secret.` locations, room-visit counts, `hearth` blocks, check targets, lore objects |
@@ -1280,7 +1286,7 @@ Constants exported: `DOC04_ROW_CAP_TENTHS = 40` (§6.1), `CHECK_PERSIST_BP = 100
 | 14 | kit templates (§2.4); joiner values (§2.5) completed by §6.6 here; Rubric and marginal notes; the Colophon full heal and Going Native calling `going_native`; Echo traits written as §2.6.1 terms. Doc 14's co-op death rule ("a ghost gains no XP") conflicts with §6.2 here and with doc 16's import; §6.2 governs because doc 04 owns character XP |
 | 15 | Fold variants B and C of each Echo trait with the same `net` (§2.6.1) |
 | 16 | `st.downed` flow, `revive_hp_bp`, consumption of `revive_bp`; ghosts; Dormant and Departed slots |
-| 17 | `input.ability_1..=4`; creation, level-up, talent, join and Going Native screens; tooltips |
+| 17 | `input.ability_1..=4` and `AssignAbilitySlot`; creation, level-up, talent, join and Going Native screens; breakdown tooltips from `explain_row` |
 | 18 | `loc.` keys, tooltip templates, kin skin names, native forms |
 
 ## Canon gaps
@@ -1309,7 +1315,7 @@ Constants exported: `DOC04_ROW_CAP_TENTHS = 40` (§6.1), `CHECK_PERSIST_BP = 100
 1. **Origin rows.** Each of the 16 rows of §2.3 sums to 0 with every entry in `-6..=6`; `origin.unwritten` is all zero.
 2. **Point-buy.** `buy_cost(43, 50) = 7`; `buy_cost(48, 54) = 10`. The §14.1 build spends 18 points with 4 refunded and validates. A build with any value 61, any value 24, or 11 refunded points is rejected. The human Vanguard Quick start preset is PWR +4, TGH +4, BRN +3, RSV +3; every (kin, Origin, Calling) Quick start build validates and its largest value is 49.
 3. **Creation stats.** The §14.1 character at level 1, VERVE 5: Max HP 85,000; regen 408 mHP/s; stamina 88; sprint drain 13; aether 61; composure 90; breath 13,000; Death's Door 850 Bp; move 10100; reload 10350; tolerance `(0, 2, 1, 1)`.
-4. **Checks.** Force PWR 46 vs DC 55 gives 3200 Bp, and 5200 after two failures on the same target; a success clears the bonus. Climb GRP 38 with Athletics 30 vs DC 40 gives 8200; rating 200 vs DC 10 clamps to 9500; each check makes exactly 1 `range(10000)` call on `rng.check`, with or without the persistence bonus. A doc 13 dialogue choice makes no draw.
+4. **Checks.** Force PWR 46 vs DC 55 gives 3200 Bp, and 5200 after two failures on the same target; a success clears the bonus. Climb GRP 38 with Athletics 30 vs DC 40 gives 8200; rating 200 vs DC 10 clamps to 9500; outside `avatar_of_fate` each check makes exactly 1 `range(10000)` call on `rng.check`, with or without the persistence bonus. A doc 13 dialogue choice makes no draw.
 5. **Skill growth.** Hacking 49 with 0 progress receiving 23,600 milli-XP at MEM 40 becomes 50, grants `skill.hacking.m50` and adds one LOG mark; at LOG 66 the fifth mark raises LOG to 67.
 6. **Combat XP.** A hit removing 20,000 mHP from a 60,000-mHP hostile grants 500 milli-XP; at MEM 50, 525. A hit on an ally grants 0.
 7. **Skill-up cap.** Ten skill-ups in one Folio at d = 10 grant `8 × 504 = 4032` character XP; the counter resets on `ev.folio_entered`.
@@ -1353,7 +1359,7 @@ Constants exported: `DOC04_ROW_CAP_TENTHS = 40` (§6.1), `CHECK_PERSIST_BP = 100
 45. **Composure factors.** `perk.leg.cold_blood` with `already_broken` multiplies composure losses by 5600; a 5-point loss in Cosmic Horror becomes `mul_bp(7500, 5600) = 4200` milli.
 46. **Partless damage.** A 4,250-mHP suffocation pulse changes no part pool; a 13,600-mHP fall hit at Max HP 85 puts 6,800 on each leg (pools 3,825, tier 2).
 47. **Shield parry.** A heater shield (6 parry ticks) at Shield 50 parries for 8 ticks; a tower shield stays at 0.
-48. **Avatar of fate.** During `avatar_of_fate` a 1000 Bp proc rolls at 1500 Bp and crit chance gains 2000 Bp within the 7500 cap; every hit still draws exactly one crit roll.
+48. **Avatar of fate.** During `avatar_of_fate` a 1000 Bp proc rolls at 1500 Bp and crit chance gains 2000 Bp within the 7500 cap; every hit still draws exactly one crit roll; a §4.2 check makes exactly 2 `range(10000)` calls and succeeds when either is below `chance_bp`.
 49. **Fieldcraft.** A placeable with `base_ticks` 120 takes 80 ticks at Fieldcraft 50 and 1 tick at Fieldcraft 100; breaking your own placeable grants 0 XP; the Marginalia power `erase` removes destructible blocks and placeables in its volume and leaves fixed terrain unchanged.
 50. **Redacted.** An Erratum at Max HP 85 with a leg pool at 1,000 of 10,625 and a severed arm respawns after a Redaction with HP 42,500, that leg at 5,312 (tier 2) and the arm still severed; its `dd_used` is unchanged.
 
@@ -1372,7 +1378,7 @@ W! derived stat := canon row + registered modifiers     N! modifier on rows 1,3,
 W! Π RowPost(row) ∈ 5000..=20000                        W! modifier order := ascending source id
 W! every random draw ∈ {rng.check, rng.progress, rng.combat, rng.alchemy} keyed
 N! draw in severing | wounds | buildup | needs | check persistence | dialogue | taming
-N! madness phantom ∈ sim state                          N! extra draw from avatar_of_fate
+N! madness phantom ∈ sim state                          N! extra combat draw from avatar_of_fate
 W! part pool ∈ 0..=max ∧ untreated tier ≥ 2 caps healing   W! Errata head never severs
 W! partless damage → HP only                            W! temperature damage | statuses := doc 03 §9.4 only
 W! augment numbers × own potency                         W! Disconnected prosthetic keeps structure

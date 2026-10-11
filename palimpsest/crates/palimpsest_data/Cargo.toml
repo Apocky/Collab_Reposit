@@ -9,6 +9,20 @@ publish.workspace = true
 [lints]
 workspace = true
 
+[features]
+default = []
+# Doc 02 §3.2 and §3.3: the core of this crate is `no_std` + `alloc`; the
+# `loader` feature brings in std and serde_json for the JSON content checks
+# (canon §1.6, doc 02 §11.1). It is off by default so that layer-2 crates
+# (gen, ai), whose closure must not contain serde_json, can depend on the core.
+loader = ["dep:serde_json"]
+
 [dependencies]
 palimpsest_math = { workspace = true }
+serde_json = { workspace = true, optional = true }
+
+[dev-dependencies]
+# The unit tests always compile the `content_check` module (cfg(test)), so
+# they need serde_json even when the `loader` feature is off.
 serde_json = { workspace = true }
+proptest = { workspace = true }
