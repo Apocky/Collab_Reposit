@@ -372,26 +372,26 @@ Docs 03, 05, 06 and 08 implement one table. Doc 03 §6.9 and §6.10 implement ev
 
 Each canon row, unchanged, and where it runs:
 
-|Canon §12.1 row|Runs in|Data in this chapter|
-|---|---|---|
-|`liq.water` contact: `st.soaked`|doc 03 §6.10|§3.2 row|
-|`liq.oil` contact: `st.oiled`; ground friction × 3000|doc 03 §6.10, §5.3|§3.2 row|
-|`liq.alcohol` contact: `st.oiled`|doc 03 §6.10|§3.2 row|
-|`liq.acid` contact: 25 `st.corroded` buildup|doc 03 §6.10|§3.2 row|
-|`liq.lava` contact: DoT 1000 Bp `dmg.fire` plus 100 `st.burning` buildup|doc 03 §6.10|§3.2 row|
-|`liq.red_ink` contact: +1 `st.erasure` per 300 ticks|doc 03 §6.10|§3.4 (counter reset, Editor immunity)|
-|`gas.steam` contact: DoT 50 Bp `dmg.fire`|doc 03 §6.10|§4.2 row|
-|`gas.miasma` contact: 20 `st.poisoned` buildup; unbreathable|doc 03 §6.10; doc 04 breath|§4.2 row, §4.3|
-|`gas.smoke`: sight concealment only|doc 03 §7.6, doc 09|§4.2 `conceal_full` 4|
-|ice and web block contact|doc 03 §5.3, §6.10; doc 07 §10.2 (`block.ice`, `block.web`)|none|
-|shock on water, blood or alcohol: electrify ≤ 64 cells for 180 ticks, 30 `st.shocked` per pulse|doc 03 §6.9, §6.10|`conductive` (§3.1); §5.2 extends to every conductive liquid|
-|frost on water, blood or alcohol: ice for 1200 ticks|doc 03 §6.9 (at least 100 units; `block.ice`)|§5.2 extends to every ice-freezing liquid but brine|
-|fire on water: `gas.steam`, 1 cell per 1000 ml|doc 03 §6.9 (at most 27 cells)|§5.2 extends to every aqueous liquid with a `boil_gas`|
-|fire on oil or alcohol: ignite; 2 m blast of 10 HP per 1000 ml, capped at 5000 ml|doc 03 §6.9|`ignite_blast_mhp_per_unit` 10,000; §5.2 adds fuel|
-|fire on ice: melts back to water|doc 03 §6.9 (restores the stored liquid)|none|
-|fire on web: burns out in 60 ticks|doc 03 §6.9|none|
-|fire on miasma: 3 m blast of 20 HP|doc 03 §6.9 (at least 1000 concentration)|§4.2 row|
-|radiant on red ink: becomes water|doc 03 §6.9|§5.2|
+|#|Canon §12.1 row|Runs in|Data in this chapter|
+|---|---|---|---|
+|1|`liq.water` contact: `st.soaked`|doc 03 §6.10|§3.2 row|
+|2|`liq.oil` contact: `st.oiled`; ground friction × 3000|doc 03 §6.10, §5.3|§3.2 row|
+|3|`liq.alcohol` contact: `st.oiled`|doc 03 §6.10|§3.2 row|
+|4|`liq.acid` contact: 25 `st.corroded` buildup|doc 03 §6.10|§3.2 row|
+|5|`liq.lava` contact: DoT 1000 Bp `dmg.fire` plus 100 `st.burning` buildup|doc 03 §6.10|§3.2 row|
+|6|`liq.red_ink` contact: +1 `st.erasure` per 300 ticks|doc 03 §6.10|§3.4 (counter reset, Editor immunity)|
+|7|`gas.steam` contact: DoT 50 Bp `dmg.fire`|doc 03 §6.10|§4.2 row|
+|8|`gas.miasma` contact: 20 `st.poisoned` buildup; unbreathable|doc 03 §6.10; doc 04 breath|§4.2 row, §4.3|
+|9|`gas.smoke`: sight concealment only|doc 03 §7.6, doc 09|§4.2 `conceal_full` 4|
+|10|ice and web block contact|doc 03 §5.3, §6.10; doc 07 §10.2 (`block.ice`, `block.web`)|none|
+|11|shock on water, blood or alcohol: electrify ≤ 64 cells for 180 ticks, 30 `st.shocked` per pulse|doc 03 §6.9, §6.10|`conductive` (§3.1); §5.2 extends to every conductive liquid|
+|12|frost on water, blood or alcohol: ice for 1200 ticks|doc 03 §6.9 (at least 100 units; `block.ice`)|§5.2 extends to every ice-freezing liquid but brine|
+|13|fire on water: `gas.steam`, 1 cell per 1000 ml|doc 03 §6.9 (at most 27 cells)|§5.2 extends to every aqueous liquid with a `boil_gas`|
+|14|fire on oil or alcohol: ignite; 2 m blast of 10 HP per 1000 ml, capped at 5000 ml|doc 03 §6.9|`ignite_blast_mhp_per_unit` 10,000; §5.2 adds fuel|
+|15|fire on ice: melts back to water|doc 03 §6.9 (restores the stored liquid)|none|
+|16|fire on web: burns out in 60 ticks|doc 03 §6.9|none|
+|17|fire on miasma: 3 m blast of 20 HP|doc 03 §6.9 (at least 1000 concentration)|§4.2 row|
+|18|radiant on red ink: becomes water|doc 03 §6.9|§5.2|
 
 ### 5.1 Contact
 
@@ -1183,18 +1183,18 @@ Brewed items start at `know.identified`. Brewing a canonical type identifies tha
 
 Doc 12 §11.2 places font basins: a cell holding `liq.wellspring` with a record in the per-Folio `fonts: BTreeMap<Gidx, u8 /* uses, 1..=3 at placement */>`. Kneeling to drink from a font cell whose uses are above 0 (60 ticks, §10.1) draws exactly 1 value, keyed `rng.alchemy` (actor = drinker, tick = the drink's start tick, seq = its start seq) `.weighted(w)`, applies the outcome and decrements the uses. Wellspring anywhere else (a vessel, a cell without a font record, a font at 0 uses) drinks as `liq.water`, and filling a vessel from a cell holding wellspring yields `liq.water` (§2.3), so a font cannot be carried off and rolled again.
 
-|Outcome|Weight|
+|Weight|Outcome|
 |---|---|
-|heal 3000 Bp|2000|
-|aether +5000 Bp of max|1500|
-|`st.blessed` 1800 ticks|1000|
-|the carried unknown potion type with the lowest `id32` becomes classified (nothing when none is carried)|1000|
-|2 stacks of `st.poisoned` (direct)|1200|
-|60 `st.confused` buildup|800|
-|one hostile of the local genre's swarm role spawns through doc 13 `request_spawn` at the first valid cell 3000 mm in front of the drinker|500|
-|toxicity −20,000|1000|
-|nothing|500|
-|the font dries: its remaining uses become 0 and its liquid becomes `liq.water`|500|
+|2000|heal 3000 Bp|
+|1500|aether +5000 Bp of max|
+|1000|`st.blessed` 1800 ticks|
+|1000|the carried unknown potion type with the lowest `id32` becomes classified (nothing when none is carried)|
+|1200|2 stacks of `st.poisoned` (direct)|
+|800|60 `st.confused` buildup|
+|500|one hostile of the local genre's swarm role spawns through doc 13 `request_spawn` at the first valid cell 3000 mm in front of the drinker|
+|1000|toxicity −20,000|
+|500|nothing|
+|500|the font dries: its remaining uses become 0 and its liquid becomes `liq.water`|
 
 Total weight 10000. At 0 uses the font record is removed and every wellspring unit in its cell becomes `liq.water`. Outcomes apply at potency 10000 and outside diminishing returns; the heal is a Canon §10.9 heal.
 
@@ -1383,7 +1383,16 @@ Content IDs, all in namespaces Canon §19 assigns to doc 08 (`liq.`, `gas.`, `in
 - **Transmutations (33)**: `alch.tx.black_powder`, `alch.tx.brine`, `alch.tx.charcoal`, `alch.tx.concentrate`, `alch.tx.consecrate`, `alch.tx.coolant`, `alch.tx.distill`, `alch.tx.elixir_aquatic`, `alch.tx.elixir_arcane_armor`, `alch.tx.elixir_dragons_blood`, `alch.tx.elixir_honeyed_healing`, `alch.tx.exotic_adrenaline`, `alch.tx.exotic_cleansing`, `alch.tx.exotic_corrosive_gas`, `alch.tx.exotic_dragonfire`, `alch.tx.exotic_panacea`, `alch.tx.exotic_shadowmeld`, `alch.tx.exotic_shielding`, `alch.tx.exotic_snap_freeze`, `alch.tx.holy_water`, `alch.tx.infernal_bomb`, `alch.tx.lamp_oil`, `alch.tx.mana`, `alch.tx.nanites`, `alch.tx.nitro`, `alch.tx.phosphor`, `alch.tx.quicksilver`, `alch.tx.seed_brew`, `alch.tx.transmute_ingredient`, `alch.tx.uncurse`, `alch.tx.unholy_water`, `alch.tx.venom`, `alch.tx.vitriol`.
 - **Apparatus, vessels and respirators (19)**: `apparatus.alembic`, `apparatus.calcinator`, `apparatus.mortar`, `apparatus.respirator.cloth`, `apparatus.respirator.mask`, `apparatus.respirator.rebreather`, `apparatus.retort`, `apparatus.vaporizer`, `apparatus.vessel.ampoule`, `apparatus.vessel.bottle`, `apparatus.vessel.bucket`, `apparatus.vessel.canteen`, `apparatus.vessel.cask`, `apparatus.vessel.crucible`, `apparatus.vessel.dewar`, `apparatus.vessel.flask`, `apparatus.vessel.grenade_shell`, `apparatus.vessel.vial`, `apparatus.vessel.waterskin`.
 
-Sub-namespaces of `alch.`: `alch.eff.` effects, `alch.potion.` potion item templates (`cat.potion`), `alch.bomb.` bomb item templates (`cat.throwable`), `alch.rx.` reactions, `alch.tx.` transmutations. Sub-namespaces of `apparatus.`: tools (`cat.tool`), `apparatus.vessel.` (`cat.container`), `apparatus.respirator.` (`slot.face`).
+Sub-namespace prefixes. These are not content IDs and are not counted among the 316 above. Other chapters may name a prefix bare, as doc 10 names `alch.tx`; each content ID is a prefix, a `.` and one suffix:
+
+- `alch.eff`: effects (§7).
+- `alch.potion`: potion item templates (`cat.potion`, §12.1, §12.2).
+- `alch.bomb`: bomb item templates (`cat.throwable`, §13.2).
+- `alch.rx`: reactions (§5.3).
+- `alch.tx`: transmutations (§15).
+- `apparatus.` with one suffix: tools (`cat.tool`, §9.1).
+- `apparatus.vessel`: vessels (`cat.container`, §6.1).
+- `apparatus.respirator`: respirators (`slot.face`, §4.3).
 
 Rules, data and interfaces:
 
@@ -1403,8 +1412,8 @@ Rules, data and interfaces:
 - **Doc 06**: holy water from altars and prayers; behavior of the buff statuses potions apply; calls `add_liquid`, `place_gas`, `place_gas_ml` and `move_gas` (§2.7) for `tide`, `acid`, `venom` and `gale`.
 - **Doc 07**: material tags `acid_soluble` and `fat`; the `destructible` block tag; blocks `block.ice`, `block.web`, `block.obsidian`, `block.basalt`, `block.slag`; `station.alchemy` with apparatus slots; `sys.crafting` runs the §9.7 channels; recipe books teaching §13.1 poisons; seed planting; `mat.coal` from `recipe.kiln.charcoal`; forge smelts that fill a crucible with `liq.molten_metal`.
 - **Doc 09**: liquid and gas conceal; the phosphor mark as its stealth-light term `ph = 9`; mind-vision reveal; noise IDs `noise.item.shatter_glass`, `noise.item.shatter_ceramic`, `noise.explosion`, `noise.explosion.grenade`, `.incendiary`, `.smoke`, `.flash` and `.surface`; respirator hearing penalty.
-- **Doc 10** (exists): at least 32 `idc.potion` appearance descriptors (29 types); `appr.use.always` for drinking and `appr.use.on_effect` with this chapter's `observable` for throwing (§12.4); cursed and blessed consumables and `curse.spoiled` (its §7.5); the self-harm cap (its §8); price identification from §12.1 and §12.2 values; BUC rates for found potions.
-- **Doc 11**: loot and shop tables for every exported item, with `alch.bomb.salt` and `alch.bomb.smoke` in every genre; found raw-liquid bottles (§3.5) in `loot.chest.plain` consumable draws and `shop.apothecary` lines; `item.face.respirator` aliased to `apparatus.respirator.mask` (Canon gaps 8); potion stacking by §16.
+- **Doc 10** (exists): at least 32 `idc.potion` appearance descriptors (29 types); `appr.use.always` for drinking and `appr.use.on_effect` with this chapter's `observable` for throwing (§12.4); cursed and blessed consumables and `curse.spoiled` (its §7.5); the self-harm cap (its §8); price identification from §12.1 and §12.2 values; BUC rates for found potions. Doc 10's rows that name `alch.potion.*` and `alch.tx.*` IDs (its price example, curse-state table and throw-use list) refer to this chapter's records and mint no IDs (Canon §19).
+- **Doc 11**: loot and shop tables for every exported item, with `alch.bomb.salt` and `alch.bomb.smoke` in every genre; found raw-liquid bottles (§3.5) in `loot.chest.plain` consumable draws and `shop.apothecary` lines; `item.face.respirator` aliased to `apparatus.respirator.mask` (Canon gaps 8); potion stacking by §16. Doc 11's found-potion weight rows and bomb value rows are loot records attached to this chapter's `alch.potion.*` and `alch.bomb.*` IDs, with the same spelling. The bomb values there equal §13.2, and those rows mint no IDs.
 - **Doc 12**: GPV `liquid_viscosity_bp` and `gas_dissipation_bp`; genre liquid lists, red-ink pools, `secret.room.ink_well`, font basins with their `fonts` records (§12.5), labs and H, F and M nodes.
 - **Doc 13**: creature `blood_liq` and the tags §3.3 reads (spirit, cephalopod, irradiated, earthen); ingredient drops; NPC potion use through `apply_alch_effect`; `request_spawn` for the wellspring outcome; Editor erasure (§10.6) matching red-ink unwriting. `elite.miasmic`'s "1000 ml of `gas.miasma`" is concentration 10 by `place_gas_ml`, below `GAS_CONTACT_CONC`; this chapter reads it as one saturated cell, `emit_gas_volume(cell, gas.miasma, 1)` (Canon gaps 18).
 - **Docs 14, 16, 17, 18**: doc 14's provisional kit IDs, which doc 11's kit rebinding table maps onto this chapter's (the fire flask to `alch.bomb.firebomb`, the poison flask to `alch.potion.toxic_gas`, the empty flask to `apparatus.vessel.flask`); replication of payload patches and emitters; brewing preview, toxicity meter and filter gauge; text keys, adjectives and §14 skin names.

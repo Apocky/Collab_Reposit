@@ -133,6 +133,41 @@ Doc 17 owns the bindings and doc 02 §5 the bit layout. This chapter reads these
 
 Every action has a `move.` ID carried in `HitRecord.move_id` and in events: light combo steps are `move.light`, heavies `move.heavy`, a raised guard `move.guard`, aiming `move.ads`, reloading `move.reload` and clearing a jam `move.clear_jam`; the other moves are named where they are defined.
 
+### 1.8 Move index
+
+Every `move.` ID is listed here once with its trigger and the section that holds its exact numbers. Swing shapes and fire modes are parameters of other moves, not actions of their own.
+
+| Move | Trigger | Rules |
+|---|---|---|
+| `move.light` | `input.attack` in `Idle`; one combo step per press | §4.1, Tables 3.2b and 3.2c |
+| `move.heavy` | `input.heavy` charge and release | §4.2, Table 3.2b |
+| `move.sprint_attack` | `input.attack` after at least 20 sprint ticks | §4.3 |
+| `move.jump_attack` | `input.attack` or `input.heavy` while airborne with the §4.4 air probe | §4.4 |
+| `move.riposte` | `input.attack` or `input.heavy` inside a riposte window | §4.5 |
+| `move.shove` | `input.heavy` while guarding without a shield | §4.6 |
+| `move.quick_melee` | `input.heavy` with a ranged weapon active | §4.7 |
+| `move.guard` | `input.alt` held with no off-hand weapon | §4.8, §12 |
+| `move.shield_bash` | `input.heavy` while guarding with a shield | §12.1 |
+| `move.taunt` | `input.reload` while guarding with a shield | §4.8, §19.2 |
+| `move.grapple` | full heavy of a fist weapon or unarmed; full chain heavy | §19.3 |
+| `move.struggle` | `input.interact` while grappled | §19.3 |
+| `move.ads` | `input.alt` held with a ranged weapon that allows ADS | §6.3, §6.6 |
+| `move.hold_breath` | `input.sprint` while fully aimed with `ads_sway >= 27` | §6.7 |
+| `move.lean_l`, `move.lean_r` | `input.lean_l`, `input.lean_r` held | §6.8 |
+| `move.fire_semi`, `move.fire_auto`, `move.fire_burst`, `move.fire_bolt`, `move.fire_charge`, `move.fire_beam` | `input.attack` under the weapon's fire mode | §6.2 |
+| `move.throw` | release of a thrown weapon or a quickbar throwable after a wind of at least 12 ticks | §5.3, §9.2 |
+| `move.cook` | `input.throw` pressed with a throwable on the quickbar | §9.2 |
+| `move.reload` | `input.reload` with a partial or empty magazine | §6.1 |
+| `move.clear_jam` | `input.reload` while `Jammed` | §6.1, §16.3 |
+| `move.imbue` | use of an `ammo.charge_*` counter charge | §15.3 |
+| `move.summon` | `input.mount` with a token in `slot.mount` | §17.2 |
+| `move.mounted_charge` | any melee hit landed at mount speed ≥ 8000 mm/s | §17.3 |
+| `move.couched_lance` | `input.heavy` held with a spear or halberd at mount speed ≥ 8000 mm/s | §17.3 |
+| `move.trample` | the mount's capsule touching a lighter non-flying entity at ≥ 8000 mm/s | §17.3 |
+| `move.quickdraw` | law-bound technique of `law.weird_west.high_noon` | §19.4 |
+| `move.qinggong_strike` | law-bound technique of `law.wuxia.qinggong` | §19.4 |
+| `move.shape_rl`, `move.shape_lr`, `move.shape_overhead`, `move.shape_thrust` | swing shapes used by the moves above | §2.3 |
+
 ---
 
 ## 2. Hit detection
@@ -641,7 +676,7 @@ charge_spread_bp = max(10000, 20000 - floor_div(10000 × (c - 15), 30))
 - **Launcher.** The rocket's direct hit (if any) resolves first; the blast (§9.4, Table 9.3b: radius 3500, inner 1000, edge 2500) follows in C5 and excludes nothing. A rocket that reaches its range limit or its 600-tick age detonates where it is.
 - **Beam.** While `input.attack` is held, one hitscan pulse fires on the press tick and every 6 ticks after, spending 1 cell unit each. The beam has `energy: true` (§8.4).
 - **Crossbow.** Loaded state persists indefinitely; reloading is an 80-tick crank. Its `rpm` is 0, so the crank can start on the tick after the shot and the REF cycle is 81 ticks.
-- **Thrown weapon.** Holding `input.attack` winds for at least 12 ticks; release throws. The interval from one release to the next press is 18 ticks, so the cycle is 30 ticks. Thrown weapons become ground items where they stop (§9.2). Knife, javelin and sling-stone skins all use this archetype (doc 11's kit rebinding maps doc 14's sling here).
+- **Thrown weapon.** Holding `input.attack` winds for at least 12 ticks; release throws. The interval from one release to the next press is 18 ticks, so the cycle is 30 ticks. Thrown weapons become ground items where they stop (§9.2). Knife, javelin and sling-stone skins all use this archetype. A one-handed sling is the sling-stone skin: the sling itself is presentation, and its stones are the held stack, so a sling never draws from an `ammo.` family (§5.6).
 
 ### 5.4 Casting implements in doc 05 namespaces
 
@@ -671,6 +706,28 @@ Doc 02 §16 runs 100,000 duels per Calling against `enemy.role.soldier` (60 HP, 
 
 - **Starting state.** A melee duel starts in `Idle` with the target inside reach. A ranged duel starts at a phase drawn uniformly from `0..cycle` of the weapon's REF cycle (§1.1) with the harness's own seed, so a duel can begin mid-magazine or mid-reload; every projectile hits the torso.
 - **Expected results** (integer pipeline, crits at 500 Bp, every swing connecting on its first active tick and every shot hitting): melee mean time to kill 1.84 s (mace) to 2.20 s (dagger); pistol 1.93 s; auto rifle 2.07 s. A ranged weapon that starts on a full magazine kills in 1.15 to 1.17 s, because one magazine holds 1.5 to 2 kills by design; sustained fire over many kills returns to the REF DPS.
+
+### 5.6 Role names used by other chapters
+
+Docs 04 and 14 describe Calling kits with role names. None of them is an archetype or an ammunition family of its own; each resolves to exactly one export of this chapter, and genre skins then rename it (doc 11 §4.2). Kits and templates name only the exported IDs.
+
+| Role name | Exported ID | Why |
+|---|---|---|
+| sidearm | `arch.ranged.pistol` | the one-handed marksmanship sidearm and the Calling reference weapon (§5.5) |
+| longarm | `arch.ranged.rifle_marksman` | the two-handed marksmanship rifle; it fires `ammo.rifle` |
+| heavy automatic | `arch.ranged.rifle_auto` | the heavy_arms automatic; it fires `ammo.heavy` |
+| flamer, flamethrower | `arch.ranged.beam` | doc 11's flamer skins are beam skins: fire 10000 pulses on `ammo.cell` (carry cap 300 units) |
+| hand crossbow | `arch.ranged.pistol` | a crossbow held in one hand is a one-handed sidearm on `ammo.light`; `arch.ranged.crossbow` is two-handed |
+| sling, sling stones | `arch.ranged.thrown` | sling-stone skin; the stones are the held stack (§5.3) |
+| hafted mace | `arch.melee.mace` | one-handed hafted |
+| hafted maul | `arch.melee.warhammer` | two-handed hafted |
+| polearm spear | `arch.melee.spear` | one-handed polearm |
+| polearm staff | `arch.melee.quarterstaff` | the melee staff; the casting staff is `arch.ranged.staff` (§5.4) |
+| hand wraps, fist wraps | `arch.melee.fist` | the `skill.unarmed` weapon; bare hands are the body function `arch.melee.unarmed` |
+| small shield | `arch.offhand.shield_buckler` | |
+| medium shield | `arch.offhand.shield_heater` | |
+| armor named class first (light head, heavy body) | `arch.armor.<slot>_<class>` | slot first, class second: `arch.armor.head_light`, `arch.armor.body_heavy` |
+| fuel | `ammo.cell` | the beam family |
 
 ---
 
@@ -976,7 +1033,7 @@ Ammunition is family-generic: any weapon of a family fires any `ammo.` item of t
 | `ammo.draw` | charge rifle, crossbow | 60 | 30 | 12 | 100 | charge rifle 1.91, crossbow 1.59 |
 | `ammo.charge_breaker`, `ammo.charge_disruptor`, `ammo.charge_staggerer`, `ammo.charge_sunder`, `ammo.charge_anchor` | any weapon (§15.3) | 5 each | 100 | 1 | 1400 | — |
 
-Doc 11 copies these values; a stack's value is `floor_div(units × value_per_100, 100)`, scaled by `P(ilvl)` like every value (doc 11 §13.1). "REF units per standard kill" is `60,000 mHP` divided by the archetype's expected REF damage per projectile or pulse (all hits on the torso, crit expectation included).
+These seven families and five counter charges are the whole `ammo.` namespace: flamer fuel is `ammo.cell`, and sling stones are `arch.ranged.thrown` stacks, not ammunition (§5.6). Doc 11 copies these values; a stack's value is `floor_div(units × value_per_100, 100)`, scaled by `P(ilvl)` like every value (doc 11 §13.1). "REF units per standard kill" is `60,000 mHP` divided by the archetype's expected REF damage per projectile or pulse (all hits on the torso, crit expectation included).
 
 ```json
 { "id": "ammo.rifle", "category": "cat.ammo", "carry_cap": 60, "mass_g": 25, "pickup": 28, "value_per_100": 300 }
@@ -1684,19 +1741,19 @@ The High Noon standoff itself (doc 12: +5000 Bp and a direct `st.staggered` on t
 
 ## Exports
 
-All IDs below sit in namespaces Canon §19 assigns to doc 05.
+All IDs below sit in namespaces Canon §19 assigns to doc 05, and this list is complete: no other ID in these namespaces exists. Role names that other chapters use for kit items resolve to these IDs through §5.6.
 
-| Namespace | IDs |
-|---|---|
-| `arch.melee.` | `dagger`, `blade_short`, `blade_long`, `blade_great`, `axe`, `axe_great`, `mace`, `warhammer`, `spear`, `halberd`, `quarterstaff`, `fist`, `whip`, `chain`, `unarmed` |
-| `arch.ranged.` | `pistol`, `pistol_heavy`, `smg`, `rifle_auto`, `rifle_marksman`, `shotgun`, `sniper`, `launcher`, `beam`, `charge_rifle`, `crossbow`, `thrown`, `grenade_frag`, `grenade_incendiary`, `grenade_concussion`, `grenade_flash`, `grenade_smoke`, `grenade_counter`, `staff`, `wand` (§5.4; casting owned by doc 06) |
-| `arch.armor.` | `head_cloth`, `head_light`, `head_medium`, `head_heavy`, `body_cloth`, `body_light`, `body_medium`, `body_heavy`, `hands_cloth`, `hands_light`, `hands_medium`, `hands_heavy`, `legs_cloth`, `legs_light`, `legs_medium`, `legs_heavy`, `feet_cloth`, `feet_light`, `feet_medium`, `feet_heavy` |
-| `arch.offhand.` | `shield_buckler`, `shield_heater`, `shield_tower`, `lantern`, `focus`, `tome` (casting behavior of focus and tome owned by doc 06) |
-| `arch.ward.` | `aegis`, `kinetic`, `reflector`, `bulwark` |
-| `arch.mount.` | `runner`, `hover`, `glider` (names from Canon §17.7; mechanics defined here) |
-| `ammo.` | `light`, `heavy`, `rifle`, `shell`, `cell`, `ordnance`, `draw`, `charge_breaker`, `charge_disruptor`, `charge_staggerer`, `charge_sunder`, `charge_anchor` |
-| `move.` | `light`, `heavy`, `sprint_attack`, `jump_attack`, `riposte`, `shove`, `guard`, `shield_bash`, `quick_melee`, `grapple`, `struggle`, `taunt`, `mounted_charge`, `couched_lance`, `trample`, `summon`, `imbue`, `ads`, `hold_breath`, `fire_semi`, `fire_auto`, `fire_burst`, `fire_bolt`, `fire_charge`, `fire_beam`, `throw`, `cook`, `reload`, `clear_jam`, `lean_l`, `lean_r`, `quickdraw`, `qinggong_strike`, `shape_thrust`, `shape_rl`, `shape_lr`, `shape_overhead` |
-| `counter.` | `ward_breaker`, `disruptor`, `staggerer` (Canon §17.3a), `sunder`, `anchor` (new) |
+| Namespace | IDs | Defined in |
+|---|---|---|
+| `arch.melee.` (15) | `arch.melee.dagger`, `arch.melee.blade_short`, `arch.melee.blade_long`, `arch.melee.blade_great`, `arch.melee.axe`, `arch.melee.axe_great`, `arch.melee.mace`, `arch.melee.warhammer`, `arch.melee.spear`, `arch.melee.halberd`, `arch.melee.quarterstaff`, `arch.melee.fist`, `arch.melee.whip`, `arch.melee.chain`, `arch.melee.unarmed` | §3 |
+| `arch.ranged.` (20) | `arch.ranged.pistol`, `arch.ranged.pistol_heavy`, `arch.ranged.smg`, `arch.ranged.rifle_auto`, `arch.ranged.rifle_marksman`, `arch.ranged.shotgun`, `arch.ranged.sniper`, `arch.ranged.launcher`, `arch.ranged.beam`, `arch.ranged.charge_rifle`, `arch.ranged.crossbow`, `arch.ranged.thrown`, `arch.ranged.grenade_frag`, `arch.ranged.grenade_incendiary`, `arch.ranged.grenade_concussion`, `arch.ranged.grenade_flash`, `arch.ranged.grenade_smoke`, `arch.ranged.grenade_counter`, `arch.ranged.staff`, `arch.ranged.wand` (casting owned by doc 06) | §5, §5.4, §9.3 |
+| `arch.armor.` (20) | `arch.armor.head_cloth`, `arch.armor.head_light`, `arch.armor.head_medium`, `arch.armor.head_heavy`, `arch.armor.body_cloth`, `arch.armor.body_light`, `arch.armor.body_medium`, `arch.armor.body_heavy`, `arch.armor.hands_cloth`, `arch.armor.hands_light`, `arch.armor.hands_medium`, `arch.armor.hands_heavy`, `arch.armor.legs_cloth`, `arch.armor.legs_light`, `arch.armor.legs_medium`, `arch.armor.legs_heavy`, `arch.armor.feet_cloth`, `arch.armor.feet_light`, `arch.armor.feet_medium`, `arch.armor.feet_heavy` | §11 |
+| `arch.offhand.` (6) | `arch.offhand.shield_buckler`, `arch.offhand.shield_heater`, `arch.offhand.shield_tower`, `arch.offhand.lantern`, `arch.offhand.focus`, `arch.offhand.tome` (casting behavior of focus and tome owned by doc 06) | §5.4, §12.1 |
+| `arch.ward.` (4) | `arch.ward.aegis`, `arch.ward.kinetic`, `arch.ward.reflector`, `arch.ward.bulwark` | §15.4 |
+| `arch.mount.` (3) | `arch.mount.runner`, `arch.mount.hover`, `arch.mount.glider` (names from Canon §17.7; mechanics defined here) | §17 |
+| `ammo.` (12) | `ammo.light`, `ammo.heavy`, `ammo.rifle`, `ammo.shell`, `ammo.cell`, `ammo.ordnance`, `ammo.draw`, `ammo.charge_breaker`, `ammo.charge_disruptor`, `ammo.charge_staggerer`, `ammo.charge_sunder`, `ammo.charge_anchor` | §8, §15.3 |
+| `move.` (37) | `move.light`, `move.heavy`, `move.sprint_attack`, `move.jump_attack`, `move.riposte`, `move.shove`, `move.guard`, `move.shield_bash`, `move.quick_melee`, `move.grapple`, `move.struggle`, `move.taunt`, `move.mounted_charge`, `move.couched_lance`, `move.trample`, `move.summon`, `move.imbue`, `move.ads`, `move.hold_breath`, `move.fire_semi`, `move.fire_auto`, `move.fire_burst`, `move.fire_bolt`, `move.fire_charge`, `move.fire_beam`, `move.throw`, `move.cook`, `move.reload`, `move.clear_jam`, `move.lean_l`, `move.lean_r`, `move.quickdraw`, `move.qinggong_strike`, `move.shape_thrust`, `move.shape_rl`, `move.shape_lr`, `move.shape_overhead` | §1.8 |
+| `counter.` (5) | `counter.ward_breaker`, `counter.disruptor`, `counter.staggerer` (Canon §17.3a), `counter.sunder`, `counter.anchor` (added here) | §15.1 |
 
 Constants exported: `LAGCOMP_MAX_TICKS = 16`; `POWER10` table (§13); recoil string reset 30 ticks; Errata poise reset 480 ticks; parry re-raise lockout 20 ticks; guard-break lockout 60 ticks; riposte window 30 ticks; firing stance 20 ticks; projectile lifetime 600 ticks; material speed floor `ceil_div(material_bp × 10000, 14000)` (§3.3); ammunition caps, pickups and values (§8.1); Calling reference weapons (§5.5).
 
@@ -1713,10 +1770,10 @@ Functions exported to other chapters: `resolve_hit` (§10.2) for doc 03's `sys.d
 | 07 | per material `dmg_bp`, `ar_bp`, density, `pen_cost`, `ricochet`, `flammable`, `blast_res_milli`, tier; instance `mass_g`; durability per throw and swing; gadget deploys as `seq` 0 action starts; turret shots keyed on the gadget |
 | 08 | `emit_gas` for smoke; flasks and bombs reusing `arch.ranged.grenade_*` with `NO_CRIT`; `coat_on_hit` (§10.2) and coated ammunition (§8.2); the sickened toxicity band (§6.3); `st.focused`; respirators as `apparatus.respirator.*` |
 | 09 | `sneak_eligible(att, tgt, t)`; `sneak_mult(att, tgt, tier)` with tier 1 = 30000, tier 2 = 22500, tier 3 = 15000 before doc 09's terms (E3 uses tier 1 at Sneak 0); `IGNORE_ARMOR` at Sneak 100; the noise IDs and levels for shots, clang (70), block, parry, jam (40), dry fire (30) and explosions (Table 9.3b) |
-| 11 | item templates and overridable fields (fire mode, `sig`, `innate_counter`, `max_ricochets`); ammunition values copied from §8.1; the standard-rank ammunition line at 2500 Bp with §8.3's need weights; counter charges and `item.throwable.counter_*` of every type in every genre's shops and loot; per-shot and per-swing chance components drawn at `seq` 0 (§1.4); its kit-rebinding table, which maps doc 14's provisional IDs onto this chapter's exports |
+| 11 | item templates and overridable fields (fire mode, `sig`, `innate_counter`, `max_ricochets`); ammunition values copied from §8.1; the standard-rank ammunition line at 2500 Bp with §8.3's need weights; counter charges and `item.throwable.counter_*` of every type in every genre's shops and loot; per-shot and per-swing chance components drawn at `seq` 0 (§1.4); templates, loot and kit rebinding name only this chapter's exported IDs, with role names resolved by §5.6 (§5.6 supersedes the hand-crossbow and stone rows of doc 11's earlier kit-rebinding table: hand crossbow is `arch.ranged.pistol`, stones are `arch.ranged.thrown`) |
 | 12 | `room.no_mount`, entered by a rider → immediate dismount (§17.2); local gravity per genre, bleed zone and flip volume; `law.weird_west.high_noon` and `law.wuxia.qinggong` binding §19.4's techniques |
 | 13 | NPC templates: `template_dmg_mhp`, impact, natural AR per part, BRN, TGH, stamina, `block_stability_bp`, guard arc, unparryable and unblockable move flags, `poise_immune`, weapon-like attack geometry, counter bits; `ai_target(e)`; forced targeting under `st.taunted`; target selection with §14.1's `eff` hysteresis; `elite.armored` and `elite.phasing` as adopted in its §7.2; cavalry mounts built from §17.1 with template HP 80 |
-| 14 | `difficulty_bp(att, tgt)`, 10000 at the default difficulty; Calling kits rebound to this chapter's IDs per doc 11's table |
+| 14 | `difficulty_bp(att, tgt)`, 10000 at the default difficulty; Calling kits that name only this chapter's exported IDs (§5.6), with ammunition entries of the weapon's own family within its §8.1 carry cap (longarm `ammo.rifle`, flamer at most 300 `ammo.cell`, sling stones as one `arch.ranged.thrown` stack) |
 | 16 | `view_tick` clamping (§5.5) and `LAGCOMP_MAX_REWIND = 16`; the 32-record pose history; prediction of recoil, sway and spread with the host's keys; `st.downed` entry, crawl 800 mm/s and `bleed_left`, accepting §14.3's shortening; the invader in slot 4; its §8 projectile sentence must read "then takes its normal step at `t`" to match doc 03 §5.19 and §2.6 |
 | 17 | the input IDs and bits of §1.7; `aim_assist_bp` (§5.2c); hit markers and damage numbers per §18; accessibility toggles |
 | 18 | skin names and presentation for every archetype and event here |
@@ -1813,6 +1870,7 @@ Functions exported to other chapters: `resolve_hit` (§10.2) for doc 03's `sys.d
 57. **Techniques.** `move.quickdraw` outside Weird West (and outside a seam zone including it) cannot start; inside it fires on the 4th draw tick with spread × 5000. `move.qinggong_strike` in Wuxia from a wall-run uses `move_bp` 17000.
 58. **Threat decay.** An entry of 333 loses 1 per think and reaches 0 after 333 thinks, when it is removed; an entry of 10,000 loses 30.
 59. **JSON examples.** Every JSON block in this chapter parses, contains only integers, strings, booleans, arrays and objects, and validates against the chapter's schemas.
+60. **Namespace closure.** Every `arch.melee.`, `arch.ranged.`, `arch.armor.`, `arch.offhand.`, `arch.ward.`, `arch.mount.`, `ammo.`, `move.` and `counter.` ID in any chapter or content file is one of the 122 IDs in Exports; the content loader rejects any other ID in these namespaces, and every kit entry's ammunition belongs to a family its kit weapon fires.
 
 ## Invariants annex
 

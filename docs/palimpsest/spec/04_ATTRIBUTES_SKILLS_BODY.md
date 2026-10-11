@@ -824,7 +824,7 @@ Canon §10.5 step 8 subtracts the hit's HP damage from the hit part's pool, floo
 
 ### 8.2 Wound tiers
 
-`frac = floor_div(pool × 10000, max)`. `tier_for(frac)`: `frac > 7500` → 0; `> 5000` → 1 (`wound.bruised`); `> 2500` → 2 (`wound.wounded`); `> 0` → 3 (`wound.crippled`); `pool = 0` → 4 (`wound.disabled`). Severing is `wound.severed`.
+`frac = floor_div(pool × 10000, max)`. `tier_for(frac)`: `frac > 7500` → 0; `> 5000` → 1 (`wound.bruised`); `> 2500` → 2 (`wound.wounded`); otherwise `pool > 0` → 3 (`wound.crippled`), so a pool too small to register in `frac` is still tier 3; `pool = 0` → 4 (`wound.disabled`). Severing is `wound.severed`.
 
 The wound **kind** is set when the tier rises, from the category of the hit's largest type share (ties to the earlier Canon §10.1 row): slash or pierce → `wound.laceration`; blunt and fall damage → `wound.fracture`; fire, frost, acid, shock, radiation, sonic → `wound.burn`; toxin, radiant, umbral, psychic, arcane, true → `wound.trauma`.
 
@@ -920,7 +920,7 @@ Body-part item (Canon §13.1 `cat.body_part`, rots after 7200 ticks):
 }
 ```
 
-Mass share of body mass (Bp): humanoid head 700, torso 4700, each arm 650, each leg 1650; quadruped head 900, torso 5500, each leg 900; avian head 800, torso 5000, each wing 1100, each leg 1000; serpentine head 1200, body_front 4000, body_rear 3500, tail 1300; insectoid head 1000, thorax 3500, abdomen 3502, each leg 333; construct core 1500, chassis 5500, each limb 750. The troll arm above is `mul_bp(140000, 650) = 9100` g.
+Mass share of body mass (Bp): humanoid head 700, torso 4700, each arm 650, each leg 1650; quadruped head 900, torso 5500, each leg 900; avian head 800, torso 5000, each wing 1100, each leg 1000; serpentine head 1200, body_front 4000, body_rear 3500, tail 1300; insectoid head 1000, thorax 3500, abdomen 3502, each leg 333; construct core 1500, chassis 5500, each limb 750. An added part (§15.8) has a mass share equal to its share, taken from its donor part's mass share: a beastkin's `bp.tail` is 500 and its torso 4200. The troll arm above is `mul_bp(140000, 650) = 9100` g.
 
 Uses of a body part:
 
@@ -1243,24 +1243,526 @@ Model as §6.3 on the doc 13 plan with a 6500 kill share on standard Folios; ski
 Training marks over these Folios raise LOG by 7, AGI by 4, SLT, PRC and HRG by 2 each, and GUI by 1. At level 10: LOG 67, AGI 54, SLT 51, TGH 48, HRG 49; hacking 50 (the Folio-8 skill-up grants `skill.hacking.m50`), sneak 36, tinkering 33. Max HP at level 10 is `40 + 48 + 10 × (3 + 2) = 138`. INT is `floor_div(67 + 40 + 40, 3) = 49`, which meets the tier-3 gate of 45; tier 3 also needs level 12, so the first tier-3 talent is bought at level 12.
 
 ---
+
+## 15. ID register
+
+Every ID this document defines, one row each, with its exact structural data. Effects are not repeated: each row names the section that states them, and the ID's last segment is the name used there. The augment list (§9.4) and the Origin table (§2.3) are already registers and are not repeated. Consumers cite these IDs exactly; no other spelling is valid.
+
+### 15.1 Primary attributes and sub-attributes
+
+| ID | Code | Kind | Sub-attributes, or parent primary | Governed skills (Canon §7) | Canon §6.4 rows | Key primary of (§7.1) |
+|---|---|---|---|---|---|---|
+| `attr.might` | MGT | primary | `sub.power`, `sub.brawn`, `sub.grip` | hafted, unarmed, shield, smithing, polearm, heavy_arms | through its sub-attributes | vanguard, grenadier |
+| `attr.finesse` | FIN | primary | `sub.precision`, `sub.agility`, `sub.sleight` | blade, marksmanship, acrobatics, sneak, throwing, security | through its sub-attributes | duelist, gunslinger, shade, monk |
+| `attr.vigor` | VIG | primary | `sub.toughness`, `sub.endurance`, `sub.resilience` | armor, athletics, fieldcraft, restoration | through its sub-attributes | warden |
+| `attr.intellect` | INT | primary | `sub.logic`, `sub.memory`, `sub.analysis` | spellcraft, tinkering, hacking, conjuration, inscription, alchemy, medicine | through its sub-attributes | alchemist, artificer, netrunner |
+| `attr.will` | WIL | primary | `sub.focus`, `sub.resolve`, `sub.attunement` | alteration, abjuration, evocation | through its sub-attributes | spellwright, oracle |
+| `attr.perception` | PER | primary | `sub.sight`, `sub.hearing`, `sub.intuition` | survival, awareness, divination, appraisal | through its sub-attributes | none |
+| `attr.presence` | PRE | primary | `sub.charm`, `sub.menace`, `sub.guile` | speech, handling, leadership, illusion, pickpocket | through its sub-attributes | beastbinder |
+| `attr.fortune` | FOR | primary | `sub.fate`, `sub.serendipity`, `sub.providence` | devotion | through its sub-attributes | none |
+| `sub.power` | PWR | sub-attribute | MGT | hafted, unarmed | 10, 20 | — |
+| `sub.brawn` | BRN | sub-attribute | MGT | shield, smithing | 18, 19 | — |
+| `sub.grip` | GRP | sub-attribute | MGT | polearm, heavy_arms | 16, 21 | — |
+| `sub.precision` | PRC | sub-attribute | FIN | blade, marksmanship | 13, 15 | — |
+| `sub.agility` | AGI | sub-attribute | FIN | acrobatics, sneak | 11 | — |
+| `sub.sleight` | SLT | sub-attribute | FIN | throwing, security | 17 | — |
+| `sub.toughness` | TGH | sub-attribute | VIG | armor | 1, 23 | — |
+| `sub.endurance` | END | sub-attribute | VIG | athletics, fieldcraft | 4, 5, 6 | — |
+| `sub.resilience` | RES | sub-attribute | VIG | restoration | 2, 3, 22 | — |
+| `sub.logic` | LOG | sub-attribute | INT | spellcraft, tinkering, hacking | 26 | — |
+| `sub.memory` | MEM | sub-attribute | INT | conjuration, inscription | 27, 28 | — |
+| `sub.analysis` | ANL | sub-attribute | INT | alchemy, medicine | none | — |
+| `sub.focus` | FOC | sub-attribute | WIL | alteration | 7, 30 | — |
+| `sub.resolve` | RSV | sub-attribute | WIL | abjuration | 9, 24 | — |
+| `sub.attunement` | ATN | sub-attribute | WIL | evocation | 8, 25, 29 | — |
+| `sub.sight` | SGT | sub-attribute | PER | survival | 31, 32 | — |
+| `sub.hearing` | HRG | sub-attribute | PER | awareness | 33, 34 | — |
+| `sub.intuition` | ITU | sub-attribute | PER | divination, appraisal | 35, 36 | — |
+| `sub.charm` | CHM | sub-attribute | PRE | speech, handling | 37, 38 | — |
+| `sub.menace` | MEN | sub-attribute | PRE | leadership | 39 | — |
+| `sub.guile` | GUI | sub-attribute | PRE | illusion, pickpocket | 40 | — |
+| `sub.fate` | FAT | sub-attribute | FOR | none | 13, 41 | — |
+| `sub.serendipity` | SER | sub-attribute | FOR | none | 42 | — |
+| `sub.providence` | PRV | sub-attribute | FOR | devotion | 43, 44 | — |
+
+Row 12 also reads any sub-attribute a weapon's scaling coefficients name (§3). Uses, checks and tooltips: §3 and §4.
+
+### 15.2 Skills and mastery perks
+
+Skills, in Canon §7 order. XP events are §5.2; skill-level effects are §5.3.
+
+| ID | Name | Governing | Group |
+|---|---|---|---|
+| `skill.blade` | Blade | PRC | combat |
+| `skill.hafted` | Hafted | PWR | combat |
+| `skill.polearm` | Polearm | GRP | combat |
+| `skill.unarmed` | Unarmed | PWR | combat |
+| `skill.shield` | Shield | BRN | combat |
+| `skill.marksmanship` | Marksmanship | PRC | combat |
+| `skill.heavy_arms` | Heavy Arms | GRP | combat |
+| `skill.throwing` | Throwing | SLT | combat |
+| `skill.armor` | Armor | TGH | defense |
+| `skill.acrobatics` | Acrobatics | AGI | mobility |
+| `skill.athletics` | Athletics | END | mobility |
+| `skill.evocation` | Evocation | ATN | magic |
+| `skill.abjuration` | Abjuration | RSV | magic |
+| `skill.alteration` | Alteration | FOC | magic |
+| `skill.conjuration` | Conjuration | MEM | magic |
+| `skill.illusion` | Illusion | GUI | magic |
+| `skill.restoration` | Restoration | RES | magic |
+| `skill.divination` | Divination | ITU | magic |
+| `skill.spellcraft` | Spellcraft | LOG | magic |
+| `skill.devotion` | Devotion | PRV | faith |
+| `skill.sneak` | Sneak | AGI | stealth |
+| `skill.security` | Security | SLT | stealth |
+| `skill.pickpocket` | Pickpocket | GUI | stealth |
+| `skill.smithing` | Smithing | BRN | craft |
+| `skill.tinkering` | Tinkering | LOG | craft |
+| `skill.alchemy` | Alchemy | ANL | craft |
+| `skill.inscription` | Inscription | MEM | craft |
+| `skill.appraisal` | Appraisal | ITU | knowledge |
+| `skill.medicine` | Medicine | ANL | knowledge |
+| `skill.survival` | Survival | SGT | knowledge |
+| `skill.speech` | Speech | CHM | social |
+| `skill.leadership` | Leadership | MEN | social |
+| `skill.hacking` | Hacking | LOG | stealth |
+| `skill.fieldcraft` | Fieldcraft | END | craft |
+| `skill.awareness` | Awareness | HRG | stealth |
+| `skill.handling` | Handling | CHM | social |
+
+Mastery perks: four per skill, 144 in all, granted on reaching 25 (Apprentice), 50 (Journeyman), 75 (Expert) and 100 (Master) and never lost (§5.1). Each perk's effect is the text after its tier number in that skill's §5.3 entry; the ten magic and faith skills' perks are also doc 06 §7.3's hook rows.
+
+| Perk IDs (25, 50, 75, 100) | Skill | Effects |
+|---|---|---|
+| `skill.blade.m25`, `skill.blade.m50`, `skill.blade.m75`, `skill.blade.m100` | `skill.blade` | §5.3 Blade |
+| `skill.hafted.m25`, `skill.hafted.m50`, `skill.hafted.m75`, `skill.hafted.m100` | `skill.hafted` | §5.3 Hafted |
+| `skill.polearm.m25`, `skill.polearm.m50`, `skill.polearm.m75`, `skill.polearm.m100` | `skill.polearm` | §5.3 Polearm |
+| `skill.unarmed.m25`, `skill.unarmed.m50`, `skill.unarmed.m75`, `skill.unarmed.m100` | `skill.unarmed` | §5.3 Unarmed |
+| `skill.shield.m25`, `skill.shield.m50`, `skill.shield.m75`, `skill.shield.m100` | `skill.shield` | §5.3 Shield |
+| `skill.marksmanship.m25`, `skill.marksmanship.m50`, `skill.marksmanship.m75`, `skill.marksmanship.m100` | `skill.marksmanship` | §5.3 Marksmanship |
+| `skill.heavy_arms.m25`, `skill.heavy_arms.m50`, `skill.heavy_arms.m75`, `skill.heavy_arms.m100` | `skill.heavy_arms` | §5.3 Heavy Arms |
+| `skill.throwing.m25`, `skill.throwing.m50`, `skill.throwing.m75`, `skill.throwing.m100` | `skill.throwing` | §5.3 Throwing |
+| `skill.armor.m25`, `skill.armor.m50`, `skill.armor.m75`, `skill.armor.m100` | `skill.armor` | §5.3 Armor |
+| `skill.acrobatics.m25`, `skill.acrobatics.m50`, `skill.acrobatics.m75`, `skill.acrobatics.m100` | `skill.acrobatics` | §5.3 Acrobatics |
+| `skill.athletics.m25`, `skill.athletics.m50`, `skill.athletics.m75`, `skill.athletics.m100` | `skill.athletics` | §5.3 Athletics |
+| `skill.evocation.m25`, `skill.evocation.m50`, `skill.evocation.m75`, `skill.evocation.m100` | `skill.evocation` | §5.3 Evocation |
+| `skill.abjuration.m25`, `skill.abjuration.m50`, `skill.abjuration.m75`, `skill.abjuration.m100` | `skill.abjuration` | §5.3 Abjuration |
+| `skill.alteration.m25`, `skill.alteration.m50`, `skill.alteration.m75`, `skill.alteration.m100` | `skill.alteration` | §5.3 Alteration |
+| `skill.conjuration.m25`, `skill.conjuration.m50`, `skill.conjuration.m75`, `skill.conjuration.m100` | `skill.conjuration` | §5.3 Conjuration |
+| `skill.illusion.m25`, `skill.illusion.m50`, `skill.illusion.m75`, `skill.illusion.m100` | `skill.illusion` | §5.3 Illusion |
+| `skill.restoration.m25`, `skill.restoration.m50`, `skill.restoration.m75`, `skill.restoration.m100` | `skill.restoration` | §5.3 Restoration |
+| `skill.divination.m25`, `skill.divination.m50`, `skill.divination.m75`, `skill.divination.m100` | `skill.divination` | §5.3 Divination |
+| `skill.spellcraft.m25`, `skill.spellcraft.m50`, `skill.spellcraft.m75`, `skill.spellcraft.m100` | `skill.spellcraft` | §5.3 Spellcraft |
+| `skill.devotion.m25`, `skill.devotion.m50`, `skill.devotion.m75`, `skill.devotion.m100` | `skill.devotion` | §5.3 Devotion |
+| `skill.sneak.m25`, `skill.sneak.m50`, `skill.sneak.m75`, `skill.sneak.m100` | `skill.sneak` | §5.3 Sneak |
+| `skill.security.m25`, `skill.security.m50`, `skill.security.m75`, `skill.security.m100` | `skill.security` | §5.3 Security |
+| `skill.pickpocket.m25`, `skill.pickpocket.m50`, `skill.pickpocket.m75`, `skill.pickpocket.m100` | `skill.pickpocket` | §5.3 Pickpocket |
+| `skill.smithing.m25`, `skill.smithing.m50`, `skill.smithing.m75`, `skill.smithing.m100` | `skill.smithing` | §5.3 Smithing |
+| `skill.tinkering.m25`, `skill.tinkering.m50`, `skill.tinkering.m75`, `skill.tinkering.m100` | `skill.tinkering` | §5.3 Tinkering |
+| `skill.alchemy.m25`, `skill.alchemy.m50`, `skill.alchemy.m75`, `skill.alchemy.m100` | `skill.alchemy` | §5.3 Alchemy |
+| `skill.inscription.m25`, `skill.inscription.m50`, `skill.inscription.m75`, `skill.inscription.m100` | `skill.inscription` | §5.3 Inscription |
+| `skill.appraisal.m25`, `skill.appraisal.m50`, `skill.appraisal.m75`, `skill.appraisal.m100` | `skill.appraisal` | §5.3 Appraisal |
+| `skill.medicine.m25`, `skill.medicine.m50`, `skill.medicine.m75`, `skill.medicine.m100` | `skill.medicine` | §5.3 Medicine |
+| `skill.survival.m25`, `skill.survival.m50`, `skill.survival.m75`, `skill.survival.m100` | `skill.survival` | §5.3 Survival |
+| `skill.speech.m25`, `skill.speech.m50`, `skill.speech.m75`, `skill.speech.m100` | `skill.speech` | §5.3 Speech |
+| `skill.leadership.m25`, `skill.leadership.m50`, `skill.leadership.m75`, `skill.leadership.m100` | `skill.leadership` | §5.3 Leadership |
+| `skill.hacking.m25`, `skill.hacking.m50`, `skill.hacking.m75`, `skill.hacking.m100` | `skill.hacking` | §5.3 Hacking |
+| `skill.fieldcraft.m25`, `skill.fieldcraft.m50`, `skill.fieldcraft.m75`, `skill.fieldcraft.m100` | `skill.fieldcraft` | §5.3 Fieldcraft |
+| `skill.awareness.m25`, `skill.awareness.m50`, `skill.awareness.m75`, `skill.awareness.m100` | `skill.awareness` | §5.3 Awareness |
+| `skill.handling.m25`, `skill.handling.m50`, `skill.handling.m75`, `skill.handling.m100` | `skill.handling` | §5.3 Handling |
+
+### 15.3 Callings
+
+| ID | Key primary | Majors, 20 (Canon §16.2) | Minors, 10 (Canon §16.2) | Quick start preset (§2.5) | Talent tree |
+|---|---|---|---|---|---|
+| `calling.vanguard` | MGT | hafted, armor, shield | athletics, leadership, smithing | PWR +3, TGH +3, BRN +2, RSV +2 | `talent.vanguard.*` (§7.2, §15.4) |
+| `calling.duelist` | FIN | blade, acrobatics, speech | sneak, throwing, unarmed | PRC +3, AGI +3, CHM +2, FAT +2 | `talent.duelist.*` (§7.2, §15.4) |
+| `calling.gunslinger` | FIN | marksmanship, acrobatics, throwing | tinkering, speech, security | PRC +4, AGI +2, SLT +2, FAT +2 | `talent.gunslinger.*` (§7.2, §15.4) |
+| `calling.grenadier` | MGT | heavy_arms, throwing, armor | tinkering, fieldcraft, medicine | GRP +3, TGH +3, SLT +2, PWR +2 | `talent.grenadier.*` (§7.2, §15.4) |
+| `calling.spellwright` | WIL | evocation, spellcraft, alteration | abjuration, inscription, divination | ATN +3, LOG +3, FOC +2, MEM +2 | `talent.spellwright.*` (§7.2, §15.4) |
+| `calling.alchemist` | INT | alchemy, throwing, medicine | survival, restoration, appraisal | ANL +4, SLT +2, RES +2, LOG +2 | `talent.alchemist.*` (§7.2, §15.4) |
+| `calling.shade` | FIN | sneak, blade, security | pickpocket, acrobatics, illusion | AGI +4, PRC +2, SLT +2, GUI +2 | `talent.shade.*` (§7.2, §15.4) |
+| `calling.artificer` | INT | tinkering, smithing, marksmanship | security, inscription, appraisal | LOG +4, BRN +2, PRC +2, ANL +2 | `talent.artificer.*` (§7.2, §15.4) |
+| `calling.warden` | VIG | shield, abjuration, restoration | polearm, devotion, leadership | BRN +3, RES +3, RSV +2, TGH +2 | `talent.warden.*` (§7.2, §15.4) |
+| `calling.oracle` | WIL | divination, devotion, conjuration | appraisal, illusion, speech | ITU +3, PRV +3, MEM +2, FOC +2 | `talent.oracle.*` (§7.2, §15.4) |
+| `calling.netrunner` | INT | hacking, tinkering, sneak | security, awareness, illusion | LOG +4, AGI +2, HRG +2, SLT +2 | `talent.netrunner.*` (§7.2, §15.4) |
+| `calling.beastbinder` | PRE | handling, conjuration, survival | polearm, leadership, restoration | CHM +3, SGT +3, MEM +2, END +2 | `talent.beastbinder.*` (§7.2, §15.4) |
+| `calling.monk` | FIN | unarmed, acrobatics, athletics | alteration, medicine, awareness | PWR +3, AGI +3, END +2, FOC +2 | `talent.monk.*` (§7.2, §15.4) |
+
+Kit roles are §2.5; doc 14 §2.4 binds each to its `run.` kit template.
+
+### 15.4 Talents
+
+170 talents: 12 per Calling tree (tier 1 ×4, tier 2 ×4, tier 3 ×3, tier 4 ×1) and 14 general. Tier gates are §7.1; general tier 2 needs level 10. Kind: **passive**; **active** takes an ability slot (§1.1); **toggle** is switched on and off without a slot. Effects are the §7.2 or §7.3 entry of the same name.
+
+| ID | Tree | Tier | Kind | Requires |
+|---|---|---|---|---|
+| `talent.vanguard.heavy_hand` | `calling.vanguard` | 1 | passive | — |
+| `talent.vanguard.bulwark` | `calling.vanguard` | 1 | passive | — |
+| `talent.vanguard.shield_wall` | `calling.vanguard` | 1 | passive | — |
+| `talent.vanguard.second_wind` | `calling.vanguard` | 1 | passive | — |
+| `talent.vanguard.crushing_blow` | `calling.vanguard` | 2 | passive | — |
+| `talent.vanguard.taunting_roar` | `calling.vanguard` | 2 | active | — |
+| `talent.vanguard.plated` | `calling.vanguard` | 2 | passive | — |
+| `talent.vanguard.unyielding` | `calling.vanguard` | 2 | passive | — |
+| `talent.vanguard.juggernaut` | `calling.vanguard` | 3 | passive | — |
+| `talent.vanguard.retaliation` | `calling.vanguard` | 3 | passive | — |
+| `talent.vanguard.rallying_presence` | `calling.vanguard` | 3 | passive | — |
+| `talent.vanguard.last_bastion` | `calling.vanguard` | 4 | passive | `talent.vanguard.unyielding` |
+| `talent.duelist.riposte` | `calling.duelist` | 1 | passive | — |
+| `talent.duelist.fleet_foot` | `calling.duelist` | 1 | passive | — |
+| `talent.duelist.en_garde` | `calling.duelist` | 1 | passive | — |
+| `talent.duelist.flourish` | `calling.duelist` | 1 | passive | — |
+| `talent.duelist.lunge` | `calling.duelist` | 2 | active | — |
+| `talent.duelist.feint` | `calling.duelist` | 2 | passive | — |
+| `talent.duelist.challenge` | `calling.duelist` | 2 | active | — |
+| `talent.duelist.silver_tongue` | `calling.duelist` | 2 | passive | — |
+| `talent.duelist.blade_dance` | `calling.duelist` | 3 | passive | — |
+| `talent.duelist.uncanny_dodge` | `calling.duelist` | 3 | passive | — |
+| `talent.duelist.coup_de_grace` | `calling.duelist` | 3 | passive | — |
+| `talent.duelist.thousand_cuts` | `calling.duelist` | 4 | passive | `talent.duelist.blade_dance` |
+| `talent.gunslinger.steady_aim` | `calling.gunslinger` | 1 | passive | — |
+| `talent.gunslinger.fast_hands` | `calling.gunslinger` | 1 | passive | — |
+| `talent.gunslinger.long_shot` | `calling.gunslinger` | 1 | passive | — |
+| `talent.gunslinger.trick_toss` | `calling.gunslinger` | 1 | passive | — |
+| `talent.gunslinger.fan_the_hammer` | `calling.gunslinger` | 2 | passive | — |
+| `talent.gunslinger.deadeye` | `calling.gunslinger` | 2 | passive | — |
+| `talent.gunslinger.dive_shot` | `calling.gunslinger` | 2 | passive | — |
+| `talent.gunslinger.quick_draw` | `calling.gunslinger` | 2 | passive | — |
+| `talent.gunslinger.mark_for_death` | `calling.gunslinger` | 3 | active | — |
+| `talent.gunslinger.ricochet` | `calling.gunslinger` | 3 | passive | — |
+| `talent.gunslinger.high_noon` | `calling.gunslinger` | 3 | passive | — |
+| `talent.gunslinger.dead_mans_hand` | `calling.gunslinger` | 4 | passive | `talent.gunslinger.deadeye` |
+| `talent.grenadier.blast_padding` | `calling.grenadier` | 1 | passive | — |
+| `talent.grenadier.bandolier` | `calling.grenadier` | 1 | passive | — |
+| `talent.grenadier.big_iron` | `calling.grenadier` | 1 | passive | — |
+| `talent.grenadier.sapper` | `calling.grenadier` | 1 | passive | — |
+| `talent.grenadier.cook_off` | `calling.grenadier` | 2 | passive | — |
+| `talent.grenadier.shrapnel` | `calling.grenadier` | 2 | passive | — |
+| `talent.grenadier.bracing` | `calling.grenadier` | 2 | passive | — |
+| `talent.grenadier.demolition` | `calling.grenadier` | 2 | passive | — |
+| `talent.grenadier.chain_reaction` | `calling.grenadier` | 3 | passive | — |
+| `talent.grenadier.suppressing_fire` | `calling.grenadier` | 3 | passive | — |
+| `talent.grenadier.walking_arsenal` | `calling.grenadier` | 3 | passive | — |
+| `talent.grenadier.carpet_bomb` | `calling.grenadier` | 4 | active | `talent.grenadier.cook_off` |
+| `talent.spellwright.efficient_casting` | `calling.spellwright` | 1 | passive | — |
+| `talent.spellwright.glyph_scholar` | `calling.spellwright` | 1 | passive | — |
+| `talent.spellwright.overchannel` | `calling.spellwright` | 1 | toggle | — |
+| `talent.spellwright.arcane_focus` | `calling.spellwright` | 1 | passive | — |
+| `talent.spellwright.extend` | `calling.spellwright` | 2 | passive | — |
+| `talent.spellwright.widen` | `calling.spellwright` | 2 | passive | — |
+| `talent.spellwright.mana_shield` | `calling.spellwright` | 2 | passive | — |
+| `talent.spellwright.quicken` | `calling.spellwright` | 2 | passive | — |
+| `talent.spellwright.spell_echo` | `calling.spellwright` | 3 | passive | — |
+| `talent.spellwright.elemental_attunement` | `calling.spellwright` | 3 | passive | — |
+| `talent.spellwright.complex_lattice` | `calling.spellwright` | 3 | passive | — |
+| `talent.spellwright.grand_design` | `calling.spellwright` | 4 | passive | `talent.spellwright.complex_lattice` |
+| `talent.alchemist.potent_brews` | `calling.alchemist` | 1 | passive | — |
+| `talent.alchemist.iron_stomach` | `calling.alchemist` | 1 | passive | — |
+| `talent.alchemist.quick_quaff` | `calling.alchemist` | 1 | passive | — |
+| `talent.alchemist.splash_master` | `calling.alchemist` | 1 | passive | — |
+| `talent.alchemist.double_batch` | `calling.alchemist` | 2 | passive | — |
+| `talent.alchemist.volatile_mix` | `calling.alchemist` | 2 | passive | — |
+| `talent.alchemist.field_medic` | `calling.alchemist` | 2 | passive | — |
+| `talent.alchemist.transmuter` | `calling.alchemist` | 2 | passive | — |
+| `talent.alchemist.catalyst` | `calling.alchemist` | 3 | passive | — |
+| `talent.alchemist.philosophers_vial` | `calling.alchemist` | 3 | passive | — |
+| `talent.alchemist.antivenom` | `calling.alchemist` | 3 | passive | — |
+| `talent.alchemist.magnum_opus` | `calling.alchemist` | 4 | passive | `talent.alchemist.potent_brews`, `skill.alchemy` ≥ 75 |
+| `talent.shade.soft_step` | `calling.shade` | 1 | passive | — |
+| `talent.shade.backstab` | `calling.shade` | 1 | passive | — |
+| `talent.shade.light_fingers` | `calling.shade` | 1 | passive | — |
+| `talent.shade.nightborn` | `calling.shade` | 1 | passive | — |
+| `talent.shade.vanish` | `calling.shade` | 2 | active | — |
+| `talent.shade.quiet_kill` | `calling.shade` | 2 | passive | — |
+| `talent.shade.envenom` | `calling.shade` | 2 | passive | — |
+| `talent.shade.escape_artist` | `calling.shade` | 2 | passive | — |
+| `talent.shade.shadow_mark` | `calling.shade` | 3 | passive | — |
+| `talent.shade.death_from_above` | `calling.shade` | 3 | passive | — |
+| `talent.shade.ghost_walk` | `calling.shade` | 3 | passive | — |
+| `talent.shade.unseen_blade` | `calling.shade` | 4 | passive | `talent.shade.backstab`, `skill.sneak` ≥ 50 |
+| `talent.artificer.overclock` | `calling.artificer` | 1 | passive | — |
+| `talent.artificer.field_repair` | `calling.artificer` | 1 | passive | — |
+| `talent.artificer.scrap_savant` | `calling.artificer` | 1 | passive | — |
+| `talent.artificer.turret_tech` | `calling.artificer` | 1 | passive | — |
+| `talent.artificer.modular` | `calling.artificer` | 2 | passive | — |
+| `talent.artificer.drone_companion` | `calling.artificer` | 2 | passive | — |
+| `talent.artificer.reinforced` | `calling.artificer` | 2 | passive | — |
+| `talent.artificer.hardlight` | `calling.artificer` | 2 | passive | — |
+| `talent.artificer.masterwork` | `calling.artificer` | 3 | passive | — |
+| `talent.artificer.self_destruct` | `calling.artificer` | 3 | passive | — |
+| `talent.artificer.smart_rounds` | `calling.artificer` | 3 | passive | — |
+| `talent.artificer.legion` | `calling.artificer` | 4 | passive | `talent.artificer.turret_tech` |
+| `talent.warden.guardian` | `calling.warden` | 1 | passive | — |
+| `talent.warden.mender` | `calling.warden` | 1 | passive | — |
+| `talent.warden.warding` | `calling.warden` | 1 | passive | — |
+| `talent.warden.steadfast` | `calling.warden` | 1 | passive | — |
+| `talent.warden.intercept` | `calling.warden` | 2 | active | — |
+| `talent.warden.purge` | `calling.warden` | 2 | passive | — |
+| `talent.warden.aegis_bash` | `calling.warden` | 2 | passive | — |
+| `talent.warden.sanctuary` | `calling.warden` | 2 | passive | — |
+| `talent.warden.martyr` | `calling.warden` | 3 | passive | — |
+| `talent.warden.resurgence` | `calling.warden` | 3 | passive | — |
+| `talent.warden.bastion` | `calling.warden` | 3 | passive | — |
+| `talent.warden.last_light` | `calling.warden` | 4 | passive | `talent.warden.martyr` |
+| `talent.oracle.foresight` | `calling.oracle` | 1 | passive | — |
+| `talent.oracle.devout` | `calling.oracle` | 1 | passive | — |
+| `talent.oracle.spirit_guide` | `calling.oracle` | 1 | passive | — |
+| `talent.oracle.omen_reader` | `calling.oracle` | 1 | passive | — |
+| `talent.oracle.prophecy` | `calling.oracle` | 2 | passive | — |
+| `talent.oracle.divine_favor` | `calling.oracle` | 2 | passive | — |
+| `talent.oracle.spectral_host` | `calling.oracle` | 2 | passive | — |
+| `talent.oracle.glimpse` | `calling.oracle` | 2 | active | — |
+| `talent.oracle.fated` | `calling.oracle` | 3 | passive | — |
+| `talent.oracle.omen_ward` | `calling.oracle` | 3 | passive | — |
+| `talent.oracle.consecrated` | `calling.oracle` | 3 | passive | — |
+| `talent.oracle.avatar_of_fate` | `calling.oracle` | 4 | active, once per Folio | `talent.oracle.fated` |
+| `talent.netrunner.backdoor` | `calling.netrunner` | 1 | passive | — |
+| `talent.netrunner.ghost_signal` | `calling.netrunner` | 1 | passive | — |
+| `talent.netrunner.overload` | `calling.netrunner` | 1 | passive | — |
+| `talent.netrunner.firewall` | `calling.netrunner` | 1 | passive | — |
+| `talent.netrunner.puppet_master` | `calling.netrunner` | 2 | passive | — |
+| `talent.netrunner.daemon` | `calling.netrunner` | 2 | active | — |
+| `talent.netrunner.jammer` | `calling.netrunner` | 2 | passive | — |
+| `talent.netrunner.remote_access` | `calling.netrunner` | 2 | passive | — |
+| `talent.netrunner.botnet` | `calling.netrunner` | 3 | passive | — |
+| `talent.netrunner.feedback` | `calling.netrunner` | 3 | passive | — |
+| `talent.netrunner.data_thief` | `calling.netrunner` | 3 | passive | — |
+| `talent.netrunner.system_crash` | `calling.netrunner` | 4 | active | `talent.netrunner.daemon` |
+| `talent.beastbinder.pack_leader` | `calling.beastbinder` | 1 | passive | — |
+| `talent.beastbinder.feral_bond` | `calling.beastbinder` | 1 | passive | — |
+| `talent.beastbinder.tracker` | `calling.beastbinder` | 1 | passive | — |
+| `talent.beastbinder.beast_tongue` | `calling.beastbinder` | 1 | passive | — |
+| `talent.beastbinder.sic_em` | `calling.beastbinder` | 2 | active | — |
+| `talent.beastbinder.hardy_beasts` | `calling.beastbinder` | 2 | passive | — |
+| `talent.beastbinder.mount_bond` | `calling.beastbinder` | 2 | passive | — |
+| `talent.beastbinder.shared_senses` | `calling.beastbinder` | 2 | passive | — |
+| `talent.beastbinder.alpha` | `calling.beastbinder` | 3 | passive | — |
+| `talent.beastbinder.primal_fury` | `calling.beastbinder` | 3 | active | — |
+| `talent.beastbinder.herd_mend` | `calling.beastbinder` | 3 | passive | — |
+| `talent.beastbinder.chimera_call` | `calling.beastbinder` | 4 | active | `talent.beastbinder.alpha` |
+| `talent.monk.iron_fist` | `calling.monk` | 1 | passive | — |
+| `talent.monk.wind_step` | `calling.monk` | 1 | passive | — |
+| `talent.monk.centered` | `calling.monk` | 1 | passive | — |
+| `talent.monk.deflect` | `calling.monk` | 1 | passive | — |
+| `talent.monk.flurry` | `calling.monk` | 2 | passive | — |
+| `talent.monk.pressure_points` | `calling.monk` | 2 | passive | — |
+| `talent.monk.still_breath` | `calling.monk` | 2 | passive | — |
+| `talent.monk.roll_with_it` | `calling.monk` | 2 | passive | — |
+| `talent.monk.stunning_palm` | `calling.monk` | 3 | active | — |
+| `talent.monk.diamond_body` | `calling.monk` | 3 | passive | — |
+| `talent.monk.drunken_master` | `calling.monk` | 3 | passive | — |
+| `talent.monk.quivering_palm` | `calling.monk` | 4 | active | `talent.monk.stunning_palm` |
+| `talent.general.toughened` | general | 1 | passive | — |
+| `talent.general.quick_learner` | general | 1 | passive | — |
+| `talent.general.pack_mule` | general | 1 | passive | — |
+| `talent.general.lucky` | general | 1 | passive | — |
+| `talent.general.polyglot` | general | 1 | passive | — |
+| `talent.general.iron_will` | general | 1 | passive | — |
+| `talent.general.forager` | general | 1 | passive | — |
+| `talent.general.hardy` | general | 1 | passive | — |
+| `talent.general.marathon` | general | 1 | passive | — |
+| `talent.general.polyglot_ii` | general | 2 | passive | `talent.general.polyglot` |
+| `talent.general.keen_senses` | general | 2 | passive | — |
+| `talent.general.field_dressing` | general | 2 | passive | — |
+| `talent.general.scavenger` | general | 2 | passive | — |
+| `talent.general.light_sleeper` | general | 2 | passive | — |
+
+### 15.5 Kin
+
+| ID | Body plan | Added parts | Creation bonus | Traits (§15.6) |
+|---|---|---|---|---|
+| `kin.human` | `body.humanoid` | none | +4 free points; +5 to one skill | `trait.kin.human.versatile` |
+| `kin.construct` | `body.humanoid` | none | none | `trait.kin.construct.machine_body`, `trait.kin.construct.fuel_cell`, `trait.kin.construct.conductive`, `trait.kin.construct.poor_chemistry`, `trait.kin.construct.self_repair`, `trait.kin.construct.plated` |
+| `kin.undead` | `body.humanoid` | none | none | `trait.kin.undead.deathless`, `trait.kin.undead.umbral_communion`, `trait.kin.undead.light_averse`, `trait.kin.undead.grave_appetite`, `trait.kin.undead.unfeeling` |
+| `kin.beastkin` | `body.humanoid` | `bp.tail` (share 500 from `bp.torso`, hit_mult 8500, precision no) | none | `trait.kin.beastkin.claws`, `trait.kin.beastkin.night_eyes`, `trait.kin.beastkin.tail_balance`, `trait.kin.beastkin.keen_nose`, `trait.kin.beastkin.fast_metabolism` |
+| `kin.fae` | `body.humanoid` | none | none | `trait.kin.fae.glamour_born`, `trait.kin.fae.iron_bane`, `trait.kin.fae.light_step`, `trait.kin.fae.fair_folk` |
+| `kin.mutant` | `body.humanoid` | none | one mutation from 3 offered (§9.3) | `trait.kin.mutant.unstable_genome`, `trait.kin.mutant.adaptive`, `trait.kin.mutant.mutable_flesh` |
+
+Doc 13 §2.4 applies kin to sapient enemies with the Errata-only clauses removed; the IDs are these.
+
+### 15.6 Traits
+
+Origin, kin and Marginalia traits have dependency none and `src_lvl = d_cur` (§1.1). Kind: **passive**, **active** (ability slot), **channel** (an action, not a slot) or **creation** (applies at creation only).
+
+| ID | Bearer | Kind | Effect |
+|---|---|---|---|
+| `trait.origin.destined` | `origin.mythic_fantasy` | passive | §2.3 item 1 |
+| `trait.origin.monster_hunter` | `origin.gothic_horror` | passive | §2.3 item 2 |
+| `trait.origin.already_broken` | `origin.cosmic_horror` | passive | §2.3 item 3 |
+| `trait.origin.spacer` | `origin.space_opera` | passive | §2.3 item 4 |
+| `trait.origin.wired` | `origin.cyberpunk` | passive | §2.3 item 5 |
+| `trait.origin.scavenger` | `origin.post_apocalypse` | passive | §2.3 item 6 |
+| `trait.origin.quickdraw` | `origin.weird_west` | passive | §2.3 item 7 |
+| `trait.origin.gumshoe` | `origin.hardboiled_noir` | passive | §2.3 item 8 |
+| `trait.origin.qinggong` | `origin.wuxia` | passive | §2.3 item 9 |
+| `trait.origin.gearwright` | `origin.steampunk` | passive | §2.3 item 10 |
+| `trait.origin.courtesy` | `origin.fairy_tale` | passive | §2.3 item 11 |
+| `trait.origin.favored` | `origin.mythic_antiquity` | passive | §2.3 item 12 |
+| `trait.origin.lucid` | `origin.oneiric` | passive | §2.3 item 13 |
+| `trait.origin.cleared` | `origin.redacted` | passive | §2.3 item 14 |
+| `trait.origin.blank_page` | `origin.unwritten` | creation | §2.3 item 15 |
+| `trait.origin.first_draft` | `origin.ur_text` | passive | §2.3 item 16 |
+| `trait.kin.human.versatile` | `kin.human` | creation | §2.4 `kin.human` |
+| `trait.kin.construct.machine_body` | `kin.construct` | passive | §2.4 `kin.construct` |
+| `trait.kin.construct.fuel_cell` | `kin.construct` | passive | §2.4 `kin.construct` |
+| `trait.kin.construct.conductive` | `kin.construct` | passive | §2.4 `kin.construct` |
+| `trait.kin.construct.poor_chemistry` | `kin.construct` | passive | §2.4 `kin.construct` |
+| `trait.kin.construct.self_repair` | `kin.construct` | channel | §2.4 `kin.construct` |
+| `trait.kin.construct.plated` | `kin.construct` | passive | §2.4 `kin.construct` |
+| `trait.kin.undead.deathless` | `kin.undead` | passive | §2.4 `kin.undead` |
+| `trait.kin.undead.umbral_communion` | `kin.undead` | passive | §2.4 `kin.undead` |
+| `trait.kin.undead.light_averse` | `kin.undead` | passive | §2.4 `kin.undead` |
+| `trait.kin.undead.grave_appetite` | `kin.undead` | passive | §2.4 `kin.undead` |
+| `trait.kin.undead.unfeeling` | `kin.undead` | passive | §2.4 `kin.undead` |
+| `trait.kin.beastkin.claws` | `kin.beastkin` | passive | §2.4 `kin.beastkin` |
+| `trait.kin.beastkin.night_eyes` | `kin.beastkin` | passive | §2.4 `kin.beastkin` |
+| `trait.kin.beastkin.tail_balance` | `kin.beastkin` | passive | §2.4 `kin.beastkin` |
+| `trait.kin.beastkin.keen_nose` | `kin.beastkin` | passive | §2.4 `kin.beastkin` |
+| `trait.kin.beastkin.fast_metabolism` | `kin.beastkin` | passive | §2.4 `kin.beastkin` |
+| `trait.kin.fae.glamour_born` | `kin.fae` | passive | §2.4 `kin.fae` |
+| `trait.kin.fae.iron_bane` | `kin.fae` | passive | §2.4 `kin.fae` |
+| `trait.kin.fae.light_step` | `kin.fae` | passive | §2.4 `kin.fae` |
+| `trait.kin.fae.fair_folk` | `kin.fae` | passive | §2.4 `kin.fae` |
+| `trait.kin.mutant.unstable_genome` | `kin.mutant` | creation and passive | §2.4 `kin.mutant` |
+| `trait.kin.mutant.adaptive` | `kin.mutant` | passive | §2.4 `kin.mutant` |
+| `trait.kin.mutant.mutable_flesh` | `kin.mutant` | passive | §2.4 `kin.mutant` |
+| `trait.marginalia.strikethrough` | `afflict.red_ink` dose | active | §10.3 item 1 |
+| `trait.marginalia.redaction` | `afflict.red_ink` dose | active | §10.3 item 2 |
+| `trait.marginalia.rewrite_wound` | `afflict.red_ink` dose | active | §10.3 item 3 |
+| `trait.marginalia.ink_sight` | `afflict.red_ink` dose | passive | §10.3 item 4 |
+| `trait.marginalia.footnote` | `afflict.red_ink` dose | passive | §10.3 item 5 |
+| `trait.marginalia.erase` | `afflict.red_ink` dose | active | §10.3 item 6 |
+| `trait.marginalia.margin_step` | `afflict.red_ink` dose | active | §10.3 item 7 |
+| `trait.marginalia.dictation` | `afflict.red_ink` dose | active | §10.3 item 8 |
+
+Echo signature traits: variant A of each of the 24 launch Echoes. Doc 14 §6.3 authors each effect as §2.6.1 terms, in the row of the Echo with the same suffix; §2.6.1 validates it. Variants B and C are `trait.echo.<suffix>_b` and `trait.echo.<suffix>_c` (doc 15 Folds 2 and 5) and must have variant A's `net`.
+
+| ID | Echo | Effect |
+|---|---|---|
+| `trait.echo.aldric_unsworn` | `echo.aldric_unsworn` | doc 14 §6.3 |
+| `trait.echo.wren_long_index` | `echo.wren_long_index` | doc 14 §6.3 |
+| `trait.echo.vesper_crane` | `echo.vesper_crane` | doc 14 §6.3 |
+| `trait.echo.mother_ilse` | `echo.mother_ilse` | doc 14 §6.3 |
+| `trait.echo.dr_halloway` | `echo.dr_halloway` | doc 14 §6.3 |
+| `trait.echo.drowned_clerk` | `echo.drowned_clerk` | doc 14 §6.3 |
+| `trait.echo.ostra_vey` | `echo.ostra_vey` | doc 14 §6.3 |
+| `trait.echo.kestrel_unit` | `echo.kestrel_unit` | doc 14 §6.3 |
+| `trait.echo.nix_seventeen` | `echo.nix_seventeen` | doc 14 §6.3 |
+| `trait.echo.ronin_valdez` | `echo.ronin_valdez` | doc 14 §6.3 |
+| `trait.echo.ma_rust` | `echo.ma_rust` | doc 14 §6.3 |
+| `trait.echo.tallow` | `echo.tallow` | doc 14 §6.3 |
+| `trait.echo.josephine_crowe` | `echo.josephine_crowe` | doc 14 §6.3 |
+| `trait.echo.preacher_amos` | `echo.preacher_amos` | doc 14 §6.3 |
+| `trait.echo.dex_halloran` | `echo.dex_halloran` | doc 14 §6.3 |
+| `trait.echo.vera_lux` | `echo.vera_lux` | doc 14 §6.3 |
+| `trait.echo.lan_ninth_peak` | `echo.lan_ninth_peak` | doc 14 §6.3 |
+| `trait.echo.old_master_huo` | `echo.old_master_huo` | doc 14 §6.3 |
+| `trait.echo.ada_brassvane` | `echo.ada_brassvane` | doc 14 §6.3 |
+| `trait.echo.colonel_wexley` | `echo.colonel_wexley` | doc 14 §6.3 |
+| `trait.echo.briar_thornwood` | `echo.briar_thornwood` | doc 14 §6.3 |
+| `trait.echo.wolf_in_wool` | `echo.wolf_in_wool` | doc 14 §6.3 |
+| `trait.echo.kallias_twice_drowned` | `echo.kallias_twice_drowned` | doc 14 §6.3 |
+| `trait.echo.sibyl_of_ash` | `echo.sibyl_of_ash` | doc 14 §6.3 |
+
+### 15.7 Afflictions and wounds
+
+| ID | Skins (Canon §16.4) | Contraction | Effects |
+|---|---|---|---|
+| `afflict.hunger` | vampirism, ghoul hunger, jiangshi | §10.1 meter, then Incubating 7200 ticks | §10.2 |
+| `afflict.beast` | lycanthropy, were-forms | §10.1 meter, then Incubating 7200 ticks | §10.2; form `summon.poly.beast` (doc 06 §12.3) |
+| `afflict.red_ink` | the Editors' forbidden ink | §10.1 meter or `add_affliction_dose`; up to 4 doses | §10.2; one `trait.marginalia.*` power per dose (§10.3) |
+
+| ID | Class | Rule (§8.2) |
+|---|---|---|
+| `wound.bruised` | tier 1 | `frac` in `5001..=7500` |
+| `wound.wounded` | tier 2 | `frac` in `2501..=5000` |
+| `wound.crippled` | tier 3 | `frac <= 2500` and `pool > 0` |
+| `wound.disabled` | tier 4 | `pool = 0`, not severed |
+| `wound.severed` | severed | the part is severed (§8.6) |
+| `wound.laceration` | kind | largest share slash or pierce |
+| `wound.fracture` | kind | largest share blunt, or fall damage |
+| `wound.burn` | kind | largest share fire, frost, acid, shock, radiation or sonic |
+| `wound.trauma` | kind | largest share toxin, radiant, umbral, psychic, arcane or true |
+
+A tier ID is also the source ID of that tier's §8.3 modifiers.
+
+### 15.8 Body plans and parts
+
+| ID | Parts (Canon §9) | Donor of added parts | Base speeds and slots |
+|---|---|---|---|
+| `body.humanoid` | `bp.head`, `bp.torso`, `bp.arm_l`, `bp.arm_r`, `bp.leg_l`, `bp.leg_r` | `bp.torso` | Canon §4.1–§4.2 |
+| `body.quadruped` | `bp.head`, `bp.torso`, `bp.leg_fl`, `bp.leg_fr`, `bp.leg_hl`, `bp.leg_hr` | `bp.torso` | §13 |
+| `body.avian` | `bp.head`, `bp.torso`, `bp.wing_l`, `bp.wing_r`, `bp.leg_l`, `bp.leg_r` | `bp.torso` | §13 |
+| `body.serpentine` | `bp.head`, `bp.body_front`, `bp.body_rear`, `bp.tail` | `bp.body_front` | §13 |
+| `body.insectoid` | `bp.head`, `bp.thorax`, `bp.abdomen`, `bp.leg_1` to `bp.leg_6` | `bp.thorax` | §13 |
+| `body.amorphous` | `bp.core`, `bp.mass` | `bp.mass` | §13 |
+| `body.construct` | `bp.core`, `bp.chassis`, `bp.limb_1` to `bp.limb_4` | `bp.chassis` | §13 |
+| `body.swarm` | `bp.mass` | `bp.mass` | NPC only (doc 13) |
+
+Parts. Share, hit_mult and precision are Canon §9 for native parts; an added part takes its share from its plan's donor part. Mass share is the part's slice of body mass for body-part items (§8.6); an added part's mass share equals its share and is taken from the donor's mass share. Severable follows Canon §9.1: limbs, tails and wings on every plan, heads on NPCs only. The wound row is the §8.3 row the part uses.
+
+| ID | Share Bp by plan | hit_mult Bp | Precision | Severable | Mass share Bp | Wound row (§8.3) |
+|---|---|---|---|---|---|---|
+| `bp.head` | humanoid 1500, quadruped 1500, avian 1500, serpentine 2000, insectoid 1500 | 10000 | yes | NPCs only | humanoid 700, quadruped 900, avian 800, serpentine 1200, insectoid 1000 | head |
+| `bp.torso` | humanoid 3500, quadruped 4500, avian 3500 | 10000 | no | no | humanoid 4700, quadruped 5500, avian 5000 | torso |
+| `bp.arm_l` | humanoid 1250 | 8500 | no | yes | 650 | arm |
+| `bp.arm_r` | humanoid 1250 | 8500 | no | yes | 650 | arm |
+| `bp.leg_l` | humanoid 1250, avian 1000 | 8500 | no | yes | humanoid 1650, avian 1000 | leg |
+| `bp.leg_r` | humanoid 1250, avian 1000 | 8500 | no | yes | humanoid 1650, avian 1000 | leg |
+| `bp.leg_fl` | quadruped 1000 | 8500 | no | yes | 900 | leg, quadruped factors (§8.3) |
+| `bp.leg_fr` | quadruped 1000 | 8500 | no | yes | 900 | leg, quadruped factors (§8.3) |
+| `bp.leg_hl` | quadruped 1000 | 8500 | no | yes | 900 | leg, quadruped factors (§8.3) |
+| `bp.leg_hr` | quadruped 1000 | 8500 | no | yes | 900 | leg, quadruped factors (§8.3) |
+| `bp.wing_l` | avian 1500; added by `aug.wings` 750 | 8500 | no | yes | avian 1100; added 750 | wings |
+| `bp.wing_r` | avian 1500; added by `aug.wings` 750 | 8500 | no | yes | avian 1100; added 750 | wings |
+| `bp.body_front` | serpentine 4000 | 10000 | no | no | 4000 | torso |
+| `bp.body_rear` | serpentine 3000 | 9000 | no | no | 3500 | one leg (locomotion part) |
+| `bp.tail` | serpentine 1000; added by `kin.beastkin` or `aug.tail` 500 | 8500 | no | yes | serpentine 1300; added 500 | tail |
+| `bp.thorax` | insectoid 3500 | 10000 | no | no | 3500 | torso |
+| `bp.abdomen` | insectoid 2600 | 10000 | no | no | 3502 | torso |
+| `bp.leg_1` | insectoid 400 | 8000 | no | yes | 333 | arm when bound as an arm (§13) |
+| `bp.leg_2` | insectoid 400 | 8000 | no | yes | 333 | arm when bound as an arm (§13) |
+| `bp.leg_3` | insectoid 400 | 8000 | no | yes | 333 | `BodyMove 8500` at tier 4 or severed; none below tier 4 |
+| `bp.leg_4` | insectoid 400 | 8000 | no | yes | 333 | `BodyMove 8500` at tier 4 or severed; none below tier 4 |
+| `bp.leg_5` | insectoid 400 | 8000 | no | yes | 333 | `BodyMove 8500` at tier 4 or severed; none below tier 4 |
+| `bp.leg_6` | insectoid 400 | 8000 | no | yes | 333 | `BodyMove 8500` at tier 4 or severed; none below tier 4 |
+| `bp.core` | amorphous 2000, construct 2000 | 10000 | yes | no | construct 1500; amorphous none (nothing severs, §13) | head |
+| `bp.mass` | amorphous 8000, swarm 10000 | 10000 | no | no | none (never severs) | amorphous torso; swarm none |
+| `bp.chassis` | construct 5000 | 10000 | no | no | 5500 | torso |
+| `bp.limb_1` | construct 750 | 8500 | no | yes | 750 | arm |
+| `bp.limb_2` | construct 750 | 8500 | no | yes | 750 | arm |
+| `bp.limb_3` | construct 750 | 8500 | no | yes | 750 | leg |
+| `bp.limb_4` | construct 750 | 8500 | no | yes | 750 | leg |
+| `bp.arm_extra_1` | added: `aug.extra_arm` 1000; serpentine Echo 750 (§13) | 8500 | no | yes | equal to its share | extra arms |
+| `bp.arm_extra_2` | added: `aug.extra_arm` 1000; serpentine Echo 750 (§13) | 8500 | no | yes | equal to its share | extra arms |
+| `bp.horn` | added: 500, by an NPC template or an augment that names it | 8500 | no | no | 500 | extra parts (tail, wings, extra arms row) |
+| `bp.weakpoint_1` | added: the boss template's share (doc 13) | 10000 | yes | no | equal to its share | its mapped attacks off at tier 4 (NPC part-to-attack map) |
+| `bp.weakpoint_2` | added: the boss template's share (doc 13) | 10000 | yes | no | equal to its share | its mapped attacks off at tier 4 (NPC part-to-attack map) |
+| `bp.weakpoint_3` | added: the boss template's share (doc 13) | 10000 | yes | no | equal to its share | its mapped attacks off at tier 4 (NPC part-to-attack map) |
+| `bp.weakpoint_4` | added: the boss template's share (doc 13) | 10000 | yes | no | equal to its share | its mapped attacks off at tier 4 (NPC part-to-attack map) |
+
+`bp.arm_extra_N` takes the lowest free `N`, from 1, and grants `slot.hand_extra_N` (Canon §9.1). Boss templates use `bp.weakpoint_1` to `bp.weakpoint_4`.
+
+---
 ## Exports
 
-All in namespaces Canon §19 assigns to doc 04.
+All in namespaces Canon §19 assigns to doc 04. §15 lists every ID with its structural data; §2.3 (Origins) and §9.4 (augments) are registers in place. An ID in these namespaces that is not listed here is invalid.
 
 | Namespace | IDs defined or given behavior here |
 |---|---|
-| `attr.` | the 8 Canon primaries: uses, display tiers, talent gates (§4) |
-| `sub.` | the 24 Canon sub-attributes: tooltips, doc-04 uses (§3) |
-| `skill.` | the 36 Canon skills: XP events, effects (§5); 144 perks `skill.<name>.m25`, `.m50`, `.m75`, `.m100` |
-| `talent.` | 156 Calling talents `talent.<calling_suffix>.<name>` (§7.2) and 14 `talent.general.*` (§7.3) |
+| `attr.` | the 8 Canon primaries (§15.1): uses, display tiers, talent gates (§4) |
+| `sub.` | the 24 Canon sub-attributes (§15.1): tooltips, doc-04 uses (§3) |
+| `skill.` | the 36 Canon skills (§15.2): XP events (§5.2), effects (§5.3); 144 mastery perks `skill.<name>.m25`, `.m50`, `.m75`, `.m100` (§5.3, §15.2) |
+| `talent.` | 156 Calling talents `talent.<calling_suffix>.<name>` (§7.2) and 14 `talent.general.<name>` (§7.3), each with tier, kind and prerequisite in §15.4 |
 | `origin.` | 16 Origins `origin.<genre_suffix>` (§2.3) |
-| `calling.` | the 13 Canon Callings: presets, kits, trees, key primaries (§2.5, §7) |
-| `kin.` | the 6 Canon kin: full trait lists and skins (§2.4) |
-| `trait.` | `trait.origin.*` (16), `trait.kin.<kin>.*` (human 1, construct 6, undead 5, beastkin 5, fae 4, mutant 3), `trait.marginalia.*` (8); `trait.echo.<suffix>`, `_b`, `_c` are authored by doc 14 (24 Echoes × 3 variants) and validated by §2.6.1 |
+| `calling.` | the 13 Canon Callings (§15.3): presets, kits, trees, key primaries (§2.5, §7) |
+| `kin.` | the 6 Canon kin (§15.5): full trait lists and skins (§2.4) |
+| `trait.` | `trait.origin.*` (16), `trait.kin.<kin>.*` (human 1, construct 6, undead 5, beastkin 5, fae 4, mutant 3) and `trait.marginalia.*` (8), all in §15.6; the 24 Echo signature traits `trait.echo.<suffix>` (§15.6), whose effects doc 14 §6.3 authors and §2.6.1 validates, with variants `trait.echo.<suffix>_b` and `_c` (doc 15 Folds 2 and 5) |
 | `aug.` | 33 augments (§9.4), including `aug.prosthetic_arm` and `aug.prosthetic_leg`; 27 have an implant form, which doc 10 counts for `idc.implant` |
-| `afflict.` | the 3 Canon afflictions: contraction, effects, cure (§10) |
-| `wound.` | tiers `wound.bruised`, `wound.wounded`, `wound.crippled`, `wound.disabled`, `wound.severed`; kinds `wound.laceration`, `wound.fracture`, `wound.burn`, `wound.trauma` |
-| `body.`, `bp.` | Canon plans and parts: wound effects, mass shares, Echo body rules (§8, §13); uses of `bp.tail`, `bp.arm_extra_N` (N from 1), `bp.wing_l`, `bp.wing_r` as added parts |
+| `afflict.` | the 3 Canon afflictions `afflict.hunger`, `afflict.beast`, `afflict.red_ink` (§15.7): contraction, effects, cure (§10) |
+| `wound.` | tiers `wound.bruised`, `wound.wounded`, `wound.crippled`, `wound.disabled`, `wound.severed`; kinds `wound.laceration`, `wound.fracture`, `wound.burn`, `wound.trauma` (§8.2, §15.7) |
+| `body.`, `bp.` | the 8 Canon plans and their 30 native parts (§15.8): wound effects, mass shares, Echo body rules (§8, §13); added parts `bp.tail`, `bp.wing_l`, `bp.wing_r`, `bp.arm_extra_N` (N from 1), `bp.horn` and boss parts `bp.weakpoint_1` to `bp.weakpoint_4`, with donor parts per plan (§15.8) |
 
 Behavior is also given for the Canon statuses and resources doc 04 owns (Canon §11.1, §12).
 
@@ -1309,6 +1811,8 @@ Constants exported: `DOC04_ROW_CAP_TENTHS = 40` (§6.1), `CHECK_PERSIST_BP = 100
 16. **Charmed players.** Canon §11.8 sets outgoing damage to the applier's faction × 0. Assumed: that hit's buildup and on-hit effects are × 0 too, and `ev.damage_dealt` is still emitted with total 0, as Canon §18 requires for every hit.
 17. **Severing a pool already at 0.** Canon §9.1 says "reaches 0 from a hit". Assumed, with doc 05 §19.1: a slash-dominant hit with positive part damage on a part whose pool is already 0 severs it.
 18. **Partless damage.** Canon §10.5 step 8 names "the hit part"; DoT pulses, suffocation, starvation and overdose have none. Assumed: they reduce HP only (§8.1).
+19. **Added-part donors.** Canon §9 takes an added part's share from `bp.torso`, `bp.mass` or `bp.chassis`; `body.serpentine` and `body.insectoid` have none of these. Assumed (§15.8): serpentine donates from `bp.body_front` (as §13 already does for its extra arms) and insectoid from `bp.thorax`.
+20. **Unspecified added parts.** Canon §9 names `bp.horn` and `bp.weakpoint_N` without data, and doc 13's boss rows give a weakpoint's share and precision only. Assumed (§15.8): `bp.horn` has share 500, hit_mult 8500, no precision and never severs; `bp.weakpoint_1` to `bp.weakpoint_4` have hit_mult 10000 and precision, never sever, and take the template's share from the donor part.
 
 ## Acceptance tests
 
@@ -1362,6 +1866,8 @@ Constants exported: `DOC04_ROW_CAP_TENTHS = 40` (§6.1), `CHECK_PERSIST_BP = 100
 48. **Avatar of fate.** During `avatar_of_fate` a 1000 Bp proc rolls at 1500 Bp and crit chance gains 2000 Bp within the 7500 cap; every hit still draws exactly one crit roll; a §4.2 check makes exactly 2 `range(10000)` calls and succeeds when either is below `chance_bp`.
 49. **Fieldcraft.** A placeable with `base_ticks` 120 takes 80 ticks at Fieldcraft 50 and 1 tick at Fieldcraft 100; breaking your own placeable grants 0 XP; the Marginalia power `erase` removes destructible blocks and placeables in its volume and leaves fixed terrain unchanged.
 50. **Redacted.** An Erratum at Max HP 85 with a leg pool at 1,000 of 10,625 and a severed arm respawns after a Redaction with HP 42,500, that leg at 5,312 (tier 2) and the arm still severed; its `dd_used` is unchanged.
+51. **ID register.** Every ID in the doc-04 namespaces (Canon §19) that any chapter cites resolves to a row of §15, §2.3 or §9.4. §15 holds 8 primaries, 24 sub-attributes, 36 skills, 144 perks, 13 Callings, 170 talents, 6 kin, 72 traits (16 Origin, 24 kin, 8 Marginalia, 24 Echo), 3 afflictions, 9 wound IDs, 8 body plans and 37 parts.
+52. **Tier floor.** An arm pool of 1 mHP out of 10,625 has `frac = 0` and is tier 3 (`wound.crippled`), not tier 4. A beastkin's severed `bp.tail` has mass share 500 and its torso 4200.
 
 ## Invariants annex
 

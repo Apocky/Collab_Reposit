@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.8 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.9 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -1393,6 +1393,8 @@ An item type is type-hidden if and only if an `idc` class above lists it, and ty
 
 Genre skins rename curse states, for example Blessed / — / Hexed, or Signed / — / Corrupted.
 
+**Pact curses** (product-owner decision, DECISIONS.md item 60). Some cursed items carry a pact instead of a plain curse: one curse affix welded to one matching **pact boon** from the same theme (`curse.pact.<name>` with its boon, owned by doc 10). The boon is strong enough that the item is a build decision, not a dud: for example a blade that cannot be unequipped and drains 1% Max HP per second, but every kill restores 10% Max HP and crits heal 20% of damage dealt. A pact item is `buc.cursed` and cannot be unequipped until uncursed, and uncursing it removes both the curse and the boon. Appraising a pact item reveals both halves together. Fortune Engines dispense pact items as **cursed capsules** at a displayed share of their capsules (doc 11), never as a hidden outcome. Doc 10 defines at least 16 pacts.
+
 ### 13.7 Enhancement and Emendations
 
 - Stored `enhancement` is the Emendation-driven level, `0..=15`.
@@ -1927,6 +1929,10 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ---
 
 ## 23. Changelog
+
+### canon-1.9 (2026-10-11)
+
+- Added pact curses: cursed items whose curse is welded to a matching boon, sold openly as cursed capsules by Fortune Engines.
 
 ### canon-1.8 (2026-10-11)
 

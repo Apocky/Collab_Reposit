@@ -23,8 +23,8 @@ This chapter defines the core of `palimpsest_sim`: the order of systems inside o
 | Canon | §12, §12.1–§12.3 | `res.breath` contact rule; the surfaces-and-reactions table; sight concealment; spawn light |
 | Canon | §13.8 | `P(d)`, `T(d)`, `S(lvl)` for environmental hazards |
 | Canon | §13.8a | one material table for blocks and items |
-| Canon | §17.5–§17.9 | `FF_AREA_BP` applies to explosions, fire spread, surfaces, falling blocks; ghosts; mounts; invasions (slot 4, invaders never place or break blocks) |
-| Canon | §18, §19 | the 44 canonical events, `ev.invasion_started` and `ev.invasion_ended` included; namespaces `comp.`, `sys.`, `grid.` (03), `ev.` and `rng.` bus (03), `block.` shared with 07 |
+| Canon | §17.5–§17.9 | `FF_AREA_BP` applies to explosions, fire spread, surfaces, falling blocks; ghosts; §17.7's retirement of mounts (canon-1.8); invasions (slot 4, invaders never place or break blocks) |
+| Canon | §18, §19 | the 42 canonical events, `ev.invasion_started` and `ev.invasion_ended` included; namespaces `comp.`, `sys.`, `grid.` (03), `ev.` and `rng.` bus (03), `block.` shared with 07 |
 | Doc 02 | §4.1–§4.6 | `Fx`, `Fx3`, `isqrt_u128`, `atan2_bam`, `closest_seg_seg`, `capsule_overlap`, vertical-capsule-vs-box distance, `ray_capsule`, `dda`, `div128`, `div256` |
 | Doc 02 | §5.1–§5.5 | sorted-column store, deferred structural commands, `SystemDesc` and `due`, `step` lifecycle, `PlayerCommand` axes and button bits, intents, `SimEvent` |
 | Doc 02 | §6.5, §7.2, §8.5, §9, §15 | serialization sections and `palette_rle`; `ChunkView` generations; light field texture and agreement clamp; audio's use of `ev.noise`; `perf.deck.sim.*` gates |
@@ -112,7 +112,7 @@ Systems run in exactly this order every tick. A system that is not due is skippe
 | 5 | `sys.perception` | 09 | 3, per entity | sight checks for awake observers (uses §5.18 DDA, §10 light, §7.6 concealment) |
 | 6 | `sys.ai_think` | 13 | 6, per entity | awake agents run doc 13 §4.1's stages (squads, Director, path service included) and write `comp.control` |
 | 7 | `sys.actions` | 05, 06, 07, 09, 11 | 1, 0 | doc 05 combat step C1: action state machines for attacks, casts and cast resolution (doc 06), item use, interaction, doors (§13.4), mining progress (§13.2), placing (§13.3), doc 09's lock, hack, takedown and hide machines; queue hits, request projectile spawns, queue explosions, request block edits, emit noise |
-| 8 | `sys.movement` | 03 | 1, 0 | `step_mover` (§5) for every awake body, ascending `EntityId`; mounts before riders' slaving; portal crossings (§5.21); fall-damage hits queued |
+| 8 | `sys.movement` | 03 | 1, 0 | `step_mover` (§5) for every awake body, ascending `EntityId`; portal crossings (§5.21); fall-damage hits queued |
 | 9 | `sys.push` | 03 | 1, 0 | entity–entity separation (§5.14); fills `push_contacts` |
 | 10 | `sys.env_sample` | 03 | 1, 0 | per body: local genre, Contradiction re-evaluation hook on change (doc 05), contact cells, immersion, eye cell, temperature, light, gravity sign (§5.20) |
 | 11 | `sys.broadphase` | 03 | 1, 0 | rebuild the spatial grid (§3.6) |
@@ -204,6 +204,20 @@ pub fn despawn(cmds: &mut Cmds, id: EntityId, reason: Id32 /* grid.despawn.* */)
 
 `sys.despawn` emits `ev.entity_despawned` for every entity removed without dying, in ascending `EntityId`, then requests column compaction. An entity removed after `ev.entity_killed` emits no `ev.entity_despawned`.
 
+Despawn reasons (`grid.despawn.*`), each the `reason` field of `ev.entity_despawned`:
+
+| Reason | Producer |
+|---|---|
+| `grid.despawn.expired` | `Lifetime.end_tick` reached (zones, corpses, markers, item drops with a lifetime); a projectile at its `end_tick` (§5.19) |
+| `grid.despawn.consumed` | a projectile that stops on a body or a block (§5.19) |
+| `grid.despawn.picked_up` | an item drop whose item enters an inventory (doc 11) |
+| `grid.despawn.merged` | an item drop merged into a Lost Satchel at `GROUND_ITEM_CAP` (doc 11) |
+| `grid.despawn.folio_exit` | an entity that does not travel with the party when it leaves a Folio (doc 14) |
+| `grid.despawn.cap_evicted` | the projectile Canon §4 evicts at `PROJECTILE_CAP` when a new one spawns: the lowest-`EntityId` non-player projectile, else the lowest `EntityId` (§5.19) |
+| `grid.despawn.landed` | a falling block that lands and becomes a block or an item (§13.6) |
+| `grid.despawn.dismissed` | a minion or summon dismissed by its owner (Canon §15.1; docs 06, 13) |
+| `grid.despawn.script` | scripted removal by docs 12, 13 and 14, including a spared creature leaving through an exit door (doc 13) |
+
 - **Generational semantics.** The canon `EntityId` is itself the generational handle: `folio_index` is the generation and the counter is the slot. No value is reused within a run, so a stale `EntityId` held in a component, a queue, an AI blackboard or an event consumer never aliases a newer entity. Every lookup of a despawned ID returns `None`: `Column::get` skips dead entries until `compact()` removes them at tick end.
 - **Dense index type.** `pub struct DenseIdx(pub u32)` is a position inside one column; `Column::index_of(id) -> Option<DenseIdx>` is a binary search over `ids`. A `DenseIdx` is valid only until the end of the system that obtained it. It is never stored in a component, a grid, an event or a save, and it never feeds an outcome.
 - **Counter range.** The counter occupies bits 0–39, so a Folio can hold `2^40 − 1` allocations. `spawn` panics with `entity_counter_overflow` beyond that, which a Folio never reaches (one spawn per tick for over 580 years).
@@ -214,9 +228,9 @@ Example: in Folio 3 the first spawn is `(3 << 40) | 1 = 0x0000030000000001`. If 
 
 | Kind ID | Meaning | Required components | Optional components |
 |---|---|---|---|
-| `grid.ekind.erratum` | a player character, alive, downed or ghost | `kind`, `pos`, `vel`, `body`, `move`, `control`, `player`, `faction`, `tags`, `pools`, `statuses`, `buildup`, `body_plan`, `pose`, `stats`, `inventory`, `equipment`, `env`, `interest` | `light_emitter`, `mining`, `rider` |
+| `grid.ekind.erratum` | a player character, alive, downed or ghost | `kind`, `pos`, `vel`, `body`, `move`, `control`, `player`, `faction`, `tags`, `pools`, `statuses`, `buildup`, `body_plan`, `pose`, `stats`, `inventory`, `equipment`, `env`, `interest` | `light_emitter`, `mining` |
 | `grid.ekind.creature` | any NPC: enemy, neutral, minion, hireling; also the invader (Canon §17.9) | `kind`, `pos`, `vel`, `body`, `move`, `control`, `faction`, `tags`, `pools`, `statuses`, `buildup`, `body_plan`, `pose`, `stats`, `env`, and either `ai` with `perception` (every NPC) or `player` with slot 4 (the invader, doc 13 template `enemy.editors.invader`) | `inventory`, `equipment`, `light_emitter`, `interest` |
-| `grid.ekind.mount` | a ridden or summoned mount (Canon §17.7) | creature set plus `mount` | `light_emitter` |
+| (retired, code 2) | the former mount kind; Canon §17.7 retired mounts in canon-1.8. Code 2 stays reserved so no later code renumbers; the loader rejects it and nothing spawns with it | — | — |
 | `grid.ekind.projectile` | any moving shot, thrown item or spell bolt | `kind`, `pos`, `vel`, `projectile` | `light_emitter` |
 | `grid.ekind.item_drop` | an item lying in the world | `kind`, `pos`, `vel`, `body`, `move`, `item_drop` | `lifetime` |
 | `grid.ekind.falling_block` | a block in free fall | `kind`, `pos`, `vel`, `body`, `move`, `falling_block` | — |
@@ -226,7 +240,7 @@ Example: in Folio 3 the first spawn is `(3 << 40) | 1 = 0x0000030000000001`. If 
 | `grid.ekind.corpse` | NPC remains kept for loot or necromancy | `kind`, `pos`, `vel`, `body`, `move`, `corpse` | `lifetime` |
 | `grid.ekind.marker` | a non-physical anchor: spawn point, scripted interest anchor, exit | `kind`, `pos` | `interest`, `lifetime` |
 
-The row order, from 0 (`erratum`) to 10 (`marker`), is the 4-bit kind code doc 16 §6.8 replicates. New kinds append after row 10 and never renumber a row.
+The row order, from 0 (`erratum`) to 10 (`marker`), is the 4-bit kind code doc 16 §6.8 replicates; code 2 is retired. New kinds append after row 10 and never renumber a row.
 
 ### 3.3 Component catalog
 
@@ -253,15 +267,13 @@ Columns serialize in ascending component-ID byte order, which is the order of th
 | `comp.lifetime` | `Lifetime { end_tick: Tick }` | 03 |
 | `comp.light_emitter` | `LightEmitter { level: u8, admitted: Option<Gidx> }` | 03 |
 | `comp.mining` | `Mining` | 03, 07 |
-| `comp.mount` | `MountState { arch: Id32, riders: [Option<EntityId>; 2], gallop: bool }` | 05 |
 | `comp.move` | `MoveState` | 03 |
 | `comp.perception` | `PerceptionState` (doc 09 §1.4: profile, senses, at most 16 `PairAware` records, disturbance, timers, decay accumulator) | 09 |
-| `comp.player` | `Player { slot: u8 /* 0..=4 */, downs_folio: u8, bleed_left: u16, revive_progress: u16, reviver: Option<EntityId>, downed_by: Option<EntityId>, mark_cooldown_until: Tick, trade: Option<TradeState>, mercy_on: bool, mercy_bp: Bp }` (doc 16 §9.4; `mercy_*` doc 17 §13) | 16, 17 |
+| `comp.player` | `Player { slot: u8 /* 0..=4 */, downs_folio: u8, bleed_left: u16, revive_progress: u16, reviver: Option<EntityId>, downed_by: Option<EntityId>, mark_cooldown_until: Tick, trade: Option<TradeState>, mercy_on: bool, mercy_bp: Bp, breath_held: bool }` (doc 16 §9.4; `mercy_*` doc 17 §13; `breath_held` doc 17 G22: set and cleared by the `SetBreathHold` intent in `sys.input_apply`, also cleared by doc 04's breath step when `res.breath` reaches 0) | 16, 17 |
 | `comp.pools` | `Pools { hp, hp_max, stamina, stamina_max, aether, aether_max, composure, composure_max, poise, poise_max, ward, toxicity, breath, breath_max: Milli, satiation: i32 }` | 04, 06 |
 | `comp.pos` | `Pos { p: Fx3, yaw: Bam, pitch: i16 }` | 03 |
 | `comp.pose` | `Pose` | 03 |
 | `comp.projectile` | `Projectile` | 03, 05 |
-| `comp.rider` | `Rider { mount: EntityId, seat: u8 }` | 05 |
 | `comp.stats` | `Stats` (doc 04: 24 base sub-attributes and training marks, 36 skills with milli-XP, level, char XP, talents), serialized in doc 04's declared field order | 04 |
 | `comp.statuses` | `Statuses { list: Vec<StatusInst> }`, `StatusInst { id: Id32, applied: Tick, expiry: Option<Tick>, stacks: u8, pool: Milli, source: EntityId, potency_bp: Bp, acc: i64 }`, sorted by `id` | 05 |
 | `comp.tags` | `Tags { bits: u64 }` (undead, fiend, divine, eldritch, construct, electronic, flier, swimmer, swarm, breathless, …; bit positions owned by doc 13) | 13 |
@@ -275,7 +287,7 @@ For Errata, `Control.prev_buttons` and `Control.action_seq` are serialized in do
 ### 3.4 Core component definitions
 
 ```rust
-pub enum MoveMode { Ground, Air, Swim, Climb, Mantle, Dodge, Fly, Downed, Ridden, Hover, Glide }  // grid.move.*
+pub enum MoveMode { Ground, Air, Swim, Climb, Mantle, Dodge, Fly, Downed }  // grid.move.*
 pub struct BodyState {
     pub radius: Fx, pub stand_h: Fx, pub crouch_h: Fx, pub eye_stand: Fx, pub eye_crouch: Fx,
     pub step_up: Fx, pub base_mass_g: Grams, pub carried_g: Grams, pub kb_resist_bp: Bp,
@@ -526,7 +538,7 @@ The simulation stores no skin. A block renders with the skin of `local_genre` at
 
 ### 4.7 Fixed terrain, protection, open-area and flip masks
 
-- **Fixed terrain** (Canon §4.3). A cell whose current block is not destructible keeps its type for the rest of the Folio: `set_block` refuses a change of type index with `fixed_terrain` unless the cause is `grid.cause.worldgen` or `grid.cause.script`. A change of props alone is allowed (door toggles, growth age, fence and pane connections). Mining, block damage, explosions and liquid displacement skip non-destructible cells; such cells still attenuate blasts (§12.2) and still collide.
+- **Fixed terrain** (Canon §4.3). A cell whose current block is not destructible keeps its type for the rest of the Folio: `set_block` refuses a change of type index with `fixed_terrain` unless the cause is `grid.cause.worldgen` or `grid.cause.script`, or the cause is `grid.cause.toggled` and the old and new types are a lit and unlit twin of doc 07 §10.6 (worldgen light fixtures can be snuffed and relit). A change of props alone is allowed (door toggles, growth age, fence and pane connections). Mining, block damage, explosions and liquid displacement skip non-destructible cells; such cells still attenuate blasts (§12.2) and still collide.
 - `protect` bits come from worldgen (doc 12 §9.2): exit portals, Folio-boundary shells, boss-arena seals while sealed, the Colophon entrance until the Rubric completes (doc 14 §3.4), and scripted props. `set_block` refuses actor-caused edits of a protected cell with `protected`; worldgen and script causes bypass it. Explosions skip protected cells. Docs 12 and 14 clear a bit through `set_protect(c, false)` with cause `grid.cause.script`.
 - `open_tag` bits come from worldgen and mark cells in rooms doc 12 tags as open areas (courtyards, caverns lit by the genre's ambient). They feed the sky channel (§10.2).
 - `flip` bits come from worldgen (doc 12 §9.5, Oneiric gravity-flip rooms). A body whose center cell has the bit uses `gsign = +1` (§5.12); a projectile whose cell has the bit falls upward (§5.19). Liquids, gases, falling blocks and every grid ignore the bit.
@@ -535,12 +547,12 @@ The simulation stores no skin. A block renders with the skin of `local_genre` at
 
 ## 5. Movement and collision
 
-`sys.movement` processes every live, awake entity that has `move`, in ascending `EntityId`. Mounts are processed in that order like any entity; riders skip their own integration and copy the seat position afterwards (§5.12).
+`sys.movement` processes every live, awake entity that has `move`, in ascending `EntityId`.
 
-**The controller is one pure function.** `sys.movement` runs `step_mover` for every body, and doc 16's client predictor runs the same function for the local Erratum (doc 16 §7.3). It reads only its arguments, draws no random numbers, emits no events and touches no other entity. Entity push (§5.14), knockback impulses (§5.13) and mount slaving are host-only steps outside it.
+**The controller is one pure function.** `sys.movement` runs `step_mover` for every body, and doc 16's client predictor runs the same function for the local Erratum (doc 16 §7.3). It reads only its arguments, draws no random numbers, emits no events and touches no other entity. Entity push (§5.14) and knockback impulses (§5.13) are host-only steps outside it.
 
 ```rust
-/// SPEC: 03 §5. MoverSnap is doc 16 §7.2's struct: tick, p, v, yaw, pitch, mv: MoveState, gates, speed_bp, genre, ride.
+/// SPEC: 03 §5. MoverSnap is doc 16 §7.2's struct: tick, p, v, yaw, pitch, mv: MoveState, gates, speed_bp, genre.
 pub fn step_mover(m: &mut MoverSnap, c: &Control, prm: &MoverParams, q: &dyn BlockQuery) -> MoverOut;
 
 pub struct MoverParams {
@@ -554,7 +566,6 @@ pub struct MoverParams {
     pub can_sprint: bool, pub can_jump: bool, pub can_dodge: bool,  // doc 04 predicates (stamina, exhaustion)
     pub air_jump_max: u8,                       // doc 04 §2.3 air_jump_max(e)
     pub wall_jump: bool, pub wall_run_max_mm: i32,  // doc 04 §5.3 Acrobatics 50; doc 04 §7.2 wind_step (2000) or 0
-    pub mount_mode: Option<MoveMode>,           // hover or glide for those mount templates (§5.12)
 }
 pub trait BlockQuery {
     fn state(&self, c: IVec3) -> BlockState;                     // block.void_bedrock outside the Folio
@@ -586,16 +597,12 @@ pub struct MoverOut {
 | `dodge` | yes | scripted 12 ticks | DODGE press on ground, allowed by doc 04 and statuses | 12th tick done |
 | `fly` | no | 3D | `FLIER` creatures; ghosts | never (flags) |
 | `downed` | yes | crawl 800 mm/s, height 600 mm | `st.downed` gained | `st.downed` removed and standing room exists |
-| `ridden` | no | input routed to the mount | `ev.mounted` | `ev.dismounted` |
-| `hover`, `glide` | special | mount archetypes | mount templates (§5.12) | — |
 
-Evaluation order each tick, first match wins: downed, ridden, mount mode, mantle in progress, dodge in progress, fly, swim, climb, dodge start, mantle start, jump, then ground or air from integration. The selection is a closed state machine: every mode is re-derived each tick from this function, so no mode can be left without a defined successor.
+Evaluation order each tick, first match wins: downed, mantle in progress, dodge in progress, fly, swim, climb, dodge start, mantle start, jump, then ground or air from integration. The selection is a closed state machine: every mode is re-derived each tick from this function, so no mode can be left without a defined successor.
 
 ```
 select_mode(m, c, prm, q) -> MoveMode:
     if m.gates & DOWNED:                                 return downed
-    if m.ride.is_some():                                 return ridden
-    if let Some(mode) = prm.mount_mode:                  return mode              // hover, glide
     if m.mv.mode == mantle ∧ m.mv.mantle.is_some():      return mantle            // until finished or aborted
     if m.mv.mode == dodge ∧ m.mv.dodge_t < 12:           return dodge
     if prm.body.flags & FLIER ∨ m.gates & GHOST:         return fly
@@ -610,7 +617,7 @@ select_mode(m, c, prm, q) -> MoveMode:
     return if m.mv.grounded { ground } else { air }                                // jumps fire in §5.7
 ```
 
-`press(b)` means bit `b` is held in `c.buttons` and was not in `c.prev_buttons`. `movement_gate(m)` is true when `gates` holds staggered, stunned, frozen, knocked down, sleeping, rooted or grappled (doc 16 §7.2 bits 0–6). Mode-specific steps run after selection: ground, air, dodge and downed use §5.2–§5.8 and §5.12; swim §5.10; climb §5.11; mantle §5.9; fly, hover and glide §5.12; ridden runs nothing, because the mount's step carries the rider.
+`press(b)` means bit `b` is held in `c.buttons` and was not in `c.prev_buttons`. `movement_gate(m)` is true when `gates` holds staggered, stunned, frozen, knocked down, sleeping, rooted or grappled (doc 16 §7.2 bits 0–6). Mode-specific steps run after selection: ground, air, dodge and downed use §5.2–§5.8 and §5.12; swim §5.10; climb §5.11; mantle §5.9; fly §5.12.
 
 **Status gates** (Canon §11.1, §9.1), read from `MoverSnap.gates`: `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping`, `st.rooted`, `st.grappled` zero the wish velocity. `st.overburdened` and a severed leg forbid sprint, jump and dodge. `st.exhausted` forbids sprint and dodge. `st.levitating` sets gravity to 0 and gives vertical control of 1500 mm/s through JUMP (up) and CROUCH (down). Doc 04's `can_sprint`, `can_jump` and `can_dodge` fold these with stamina, and `step_mover` reads only those three flags plus the gate bits.
 
@@ -648,7 +655,7 @@ on_ground: rate = mul_bp(40000, block.friction_bp)                              
 in air or kb_ticks > 0: rate = mul_bp(8000, genre.air_accel_bp)
 dv_max   = mul_fx(fx_mm(rate), DT)
 dh       = wish_h − v_h ;  if |dh| <= dv_max { v_h = wish_h } else { v_h += dh × dv_max / |dh| }
-if gravity applies: v.y += gsign × mul_fx(g, DT)      // not in swim, climb, mantle, fly or ridden modes, not with
+if gravity applies: v.y += gsign × mul_fx(g, DT)      // not in swim, climb, mantle or fly modes, not with
                                                      // st.levitating or NO_GRAVITY, not while wall-running (§5.7)
 clamp |v.y| <= 50000 mm/s (Canon §4 terminal) and |v_h| <= 50000 mm/s
 p_delta  = (mul_fx(v.x, DT), mul_fx(v.y, DT), mul_fx(v.z, DT));  move_body(m, p_delta, prm, q, jumped_this_tick)
@@ -819,14 +826,13 @@ State machine of a mantle: `Mantle.t` runs from 1 to `total`; on each tick `t` t
 - Climbable overlap: any cell with `climbable[state]` intersecting the capsule AABB expanded by 100 mm horizontally, between `p.y` and `p.y + h/2`.
 - In `climb`: gravity off. `v.y = spd_c × sign(fwd_in)` with `spd_c = mul_bp(2400, row 21)` → × each status multiplier in ascending status ID (forward climbs up, back climbs down, no input holds); horizontal wish is capped at 1000 mm/s; CROUCH holds. JUMP leaves the ladder with `v.y = 4000` mm/s against gravity and `v_h = −fwdh × 2000` mm/s, and sets `climb_lock = 10` ticks. At GRP 60 the climb speed is 2640 mm/s.
 
-### 5.12 Dodge, downed, flight, ghosts, gravity flip, mounts
+### 5.12 Dodge, downed, flight, ghosts, gravity flip
 
 - **Dodge** (Canon §4.2): direction = the horizontal unit of the wish velocity, or `−fwdh` with no input, fixed in `dodge_dir` on the start tick. On each dodge tick the horizontal velocity is set to 15000 mm/s along it, gravity still applies, and `dodge_t` increases by 1; after the tick on which it reaches 12, §5.1 selects ground or air again. Per-tick displacement is raw 1073741820, so the dodge covers 2.99999999 m. Doc 04 spends the stamina; doc 05 owns invulnerability.
 - **Downed:** height 600 mm, crawl 800 mm/s × status multipliers, no jump, sprint or dodge.
 - **Fly:** gravity off; `wish = fwd3(yaw, pitch) × spd` plus strafe, with `spd` the §5.2 chain from `walk_base` (the template's walk speed; 4300 for ghosts); acceleration 20000 mm/s² on three axes. AI fliers write yaw and pitch into `control`.
 - **Ghosts** (Canon §17.6) fly at walk speed with voxel collision and `NO_COLLIDE_BODIES`; they never appear in body, hit or perception queries (§3.6).
 - **Gravity flip:** `gsign = +1` while the cell of the body center carries the `flip` bit (§4.7, doc 12 §9.5), else −1; `step_mover` re-reads it at the start of every tick, and `peak_y` restarts at the current position on the tick the sign changes. Every "up" in §5.3–§5.7 reverses, and the feet point becomes `p + (0, h, 0)`. Mantle, swim and climb are disabled under flipped gravity.
-- **Mounts** (Canon §17.7): the rider's `control` drives the mount. Runner mounts use `ground`/`air` with walk 6000 mm/s and gallop 12000 mm/s (SPRINT; doc 05 spends mount stamina). Hover mounts keep their origin 500 mm above the higher of the ground top and the liquid surface below them, at up to 14000 mm/s, rising or falling at most 4000 mm/s toward that height. Glider mounts move 9000 mm/s horizontally and, while airborne, fall at exactly 2000 mm/s. After the mount moves, each rider's `p` is set to the mount's `p` plus the template seat offset rotated by the mount's yaw, and the rider's `vel` copies the mount's. Summoning checks a 2600 mm tall capsule of the mount's radius for penetration.
 
 ### 5.13 Knockback
 
@@ -861,7 +867,7 @@ Every pair with `overlap > 0` before the push is appended to `push_contacts: Vec
 
 - `peak_y` resets to `p.y` every tick the body is grounded, swimming, climbing, mantling or has `st.levitating`; otherwise it keeps the extreme against gravity (Canon §4.2).
 - On the transition into `ground`, `fall_mm = max(0, to_mm(peak_y − p.y))` when `gsign = −1` and `max(0, to_mm(p.y − peak_y))` when `gsign = +1`. `step_mover` returns it in `MoverOut.landed_fall_mm`. If the canon fall formula gives damage, `sys.movement` queues a hit for `sys.damage` with `B = mul_bp(canon_damage, genre.fall_dmg_bp)`, type `dmg.blunt`, flag `fall`, entering Canon §10.5 at step 4; doc 04 §8.1 splits it over the legs and applies its fall factors (Acrobatics, traits) after `fall_dmg_bp`. When `fall_mm >= 300`, `ev.entity_landed` is emitted. Example: a 6 m fall at VERVE 5 with Max HP 85 gives `excess` raw 8589934592, 1600 Bp, and 13,600 mHP before `fall_dmg_bp`.
-- **Footsteps.** While in `ground`, `stride_mm` accumulates horizontal distance in mm. When it reaches the stride length (crouch 500, walk 700, sprint 900), it drops by that length and `ev.footstep` is emitted with the gait and the ground material. Doc 09 converts footsteps and landings into `ev.noise`.
+- **Footsteps.** While in `ground` or `downed`, `stride_mm` accumulates horizontal distance in mm. When it reaches the stride length of the gait, it drops by that length and `ev.footstep` is emitted with the gait and the ground material. Gaits (`grid.gait.*`): `grid.gait.crouch` 500 mm (crouched in `ground`), `grid.gait.walk` 700 mm (`ground`, not crouched, not sprinting), `grid.gait.sprint` 900 mm (`ground` while §5.2's `sprint` holds), `grid.gait.crawl` 500 mm (`downed`, doc 09 G16). Doc 09 converts footsteps and landings into `ev.noise`.
 
 ### 5.16 Hitbox capsules from pose tables
 
@@ -1481,7 +1487,7 @@ All requests of a tick share 32,768 settled cells. When the budget runs out, eve
 
 ### 11.5 Outputs
 
-- `HeardNoise { listener, emitter, noise, level_db, arrival_dir: Fx3, exact: bool }` per candidate with `level_db > 0`, appended to the tick's hearing list for `sys.hearing` (doc 09).
+- `HeardNoise { listener, emitter, noise, level_db, arrival_dir: Fx3, exact: bool, req: u32 }` per candidate with `level_db > 0`, appended to the tick's hearing list for `sys.hearing` (doc 09). `req` is the index of the originating request in the tick's noise list, so doc 09 reads the source position, source level, emitter and callout payload from it.
 - `ev.noise` carries the source level and, for each player slot `0..=4`, the heard level and arrival direction of that slot's entity, which the audio engine uses for gain, low-pass and apparent position (doc 02 §9). Slot 4 is the invader's. Doc 16's `listener_db[slot]` is `heard[slot]`'s level.
 
 **Examples.** A 130 dB shot (`L0` 1300) reaches a listener 10 m down a straight corridor at cost 200: 110 dB. With a closed oak door on the path the cost is 350: 95 dB. A 45 dB footstep reaches 25 dB at 10 m. Candidates for the shot lie within `68,421 + 1,732 = 70,153` mm.
@@ -1586,7 +1592,7 @@ Example: `R = 4000`, `inner_mm = 1000`, `edge_bp = 2500`, `B = 40,000` mHP, targ
 1. `out_of_bounds`: `c` is outside the Folio box.
 2. `bad_props`: `new` has prop bits its shape does not use (§4.2).
 3. `protected`: the cell's `protect` bit is set and the cause is neither `grid.cause.worldgen` nor `grid.cause.script` (§4.7).
-4. `fixed_terrain`: the current block is not destructible, the type index changes, and the cause is neither `grid.cause.worldgen` nor `grid.cause.script` (§4.7, Canon §4.3).
+4. `fixed_terrain`: the current block is not destructible, the type index changes, the cause is neither `grid.cause.worldgen` nor `grid.cause.script`, and the change is not a `grid.cause.toggled` swap between doc 07 §10.6 lit and unlit twins (§4.7, Canon §4.3).
 5. `actor_forbidden`: the actor is the invader (slot 4) or a ghost and the cause is `placed`, `mined` or `broken` (Canon §17.6, §17.9). Ghosts may toggle doors.
 
 On success, in this order: write the chunk and bump `block_gen`; delete liquid above the new `liquid_cap` and bump `fluid_gen`; end a block fire if the new block cannot burn; remove the cell's `block_damage` entry and, unless the cause is `froze` or `reverted`, its `timed_revert` entry; call doc 07's `on_block_changed(c, old, new, cause, actor)`, which clears `placed_meta`, `stations` and `crops` entries when the cause is not doc 07's own; update `heat_sources`, the thermal conductance cache and the column's `sky_src` bits; call light `on_change` for both channels; push `c` and its `N6` neighbors onto the block-update queue; emit `ev.block_changed`.
@@ -1608,10 +1614,10 @@ Causes (`grid.cause.*`), each the `cause` field of `ev.block_changed`:
 | `grid.cause.fell` | §13.6 a gravity block starts to fall |
 | `grid.cause.landed` | §13.6 a falling block lands |
 | `grid.cause.melted` | §9.5 heat |
-| `grid.cause.froze` | §6.4 step 3 and the §6.9 frost trigger |
+| `grid.cause.froze` | §6.4 step 3 and the §6.9 frost trigger, including doc 08 §5.2's frost rows (lava to `block.basalt`, molten metal to `block.slag`) |
 | `grid.cause.reaction` | §6.8 doc 08 reaction outcomes |
-| `grid.cause.toggled` | §13.4 doors and trapdoors |
-| `grid.cause.grew`, `grid.cause.decayed`, `grid.cause.spread` | §13.7 random ticks; doc 07 torch burnout uses `decayed` |
+| `grid.cause.toggled` | §13.4 doors and trapdoors; doc 07 §10.6 light-block twin swaps (snuff, douse, switch and relight, by doc 09 §2.4 and doc 13 `ai.action.relight`) |
+| `grid.cause.grew`, `grid.cause.decayed`, `grid.cause.spread` | §13.7 random ticks; doc 07 §9.7 crop stages use `grew`; doc 07 torch burnout uses `decayed` |
 | `grid.cause.erased` | §13.8 Editor and red-ink erasure |
 | `grid.cause.reverted` | §6.9 timed revert of frost ice |
 | `grid.cause.expired` | doc 07 placed-block expiry and doc 06 conjured blocks at the end of their duration |
@@ -1634,7 +1640,7 @@ Errata place only `cat.placeable` items and `item.tool.torch` (Canon §4.3, doc 
 2. The target is in bounds, not protected, and holds air, a destructible `replaceable` block, or only liquid.
 3. Attach blocks need a sturdy face on the support side; other blocks need any `N6` neighbor that is not air, except `gravity` blocks.
 4. No collision box of the new state penetrates any non-ghost body capsule or item drop (§5.4 test with zero tolerance).
-5. The placer is not `st.mounted` (Canon §17.7), not downed, not a ghost and not the invader (Canon §17.9), and holds the item (doc 11 consumes it on success).
+5. The placer is not downed, not a ghost and not the invader (Canon §17.9), and holds the item (doc 11 consumes it on success).
 
 Props from the placer: horizontal facing from `facing_from_yaw` (stairs face away from the placer; doors, ladders and fixtures face the placer); slab and stair half from the hit point (upper half of a side face or a bottom face gives top); doors place two cells (lower, upper) and both must pass; door hinge is left. Cause `grid.cause.placed`.
 
@@ -1701,7 +1707,11 @@ impl EventBus {
 
 ### 14.2 Payload schemas
 
-Common flag word `DmgFlags: u32`: bit 0 crit, 1 sneak, 2 dot, 3 no_chain, 4 blocked, 5 area, 6 precision, 7 env, 8 fall, 9 reflected, 10 chain, 11 friendly_fire, 12 lethal.
+Common flag word `DmgFlags: u32`: bit 0 crit, 1 sneak, 2 dot, 3 no_chain, 4 blocked, 5 area, 6 precision, 7 env, 8 fall, 9 reflected, 10 chain, 11 friendly_fire, 12 lethal, 13 takedown (doc 09 §9.4 takedown hits), 14 parried, 15 negated (doc 05 §10.2: every type 0), 16 self_cost (doc 06 §10 row 10.2, Blood Price: HP paid as a cast cost, no pipeline). Bits 17 to 31 are reserved and 0.
+
+`ev.damage_dealt` fields beyond the hit's identity: `per_type` is HP damage per type after step 8, `total_mhp` its sum, `ward_mhp` the ward lost (doc 05's `ward_lost`), `kind` the doc 05 §1.5 `HitKind` in declaration order (0 melee, 1 projectile, 2 hitscan, 3 area, 4 thorns), `base_mhp` the hit's magnitude after attack factors (doc 05 §10.1; doc 04 sums it for negated hits), `stamina_loss_mst` the milli-stamina a block cost (doc 05 §12.3; 0 unless `blocked`), `d_armor` the mHP of armor-affected types (slash, pierce, blunt, sonic) after step 4 (doc 05 §11.4, read by doc 04's Armor XP), and `counters` the hit's `counter.*` bits (doc 05 §15.1). The hits this chapter queues (falls §5.15, surface contact §6.10, temperature §9.4, explosions §12.4, falling blocks §13.6) are `kind` 3 with `counters` 0 and `base_mhp` equal to their base before the pipeline; doc 05 fills the other fields as for any hit.
+
+**Lethal order and `damage_seq`.** The lethal hit's `ev.damage_dealt` (flag `lethal`) is emitted before the victim's `ev.entity_killed` in the same tick, and the `damage_seq` field of `ev.entity_killed` is that `ev.damage_dealt`'s `seq`. A death with no lethal hit on its tick (a downed Erratum bleeding out, doc 16 §9.4) carries `damage_seq = 0xFFFF_FFFF`.
 
 | Event | Payload fields | Producer | Main consumers |
 |---|---|---|---|
@@ -1709,20 +1719,20 @@ Common flag word `DmgFlags: u32`: bit 0 crit, 1 sneak, 2 dot, 3 no_chain, 4 bloc
 | `ev.folio_exited` | `folio_index: u32, exit_index: u8, next_genre: Id32` | 12, 14 | 13, 14, 16 |
 | `ev.entity_spawned` | `entity: EntityId, kind: Id32, template: Id32, pos: Fx3, owner: Option<EntityId>` | 03 | 09, 13, 16 |
 | `ev.entity_despawned` | `entity: EntityId, kind: Id32, reason: Id32 /* grid.despawn.* */` | 03 | 13, 16 |
-| `ev.damage_dealt` | `attacker: Option<EntityId>, source: EntityId, target: EntityId, part: Id32, item_uid: u64, ability: Id32, per_type: Vec<(Id32, i64)>, total_mhp: i64, ward_mhp: i64, hp_mhp: i64, poise_mhp: i64, flags: DmgFlags, pos: Fx3, instigator_slot: u8` | 05 | 04, 09, 13, 14, 17 |
+| `ev.damage_dealt` | `attacker: Option<EntityId>, source: EntityId, target: EntityId, part: Id32, item_uid: u64, ability: Id32, per_type: Vec<(Id32, i64)>, total_mhp: i64, ward_mhp: i64, hp_mhp: i64, poise_mhp: i64, flags: DmgFlags, pos: Fx3, instigator_slot: u8, kind: u8, base_mhp: i64, stamina_loss_mst: i64, d_armor: i64, counters: u8` | 05 (06 for `self_cost`) | 01, 04, 09, 13, 14, 16, 17, 18 |
 | `ev.healed` | `target: EntityId, source: Option<EntityId>, amount_mhp: i64, overheal_mhp: i64, cause: Id32` | 04, 06, 08 | 14, 17 |
-| `ev.entity_killed` | `victim: EntityId, killer: Option<EntityId>, instigator_slot: u8, template: Id32, rank: Id32, pos: Fx3, damage_seq: u32` | 05 | 04, 11, 13, 14 |
+| `ev.entity_killed` | `victim: EntityId, killer: Option<EntityId>, instigator_slot: u8, template: Id32, rank: Id32, pos: Fx3, damage_seq: u32 /* seq of the lethal ev.damage_dealt this tick; 0xFFFF_FFFF when none */` | 05 (16 for bleed-out) | 01, 04, 09, 11, 13, 14 |
 | `ev.status_applied` | `target: EntityId, status: Id32, source: Option<EntityId>, stacks: u8, expiry: Option<Tick>, via: u8 /* 0 buildup, 1 direct */` | 05 | 04, 13, 17 |
 | `ev.status_expired` | `target: EntityId, status: Id32, reason: u8 /* 0 timeout, 1 cleansed, 2 consumed, 3 death, 4 folio exit */` | 05 | 13, 17 |
 | `ev.noise` | `emitter: Option<EntityId>, noise: Id32, pos: Fx3, level_db: Db, heard: [Option<(Db, Fx3)>; 5]` (per player slot 0..=4, slot 4 the invader: level and arrival direction) | 03 (`sys.sound`) | 09, 16, 17, audio |
 | `ev.awareness_changed` | `observer: EntityId, subject: EntityId, from: Id32, to: Id32 /* aware.* */` | 09 | 13, 17 |
-| `ev.item_picked_up` | `entity: EntityId, uid: u64, from: u8 /* 0 ground, 1 container, 2 shop */, from_entity: Option<EntityId>, stack: i32, cause: u8 /* 0 normal, 1 trade */` | 11, 16 | 10, 14 |
+| `ev.item_picked_up` | `entity: EntityId, uid: u64, from: u8 /* 0 ground, 1 container, 2 shop, 3 trade */, from_entity: Option<EntityId>, stack: i32, cause: u8 /* 0 normal, 1 trade; 1 exactly when from = 3 */` | 11, 16 | 10, 14 |
 | `ev.item_dropped` | `entity: EntityId, uid: u64, drop_entity: EntityId, pos: Fx3, stack: i32, cause: u8 /* 0 normal, 1 trade */` | 11, 16 | 13 |
 | `ev.item_used` | `user: EntityId, uid: u64, template: Id32, target: Option<EntityId>, cell: Option<Gidx>` | 07, 08, 11 | 04, 10 |
 | `ev.item_identified` | `by: EntityId /* 0 = no entity */, uid: u64 /* 0 = whole type */, template: Id32, state: Id32 /* know.* */, descriptor: Id32 /* 0 when not type-hidden */, flags_new: u32 /* 0 for a type event */, reason: Id32 /* appr.reason.* */` | 10 | 14, 15, 17 |
 | `ev.item_crafted` | `crafter: EntityId, uid: u64, recipe: Id32, station: Id32, quality: Id32` | 07 | 04, 14 |
 | `ev.potion_brewed` | `brewer: EntityId, uid: u64, recipe: Id32, apparatus: Id32` | 08 | 04, 14 |
-| `ev.spell_cast` | `caster: EntityId, spell: Id32, target: Option<EntityId>, target_pos: Fx3, aether_mhp: i64, fizzled: bool` | 06 | 04, 09, 13 |
+| `ev.spell_cast` | `caster: EntityId, spell: Id32 /* authored spell id32; 0 for a compiled Grimoire or tome spell */, target: Option<EntityId>, target_pos: Fx3, aether_mhp: i64, fizzled: bool, spell_hash: u64 /* doc 06 §4.2: fnv1a64 of the canonical text */, channel_ticks: Ticks /* 0 unless a channel ended */` | 06 (root resolution, channel end, and every fizzle with `fizzled = true`) | 04, 09, 13, 16, 18 |
 | `ev.block_changed` | `cell: Gidx, old: BlockState, new: BlockState, cause: Id32 /* grid.cause.* */, actor: Option<EntityId>` | 03 (`set_block`) | 07, 09, 12, 13, 14, 16 |
 | `ev.liquid_reaction` | `cell: Gidx, rule: Id32 /* alch.* or the triggering dmg.* */, a: Id32, b: Id32, result: Id32, units: u16, instigator_slot: u8` | 03 | 08, 14 |
 | `ev.skill_gained` | `entity: EntityId, skill: Id32, value: i32` | 04 | 14, 17 |
@@ -1744,8 +1754,6 @@ Common flag word `DmgFlags: u32`: bit 0 crit, 1 sneak, 2 dot, 3 no_chain, 4 bloc
 | `ev.part_reattached` | `entity: EntityId, part: Id32, method: Id32` | 04 | 17 |
 | `ev.minion_bound` | `minion: EntityId, owner_slot: u8` | 13 | 17 |
 | `ev.minion_released` | `minion: EntityId, owner_slot: u8, reason: u8 /* 0 dismissed, 1 died, 2 folio exit */` | 13 | 17 |
-| `ev.mounted` | `rider: EntityId, mount: EntityId, seat: u8` | 05 | 09, 17 |
-| `ev.dismounted` | `rider: EntityId, mount: EntityId, thrown: bool` | 05 | 17 |
 | `ev.affliction_changed` | `entity: EntityId, affliction: Id32, stage: u8 /* 0 incubating, 1 took hold, 2 cured */` | 04 | 17 |
 | `ev.invasion_started` | `invader: EntityId, slot: u8 /* 4 */, kit: Id32, folio_index: u32` | 13, 16 | 09, 14, 15, 17 |
 | `ev.invasion_ended` | `invader: EntityId, reason: u8 /* 0 left, 1 died, 2 timed out, 3 Redacted, 4 Colophon entered, 5 blocked, 6 host migration (doc 16 §9.13) */, redacted: bool, duration: Ticks` | 16 | 13, 14, 15, 17 |
@@ -1768,28 +1776,28 @@ JSON log form (integers and hex strings only; `Fx3` as raw values). Cell 133645 
                "part": "bp.torso", "item_uid": "0x0000030000000009", "ability": 0,
                "per_type": [["dmg.blunt", 10000], ["dmg.fire", 10000]], "total_mhp": 20000, "ward_mhp": 0,
                "hp_mhp": 20000, "poise_mhp": 4000, "flags": 32, "pos": [45097156608, 8589934592, 45097156608],
-               "instigator_slot": 0 } }
+               "instigator_slot": 0, "kind": 3, "base_mhp": 20000, "stamina_loss_mst": 0, "d_armor": 10000,
+               "counters": 0 } }
 ```
 
 ### 14.3 Bus events registered for other chapters
 
-Canon §19 gives the `ev.` namespace to the canon core list and to this chapter for the bus. Events that other chapters emit beyond the canon list are registered here with their payloads; the requesting chapter is the producer and may append fields only through this table. `ev.entity_pacified` is the one name for the pacification event that doc 04 calls by that name and doc 13 calls "pacified" (Canon gaps G21).
+Canon §19 gives the `ev.` namespace to the canon core list and to this chapter for the bus. Events that other chapters emit beyond the canon list are registered here with their payloads; the requesting chapter is the producer and may append fields only through this table. `ev.entity_pacified` is the one name for the pacification event that doc 04 calls by that name and doc 13 calls "pacified" (Canon gaps G21). The seven doc 06 rows are doc 06 §19.1's payloads verbatim; a fizzle is `ev.spell_cast` with `fizzled = true`, so no separate fizzle event exists (Canon gaps G28).
 
 | Event | Payload fields | Producer | Main consumers |
 |---|---|---|---|
 | `ev.wound_changed` | `entity: EntityId, part: Id32, tier: u8 /* 0..=4 */, kind: u8 /* 0 laceration, 1 fracture, 2 burn, 3 trauma */, treated: bool` | 04 | 13, 17 |
 | `ev.augment_changed` | `entity: EntityId, aug: Id32, change: u8 /* 0 installed, 1 removed, 2 rank up, 3 enabled, 4 disabled by Contradiction */, rank: u8` | 04 | 17 |
-| `ev.entity_pacified` | `target: EntityId, by: EntityId, slot: u8, method: u8 /* 0 spared, 1 pacify check, 2 tamed, 3 hacked */` | 13 | 04, 14, 17 |
-| `ev.secret_found` | `finder: EntityId, slot: u8, cell: Gidx, kind: u8 /* doc 12 §16 hiding method index */` | 12 | 04, 14, 17 |
+| `ev.entity_pacified` | `target: EntityId, by: EntityId, slot: u8, method: u8 /* 0 spared surrender, 1 dialogue (Persuade, Intimidate or bribe), 2 tamed, 3 hacked (doc 09 §13.5), 4 subdued (doc 09 §9.4) */` | 13 | 04, 14, 17 |
+| `ev.secret_found` | `finder: EntityId, slot: u8, cell: Gidx, kind: u8 /* doc 12 §17.3 hiding method row index, 0..=10 */` | 12 | 04, 14, 17 |
 | `ev.objective_completed` | `kind: u8 /* 0 rubric, 1 challenge, 2 story */, objective: Id32, by_slot: u8` | 12 | 14, 17 |
-| `ev.cast_started` | `caster: EntityId, spell: Id32, cast_ticks: Ticks, pos: Fx3` | 06 | 09, 13, 17 |
-| `ev.cast_interrupted` | `caster: EntityId, spell: Id32, cause: u8 /* 0 damage, 1 control status, 2 silenced, 3 cancelled */` | 06 | 13, 17 |
-| `ev.spell_fizzled` | `caster: EntityId, spell: Id32, aether_mhp: i64` | 06 | 04, 17 |
-| `ev.wild_surge` | `caster: EntityId, spell: Id32, entry: u8 /* doc 06 §11.3 table row */, param: i32` | 06 | 17 |
-| `ev.glyph_learned` | `entity: EntityId, glyph: Id32, origin: Id32` | 06 | 14, 17 |
-| `ev.enchant_applied` | `by: EntityId, uid: u64, ench: Id32` | 06 | 10, 17 |
-| `ev.prayer_resolved` | `entity: EntityId, patron: Id32, outcome: u8 /* doc 06 prayer table row */, favor: i32` | 06 | 14, 17 |
-| `ev.favor_changed` | `entity: EntityId, patron: Id32, old: i32, new: i32, cause: Id32` | 06 | 17 |
+| `ev.cast_started` | `caster: EntityId, spell_hash: u64, source: u8 /* 0 grimoire, 1 tome, 2 text, 3 wand, 4 on-use, 5 prayer */, form: Id32, ct: Ticks, aim_point: Fx3` | 06 | 09, 13, 17 |
+| `ev.cast_interrupted` | `caster: EntityId, spell_hash: u64, cause: u8 /* 0 hard status, 1 soft hit, 2 counterspell, 3 null field, 4 voluntary cancel */, refund_maero: i64` | 06 | 13, 17 |
+| `ev.wild_surge` | `caster: EntityId, spell_hash: u64, c: u8 /* Contradiction level, 4 or 5 */, entry: u8 /* doc 06 §11.3 entry 1..=12 */, param: u16` | 06 | 17 |
+| `ev.glyph_learned` | `erratum: EntityId, glyph: Id32, origin: Id32, source: u8 /* 0 run start, 1 tome, 2 text study, 3 trainer, 4 Rewrite, 5 kit */` | 06 | 14, 17 |
+| `ev.enchant_applied` | `erratum: EntityId, uid: u64, ench: Id32, tier: u8, origin: Id32` | 06 | 10, 17 |
+| `ev.prayer_resolved` | `erratum: EntityId, patron: Id32, prayer: Id32, outcome: u8 /* 0 pleased, 1 displeased, 2 helped, 3 angry, 4 unheard, 5 petition */, need: u8 /* 0 none, 1..=8 */` | 06 | 14, 17 |
+| `ev.favor_changed` | `erratum: EntityId, patron: Id32, old: i32, new: i32, cause: u8 /* 0 sacrifice, 1 prayer, 2 taboo, 3 Folio exit, 4 Editor kill, 5 rider, 6 altar, 7 shrine bonus */` | 06 | 17 |
 | `ev.alarm_raised` | `raiser: EntityId /* 0 for a device without an entity */, pos: Fx3, kind: u8 /* 0 callout, 1 alarm device, 2 camera */` | 09 | 13, 17 |
 | `ev.body_discovered` | `observer: EntityId, body: EntityId, pos: Fx3` | 09 | 13 |
 | `ev.disguise_blown` | `wearer: EntityId, observer: EntityId` | 09 | 13, 17 |
@@ -1819,11 +1827,11 @@ Inactive chunks keep their liquid, gas, fire and thermal state frozen: their cel
 
 ### 15.2 Sleeping entities
 
-A creature, mount, gadget, item drop or corpse is asleep (`Kind.flags & ASLEEP`) when all hold: its chunk is inactive, it is grounded or has no `move`, it is not `in_combat` (Canon §2.3), and doc 09 reports no awareness above unaware toward any Erratum. Asleep entities skip perception, AI think, movement, environment sampling, animation advance, surfaces and temperature effects, and they hear nothing (§11.3). `sys.pose` still appends their unchanged history record each tick, so a lag-compensated test never finds a gap (§5.16). They still take hits, and their status timers and DoT pulses run. They wake the tick any condition fails, and a hit wakes them on the next tick. Projectiles, zones and player-controlled entities never sleep. Doc 09's `awareness_above_unaware(e)` (§6.8) is the awareness query.
+A creature, gadget, item drop or corpse is asleep (`Kind.flags & ASLEEP`) when all hold: its chunk is inactive, it is grounded or has no `move`, it is not `in_combat` (Canon §2.3), and doc 09 reports no awareness above unaware toward any Erratum. Asleep entities skip perception, AI think, movement, environment sampling, animation advance, surfaces and temperature effects, and they hear nothing (§11.3). `sys.pose` still appends their unchanged history record each tick, so a lag-compensated test never finds a gap (§5.16). They still take hits, and their status timers and DoT pulses run. They wake the tick any condition fails, and a hit wakes them on the next tick. Projectiles, zones and player-controlled entities never sleep. Doc 09's `awareness_above_unaware(e)` (§6.8) is the awareness query.
 
 ### 15.3 Actor cap
 
-Creatures (the invader included), mounts and doc 07's gadget entities (turrets, drones, beacons, coils, decoys; doc 07 §11.1) count toward `ACTIVE_ACTOR_CAP` (256; Canon §4), minions included (Canon §15.1). Doc 13 calls `request_spawn(template, pos, yaw, owner)`; when the cap is reached the request waits in `spawn_q: VecDeque<SpawnReq>` (saved) and `sys.spawn_admit` admits it, oldest first, once the count drops. The invader's spawn never waits: it is admitted at once and counts from then on, so the live count can exceed 256 by one for the length of an invasion.
+Creatures (the invader included) and doc 07's gadget entities (turrets, drones, beacons, coils, decoys; doc 07 §11.1) count toward `ACTIVE_ACTOR_CAP` (256; Canon §4), minions included (Canon §15.1). Doc 13 calls `request_spawn(template, pos, yaw, owner)`; when the cap is reached the request waits in `spawn_q: VecDeque<SpawnReq>` (saved) and `sys.spawn_admit` admits it, oldest first, once the count drops. The invader's spawn never waits: it is admitted at once and counts from then on, so the live count can exceed 256 by one for the length of an invasion.
 
 ---
 
@@ -1890,18 +1898,20 @@ Memory for 128 chunks: blocks 2 MiB typical (4-bit palettes) and 8 MiB worst (16
 
 | Namespace | IDs defined here |
 |---|---|
-| `comp.` | `comp.ai`, `comp.body`, `comp.body_plan`, `comp.buildup`, `comp.container`, `comp.control`, `comp.corpse`, `comp.env`, `comp.equipment`, `comp.faction`, `comp.falling_block`, `comp.gadget`, `comp.interest`, `comp.inventory`, `comp.item_drop`, `comp.kind`, `comp.lifetime`, `comp.light_emitter`, `comp.mining`, `comp.mount`, `comp.move`, `comp.perception`, `comp.player`, `comp.pools`, `comp.pos`, `comp.pose`, `comp.projectile`, `comp.rider`, `comp.stats`, `comp.statuses`, `comp.tags`, `comp.vel`, `comp.zone` |
+| `comp.` | `comp.ai`, `comp.body`, `comp.body_plan`, `comp.buildup`, `comp.container`, `comp.control`, `comp.corpse`, `comp.env`, `comp.equipment`, `comp.faction`, `comp.falling_block`, `comp.gadget`, `comp.interest`, `comp.inventory`, `comp.item_drop`, `comp.kind`, `comp.lifetime`, `comp.light_emitter`, `comp.mining`, `comp.move`, `comp.perception`, `comp.player`, `comp.pools`, `comp.pos`, `comp.pose`, `comp.projectile`, `comp.stats`, `comp.statuses`, `comp.tags`, `comp.vel`, `comp.zone` |
 | `sys.` | the 39 systems of §2.2 in table order: `sys.tick_begin`, `sys.interest`, `sys.spawn_admit`, `sys.input_apply`, `sys.perception`, `sys.ai_think`, `sys.actions`, `sys.movement`, `sys.push`, `sys.env_sample`, `sys.broadphase`, `sys.pose`, `sys.melee`, `sys.projectiles`, `sys.hitscan`, `sys.explosions`, `sys.damage`, `sys.crafting`, `sys.block_updates`, `sys.random_ticks`, `sys.liquids`, `sys.gases`, `sys.fire`, `sys.temperature`, `sys.surfaces`, `sys.status_pulse`, `sys.damage_late`, `sys.resources`, `sys.coop`, `sys.needs`, `sys.light_emitters`, `sys.light`, `sys.sound`, `sys.hearing`, `sys.erasure`, `sys.status_timers`, `sys.despawn`, `sys.run_layer`, `sys.tick_end` |
 | `grid.shape.` | `grid.shape.none`, `grid.shape.full`, `grid.shape.pillar`, `grid.shape.slab`, `grid.shape.stairs`, `grid.shape.door`, `grid.shape.trapdoor`, `grid.shape.ladder`, `grid.shape.fence`, `grid.shape.pane`, `grid.shape.layer`, `grid.shape.cross`, `grid.shape.fixture` |
 | `grid.liqi.` | `grid.liqi.blocks`, `grid.liqi.permeable`, `grid.liqi.displaced`, `grid.liqi.absorbs` |
 | `grid.rt.` | `grid.rt.none`, `grid.rt.grow`, `grid.rt.decay`, `grid.rt.spread` |
-| `grid.ekind.` | `grid.ekind.erratum`, `grid.ekind.creature`, `grid.ekind.mount`, `grid.ekind.projectile`, `grid.ekind.item_drop`, `grid.ekind.falling_block`, `grid.ekind.container`, `grid.ekind.gadget`, `grid.ekind.zone`, `grid.ekind.corpse`, `grid.ekind.marker` (row order is the replicated kind code) |
-| `grid.move.` | `grid.move.ground`, `grid.move.air`, `grid.move.swim`, `grid.move.climb`, `grid.move.mantle`, `grid.move.dodge`, `grid.move.fly`, `grid.move.downed`, `grid.move.ridden`, `grid.move.hover`, `grid.move.glide` |
+| `grid.ekind.` | `grid.ekind.erratum`, `grid.ekind.creature`, `grid.ekind.projectile`, `grid.ekind.item_drop`, `grid.ekind.falling_block`, `grid.ekind.container`, `grid.ekind.gadget`, `grid.ekind.zone`, `grid.ekind.corpse`, `grid.ekind.marker` (row order is the replicated kind code) |
+| `grid.move.` | `grid.move.ground`, `grid.move.air`, `grid.move.swim`, `grid.move.climb`, `grid.move.mantle`, `grid.move.dodge`, `grid.move.fly`, `grid.move.downed` |
 | `grid.cause.` | `grid.cause.worldgen`, `grid.cause.script`, `grid.cause.placed`, `grid.cause.mined`, `grid.cause.broken`, `grid.cause.explosion`, `grid.cause.fire`, `grid.cause.liquid`, `grid.cause.unsupported`, `grid.cause.fell`, `grid.cause.landed`, `grid.cause.melted`, `grid.cause.froze`, `grid.cause.reaction`, `grid.cause.toggled`, `grid.cause.grew`, `grid.cause.decayed`, `grid.cause.spread`, `grid.cause.erased`, `grid.cause.reverted`, `grid.cause.expired`, `grid.cause.connected` |
 | `grid.despawn.` | `grid.despawn.expired`, `grid.despawn.consumed`, `grid.despawn.picked_up`, `grid.despawn.merged`, `grid.despawn.folio_exit`, `grid.despawn.cap_evicted`, `grid.despawn.landed`, `grid.despawn.dismissed`, `grid.despawn.script` |
 | `grid.gait.` | `grid.gait.crouch`, `grid.gait.walk`, `grid.gait.sprint`, `grid.gait.crawl` |
+| `grid.` enum families | `grid.shape`, `grid.liqi`, `grid.rt`, `grid.ekind`, `grid.move`, `grid.cause`, `grid.despawn`, `grid.gait`: each names the whole enum whose values the matching `grid.` row above lists; a family name is valid in prose and schemas, is never a stored value and is never loaded as content |
+| `ev.` (Canon §18 core list; the names are canon's, the payload schemas of §14.2 are defined here) | `ev.folio_entered`, `ev.folio_exited`, `ev.entity_spawned`, `ev.entity_despawned`, `ev.damage_dealt`, `ev.healed`, `ev.entity_killed`, `ev.status_applied`, `ev.status_expired`, `ev.noise`, `ev.awareness_changed`, `ev.item_picked_up`, `ev.item_dropped`, `ev.item_used`, `ev.item_identified`, `ev.item_crafted`, `ev.potion_brewed`, `ev.spell_cast`, `ev.block_changed`, `ev.liquid_reaction`, `ev.skill_gained`, `ev.level_gained`, `ev.contradiction_changed`, `ev.container_opened`, `ev.engine_spun`, `ev.reputation_changed`, `ev.erasure_stack`, `ev.hunter_spawned`, `ev.player_downed`, `ev.player_revived`, `ev.run_ended`, `ev.player_died`, `ev.player_ghosted`, `ev.player_resurrected`, `ev.ward_broken`, `ev.part_severed`, `ev.part_reattached`, `ev.minion_bound`, `ev.minion_released`, `ev.affliction_changed`, `ev.invasion_started`, `ev.invasion_ended` |
 | `ev.` (bus events of this chapter) | `ev.explosion`, `ev.fire_started`, `ev.fire_out`, `ev.footstep`, `ev.entity_landed` |
-| `ev.` (registered for other chapters, §14.3) | `ev.wound_changed`, `ev.augment_changed`, `ev.entity_pacified`, `ev.secret_found`, `ev.objective_completed`, `ev.cast_started`, `ev.cast_interrupted`, `ev.spell_fizzled`, `ev.wild_surge`, `ev.glyph_learned`, `ev.enchant_applied`, `ev.prayer_resolved`, `ev.favor_changed`, `ev.alarm_raised`, `ev.body_discovered`, `ev.disguise_blown`, `ev.lock_opened`, `ev.object_revealed`, `ev.device_hacked`, `ev.takedown`, `ev.item_stolen`, `ev.rubric_completed`, `ev.colophon_entered`, `ev.colophon_desecrated`, `ev.boon_committed`, `ev.note_completed`, `ev.exit_committed`, `ev.boss_engaged`, `ev.volume_completed` |
+| `ev.` (registered for other chapters, §14.3) | `ev.wound_changed`, `ev.augment_changed`, `ev.entity_pacified`, `ev.secret_found`, `ev.objective_completed`, `ev.cast_started`, `ev.cast_interrupted`, `ev.wild_surge`, `ev.glyph_learned`, `ev.enchant_applied`, `ev.prayer_resolved`, `ev.favor_changed`, `ev.alarm_raised`, `ev.body_discovered`, `ev.disguise_blown`, `ev.lock_opened`, `ev.object_revealed`, `ev.device_hacked`, `ev.takedown`, `ev.item_stolen`, `ev.rubric_completed`, `ev.colophon_entered`, `ev.colophon_desecrated`, `ev.boon_committed`, `ev.note_completed`, `ev.exit_committed`, `ev.boss_engaged`, `ev.volume_completed` |
 | `block.` (shared with 07) | `block.air` (type index 0) |
 | `rng.` | none new; this chapter draws only `rng.fire`, `rng.blocktick`, `rng.physics` (Canon §3.2; Canon gaps G17) |
 
@@ -1913,26 +1923,26 @@ Non-ID exports: `step_mover`, `MoverParams`, `BlockQuery`, `MoverOut`, `select_m
 |---|---|
 | 02 | the primitives, store, scheduler, `PlayerCommand` axes and bits, `SimEvent`, section order and `palette_rle` as imported; `palette_rle` also accepts the 4,096-entry thermal array; `SCHEDULE` lists the 39 systems of §2.2, so doc 02 §15 adds budget rows for `sys.crafting`, `sys.resources`, `sys.coop` and `sys.run_layer`; `ChunkView` carries `fluid_gen` (§4.3); copy-on-write chunk clones grow by the fourth bitset (`flip`, 4 KiB); the view frame publishes active light overrides (§10.6) and the renderer clamps the light field with them; `extract_view` and doc 16's `ReplFrame` extraction are read-only passes outside the schedule; doc 02 §9 plays `ev.noise` for slot 4 like any party slot |
 | 04 | Errata `BodyState` values; `can_sprint`, `can_jump`, `can_dodge` and stamina spending; `body_move_bp(e)` (§8.5) replacing any leg or crutch factor here; `air_jump_max(e)` (§2.3); the Acrobatics 50 wall jump and `wind_step` wall-run as components that set `MoverParams.wall_jump` and `wall_run_max_mm` (2000); breath drain from `Env.eye_submerged` and unbreathable eye gas; fall-damage leg split and fall factors after `fall_dmg_bp`; per-tick pool regeneration inside `sys.resources`; the `body.*` part lists that pose tables reference |
-| 05 | `HitRecord`, `queue_hit` and the pipeline in `sys.damage` and `sys.damage_late`; combat steps C1 to C9 mapped as in §2.2 (C1 runs before movement); calls to `surface_trigger` and `damage_block` with the §13.2 `block_bp` table; projectile templates (`radius`, `gravity_bp`, `drag_bp` 0, `bounce_bp` 4000 for fused grenades, pierce, lifetime) and the five §5.19 hooks with doc 05 §7 semantics; `LAGCOMP_MAX_TICKS = 16`; melee traces on doc 02 primitives; Contradiction re-evaluation called from `sys.env_sample`; `kb_resist_bp`; animation choice; stance base speeds and armor sprint and swim bases in `MoverParams`; mount archetypes with seat offsets; item explosion parameters mapped as in §12.1, with impact and status powers scaled by `f = mul_bp(falloff, exposure)` of §12.4 in place of doc 05 §9.4's binary line-of-sight test; friendly-fire scaling from `instigator_slot` |
-| 06 | `aether_tick` inside `sys.resources`; cast resolution inside `sys.actions`; `ignite`, `add_light` and `add_heat` calls; conjured blocks placed through doc 07 `placed_meta` with the conjured flag and removed at expiry with cause `grid.cause.expired`; `surface_trigger` for the cells a spell touches; `st.levitating` control |
+| 05 | `HitRecord`, `queue_hit` and the pipeline in `sys.damage` and `sys.damage_late`; combat steps C1 to C9 mapped as in §2.2 (C1 runs before movement); calls to `surface_trigger` and `damage_block` with the §13.2 `block_bp` table; projectile templates (`radius`, `gravity_bp`, `drag_bp` 0, `bounce_bp` 4000 for fused grenades, pierce, lifetime) and the five §5.19 hooks with doc 05 §7 semantics; `LAGCOMP_MAX_TICKS = 16`; melee traces on doc 02 primitives; Contradiction re-evaluation called from `sys.env_sample`; `kb_resist_bp`; animation choice; stance base speeds and armor sprint and swim bases in `MoverParams`; item explosion parameters mapped as in §12.1, with impact and status powers scaled by `f = mul_bp(falloff, exposure)` of §12.4 in place of doc 05 §9.4's binary line-of-sight test; friendly-fire scaling from `instigator_slot`; the §14.2 `ev.damage_dealt` fields `kind`, `base_mhp`, `stamina_loss_mst`, `d_armor` and `counters` and the `parried` and `negated` bits for every hit, and the lethal hit's `ev.damage_dealt` emitted before the victim's `ev.entity_killed` so that `damage_seq` names it |
+| 06 | `aether_tick` inside `sys.resources`; cast resolution inside `sys.actions`; `ignite`, `add_light` and `add_heat` calls; conjured blocks placed through doc 07 `placed_meta` with the conjured flag and removed at expiry with cause `grid.cause.expired`; `surface_trigger` for the cells a spell touches; `st.levitating` control; `spell_hash` and `channel_ticks` on `ev.spell_cast`, fizzles reported only as `ev.spell_cast` with `fizzled = true`; the §14.3 payloads of doc 06 §19.1; the `self_cost` bit on Blood Price HP payments |
 | 07 | every block record with the §4.5 fields and `tags`; the material-to-block defaults of doc 07 §2.5; `mining_ticks` and `block_hp`; `block_drops(state, cause, actor)`; ordered `tooltier.*`; `placed_meta`, `stations` and `crops` saved in section 4 and cleared by `on_block_changed` for foreign causes; placement rules after `can_place`; `sys.crafting`; `block.ice` (`friction_bp` 1500, melts to 1000 units of water) and `block.web` (`burn_runs` 5) |
 | 08 | liquid records (§6.5) and gas records (§7.2) for every `liq.` and `gas.` ID, including `evap_gas`; `alch_react` (§6.8); extended trigger rows and contact rows; `splash` amounts; nitro detonation specs with `block_power_milli` set directly (doc 08's "block-break power 2" is 2000) |
-| 09 | noise IDs, `noise_level` and `convert_events()` in the `sys.sound` prelude; consumption of `HeardNoise`; perception through `raycast_blocks`, `cell_conceal_parts`, light, overrides and `flashes`; `door_locked(gidx)`; `awareness_above_unaware(e)` for sleep; reading `push_contacts` |
+| 09 | noise IDs, `noise_level` and `convert_events()` in the `sys.sound` prelude; consumption of `HeardNoise`; perception through `raycast_blocks`, `cell_conceal_parts`, light, overrides and `flashes`; `door_locked(gidx)`; `awareness_above_unaware(e)` for sleep; reading `push_contacts`; the `takedown` bit on takedown hits; `HeardNoise.req`; `grid.gait.crawl` footsteps from downed bodies; doc 13's pacification codes 3 and 4 for doc 09 hacks and subdues |
 | 10 | the appended `ev.item_identified` fields; appraisal passes inside `sys.needs` after doc 04's needs work |
 | 11 | item-drop contents, pickup, Lost Satchel merging at `GROUND_ITEM_CAP`, `carried_g`, death drops in `sys.despawn`; `perk.leg.worldbreaker` applied by doc 05 before `damage_block` |
 | 12 | worldgen chunks with `open_tag`, `protect` and `flip` bits; relink pairs as `PortalPair` records; liquid sources; bleed zones for `local_genre`; GPV fields `ambient_decic`, `liquid_viscosity_bp`, `gas_dissipation_bp`; hazard placement; worldgen calls the §10 propagation for its light pass |
-| 13 | AI writes `control`; `request_spawn`; `comp.tags` bit layout (doc 13 §2.4); `Blackboard` as `comp.ai`; creature `BodyState` templates with radius at least 100 mm; navigation rebuilt from `ev.block_changed`; Editor erasure through `erase_placed`; `blackout` through a light override; telegraphs derived every tick from agents' action states into the per-tick list that `extract_view` reads (view data, never saved); the invader template `enemy.editors.invader` carries `comp.player` slot 4 and no `comp.ai` |
+| 13 | AI writes `control`; `request_spawn`; `comp.tags` bit layout (doc 13 §2.4); `Blackboard` as `comp.ai`; creature `BodyState` templates with radius at least 100 mm; navigation rebuilt from `ev.block_changed`; Editor erasure through `erase_placed`; `blackout` through a light override; telegraphs derived every tick from agents' action states into the per-tick list that `extract_view` reads (view data, never saved); the invader template `enemy.editors.invader` carries `comp.player` slot 4 and no `comp.ai`; `ev.entity_pacified` `method` codes 0 to 4 for doc 13 §4.9 spares, dialogue, Tame, doc 09 hacks and doc 09 subdues |
 | 14 | `sys.run_layer` logic; `protect` bits for the sealed Colophon entrance cleared through `set_protect` |
-| 16 | delivery of commands and intents per tick for slots 0 to 4; the predictor calls `step_mover` with `MoverParams` built from replicated state and must carry the active move-speed status list (`status_speed_bp`) or the `gates` bits that imply it, because a single folded `speed_bp` rounds differently from Canon §4.2's per-status chain; `Player` semantics and `sys.coop` logic; lag compensation through `Pose.hist`; snapshot cadence |
-| 17 | `mercy_on` and `mercy_bp` stored in `comp.player` |
+| 16 | delivery of commands and intents per tick for slots 0 to 4; the predictor calls `step_mover` with `MoverParams` built from replicated state and must carry the active move-speed status list (`status_speed_bp`) or the `gates` bits that imply it, because a single folded `speed_bp` rounds differently from Canon §4.2's per-status chain; `Player` semantics and `sys.coop` logic; lag compensation through `Pose.hist`; snapshot cadence; a trade emits `ev.item_dropped` with `cause = 1` and `ev.item_picked_up` with `from = 3` and `cause = 1`; a bleed-out death emits `ev.entity_killed` with `damage_seq = 0xFFFF_FFFF`; `MoverSnap` carries no ride field (Canon §17.7 retired mounts) |
+| 17 | `mercy_on` and `mercy_bp` stored in `comp.player`; `breath_held` in `comp.player`, written by `SetBreathHold` in `sys.input_apply` |
 | 18 | `art.anim.*` pose tables committed as content with the §5.16 schema, keyed by `anim`; `art.block.*` skins |
 
 ## Canon gaps
 
-- **G1. Version.** The header conforms to canon-1.4. Every rule was checked against it: the 1.2 jump curve, air jump, lean, two-channel light, surfaces, concealment, breath, mounts and ghosts; the 1.3 World Laws, seams and Colophon; and the 1.4 fixed terrain, placeables, Editor erasure, invasions with replay slot 4, and the 44-event list including `ev.invasion_started` and `ev.invasion_ended`.
+- **G1. Version.** The header conforms to canon-1.4. Every rule was checked against it: the 1.2 jump curve, air jump, lean, two-channel light, surfaces, concealment, breath, mounts and ghosts; the 1.3 World Laws, seams and Colophon; and the 1.4 fixed terrain, placeables, Editor erasure, invasions with replay slot 4, and the event list including `ev.invasion_started` and `ev.invasion_ended`. The canon-1.8 retirement of mounts is applied: the mount entity kind (code 2 reserved), the mount and rider components, the ridden, hover and glide movement modes and the two mount events are gone, leaving 42 canon events (G28).
 - **G2. Liquid units.** Canon types liquid volume as `Ml`. The grid stores 1-litre units (1000 ml, 1000 per cell), so `Ml = units × 1000` at every boundary. Canon §12.1's 100 ml contact threshold is therefore met by any non-zero unit.
 - **G3. Explosion draws.** Canon §3.3 keys every action-caused draw, while §3.2 assigns explosion block-break variation to sequential `rng.physics` and fire ignition to `rng.fire`. Explosions resolve host-side in the §12.1 order and are never client-predicted, so this chapter uses those sequential streams for block breaks, drops and incendiary ignition. Requested: Canon §3.3 names this exception.
-- **G4. Bus events.** Canon §19 gives `ev.` to 00 for core lists and to 03 for the bus. This chapter defines five bus events of its own and registers 29 events that docs 04, 06, 09, 12, 13 and 14 emit (§14.3), with payloads. Requested: Canon §18 lists them or points to §14.3.
+- **G4. Bus events.** Canon §19 gives `ev.` to 00 for core lists and to 03 for the bus. This chapter defines five bus events of its own and registers 28 events that docs 04, 06, 09, 12, 13 and 14 emit (§14.3), with payloads. Requested: Canon §18 lists them or points to §14.3.
 - **G5. Two hit batches.** Canon §10.8's `(source EntityId, seq)` order holds inside `sys.damage` and inside `sys.damage_late`; environmental, contact and DoT hits of a tick resolve after weapon hits.
 - **G6. Ghosts.** "A ghost has no collision" is read as no body collision and no hit, push or perception queries; voxel collision stays so ghosts cannot leave the Folio. Ghosts toggle doors (Canon §17.6) and never place or break blocks (§13.1).
 - **G7. Ambient temperature.** The canon has no per-genre temperature. This chapter reads doc 12 §2.3's GPV field `ambient_decic`, default 200.
@@ -1942,7 +1952,7 @@ Non-ID exports: `step_mover`, `MoverParams`, `BlockQuery`, `MoverOut`, `select_m
 - **G11. Pose keyframes.** Content stores keyframes every `key_every` ticks; the loader expands them to the canon per-tick table with integer interpolation.
 - **G12. Serialization encodings.** Doc 02 §6.5 lists palette-RLE for fluids and thermal; sparse liquid and gas lists and `u16` thermal offsets are used (§16.1).
 - **G13. Genre fall multiplier.** Canon §5.9 `fall_dmg_bp` is applied to the canon fall damage before doc 04's fall factors.
-- **G14. Fixed terrain enforcement.** Canon §4.3 names a `destructible` tag but not every rule it implies. This chapter makes it `block.tag.destructible` (doc 07), sets `hardness_milli = -1` without it, refuses type changes of non-destructible cells for every cause except worldgen and script, allows prop-only changes (doors, growth, connections), and forbids non-destructible blocks from burning, melting, falling, washing away, decaying or exploding (§4.5 loader rule 2).
+- **G14. Fixed terrain enforcement.** Canon §4.3 names a `destructible` tag but not every rule it implies. This chapter makes it `block.tag.destructible` (doc 07), sets `hardness_milli = -1` without it, refuses type changes of non-destructible cells for every cause except worldgen, script and `grid.cause.toggled` swaps between doc 07 §10.6 lit and unlit twins, allows prop-only changes (doors, growth, connections), and forbids non-destructible blocks from burning, melting, falling, washing away, decaying or exploding (§4.5 loader rule 2).
 - **G15. Steam balance.** Canon §12.1 turns fire on water into "1 cell per 1000 ml" of steam. This chapter makes 1 liquid unit equal one saturated gas cell everywhere: boiling emits one cell per unit, and condensation returns 1 unit per 10,000 concentration. The earlier rate of 1 unit per 20 concentration let one unit of water become 500 units through fire and condensation. Freezing and melting likewise restore exactly the frozen units (`timed_revert`).
 - **G16. Web burnout.** Canon §12.1's "burns out in 60 ticks" is realized as 5 fire runs, which ends 48 to 60 ticks after ignition depending on the fire phase (§8.4).
 - **G17. RNG streams.** No stream beyond Canon §3.2 is needed. `rng.fire` covers spread and incendiary ignition, `rng.blocktick` random ticks, `rng.physics` explosion block intensity and drops. Liquids, gases, temperature, light, sound, falling blocks, movement and every surface rule draw nothing. Every draw is listed with its count in §8.3, §12.2, §12.3 and §13.7.
@@ -1956,6 +1966,7 @@ Non-ID exports: `step_mover`, `MoverParams`, `BlockQuery`, `MoverOut`, `select_m
 - **G25. Asleep listeners.** Asleep creatures (inactive chunk, no awareness) hear nothing. A noise loud enough to matter is emitted near an Erratum, whose window keeps chunks within 2 columns active, so the case is limited to sounds that carry more than 64 m.
 - **G26. System numbering.** Docs 09, 10, 13 and 14 cite system numbers. The four systems added for docs 04, 06, 07, 14 and 16 carry letter suffixes (17a, 26a, 26b, 34a) so no cited number changes.
 - **G27. Destructible block HP by depth.** Canon §13.8 lists the uses of `P(d)` and does not include block HP. Terrain destructible blocks scale their break threshold by `P(d_current)` (§13.2) so that weapons, which scale by `P(src_lvl)`, need the same number of hits at every depth; doc 07's placed blocks keep their own `T(d_place)` scaling against enemy damage. Requested: Canon §13.8 adds the row.
+- **G28. Event and ID reconciliation.** Payloads follow their producers: `ev.damage_dealt` carries doc 05 §10.2 step 9's `kind`, `base_mhp`, `stamina_loss_mst`, `d_armor` and `counters` and `DmgFlags` bits 13 to 16 (`takedown` from doc 09, `parried` and `negated` from doc 05, `self_cost` from doc 06); `ev.spell_cast` gains doc 06's `spell_hash` and `channel_ticks`; the seven doc 06 rows of §14.3 are doc 06 §19.1 verbatim; a trade sets `from = 3` on `ev.item_picked_up` (doc 16 G10); `ev.entity_pacified` gains code 4 for doc 09 subdues; `ev.secret_found` indexes doc 12 §17.3. `damage_seq` names the lethal hit's `ev.damage_dealt`, emitted first, or is `0xFFFF_FFFF` for a bleed-out (doc 01 G4). The separate fizzle registration is withdrawn because doc 06 reports every fizzle as `ev.spell_cast` with `fizzled = true`. The `grid.` family names (`grid.cause` and the others in Exports) are valid references to a whole enum. Canon-1.8 retired mounts, so this chapter retires its mount-only IDs (G1); the two retired mount events have no successor, and docs 05, 09, 12 and 16, which still name them, drop those references.
 
 ## Acceptance tests
 
@@ -1994,7 +2005,7 @@ Non-ID exports: `step_mover`, `MoverParams`, `BlockQuery`, `MoverOut`, `select_m
 33. **Events.** `seq` starts at 0 each tick and follows system order; the event list is empty at every boundary.
 34. **Sleep.** A creature in an inactive chunk keeps its position for 600 ticks, takes a hit, and moves on the next tick after waking.
 35. **Performance.** Every §17 unit-cost benchmark passes on the Deck runner.
-36. **Fixed terrain.** `set_block` on a granite masonry cell (not destructible) with cause `placed`, `broken`, `mined` or `explosion` returns `fixed_terrain`; with cause `worldgen` it succeeds. Toggling a non-destructible worldgen door succeeds. A power-8000 explosion next to a masonry wall marks no masonry cell and leaves the room behind it untouched. The content loader rejects a non-destructible block with `gravity`, `flammability_bp > 0`, `melt_decic` or `explosive`.
+36. **Fixed terrain.** `set_block` on a granite masonry cell (not destructible) with cause `placed`, `broken`, `mined` or `explosion` returns `fixed_terrain`; with cause `worldgen` it succeeds. Toggling a non-destructible worldgen door succeeds, and so does snuffing a non-destructible worldgen light fixture into its doc 07 §10.6 unlit twin with cause `grid.cause.toggled`; the same type change with cause `placed` returns `fixed_terrain`. A power-8000 explosion next to a masonry wall marks no masonry cell and leaves the room behind it untouched. The content loader rejects a non-destructible block with `gravity`, `flammability_bp > 0`, `melt_decic` or `explosive`.
 37. **No liquid from nothing.** Fire on 3 units of water yields 3 saturated steam cells; cooling them below 900 DeciC before dissipation returns at most 3 units. A 600-unit water cell frozen by temperature and later melted holds 600 units, not 1000. A frost-trigger ice cell reverts at `t + 1200` with its stored units and temperature never melts it early.
 38. **Controller purity.** For 10,000 ticks of random commands on a test map with slabs, stairs, ladders, water, a fence and a 1.2 m ledge, `sys.movement` on the host and `step_mover` on a copied `MoverSnap` with the same `MoverParams` and `BlockQuery` produce bit-identical `MoverSnap` values every tick, with no push or knockback present.
 39. **Broadphase and restore.** A save taken at a boundary after `sys.despawn` dropped an item on the previous tick, restored and stepped 600 ticks, matches the uninterrupted run's `state_hash` at every 60-tick boundary.
@@ -2009,6 +2020,8 @@ Non-ID exports: `step_mover`, `MoverParams`, `BlockQuery`, `MoverOut`, `select_m
 48. **Light overrides.** A `blackout` override with `max_level` 0 over an arena makes `light_at` 0 for every Erratum inside, lets a spawn query with `spawn_block_max` 0 pass inside it, changes no stored light level, and expires on its `until` tick.
 49. **Lag-compensated projectile.** An Erratum projectile fired on tick 1000 with `view_tick` 994 takes 7 steps on tick 1000, testing poses of ticks 995 to 1000, then 1 step per tick; an NPC projectile takes 1 step on its spawn tick.
 50. **Resting items.** An item at rest on a flat floor keeps its exact position for 600 ticks with no integration; a 3000 mm/s knockback moves it on the next tick.
+51. **Payload reconciliation.** A lethal melee hit emits `ev.damage_dealt` with flag `lethal` and then `ev.entity_killed` whose `damage_seq` equals that event's `seq`; a downed Erratum bleeding out emits `ev.entity_killed` with `damage_seq = 0xFFFF_FFFF`. A parried hit carries bit 14, a dodge-negated hit bit 15 with every type 0 and its `base_mhp`, a takedown bit 13 and a Blood Price payment bit 16. A fizzled Grimoire spell emits one `ev.spell_cast` with `fizzled = true`, `spell = 0` and its `spell_hash`, and no other fizzle event. A traded item emits `ev.item_dropped` with `cause = 1` and `ev.item_picked_up` with `from = 3`, `cause = 1`. A downed Erratum crawling 1,000 mm emits two `ev.footstep` with gait `grid.gait.crawl`.
+52. **Retired mounts.** The content loader rejects an entity template with kind code 2; `MoveMode` has 8 variants and the §14.2 table has exactly one row per Canon §18 event (42 rows) plus the five events of this chapter.
 
 ## Invariants annex
 
@@ -2034,7 +2047,7 @@ W! renderer light := sim light (field texture)        N! skin stored per block
 W! restore → identical state_hash                     N! derived cache ∈ serialization
 W! broadphase rebuilt before use within the tick       N! broadphase read across ticks
 W! step_mover pure: no draw, no event, no other entity W! host mover ≡ predictor mover
-W! ¬destructible ⇒ hardness −1 ∧ type fixed            N! fixed terrain burns|melts|falls|decays|explodes
+W! ¬destructible ⇒ hardness −1 ∧ type fixed (∖ twin toggle) N! fixed terrain burns|melts|falls|decays|explodes
 W! set_block refuses invader|ghost place/break         W! erase_placed ⇔ is_errata_placed (placed_meta)
 W! 1 liquid unit ⇔ 1 saturated gas cell                N! boil|condense|freeze|melt cycle creates liquid
 W! explosions: ≤ 4/tick, order (due, source, seq)      W! non-destructible blocks attenuate, never break
@@ -2044,4 +2057,6 @@ W! light overrides clamp reads, never stored levels    W! asleep bodies still ap
 W! system numbers cited by other docs never change     W! body radius ≥ 100 mm ∧ height ≥ 2 × radius
 W! block_hp(c) := block_hp_mhp × P(d_current)          W! lag-comp rewind ≤ 16 ticks < 32-tick history
 W! explosion center ∉ collision box                   W! mantle target ∉ {fence, pane}
+W! lethal ev.damage_dealt before ev.entity_killed     W! damage_seq := lethal seq | 0xFFFF_FFFF
+N! mount kind|component|mode|event (canon-1.8)        W! grid.ekind code 2 reserved, never spawned
 ```

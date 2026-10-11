@@ -731,27 +731,27 @@ armor_db(e) = Σ worn pieces max(0, noise_db − floor_div(skill.armor, 25)), an
 | `noise.move.splash` | 50 | entering liquid with `|v.y| ≥ 3000 mm/s` |
 | `noise.move.flap` | 35 | every 30 ticks for fliers |
 
-NPC steps add the profile `step_db` (§4.1). **Surface** comes from the acoustic class of the ground block's material, overridden by `noise.surface.water` when the feet cell holds ≥ 1 liquid unit:
+NPC steps add the profile `step_db` (§4.1). **Surface** is the `acoustic` class of the ground block's material (the `material` of `ev.footstep` and `ev.entity_landed`). Doc 07 §2.4 writes exactly one `acoustic` value on every material, and the material lists below repeat it verbatim; a material with no value (only `air`, never a ground block) reads `noise.surface.dirt`. Three feet-cell overrides replace the ground class, first match wins: ≥ 1 unit of `liq.mud` (doc 08) gives `noise.surface.mud`; ≥ 1 unit of any other liquid gives `noise.surface.water`; a `block.tall_grass` cell (doc 07) gives `noise.surface.grass`.
 
-| Class | dB | Canon materials (doc 07 field `acoustic` overrides) |
+| Class | dB | Source: doc 07 §2.4 materials, or the override |
 |---|---|---|
-| `noise.surface.metal` | +10 | steel, moonsilver, silver, star_metal, plasteel, titanium, scrap_iron, iron, cast_iron, hexed_silver, brass, bronze, copper, aetherium, cold_iron, orichalcum, redacted_alloy, gold_leaf |
+| `noise.surface.metal` | +10 | copper, tin, zinc, bronze, iron, cold_iron, scrap_iron, cast_iron, steel, brass, silver, hexed_silver, gold, chrome, titanium, moonsilver, plasteel, orichalcum, star_metal, aetherium, redacted_alloy, gold_leaf |
 | `noise.surface.glass` | +8 | glass, rad_glass, psi_crystal |
-| `noise.surface.water` | +8 | any liquid ≥ 1 unit in the feet cell |
-| `noise.surface.stone` | +6 | marble, jade, obsidian, every stone block |
-| `noise.surface.ice` | +4 | `block.ice` |
+| `noise.surface.water` | +8 | override: ≥ 1 unit of any liquid other than `liq.mud` in the feet cell |
+| `noise.surface.stone` | +6 | granite, sandstone, slate, basalt, marble, obsidian, jade, brick, concrete, terracotta, coral, slag, void |
+| `noise.surface.ice` | +4 | ice (`block.ice`) |
 | `noise.surface.bone` | +4 | bone, dragonbone, chitin |
-| `noise.surface.wood` | +3 | oak, blackwood, elderwood |
+| `noise.surface.wood` | +3 | pine, birch, cedar, bamboo, oak, thornwood, blackwood, elderwood |
 | `noise.surface.synthetic` | +2 | polymer, carbon_fiber |
-| `noise.surface.mud` | +2 | mud blocks |
-| `noise.surface.dirt` | 0 | dirt, gravel, default |
+| `noise.surface.mud` | +2 | override: ≥ 1 unit of `liq.mud` in the feet cell |
+| `noise.surface.dirt` | 0 | soil, coal; the default for a material with no `acoustic` value |
 | `noise.surface.sand` | −2 | sand |
-| `noise.surface.soft` | −4 | flesh, leather, rubber |
-| `noise.surface.foliage` | −4 | leaves, hay |
-| `noise.surface.grass` | −6 | grass, moss blocks with grass |
-| `noise.surface.paper` | −6 | vellum, paper |
-| `noise.surface.cloth` | −8 | carpet, tweed, silk, nanoweave, dreamstuff |
-| `noise.surface.snow` | −8 | snow layers |
+| `noise.surface.soft` | −4 | hide, leather, rubber, flesh |
+| `noise.surface.foliage` | −4 | leaves |
+| `noise.surface.grass` | −6 | override: a `block.tall_grass` cell as the feet cell |
+| `noise.surface.paper` | −6 | paper, vellum |
+| `noise.surface.cloth` | −8 | linen, tweed, silk, nanoweave, dreamstuff, web |
+| `noise.surface.snow` | −8 | none yet: reserved for a doc 07 snow-layer block (Canon gaps G21); nothing emits it until doc 07 adds one |
 
 Examples: walking on metal in a full heavy set at Armor 0 with `curse.loud` 2: `40 + 10 + 11 + 2 = 63` dB. A Shade crouch-walking on stone in a light set with Sneak 25 and `soft_step`: `25 + 6 + 3 − 3 − 6 = 25` dB. A 4000 mm drop onto stone in a medium set: `40 + 20 + 6 + 6 = 72` dB.
 
@@ -842,7 +842,7 @@ Grimoire spells take the form's cast noise from doc 06 §5.2 with doc 06's hushe
 | `noise.voice.scream` | 95 | `noise.voice.pain` | 60 |
 | `noise.voice.death` | 70 | `noise.voice.breath` | 30 (doc 13 stalkers) |
 | `noise.voice.groan` | 40 (downed, every 120 ticks) | `noise.voice.dog_bark` | 90 |
-| `noise.voice.squawk` | 90 (tattlers; doc 12 `hazard.alarm` level) | `noise.explosion` | 150 (doc 03 powder keg) |
+| `noise.voice.squawk` | 90 (tattlers; doc 12 `hazard.alarm` level) | `noise.explosion` | 150 (doc 03 `block.powder_keg`, doc 08 §5.6 `liq.nitro` detonation) |
 | `noise.explosion.grenade` | 140 | `noise.explosion.concussion` | 150 |
 | `noise.explosion.flash` | 160 | `noise.explosion.incendiary` | 110 |
 | `noise.explosion.smoke` | 55 | `noise.explosion.surface` | 100 (liquid blasts, Canon §12.1) |
@@ -855,7 +855,7 @@ Grimoire spells take the form's cast noise from doc 06 §5.2 with doc 06's hushe
 | `noise.env.distant` | 70 (doc 12 event) | `noise.env.debris` | 80 |
 | `noise.env.steam` | 50 | `noise.env.fire` | 45 on `ev.fire_started` |
 
-Doc 05 grenades map: frag `noise.explosion.grenade`, concussion `.concussion`, flash `.flash`, incendiary `.incendiary`, smoke `.smoke`, counter `.grenade`. Doc 03 reads levels through `noise_level` for `ExplosionSpec.noise`.
+Doc 05 grenades map: frag `noise.explosion.grenade`, concussion `.concussion`, flash `.flash`, incendiary `.incendiary`, smoke `.smoke`, counter `.grenade`; the launcher blast is `.grenade`. Doc 08 §13.2 bombs name their own detonation noise from this table (`.grenade`, `.incendiary`, `.smoke`, `.flash`, or `noise.item.shatter_ceramic` for bombs that only shatter); doc 08 §5.2 liquid blasts use `.surface`. Doc 03 reads levels through `noise_level` for `ExplosionSpec.noise`.
 
 ### 7.7 Attribution and AI reactions
 
@@ -1113,12 +1113,23 @@ A lock is genre-neutral; its skin decides the tool. Worldgen (doc 12) gives a lo
 
 `LOCK_DC[t]`, `PICK_TICKS[t]` and `HACK_TICKS[t]` name the DC, pick-ticks and hack-ticks columns.
 
-Tier is `lock_tier(d) = clamp(1 + floor_div(d − 1, 5), 1, 6)`, +1 for vaults, capped at 6. Kinds: `lock.kind.door` (`lock_hp` as listed), `lock.kind.container` (`lock_hp × 2`, R7 chest rule), `lock.kind.vault` (no pity), `lock.kind.quest` (key only, never picked). Skins: `lock.skin.mechanical` (Security, `item.tool.lockpicks`) and `lock.skin.electronic` (Hacking, the hacking deck, dependency techne). `LockState { tier, kind, skin, locked, progress: i32, key_tag: u32, fails: u8 }`. A matching key (`cat.key` with the same `key_tag`, doc 11) opens it in 20 ticks with no roll. Doc 03 asks `door_locked(gidx)` before toggling a door; a locked door refuses and emits `noise.door.locked`.
+Tier is `lock_tier(d) = clamp(1 + floor_div(d − 1, 5), 1, 6)`, +1 for vaults, capped at 6. Kinds: `lock.kind.door` (`lock_hp` as listed), `lock.kind.container` (`lock_hp × 2`, R7 chest rule), `lock.kind.vault` (no pity), `lock.kind.quest` (key only, never picked). Skins: `lock.skin.mechanical` (Security, `item.tool.lockpicks`) and `lock.skin.electronic` (Hacking, the hacking deck, dependency techne). `LockState { tier, kind, skin, locked, progress: i32, key_tags: [u32; 2], fails: u8 }`, where a `key_tag` of 0 means no key. An opener holding a matching key (`cat.key` with the same `key_tag`, doc 11) for every non-zero entry of `key_tags` opens it in 20 ticks with no roll. Doc 03 asks `door_locked(gidx)` before toggling a door; a locked door refuses and emits `noise.door.locked`.
 
 ```json
 { "id": "lock.t3", "dc": 55, "lock_hp": 28, "pick_ticks": 90, "hack_ticks": 120,
   "kinds": { "lock.kind.door": 10000, "lock.kind.container": 20000, "lock.kind.vault": 0 } }
 ```
+
+**Placed locks.** Doc 12 and doc 11 attach locks by these rules; tier is always `lock_tier(d)` (+1 for vaults) and skin follows the TEC rule above unless the row names one:
+
+| Kind | Placement (owner) | Skin | `key_tags` |
+|---|---|---|---|
+| `lock.kind.door` | door of a `Locked(k)` or `Locked(k1, k2)` edge, including the heist Treasury door (doc 12 §8.1, §9.2) | TEC rule | the edge's key items: `[k, 0]` or `[k1, k2]` |
+| `lock.kind.container` | every chest of kind `loot.chest.locked` (doc 11 §9.6) | TEC rule | `[0, 0]` unless doc 11 binds a key |
+| `lock.kind.door` | the `clearance` secret-exit door (doc 12 §17.4; Folio genre TEC ≥ 5) | `lock.skin.electronic`; doc 12 places it only where local TEC ≥ 5 | `[0, 0]`; doc 12 also unlocks it on the tick an Erasure hunter dies in the Folio |
+| `lock.kind.vault`, `lock.kind.quest` | a vault or quest door that doc 12 names | TEC rule | as doc 12 names |
+
+The `hack` verb seal of doc 12 §17.3 (`secret.hide.verb_lock`) is a §13.4 device, not a lock: one Unlock verb at device tier `lock_tier(d)` opens it, so it never needs local TEC ≥ 5. Its `prayer` and `spell` seals are doc 12 objects with no doc 09 lock.
 
 ### 13.2 Lockpicking
 
@@ -1341,10 +1352,10 @@ Namespaces owned by Canon §19: `noise.`, `aware.`, `disguise.`, `lock.`. Every 
 | 04 | the §5.2 XP events as written plus 750 Sneak milli-XP for engineered-noise kills (§12); the §4.2 Deceive chance drawn on `rng.stealth` seq 1006 for disguise challenges (Canon gaps G9); `RowFlat(31)`, `RowFlat(33)`, `RowFlat(34)`, `RowFlat(35)` terms; `light_fingers` applying to lockpicking and pickpocketing only; talent and trait IDs cited here |
 | 05 | calls `sneak_mult(att, tgt, tier)` (three arguments, for the boss and hunted caps) with `att` = the hit's owner; emits shot, swing, impact, block-hit, reload and jam noise through `noise_level`; a `suppressor` part tag for powered ranged skins only; `st.grappled` applied and refreshed directly for a takedown's duration; the `IGNORE_ARMOR` flag from `grants_ignore_armor` |
 | 06 | form cast noise and school; a query "is this cell inside a shadow area"; `summon.phantasm` as a hostile-perceived decoy; the Divination see-invisible hook |
-| 07 | material `acoustic` class; block `lightsrc` (`flame`, `electric`, `arcane`) and lit/unlit states; prop field `hide` (`enclosed`, `under`); crouch-only conceal flag; `block.light_switch`, `block.fuse_box`; lockpick, toolkit and hacking-deck durability and quality; noisemaker gadget; disarmed traps as redeployable `cat.placeable` items; doc 07 §11.1 rule 2 read as: a seized hostile turret or drone fights for the hacker per Canon §11.1 while never becoming an Errata gadget (Canon gaps G14) |
-| 08 | phosphor marking; respirator hearing penalty; mind vision radius; blood volume per cell; night-eye magnitude in mm |
-| 11 | instance field `outfit_of`; `item.tool.hacking_deck`; door keys in `cat.key` with `key_tag`; tool qualities |
-| 12 | lock tiers and skins at placement; tag `room.restricted` (Canon gaps G19); biome `camo`; `hazard.alarm` skins by dependency; laser heights; hiding props in stealth rooms; one fuse box per electric room; a room id per cell for power cuts and weather fronts; the faction recorded on every placed device; the `lattice.marg.silent` flag readable by `sound_bp_eff` |
+| 07 | material `acoustic` class, one `noise.surface.*` value per material, which §7.2's material lists repeat verbatim (doc 07 §2.4 is consumer data for these IDs; their definitions and dB values are §7.2's); `block.tall_grass` as the grass override; block `lightsrc` (`flame`, `electric`, `arcane`) and lit/unlit states; prop field `hide` (`enclosed`, `under`); crouch-only conceal flag; `block.light_switch`, `block.fuse_box`; lockpick, toolkit and hacking-deck durability and quality; noisemaker gadget; disarmed traps as redeployable `cat.placeable` items; doc 07 §11.1 rule 2 read as: a seized hostile turret or drone fights for the hacker per Canon §11.1 while never becoming an Errata gadget (Canon gaps G14) |
+| 08 | phosphor marking; respirator hearing penalty; mind vision radius; blood volume per cell; night-eye magnitude in mm; `liq.mud` as the mud surface override (§7.2) |
+| 11 | instance field `outfit_of`; `item.tool.hacking_deck`; door keys in `cat.key` with `key_tag`; tool qualities; `loot.chest.locked` chests carry a `lock.kind.container` lock (§13.1) |
+| 12 | lock tiers and skins at placement, with kinds and `key_tags` per the §13.1 placed-locks table (two-key `Locked(k1, k2)` doors fill both entries; the `clearance` door only where local TEC ≥ 5); the `hack` verb seal as a §13.4 device; tag `room.restricted` (Canon gaps G19); biome `camo`; `hazard.alarm` skins by dependency; laser heights; hiding props in stealth rooms; one fuse box per electric room; a room id per cell for power cuts and weather fronts; the faction recorded on every placed device; the `lattice.marg.silent` flag readable by `sound_bp_eff` |
 | 13 | template field `perception`; tags `enforcer`, `flier`, `breathless`, `electronic`; faction flag `radio`; template `outfit` flag and mass; investigate and search actions using §6.5 and §6.7 with `min(3, n)` draws; relight, bell and wake behaviors; reputation event `pickpocket_caught`; Director `alarm_raised`; subdue as a pacification defeat; each Folio's primary native faction (default device faction) |
 | 14 | `run.note.silent` and heist challenge read `run_alerted` and `folio_alerted` |
 | 16 | `StealthHud` in each player's snapshot; the §14.5 invader interest filter |
@@ -1373,6 +1384,8 @@ Namespaces owned by Canon §19: `noise.`, `aware.`, `disguise.`, `lock.`. Every 
 - **G18. Balance rules owned here.** The lock, hack, disarm and pickpocket ratings weight the skill × 3/2 and the gates use `2 + skill / 14` (§13.2, §13.4); doc 04 owns only the chance curve and the DC ladder, both kept. The hunted cap (§9.2) changes the doc 09 multiplier only; Canon §10.5 step 2.4 eligibility and its no-crit rule are unchanged.
 - **G19. Foreign-namespace IDs used here.** This chapter needs but does not define `input.hold_breath`, `input.whistle`, `input.shout` (doc 17), `room.restricted` (doc 12), `block.light_switch`, `block.fuse_box` (doc 07), `grid.cause.erased`, `grid.gait.crawl` (doc 03) and the G5 events. Each owner adds them; a rule here that names a missing ID does nothing until the owner adds it, and is never reinterpreted.
 - **G20. Ur-Text rooms.** Doc 12 §20.3 defines no per-room genre wedges for the Ur-Text, so the Ur-Text uses its own §15.1 row.
+- **G21. Surface sources.** Doc 07 §2.4 assigns every material one `acoustic` class, and §7.2 repeats those lists exactly. Four of the 17 classes have no material: `noise.surface.water` and `noise.surface.mud` come from liquid in the feet cell (`liq.mud` gives mud, any other liquid water), `noise.surface.grass` from a `block.tall_grass` feet cell, and `noise.surface.snow` waits for a doc 07 snow-layer block (requested; until then nothing emits it). All 17 classes stay defined because doc 18 builds one audio set per (gait, class).
+- **G22. Namespace reconciliation (2026-10-11).** Every concrete `noise.`, `aware.`, `disguise.` and `lock.` ID that another chapter uses is defined in this chapter, so no rename is needed. Two lint flags are layout artifacts, not foreign definitions: doc 07 §2.4's acoustic table puts the `noise.surface.*` class in its first column as a field value (listing materials first removes the flag), and a doc 13 Director tension row starts with prose that mentions `aware.alert`. Doc 17's `noise.<category>.<name>` pattern is read to include the four two-part IDs `noise.shot`, `noise.prayer`, `noise.alarm` and `noise.explosion`.
 
 ## Acceptance tests
 
@@ -1430,6 +1443,9 @@ Namespaces owned by Canon §19: `noise.`, `aware.`, `disguise.`, `lock.`. Every 
 52. **Takedown witnesses.** An observer with a sight pass on the attacker during a takedown gains exactly 4000 meter once; the takedown hit carries `DmgFlags` bits 1 and 13.
 53. **Hiding under.** An Erratum under a `hide: under` prop has the 600 mm capsule, `f_stance` 3500 and `f_frac` at most 4000; an Erratum seen entering an enclosed spot within 1500 mm of a searcher's `lkp` is found on the searcher's T6 or T7 entry.
 54. **Content lint.** Every JSON block in this chapter parses with integers only, and every ID in Exports matches the Canon §1.1 grammar and lies in `noise.`, `aware.`, `disguise.` or `lock.`.
+55. **Surfaces.** For each of doc 07's 68 non-air materials the §7.2 class equals its doc 07 §2.4 `acoustic` value (granite stone, hide soft, web cloth, coal dirt, gold metal). An unarmored walk with no §7.1 modifiers on soil gives 40 dB; the same step with 1 unit of `liq.mud` in the feet cell gives 42 (mud), with 1 unit of `liq.water` 48 (water), and in a `block.tall_grass` feet cell 34 (grass). No step ever reads `noise.surface.snow` while doc 07 has no snow block.
+56. **Placed locks.** A `Locked(k1, k2)` door at Folio 12 is `lock.kind.door` at `lock.t3` with `key_tags = [k1, k2]`: an opener holding only `k1` cannot use the key path and must pick or hack it, while holding both opens it in 20 ticks with no draw. A `loot.chest.locked` chest at the same depth has `lock_hp` 56. A `hack` verb seal at Folio 12 with local TEC 3 is hacked at device DC 55 and never becomes an electronic lock.
+57. **Cross-chapter IDs.** Every concrete `noise.`, `aware.`, `disguise.` or `lock.` ID that appears in any chapter appears in this chapter's Exports.
 
 ## Invariants annex
 
@@ -1457,4 +1473,6 @@ W! your_tier(sec) = min(5, 2 + sec/14) + [sec ≥ 75]            W! security|hac
 W! bluff draw := rng.stealth seq 1006                          N! rng.check ∈ doc 09 draws
 W! raise_alarm source ∈ §6.6 table ∧ cooldown 600 per source    W! SOUND_BP defined ∀ genre (§15.1)
 W! convert_events: door noise ⇔ door state toggled             W! block fall noise ⇔ cause landed
+W! surface(material) = doc 07 acoustic(material), then the feet-cell overrides mud, water, grass
+W! key open ⇔ opener holds a key for every non-zero key_tags entry   W! used noise.|aware.|disguise.|lock. id ⊆ Exports
 ```

@@ -69,6 +69,14 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 54 | Genre bleed | Kept: about 1 in 10 Folios, after an account finishes 3 runs | Doc 12 |
 | 55 | Mounts | **Changed: cut.** No mounts or vehicles; mount IDs retired | Canon §17.7; docs 03, 05, 11, 12, 13, 17 |
 | 56 | World Laws | **Changed: discovered in play.** Hidden from previews until first triggered for the account; then remembered by the Codex | Canon §5.8; docs 12, 17 |
+| 57 | Inkwell rates | Kept: 160 Ink per pull, pity by pull 60, 75/25 featured with guarantee, spark at 100, about 20 hours per featured Echo | Doc 15 |
+| 58 | Codex premium | Kept: cosmetics plus earned currencies; tier 100 grants a Quill | Doc 15 |
+| 59 | Account Reliquaries | Kept: keepsakes and cosmetics, never raw power | Doc 15 |
+| 60 | Fortune Engines | **Changed: add cursed capsules with pact curses.** A pact welds a real curse to a matching strong boon so the item forces a build decision; shown openly with displayed odds, still no wagering | Canon §13.6; docs 10, 11 |
+| 61 | Stealth alarms | Kept: recoverable, with guards searching longer and staying wary for the rest of the Folio | Doc 09 |
+| 62 | Pacifist play | Kept: tracked and rewarded through achievements, Codex marks and non-kill XP | Docs 04, 14 |
+| 63 | Hacking | Kept: optional quick minigame with auto-resolve at a cost, same model as lockpicking | Doc 09 |
+| 64 | Disguises | Kept: every sapient native faction in every genre | Doc 09 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 

@@ -1,0 +1,5 @@
+{
+  "comp.pools.aether": "comp.pools",
+  "ev.entity_killed.damage_seq": "ev.entity_killed",
+  "ev.spell_fizzled": "ev.spell_cast"
+}

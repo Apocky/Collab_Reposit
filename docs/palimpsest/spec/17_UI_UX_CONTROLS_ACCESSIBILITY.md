@@ -349,9 +349,9 @@ The Ledger (doc 10 §5.8) is a Journal page and an item-card expander for every 
 
 ## 5. Character
 
-### 5.1 Character sheet
+### 5.1 Character sheet (`ui.menu.character`)
 
-Tabs: **Attributes**, **Skills**, **Talents**, **Body**, **Afflictions** (§10.6), **Kin and Origin** (§10.5). The header shows name, kin, Origin (with Going Native state), Calling, level, XP `cur / next` with a bar, unspent attribute points, unspent talent points, and Scribe's Mercy when on.
+The Character sheet is the Book menu's Character tab (§4.1); `input.menu_character` opens it directly (§12.3). Tabs: **Attributes**, **Skills**, **Talents**, **Body**, **Afflictions** (§10.6), **Kin and Origin** (§10.5). The header shows name, kin, Origin (with Going Native state), Calling, level, XP `cur / next` with a bar, unspent attribute points, unspent talent points, and Scribe's Mercy when on.
 
 ### 5.2 Attributes and allocation
 
@@ -419,11 +419,11 @@ Level-up (`ev.level_gained`) never opens a modal: it raises a notification ("Lev
 
 ### 6.1 Crafting (`ui.menu.craft`)
 
-Crafting opens at a `station.*` within `CRAFT_REACH_MM`, or from the Satchel for `station.hand` recipes (2 × 2 grid, quality cap Normal). Doc 07 owns recipes. Five modes, one tab each, cover doc 07 §6.1's recipe kinds; every commit is doc 02's `Craft` intent carrying doc 07's `StartCraft { recipe, count }` payload:
+Crafting opens at a `station.*` within `CRAFT_REACH_MM`, or from the Satchel for `station.hand` recipes (3 × 3 grid, quality cap Normal, doc 07). Doc 07 owns recipes. Five modes, one tab each, cover doc 07 §6.1's recipe kinds; every commit is doc 02's `Craft` intent carrying doc 07's `StartCraft { recipe, count }` payload:
 
 | Mode | Recipe kinds | Layout |
 |---|---|---|
-| Grid | `recipe.kind.shaped`, `recipe.kind.shapeless` | a 3 × 3 grid (2 × 2 at `station.hand`); drag materials in; the matching recipe (doc 07 §6.3, horizontal mirror included) and its output card show live on the right, with the count stepper up to the stack limit |
+| Grid | `recipe.kind.shaped`, `recipe.kind.shapeless` | a 3 × 3 grid at every station, `station.hand` included (doc 07); drag materials in; the matching recipe (doc 07 §6.3, horizontal mirror included) and its output card show live on the right, with the count stepper up to the stack limit |
 | Assembly | `recipe.kind.assembly` | the frame item centered with one socket per part slot (`parts`, Canon §13.9); compatible loose `cat.part` items listed per socket; the assembled item card updates live |
 | Processing | `recipe.kind.process` | the station queue of up to `STATION_QUEUE_MAX` = 4 jobs (doc 07 §5.3): input, output, `ticks_each`, fuel left and a progress bar per job; jobs run in simulation time; the tab states "Queued jobs and uncollected outputs are lost when the party leaves the Folio" |
 | Disassembly | `recipe.kind.disassembly` | the item to break down and every material, part and graft it yields (doc 07 §8.5) |
@@ -489,7 +489,7 @@ The composer is a glyph-grammar editor over doc 06 §4. It calls the pure `compi
 | Cast ticks, recovery, cooldown, cast type | doc 06 §3.3, §3.4 | 24, 20, 0, cast_time |
 | Potency | doc 06 §6.3 | 11400 → 12084 → 12809 (×1.28) |
 | Damage per hit (step 0 and 2.1) | doc 06 §6.4 at the implement `src_lvl` | `mul_bp(24000, 11881) = 28,514` → ×12809 = 36,523 mHP → **36** |
-| Status power per hit | doc 06 §6.4 | burning 54 |
+| Status power per hit | doc 06 §6.4, with the Evocation 25 hook | burning 64 |
 | Contradiction forecast | Canon §5.5 at the caster's position | Coherent, potency 100%, failure 0% |
 | Error | doc 06 §4.3 first failing check | none |
 
@@ -566,7 +566,7 @@ A brass crank and a capsule chute; no reels, symbols, lights, near-miss frames, 
 ### 9.5 Colophon services, boon altar and Volume reward
 
 - **Hearth**: one prompt, "Restore (once per Colophon)".
-- **Boon altar** (doc 14 §3.9): 3 boon cards from the stored offer, a Reroll button showing "1 reroll left", and Commit. The cards state each boon's exact effect and that it lasts one Folio. Reopening shows the same stored offer. The Reroll button states its odds: a reroll draws 3 of the 12 boons uniformly without replacement, so each boon, including the three on screen, appears on the new offer with probability 25.0000% (`pct4(3, 12)`).
+- **Boon altar** (`ui.menu.boon_altar`, doc 14 §3.9): 3 boon cards from the stored offer, a Reroll button showing "1 reroll left", and Commit. The cards state each boon's exact effect and that it lasts one Folio. Reopening shows the same stored offer. The Reroll button states its odds: a reroll draws 3 of the 12 boons uniformly without replacement, so each boon, including the three on screen, appears on the new offer with probability 25.0000% (`pct4(3, 12)`).
 - **Interleaf Rest** (doc 14 §3.9): a 600-tick channel (`REST_CHANNEL_TICKS`) whose prompt lists its cancel reasons (damage, attacking, casting, moving 500 mm) and the heal it will give, `mul_bp(mul_bp(max_hp_mhp, INTERLEAF_HEAL_BP), gp.rest_heal_bp)` through Canon §10.9, in display HP.
 - **Going Native** (Canon §5.11): a confirmation page that lists the new Origin tolerance row next to the current one and the native cosmetic form; it states "Once per run. Gear is not translated."
 - **Volume reward** (Endpaper): 3 item cards from the stored offer; commit one; the page states "If you choose nothing, the first card is taken in M:SS", counting down `VOLUME_REWARD_TIMEOUT_TICKS` (3,600 ticks) from the Endpaper's start (doc 14 §3.9). P9 does not apply because this in-run countdown sells nothing.
@@ -652,7 +652,7 @@ The Kin and Origin tab lists the Origin's tolerance row (Canon §5.4), the Origi
 - **Status row**: afflictions draw first, in a thorn-ring frame. `st.incubating` shows the incubating affliction's glyph with a 7200-tick countdown.
 - **Afflictions tab**: per affliction, its skinned name in the local genre (vampirism, ghoul hunger, jiangshi; lycanthropy; Red Ink), upsides and downsides as two lists, cure options with live prices: Scriptorium cure `mul_bp(500, P(d))` Lucre (Folio 10: `mul_bp(500, 21718) = 1085`), or a blessed cure potion. For `afflict.red_ink`: doses taken, the Marginalia powers unlocked, and the hunter threshold `max(6, 10 − doses)`.
 - `afflict.hunger` adds a sun glyph to the vitals glyph row while `light_at ≥ 12` ("No regeneration in bright light"). `afflict.beast` shows "Beast form ready" while its once-per-Folio change is unused, the 30 s `st.polymorphed` timer while transformed, and "The beast stirs" while composure is below 25%.
-- `ev.affliction_changed` raises a notification and, the first time per run, a tip (§15).
+- `ev.affliction_changed` raises a notification and, the first time, `ui.tip.affliction` (§15).
 
 ### 10.7 Patrons and prayer (`ui.menu.prayer`)
 
@@ -704,7 +704,7 @@ Example: in Gothic Horror (`ambient_light` 2, `spawn_block_max` 7) beside a plac
 
 ### 11.1 Margin hub
 
-The Margin is walkable (doc 14 §5). Every open facility (doc 14 §5.1) has a lectern prompt. `input.menu_book` in the Margin opens the **Margin index**, a list of every open facility that opens its screen directly without walking (P6, cognitive and motor accessibility). Locked facilities list their opening milestone. The trophy and decoration arranger (§10.8) is listed as "Trophies" whatever doc 14 names the facility (Canon gaps G2). The Lectern runs the doc 14 §2.1 lobby (`ui.menu.lobby`) with one screen per state:
+The Margin is walkable (doc 14 §5). Every open facility (doc 14 §5.1) has a lectern prompt. `input.menu_book` in the Margin opens the **Margin index** (`ui.menu.margin_index`), a list of every open facility that opens its screen directly without walking (P6, cognitive and motor accessibility). Locked facilities list their opening milestone. The trophy and decoration arranger (§10.8) is listed as "Trophies" whatever doc 14 names the facility (Canon gaps G2). The Lectern runs the doc 14 §2.1 lobby (`ui.menu.lobby`) with one screen per state:
 
 | Lobby state | Screen |
 |---|---|
@@ -785,7 +785,20 @@ Every action is an `input.*` record. Kind: `B` button, `A2` two-axis. Sim column
 | `input.whistle`, `input.shout` | B | `Vocalize { kind }` intent (doc 09 §12) | `input.ui_actions` | B | client |
 | `input.speak_vitals` | B | client (§13.6) | | | |
 
-Contexts (`input.ctx.*`) decide which bindings are live: `on_foot`, `mounted` (adds couched lance hold, hides lean and dodge), `casting` (while the local cast machine, as the client last knows it, is in Winding, Overcasting, Channeling or Charging, doc 06 §3.5; overrides one gamepad binding, §12.4), `downed` (look, crawl, ping, chat), `ghost` (§10.4), `wheel` (while a wheel is open), `menu`, `placement` (§6.2), `lockpick` (§10.11), `margin`. When several apply, the most specific wins in the order `menu`, `wheel`, `lockpick`, `placement`, `casting`, `ghost`, `downed`, `mounted`, `on_foot`. A binding may repeat across contexts but never within one (§12.8).
+Contexts (`input.ctx.*`) decide which bindings are live. When several apply, the one with the lowest rank wins: `menu`, `wheel`, `lockpick`, `placement`, `casting`, `ghost`, `downed`, `mounted`, `margin`, `on_foot`. A binding may repeat across contexts but never within one (§12.8).
+
+| Context | Rank | Active when | Bindings it changes |
+|---|---|---|---|
+| `input.ctx.menu` | 1 | any `ui.menu.*` screen is open | the menu bindings of §12.3 and §12.4 (`input.ui_*`, `input.examine`) |
+| `input.ctx.wheel` | 2 | a wheel is open (§6.5) | the right stick or the mouse selects a socket; releasing the input that opened the wheel commits the selection |
+| `input.ctx.lockpick` | 3 | `ui.hud.lockpick` runs a manual attempt (§10.11) | only `input.attack` (set the pin), `input.ui_back` (abandon) and look |
+| `input.ctx.placement` | 4 | placement mode (§6.2) | `input.attack` confirms, `input.alt` cancels, `input.weapon_next` / `input.weapon_prev` rotate by 16384 Bam |
+| `input.ctx.casting` | 5 | the local cast machine, as the client last knows it, is in Winding, Overcasting, Channeling or Charging (doc 06 §3.5) | gamepad base-layer B is `input.cast_cancel`; a second B within 18 frames dodges (§12.4) |
+| `input.ctx.ghost` | 6 | the local Erratum is a ghost (§10.4) | `input.attack` marks, `input.interact` opens doors and presses switches and levers, `input.ping` pings, `input.weapon_next` / `input.weapon_prev` spectate, `input.jump` returns to the ghost body |
+| `input.ctx.downed` | 7 | the local Erratum holds `st.downed` (§10.4a) | only look, crawl (`input.move`), `input.ping` and `input.chat` |
+| `input.ctx.mounted` | 8 | the local Erratum holds `st.mounted` (§10.2) | adds the couched lance hold on `input.heavy`; hides `input.lean_l`, `input.lean_r` and `input.dodge` |
+| `input.ctx.margin` | 9 | the local player is in the Margin hub (§11.1) | `input.menu_book` opens `ui.menu.margin_index` instead of `ui.menu.book` |
+| `input.ctx.on_foot` | 10 | no other context applies | the preset's base bindings for every §12.1 action |
 
 ### 12.2 Command encoding
 
@@ -966,6 +979,25 @@ The client turns toggles into held bits each tick, so the simulation always sees
 
 `access.hold_to_toggle` sets every row to toggle at once. Timed interacts never shorten: a 90-tick Reliquary open still takes 90 ticks; the toggle only removes the need to keep the button down.
 
+### 12.10 Device settings (`input.cfg.*`)
+
+Client settings on the Controls page (§11.6), integers only. They shape look deltas and rumble on the client and never reach the simulation except as the `yaw` and `pitch` they produce.
+
+| Setting | Values | Default | Rule |
+|---|---|---|---|
+| `input.cfg.mouse_sens_milli` | 100..=10000 | 1000 | `yaw_deg = counts × 22 × sens_milli / 1,000,000` (§12.3) |
+| `input.cfg.ads_mult_bp` | 2500..=20000 | 10000 | multiplies mouse sensitivity while ADS (§12.3) |
+| `input.cfg.invert_y` | off, on | off | negates the vertical look delta (§12.3) |
+| `input.cfg.deadzone_inner_bp` | 0..=3000 | 1200 | radial inner deadzone (§12.4) |
+| `input.cfg.deadzone_outer_bp` | 8000..=10000 | 9500 | radial outer deadzone; deflection rescales linearly between the two (§12.4) |
+| `input.cfg.look_curve` | `linear`, `classic`, `precise` | `classic` | `r`, `r²` or `r³` of the rescaled deflection (§12.4) |
+| `input.cfg.look_yaw_dps` | 60..=600 | 240 | stick yaw speed at full deflection, °/s (§12.4) |
+| `input.cfg.look_pitch_dps` | 60..=600 | 160 | stick pitch speed at full deflection, °/s (§12.4) |
+| `input.cfg.vibration_bp` | 0..=10000 | 7000 | multiplies every `ui.rumble.*` motor value (§16.3) |
+| `input.cfg.trigger_bp` | 2000..=8000 | 3000 | trigger actuation point (§12.4) |
+| `input.cfg.gyro_mode` | `always`, `while_aiming`, `while_touching_right_pad`, `off` | `while_aiming` | gyro activation (§12.6) |
+| `input.cfg.aim_assist_gyro` | off, on | off | when on, gyro deltas receive aim assist at `low` at most (§12.6, §12.7) |
+
 ---
 ## 13. Accessibility
 
@@ -1114,6 +1146,25 @@ Settings records (content, integers only):
 ]
 ```
 
+### 13.11 Remaining settings
+
+The tables of §13.2, §13.5 and §13.10 give every other `access.*` setting's values and default. These settings complete the list:
+
+| Setting | Values | Default | Section |
+|---|---|---|---|
+| `access.colorblind_mode` | `none`, `deuteranopia`, `protanopia`, `tritanopia`, `monochrome` | `none` | §2.2, §13.3 |
+| `access.world_filter` | off, on | off | §13.3 |
+| `access.ui_scale_bp` | 7500..=20000 step 500 | 10000 | §2.4, §13.4 |
+| `access.text_scale_bp` | 10000..=20000 step 1000 | 10000; 11000 on Steam Deck (§12.5) | §2.4, §13.4 |
+| `access.font` | `standard`, `legible`, `dyslexic` | `standard` | §2.4 |
+| `access.high_contrast` | off, on | off | §3.5, §13.4 |
+| `access.consistent_skin` | off, on | off | §2.1 |
+| `access.lean_toggle` | off (hold), on (toggle) | off | §10.9 |
+| `access.narrator` | off, on; speech rate 50..=300 words per minute | off; 180 words per minute | §13.6 |
+| `access.sound_viz` | off, on | off | §13.7 |
+| `access.photosensitive` | off, on | off | §13.8 |
+| `access.game_speed_bp` | 5000..=10000 step 1000, solo only | 10000 | §13.9 |
+
 ---
 
 ## 14. Localization
@@ -1134,7 +1185,25 @@ Settings records (content, integers only):
   "text_key": "loc.ui.tip.contradiction.desc", "glyphs": ["input.ui_details"], "max_shows": 1 }
 ```
 
-- Launch tips: contradiction, anachronism_edge, erasure, colophon, ward, mount, minions, ghost, affliction, prayer, lean, stealth_light, placeables, ledger, scribes_mercy (shown once after the first death: "Scribe's Mercy is in Settings if you want it").
+- **Launch tips.** Every tip is a record of the shape above: `text_key` is `loc.ui.tip.<name>.desc` (doc 18), `max_shows` is 1, and the trigger is the local player's first occurrence of:
+
+| Tip | Trigger | Glyphs |
+|---|---|---|
+| `ui.tip.contradiction` | `ev.contradiction_changed` with `new_c ≥ 3` on an item the local Erratum holds | `input.ui_details` |
+| `ui.tip.anachronism_edge` | `ui.icon.edge` drawn for the first time (Anachronism Edge active against the current target, §2.5) | `input.ui_details` |
+| `ui.tip.erasure` | `ev.erasure_stack` on the local Erratum | none |
+| `ui.tip.colophon` | `ev.colophon_entered` for the local slot | `input.interact`, `input.menu_exits` |
+| `ui.tip.ward` | `ev.ward_broken` on the local Erratum | none |
+| `ui.tip.mount` | `ev.item_picked_up` of a `cat.mount` item into the local Erratum's inventory | `input.mount` |
+| `ui.tip.minions` | `ev.minion_bound` with the local slot as `owner_slot` | `input.minion_follow`, `input.minion_hold`, `input.minion_attack` |
+| `ui.tip.ghost` | `ev.player_ghosted` for the local slot | `input.attack`, `input.ping`, `input.weapon_next` |
+| `ui.tip.affliction` | `ev.affliction_changed` on the local Erratum | `input.menu_character` |
+| `ui.tip.prayer` | `ev.favor_changed` on the local Erratum | `input.pray` |
+| `ui.tip.lean` | `ev.awareness_changed` with the local Erratum as `subject` and `to` other than `aware.unaware` | `input.lean_l`, `input.lean_r` |
+| `ui.tip.stealth_light` | the stealth meter (`ui.hud.stealth`, §10.10) shown for the first time | `input.crouch` |
+| `ui.tip.placeables` | `ev.item_picked_up` of a `cat.placeable` item into the local Erratum's inventory | `input.attack`, `input.alt`, `input.weapon_next` |
+| `ui.tip.ledger` | `ev.item_picked_up` of an item whose type the local player does not know | `input.menu_journal` |
+| `ui.tip.scribes_mercy` | the local Erratum's first death (Canon §10.8 step 3, counted as §13.1 counts deaths) while `access.scribes_mercy` is off; shown after the death screen with the text "Scribe's Mercy is in Settings if you want it" | `input.pause` |
 - **First-open explainers**: each major menu shows a one-page explainer the first time, re-openable from its "?" button.
 - **Tooltips**: mouse hover 300 ms; gamepad shows the focused element's tooltip at once in a side panel; nested glossary links open with `input.ui_details` and back with `input.ui_back`.
 - The Prologue's room L3 teaches placing a bridge span and a ladder (`cat.placeable`), never mining terrain (Canon §4.3; Canon gaps G21).
@@ -1339,6 +1408,9 @@ The user asked for clarifying questions on every system designed here. Each defa
 51. **Respec price.** At Folio 10 the talent respec service shows 434 Lucre, then 868 (doc 04 §6.5).
 52. **Hold breath intents.** Pressing and releasing `input.hold_breath` 120 ticks apart sends `SetBreathHold { on: true }` and `SetBreathHold { on: false }`; the replay of that session reproduces the live `state_hash`.
 53. **Settings JSON.** Every `access.*` record loads with integer-only fields; the §13.10 array parses and contains no floats.
+54. **Input contexts.** With a wheel open while mounted, `input.ctx.wheel` is live and the right stick selects a socket; in the Margin, `input.menu_book` opens `ui.menu.margin_index`; while the local Erratum holds `st.downed`, pressing `input.attack` changes no command bit.
+55. **Fresh profile defaults.** A new client profile reads every `input.cfg.*` setting at its §12.10 default and every `access.*` setting at its §13.2, §13.5, §13.10 or §13.11 default (Steam Deck: `access.text_scale_bp` 11000, `access.aim_assist` `standard`).
+56. **Tips.** On a fresh account the first `ev.ward_broken` on the local Erratum shows `ui.tip.ward` once; later `ev.ward_broken` events, in that run or any other, show nothing until "Show again" is used; a first death with `access.scribes_mercy` already on shows no `ui.tip.scribes_mercy`.
 
 ## Invariants annex
 

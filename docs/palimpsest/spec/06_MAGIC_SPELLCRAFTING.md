@@ -1300,7 +1300,7 @@ fn glyph_tome(school: SchoolId, d: i32, set: &ContentSet, rng: &mut Rng) -> Vec<
 - **Reading** casts the text's spell at 0 aether. Read time is `max(1, ceil_div(30 × 10000, row17))` ticks (Canon §6.4 row 17) in the Winding state; it is interrupted like a cast. `st.blinded` or `st.silenced` forbids reading. The reader's row 29 applies; `src_lvl` is the text `ilvl`; the text's glyph origins set Contradiction. The text is consumed on resolution; an interrupted read keeps it. A blessed text multiplies its positive magnitudes (`mag_chain`, heal and ward) by 12500; a cursed text multiplies them by 7500 and carries `curse.misprint` (doc 10 §7.5).
 - **Inscribing** scrapes one identified `cat.text` of any type, consuming it as a palimpsest, and writes onto it a spell the inscriber can compile, producing one `item.text.inscribed` (a doc 11 template, Interface assumptions) that carries the glyph references: 180 ticks, not `in_combat`, complexity at most `min(row 26 budget, 4 + floor_div(inscription, 10))`, aether `mul_bp(base_cost, 20000 − 100 × inscription)`, then × 7500 with Inscription 50 (§7.3). The new text has `ilvl = d_current`, item `origin_genre` = local genre, glyph origins from the inscriber's Lexicon, and starts `know.identified` for the party. Inscription refuses channel and charge spells (a `beam` form or `glyph.mod.charged`), because reading is a single activation. A text's 30-tick read and a wand's 12-tick zap replace the form's cast ticks; the form decides only the delivery. Example: Inscription 10 inscribing W5 (base 11250) costs `mul_bp(11250, 19000) = 21375` m-aether.
 
-Effects of doc 11's text templates (doc 10 owns `item.text.appraisal`, `item.text.sanctify` and its five proposed texts). Each spell text is an authored `spell.` record whose glyph origins are the text's `origin_genre`; `use_id` is the doc 10 §5.1 rule.
+Effects of doc 11's text templates (doc 10 owns `item.text.appraisal`, `item.text.sanctify` and its five proposed texts). Each spell text is an authored `spell.` record (§8.6) whose glyph origins are the text's `origin_genre`; `use_id` is the doc 10 §5.1 rule.
 
 | Template | Effect | Targeted | `use_id` |
 |---|---|---|---|
@@ -1328,7 +1328,7 @@ Effects of doc 11's text templates (doc 10 owns `item.text.appraisal`, `item.tex
 - **Snap**: hold use for 60 ticks to destroy the wand; its spell's essences resolve as a nova of radius 3000 mm centered on the wielder, including the wielder, at magnitude × `(5000 + 2500 × charges)`. A wand with 0 charges cannot be snapped.
 - A wand is zapped from the inventory through the quick-cast wheel or equipped in `slot.offhand` (doc 10 §4.3). Its Contradiction and misfire roll use `rng.combat` with the zap's key (§19.2); a failed zap is a fizzle and its charge is spent. Cursed wands carry one doc 10 §7.3 zap curse: `curse.misfire` adds its `m` to the failure chance (§3.9), `curse.backfire` makes the effect originate at and target the zapper on a successful `rng.ident` roll, `curse.leaking` spends an extra charge, `curse.bloodprice` costs HP.
 
-**Wand pool.** These 15 authored spells carry the tag `wand_pool` (doc 10 §4.2 allows at most 16). Doc 11 draws a generated wand's spell with `weighted` over `wand_weight`; every glyph origin becomes the wand's `origin_genre`. All are complexity 8 or less.
+**Wand pool.** These 15 authored spells (§8.6) carry the tag `wand_pool` (doc 10 §4.2 allows at most 16). Doc 11 draws a generated wand's spell with `weighted` over `wand_weight`; every glyph origin becomes the wand's `origin_genre`. All are complexity 8 or less.
 
 | Spell | Glyphs | Complexity | `wand_weight` |
 |---|---|---|---|
@@ -1355,6 +1355,43 @@ The weights sum to 10000. Beams and channels never enter the pool, because a zap
 - Implement fields are in §3.8. A tome holds 2 inscribed spells, inscribed as in §8.3 but not consumed by casting; tome spells cost aether and obey cooldowns like Grimoire spells, and are castable only while the tome is the active implement.
 - Bound glyphs (§3.8) roll from: empower, extend, reach, hushed, keen, thrift, heavy, anchor (doc 11 rolls).
 - Implement JSON fields (added by this chapter to the doc 05 archetype record): `{ "casting": { "cost_bp": 9500, "cast_speed_bp": 10000, "tome_spell_slots": 0 } }`; the instance carries `{ "bound_glyph": "glyph.mod.keen" }` or none.
+
+### 8.6 Authored spell catalog
+
+These 28 records are every `spell.` ID. Each is a §4.6 authored spell record that passes §4.3 checks 1, 2 and 4 to 11 at content load. Glyphs are written in grammar order with the payload in parentheses (§4.2); the school is the root primary essence's (§7.1); complexity is §4.4 without perks. `origin_genre` is the record's glyph origin; a wand or text is generated with its own `origin_genre`, which replaces every glyph origin of its spell (§4.6), so the wand and text records carry `genre.mythic_fantasy`, the archetype genre.
+
+| ID | `origin_genre` | Glyphs | Complexity | School | Tags and use |
+|---|---|---|---|---|---|
+| `spell.searing_bolt` | `genre.mythic_fantasy` | bolt flame | 2 | evocation | W1 (§6.7); `wand_pool`, `wand_weight` 1000 |
+| `spell.frost_orb` | `genre.mythic_fantasy` | orb frost widen | 4 | evocation | W2; `wand_pool`, 900 |
+| `spell.storm_ray` | `genre.mythic_fantasy` | beam storm | 3 | evocation | W3; channel, never in the wand pool |
+| `spell.firestorm_bolt` | `genre.mythic_fantasy` | bolt flame storm empower | 4 | evocation | W4 |
+| `spell.cinder_bolt` | `genre.mythic_fantasy` | bolt flame on_impact ( nova frost ) | 9 | evocation | W5; the §4.6 record |
+| `spell.flame_conjuration` | `genre.mythic_fantasy` | manifest summon flame | 5 | conjuration | W6; spawns `summon.elemental` |
+| `spell.mending_aura` | `genre.mythic_fantasy` | aura mend extend | 4 | restoration | W7 |
+| `spell.packet_surge` | `genre.cyberpunk` | bolt storm quicken | 3 | evocation | W8; `wand_pool`, 900 |
+| `spell.mountain_palm` | `genre.wuxia` | touch force heavy | 3 | alteration | W9 (§10) |
+| `spell.gaze_of_madness` | `genre.cosmic_horror` | cone mind | 3 | illusion | W10 |
+| `spell.thorn_sleep` | `genre.fairy_tale` | bolt slumber | 2 | illusion | W11; `wand_pool`, 700 |
+| `spell.boiler_burst` | `genre.steampunk` | nova thunder | 3 | evocation | W12 |
+| `spell.wand_striking` | `genre.mythic_fantasy` | bolt force | 2 | alteration | `wand_pool`, 800; the §4.6 record |
+| `spell.wand_digging` | `genre.mythic_fantasy` | bolt shape | 3 | alteration | `wand_pool`, 600 |
+| `spell.wand_light` | `genre.mythic_fantasy` | bolt lumen | 2 | divination | `wand_pool`, 700 |
+| `spell.wand_haste` | `genre.mythic_fantasy` | self swiftness | 2 | alteration | `wand_pool`, 600 |
+| `spell.wand_polymorph` | `genre.mythic_fantasy` | bolt polymorph | 4 | alteration | `wand_pool`, 300 |
+| `spell.wand_dispel` | `genre.mythic_fantasy` | bolt unmaking | 3 | abjuration | `wand_pool`, 600 |
+| `spell.wand_fear` | `genre.mythic_fantasy` | cone dread | 2 | illusion | `wand_pool`, 600 |
+| `spell.wand_lightning` | `genre.mythic_fantasy` | chain storm | 3 | evocation | `wand_pool`, 700 |
+| `spell.wand_venom` | `genre.mythic_fantasy` | cone venom | 2 | alteration | `wand_pool`, 700 |
+| `spell.wand_conjure` | `genre.mythic_fantasy` | manifest summon edge | 5 | conjuration | `wand_pool`, 400; spawns `summon.hound` |
+| `spell.wand_invisibility` | `genre.mythic_fantasy` | self veil | 2 | illusion | `wand_pool`, 500 |
+| `spell.text_mending` | `genre.mythic_fantasy` | nova mend | 3 | restoration | `item.text.mending` (§8.3) |
+| `spell.text_demolition` | `genre.mythic_fantasy` | nova force shape | 5 | alteration | `item.text.demolition`; shape removes only `destructible` blocks within 2000 mm (§13.2) |
+| `spell.text_warding` | `genre.mythic_fantasy` | nova ward | 3 | abjuration | `item.text.warding` |
+| `spell.text_silence` | `genre.mythic_fantasy` | field hush | 3 | abjuration | `item.text.silence`; a null field (§14.4) |
+| `spell.text_summoning` | `genre.mythic_fantasy` | manifest summon edge | 5 | conjuration | `item.text.summoning`; spawns `summon.hound` |
+
+Counts: 12 worked spells (W1 to W12), 15 `wand_pool` spells (four of them worked spells), 5 text spells; 12 + 11 + 5 = 28 IDs. The `wand_weight` column of §8.4 is authoritative and sums to 10000. NPC templates (doc 13) may list any of these IDs; an NPC casts them per §6.5 and §18.
 
 ## 9. Enchanting
 
@@ -1518,7 +1555,7 @@ Values are at `P = 10000` and `pot = 10000`. The summon template is chosen by th
 | `summon.hound` | edge, force | quadruped | 60000 | 5 | 9000, slash (edge) or blunt (force), 45, 2000 | 7000 | skirmisher | — |
 | `summon.phantasm` | mind | humanoid | 40000 | 0 | none | 4300 | decoy | 2 spawn per cast with Illusion 100, each counting toward the cap; on spawn `st.taunted` direct to hostiles within 6000 mm; on death `st.confused` power 60 (carrier psychic) within 3000 mm and 100 dB noise |
 | `summon.sentinel` | ward | construct | 80000 | 30 | none | 6500, flies | bodyguard | a hostile projectile whose path passes within 1500 mm of it hits it instead |
-| `summon.herald` | prayer only (§16.3) | humanoid | 150000 | 30 | 16000, radiant, 60, 2500 | 6000, flies | guardian | friendly: 3600 ticks; hostile: an NPC of `rank.elite` |
+| `summon.herald` | prayer only (§16.3) | humanoid | 150000 | 30 | 16000, radiant, 60, 2500 | 6000, flies | guardian | friendly: 3600 ticks; hostile: an NPC of `rank.elite` in `fac.wild.<local genre suffix>` (doc 13 §5.5) |
 | `summon.misprint` | surge only (§11.3) | amorphous | 50000 | 0 | 10000, arcane, 60, 2000 | 5000 | hostile (doc 13 hunter behavior) | `fac.editors`, `rank.standard`; erases Errata-placed blocks like an Editor (Canon §11.6) |
 
 A hostile herald or misprint is an enemy: HP `template → × H(d_current) → × rank HP → × party HP`, damage `template → × T(d_current) → × rank damage`.
@@ -1533,13 +1570,13 @@ A hostile herald or misprint is an enemy: HP `template → × H(d_current) → �
 | `summon.poly.crow` | weird_west, oneiric | avian | 200 / 400 | 4000 | 600 | 800, 1000, 45 | gravity × 2000 while falling |
 | `summon.poly.ooze` | cosmic_horror, space_opera | amorphous | 450 / 600 | 1500 | 0 | 1000, 2500, 60 | immune to `st.bleeding` |
 | `summon.poly.paper` | cyberpunk, steampunk, redacted, ur_text | humanoid | 300 / 1800 | 4300 | 1100 | none | `resist[dmg.fire] = −10000` |
-| `summon.poly.beast` | `afflict.beast` only | quadruped | 400 / 1200 | 7500 | 1700 | 2200, Errata `B = mul_bp(mul_bp(20000, P(d_current)), 15000)`, 40 | Canon §16.4 |
+| `summon.poly.beast` | `afflict.beast` only | quadruped | 400 / 1200 | 7500 | 1700 | 2200, Errata `B = mul_bp(mul_bp(20000, P(d_current)), 15000)`, 40 | Canon §16.4: applied only by `afflict.beast` (doc 04 §10.2) for 1800 ticks, unscaled; the damage-taken break below does not apply: the form ends at expiry, when the bearer is downed, or on a cure, and it is not dispellable (§14.1); no items, no casting |
 
 Rules:
 
 - `glyph.ess.polymorph` applies the template of the spell's register by direct application: base `1800 → × duration_bp → × C potency`, then Canon §11.4 with the arcane threshold, then the rank control multiplier. Bosses, editors and hunters are immune (Canon §11.4).
 - While polymorphed: equipment is stowed (no item component works, enchantments included); no casting, prayer, item use, block, sprint or dodge; movement, capsule, jump and attack come from the template; AR 0 on every part; Max HP is unchanged, so the HP ratio is kept; parts map to the template body plan with every pool at the current HP ratio. The **reference** attack B is the bearer's primary attack B (NPC: template damage × `T(d)` × rank; Erratum: `10000 × P(d_current)`).
-- The status ends at expiry, by dispel, or when damage taken since application reaches 2000 Bp of Max HP (4000 when the applier has Alteration 75). On revert, original parts take the current HP ratio; severed parts stay severed.
+- The status ends at expiry, by dispel, or when damage taken since application reaches 2000 Bp of Max HP (4000 when the applier has Alteration 75). The `afflict.beast` form (`summon.poly.beast`) follows its own row instead. On revert, original parts take the current HP ratio; severed parts stay severed.
 
 ## 13. Spells and the world
 
@@ -1615,6 +1652,14 @@ Canon §11.1 fixes stacking, base duration and the canonical effect; these are t
 
 ## 16. Prayers and Devotion
 
+Every `prayer.` ID is one of three kinds. All 14 are listed here; §16.3 to §16.5 give their resolution.
+
+| ID | Kind | Activation | Gate | Favor | `prayer_timer` | Draws | Rules |
+|---|---|---|---|---|---|---|---|
+| `prayer.supplication` | supplication | 60-tick Winding cast through §3.5, interruptible by §3.7; sent by `input.pray` as `Pray { patron, kind: supplication }` (doc 17 §10.7), default patron the local genre's | any timer value; refused under `st.silenced`, `st.downed`, `st.ghost`, `st.polymorphed` and every other §3.9 `Disabled` status | PLEASED `+gain(50)`, DISPLEASED `−loss(50)`, HELPED `−loss(75)`, ANGRY `−loss(100)`, Unheard 0 | PLEASED +18000, DISPLEASED +36000, HELPED +90000, ANGRY +180000, Unheard +3600 | 4 `rng.magic` always; 1 `rng.combat` when its Contradiction failure chance is above 0 (§19.2) | §16.3; emits `ev.prayer_resolved` with outcome 0 to 4 |
+| `prayer.offering` | sacrifice | not a cast: each item stack confirmed in the altar offering menu (doc 17 §10.7) resolves on the tick its command applies, with the Erratum within 3000 mm of an altar block | refused under `st.downed`, `st.ghost` and `st.polymorphed`; allowed under `st.silenced` (no voice) and at any timer value | `+gain(base)` per stack (§16.5) | unchanged | none; no Contradiction roll | §16.5; counts as a prayer made at a shrine for §16.2; emits `ev.favor_changed` cause 0 |
+| `prayer.benediction`, `prayer.smite`, `prayer.sanctuary`, `prayer.mending`, `prayer.reattachment`, `prayer.absolution`, `prayer.turning`, `prayer.provision`, `prayer.vigil`, `prayer.intercession`, `prayer.lantern`, `prayer.oath` | petition | 30-tick Winding cast through §3.5, interruptible by §3.7; chosen in the prayer menu (doc 17 §10.7) | favor at least the §16.4 minimum and `prayer_timer <= 7200`; refused under the same statuses as a supplication | `−loss(cost)`, cost × 8000 first with Devotion 25 (§7.3); Unheard spends none | +3600, Unheard included (× 7500 with `divine_favor`, §16.2) | 1 `rng.combat` when its Contradiction failure chance is above 0 | §16.4; emits `ev.prayer_resolved` with outcome 5, or 4 when Unheard |
+
 ### 16.1 Patrons
 
 Each patron `patron.<genre_suffix>` is the Author of its genre. Prayers to a patron are components with `dep = {mythos}` and origin = the patron's genre, so `Req = max(1, MYT − 2)` of that genre (Canon §16.5).
@@ -1634,11 +1679,11 @@ Each patron `patron.<genre_suffix>` is the Author of its genre. Prayers to a pat
 | `patron.fairy_tale` | The Godmother of Thorns | `st.blessed` 900 and Bargain Debt cleared | `st.polymorphed` as toad, direct, base 300 (Canon §11.4) | Folio exit with Debt: `ceil_div(Debt, 1000)` |
 | `patron.mythic_antiquity` | The Laurel-Crowned | `st.empowered` 1200 | a `dmg.radiant` hit of 2000 Bp of Max HP entering Canon §10.5 at step 4 | 40 kills since the last sacrifice or shrine prayer to this patron: 100, counter resets (the per-Erratum mirror of doc 12's `law.mythic_antiquity.hubris`) |
 | `patron.oneiric` | The Dreamer Who Writes Us | aether to max and `st.levitating` 600 | `st.sleeping` 240 | waking a `st.sleeping` creature with damage: 5 |
-| `patron.redacted` | The Censor | removes 2 stacks of `st.erasure` | adds 2 stacks of `st.erasure` | reading a `cat.text`: 5 |
+| `patron.redacted` | The Undersigned | removes 2 stacks of `st.erasure` | adds 2 stacks of `st.erasure` | reading a `cat.text`: 5 |
 | `patron.unwritten` | The Blank Page | removes `st.unmoored`, clears the Canon §5.11 failure count, and `st.blessed` 900 | none | none |
 | `patron.ur_text` | The First Author | removes every DoT, debuff, control and mental status; HP to max | `st.dread` | none |
 
-An Erratum who breaks an altar block loses 200 favor with that altar's patron. The Blank Page's boon used to set the prayer timer to 0, which let a full-health Erratum pray to it every 60 ticks for +50 favor each time and reach 1000 favor in 20 prayers; its boon now leaves the timer alone.
+Names are the English display text; doc 18 §8.2 owns their `loc.` strings and gave `patron.redacted` the name "The Undersigned", because doc 13 §9.2's `boss.editor_v2` is "The Censor" and two beings cannot share a name. An Erratum who breaks an altar block loses 200 favor with that altar's patron. The Blank Page's boon used to set the prayer timer to 0, which let a full-health Erratum pray to it every 60 ticks for +50 favor each time and reach 1000 favor in 20 prayers; its boon now leaves the timer alone.
 
 ### 16.2 Favor
 
@@ -1756,7 +1801,7 @@ Examples: W1 in Mythic Fantasy, `fnv1a32 = 0x009418ee`, `v = 0`: "Flame Bolt". W
 | `area_members(spell, caster, aim)` | sorted EntityIds the root stage would affect |
 | `ally_risk(spell, caster, aim)` | count of the caster's allies in `area_members` |
 | `cast_state(entity)` | `Option<{ spell_hash, state, ticks_remaining, form, aim_point }>` for any visible caster |
-| `spell_tags(spell)` | the authored `ai.tags` (§4.6) |
+| `spell_tags(spell)` | the `tags` list of the authored record's `ai` block (§4.6) |
 
 - An NPC never casts a harmful area spell with `ally_risk > 0` unless its AI profile is `reckless`. NPCs keep target distance within the spell's `min_range_mm..=max_range_mm`.
 - Interrupters (doc 13 profile) prefer targets whose `cast_state.ticks_remaining >= 12`. Counterspell-capable NPCs cast unmaking at Errata in Winding.
@@ -1801,21 +1846,24 @@ Compilation, cost, potency, buildup, enchanting, favor, summon AI target choice 
 
 ## Exports
 
-All IDs below are in namespaces Canon §19 assigns to doc 06.
+All IDs below are in namespaces Canon §19 assigns to doc 06; 195 content IDs in all. Each is defined by its row in the listed section.
 
-| Namespace | IDs |
-|---|---|
-| `glyph.form.` (13) | bolt, orb, beam, cone, touch, self, aura, field, wall, rune, nova, chain, manifest |
-| `glyph.ess.` (33) | flame, frost, storm, acid, force, edge, radiance, shadow, mind, arcane, venom, thunder, mend, ward, swiftness, levitate, veil, bind, dread, dominion, slumber, hush, polymorph, unmaking, summon, shape, tide, gale, lumen, sight, appraise, omen, psychometry |
-| `glyph.mod.` (22) | empower, extend, widen, reach, quicken, charged, split, homing, pierce, ricochet, linger, delay, hushed, thrift, volatile, keen, siphon, leech, sculpt, anchor, heavy, twin |
-| `glyph.trig.` (8) | on_impact, on_kill, on_expire, timer, proximity, on_struck, on_status, pulse |
-| `glyph.cond.` (8) | foe, ally, wounded, native, wet, burning, dark, unaware |
-| `school.` (8) | evocation, abjuration, alteration, conjuration, illusion, restoration, divination, spellcraft |
-| `spell.` (28 authored) | `spell.searing_bolt` = W1, `spell.frost_orb` = W2, `spell.storm_ray` = W3, `spell.firestorm_bolt` = W4, `spell.cinder_bolt` = W5, `spell.flame_conjuration` = W6, `spell.mending_aura` = W7 (origin `genre.mythic_fantasy`); `spell.packet_surge` = W8 (`genre.cyberpunk`); `spell.mountain_palm` = W9 (`genre.wuxia`); `spell.gaze_of_madness` = W10 (`genre.cosmic_horror`); `spell.thorn_sleep` = W11 (`genre.fairy_tale`); `spell.boiler_burst` = W12 (`genre.steampunk`); wand pool `spell.wand_striking`, `.wand_digging`, `.wand_light`, `.wand_haste`, `.wand_polymorph`, `.wand_dispel`, `.wand_fear`, `.wand_lightning`, `.wand_venom`, `.wand_conjure`, `.wand_invisibility` (§8.4); text spells `spell.text_mending`, `.text_demolition`, `.text_warding`, `.text_silence`, `.text_summoning` (§8.3) |
-| `summon.` (18) | familiar, elemental, servitor, swarm, wisp, golem, hound, phantasm, sentinel, herald, misprint; `summon.poly.` toad, sheep, rat, crow, ooze, paper, beast |
-| `patron.` (16) | one per genre suffix of Canon §5.2 |
-| `prayer.` (14) | supplication, offering, benediction, smite, sanctuary, mending, reattachment, absolution, turning, provision, vigil, intercession, lantern, oath |
-| `ench.` (27) | focus, attunement, logic, memory, toughness, agility, resistance, potency, valor, precision, ruin, thrift, celerity, lightbearer, breath, surefoot, searing, frostbite, galvanic, corrosive, sanctified, vampiric, siphoning, disruption, spellstore, blink, restoring |
+| Namespace | Defined in | IDs |
+|---|---|---|
+| `glyph.form.` (13) | §5.2 | `glyph.form.bolt`, `glyph.form.orb`, `glyph.form.beam`, `glyph.form.cone`, `glyph.form.touch`, `glyph.form.self`, `glyph.form.aura`, `glyph.form.field`, `glyph.form.wall`, `glyph.form.rune`, `glyph.form.nova`, `glyph.form.chain`, `glyph.form.manifest` |
+| `glyph.ess.` (33) | §5.3 | `glyph.ess.flame`, `glyph.ess.frost`, `glyph.ess.storm`, `glyph.ess.acid`, `glyph.ess.force`, `glyph.ess.edge`, `glyph.ess.radiance`, `glyph.ess.shadow`, `glyph.ess.mind`, `glyph.ess.arcane`, `glyph.ess.venom`, `glyph.ess.thunder`, `glyph.ess.mend`, `glyph.ess.ward`, `glyph.ess.swiftness`, `glyph.ess.levitate`, `glyph.ess.veil`, `glyph.ess.bind`, `glyph.ess.dread`, `glyph.ess.dominion`, `glyph.ess.slumber`, `glyph.ess.hush`, `glyph.ess.polymorph`, `glyph.ess.unmaking`, `glyph.ess.summon`, `glyph.ess.shape`, `glyph.ess.tide`, `glyph.ess.gale`, `glyph.ess.lumen`, `glyph.ess.sight`, `glyph.ess.appraise`, `glyph.ess.omen`, `glyph.ess.psychometry` |
+| `glyph.mod.` (22) | §5.4 | `glyph.mod.empower`, `glyph.mod.extend`, `glyph.mod.widen`, `glyph.mod.reach`, `glyph.mod.quicken`, `glyph.mod.charged`, `glyph.mod.split`, `glyph.mod.homing`, `glyph.mod.pierce`, `glyph.mod.ricochet`, `glyph.mod.linger`, `glyph.mod.delay`, `glyph.mod.hushed`, `glyph.mod.thrift`, `glyph.mod.volatile`, `glyph.mod.keen`, `glyph.mod.siphon`, `glyph.mod.leech`, `glyph.mod.sculpt`, `glyph.mod.anchor`, `glyph.mod.heavy`, `glyph.mod.twin` |
+| `glyph.trig.` (8) | §5.5 | `glyph.trig.on_impact`, `glyph.trig.on_kill`, `glyph.trig.on_expire`, `glyph.trig.timer`, `glyph.trig.proximity`, `glyph.trig.on_struck`, `glyph.trig.on_status`, `glyph.trig.pulse` |
+| `glyph.cond.` (8) | §5.6 | `glyph.cond.foe`, `glyph.cond.ally`, `glyph.cond.wounded`, `glyph.cond.native`, `glyph.cond.wet`, `glyph.cond.burning`, `glyph.cond.dark`, `glyph.cond.unaware` |
+| `school.` (8) | §7.1 | `school.evocation`, `school.abjuration`, `school.alteration`, `school.conjuration`, `school.illusion`, `school.restoration`, `school.divination`, `school.spellcraft` |
+| `spell.` (28) | §8.6 | `spell.searing_bolt`, `spell.frost_orb`, `spell.storm_ray`, `spell.firestorm_bolt`, `spell.cinder_bolt`, `spell.flame_conjuration`, `spell.mending_aura`, `spell.packet_surge`, `spell.mountain_palm`, `spell.gaze_of_madness`, `spell.thorn_sleep`, `spell.boiler_burst`, `spell.wand_striking`, `spell.wand_digging`, `spell.wand_light`, `spell.wand_haste`, `spell.wand_polymorph`, `spell.wand_dispel`, `spell.wand_fear`, `spell.wand_lightning`, `spell.wand_venom`, `spell.wand_conjure`, `spell.wand_invisibility`, `spell.text_mending`, `spell.text_demolition`, `spell.text_warding`, `spell.text_silence`, `spell.text_summoning` |
+| `summon.` (11) | §12.2 | `summon.familiar`, `summon.elemental`, `summon.servitor`, `summon.swarm`, `summon.wisp`, `summon.golem`, `summon.hound`, `summon.phantasm`, `summon.sentinel`, `summon.herald`, `summon.misprint` |
+| `summon.poly.` (7) | §12.3 | `summon.poly.toad`, `summon.poly.sheep`, `summon.poly.rat`, `summon.poly.crow`, `summon.poly.ooze`, `summon.poly.paper`, `summon.poly.beast` |
+| `patron.` (16) | §16.1 | `patron.mythic_fantasy`, `patron.gothic_horror`, `patron.cosmic_horror`, `patron.space_opera`, `patron.cyberpunk`, `patron.post_apocalypse`, `patron.weird_west`, `patron.hardboiled_noir`, `patron.wuxia`, `patron.steampunk`, `patron.fairy_tale`, `patron.mythic_antiquity`, `patron.oneiric`, `patron.redacted`, `patron.unwritten`, `patron.ur_text` |
+| `prayer.` (14) | §16 | `prayer.supplication`, `prayer.offering`, `prayer.benediction`, `prayer.smite`, `prayer.sanctuary`, `prayer.mending`, `prayer.reattachment`, `prayer.absolution`, `prayer.turning`, `prayer.provision`, `prayer.vigil`, `prayer.intercession`, `prayer.lantern`, `prayer.oath` |
+| `ench.` (27) | §9.4 | `ench.focus`, `ench.attunement`, `ench.logic`, `ench.memory`, `ench.toughness`, `ench.agility`, `ench.resistance`, `ench.potency`, `ench.valor`, `ench.precision`, `ench.ruin`, `ench.thrift`, `ench.celerity`, `ench.lightbearer`, `ench.breath`, `ench.surefoot`, `ench.searing`, `ench.frostbite`, `ench.galvanic`, `ench.corrosive`, `ench.sanctified`, `ench.vampiric`, `ench.siphoning`, `ench.disruption`, `ench.spellstore`, `ench.blink`, `ench.restoring` |
+
+Polymorph templates use `summon.poly.` inside `summon.` (Canon gap G4). Doc 10 §5.10 restates `glyph.ess.appraise`, `glyph.ess.omen`, `glyph.ess.sight` and `glyph.ess.psychometry` in the first column of its effect table, and doc 10 §7.6 restates `prayer.absolution`; this chapter owns those IDs and their glyph and petition data, and doc 10 owns only the `appr.eff.*` effects they call.
 
 Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt lockout 30 ticks, charge `charge_bp(c) = 10000 + floor_div(5000 × c, 60)` with `c` in `0..=60` past `ct` and auto-release at `ct + 120` (Evocation 50: `10000 + floor_div(7500 × c, 90)`, `c` in `0..=90`, auto-release at `ct + 150`), `DEPTH_BP = [10000, 7500, 6000]`, `NPC_SPELL_SCALE_BP = 4500`, max trigger depth 2, casting base speeds 2150 and 1720 mm/s, siphon cap 5000 Bp of `cast_cost` and leech cap 2500 Bp of Max HP per root resolution, enchanting ARCANA gates 1, 4 and 7, supplication `r1 = range(180_000)`, petition gate `prayer_timer <= 7200`. Enumerations (not content IDs): glyph pools `base`, `glyphs_2`, `family.<name>`; essence kinds `damage`, `heal`, `buff`, `control`, `poly`, `dispel`, `summon`, `world`, `lore`; implement profiles `focus`, `tome`, `staff`. Behavior of the Canon §11.1 statuses owned by 06 (§15) and of `res.aether`, `res.ward` (spell side) and `res.favor`.
 
@@ -1836,8 +1884,8 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 | 14 | kit primers as §8.1 states; `unlock.loot.glyphs_2` adds the `glyphs_2` pool; Echo traits enter the `[T]` slots of §3.4, §6.2, §6.3 and §12.1 |
 | 15 | each `unlock.glyph.<family>` adds that §8.1 family pool; each Folio Expansion supplies 4 glyphs for its family |
 | 16 | prediction of cast start, Winding and spell projectile stand-ins with the §19.2 keys; downed rules; the Restoration 100 revival hook |
-| 17 | (present) `input.cast`, `input.cast_wheel`, `input.pray`, `input.cast_cancel` and the bit layout of §3.2; the lore-essence target list; the spell composer over `compile`; the party map reveal of `item.text.mapping`. Doc 17's composer example lists W1 burning power 54; with the Evocation 25 hook it is 64 (§6.7) |
-| 18 | (present) §7.5 Form skins, adopted unchanged in §5.7; localization of every §5.7 skin and of patron, prayer and enchantment names; register VFX and audio (`mag` cast, release and fizzle per register) |
+| 17 | (present) `input.cast`, `input.cast_wheel`, `input.pray`, `input.cast_cancel` and the bit layout of §3.2; the lore-essence target list; the spell composer over `compile`; the party map reveal of `item.text.mapping`. Doc 17's composer example lists W1 burning power 54; with the Evocation 25 hook it is 64 (§6.7). Doc 17 §10.7's prayer odds use `r1 = range(1,800,000)` and a petition condition `timer ≤ 36000`; this chapter's values are `range(180_000)` (§16.3) and `prayer_timer <= 7200` (§16.4), and the offering menu sends `prayer.offering` per §16 |
+| 18 | (present) §7.5 Form skins, adopted unchanged in §5.7; localization of every §5.7 skin and of patron, prayer and enchantment names; §8.2's display name "The Undersigned" for `patron.redacted`, adopted in §16.1; register VFX and audio (`mag` cast, release and fizzle per register) |
 
 ## Canon gaps
 
@@ -1910,6 +1958,8 @@ Constants: `CAST_RECOVERY_TICKS = 20`, `INSTANT_RECOVERY_TICKS = 45`, interrupt 
 46. **Recharge text.** On an uncursed wand at 3 of 6 charges: uncursed text gives 5 of 5, blessed gives 6 of 6, cursed gives 4 of 5.
 47. **Evocation 50 charge.** With `skill.evocation.m50`, `charge_bp(45) = 13750` and `charge_bp(90) = 17500`, and a charged bolt (`ct = 24`) auto-releases at `held = 174`; without the perk it auto-releases at `held = 144` at 15000.
 48. **Spellcraft hooks.** `bolt flame empower widen quicken` fails `E_MODIFIER` (widen does not apply to bolt); `orb flame empower widen quicken reach` fails `E_GRAMMAR` at Spellcraft 99 and compiles past check 1 with `skill.spellcraft.m100`. With `skill.spellcraft.m50`, `orb flame on_impact foe ( nova frost )` has complexity 10 instead of 11.
+49. **Authored catalog.** Content load finds exactly 28 `spell.` records, each passing §4.3 checks 1, 2 and 4 to 11, with the §8.6 complexities: `spell.cinder_bolt` 9, `spell.text_demolition` 5, `spell.text_silence` 3, `spell.wand_polymorph` 4. Reading `item.text.silence` creates a null field; reading `item.text.summoning` spawns one `summon.hound`.
+50. **Prayer kinds.** `prayer.offering` under `st.silenced` resolves, draws nothing and leaves `prayer_timer` unchanged; under `st.downed` it is refused. `prayer.supplication` and every petition under `st.silenced` are refused (§14.2) and draw nothing. Exactly 14 `prayer.` IDs exist: 1 supplication, 1 offering, 12 petitions.
 
 ## Invariants annex
 
