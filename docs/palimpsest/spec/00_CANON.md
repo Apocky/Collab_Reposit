@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.7 (changelog in §23).
+As of 2026-10-11. Status: BINDING. Version: canon-1.8 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -531,9 +531,8 @@ Every **component** of an item or ability has a dependency set `dep ⊆ {arcana,
 | Prayers, relics, holy or unholy affixes, curse effects, undead-bane, divine favors, mutations of supernatural origin | mythos |
 | Cinematic techniques: wall-run, double jump, qinggong glide, gun-kata, "rule of cool" exotic perks | verve |
 | Mundane alchemical effects: healing, poison, stamina, acid, fire, smoke | none |
-| Kin passive traits, tamed beasts, beast mounts | none |
+| Kin passive traits, tamed beasts | none |
 | Summons | the summoning glyph's dependency |
-| Mounts other than beasts | from the skin: vehicle techne, broom or carpet arcana, divine steed mythos, cloud verve |
 
 A component's **requirement** on axis `a`:
 
@@ -645,6 +644,7 @@ All axiom values here are local axioms at the relevant entity's position (§5.8)
 - `local_genre(pos)` is the genre of the bleed zone containing block `fx_floor_block(pos)`, or the Folio's genre outside bleed zones. Doc 12 defines bleed zones.
 - `local_axiom(pos, a)` is the axiom value of `local_genre(pos)`.
 - §5.5 to §5.7 always use local values at the wielder's position, except that "native" uses the target's position.
+- **Law discovery.** World Laws are discovered in play (DECISIONS.md, item 56). A Law is hidden from exit previews and HUD until it first triggers for the account; the Codex then remembers it and previews show it in later runs.
 - **Seam zones.** Doc 12 may place at most one `zone.seam` per Folio, covering 1 or 2 rooms, where two genres are stitched together. Inside a seam zone, `local_axiom(pos, a)` is the larger of the two genres' axiom values for each `a`, both genres' World Laws (§5.10) are active, entities of either genre count as native, and the Folio's genre supplies skins. This is the only place where both toolsets work at full strength.
 - `vrv(e) = min(10, local_axiom(e.pos, verve) + 2 × [e has st.inspired])`. Jump, safe fall, crit chance and Death's Door use `vrv(e)`. Contradiction requirements always use the unmodified local axiom.
 
@@ -840,7 +840,7 @@ Scope notes:
 - **Hacking** covers electronic locks, cameras, turrets, drones and `body.construct` NPCs (§11.1 `st.hacked`).
 - **Fieldcraft** covers placing and repairing placeables, their block HP, breaking destructible blocks, setting traps and demolition charges.
 - **Awareness** opposes Sneak in doc 09 and improves §6.4 row 35.
-- **Handling** covers taming, minion command, mounts and vehicles.
+- **Handling** covers taming and minion command.
 - **Inscription** covers scrolls, runes, enchanting (`ench.`) and Rewriting.
 - **Conjuration** covers all summoning, including undead.
 - FAT and SER govern no skill, so they rise only through level-up allocation, mirroring Morrowind's Luck.
@@ -1125,7 +1125,6 @@ Threshold groups `body`, `nerve`, `mind` and `arcane` use §6.4 rows 22 to 25. `
 | `st.polymorphed` | special | direct | arcane | refresh | 30 s | body plan and base stats replaced by a template; equipment stowed; HP ratio kept | 06 |
 | `st.incubating` | special | direct | — | refresh | 7200 ticks | an affliction incubates; at expiry the affliction takes hold (§16.4) | 04 |
 | `st.suffocating` | DoT | special | — | while `res.breath` = 0 | none | DoT rate 500 Bp as `dmg.true` | 04 |
-| `st.mounted` | indicator | special | — | while riding | none | §17.7 | 05 |
 | `st.bound` | indicator | special | — | while a minion is bound to its owner | none | §15.1 | 13 |
 | `st.ghost` | special | special | — | until resurrected | none | §17.6 | 16 |
 | `st.unmoored` | special | special | — | refresh | 300 ticks | §5.11 | 12 |
@@ -1296,7 +1295,6 @@ Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at m
 | `cat.quest` | narrative items | 12 |
 | `cat.part` | loose weapon parts and licensed grafts that cross manufacturers | 07, 11 |
 | `cat.ward_gen` | ward generators: shields of every skin, from aegis charms to kinetic barriers | 05, 11 |
-| `cat.mount` | mount tokens: whistles, keys, bridles | 05, 11 |
 | `cat.seed` | plantable seeds | 07, 08 |
 | `cat.corpse` | corpses and Errata Remains: carry, loot, eat, raise, sacrifice | 04, 13, 16 |
 | `cat.body_part` | severed body parts (§9.1) | 04, 07, 08 |
@@ -1316,7 +1314,6 @@ Ambient and wave spawns (doc 13) occur only in cells whose `light_block` is at m
 | `slot.implant_head`, `slot.implant_torso`, `slot.implant_arms`, `slot.implant_legs` | implants |
 | `slot.ward` | one ward generator: capacity `mul_bp(cap_base_mhp, T(ilvl))`; recharge starts 180 ticks after the bearer last took damage and restores 2500 Bp of capacity per second; dependency from its skin |
 | `slot.face` | masks, goggles, respirators; respirators make gases breathable; masks serve disguises (doc 09) |
-| `slot.mount` | one mount token (§17.7) |
 | `slot.hand_extra_N` | granted by `bp.arm_extra_N` (§9.1): one one-handed weapon or off-hand item |
 
 The quickbar has 4 slots without a belt and up to 8 with one.
@@ -1712,17 +1709,7 @@ Doc 05, doc 11 and doc 13 tune all content against these Folio-1 anchors.
 
 ### 17.7 Mounts
 
-Mount archetypes are owned by doc 05. A mount is an entity with HP `template × H(d)`.
-
-| Archetype | Movement | Seats |
-|---|---|---|
-| `arch.mount.runner` | walk 6000 mm/s; gallop 12000 mm/s, spending the mount's own stamina | 1 |
-| `arch.mount.hover` | 14000 mm/s; crosses liquids | 2; the passenger can shoot |
-| `arch.mount.glider` | horizontal 9000 mm/s; descent 2000 mm/s | 1 |
-
-- Summoning a mount takes 30 ticks and needs 2600 mm of headroom. Doc 12 may tag rooms `room.no_mount`.
-- A mounted Erratum has `st.mounted`, cannot be `st.hidden`, cannot place blocks, and has spread × 13000. A melee charge at 8000 mm/s or faster deals × 12500 damage and × 20000 poise damage.
-- When the mount reaches 0 HP, the rider gains `st.knocked_down`. Events: `ev.mounted`, `ev.dismounted`.
+Cut by product-owner decision (DECISIONS.md, item 55). The game has no mounts or vehicles. `cat.mount`, `slot.mount`, `st.mounted`, `arch.mount.`, `ev.mounted`, `ev.dismounted` and `room.no_mount` are retired IDs and must not appear in content.
 
 ### 17.8 The Margin trophies
 
@@ -1787,8 +1774,6 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 | `ev.part_reattached` | a severed part is reattached or replaced (§9.1) |
 | `ev.minion_bound` | a minion joins its owner (§15.1) |
 | `ev.minion_released` | a minion leaves or dies (§15.1) |
-| `ev.mounted` | an Erratum mounts (§17.7) |
-| `ev.dismounted` | an Erratum dismounts or is thrown (§17.7) |
 | `ev.affliction_changed` | an affliction begins incubating, takes hold or is cured (§16.4) |
 | `ev.invasion_started` | an invader joins (§17.9) |
 | `ev.invasion_ended` | an invader leaves, dies, times out, or the party is Redacted (§17.9) |
@@ -1803,7 +1788,7 @@ Doc 03 owns the event bus and the full payload schemas. These IDs are canonical:
 | `lattice.`, `room.`, `gpv.`, `biome.`, `hazard.`, `secret.`, `law.`, `zone.` | 12 |
 | `attr.`, `sub.`, `skill.`, `talent.`, `body.`, `bp.`, `wound.`, `trait.`, `origin.`, `calling.`, `aug.`, `kin.`, `afflict.` | 04 |
 | `dmg.`, `st.`, `res.` | 00 for the core lists; owners per §11.1 and §12 for behavior |
-| `arch.melee.`, `arch.ranged.`, `arch.armor.`, `arch.offhand.`, `arch.mount.`, `arch.ward.`, `ammo.`, `move.`, `counter.` | 05 |
+| `arch.melee.`, `arch.ranged.`, `arch.armor.`, `arch.offhand.`, `arch.ward.`, `ammo.`, `move.`, `counter.` | 05 |
 | `glyph.`, `spell.`, `school.`, `prayer.`, `ench.`, `summon.`, `patron.` | 06 |
 | `mat.`, `q.`, `station.`, `recipe.`, `part.`, `block.`, `tooltier.`, `gadget.` | 07 (blocks shared with 03) |
 | `liq.`, `gas.`, `ing.`, `alch.`, `apparatus.` | 08 |
@@ -1942,6 +1927,13 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names, "Ink"}
 ---
 
 ## 23. Changelog
+
+### canon-1.8 (2026-10-11)
+
+Applied after the fourth product-owner question round (DECISIONS.md).
+
+- Cut mounts and vehicles; their IDs are retired. Handling now covers taming and minion command only.
+- World Laws are discovered in play and remembered by the Codex.
 
 ### canon-1.7 (2026-10-11)
 

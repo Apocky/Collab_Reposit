@@ -65,6 +65,10 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 50 | Co-op death | Kept: Barony-style ghosts and next-Folio resurrection | Canon §17.6 |
 | 51 | Dailies | Kept: daily ranked seed plus weekly mutator run | Doc 14 |
 | 52 | Achievements | Kept: standard set of 40 or more | Doc 14 |
+| 53 | Future expansions | Age of Sail and Pirates, and Kaiju and Mecha are the first planned Folio Expansions | Docs 12, 15, 21 |
+| 54 | Genre bleed | Kept: about 1 in 10 Folios, after an account finishes 3 runs | Doc 12 |
+| 55 | Mounts | **Changed: cut.** No mounts or vehicles; mount IDs retired | Canon §17.7; docs 03, 05, 11, 12, 13, 17 |
+| 56 | World Laws | **Changed: discovered in play.** Hidden from previews until first triggered for the account; then remembered by the Codex | Canon §5.8; docs 12, 17 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 

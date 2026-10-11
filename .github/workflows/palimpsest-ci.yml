@@ -1,0 +1,84 @@
+# PALIMPSEST Rust vertical slice: format, lint and test the Cargo workspace
+# in palimpsest/. The toolchain is pinned to Rust 1.99.0 by
+# palimpsest/rust-toolchain.toml; this workflow installs exactly that release
+# with clippy and rustfmt. See palimpsest/AGENTS.md for the local equivalents.
+
+name: palimpsest-ci
+
+on:
+  push:
+    paths:
+      - "palimpsest/**"
+      - ".github/workflows/palimpsest-ci.yml"
+  pull_request:
+    paths:
+      - "palimpsest/**"
+      - ".github/workflows/palimpsest-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: palimpsest-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+
+jobs:
+  check:
+    name: fmt, clippy, test (Rust 1.99.0)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: palimpsest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Install Rust 1.99.0 with clippy and rustfmt
+        run: |
+          rustup toolchain install 1.99.0 --profile minimal --component clippy --component rustfmt
+          rustup show active-toolchain
+          cargo --version
+          cargo clippy --version
+          cargo fmt --version
+
+      - name: Cache cargo registry and target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            palimpsest/target
+          key: palimpsest-${{ runner.os }}-rust-1.99.0-${{ hashFiles('palimpsest/Cargo.lock') }}
+          restore-keys: |
+            palimpsest-${{ runner.os }}-rust-1.99.0-
+
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy -- -D warnings
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: cargo clippy -- -D warnings (all features)
+        run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+
+      - name: cargo test
+        run: cargo test --workspace --locked
+
+      - name: cargo test (all features, release profile)
+        run: cargo test --workspace --all-features --release --locked
+
+      - name: Set up Python for the table generator check
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Committed trig tables match tools/gen_trig.py (doc 02 test 46)
+        run: |
+          python -m pip install --disable-pip-version-check mpmath==1.4.1
+          python tools/gen_trig.py --check
