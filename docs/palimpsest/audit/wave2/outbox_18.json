@@ -1,0 +1,10 @@
+{
+  "chapter": "18",
+  "status": "complete",
+  "requests_handled": 27,
+  "edits": 24,
+  "canon_requests": [],
+  "cross_chapter_requests": [],
+  "product_questions": [],
+  "summary": "Completed wave-2 pass on doc 18:\n- Converted cavalry art notes to on-foot charger roles (ram_raider, posse_deputy, wild_huntsman, jet_lancer, getaway_gunman, jade_general).\n- Stated text-only resident arcs in Margin dialogue box with 6 beats per resident (DECISIONS 78, 130) and no relationships (DECISIONS 127).\n- Added Second Edition second ending layer (nar.ending.second_edition) with Ironman plate (DECISIONS 100, 108).\n- Specified art.block.* skins for block.altar, block.rubble, block.pit_lid, block.hull_panel, and chipping rendering from ev.block_chipped and ChunkView.\n- Added feet-cell acoustic class override for liq.mud (mud) vs other liquids (water).\n- Specified the Author (boss.author) strictly as a giant writing hand, quill, and handwriting with no face/body (DECISIONS 103).\n- Named 60 Plain Inkwell cosmetics and story plaque line in closing manuscript.\n- Clean lint with 0 findings."
+}

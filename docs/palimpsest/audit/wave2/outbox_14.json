@@ -1,0 +1,39 @@
+{
+  "chapter": "14",
+  "status": "complete",
+  "requests_handled": 29,
+  "edits": 35,
+  "canon_requests": [
+    {
+      "section": "§17.1",
+      "old": "",
+      "new": "ERASURE_ONSET = 720 s, ERASURE_STEP = 30 s; single Erasure hunter spawns at 720 s and tenth stack at 990 s (59,400 ticks).",
+      "why": "DECISIONS 26, 91; doc 14 §3.8"
+    },
+    {
+      "section": "§17.7",
+      "old": "",
+      "new": "cat.seed, block.crop, mat.tag.tillable (DECISIONS 128) and mode.prologue (DECISIONS 132) are retired IDs.",
+      "why": "DECISIONS 128, 132"
+    }
+  ],
+  "cross_chapter_requests": [
+    {
+      "to": "18",
+      "request": "Author dialogue lines and story scenes for resident quests that advance fixed resident arcs (DECISIONS 130)."
+    }
+  ],
+  "product_questions": [
+    {
+      "id": "14-Q1",
+      "question": "Second Edition offer: is Second Edition offered at every Ur-Text victory of a Standard or Abridged run, or only after the first?",
+      "default_applied": "Every Ur-Text victory of a Standard or Abridged run, the account's first included (doc 14 §8.9, DECISIONS 108, 118).",
+      "options": [
+        "Every Ur-Text victory, the first included (applied)",
+        "Only the account's first Ur-Text victory",
+        "Every victory after unlocking the mode"
+      ]
+    }
+  ],
+  "summary": "Completed wave-2 pass on doc 14:\n- Applied DECISIONS 130 (residents advance fixed arcs through optional Folio quests they give).\n- Applied DECISIONS 132 (retired mode.prologue, replaced enemy.prologue_hunter with enemy.editors.revisor).\n- Applied DECISIONS 137 (first-run achievement replaces Prologue achievement ach.first_page).\n- Applied DECISIONS 141 (delineated curated Steam achievements from in-game Codex marks, both paying grade table).\n- Replaced undefined ID references, verified hunter and Second Edition rules.\n- Clean lint with 0 findings."
+}

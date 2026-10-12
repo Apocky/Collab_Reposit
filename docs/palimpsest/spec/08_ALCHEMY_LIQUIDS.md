@@ -1,5 +1,5 @@
 # 08 — Alchemy and Liquids
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
 
 Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs, transmutations, the liquid and gas automata transfer rules, the full Canon §12.1 table, the liquid and gas API other chapters call (§2.7), `res.toxicity`, and the behavior of `st.poisoned`, `st.irradiated`, `st.soaked`, `st.oiled` and `st.focused`.
 
@@ -16,7 +16,8 @@ Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs,
 |Canon|§6.4, §7|rows 1–3, 10, 12, 17, 20, 22–25, 28, 41; `skill.alchemy` (ANL), tiers 25/50/75/100, magnitude-based non-combat XP|
 |Canon|§10, §11|damage types, resistance, item source chain (§10.4), environmental entry and the consumable self-damage entry (§10.6), healing in Bp of Max HP (§10.9); status list, buildup, DoT, direct durations, Erasure|
 |Canon|§12, §12.1, §12.2|`res.toxicity` (owner 08), `res.breath` and the working respirator in `slot.face`, surfaces and reactions with the 100 ml liquid and 500 gas contact thresholds, concealment|
-|Canon|§13, §16, §17.5, §18, §19|item categories `cat.potion`, `cat.throwable`, `cat.tool`, `cat.container`, `cat.ingredient`, `cat.seed`, `cat.accessory` and the slot `slot.face` (canon and doc 11 IDs, which this chapter references and never declares), quality, `idc.potion`, knowledge, `buc`, `P`/`T`/`S`, source level, item contract; kin, afflictions, blessed cure; `FF_AREA_BP`; the events `ev.potion_brewed` and `ev.liquid_reaction` (payloads in doc 03 §14.2); namespaces `liq.`, `gas.`, `ing.`, `alch.`, `apparatus.`|
+|Canon|§13, §16, §17.5, §18, §19|item categories `cat.potion`, `cat.throwable`, `cat.tool`, `cat.container`, `cat.ingredient`, `cat.accessory` and the slot `slot.face` (canon and doc 11 IDs, which this chapter references and never declares), quality, `idc.potion`, knowledge, `buc`, `P`/`T`/`S`, source level, item contract; kin, afflictions, blessed cure; `FF_AREA_BP`; the events `ev.potion_brewed` and `ev.liquid_reaction` (payloads in doc 03 §14.2); namespaces `liq.`, `gas.`, `ing.`, `alch.`, `apparatus.`|
+|DECISIONS|rows 34, 65, 128, 145|no cross-run ingredient record (34); no item wear (65); seeds, planting and the seed brew cut (128); hunger is the only survival meter, no thirst or fatigue (145)|
 |Docs 03–18|see Interface assumptions|grids, tick order, explosions, `erase_placed` and event payloads (03 §2.2, §6, §7, §12, §13.8, §14.2), skills, perks, talents and afflictions (04 §5.2, §5.3, §7, §10), throwing, area hits and crits (05 §9), holy water, spell calls and the shared `note_contradiction_failure(t)` (06 §3.9), materials, blocks, stations and craft channels (07), noise IDs and stealth light (09 §4, §7), identification (10 §5, §7.5, §8), loot (11), worldgen (12 §2.3, §11.2), enemies and Editor erasure (13 §10.6)|
 
 ---
@@ -58,7 +59,7 @@ Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs,
 |`seq`|Draw site|Draws|
 |---|---|---|
 |0|brewing variance `v` of a brew or bomb channel (§9.5, §13.2)|1|
-|1|seed brewing (§15.2)|3 to 5|
+|1|unused; reserved since seed brewing was cut (DECISIONS 128)|0|
 |2|doc 04 `transmuter` (§15.4)|1|
 |3|wellspring drink at a font (§12.5)|1|
 
@@ -220,6 +221,8 @@ Ignition blasts per unit (§5.2): oil and alcohol 10,000 mHP (Canon §12.1), fue
 ### 3.2 Contact and drink rows
 
 Doc 03 §6.10 applies contact rows each status pulse to entities in contact (at least 1 unit in the feet or body cell, §5.1). Drink rows are per 250 ml; other amounts scale numbers by `floor_div(ml × value, 250)`, and removal rules need at least 125 ml. Drinking one dose of a raw-liquid vessel removes the dose's ml from its components proportionally (floor, remainder to the largest component) and applies each component's row with its removed ml. "Hazard N HP" enters Canon §10.6 at step 3 with `D2 = mul_bp(N × 1000, T(d))` against Errata and `P(d)` against NPCs. Buildup is environmental (§5.1). "Refused": the drink action is not offered.
+
+No drink row quenches thirst: the game tracks hunger only and has no thirst or fatigue meter (DECISIONS 145). A drink acts only through its listed parts, and the only food-like part is satiation, which feeds doc 04's hunger meter `res.satiation`.
 
 |Liquid|Contact (per status pulse)|Drink (per 250 ml)|
 |---|---|---|
@@ -563,7 +566,7 @@ A filled vessel holding a brewed or found potion is a `cat.potion` (grenade shel
 |`apparatus.vessel.bottle`|750|3|400|3|glass|yes|2500|drink, throw, coat|bottle, canteen-jet, wine jar|
 |`apparatus.vessel.ampoule`|50|1|30|2|polymer|never thrown|0|inject, drink|auto-injector (cyberpunk), hypo (space_opera), acupuncture needle (wuxia), bee-sting lancet (fairy_tale)|
 |`apparatus.vessel.grenade_shell`|300|1|200|2|ceramic|yes|3000|throw|clay pot, thunder pellet, tin grenade, glass orb|
-|`apparatus.vessel.waterskin`|2000|8|250|3|leather|no|0|drink, pour, empty|waterskin, hydration pack, gourd|
+|`apparatus.vessel.waterskin`|2000|8|250|3|leather|no|0|drink, pour, empty|waterskin, water bladder, gourd|
 |`apparatus.vessel.canteen`|1000|4|300|4|metal|no|0|drink, pour, empty|canteen, flask-tin|
 |`apparatus.vessel.bucket`|10000|0|1500|3|wood|no|0|pour, dump, empty|bucket, pail, jerrycan|
 |`apparatus.vessel.crucible`|1000|0|1200|8|ceramic|no|0|pour, empty|crucible, ladle|
@@ -751,7 +754,7 @@ Effect columns give the `alch.eff.` suffix.
 |`ing.mandrake`|sleep|fear|fortify_intellect|restore_aether|12000|60|12|H root: graveyards|plant|fairy_tale: Screaming root; oneiric: Dream-root|
 |`ing.mender_root`|heal|cure|regenerate|slow|11000|40|6|H root: forest biomes|plant|weird_west: Snakeroot; space_opera: Medi-tuber|
 |`ing.mint_leaf`|restore_stamina|detox|focus|resist_fire|9000|5|2|H herb: every genre|plant|cyberpunk: Menthol cartridge; fairy_tale: Pennyroyal|
-|`ing.mutagen`|mutate|irradiate|regenerate|fortify_might|11000|30|10|D tag mutant; W labs|tech|post_apocalypse: Mutant serum; cosmic_horror: Shoggoth cell|
+|`ing.mutagen`|mutate|irradiate|regenerate|`fortify_might`|11000|30|10|D tag mutant; W labs|tech|post_apocalypse: Mutant serum; cosmic_horror: Shoggoth cell|
 |`ing.nanopaste`|heal|ward|fortify|unravel|12000|20|14|S shop; D tag construct|tech|cyberpunk: Medi-nanite paste; steampunk: Restorative grease|
 |`ing.nightshade`|poison|sleep|night_eye|harm|10000|10|5|H berry: shade|plant|gothic_horror: Belladonna; cyberpunk: Black-berry synth|
 |`ing.ooze_core`|corrode|resist_acid|slow|satiate|10000|200|5|D tag ooze, amorphous|monster|post_apocalypse: Sludge heart; space_opera: Protoplasm nucleus|
@@ -760,8 +763,8 @@ Effect columns give the `alch.eff.` suffix.
 |`ing.phoenix_feather`|regenerate|resist_fire|burn|bless|14000|5|40|D tag phoenix; Reliquary|monster|wuxia: Vermilion bird plume; fairy_tale: Firebird feather|
 |`ing.pitchblende`|irradiate|night_eye|resist_radiation|harm|11000|100|8|M mine: post_apocalypse, space_opera|mineral|post_apocalypse: Hot rock; space_opera: Isotope ore|
 |`ing.poppy_tear`|sleep|restore_composure|slow|heal|10000|5|6|H flower: fields|plant|hardboiled_noir: Laudanum gum; wuxia: Dream poppy|
-|`ing.redcap`|restore_stamina|poison|berserk|fortify_might|10000|20|3|F mushroom: caves|fungus|fairy_tale: Fly agaric; post_apocalypse: Rad-cap|
-|`ing.rotberry`|fortify_might|disease|satiate|empower|10000|20|4|H bush: ruins|plant|post_apocalypse: Mutberry; gothic_horror: Grave-berry|
+|`ing.redcap`|restore_stamina|poison|berserk|`fortify_might`|10000|20|3|F mushroom: caves|fungus|fairy_tale: Fly agaric; post_apocalypse: Rad-cap|
+|`ing.rotberry`|`fortify_might`|disease|satiate|empower|10000|20|4|H bush: ruins|plant|post_apocalypse: Mutberry; gothic_horror: Grave-berry|
 |`ing.salamander_tail`|resist_fire|regenerate|burn|water_breathing|11000|40|9|D tag salamander, amphibian|animal|mythic_fantasy: Salamander tail; cyberpunk: Regen-graft tissue|
 |`ing.saltpeter`|burn|purify|resist_frost|expose|9000|50|3|M mine; S shop|mineral|steampunk: Nitre; wuxia: Fire-saltpetre|
 |`ing.serpent_venom`|poison|paralyze|resist_toxin|expose|11000|10|8|D tag serpent|animal|weird_west: Rattler venom; mythic_antiquity: Asp venom|
@@ -778,7 +781,7 @@ Effect columns give the `alch.eff.` suffix.
 |`ing.unicorn_hair`|cure|purify|heal|bless|14000|1|40|D tag unicorn; Reliquary|monster holy|fairy_tale: Unicorn mane; wuxia: Qilin hair|
 |`ing.vampire_dust`|wither|invisibility|regenerate|dread|12000|10|14|D tag vampire|monster|gothic_horror: Nosferatu ash; cyberpunk: Night-gland powder|
 |`ing.vitriol`|corrode|purify|expose|resist_acid|10000|50|5|M mine; S shop|mineral|steampunk: Oil of vitriol crystal; cyberpunk: Etchant salt|
-|`ing.wolf_heart`|berserk|fortify_might|haste|wither|11000|300|8|D tag wolf, were|animal|weird_west: Coyote heart; wuxia: Tiger heart|
+|`ing.wolf_heart`|berserk|`fortify_might`|haste|wither|11000|300|8|D tag wolf, were|animal|weird_west: Coyote heart; wuxia: Tiger heart|
 |`ing.wolfsbane`|poison|resist_umbral|fear|paralyze|10000|15|6|H flower: mountains|plant|gothic_horror: Monkshood; wuxia: Aconite of the wolf|
 |`ing.wyrm_scale`|resist_fire|fortify|empower|burn|13000|60|25|D tag dragon, reptile|animal|wuxia: Jiao scale; space_opera: Salamander plate|
 
@@ -798,28 +801,9 @@ Modifiers carry no effects and do not count toward the 2 to 4 effect ingredients
 |`ing.essence`|transmutation currency (§15)|stack 999|1|1|alchemizing (§15.1)|quintessence, reagent credits, refined qi, ichor salt|
 |`ing.black_powder`|bomb charge (§13.2)|no brewing use|20|3|§15 recipe, S|gunpowder, flash compound, fire medicine|
 
-### 8.4 Seeds (`cat.seed`)
+### 8.4 Seeds (cut)
 
-Seeds are planted (doc 07) to grow their plant, or brewed three at a time (§15.2). Each maps to one canonical potion.
-
-|Seed ID|Grows|Seed brew potion|
-|---|---|---|
-|`ing.seed_sungrass`|`ing.sungrass`|`alch.potion.healing`|
-|`ing.seed_ginseng`|`ing.ginseng`|`alch.potion.stamina`|
-|`ing.seed_starflower`|`ing.starflower`|`alch.potion.aether`|
-|`ing.seed_poppy`|`ing.poppy_tear`|`alch.potion.calm`|
-|`ing.seed_swiftthistle`|`ing.swiftthistle`|`alch.potion.haste`|
-|`ing.seed_blindweed`|`ing.blindweed`|`alch.potion.invisibility`|
-|`ing.seed_stormvine`|`ing.stormvine`|`alch.potion.levitation`|
-|`ing.seed_mageroyal`|`ing.mageroyal`|`alch.potion.purity`|
-|`ing.seed_fadeleaf`|`ing.fadeleaf`|`alch.potion.mind_vision`|
-|`ing.seed_earthroot`|`ing.earthroot`|`alch.potion.fortitude`|
-|`ing.seed_mender_root`|`ing.mender_root`|`alch.potion.cure`|
-|`ing.seed_glowshroom`|`ing.glowshroom`|`alch.potion.night_eye`|
-|`ing.seed_firebloom`|`ing.firebloom`|`alch.potion.liquid_flame`|
-|`ing.seed_icecap`|`ing.icecap`|`alch.potion.frost`|
-|`ing.seed_sorrowmoss`|`ing.sorrowmoss`|`alch.potion.toxic_gas`|
-|`ing.seed_dreamfoil`|`ing.dreamfoil`|`alch.potion.slumber`|
+Seeds are cut (DECISIONS 128): no seed items exist, nothing is planted in runs or in the Margin, and the item category cat.seed is retired. The 16 seed ingredient IDs this section once defined and the seed brewing transmutation alch.tx.seed_brew are retired with it. Plant ingredients come only from H harvest nodes, shops and the other §8.2 sources.
 
 ### 8.5 Effect reveal
 
@@ -1004,7 +988,7 @@ Each selected effect with a non-empty dependency is a component (Canon §5.3) wi
 
 Doc 04 §5.2 owns the amounts: a completed brew grants `600 × brew_basis + 1000 × new_reveals` milli-XP to `skill.alchemy`, a taste `250 × new_reveals`, and each potion type newly identified by brewing 3000; a murky draught grants 0, because Canon §7.1 grants nothing for zero-effect actions. Doc 04 also counts a completed brew as crafting tier `min(5, brew_basis)` for character XP. This chapter defines the inputs:
 
-- `brew_basis = u + s`. `u` is the number of effect-ingredient, modifier, seed and ingredient units the channel consumed (vessels, shells, base liquid and essence excluded). `s` is the number of selected effects of a brew (§9.4), and 1 for a bomb or a transmutation.
+- `brew_basis = u + s`. `u` is the number of effect-ingredient, modifier and ingredient units the channel consumed (vessels, shells, base liquid and essence excluded). `s` is the number of selected effects of a brew (§9.4), and 1 for a bomb or a transmutation.
 - `new_reveals` is the number of `ing_known` bits the completion or taste newly set (§8.5).
 
 **Example.** The §9.10 apprentice healing brew, with an empty record, consumes 3 ingredients and selects 2 effects, so `brew_basis = 5`. It sets bit 0 (heal) of all three ingredients and the `regenerate` bits of sungrass (bit 1) and mender root (bit 2), so `new_reveals = 5`. It grants `600 × 5 + 1000 × 5 = 8,000` milli-XP before Canon §6.4 row 28, and no identification bonus, because the universal kit's healing potion already made the type known (doc 04 §2.4).
@@ -1185,7 +1169,6 @@ Brewed items start at `know.identified`. Brewing a canonical type identifies tha
 - **Drinking** an unknown potion classifies its type and identifies the instance (doc 10 `appr.use.always`).
 - **Throwing** an unknown potion classifies its type when its resolution is `observable` (doc 10 `appr.use.on_effect`); otherwise the type stays unknown. This chapter sets `observable` when the splash, spill or gas changed any entity's HP, stamina, aether, composure, satiation, toxicity, breath, ward or statuses, or caused an `ev.liquid_reaction`.
 - **Alchemy appraisal hooks** for doc 10: at Alchemy 25 a held unknown potion shows its polarity (beneficial or harmful); at 50 also whether it is an aerosol; at 75 also its primary effect's kind (`instant`, `status`, `buildup`, `damage`).
-- **Seed brewing** (§15.2) identifies the produced type only when all three seeds are of one type.
 - **Price identification** uses the §12.1 values (doc 10, doc 11).
 
 ### 12.5 Wellsprings: unknown liquid effects
@@ -1290,39 +1273,20 @@ Skins change names, meshes, animations and the dependency of `aether` effects (�
 
 ## 15. Transmutation (`alch.tx.*`)
 
-The Shattered Pixel Dungeon alchemy-pot analog. Every recipe needs a `station.alchemy` (doc 07), takes 60 ticks (§9.7 state machine and interruptions), consumes its inputs and `ing.essence`, and yields identified output (except a mixed seed brew, §15.2) with quality equal to the best input potion's quality (Normal when none) and `ilvl = max(input ilvl, current Folio index)`. Liquid outputs fill empty `cat.container` vessels the brewer holds, the smallest capacity that holds the whole output first (ties ascending `uid`), skipping vessels whose material conflicts with the liquid (§6.2); the recipe is refused when none fits. Draws: `alch.tx.seed_brew` 3 to 5 (§15.2); every other recipe 0.
+The Shattered Pixel Dungeon alchemy-pot analog. Every recipe needs a `station.alchemy` (doc 07), takes 60 ticks (§9.7 state machine and interruptions), consumes its inputs and `ing.essence`, and yields identified output with quality equal to the best input potion's quality (Normal when none) and `ilvl = max(input ilvl, current Folio index)`. Liquid outputs fill empty `cat.container` vessels the brewer holds, the smallest capacity that holds the whole output first (ties ascending `uid`), skipping vessels whose material conflicts with the liquid (§6.2); the recipe is refused when none fits. Draws: every recipe 0.
 
 ### 15.1 Alchemize
 
-At a station, 30 ticks per item: `cat.potion` → 6 `ing.essence`; `cat.text` → 6; `alch.bomb.*` → 4; `cat.seed` → 2; `cat.ingredient` (except essence) → 1; `cat.food` → 1. Nothing else can be alchemized. Unknown items are accepted and stay unknown.
+At a station, 30 ticks per item: `cat.potion` → 6 `ing.essence`; `cat.text` → 6; `alch.bomb.*` → 4; `cat.ingredient` (except essence) → 1; `cat.food` → 1. Nothing else can be alchemized. Unknown items are accepted and stay unknown.
 
-### 15.2 Seed brewing (`alch.tx.seed_brew`)
+### 15.2 Seed brewing (retired)
 
-Three `cat.seed` items, 0 essence, keyed `rng.alchemy` (actor = brewer, tick = start tick, seq = 1; §1.3). `canon` is the 16 §12.1 IDs sorted by ID byte order: aether, calm, cure, fortitude, frost, haste, healing, invisibility, levitation, liquid_flame, mind_vision, night_eye, purity, slumber, stamina, toxic_gas (indices 0 to 15).
-
-```rust
-let k = distinct seed types among the 3;
-let d1 = rng.range(10000); let d2 = rng.range(3); let d3 = rng.range(16);   // always 3 draws
-let mut out = if k == 1 { seed_potion(seeds[0]) }
-              else if d1 < (if k == 2 { 2500 } else { 5000 }) { canon[d3] }
-              else { seed_potion(seeds[d2]) };                              // seeds sorted by id32
-if out == HEALING {
-    let d4 = rng.range(10000);                                             // 4th draw
-    if d4 < min(10000, party.seed_heal_count * 1000) { out = canon[rng.range(16)]; }   // 5th draw
-    if out == HEALING { party.seed_heal_count += 1; }
-}
-identify(out) only if k == 1; otherwise it is created at know.unknown unless the party already knows its type
-```
-
-Draw count: 3, 4 or 5. `seed_heal_count` is per run and per party (SPD's healing anti-farm).
-
-**Worked example.** Two `ing.seed_sungrass` and one `ing.seed_icecap`: `k = 2`. With `d1 = 1873 < 2500`, the result is `canon[d3]`; with `d3 = 5` it is `alch.potion.haste`, created unknown. With `d1 = 6000` and `d2 = 2` (third sorted seed), it is that seed's potion.
+Retired by DECISIONS 128. The former seed brew alch.tx.seed_brew, its per-party seed_heal_count and its `rng.alchemy` `seq` 1 draws do not exist; `seq` 1 stays unused so the other `seq` values keep their keys. No transmutation produces a random potion type.
 
 ### 15.3 Recipes
 
 |ID|Inputs|Essence|Output|
 |---|---|---|---|
-|`alch.tx.seed_brew`|3 seeds|0|§15.2|
 |`alch.tx.exotic_shielding`|`alch.potion.healing`|4|`alch.potion.shielding`|
 |`alch.tx.exotic_adrenaline`|`alch.potion.stamina`|4|`alch.potion.adrenaline`|
 |`alch.tx.exotic_shadowmeld`|`alch.potion.invisibility`|4|`alch.potion.shadowmeld`|
@@ -1356,7 +1320,7 @@ Draw count: 3, 4 or 5. `seed_heal_count` is per run and per party (SPD's healing
 |`alch.tx.transmute_ingredient`|2 units of one effect ingredient|1|1 unit of the next ingredient in ascending ID byte order whose first effect equals this one's first effect (wrapping); refused when none exists|
 |`alch.tx.infernal_bomb`|`alch.potion.toxic_gas` + `alch.potion.liquid_flame` + a grenade shell|4|`alch.bomb.infernal`|
 
-**Essence balance.** Alchemizing never returns more than alchemizing the inputs directly: upgrading a potion to an exotic (4 essence) and alchemizing the exotic (6) nets 2 essence, less than alchemizing the potion directly (6); a seed brew turns 3 seeds (2 essence each) into one potion (6 essence), no gain. No recipe chain produces essence or liquid from nothing.
+**Essence balance.** Alchemizing never returns more than alchemizing the inputs directly: upgrading a potion to an exotic (4 essence) and alchemizing the exotic (6) nets 2 essence, less than alchemizing the potion directly (6); every recipe in §15.3 consumes at least the essence its output alchemizes back to, or its inputs alchemize to more. No recipe chain produces essence or liquid from nothing.
 
 ### 15.4 Doc 04 `transmuter` hook
 
@@ -1384,15 +1348,15 @@ Content IDs, all in namespaces Canon §19 assigns to doc 08 (`liq.`, `gas.`, `in
 
 - **Liquids (35)**: `liq.acid`, `liq.alcohol`, `liq.bile`, `liq.blood`, `liq.brine`, `liq.coolant`, `liq.ectoplasm`, `liq.fuel`, `liq.hemolymph`, `liq.holy_water`, `liq.honey`, `liq.ichor`, `liq.lava`, `liq.mana`, `liq.milk`, `liq.molten_metal`, `liq.mud`, `liq.nanite_slurry`, `liq.nectar`, `liq.nitro`, `liq.oil`, `liq.phosphor`, `liq.quicksilver`, `liq.rad_sludge`, `liq.red_ink`, `liq.sap`, `liq.sepia`, `liq.slime`, `liq.swamp_water`, `liq.tar`, `liq.unholy_water`, `liq.venom`, `liq.water`, `liq.wellspring`, `liq.wine`.
 - **Gases (13)**: `gas.alch_vapor`, `gas.caustic`, `gas.cold_fog`, `gas.fallout`, `gas.fuel_vapor`, `gas.incense`, `gas.laughing`, `gas.miasma`, `gas.smoke`, `gas.soporific`, `gas.spore`, `gas.steam`, `gas.terror`.
-- **Ingredients (72 effect ingredients, 5 modifier reagents, `ing.essence`, `ing.black_powder`, 16 seeds)**: `ing.aether_crystal`, `ing.amber`, `ing.angel_feather`, `ing.ash_of_errata`, `ing.basilisk_eye`, `ing.black_gall`, `ing.black_powder`, `ing.blessed_salt`, `ing.blindweed`, `ing.bloodmoss`, `ing.bombardier_gland`, `ing.bright_dust`, `ing.brimstone`, `ing.charcoal`, `ing.cinnabar`, `ing.circuit_dust`, `ing.clockwork_spring`, `ing.coffee_bean`, `ing.demon_horn`, `ing.dreamfoil`, `ing.earthroot`, `ing.ectoplasm_wisp`, `ing.eldritch_eye`, `ing.essence`, `ing.eye_of_newt`, `ing.fadeleaf`, `ing.fairy_wing`, `ing.firebloom`, `ing.foxglove`, `ing.frost_salt`, `ing.ghoul_tongue`, `ing.ginseng`, `ing.glowshroom`, `ing.gum_resin`, `ing.hagberry`, `ing.hemlock`, `ing.icecap`, `ing.ink_lotus`, `ing.inkcap`, `ing.kraken_ink`, `ing.lich_dust`, `ing.lodestone`, `ing.lotus_seed`, `ing.mageroyal`, `ing.mandrake`, `ing.mender_root`, `ing.mint_leaf`, `ing.mutagen`, `ing.nanopaste`, `ing.nightshade`, `ing.ooze_core`, `ing.peach_of_immortality`, `ing.peyote_flesh`, `ing.phoenix_feather`, `ing.pitchblende`, `ing.poppy_tear`, `ing.puffball`, `ing.quicksalt`, `ing.redcap`, `ing.rotberry`, `ing.salamander_tail`, `ing.saltpeter`, `ing.seed_blindweed`, `ing.seed_dreamfoil`, `ing.seed_earthroot`, `ing.seed_fadeleaf`, `ing.seed_firebloom`, `ing.seed_ginseng`, `ing.seed_glowshroom`, `ing.seed_icecap`, `ing.seed_mageroyal`, `ing.seed_mender_root`, `ing.seed_poppy`, `ing.seed_sorrowmoss`, `ing.seed_starflower`, `ing.seed_stormvine`, `ing.seed_sungrass`, `ing.seed_swiftthistle`, `ing.serpent_venom`, `ing.siren_scale`, `ing.sorrowmoss`, `ing.spider_gland`, `ing.spore_sac`, `ing.starflower`, `ing.stim_gland`, `ing.stormvine`, `ing.sungrass`, `ing.swiftthistle`, `ing.troll_fat`, `ing.unicorn_hair`, `ing.vampire_dust`, `ing.vitriol`, `ing.wolf_heart`, `ing.wolfsbane`, `ing.wyrm_scale`.
+- **Ingredients (72 effect ingredients, 5 modifier reagents, `ing.essence`, `ing.black_powder`)**: `ing.aether_crystal`, `ing.amber`, `ing.angel_feather`, `ing.ash_of_errata`, `ing.basilisk_eye`, `ing.black_gall`, `ing.black_powder`, `ing.blessed_salt`, `ing.blindweed`, `ing.bloodmoss`, `ing.bombardier_gland`, `ing.bright_dust`, `ing.brimstone`, `ing.charcoal`, `ing.cinnabar`, `ing.circuit_dust`, `ing.clockwork_spring`, `ing.coffee_bean`, `ing.demon_horn`, `ing.dreamfoil`, `ing.earthroot`, `ing.ectoplasm_wisp`, `ing.eldritch_eye`, `ing.essence`, `ing.eye_of_newt`, `ing.fadeleaf`, `ing.fairy_wing`, `ing.firebloom`, `ing.foxglove`, `ing.frost_salt`, `ing.ghoul_tongue`, `ing.ginseng`, `ing.glowshroom`, `ing.gum_resin`, `ing.hagberry`, `ing.hemlock`, `ing.icecap`, `ing.ink_lotus`, `ing.inkcap`, `ing.kraken_ink`, `ing.lich_dust`, `ing.lodestone`, `ing.lotus_seed`, `ing.mageroyal`, `ing.mandrake`, `ing.mender_root`, `ing.mint_leaf`, `ing.mutagen`, `ing.nanopaste`, `ing.nightshade`, `ing.ooze_core`, `ing.peach_of_immortality`, `ing.peyote_flesh`, `ing.phoenix_feather`, `ing.pitchblende`, `ing.poppy_tear`, `ing.puffball`, `ing.quicksalt`, `ing.redcap`, `ing.rotberry`, `ing.salamander_tail`, `ing.saltpeter`, `ing.serpent_venom`, `ing.siren_scale`, `ing.sorrowmoss`, `ing.spider_gland`, `ing.spore_sac`, `ing.starflower`, `ing.stim_gland`, `ing.stormvine`, `ing.sungrass`, `ing.swiftthistle`, `ing.troll_fat`, `ing.unicorn_hair`, `ing.vampire_dust`, `ing.vitriol`, `ing.wolf_heart`, `ing.wolfsbane`, `ing.wyrm_scale`.
 - **Alchemical effects (59)**: `alch.eff.berserk`, `alch.eff.bless`, `alch.eff.blind`, `alch.eff.burn`, `alch.eff.charm`, `alch.eff.confuse`, `alch.eff.corrode`, `alch.eff.cure`, `alch.eff.detox`, `alch.eff.disease`, `alch.eff.drain_stamina`, `alch.eff.dread`, `alch.eff.empower`, `alch.eff.expose`, `alch.eff.fear`, `alch.eff.featherfall`, `alch.eff.focus`, `alch.eff.fortify`, `alch.eff.fortify_finesse`, `alch.eff.fortify_intellect`, `alch.eff.fortify_might`, `alch.eff.fortify_perception`, `alch.eff.fortify_vigor`, `alch.eff.freeze`, `alch.eff.harm`, `alch.eff.haste`, `alch.eff.heal`, `alch.eff.inspire`, `alch.eff.invisibility`, `alch.eff.irradiate`, `alch.eff.levitate`, `alch.eff.mind_vision`, `alch.eff.mutate`, `alch.eff.night_eye`, `alch.eff.paralyze`, `alch.eff.poison`, `alch.eff.purify`, `alch.eff.red_dose`, `alch.eff.regenerate`, `alch.eff.resist_acid`, `alch.eff.resist_fire`, `alch.eff.resist_frost`, `alch.eff.resist_radiation`, `alch.eff.resist_shock`, `alch.eff.resist_toxin`, `alch.eff.resist_umbral`, `alch.eff.restore_aether`, `alch.eff.restore_composure`, `alch.eff.restore_stamina`, `alch.eff.satiate`, `alch.eff.shock`, `alch.eff.silence`, `alch.eff.sleep`, `alch.eff.slow`, `alch.eff.unravel`, `alch.eff.ward`, `alch.eff.water_breathing`, `alch.eff.weaken`, `alch.eff.wither`.
 - **Potion types (29)**: `alch.potion.adrenaline`, `alch.potion.aether`, `alch.potion.aquatic_rejuvenation`, `alch.potion.arcane_armor`, `alch.potion.calm`, `alch.potion.cleansing`, `alch.potion.corrosive_gas`, `alch.potion.cure`, `alch.potion.dragonfire`, `alch.potion.dragons_blood`, `alch.potion.draught`, `alch.potion.fortitude`, `alch.potion.frost`, `alch.potion.haste`, `alch.potion.healing`, `alch.potion.honeyed_healing`, `alch.potion.invisibility`, `alch.potion.levitation`, `alch.potion.liquid_flame`, `alch.potion.mind_vision`, `alch.potion.night_eye`, `alch.potion.panacea`, `alch.potion.purity`, `alch.potion.shadowmeld`, `alch.potion.shielding`, `alch.potion.slumber`, `alch.potion.snap_freeze`, `alch.potion.stamina`, `alch.potion.toxic_gas`.
 - **Bombs (14)**: `alch.bomb.acid`, `alch.bomb.blasting`, `alch.bomb.firebomb`, `alch.bomb.flash`, `alch.bomb.frost`, `alch.bomb.grenade`, `alch.bomb.incense`, `alch.bomb.infernal`, `alch.bomb.salt`, `alch.bomb.shock`, `alch.bomb.sleep`, `alch.bomb.smoke`, `alch.bomb.stink`, `alch.bomb.tar`.
 - **Reactions (19)**: `alch.rx.acid_block`, `alch.rx.acid_milk`, `alch.rx.acid_slime`, `alch.rx.bile_water`, `alch.rx.coolant_lava`, `alch.rx.coolant_water`, `alch.rx.flammable_lava`, `alch.rx.holy_ectoplasm`, `alch.rx.holy_red_ink`, `alch.rx.holy_unholy`, `alch.rx.honey_alcohol`, `alch.rx.ichor_unholy`, `alch.rx.lava_ice`, `alch.rx.mana_water`, `alch.rx.metal_water`, `alch.rx.nanite_rad`, `alch.rx.red_ink_blood`, `alch.rx.venom_milk`, `alch.rx.water_lava`.
-- **Transmutations (33)**: `alch.tx.black_powder`, `alch.tx.brine`, `alch.tx.charcoal`, `alch.tx.concentrate`, `alch.tx.consecrate`, `alch.tx.coolant`, `alch.tx.distill`, `alch.tx.elixir_aquatic`, `alch.tx.elixir_arcane_armor`, `alch.tx.elixir_dragons_blood`, `alch.tx.elixir_honeyed_healing`, `alch.tx.exotic_adrenaline`, `alch.tx.exotic_cleansing`, `alch.tx.exotic_corrosive_gas`, `alch.tx.exotic_dragonfire`, `alch.tx.exotic_panacea`, `alch.tx.exotic_shadowmeld`, `alch.tx.exotic_shielding`, `alch.tx.exotic_snap_freeze`, `alch.tx.holy_water`, `alch.tx.infernal_bomb`, `alch.tx.lamp_oil`, `alch.tx.mana`, `alch.tx.nanites`, `alch.tx.nitro`, `alch.tx.phosphor`, `alch.tx.quicksilver`, `alch.tx.seed_brew`, `alch.tx.transmute_ingredient`, `alch.tx.uncurse`, `alch.tx.unholy_water`, `alch.tx.venom`, `alch.tx.vitriol`.
+- **Transmutations (32)**: `alch.tx.black_powder`, `alch.tx.brine`, `alch.tx.charcoal`, `alch.tx.concentrate`, `alch.tx.consecrate`, `alch.tx.coolant`, `alch.tx.distill`, `alch.tx.elixir_aquatic`, `alch.tx.elixir_arcane_armor`, `alch.tx.elixir_dragons_blood`, `alch.tx.elixir_honeyed_healing`, `alch.tx.exotic_adrenaline`, `alch.tx.exotic_cleansing`, `alch.tx.exotic_corrosive_gas`, `alch.tx.exotic_dragonfire`, `alch.tx.exotic_panacea`, `alch.tx.exotic_shadowmeld`, `alch.tx.exotic_shielding`, `alch.tx.exotic_snap_freeze`, `alch.tx.holy_water`, `alch.tx.infernal_bomb`, `alch.tx.lamp_oil`, `alch.tx.mana`, `alch.tx.nanites`, `alch.tx.nitro`, `alch.tx.phosphor`, `alch.tx.quicksilver`, `alch.tx.transmute_ingredient`, `alch.tx.uncurse`, `alch.tx.unholy_water`, `alch.tx.venom`, `alch.tx.vitriol`.
 - **Apparatus, vessels and respirators (19)**: `apparatus.alembic`, `apparatus.calcinator`, `apparatus.mortar`, `apparatus.respirator.cloth`, `apparatus.respirator.mask`, `apparatus.respirator.rebreather`, `apparatus.retort`, `apparatus.vaporizer`, `apparatus.vessel.ampoule`, `apparatus.vessel.bottle`, `apparatus.vessel.bucket`, `apparatus.vessel.canteen`, `apparatus.vessel.cask`, `apparatus.vessel.crucible`, `apparatus.vessel.dewar`, `apparatus.vessel.flask`, `apparatus.vessel.grenade_shell`, `apparatus.vessel.vial`, `apparatus.vessel.waterskin`.
 
-Sub-namespace prefixes. These are not content IDs and are not counted among the 316 above. Other chapters may name a prefix bare, as doc 10 names `alch.tx`; each content ID is a prefix, a `.` and one suffix:
+Sub-namespace prefixes. These are not content IDs and are not counted among the 299 above. Other chapters may name a prefix bare, as doc 10 names `alch.tx`; each content ID is a prefix, a `.` and one suffix:
 
 - `alch.eff`: effects (§7).
 - `alch.potion`: potion item templates (§12.1, §12.2).
@@ -1412,16 +1376,16 @@ Rules, data and interfaces:
 - `alch_react(a, b, temp) -> Option<Reaction>` (§5.3), implementing doc 03 §6.8; the extended trigger kinds of §5.2 for doc 03 §6.9; the contact rows of §3.2 and §4.2 and status triggers of §5.4 for doc 03 §6.10.
 - Event emission: one brew event per created item with doc 03 §14.2's payload `{ brewer, uid, recipe, apparatus }` (§9.7), and one liquid-reaction event per changed cell whose `rule` is the `alch.rx` ID or the triggering damage type (§5). Both event IDs and their schemas belong to the canon and doc 03 (Imports). XP inputs `brew_basis` and `new_reveals` go to doc 04's `grant_skill_xp`, not into events (§9.11).
 - Item instance extension (doc 19 schema): `alch: { base: u32, effects: [{eff, mag, dur, n}], tox_milli: i64, mods: u8 bitset (extend, amplify, invert, aerosol, linger), afflict: [(u32, i32)], forbidden: bool }` on potions (§12) and `alch.bomb.*`; `coat: {effects, charges, coat_bp, expires, src_lvl, quality_bp, potency}` on weapons and ammo (§10.3); `filter: u32` on respirators; `tier: u8` on apparatus (§9.1); doses as `charges` on multi-dose vessels.
-- Per-entity state: `blood_acc_ml`, the red-ink counter reset (§3.4), `dr: BTreeMap<u32, (u8, u64)>`, `raw_cd: BTreeMap<u32, u64>` (§3.2), `od_count: u8` (§11.2), the phosphor mark expiry (§3.2), the active brew channel (§9.7); per-party run state: `ing_known`, `seed_heal_count`; per-Folio state: `BTreeMap<u16, Payload>` with `next_payload_id`, `fonts: BTreeMap<Gidx, u8>` (§12.5), gas emitters (§2.7) and the payload exposure set `BTreeSet<(EntityId, u16)>`. Every item is saved state (Canon §2.5).
+- Per-entity state: `blood_acc_ml`, the red-ink counter reset (§3.4), `dr: BTreeMap<u32, (u8, u64)>`, `raw_cd: BTreeMap<u32, u64>` (§3.2), `od_count: u8` (§11.2), the phosphor mark expiry (§3.2), the active brew channel (§9.7); per-party run state: `ing_known`; per-Folio state: `BTreeMap<u16, Payload>` with `next_payload_id`, `fonts: BTreeMap<Gidx, u8>` (§12.5), gas emitters (§2.7) and the payload exposure set `BTreeSet<(EntityId, u16)>`. Every item is saved state (Canon §2.5).
 - Behavior of `res.toxicity`, `st.poisoned`, `st.irradiated`, `st.soaked`, `st.oiled`, `st.focused` (§16).
 
 ## Interface assumptions
 
 - **Doc 03** (exists; checked against its current text under canon-1.11): runs the liquid grid (§6) with the §3.1 fields and `flow_eff` from doc 12's `liquid_viscosity_bp`; extends its §6.9 table by each liquid's `triggers` and each gas's fire column (§5.2, including the fuel and mana blasts in the oil row's form, the lava and molten-metal frost conversions, and the multi-liquid order of §5.2); applies every §3.2 and §4.2 contact row and the §5.4 status triggers in §6.10, skipping every gas row for a bearer with a working respirator (Canon §12.1) and every `inhaled` gas row for a bearer with purify immunity (§4.3, §5.1); emits `evap_gas` when step 7 evaporates a unit; reads `flammability_bp` for liquid fire spread (§8.3); resolves nitro, blast and bomb explosions through §12 with the specs of §5.2, §5.6 and §13.2, drawing their block-break variation and drops from `rng.physics` and their ignition from `rng.fire` (Canon §3.3); exposes `deposit`, `splash`, `drain`, `emit_gas`, `emit_gas_volume`, `surface_trigger`, `is_errata_placed` and §13.8 `erase_placed`, which accepts eraser `EntityId` 0 for red ink; runs gas emitters (§2.7) at the start of each gas run; owns the `ev.potion_brewed` and `ev.liquid_reaction` payloads (§14.2).
-- **Doc 04** (exists): grants the Alchemy mastery perks as its §5.3 states (25: see effect 2; 50: see effect 3, a taste reveals two, batch +1; 75: see all four; 100: batch +1, single-ingredient brewing) and the toxicity factor `10000 − 25 × skill.alchemy` (§11.1); applies its Alchemist talents at the points §9.6, §9.7, §10, §11 and §15.4 mark (`potent_brews`, `iron_stomach`, `quick_quaff`, `splash_master`, `double_batch`, `field_medic`, `transmuter`, `volatile_mix`, `catalyst`, `philosophers_vial`, `antivenom`, `magnum_opus`); owns affliction meters, `add_affliction_dose` and `cure_affliction` (§10.1), mutation points, body parts (§8), the XP table (§5.2) fed by §9.11's `brew_basis` and `new_reveals`, breath, the `toxicity_decay` key, and the toxicity step inside `sys.needs` that calls §11.2; `talent.shade.envenom` as triage C-19 rules and doc 04 now states it: "your coats get +5 charges, and the coat's buildup factor 5000 becomes 10000" (§10.3).
+- **Doc 04** (exists): grants the Alchemy mastery perks as its §5.3 states (25: see effect 2; 50: see effect 3, a taste reveals two, batch +1; 75: see all four; 100: batch +1, single-ingredient brewing) and the toxicity factor `10000 − 25 × skill.alchemy` (§11.1); applies its Alchemist talents at the points §9.6, §9.7, §10, §11 and §15.4 mark (`potent_brews`, `iron_stomach`, `quick_quaff`, `splash_master`, `double_batch`, `field_medic`, `transmuter`, `volatile_mix`, `catalyst`, `philosophers_vial`, `antivenom`, `magnum_opus`); owns affliction meters, `add_affliction_dose` and `cure_affliction` (§10.1), mutation points, body parts (§8), the XP table (§5.2) fed by §9.11's `brew_basis` and `new_reveals`, breath, the hunger meter `res.satiation` as the only survival meter (DECISIONS 145; present), the `toxicity_decay` key, and the toxicity step inside `sys.needs` that calls §11.2; `talent.shade.envenom` as triage C-19 rules and doc 04 now states it: "your coats get +5 charges, and the coat's buildup factor 5000 becomes 10000" (§10.3).
 - **Doc 05** (exists): throw physics and impact for vessels and bombs (`skill.throwing`, the §9.3 throwable constants and scaling, first-contact detonation); §9.4 `NO_CRIT` area-hit resolution with one crit draw per target that is ignored, Canon §6.4 row 12 and `FF_AREA_BP` for alchemical splashes and bombs (§7, §10.2, §13.2), where `volatile_mix` and `catalyst` apply; the §1.4 `seq` 0 action-start slot for a potion use action's Contradiction failure roll (§9.9); the on-hit hook for coats; ammo stack splitting; spread and aim sway for `st.focused` and the sickened band; `counter.disruptor` for `alch.bomb.salt`. Doc 05's `grenade_smoke` releases its 27 smoke cells once through doc 03 (doc 05 §9.3) and uses no §2.7 emitter.
 - **Doc 06**: holy water from altars and prayers; behavior of the buff statuses potions apply; the shared `note_contradiction_failure(t)` (§3.9), which every failed potion calls (§9.9); calls `add_liquid`, `place_gas` and `move_gas` (§2.7) for `tide`, `acid`, `venom` and `gale`.
-- **Doc 07**: material tags `mat.tag.acid_soluble` and `mat.tag.fat`; the block tag `block.tag.destructible`; blocks `block.ice`, `block.web`, `block.obsidian`, `block.basalt`, `block.slag`; `station.alchemy` with apparatus slots; `sys.crafting` runs the §9.7 channels; recipe books teaching §13.1 poisons; seed planting; `mat.coal` from `recipe.kiln.charcoal`; forge smelts that fill a crucible with `liq.molten_metal`.
+- **Doc 07**: material tags `mat.tag.acid_soluble` and `mat.tag.fat`; the block tag `block.tag.destructible`; blocks `block.ice`, `block.web`, `block.obsidian`, `block.basalt`, `block.slag`; `station.alchemy` with apparatus slots; `sys.crafting` runs the §9.7 channels; recipe books teaching §13.1 poisons; no planting (DECISIONS 128); `mat.coal` from `recipe.kiln.charcoal`; forge smelts that fill a crucible with `liq.molten_metal`.
 - **Doc 09**: liquid and gas conceal; the phosphor mark as its stealth-light term `ph = 9`; mind-vision reveal; noise IDs `noise.item.shatter_glass`, `noise.item.shatter_ceramic`, `noise.explosion`, `noise.explosion.grenade`, `.incendiary`, `.smoke`, `.flash` and `.surface`; respirator hearing penalty.
 - **Doc 10** (exists): at least 32 `idc.potion` appearance descriptors (29 types); `appr.use.always` for drinking and `appr.use.on_effect` with this chapter's `observable` for throwing (§12.4); cursed and blessed consumables and `curse.spoiled` (its §7.5); the self-harm cap (its §8); price identification from §12.1 and §12.2 values; BUC rates for found potions. Doc 10's rows that name `alch.potion.*` and `alch.tx.*` IDs (its §6.1 stored-value example, §7.6 curse-removal table and §8 dangerous-consumables table) refer to this chapter's records and mint no IDs (Canon §19).
 - **Doc 11**: loot and shop tables for every exported item, with `alch.bomb.salt` and `alch.bomb.smoke` in every shop and every genre's loot pool (§13.2); found raw-liquid bottles (§3.5) in `loot.chest.plain` consumable draws and `shop.apothecary` lines; the loot records of the three respirators on their own `apparatus.respirator.*` IDs as face accessories, values 15, 40 and 90 (doc 11 §3.4; triage C-26: no alias and no `item.` respirator ID); potion stacking by §16. Doc 11's found-potion weight rows and bomb value rows are loot records attached to this chapter's `alch.potion.*` and `alch.bomb.*` IDs, with the same spelling. The bomb values there equal §13.2, and those rows mint no IDs.
@@ -1464,13 +1428,13 @@ None open. Canon-1.11 adopted the amendments this chapter requested (liquid unit
 27. **Contradiction.** The §9.9 invisibility potion drunk in Hardboiled Noir by a Fantasy-origin Erratum with ATN 40 has C = 4, rolls one keyed `rng.combat` failure value at 1000 Bp, and on success lasts 540 ticks.
 28. **Coat.** Viper's Kiss on oil (§13.1) gives 10 charges; each landed hit at `ilvl 5` adds 32 poison buildup against 0 resistance, so the 4th hit applies one `st.poisoned` stack at threshold 100.
 29. **Firebomb.** A Good firebomb made on Folio 5 has `B = 9,315` mHP of fire at step 0 and draws one crit value per target, which it ignores (`NO_CRIT`); its spill deposits 1 unit of oil whose blast has environmental base 10,000 mHP.
-30. **Seed brew.** Three `ing.seed_sungrass` with `seed_heal_count = 0` yield an identified `alch.potion.healing` after exactly 4 draws and set the count to 1; the same brew with count 1 rerolls when the 4th draw is below 1000 (5 draws).
-31. **Seed index.** `canon[5]` is `alch.potion.haste`.
+30. **No seeds.** The loaded content holds no seed ingredient, the §15.3 table holds 32 transmutations and none takes a seed input, the §15.1 alchemize list has 5 accepted inputs, and no `rng.alchemy` draw uses `seq` 1 (§8.4, §15.2; DECISIONS 128).
+31. **Hunger only.** Drinking 250 ml of `liq.water` with toxicity 5,000 lowers toxicity to 3,000 and changes no other resource; no drink row or effect references a thirst or fatigue meter (§3.2; DECISIONS 145).
 32. **Wellspring.** The §12.5 weights sum to 10,000 and each qualifying drink draws exactly one value.
 33. **Cure.** An uncursed cure ends `st.incubating` and the affliction never takes hold. A blessed cure on a bearer with 3 `afflict.red_ink` doses removes all of them and the hunter threshold returns to 10.
 34. **Bleeding and death spill.** A bearer with 3 `st.bleeding` stacks deposits its first unit of blood on the 14th pulse (1,050 ml accumulated, 50 carried); a 75,000 g humanoid corpse deposits 3 units.
 35. **Vessel mass.** A water flask weighs 400 g; an alcohol bottle of 750 ml weighs `400 + 592 = 992` g.
-36. **ID hygiene.** Every exported ID matches the Canon §1.1 grammar, is at most 64 bytes, and the 316 exported IDs have distinct `fnv1a32` values (`fnv1a32("liq.water") = 0x2d2df52c`).
+36. **ID hygiene.** Every exported ID matches the Canon §1.1 grammar, is at most 64 bytes, and the 299 exported IDs have distinct `fnv1a32` values (`fnv1a32("liq.water") = 0x2d2df52c`).
 37. **Integer content.** Every liquid, gas, ingredient, effect, reaction, transmutation and apparatus record passes the Canon integer-only content validator.
 38. **No duplication loop.** A bottle filled from a cell holding 1 unit of holy water gets 750 ml and the cell is empty; after one drink (500 ml left) pouring is refused; shattering it deposits 1 unit. A randomized property test over fill, pour, dump, empty, drink and shatter for all 11 vessel kinds never raises total liquid (grid units × 1000 plus vessel ml) by more than 1,000 ml per component of each shattered vessel.
 39. **Wellspring font.** A font with 2 uses: two kneel-drinks each draw exactly one keyed `rng.alchemy` value, and the second sets uses to 0, removes the record and turns the cell's wellspring into water. Filling a flask from a font cell yields 250 ml of `liq.water`, and drinking it draws nothing.
@@ -1492,7 +1456,7 @@ None open. Canon-1.11 adopted the amendments this chapter requested (liquid unit
 55. **Fortify cap.** A Peerless, Amplified `fortify_might` brew with a tier-5 calcinator stores at most 20 points, and a Peerless Extended one at most 7200 ticks.
 56. **Envenom.** A Shade with `talent.shade.envenom` coating the §13.1 Viper's Kiss (oil base, Alchemy 40) gets `mul_bp(5 + 2 + 5, 15000) = 18` charges and `coat_bp` 10000, so each landed hit adds poison buildup `mul_bp(59, 10000) = 59` before Canon §11.2; without the talent the coat has 10 charges and adds 29.
 57. **Failed potion.** An `alch.potion.invisibility` whose failure roll fails is consumed: drunk at Alchemy 0, it applies no `st.invisible` and adds 10,000 toxicity; thrown, it deposits 1 unit of water and applies no splash. Each failure calls `note_contradiction_failure(t)` once, and three failed potions by one Erratum within 600 ticks apply `st.unmoored` for 300 ticks (doc 12). A healing potion (dependency none) never draws a failure value.
-58. **Keyed `seq`.** A brew started on tick `t` draws `v` from `keyed_rng("rng.alchemy", folio, brewer, t, 0)`; a seed brew uses `seq` 1, the `transmuter` `seq` 2 and a font drink `seq` 3, so a brew and a font drink that one Erratum starts on the same tick draw independent values.
+58. **Keyed `seq`.** A brew started on tick `t` draws `v` from `keyed_rng("rng.alchemy", folio, brewer, t, 0)`; `seq` 1 is unused, the `transmuter` uses `seq` 2 and a font drink `seq` 3, so a brew and a font drink that one Erratum starts on the same tick draw independent values.
 59. **One evaluation per use.** A thrown Aerosol potion whose failure chance is above 0 makes exactly one `rng.combat` failure draw, at its throw's doc 05 §1.4 `seq` 0 slot; the payload it creates on impact draws nothing and carries the throw's potency.
 
 ## Invariants annex
@@ -1518,7 +1482,7 @@ W! res.toxicity ∈ 0..=100,000 ∧ decay (500 + toxicity_decay)/s       W! exce
 W! DR per (recipient, effect) within 1800 ticks                     N! thrown|coated|vapor effects add toxicity
 W! brewed items know.identified ∧ brewing canonical type ⇒ type identified
 W! doc 04 perks and talents apply only at the marked hook points       W! cursed potions := doc 10 §7.5
-W! seed brew identifies ⇔ 1 seed type                                W! working respirator blocks every gas row ∧ vapor; purify: inhaled only
+N! seed item | planting | seed brew (DECISIONS 128)                   W! working respirator blocks every gas row ∧ vapor; purify: inhaled only
 N! carried vessels shatter from hits                                N! red ink appears in generated loot
 W! iteration order := ascending EntityId | uid | cell order         N! HashMap|HashSet in 08 state
 N! splash for shattered vessels                                     N! liquid gain from fill|pour|dump|empty
@@ -1530,8 +1494,9 @@ W! dose toxicity := tox × (10000 − 25 × skill) × iron_stomach × kin  W! br
 W! batch ≤ 4 before double_batch and mother_ilse                    W! ev.potion_brewed once per created item ∧ N! ev.item_crafted
 W! red ink by mouth := 40 meter power                               W! red_dose ⇒ add_affliction_dose; N! red_dose in payloads
 W! reactions|detonations break only block.tag.destructible blocks    W! red-ink unwriting := erase_placed only
-W! rng.alchemy seq := 0 brew|bomb, 1 seed brew, 2 transmuter, 3 font   W! ≤ 1 Contradiction evaluation ∧ ≤ 1 failure draw per use action
+W! rng.alchemy seq := 0 brew|bomb, 1 unused, 2 transmuter, 3 font   W! ≤ 1 Contradiction evaluation ∧ ≤ 1 failure draw per use action
 W! failed potion := consumed; toxicity (drunk|injected) | base spill (thrown); note_contradiction_failure once
 W! envenom ⇒ coat charges + 5 ∧ coat_bp 10000                       N! item wear | durability in 08 (filters are refillable charges)
 N! invader blood_liq = liq.red_ink ∧ N! invader red-ink death spill
+N! thirst | fatigue meter or drink row that quenches (DECISIONS 145)
 ```

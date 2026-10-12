@@ -1,0 +1,22 @@
+{
+ "chapter": "08",
+ "status": "complete",
+ "requests_handled": 9,
+ "edits": 34,
+ "canon_requests": [],
+ "cross_chapter_requests": [],
+ "product_questions": [
+  {
+   "id": "08-Q1",
+   "question": "With seeds cut (DECISIONS 128), should the SPD-style random seed brew be retired or re-keyed to a non-seed input?",
+   "default_applied": "Retired: alch.tx.seed_brew, seed_heal_count and the 16 ing.seed_* IDs are removed; rng.alchemy seq 1 stays reserved and unused.",
+   "options": [
+    "Retire the seed brew (applied)",
+    "Re-key it to three plant ingredients of the §8.2 catalog",
+    "Re-key it to essence plus one ingredient"
+   ]
+  }
+ ],
+ "unresolved": [],
+ "summary": "Header set to 2026-10-12, DECISIONS through row 145. DECISIONS 128: §8.4 reduced to a retirement note, 16 ing.seed_* IDs and alch.tx.seed_brew removed (Exports 316 -> 299; ingredients 79, transmutations 32), cat.seed dropped from Imports and the alchemize list, seed_heal_count removed, rng.alchemy seq 1 reserved unused, doc 07 Interface row now 'no planting (DECISIONS 128)', tests 30/31 replaced (No seeds, Hunger only), invariants updated. DECISIONS 145: §3.2 states no drink quenches thirst; hunger via res.satiation only; waterskin skin 'hydration pack' renamed. Four bare fortify_might cells backticked, clearing the 4 'might' hedges. Requests from fix:05, fix:11, fix:04 and verify:08 (Margin codex, destructible products) were already satisfied on disk; respirator scope and hazard drink entry rejected as conforming to canon-1.11. No canon or cross-chapter requests needed. Lint 08 clean; full run duplicates 0, no new findings elsewhere."
+}

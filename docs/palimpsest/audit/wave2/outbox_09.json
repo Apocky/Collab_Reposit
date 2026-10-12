@@ -1,0 +1,72 @@
+{
+ "chapter": "09",
+ "status": "complete",
+ "requests_handled": 22,
+ "edits": 25,
+ "canon_requests": [
+  {
+   "section": "§5.12 (new, merged with doc 03 G31)",
+   "old": "",
+   "new": "Each `wx.*` row also carries the stealth columns `FOG` (whole fog points added to the genre fog, §12.2), `AMB` (dB added to the ambient mask), wash (scent lasts 1800 ticks) and snow (footsteps read `noise.surface.snow`), applied only at `sky_open` cells (doc 09 §15.3): `wx.clear` 0, 0, no, no; `wx.rain` 0, 5, yes, no; `wx.storm` 1, 10, yes, no; `wx.fog` 1, 0, no, no; `wx.snow` 1, 0, no, yes; `wx.dust` 1, 5, no, no. Weather sound is the per-step `sound_ddb(wx)` alone.",
+   "why": "DECISIONS 99; doc 09 G26 replaces its earlier §12.4 proposal so one section serves docs 03 and 09"
+  },
+  {
+   "section": "§4.4",
+   "old": "",
+   "new": "Sight rays test each cell's micro-voxel boxes through `raycast_blocks` and read `conceal_at` through the fill rule; closed doors are unscaled.",
+   "why": "doc 09 G23 (addition: canon-1.11 has no 48-micro-voxel sight sentence)"
+  },
+  {
+   "section": "§10.6",
+   "old": "HP plus ward",
+   "new": "HP plus ward; against a `rank.elite` target, `mul_bp(max HP, 5000)` (doc 09 §9.4)",
+   "why": "doc 09 G24"
+  },
+  {
+   "section": "§17.7",
+   "old": "",
+   "new": "`noise.mount.` (walk, gallop, hover, glide, summon) is retired with the mount family.",
+   "why": "DECISIONS 55; doc 09 §7.6 retirement"
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "03",
+   "request": "§4.8 and Canon gaps G31: extend the requested Canon §5.12 table with doc 09's four stealth columns per wx.* row (FOG 0/0/1/1/1/1, AMB 0/5/10/0/0/5 dB for clear/rain/storm/fog/snow/dust; wash = precip water; snow only for wx.snow), applied on sky_open cells; doc 09 §15.3 now reads Climate.wx, uses sky_open as outdoor and adds no sound term (sound_ddb alone). Motivated by doc 09 §15.3 and G26."
+  },
+  {
+   "to": "18",
+   "request": "Add audio records for noise.move.slide, noise.move.reel and noise.impact.grapple (doc 09 §7.2, §7.3), now produced from doc 03 §3.4 MoveState fields."
+  },
+  {
+   "to": "16",
+   "request": "Canon gaps O1: remove the backticked aware.profile.invader citation (retired by doc 09 §14.5); state §6.6 rule 2 as the only invader replication rule (doc 09 P1 default). Carry StealthHud.panel (doc 09 §8.4) on the STEALTH 0x06 wire and set a cap on StealthPanel::Steal lines; Interface row 09 should note steps live 30 ticks (doc 09 §8.3)."
+  },
+  {
+   "to": "12",
+   "request": "Roll each Folio's tod.* and wx.* from the genre tables and pass them to doc 03 set_climate (doc 09 §15.3, Interface row 12); remove 'stores no weather state' from G19."
+  },
+  {
+   "to": "07",
+   "request": "Interface row 09: noise.surface.snow has a base-game producer, doc 09 §7.2's feet-cell override under wx.snow on sky_open cells (§15.3)."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "09-Q1",
+   "question": "Invader replication: which rule decides the Errata an invader's client receives?",
+   "default_applied": "Doc 16 §6.6 rule 2 alone; doc 09's perception filter and the invader profile are retired (§14.5, test 41).",
+   "options": [
+    "Doc 16's rule alone (applied)",
+    "Doc 09's perception filter for Errata-to-invader, doc 16's rule otherwise",
+    "Both tests required for Errata-to-invader",
+    "Doc 16's rule plus: an Erratum in an occupied enclosed hiding spot is never sent"
+   ]
+  }
+ ],
+ "unresolved": [
+  "Canon-1.12 edits (G23-G28, noise.mount retirement) wait for the canon cut.",
+  "Doc 16 still cites aware.profile.invader (its lane)."
+ ],
+ "summary": "Verified batches 1-8 of the earlier pass on disk; every claimed edit held. Batch 9 (25 edits): header coverage through row 145; §15.3 rebuilt on doc 03 §4.8 Climate.wx with wx.* IDs, outdoor = sky_open, wx_sound dropped so weather muffles sound once (doc 03 sound_ddb), new stealth column table, rain example recomputed (25 dB < gate 28), test 63 rewritten; G26 now asks to extend doc 03's Canon §5.12 table instead of a separate §12.4. Kit noises bound to doc 03 §3.4 MoveState ticks (§7.2, §7.3, test 73). Mark flags bit 0 defined in §8.3 (test 71). Glitch companion term comp_hack +10 in §13.4 (test 72). Imports, Interface rows 03/12/13/16/17, Exports, invariants updated. DECISIONS 130-145 touch no doc 09 subject; leftover sweep clean. Lint 09: 0 findings; full run: no new findings in other chapters from this lane."
+}

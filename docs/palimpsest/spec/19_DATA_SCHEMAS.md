@@ -1,6 +1,6 @@
 # 19 — Data Schemas
 
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
 
 This chapter fixes how content is stored and checked: the file layout and envelope, schema identity, the common definitions every record schema builds on, the custom schema keywords, the validation pipeline with its error codes, the catalog of record kinds that chapters 00 to 18 define, and the rules the Rust loader in `palimpsest_data` mirrors. It owns the full item instance schema (Canon §13.9). It owns no content namespace. Per-chapter record schemas arrive as fragments in §6.
 
@@ -28,6 +28,13 @@ The implementation lives in the workspace: `palimpsest/schemas/common.schema.jso
 | `palimpsest_data` (`ids.rs`, `hex.rs`, `registry.rs`, `content_check.rs`, `test_support.rs`) | grammar check order and messages, hex `u64` form, alias registration order, number classification including `-0`, the four real `fnv1a32` collision pairs |
 | Docs 01–18, Exports and main tables | the record kinds of the §5 catalog |
 | Doc 07 §7.1; doc 10 §2.3, §4; doc 11 §2.2 | part slot names; the knowledge flag word, counters and `zaps_total`; the instance example, affix tiers `1..=5`, perk columns |
+| Doc 01 §2.7 | the `01.pillar_test` fields `id`, `pillar`, `index` `1..=3`, `carry_forward` |
+| Doc 11 §1 rule 8, §2.1 | loot-table `lines` as the one `x-patchable` array; template loot records for owners' IDs |
+| Doc 13 §2.1 | enemy template fields `visual`, `body_state.crouch_mm`, `flags.net_always`, `outfit`, `outfit_mass_g`; attack-profile `knockback_mm_s`; the outfit and size validation rules |
+| Doc 16 §11.4, test 50 | the economy API schema at `palimpsest/schemas/svc/econ_api.json` |
+| DECISIONS.md 55, 65, 89 | no mounts or vehicles; no item durability; `enemy.role.charger` replaces the retired cavalry role |
+| DECISIONS.md 128, 132, 137 | cat.seed, block.crop, mat.tag.tillable and mode.prologue retired; no seeds and no Prologue in the catalog; a first-run achievement replaces the Prologue achievements |
+| DECISIONS.md 141 | at most 40 curated Steam achievements; the long tail as in-game Codex marks |
 
 ---
 
@@ -58,6 +65,7 @@ Each file is exactly this object, with no other key:
 - `schema` is a record schema ID (§1.3). The library schemas `common` and `envelope` are never named here.
 - `records` is an array of objects. Each record has `id`, a content ID (Canon §1.1), and when the record was renamed, `aliases`: a non-empty array of unique content IDs, the retired old IDs that now resolve to this record. Aliases are how this chapter realizes Canon §1.1's alias entries (Canon gaps G2).
 - **One ID, one record.** An ID is defined by exactly one record in the whole content set, and no alias equals another record's ID or alias. A document that adds data about a record another document owns does it in one of two ways: (a) a schema fragment that the owner's schema merges, so the owner's file carries the fields; or (b) a record kind of its own, in a namespace it owns, whose field references the other record through `x-idref`.
+- **Template loot IDs.** Doc 11's kind (b) records for templates owned by docs 04 to 08 (`11.template_loot`) carry the ID `loot.tpl.` followed by the owner's template ID with every `.` written as `_`, for example loot.tpl.arch_melee_spear for `arch.melee.spear`, and the field `template` (`ref_item_template`) holding the owner's ID. A template ID used this way is at most 55 bytes, so the derived ID stays within 64 bytes (Canon §1.1). Two records never name one template: their derived IDs are equal and the second is `E_DUP_ID`.
 - Record order inside a file and file order carry no meaning. `content_hash` sorts records by ID (doc 02 §11.2).
 - Every record schema allows `id` and `aliases` and nothing else beyond its own properties (§1.3).
 
@@ -97,6 +105,7 @@ Each file is exactly this object, with no other key:
   9. every `$ref` resolves.
 - A record schema admits any record namespace; the §5 catalog states which namespaces each schema serves, and a schema pins them with a pattern on `id` where the owner wants the check.
 - When two schema directories are searched (the self-test, `--schemas`), the first directory that holds a schema ID wins.
+- Subdirectories of `palimpsest/schemas/` hold schemas that are not content record schemas, such as the service API schemas of doc 16 §11.4 (`palimpsest/schemas/svc/econ_api.json`). Stage 1 reads only the top-level `*.schema.json` files, never a subdirectory, and no envelope names a subdirectory schema.
 
 ### 1.4 The ownership table
 
@@ -313,6 +322,7 @@ The validator adds these keywords to JSON Schema 2020-12 with `jsonschema.valida
 
 - **Value:** a boolean, on a subschema with `"type": "array"` (doc 02 §13.1).
 - **Rule:** an annotation: `true` marks an array a mod patch may append to. The content validator only checks its placement (`E_SCHEMA_DEF`); the mod loader enforces it.
+- **Use:** the `lines` array of `11.loot_table` carries `"x-patchable": true`; it is the array doc 02 §13.1's `02.patch` example targets and the only list a loot table has (doc 11 §1 rule 8).
 
 ### 3.7 Implementation notes
 
@@ -436,7 +446,7 @@ One row per record kind that chapters 00 to 18 define as content. The schema ID 
 | `00.entitlement` | 00 | `ent.` | `content/00/ent/entitlements.json` | entitlements (Canon §14) |
 | `00.rng_stream` | 00 | `rng.` | `content/00/rng/streams.json` | sequential and keyed streams: scope, owner, uses (Canon §3.2, §3.3, §3.5) |
 | `01.pillar` | 01 | `pillar.` | `content/01/pillar/pillars.json` | pillars: order, hard constraint, tests, owner docs (doc 01 §2.7) |
-| `01.pillar_test` | 01 | `pillar.<name>.t1` to `.t3` | `content/01/pillar/tests.json` | pillar acceptance tests (doc 01 §2) |
+| `01.pillar_test` | 01 | `pillar.<name>.t1` to `.t3` | `content/01/pillar/tests.json` | pillar acceptance tests: `id`, `pillar` (a `pillar.` reference), `index` `1..=3`, `carry_forward` (true only for `pillar.one_ruleset.t3`) (doc 01 §2.7) |
 | `01.kpi` | 01 | `kpi.` | `content/01/kpi/kpis.json` | KPIs: unit, statistic, mode, window, bands (doc 01 §10.2) |
 | `02.crate` | 02 | `crate.` | `content/02/crate/crates.json` | crate layers and dependency allow lists (doc 02 §3.3) |
 | `02.flag` | 02 | `flag.` | `content/02/flag/flags.json` | runtime feature flags (doc 02 §17.3) |
@@ -495,7 +505,7 @@ One row per record kind that chapters 00 to 18 define as content. The schema ID 
 | `07.gadget` | 07 | `gadget.` | `content/07/gadget/gadgets.json` | gadgets (doc 07 §11.2) |
 | `08.liquid` | 08 | `liq.` | `content/08/liq/liquids.json` | liquids (doc 08 §2.2, §3.1) |
 | `08.gas` | 08 | `gas.` | `content/08/gas/gases.json` | gases (doc 08 §4.2) |
-| `08.ingredient` | 08 | `ing.` | `content/08/ing/ingredients.json` | ingredients, modifier reagents and seeds (doc 08 Exports) |
+| `08.ingredient` | 08 | `ing.` | `content/08/ing/ingredients.json` | ingredients and modifier reagents (doc 08 Exports; seeds are cut, DECISIONS.md 128) |
 | `08.alch_effect` | 08 | `alch.eff.` | `content/08/alch/effects.json` | alchemical effects (doc 08 §7) |
 | `08.potion` | 08 | `alch.potion.` | `content/08/alch/potions.json` | potion item templates (doc 08 §12.1, §12.2) |
 | `08.bomb` | 08 | `alch.bomb.` | `content/08/alch/bombs.json` | bomb item templates (doc 08 §13.2) |
@@ -525,14 +535,14 @@ One row per record kind that chapters 00 to 18 define as content. The schema ID 
 | `10.curse` | 10 | `curse.` | `content/10/curse/curses.json` | plain curses (doc 10 §7.3) |
 | `10.pact` | 10 | `curse.pact.` | `content/10/curse/pacts.json` | pact curses with their boons (Canon §13.6, doc 10 §7.8) |
 | `11.item` | 11 | `item.` | `content/11/item/items.json` | item templates: accessories, consumables, tools, books, bags, keys, Lucre, quest items, Remains, Exotics, Palimpsestic uniques (doc 11 §3, §8) |
-| `11.template_loot` | 11 | `loot.tpl.` (proposed) | `content/11/loot/templates.json` | doc 11 loot fields for templates owned by docs 04 to 08, one record per template (§1.2 rule (b)) |
+| `11.template_loot` | 11 | `loot.tpl.` | `content/11/loot/templates.json` | doc 11 loot fields for templates owned by docs 04 to 08, one record per template, ID derived from the template ID, `template` field by `x-idref` (§1.2) |
 | `11.rarity` | 11 | `rar.` | `content/11/rar/rarities.json` | rarities (Canon §13.3, doc 11 §3.8) |
 | `11.category` | 11 | `cat.` | `content/11/cat/categories.json` | item categories (Canon §13.1, doc 11 §3.1) |
 | `11.slot` | 11 | `slot.` | `content/11/slot/slots.json` | equipment slots (Canon §13.2, doc 11 §3.9) |
 | `11.affix` | 11 | `affix.` | `content/11/affix/affixes.json` | affixes and tier rows (doc 11 §6.2) |
 | `11.perk` | 11 | `perk.`, `perk.genre.`, `perk.leg.` | `content/11/perk/perks.json` | column perks, genre traits, Legendary perks (doc 11 §7.2, §8.1) |
 | `11.manufacturer` | 11 | `mfr.` | `content/11/mfr/manufacturers.json` | manufacturers and signature traits (Canon §5.9, doc 11 §5.2) |
-| `11.loot_table` | 11 | `loot.` | `content/11/loot/tables.json` | drop, chest, bag, boss, floor, quest, Keepsake, Reliquary-content, Engine-face and shop-stock tables (doc 11 §9 to §12) |
+| `11.loot_table` | 11 | `loot.` | `content/11/loot/tables.json` | drop, chest, bag, boss, floor, quest, Keepsake, Reliquary-content, Engine-face and shop-stock tables; `lines` is `x-patchable` (§3.6; doc 11 §9 to §12) |
 | `11.loot_pool` | 11 | `loot.pool.` | `content/11/loot/pools.json` | loot pool tags (doc 11 §2.5) |
 | `11.loot_generator` | 11 | `loot.<generator>` | `content/11/loot/generators.json` | reserved sub-generator tags (doc 11 §2.3) |
 | `11.reliquary` | 11 | `reliq.` | `content/11/reliq/reliquaries.json` | in-run Reliquaries (doc 11 §10) |
@@ -549,7 +559,7 @@ One row per record kind that chapters 00 to 18 define as content. The schema ID 
 | `12.layout` | 12 | `gpv.layout.` | `content/12/gpv/layouts.json` | layout generators (doc 12 §3.4) |
 | `12.world_event` | 12 | `gpv.evt.` | `content/12/gpv/events.json` | world events (doc 12 §19.1) |
 | `12.story` | 12 | `gpv.story.` | `content/12/gpv/stories.json` | story slot templates, bridges and erasure (doc 12 §20.2) |
-| `12.room_kind` | 12 | `room.` (kinds and prologue rooms) | `content/12/room/kinds.json` | room kinds, the Colophon included (Canon §17.1, doc 12 §16.1) |
+| `12.room_kind` | 12 | `room.` (kinds) | `content/12/room/kinds.json` | room kinds, the Colophon included (Canon §17.1, doc 12 §16.1) |
 | `12.room_tag` | 12 | `room.` (tags) | `content/12/room/tags.json` | room tags (doc 12 §12) |
 | `12.room_template` | 12 | `room.tpl.` | `content/12/room/templates.json` | room templates (doc 12 §16) |
 | `12.room_rule` | 12 | `room.rule.` | `content/12/room/rules.json` | room rules (doc 12 §8.2) |
@@ -591,7 +601,8 @@ One row per record kind that chapters 00 to 18 define as content. The schema ID 
 | `14.echo` | 14 | `echo.` | `content/14/echo/echoes.json` | Echoes: kin, Origin, Calling, signature trait, body plan (Canon §16.2, doc 14 §6.3) |
 | `14.score_component` | 14 | `score.` (components) | `content/14/score/components.json` | score components (doc 14 §4.2) |
 | `14.leaderboard` | 14 | `score.board.` | `content/14/score/boards.json` | leaderboards (doc 14 §9.4) |
-| `14.achievement` | 14 | `ach.` | `content/14/ach/achievements.json` | achievements (doc 14 §10) |
+| `14.achievement` | 14 | `ach.` | `content/14/ach/achievements.json` | curated Steam achievements, at most 40 records, the first-run achievement and the Second Edition Ironman included (DECISIONS.md 137, 141; doc 14 §10) |
+| `14.codex_mark` | 14 | `ach.mark.` (proposed) | `content/14/ach/marks.json` | in-game Codex marks, the long tail of account milestones that are not Steam achievements (DECISIONS.md 141) |
 | `15.banner` | 15 | `banner.` (banners) | `content/15/banner/banners.json` | Inkwell banners (doc 15 §3.2) |
 | `15.banner_pool` | 15 | `banner.pool.` | `content/15/banner/pools.json` | banner pools (doc 15 §3.1, §3.13) |
 | `15.banner_tier` | 15 | `banner.tier.` | `content/15/banner/tiers.json` | catalog tiers (doc 15 §3.1) |
@@ -644,6 +655,14 @@ One row per record kind that chapters 00 to 18 define as content. The schema ID 
 | `18.locale` | 18 | `nar.locale.` (proposed) | `content/18/nar/locales.json` | launch locales and fallback order (doc 18 §9.11; Canon gaps G7) |
 
 ---
+
+### 5.1 Fields and rules recorded ahead of the fragments
+
+These fields and validation rules are fixed now; the owner's §6 fragment carries them in its field table and schema.
+
+- **`13.enemy_template`** (doc 13 §2.1): `visual`, a content ID with `x-idref: ["art.visual."]`, equal to `art.visual.` followed by the template ID; `body_state.crouch_mm` (`mm_pos`, equal to `stand_mm` for a body that never crouches); the flag `net_always` (`0` or `1`) in `flags`; `flags.outfit` (`0` or `1`) and `outfit_mass_g` (`grams`).
+- **`13.ability`** (doc 13 §2.1): the attack-profile field `knockback_mm_s` (`u32`, a speed in mm/s, `0` for none). No knockback field is a distance.
+- **Validation rules for `13.enemy_template`:** `outfit` is 1 exactly on templates of a `fac.native.` faction with `body.humanoid` and the `sapient` tag; `outfit_mass_g` is 9000 for roles brute, guardian and charger, 6000 for every other role with `outfit` 1, and 0 when `outfit` is 0; every `body.humanoid` template of role brute has `stand_mm` at least 2200; `crouch_mm` is at most the nav-class headroom less 50 mm (950 for `ai.nav.small`, 1950 for `ai.nav.humanoid` and `ai.nav.burrower`, 2950 for `ai.nav.large`); `net_always` is 1 only on templates of `rank.editor` and on NPC templates of `rank.hunter`. These rules cross fields and records, so doc 13's content tests check them; the schema checks types and ranges.
 
 ## 6. Record schemas by owner document
 
@@ -748,7 +767,7 @@ The Python validator is the reference for CI; `palimpsest_data` (feature `loader
 
 This chapter defines no content IDs. It exports:
 
-- **Schema IDs:** the library schemas `common` and `envelope`; the record schema `00.namespace`; and the reserved catalog IDs of §5 (215 rows), which the owner documents implement through §6.
+- **Schema IDs:** the library schemas `common` and `envelope`; the record schema `00.namespace`; and the reserved catalog IDs of §5 (216 rows), which the owner documents implement through §6.
 - **Common definitions (§2):** `id`, `id_list`, `ref_any`, `loc_key`, `schema_id`, `doc_number`, `doc_dir`, `hex_u64`, `blake3_hex`, `date`, `record_base`; `i8`, `u8`, `i16`, `u16`, `i32`, `u32`, `i53`, `u53`; `bp`, `bp_i64`, `bp_unit`, `pct_bp`, `mult_bp`, `resist_bp`, `milli`, `milli_nonneg`, `mm`, `mm_nonneg`, `mm_pos`, `mm_s`, `mm_s2`, `mm3`, `block3`, `ticks`, `ticks_pos`, `bam`, `bam_cone`, `pitch`, `grams`, `ml`, `deci_c`, `light`, `db`, `axiom`, `sub_attr_base`, `sub_attr_eff`, `skill_value`, `satiation`, `char_xp`, `money`, `armor_rating`, `standing`, `depth`, `party_slot`, `color`; the 23 `ref_*` definitions; `dep_set`, `axiom_vector`, `weight`, `weighted_entry`, `positive_weight`, `dmg_share`, `dmg_shares`, `scaling_entry`, `weapon_scaling`, `attr_requirement`, `attr_requirements`, `part_slot`, `knowledge`, `affix_roll`, `part_entry`, `charges`, `perk_column`, `item_instance`.
 - **Custom keywords (§3):** `x-idref`, `x-sum`, `x-sum-max`, `x-unique-by`, `x-owner`, `x-patchable`.
 - **Error codes (§4.2):** `E_SCHEMA_DEF`, `E_NAMESPACES`, `E_PATH`, `E_JSON`, `E_FLOAT_TOKEN`, `E_INT_RANGE`, `E_ENVELOPE`, `E_ID_GRAMMAR`, `E_SCHEMA_UNKNOWN`, `E_SCHEMA_OWNER`, `E_SCHEMA`, `E_REF_PREFIX`, `E_SUM`, `E_SUM_MAX`, `E_UNIQUE`, `E_NS_DIR`, `E_NS_UNKNOWN`, `E_OWNER`, `E_MOD_ID`, `E_RETIRED`, `E_DUP_ID`, `E_ID32_COLLISION`, `E_REF_MISSING`, `W_REF_MISSING`, `W_REF_ALIAS`.
@@ -760,18 +779,19 @@ This chapter defines no content IDs. It exports:
 |---|---|
 | 00 to 18 | a §6 fragment per owned record kind in the §6 contract, using the §2 definitions and the §5 schema IDs; content files only in its own `content/<NN>/` directory |
 | 00 | Canon §19 adds `meta.` (G1); Canon §1.1 points its alias entries at §1.2 (G2) |
-| 01 | `pillars.json` and `kpis.json` wrapped in the §1.2 envelope (doc 01 §2.7 and §10.2 show bare arrays); `owner_docs` and `owner_doc` as `doc_number` |
-| 02 | `pal validate` implements §4 with these codes; the `02.patch` schema for mod patches; doc 02's Interface assumption on doc 19 ("the schema catalog matching `palimpsest_data` record types, including the `x-patchable` keyword") is met by §3.6, §5 and §7 |
-| 03 | one record per block ID: `block.air` and every other shared block live in doc 07's `07.block` files, and doc 03 adds its grid fields to `07.block` by fragment; `ev.` records in `content/03/ev/`; pose tables as `18.anim_pose` records in the doc 03 §5.16 format |
+| 01 | still requested: `pillars.json`, `tests.json` and `kpis.json` wrapped in the §1.2 envelope (doc 01 §2.7 and §10.2 show bare arrays); `owner_docs` and `owner_doc` as `doc_number`; present: the `01.pillar_test` fields (doc 01 §2.7) |
+| 02 | present: the `02.patch` example targets loot-table `lines` (§3.6); `pal validate` implements §4 with these codes; the `02.patch` schema for mod patches; doc 02's Interface assumption on doc 19 ("the schema catalog matching `palimpsest_data` record types, including the `x-patchable` keyword") is met by §3.6, §5 and §7 |
+| 03 | present: doc 03 imports `block.air` from doc 07 and defines no block record; one record per block ID: `block.air` and every other shared block live in doc 07's `07.block` files, and doc 03 adds its grid fields to `07.block` by fragment; `ev.` records in `content/03/ev/`; pose tables as `18.anim_pose` records in the doc 03 §5.16 format |
 | 05 | the Exports list drops the `arch.mount.` archetypes, which Canon §17.7 retires; content using them fails with `E_RETIRED` |
 | 07 | the §7.1 part slot names are the closed `part_slot` set; the instance fields `crafted`, `mat_bonus_bp`, `dish` and ammunition `smart` arrive in fragment 6.07 |
 | 08 | the instance extensions `alch`, `coat`, `filter` and `tier` arrive in fragment 6.08 |
 | 10 | the `knowledge` counters and `zaps_total` of §2.5 match doc 10 §2.3 and §4 |
-| 11 | the doc 11 §2.2 instance fields arrive in fragment 6.11, without `durability`, which Canon §4.3 (canon-1.10) removed; loot data for templates owned by docs 04 to 08 is stored as `11.template_loot` records, not as second records under the owner's ID, which §1.2 and Canon §1.1 forbid |
+| 11 | the doc 11 §2.2 instance fields arrive in fragment 6.11, without `durability`, which Canon §4.3 (canon-1.10) removed; present: loot data for templates owned by docs 04 to 08 is stored as `11.template_loot` records (doc 11 §2.1); still requested: doc 11 exports those IDs under the §1.2 scheme `loot.tpl.<template ID, dots as underscores>` |
 | 12 | `12.genre` records copy the Canon §5.2, §5.4 and §5.9 columns exactly, the tolerance row with `x-sum` total 4 |
-| 13 | `rank.` records in `content/13/rank/`; the champion aspects as `13.elite_modifier` records |
-| 16 | `content/16/schema/econ_api.json` (doc 16 §10) is not content: `schema` is no Canon §19 namespace, so the service API schema moves to `palimpsest/schemas/` or under `content/16/svc/` as `svc.` records |
-| 18 | the launch locale records of G7, or an equivalent ID scheme |
+| 13 | `rank.` records in `content/13/rank/`; the champion aspects as `13.elite_modifier` records; present: the §5.1 fields and rules (doc 13 §2.1) |
+| 14 | still requested: `14.achievement` holds at most 40 curated records, with the first-run achievement replacing the Prologue achievements; the long tail as `14.codex_mark` records under `ach.mark.` (DECISIONS.md 137, 141) |
+| 16 | present: the economy API schema lives at `palimpsest/schemas/svc/econ_api.json` (doc 16 test 50), a subdirectory schema that stage 1 skips (§1.3) |
+| 18 | still requested: the launch locale records of G7 (`18.locale`, `nar.locale.`) |
 
 ## Canon gaps
 
@@ -786,6 +806,7 @@ This chapter defines no content IDs. It exports:
 - **G9. Negative zero.** Canon §1.6 is silent on the integer token `-0`. This chapter rejects it with `E_FLOAT_TOKEN`, matching `palimpsest_data`, whose `serde_json` reads it as `-0.0`. Proposal: Canon §1.6 adds "`-0` is not an integer".
 - **G10. Repeated object keys.** Neither the canon nor doc 02 rules on a JSON object that repeats a key; `serde_json` keeps the last value silently. This chapter rejects it (`E_JSON`), and §7 item 5 asks the loader to match. Proposal: Canon §1.6 forbids repeated keys.
 - **G11. Schemas for shared namespaces.** Canon §19 gives some namespaces two owners (`ax.` and `genre.`, `block.`, `ev.` and `rng.`, the core values of rows 10 to 12) without saying whose file holds a given record. This chapter keeps one record per ID (§1.2) and places each kind in one owner's directory in §5. Proposal: Canon §19 names, per shared namespace, the document whose files hold the records.
+- **G12. Retired IDs of DECISIONS.md 128 and 132.** `gen_namespaces.py` retires only what Canon §17.7 declares, and §17.7 does not yet name the IDs that DECISIONS.md 128 and 132 retire. Until it does, content holding them passes stage 8. Proposal: Canon §17.7 adds the sentence "cat.seed, block.crop and mat.tag.tillable (DECISIONS.md, item 128) and mode.prologue (item 132) are retired IDs and must not appear in content."
 
 ## Acceptance tests
 
@@ -801,6 +822,12 @@ This chapter defines no content IDs. It exports:
 10. **Patterns.** A `hex_u64` field holding `"0xFF"` followed by a newline gives `E_SCHEMA`.
 11. **Schemas.** Every file in `palimpsest/schemas/` passes stage 1; none contains `"type": "number"`; a schema with an unknown `x-` keyword, a wrong `x-owner` or an unresolvable `$ref` gives `E_SCHEMA_DEF`.
 12. **Rust mirror (milestone M2).** The `palimpsest_data` equivalence test of §7 item 9 passes, and `pal schema export --check` passes on the committed schemas.
+13. **Template loot IDs (§1.2).** A `11.template_loot` record for `arch.melee.spear` has the ID loot.tpl.arch_melee_spear and `template` `arch.melee.spear`; a second record for the same template gives `E_DUP_ID`; a `template` holding an `st.` ID gives `E_REF_PREFIX`.
+14. **Patchable lines (§3.6).** The `11.loot_table` schema passes stage 1 with `"x-patchable": true` on `lines`; the same keyword on a non-array subschema gives `E_SCHEMA_DEF`.
+15. **Retirements of DECISIONS.md 128 and 132 (§1.4, G12).** Once Canon §17.7 carries the G12 sentence, `gen_namespaces.py --check` fails until the table is regenerated, and a record or reference cat.seed, block.crop, mat.tag.tillable or mode.prologue then gives `E_RETIRED`.
+16. **Achievements (§5, DECISIONS.md 141).** `content/14/ach/` holds at most 40 `14.achievement` records; every other account milestone is a `14.codex_mark` record.
+17. **Doc 13 fields (§5.1).** A `13.enemy_template` record without `visual` or `body_state.crouch_mm` gives `E_SCHEMA`; `flags.net_always` set to 2 gives `E_SCHEMA`; a `13.ability` record with a negative `knockback_mm_s` gives `E_SCHEMA`; a `visual` that starts with another prefix than `art.visual.` gives `E_REF_PREFIX`.
+18. **Service schemas (§1.3).** A file under `palimpsest/schemas/svc/` is not read by stage 1 and no `E_SCHEMA_DEF` names it.
 
 ## Invariants annex
 
@@ -815,4 +842,8 @@ W! owner(record) ∈ owners(longest §19 prefix)                     N! Markdown
 W! namespaces.json := gen_namespaces(canon §19, §17.7)             N! retired id ∈ content
 W! Σ shares = 10000 ∧ Σ c_i ≤ 15000 by x-sum, x-sum-max           W! every code ∈ some fixture
 W! python verdicts == rust loader verdicts on fixtures            W! schemars output == committed schema
+W! id(11.template_loot) == loot.tpl. + dots_to_underscores(template) N! two template_loot records ⇒ one template
+W! x-patchable(11.loot_table.lines) == true                       N! stage 1 reads schemas/<subdir>/
+W! |14.achievement records| ≤ 40                                  N! knockback stated as a distance
+N! seeds ∨ Prologue ∈ catalog                                      W! retired(128, 132) ∈ §17.7 ⇒ E_RETIRED
 ```

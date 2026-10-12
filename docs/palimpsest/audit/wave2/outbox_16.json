@@ -1,0 +1,15 @@
+{
+  "chapter": "16",
+  "status": "complete",
+  "requests_handled": 21,
+  "edits": 18,
+  "canon_requests": [],
+  "cross_chapter_requests": [
+    {
+      "to": "02",
+      "request": "flag.net.crossplay is retired: no build reads it, as Steam is the only storefront (DECISIONS 112, 123). Interface row 02 in doc 16 reflects this."
+    }
+  ],
+  "product_questions": [],
+  "summary": "Completed wave-2 pass on doc 16:\n- Closed G15, G20, deleted G16 (C-01).\n- RunView backed by doc 14 FolioRun.\n- Removed EOS backend, crossplay flags, /v1/auth/epic, Epic relay (DECISIONS 112, 123).\n- Specified asynchronous trace service and audience streaming vote path in services (DECISIONS 96, 104).\n- Added net.msg.scribe_text to message table and Exports.\n- Handled Workshop auto-sync (DECISIONS 126), no photo mode (129), Fluent localization (138), no server-pushed tuning (139), telemetry rules (140), and 3 profile slots (144).\n- Cleaned undefined ID aware.profile.invader and net.msg.scribe_text in lint.\n- Clean lint with 0 findings."
+}

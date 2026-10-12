@@ -1,0 +1,18 @@
+{
+ "chapter": "10",
+ "status": "complete",
+ "requests_handled": 12,
+ "edits": 11,
+ "canon_requests": [
+  {
+   "section": "§13.1",
+   "old": "| `cat.seed` | plantable seeds | 07, 08 |",
+   "new": "",
+   "why": "DECISIONS 128; wave2:07"
+  }
+ ],
+ "cross_chapter_requests": [],
+ "product_questions": [],
+ "unresolved": [],
+ "summary": "Header to 2026-10-12, DECISIONS through row 145. §1 drops cat.seed from the mundane list and counts 26 categories (DECISIONS 128); canon_request to delete the §13.1 row; test 44 added. §5.3 Witness now uses doc 09's erratum_sees(e, n) on the event tick; Imports and Interface row 09 updated. Invariant names block.shrine_lamp instead of 'Erratum-placed altar'. Imports cite DECISIONS 65, 90, 128. Other wave-1 requests were already satisfied on disk. Sweep clean. Lint clean for 10; full run unchanged from baseline."
+}

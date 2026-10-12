@@ -1,0 +1,33 @@
+{
+  "chapter": "05",
+  "status": "complete",
+  "requests_handled": 19,
+  "edits": 28,
+  "canon_requests": [
+    {
+      "section": "§10.8",
+      "old": "",
+      "new": "2a. **Errata in solo play only:** if Death's Door did not prevent the lethal damage and the last stand is unused this Folio, the Erratum enters a last stand of 300 ticks (doc 04 §12.1a, doc 05 §12.1a) with HP 0, taking no damage. On success its HP = 1,000 mHP; on failure step 3 applies.",
+      "why": "DECISIONS 131, 134, 135; doc 05 Canon gap 4; aligns with doc 04 G2"
+    }
+  ],
+  "cross_chapter_requests": [
+    {
+      "to": "17",
+      "request": "Display the 3-input ink-strike QTE prompt for the solo last stand (DECISIONS 135) and provide accessibility options for single hold or auto-success (doc 17 §13.6)."
+    }
+  ],
+  "product_questions": [
+    {
+      "id": "05-Q1",
+      "question": "Aim assist strength in controller play: should aim assist be completely disabled in invasions or kept at standard slowdown?",
+      "default_applied": "Slowdown kept at standard value; tracking and snap are set to 0 in invasions against human targets (DECISIONS 142).",
+      "options": [
+        "Slowdown standard, tracking/snap 0 (applied)",
+        "Aim assist completely disabled in PvP invasions",
+        "Full aim assist in all modes"
+      ]
+    }
+  ],
+  "summary": "Applied wave-2 requests for chapter 05:\n- Replaced cavalry references with unmounted charger and lance_charge mechanics.\n- Gated sprint-slide and grappling line actions in §1.6 stance base speeds, §4.8a action gating, and Table 6.3 spread multipliers (DECISIONS 95).\n- Integrated doc 08 thrown potion splashes and bombs as NO_CRIT area hits under skill.throwing.\n- Added HitRecord fields for spell Contradiction potency, Edge, school, and move_id, routing them through steps 2.5 and 2.6 (doc 06).\n- Added doc 10 Interface row and §10.5a curse/pact combat hooks for curse.brittle, curse.blunted, curse.dulled, curse.misfire, curse.bloodprice, curse.backlash, curse.pact.fury, curse.pact.executioner, curse.pact.glass, curse.pact.nightmare, curse.pact.wildfire, curse.pact.thorns, curse.pact.bulwark, curse.pact.bloodthirst, and weapon lock.\n- Implemented solo last stand 300-tick QTE (§12.1a, DECISIONS 131, 134, 135).\n- Clean lint with 0 findings."
+}

@@ -1,0 +1,56 @@
+{
+ "chapter": "01",
+ "status": "complete",
+ "requests_handled": 22,
+ "edits": 46,
+ "canon_requests": [
+  {
+   "section": "§4.2",
+   "old": "",
+   "new": "**Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet, and a sprint-slide started by a crouch press while sprinting (doc 03 §5.9, §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).",
+   "why": "DECISIONS 95; doc 01 Canon gaps G1; same text as doc 03 G31"
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "04",
+   "request": "List, per Calling, at least one kit verb that targets or benefits an ally (heal, ward, buff, revive speed, taunt, mark, thrown potion with area effect) for all 13 Callings, so doc 01 §2.4 pillar.party_of_errata.t2's content audit can be checked on disk (doc 01 Interface assumptions row 04)."
+  },
+  {
+   "to": "11",
+   "request": "Add the genre-skinned grappling tool template of DECISIONS 95 as a cat.tool item.tool. template whose use calls doc 03 §5.24 start_grapple (doc 11 Canon gaps item 2); doc 01 §7 quickbar row and Canon gaps G1 cite it as requested."
+  },
+  {
+   "to": "14",
+   "request": "§5.6: advance each resident arc through the optional Folio quests the resident gives, with quest completion unlocking the next text scene (DECISIONS 130), replacing the run-milestone advance, and drop the 'except the Prologue' exception (DECISIONS 132). Doc 01 §6.5 already states the DECISIONS 130 rule."
+  },
+  {
+   "to": "21",
+   "request": "Apply DECISIONS 109-145 to §2.2, §2.3 (e) and §2.5 and its doc 01 Interface row: all 12 core genres, mode.standard and Second Edition at Early Access (114, 118); invasions, traces and streaming votes in updates before 1.0 (118, 125); Steam only, no Epic Games Store and no EOS crossplay (112, 123); no calendar dates (111); no demo or public playtest (113); no Prologue mode (132); Folio Expansions USD 9.99 (122). The pillar tests then read as written at every gate (doc 01 §2.7, PAR-12, §9.2). Doc 21 is generated, so the change goes to its generator inputs."
+  },
+  {
+   "to": "19",
+   "request": "§6.01 fragment: fill 01.pillar, 01.pillar_test and 01.kpi from doc 01 §2.7 and §10.2 (now shown in the §1.2 envelope; owner_docs and owner_doc as doc_number); the §7 row 01 'bare arrays' finding is resolved in doc 01."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "01-Q1",
+   "question": "Is the Second Edition offered at every Ur-Text victory of a Standard or Abridged run, or only at the account's first?",
+   "default_applied": "Every Ur-Text victory, the account's first included (doc 14 §8.9; doc 14 harvest pq_se_offer); doc 01 §6.4 and G2 state it as the rule.",
+   "options": [
+    "Every Ur-Text victory, the first included",
+    "Only the account's first Ur-Text victory",
+    "Every victory, but only after the first Second Edition has been entered once"
+   ]
+  }
+ ],
+ "unresolved": [
+  "Interface row 04: no chapter lists ally-targeting verbs per Calling, so pillar.party_of_errata.t2's audit stays unconfirmed (cross-chapter request to 04).",
+  "Grappling tool template still missing in doc 11; Canon §4.2 text still requested (G1).",
+  "Second Edition fused Folios, revised Editors, the Author and the trace service wait on canon and docs 12, 13, 16 (G2).",
+  "Doc 21 (generated) still predates DECISIONS 109-145; doc 14 §5.6 still predates 130 and 132.",
+  "Peer table keeps third-party prices 24.99 (Slay the Spire 2) and 29.99 (Hades II): they are R3 facts about other games, not PALIMPSEST prices."
+ ],
+ "summary": "Most requests were already satisfied on disk from the earlier pass (Erasure timing, mount row, Windows/Steam only, prices, the Censor, 12 genres at EA, G7). This round: header to 2026-10-12 with DECISIONS through row 145; Imports extended for rows 126-145 and docs 03, 07, 14, 16, 17, 19. Doc 16 import drops ChooseExit (votes are positions, doc 16 §9.8). The §10.3 systemic-kill test now uses the doc 07 §10.4 / doc 03 §14.2 trap payload (source 0, block. ability with block.tag.errata_placeable). §7 rows cite doc 03 §5.9 (2,000 mm), §5.23 slide, §5.24 grapple and doc 17 §12.1. JSON examples are wrapped in the doc 19 §1.2 envelope (01.pillar, 01.pillar_test, 01.kpi). Rows 126, 130, 132, 136, 140, 142, 144, 145 applied in PAR-04/06/10, §6.5, §10.1, Barony and Megabonk entries, fair_page.t3 and the first-editor KPI. Sweep removed Prologue, Epic/EOS/itch.io, farms, plants and 12.99 hits. Interface assumptions now have one row per chapter with a status; G1 carries the requested Canon §4.2 text, G2 cites doc 14 §8.9 and product question 01-Q1. Tests 26-28 and four invariants added. Lint for 01 is clean, and the full run still reports 0 duplicate IDs."
+}

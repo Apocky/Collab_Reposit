@@ -1,0 +1,109 @@
+{
+ "chapter": "13",
+ "status": "complete",
+ "requests_handled": 26,
+ "edits": 24,
+ "canon_requests": [
+  {
+   "section": "§5",
+   "old": "",
+   "new": "A fused Folio holds both genres' rosters, native and wild factions, World Laws and skins; a native of either genre is native there; its axioms are floor_div(a + b, 2) per axis.",
+   "why": "DECISIONS 100, 101; doc 13 Canon gaps 3a"
+  },
+  {
+   "section": "§11.6",
+   "old": "",
+   "new": "In the Final Second Edition Folio the boss-Folio pause of the Erasure clock lasts until the Author (boss.author) dies.",
+   "why": "DECISIONS 103; doc 13 Canon gaps 3b"
+  },
+  {
+   "section": "§20",
+   "old": "the Author of a genre",
+   "new": "the author of its genre (the Author, capitalized, names boss.author only)",
+   "why": "DECISIONS 103; doc 13 Canon gaps 3c"
+  },
+  {
+   "section": "§17.7",
+   "old": "",
+   "new": "enemy.prologue_hunter is retired with mode.prologue (DECISIONS 132).",
+   "why": "DECISIONS 132"
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "14",
+   "request": "§11 Prologue table row L7 and Interface row 13: enemy.prologue_hunter is retired (doc 13 §8.17 'No Prologue', DECISIONS 132); remove the L7 row and the ID from Interface row 13, or keep one retirement sentence naming it without backticks. The full lint now flags it as undefined in doc 14."
+  },
+  {
+   "to": "14",
+   "request": "Interface row 13: doc 13 §9.4 now states that gp.final_hp_bp and final_phase_extra apply to boss.author only, that the Erasure clock stays paused until the Author dies, that the Final Folio adds 2 to editor_kills_present and counts once for S_editor, and that doc 13 names each boss Folio's first Editor at entry for FolioRecord.editor (tests 72, 73). No change needed beyond confirming."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "13-Q4",
+   "question": "Is the Colophon vendor npc.vendor.colophon invulnerable and non-combat, or a killable elite vendor?",
+   "default_applied": "Invulnerable, non-combat, fac.neutral, no kill drop (§13.2, test 55).",
+   "options": [
+    "Keep the invulnerable sanctuary vendor (recommended)",
+    "Ordinary killable elite vendor"
+   ]
+  },
+  {
+   "id": "13-Q5",
+   "question": "Confirm the §13.4 chapter-hireling base entries rule.",
+   "default_applied": "The genre's sapient soldier-role entry whose signature calls no allies, otherwise the listed sapient entry.",
+   "options": [
+    "Confirm the rule (recommended)",
+    "Hand-pick a base per genre",
+    "Author bespoke hireling templates"
+   ]
+  },
+  {
+   "id": "13-Q6",
+   "question": "The Author is shown only as a writing hand, quill and handwriting. Confirm.",
+   "default_applied": "Writing hand only; body.amorphous, nib bp.core (§9.4).",
+   "options": [
+    "Adopt the writing hand (recommended)",
+    "Full figure or face",
+    "Unseen, voice and handwriting only"
+   ]
+  },
+  {
+   "id": "13-Q7",
+   "question": "Knockback distances converted to speeds (3000 mm->6000 mm/s, 4000->8000, 5000->9000). Accept?",
+   "default_applied": "Those conversions with knockback_mm_s (§2.1, test 62).",
+   "options": [
+    "Accept and retune in playtest (recommended)",
+    "Retune now",
+    "Distance-based knockback entry point in doc 03"
+   ]
+  },
+  {
+   "id": "13-Q8",
+   "question": "Final Folio: revised Last Word HP 100 then the Author HP 120, two Editor kills, one Volume reward. Accept?",
+   "default_applied": "As stated in §9.4.",
+   "options": [
+    "Accept (recommended)",
+    "Revised Last Word at HP 120 and one kill payment",
+    "Volume reward after each boss"
+   ]
+  },
+  {
+   "id": "13-Q9",
+   "question": "Revised Volume Editor chosen by the fused pair's dominant axiom with the cycle rule, no draw. Accept?",
+   "default_applied": "Axiom mapping ARC v1, TEC v2, MYT v3, VRV v4 (§9.4, test 66).",
+   "options": [
+    "Accept the axiom mapping (recommended)",
+    "One weighted draw on rng.spawn",
+    "Party chooses at the Binding door"
+   ]
+  }
+ ],
+ "unresolved": [
+  "Doc 14 still references enemy.prologue_hunter (§11 L7, Interface row 13); routed as a cross_chapter_request.",
+  "Canon-1.12 text for the Second Edition rules and the prologue_hunter retirement is pending (canon_requests).",
+  "Q4 and Q5 still await the product owner; defaults stand."
+ ],
+ "summary": "Resumed pass. Verified batches 1-14 on disk (visual, crouch_mm, net_always, knockback_mm_s, outfits, §9.4 Second Edition bosses, §10.8 fused Folios, kill credit, tests 60-71).\nApplied DECISIONS 132: enemy.prologue_hunter retired with a backtick-free retirement sentence in §8.17; Prologue exceptions removed from §1, §2.1, §10.2, §10.4, §11.1, Imports, Exports, Interface row 14; test 48 rewritten as a no-Prologue test.\nInbound 03: chrome king strobe now requests doc 03 §10.6 LightOverride boxes; no template sets CLIMB_ANY; mantle reach measured from the floor.\nInbound 14: §9.4 states the Author's death as Final Folio Editor death with the paused clock, two editor_kills_present, one S_editor, FolioRecord.editor at entry, and final_hp_bp/final_phase_extra on the Author only; tests 72-73.\nInbound 09: already satisfied (§2.1 Outfits, test 60).\nRows 130-131, 133-145: no subject in chapter; leftover sweep clean. Header As of 2026-10-12, coverage through row 145.\nLint ch13 clean; full run 0 duplicate IDs; doc 14 now shows undefined enemy.prologue_hunter, routed to doc 14."
+}

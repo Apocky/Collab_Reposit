@@ -1,6 +1,6 @@
 # 10 — Identification and Appraisal
 
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
 
 This chapter owns item knowledge and how it grows, the knowledge-filtered vendor value and the appraisal estimate, curses, pacts and blessings, the type-hiding rule and the wand classification rule (the `cat.wand` category itself is Canon §13.1's), sealed Reliquary contents, and the identification side of the Index and Bestiary.
 
@@ -20,9 +20,10 @@ This chapter owns item knowledge and how it grows, the knowledge-filtered vendor
 | Doc 06 §3.2, §8.3, §8.4, §16 | quick-cast wheel; text reading; wand charges, zap, recharge and snap; prayer needs, `prayer.absolution` and the Cosmic Horror patron boon |
 | Doc 07 §2.1, §2.2, §10.1 | material `value_bp` (`mat.iron` 10000); the worldgen `block.altar` and the placed `block.shrine_lamp`, both tagged `block.tag.altar` |
 | Doc 08 §12.1–§12.4, §15.3 | the 29 `alch.potion.*` types and their base values; drink and throw identification; Alchemy hooks; `alch.tx.uncurse`, `alch.tx.consecrate` |
-| Doc 09 §1.3, §2.3, §7.1 | `sys.perception` sight checks every 3 ticks; own emitted light; the noise level formula |
+| Doc 09 §1.3, §2.3, §4.8, §7.1 | `sys.perception` sight checks every 3 ticks; `erratum_sees(e, n)` for witness ID; own emitted light; the noise level formula |
 | Doc 11 §2.1–§2.4, §3.1–§3.5, §9.1, §9.8, §10–§14 | template and instance records (`base_value`, `sealed`, `zaps_total`) and knowledge at creation (§2.4), the generation pipeline and its step 12 call, accessories, consumables and their values, fresh Lucre piles (§9.1), Volume rewards (§9.8), in-run Reliquaries, Fortune Engines and the cursed capsule (§11.2), shops, the composite trade factors (§12.2), services, stored `value` (§13.1), Lucre targets (§13.2), carried mass (§14.1), stacking (§14.2) |
 | Doc 12, 13, 14, 15, 16 | Scriptoria, altars and story relics; monster item use and carried items; kits, Calling lore, boons, modes and Index and Bestiary knowledge (§5.5); Keepsakes, the Satchel and disclosure (§5); `ItemView` transport |
+| DECISIONS.md items 65, 90, 128 | no item durability; "Crowns" for the Mythic Fantasy Lucre skin; the seed category retired |
 | Doc 17 §4.3, §4.5; doc 18; doc 19 §6.10 | `input.examine`, the item card and the Ledger panel; descriptor art, form nouns and curse names; the schemas of this chapter's records |
 
 Every cited chapter exists, and this chapter cites their sections inline; what it needs from each is under Interface assumptions.
@@ -58,7 +59,7 @@ Every cited chapter exists, and this chapter cites their sections inline; what i
 | `cat.part` | no | yes | no | no | no | yes |
 | every other category (**mundane categories**) | no | no | no | no | no | no |
 
-- **Mundane categories** (`cat.ammo`, `cat.book`, `cat.food`, `cat.throwable`, `cat.gadget`, `cat.tool`, `cat.material`, `cat.ingredient`, `cat.container`, `cat.placeable`, `cat.key`, `cat.currency`, `cat.quest`, `cat.seed`, `cat.corpse`, `cat.body_part`) start and stay at `know.classified` (Canon §13.6), which for them is complete: exact value shown, no "?" marks, never a target, always `buc.uncursed`. The table covers all 27 Canon §13.1 categories.
+- **Mundane categories** (`cat.ammo`, `cat.book`, `cat.food`, `cat.throwable`, `cat.gadget`, `cat.tool`, `cat.material`, `cat.ingredient`, `cat.container`, `cat.placeable`, `cat.key`, `cat.currency`, `cat.quest`, `cat.corpse`, `cat.body_part`) start and stay at `know.classified` (Canon §13.6), which for them is complete: exact value shown, no "?" marks, never a target, always `buc.uncursed`. The table covers all 26 Canon §13.1 categories. The former seed category is retired (DECISIONS.md item 128) and has no row.
 - **Affix slots** are the entries of the instance's `affixes` list in list order, at most 8. A curse affix is always the last entry (§7.1). A Legendary perk and an Exotic intrinsic are not affix slots; they are revealed with RARITY.
 - Quality, material, manufacturer, `ilvl`, `origin_genre`, `gear_tier`, mass and stored `enhancement` are never hidden.
 - **Enhancement.** Every item enters the world with stored `enhancement = 0`: Canon §13.7 makes stored enhancement Emendation-driven, and no generator sets it (doc 11 §2.3 has no enhancement step, doc 14 §2.4 kits and doc 15 §5.4 Keepsakes are created at 0). Every later change is an Emendation, which is a visible party action. Stored `enhancement` is therefore public. The hidden part of an item's displayed enhancement `eff_enh` (Canon §13.7) is `eff_enh − enhancement`: +1 when blessed, `−curse_penalty` when cursed. `ENH` therefore means "`eff_enh` known" and is set exactly when `BUC` is set (§2.3). The "hidden +N" of Shattered Pixel Dungeon is this term.
@@ -451,7 +452,7 @@ Equip sequence for Erratum `E` equipping item `X` (installing, for implants):
 
 ### 5.3 Witness and deduction
 
-- **Witness.** When an NPC uses or zaps a type-hidden item (doc 13 §5.1) and the NPC is visible to any Erratum in that Erratum's most recent sight check (doc 09; `sys.perception` runs every 3 ticks per observer, so the result is at most 2 ticks old), §5.1 runs with the NPC's outcome and reason `appr.reason.witness`. The witnessed item's descriptor joins `seen`.
+- **Witness.** When an NPC uses or zaps a type-hidden item (doc 13 §5.1) and doc 09's `erratum_sees(e, n)` is true for any Erratum `e` (V ≥ 500 with the erratum profile, computed on the tick of the event; doc 09 §4.8), §5.1 runs with the NPC's outcome and reason `appr.reason.witness`. The witnessed item's descriptor joins `seen`.
 - **Deduction.** After every change to `TypeKnowledge`, for each descriptor in `seen` whose type is unknown, in ascending `id32` order, compute `candidates(d)` (§5.8). If exactly one type remains, `identify_type` with reason `appr.reason.deduction`. Repeat until a full pass identifies nothing. A descriptor joins `seen` when an unsealed instance enters an Erratum's inventory or a trade window, or is used or witnessed; a sealed item's descriptor joins `seen` when it is unsealed (§11). Deduction is sound because a seen descriptor is always assigned: decoys (§3.2) never appear on an item.
 
 ### 5.4 Doc-10 texts
@@ -1160,7 +1161,7 @@ Also defined here, without new IDs: the wand classification rule and wand type k
 | 06 | lists essences `glyph.ess.appraise`, `glyph.ess.omen`, `glyph.ess.psychometry` and makes `glyph.ess.sight` apply `appr.eff.aura` (§5.3); applies the wand pacts `curse.pact.overcharge` and `curse.pact.wildfire` on every zap; tags at most 16 spells `wand_pool` and draws wand spells only from them; text effects set `observable`; the Cosmic Horror patron boon calls `identify_one_unknown` with `appr.reason.prayer`; prayer need (4) and `prayer.absolution` uncurse by §7.6 |
 | 07 | material `value_bp` (`mat.iron` 10000); crafted items created with every required flag set and uncursed; `block.altar` is the worldgen altar and `block.shrine_lamp` with its unlit twin `block.shrine_lamp_out` the Erratum-placed one (§10.1) |
 | 08 | §12.4 drink, throw, brew and Alchemy-hook rules as used in §5.1; holy-water, unholy-water and `alch.tx` curse-state rules as listed in §7.6; values of the 12 exotics and elixirs of §12.2, with `alch.potion.draught` valued per brew |
-| 09 | per-observer sight results at most 2 ticks old for witness ID; noise and dynamic-light hooks for `curse.loud`, `curse.beacon` and `curse.pact.hush` (−`m` dB, floored by doc 09's own minimum) |
+| 09 | present: `erratum_sees(e, n)` computed on the event tick for witness ID (§5.3); noise and dynamic-light hooks for `curse.loud`, `curse.beacon` and `curse.pact.hush` (−`m` dB, floored by doc 09's own minimum) |
 | 11 | lists `item.text.survey` (20), `.omen` (18), `.consecrate` (30), `.intuit` (24), `.amnesia` (12) in §3.5 and maps `item.text.appraisal` to `appr.eff.identify` and `item.text.sanctify` to `appr.eff.unbind`; calls `roll_curse(rng, it, local_myt, req.source)` at §2.3 step 12; makes face 4 of every Fortune Engine the cursed capsule (§11.2) at a displayed share, filled only with equipment cards, calling `roll_curse` with source `CursedCapsule` and creating the item sealed with `RARITY` and `OMEN` set (§7.8); applies `curse.greed` and `curse.pact.miser` as fresh-pile Lucre factors (§9.1); counts an item bearing `curse.leaden` or `curse.pact.bulwark` in `carried_g` (§14.1) at `mul_bp(mass_g, 10000 + m)` while equipped; keeps its stored `value` (§13.1) identical to `value_true` (§6.1); feeds `value_vendor(view)` into every value-scaled price (§12.2 buy and sell through one composite trade factor recorded as `PriceObs.trade_bp`, §15 Rewrite, §16.3 reforge); sells `appr.svc.*` at §12.3's prices; owns `sealed` and creates Reliquary, Engine, Volume-reward and Keepsake items sealed with `RARITY` set; meets the §8 malign shares; stores `zaps_total: u32` (§2.2) |
 | 12 | Scriptoria in rooms and every Colophon; worldgen `block.altar` in `room.shrine` and `secret.room.shrine`; the story relic of a solved story calls `identify_instance` with `appr.reason.story` |
 | 13 | NPCs use type-hidden items through `ai.action.use_item` and emit the outcome for witness ID; Editors honor `curse.red_letter`; enemy templates for the Bestiary |
@@ -1173,7 +1174,7 @@ Also defined here, without new IDs: the wand classification rule and wand type k
 
 ## Canon gaps
 
-None open at canon-1.11. The gaps this chapter listed at canon-1.10 are closed by the canon-1.11 amendments, by the rulings of audit/canon_gaps_triage.md and by the chapters now on disk; the sections above state each rule they settled.
+One open request: Canon §13.1 deletes the row `| cat.seed | plantable seeds | 07, 08 |` (DECISIONS.md item 128); this chapter already counts 26 categories (§1). No other gap is open at canon-1.11. The gaps this chapter listed at canon-1.10 are closed by the canon-1.11 amendments, by the rulings of audit/canon_gaps_triage.md and by the chapters now on disk; the sections above state each rule they settled.
 
 ## Acceptance tests
 
@@ -1223,6 +1224,8 @@ Run seed for keyed tests: `0x0123456789ABCDEF`.
 42. **Pact magnitude and removal.** `curse.pact.bloodthirst` on a bearer with 85,000 mHP Max HP and RES 40, full potency: 850 mHP lost per s, 8,500 healed per credited kill, 6,000 for a crit dealing 30,000 mHP; at potency 7000: 595, 5,950 and 4,200. Its `eff_enh` is `enhancement − p` while both halves stay unchanged across `p = 1..=3`. An appraisal tier-2 completion sets `AFFIX_NAME[c]` and shows both halves; any §7.6 uncursing removes both halves and ends the binding.
 43. **Brittle.** `curse.brittle` at `p = 2` and full potency lowers the bearer's `dmg.slash`, `dmg.pierce` and `dmg.blunt` resistances by 1000 Bp and leaves every other resistance unchanged.
 
+44. **No seed category (§1, DECISIONS.md item 128).** The §1 category table and mundane list name exactly 26 categories, and none of them is a seed category.
+
 ## Invariants annex
 
 ```
@@ -1250,5 +1253,5 @@ W! Index|Bestiary ← in-run play only              N! Index|Bestiary ← SKU|In
 N! appearance mapping persists across runs        W! Cross-Reference off in leaderboard modes
 W! self-harm per consumable use ≤ 3000 Bp Max HP  W! client receives ItemView only
 N! invader ← party knowledge                      N! unrevealed property ∈ client packet
-N! appr.svc.* at an Erratum-placed altar          W! service cost := f(depth, Grade) only
+N! appr.svc.* at a block.shrine_lamp              W! service cost := f(depth, Grade) only
 ```

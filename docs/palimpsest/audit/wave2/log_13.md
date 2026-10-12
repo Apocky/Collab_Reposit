@@ -26,3 +26,23 @@ Started 2026-10-12. Inputs: requests_13.json (20 items), DECISIONS rows 89-129.
 - [x] Batch 7: Interface rows 03 (crouch, mantle), 12 (SE arenas, fused Folios, preview), 15 (rank.editor kills), 16 (net_always, migration), 18 (visual, Author), new 19 (schema fields); stray blank line in §11.1 list removed.
 - [x] Batch 8-10: Imports rows (Canon §20, doc 03 §5.8/§5.9/§14.3, doc 09 ev.takedown, doc 12 G19, doc 14 §1.2/§5.3a/§8.9, doc 16 §6.6/§9.3, new doc 18 row, decision ledger items); mantle link made exact against doc 03 §5.9 (origin column ceil_div(2000 + crouch_mm, 1000) cells); lint: fixed one undefined art.visual ID (now cites doc 18's ghoul record).
 - [x] Batch 11-14: Exports boss.* 33->39 and boss attacks 119->155 (counted programmatically), revised-Editor choice rule exported; Canon gaps item 3 rewritten (now canon-only: fused rule, pause, glossary); acceptance tests 60-71; invariants added. Lint clean.
+
+## Round 1, 2026-10-12 (resume)
+
+Verified on disk: batches 1-14 claims hold (visual, crouch_mm, net_always, knockback_mm_s, outfits, §9.4, §10.8, §11.1 kill credit, tests 60-71, lint clean at start). Not done: DECISIONS 132, rows 130-145 triage, inbound requests.
+
+| Item | Disposition | Where |
+|---|---|---|
+| DECISIONS 132 (no Prologue) | edit; enemy.prologue_hunter retired | §8.17, §1 rule 4, §2.1, §10.2, §10.4, §11.1, Imports, Exports, Interface 14, test 48; xreq doc 14 §11 L7 and Interface row 13 |
+| DECISIONS 130, 131, 133-145 | already satisfied or not applicable (no subject terms in ch13; sweep clean) | - |
+| wave2:03 strobe LightOverride | edit | §9.3 chrome king, Interface 03 |
+| wave2:03 CLIMB_ANY | edit: no template sets it (no wall-climb link) | §4.13 climb row |
+| wave2:03 mantle from floor | edit | §4.13 mantle row |
+| wave2:09 outfits verification | already satisfied | §2.1 Outfits, test 60 |
+| wave2:14 readings 1-3 | edit | §9.4 Author entry and fifth phase; tests 72, 73 |
+| Q4/Q5 Colophon vendor, hireling bases | product_question, defaults stand | §13.2, §13.4, Canon gaps 2 |
+| Canon gap 3 (SE rules) | canon_request | Canon gaps 3 |
+| Leftover sweep | clean (mounts/cavalry only as retirement records; Epic is a rarity; fac.rep.gift is faction, not Margin) | - |
+
+- Batch 15: 22 edits (header, 132 retirement, strobe, CLIMB_ANY, Author readings, tests 72-73, invariant). Lint ch13 clean.
+- Batch 16: 2 edits (test 48 wording, mantle reach from floor). Full lint: IDs in more than one chapter 0; ch13 clean; ch14 now undefined enemy.prologue_hunter (expected, routed to doc 14).

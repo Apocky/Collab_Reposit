@@ -1,0 +1,73 @@
+{
+ "chapter": "04",
+ "status": "complete",
+ "requests_handled": 25,
+ "edits": 36,
+ "canon_requests": [
+  {
+   "section": "§10.8",
+   "old": "",
+   "new": "2a. **Errata in solo play only:** if Death's Door did not prevent the lethal damage and the last stand is unused this Folio, the Erratum enters a last stand of 300 ticks (doc 04 §12.1a) with HP 0, taking no damage. On success its HP = 1,000 mHP; on failure step 3 applies.",
+   "why": "DECISIONS 131, 134"
+  },
+  {
+   "section": "§13.8",
+   "old": "",
+   "new": "Second Edition Folio `n` (n ≥ 1) uses depth `25 + 2n` in the P, T, H and S tables.",
+   "why": "DECISIONS 106"
+  },
+  {
+   "section": "§9.1",
+   "old": "",
+   "new": "Losing a leg of a two-legged plan multiplies move speed by 5000 and removes sprint, jump and dodge; doc 04 §8.3 and §13 set the factors for plans with more legs.",
+   "why": "doc 04 Canon gap 1 (fix:04 unresolved), restated"
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "05",
+   "request": "Add the last-stand input that doc 04 §12.1a opens (DECISIONS 131, 134, 135): three prompted ink-strike inputs in order within LAST_STAND_TICKS = 300 ticks; report success or failure (timeout = failure) to doc 04 §12.1a; draw no random number. The last stand opens only in solo play, after Death's Door fails, once per Folio."
+  },
+  {
+   "to": "17",
+   "request": "Add the last-stand prompt for doc 04 §12.1a (300 ticks, three prompted inputs in order) and its accessibility forms: a single hold or automatic success (DECISIONS 135)."
+  },
+  {
+   "to": "14",
+   "request": "Second Edition (doc 14, DECISIONS 106): state that Second Edition Folio n uses depth 25 + 2n for every depth-keyed table; doc 04 §6.7 now reads that depth for K(d), P, T and S."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "04-Q1",
+   "question": "Last stand details beyond DECISIONS 131/134: does it open under st.unmoored or after an invader kill, and is the Erratum protected after success?",
+   "default_applied": "Opens whenever Death's Door does not prevent lethal damage in solo play (including st.unmoored); HP 0 and no damage during the 300 ticks; success sets 1,000 mHP with no extra invulnerability; on failure an invader kill leads to Redacted (§12.3a), otherwise death.",
+   "options": [
+    "Default as applied",
+    "Add 60 ticks of st.deaths_door after success",
+    "No last stand under st.unmoored"
+   ]
+  },
+  {
+   "id": "04-Q2",
+   "question": "Kit balance: standard kits span 209 to 442 Lucre of base value and no kit carries a pick or torches (doc 14 Canon gap 2 points b and c).",
+   "default_applied": "Kits unchanged; the Shade kit now carries one lockpicks tool.",
+   "options": [
+    "Keep kits as written",
+    "Add a pick to Vanguard and Grenadier kits",
+    "Rebalance every kit to one value band"
+   ]
+  },
+  {
+   "id": "04-Q3",
+   "question": "Should each Calling kit list ally-targeting verbs (doc 01 pillar.party_of_errata.t2)?",
+   "default_applied": "Kits unchanged; ally-targeting verbs come from talents (for example Warden guardian, intercept, mender) and the universal kit's healing items.",
+   "options": [
+    "Talents carry ally verbs (as applied)",
+    "Add one ally-targeting item to every kit"
+   ]
+  }
+ ],
+ "unresolved": [],
+ "summary": "Most wave-2 requests were already on disk: fenrir/sun_wukong/loki budgets, self_repair supplies, durability perks removed, Security 25 slip chance, pres_hash phantoms and the hallucination marking.\nEdited: last stand §12.1a (DECISIONS 131, 134: solo only, after Death's Door, once per Folio, 300 ticks, 1,000 mHP on success); hunger only §11 (145); Second Edition depth 25 + 2n §6.7 (106); Appearance and ErratumChoice::Custom §2.1, kept by Going Native §2.8 (97, doc 14 §1.2-§1.3, doc 18 §5.6, whose art.preset IDs already exist); Shade kit 'lockpicks'; recipe_tier 0..=5 and mineral or salvage nodes; Appraisal 25 via the tier-1 reveal set; pacify on first subdue; curse and pact terms in the §1.2 modifier model; CLIMB_ANY, sprint-slide and grapple rules from doc 03; Imports doc 08 §4.3.\nAdded LAST_STAND_TICKS = 300 to Exports, Interface rows, Canon gaps 2 and 3, tests 57-63 and invariants. No new IDs.\nCanon requests: §10.8 last stand, §13.8 Second Edition depth, §9.1 leg loss (restated). Cross-chapter: 05 and 17 last-stand input and prompt, 14 depth.\nLeftover sweep found no hits. Lint for 04 is clean; full run keeps 0 duplicate IDs."
+}

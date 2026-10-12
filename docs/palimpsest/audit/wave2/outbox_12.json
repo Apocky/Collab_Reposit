@@ -1,0 +1,39 @@
+{
+  "chapter": "12",
+  "status": "complete",
+  "requests_handled": 26,
+  "edits": 22,
+  "canon_requests": [
+    {
+      "section": "§5.12",
+      "old": "",
+      "new": "Each Folio rolls one time of day and one weather state (doc 12), fixed for the Folio. Per-genre weights over `tod.dawn`, `tod.day`, `tod.dusk`, `tod.night` and `wx.clear`, `wx.rain`, `wx.storm`, `wx.fog`, `wx.snow`, `wx.dust` feed light, sound, surfaces and fire (doc 03 §4.8) and stealth (doc 09 §15.3).",
+      "why": "DECISIONS 99; doc 12 G19; unified climate table with docs 03 and 09"
+    },
+    {
+      "section": "§5.8",
+      "old": "",
+      "new": "**Fused Folios.** A Second Edition Folio is written in an ordered core genre pair (A, B) that doc 12 records. Outside bleed and seam zones `local_axiom(pos, a) = floor_div(axiom_A + axiom_B, 2)`, both genres' rosters, World Laws and skins are active, and entities of either genre count as native (DECISIONS 101).",
+      "why": "DECISIONS 101, 117; doc 12 §5.8; doc 14 §8.9"
+    }
+  ],
+  "cross_chapter_requests": [
+    {
+      "to": "18",
+      "request": "Key lighting rig and atmospheric VFX variants on `FolioView.climate` ({ tod, wx }) rolled per Folio (DECISIONS 99; doc 12 §3.7)."
+    }
+  ],
+  "product_questions": [
+    {
+      "id": "12-Q1",
+      "question": "Story relic: should the story relic spot be filled with an ordinary Placed accessory whose affix themes follow the story's 2 domains (as doc 11 implements), or a unique relic item?",
+      "default_applied": "Ordinary Placed accessory with fixed card cat.accessory and SER 40 whose story_domains hold the 2 drawn domains (doc 11 §9.6).",
+      "options": [
+        "Placed accessory with domain-themed affixes (applied)",
+        "Bespoke story relic templates per genre",
+        "Remove the story relic item"
+      ]
+    }
+  ],
+  "summary": "Applied wave-2 requests for chapter 12:\n- Deleted cavalry references, room.no_mount, and updated captive event to trader faction npc.captive.<genre_suffix>.\n- Updated secret.exit.unwritten stack-5 timing to 840 s, and clarified Index terminology.\n- Documented Prologue retirement (DECISIONS 132).\n- Added net_always flag to exit doors in Colophon.\n- Added mini-boss arena dressings for all 14 new doc 13 §9.3 mini-bosses in §21.2.\n- Named block.altar, block.rubble, block.pit_lid, block.hull_panel in hazard and room tables.\n- Defined per-Folio weather states and time-of-day weight tables (§3.7, DECISIONS 99).\n- Defined Second Edition fused-Folio lattice, per-pair Volume no-repeat rule, and depth 25 + 2n (§5.8, DECISIONS 100, 101, 105, 117).\n- Added Rule F1 Origin fallback (DECISIONS 116) and forced Ur-Text draw exemption (DECISIONS 115).\n- Clean lint with 0 findings."
+}

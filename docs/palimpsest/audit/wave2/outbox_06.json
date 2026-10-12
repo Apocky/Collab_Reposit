@@ -1,0 +1,81 @@
+{
+ "chapter": "06",
+ "status": "complete",
+ "requests_handled": 16,
+ "edits": 23,
+ "canon_requests": [
+  {
+   "section": "§17.1",
+   "old": "at run start each Erratum pre-learns 2 glyphs chosen from it (doc 06)",
+   "new": "at run start each Erratum pre-learns 2 glyphs chosen from it (doc 06); runs on `unlock.daily_baseline` offer the 52 glyphs of doc 06's `base` pool in place of the library",
+   "why": "DECISIONS 33; doc 06 G17"
+  },
+  {
+   "section": "§16.5",
+   "old": "Each genre has one patron Author, `patron.<genre_suffix>`, 16 in all, owned by doc 06.",
+   "new": "Each genre has one patron, the author of its genre, `patron.<genre_suffix>`, 16 in all, owned by doc 06.",
+   "why": "DECISIONS 103 (boss.author is the Author); wave2:13; doc 06 G18"
+  },
+  {
+   "section": "§20",
+   "old": "| Patron | the Author of a genre, who answers prayers |",
+   "new": "| Patron | the author of a genre (lower case; the Author is `boss.author`), who answers prayers |",
+   "why": "DECISIONS 103; doc 06 G18"
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "03",
+   "request": "Doc 03 §5.19 Homing: add a lock variant for doc 06 §5.4 `glyph.mod.homing`. Add `Projectile.home_target: Option<EntityId>` set at launch by doc 06 (the hostile with the smallest angle to the aim inside an 8192 Bam cone within 15000 mm, ties to lower EntityId) with `home_bam_s = 8160` (136 x 60) through the same Canon §2.3 accumulator. When `home_target` is Some, step 2 skips the `st.marked` candidate scan and uses that entity's body center as `d`; step 3 applies unchanged; when the entity dies, despawns or becomes a ghost, the projectile flies straight for the rest of its life. Motivated by doc 06 §5.4 and acceptance test 57."
+  },
+  {
+   "to": "02",
+   "request": "Rust slice (doc 03 §5.19): add `home_target: Option<EntityId>` to the projectile struct and the lock branch of `home(pr, v)` described in doc 06 §5.4 (home_bam_s 8160, no candidate scan when locked). Motivated by doc 06 §5.4."
+  },
+  {
+   "to": "11",
+   "request": "Doc 11 §2.3 step 11c (Wand spell): replace 'weight 100 each' with 'weight `wand_weight` from doc 06 §8.4 (the weights of the 15 `wand_pool` spells sum to 10000)'; keep the legality filter and ascending ID. Motivated by doc 06 §8.4 and Interface row 11."
+  },
+  {
+   "to": "05",
+   "request": "Doc 05 HitRecord and pipeline: for spell and prayer hits HitRecord carries the spell's Contradiction potency and Edge (doc 06 §11.1: the maximum over the root core glyphs, or the payload stage's own core), and steps 2.5 and 2.6 use them in place of `potency(h.item_uid)` and `edge_bp(h.item_uid)`; it also carries the stage school for skill XP (doc 06 §7.4) and `move_id` = the stage's form glyph id32. Motivated by doc 06 Interface row 05."
+  },
+  {
+   "to": "04",
+   "request": "Doc 04: state that an Unwritten Origin's glyph origin for run-start, kit and Glyph Library glyphs is `genre.ur_text` (doc 06 §8.1, doc 14 §5.7). Motivated by doc 06 Interface row 04."
+  },
+  {
+   "to": "12",
+   "request": "Doc 12 Colophon vendor: stock glyph tomes whose contents are filled by doc 06 §8.1 `glyph_tome(school, d, set, rng)`. Motivated by doc 06 Interface row 12."
+  },
+  {
+   "to": "14",
+   "request": "Doc 14 §5.7 Joining: replace 'Prologue and Apocrypha runs add nothing (§4.5).' with 'Apocrypha runs add nothing (§4.5).' (DECISIONS 132 retires the Prologue). Doc 06 §8.1 already reads this way."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "06-Q1",
+   "question": "When one stage holds two block-power essences (§13.1), does block damage use the largest block power or the sum?",
+   "default_applied": "largest block power among the stage's essences after material multipliers; tool tier = source item's primary-material tier, tooltier.t0 with none",
+   "options": [
+    "largest (current rule)",
+    "sum of block powers"
+   ]
+  },
+  {
+   "id": "06-Q2",
+   "question": "prayer.intercession (§16.4) resurrects a ghost ally mid-Folio for 400 favor; Canon §17.6 and DECISIONS 50 name next-Folio resurrection. Keep the mid-Folio petition?",
+   "default_applied": "kept: 400 favor, minimum 500, Remains within 3000 mm, 2500 Bp of Max HP",
+   "options": [
+    "keep as a costly mid-Folio exception",
+    "remove intercession and keep next-Folio resurrection only",
+    "keep but only at a shrine"
+   ]
+  }
+ ],
+ "unresolved": [
+  "Interface rows 13, 15 and 16 were not audited row by row against those chapters this round; they stay assumptions without a (present) mark."
+ ],
+ "summary": "Header to 2026-10-12, DECISIONS through row 145. Petition count resolved to 32 at Devotion 50 (m25 x8000 applies: mul_bp(60,8000)=48, floor_div(4800,150)=32) and 50 at Devotion 20, in §16.4 and test 22, matching doc 17 §10.7.\nHoming now routes through doc 03 §5.19 with a launch lock (home_target, home_bam_s 8160 = 136 Bam per tick); requested from 03 and 02; test 57 and an invariant added.\nWand draw: §8.4 states step 11c weights by wand_weight among legal spells; doc 11 asked to replace weight 100 each.\nShadow: doc 03 §10.6 is the reader; doc 09 sees it through light_at (§13.1, Interface 09, Exports).\nPatron is the author of its genre in lower case (DECISIONS 103); canon §16.5 and §20 requests (G18).\nBlood Price never opens the last stand (DECISIONS 131/134); test 58.\nPrologue reference removed from §8.1 (DECISIONS 132); doc 14 asked to match.\nAlready satisfied: Glyph Library row (§8.1), altar loss rule (§16.1), Interface rows 08 and 11, doc 03 shadow dim. DECISIONS 33 and G17 text confirmed; G17 canon request restated with exact text.\nStill requested: doc 05 HitRecord spell potency/Edge, doc 04 ur_text glyph origin, doc 12 Colophon tome stock.\nLeftover sweep: no other hits."
+}

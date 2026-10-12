@@ -1,0 +1,136 @@
+{
+ "chapter": "19",
+ "status": "complete",
+ "requests_handled": 4,
+ "edits": 28,
+ "canon_requests": [
+  {
+   "section": "§19",
+   "old": "| `pillar.`, `kpi.` | 01 |",
+   "new": "| `pillar.`, `kpi.` | 01 |\n| `meta.` | 00 (generated tables, doc 19) |",
+   "why": "doc 19 G1: generated ownership table content/00/meta/namespaces.json needs a namespace"
+  },
+  {
+   "section": "§1.1",
+   "old": "Renaming requires an alias entry in `data/aliases.json`.",
+   "new": "Renaming requires an alias entry: the renamed record lists its old IDs in `aliases` (doc 19 §1.2).",
+   "why": "doc 19 G2: all content lives under content/<doc>/<ns>/ (doc 02 §11.1)"
+  },
+  {
+   "section": "§19",
+   "old": "| Namespace prefix | Owning document |",
+   "new": "| Namespace prefix | Record owners | Rule owners |  (every row split: the owner cell's two-digit record owners in the second column, phrases such as \"Echo acquisition in 15\", \"account economy rules in 15\" and \"owners per §11.1 and §12 for behavior\" in the third)",
+   "why": "doc 19 G3: owner cells mix record owners and rule owners; doc 19 §1.4 parses them"
+  },
+  {
+   "section": "§1.1",
+   "old": "Every piece of content and every enum value has a string **content ID**.",
+   "new": "Every piece of content and every enum value that other records reference, or that saves and packets carry as `id32`, has a string **content ID**. A closed set used by one field only is a JSON Schema `enum` of bare words (doc 19 G4).",
+   "why": "doc 19 G4: part slots, KPI units, flag kinds and axis names are field-local bare words"
+  },
+  {
+   "section": "§1.2",
+   "old": "",
+   "new": "Bp content values are `i32`; power-table values and `i64` table multipliers are `i64` Bp and in content stay within `±(2^53 - 1)` (doc 19 `bp`, `bp_i64`).",
+   "why": "doc 19 G5: Bp width for i64 power tables"
+  },
+  {
+   "section": "§1.6",
+   "old": "Larger values, and every `u64` such as a seed or a hash, are written as `\"0x\"`-prefixed hexadecimal strings, because JSON tooling loses precision above 2^53.",
+   "new": "Larger values, and every `u64` such as a seed or a hash, are written as `\"0x\"` followed by exactly 16 upper-case hexadecimal digits, because JSON tooling loses precision above 2^53 and `content_hash` hashes the JSON text.",
+   "why": "doc 19 G6: one canonical hex spelling"
+  },
+  {
+   "section": "§1.10",
+   "old": "",
+   "new": "Locale tags are not content IDs. A locale record has the ID `nar.locale.<tag>`, the BCP 47 tag lower-cased with `-` written as `_` (for example `nar.locale.en_us`); doc 18 owns the records.",
+   "why": "doc 19 G7: BCP 47 tags break the ID grammar"
+  },
+  {
+   "section": "§17.7",
+   "old": "",
+   "new": "Every ID the canon replaces is listed as retired in §17.7, including the block category and the Delving skill IDs replaced in canon-1.4.",
+   "why": "doc 19 G8: retirements outside §17.7 are invisible to gen_namespaces.py"
+  },
+  {
+   "section": "§1.6",
+   "old": "",
+   "new": "- The integer token `-0` is not an integer; content never contains it.",
+   "why": "doc 19 G9: serde_json reads -0 as -0.0"
+  },
+  {
+   "section": "§1.6",
+   "old": "",
+   "new": "- A JSON object in content never repeats a key.",
+   "why": "doc 19 G10: serde_json keeps the last value silently"
+  },
+  {
+   "section": "§19",
+   "old": "| `mat.`, `q.`, `station.`, `recipe.`, `part.`, `block.`, `tooltier.`, `gadget.` | 07 (blocks shared with 03) |",
+   "new": "| `mat.`, `q.`, `station.`, `recipe.`, `part.`, `block.`, `tooltier.`, `gadget.` | 07 (block records in 07's files; 03 adds grid fields by schema fragment) |  (and per shared namespace: `ax.`, `genre.` records in 00's files with 12's fields by fragment; `ev.`, `rng.` core records in 00's files and bus events in 03's; rows 10 to 12 records in the named chapter's files)",
+   "why": "doc 19 G11: one record per ID needs one file owner per shared namespace"
+  },
+  {
+   "section": "§17.7",
+   "old": "",
+   "new": "cat.seed, block.crop and mat.tag.tillable (DECISIONS.md, item 128) and mode.prologue (item 132) are retired IDs and must not appear in content. (Write the IDs in backticks in the canon so gen_namespaces.py retires them.)",
+   "why": "DECISIONS 128, 132; doc 19 G12"
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "01",
+   "request": "Doc 01 §2.7 and §10.2: the examples of content/01/pillar/pillars.json, content/01/pillar/tests.json and content/01/kpi/kpis.json show bare JSON arrays. Wrap each in the doc 19 §1.2 envelope: {\"schema\": \"01.pillar\" | \"01.pillar_test\" | \"01.kpi\", \"records\": [ ... ]}; state `owner_docs` and `owner_doc` as doc 19 `doc_number` integers. Motivated by doc 19 §1.2 and Interface row 01."
+  },
+  {
+   "to": "11",
+   "request": "Doc 11 §2.1 and Exports: the `11.template_loot` records carry the ID `loot.tpl.` plus the owner's template ID with every `.` written as `_` (for example loot.tpl.arch_melee_spear for `arch.melee.spear`) and a field `template` holding the owner's ID; template IDs used this way are at most 55 bytes. Export the `loot.tpl.` IDs under that scheme with an exact count. Motivated by doc 19 §1.2 (Template loot IDs) and §5 row 11.template_loot."
+  },
+  {
+   "to": "14",
+   "request": "Doc 14 §10 (DECISIONS 137, 141): `14.achievement` holds at most 40 curated Steam achievements (story and mastery milestones, the first-run achievement for finishing Folio 1 of the account's first run, Second Edition Ironman); `ach.first_page` (complete the Prologue) leaves; every other milestone becomes an in-game Codex mark, record kind `14.codex_mark`, IDs `ach.mark.<name>`, file content/14/ach/marks.json. Define the marks and export both counts. Motivated by doc 19 §5 rows 14.achievement and 14.codex_mark."
+  },
+  {
+   "to": "18",
+   "request": "Doc 18 §9.11: define the launch locales as `18.locale` records `nar.locale.<tag>` (BCP 47 tag lower-cased, `-` as `_`, for example `nar.locale.en_us`), one per locale of the 15 (DECISIONS 138), with a fallback order field, file content/18/nar/locales.json; export them. Motivated by doc 19 §5 row 18.locale and Canon gaps G7."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "19-Q1",
+   "question": "What ID do doc 11's loot records for templates owned by other chapters carry?",
+   "default_applied": "loot.tpl. plus the template ID with dots as underscores, with a `template` x-idref field (doc 19 §1.2)",
+   "options": [
+    "loot.tpl. plus template ID with dots as underscores",
+    "fold the loot fields into each owner's schema by fragment (no separate record)",
+    "a counter-based ID loot.tpl.<n>"
+   ]
+  },
+  {
+   "id": "19-Q2",
+   "question": "DECISIONS 141 says about 40 achievements; is 40 a hard cap the catalog enforces?",
+   "default_applied": "hard cap: at most 40 `14.achievement` records (test 16)",
+   "options": [
+    "hard cap 40",
+    "hard cap 50",
+    "target 40 without a cap"
+   ]
+  },
+  {
+   "id": "19-Q3",
+   "question": "Which namespace and record kind hold the Codex marks?",
+   "default_applied": "`14.codex_mark` under `ach.mark.` (proposed; doc 14 owns `ach.`)",
+   "options": [
+    "`ach.mark.` in doc 14",
+    "a new Canon §19 namespace `mark.` owned by 14",
+    "fields on `14.achievement` with a steam flag"
+   ]
+  }
+ ],
+ "unresolved": [
+  "Canon §17.7 does not yet retire cat.seed, block.crop, mat.tag.tillable or mode.prologue, so gen_namespaces.py cannot reject them until canon-1.12 (G12).",
+  "Doc 01 bare arrays, doc 11 loot.tpl. exports, doc 14 Codex marks and doc 18 locale records wait on those chapters (cross_chapter_requests).",
+  "Full lint shows findings in chapters 14 (enemy.prologue_hunter) and 16 (aware.profile.invader, net.msg.scribe_text) from those lanes' concurrent edits; doc 19 adds none."
+ ],
+ "summary": "Header set to 2026-10-12, canon-1.11, DECISIONS through row 145. Requests: fix:02 (x-patchable on loot-table lines, §3.6 and §5), fix:01 (01.pillar_test fields in §5), verify:11 (template loot ID scheme loot.tpl.<template ID with dots as underscores>, §1.2) and the inbound doc 13 request (new §5.1 with visual, crouch_mm, net_always, knockback_mm_s and the outfit and size rules) all applied.\nConflict checks on disk: doc 16 now uses palimpsest/schemas/svc/econ_api.json (satisfied; §1.3 states stage 1 skips schemas subdirectories); block.air is defined by doc 07 and imported by doc 03 (satisfied); doc 11 names 11.template_loot (satisfied, ID scheme sent); doc 01 still shows bare arrays (cross request).\nDECISIONS 128 and 132: seeds and Prologue rooms removed from the catalog; 141: 14.achievement capped at 40 and a proposed 14.codex_mark row added (catalog 215 -> 216 rows, counted by script).\nLeftover sweep hits fixed: 2. Canon gaps G1-G11 restated as canon_requests plus new G12 for the 128/132 retirements. Acceptance tests 13-18 and five invariant lines added. 19 SCHEMA-FRAGMENT placeholders kept. Lint for chapter 19 clean; cross-chapter duplicates 0."
+}

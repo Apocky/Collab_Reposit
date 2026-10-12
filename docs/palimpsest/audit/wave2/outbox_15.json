@@ -1,0 +1,74 @@
+{
+ "chapter": "15",
+ "status": "complete",
+ "requests_handled": 19,
+ "edits": 33,
+ "canon_requests": [],
+ "cross_chapter_requests": [
+  {
+   "to": "14",
+   "request": "§10 Achievements, §8.1 and §11 (DECISIONS 132, 137, 141): cut §10 to about 40 curated Steam achievements (story and mastery milestones, the first-run achievement, Second Edition Ironman) and move the long tail to in-game Codex marks that keep grades 1 to 4, because doc 15 §2.2, §2.4 and §6.2 pay a Codex mark exactly like an ach. entry (40/80/160/320 Ink, 10/25/50/100 Quires, 2,000 Codex XP, idempotency kind ach with the mark's ID). Replace the Prologue grant of ach.first_page with the first-run achievement unlocked by finishing Folio 1 of the account's first run, and remove the Prologue from the §8.1 mode table; doc 15 §2.2 retired its Prologue mode row and refuses a run report naming it with report_malformed."
+  },
+  {
+   "to": "16",
+   "request": "§11 run-report validation (doc 15 §2.2, test 12): a run report whose mode is the retired Prologue mode is refused with svc.err.report_malformed; the §2.2 mode table now has five rows (standard group, daily group, easing Custom, Apocrypha, invader)."
+  },
+  {
+   "to": "17",
+   "request": "Remove any Prologue achievement or Prologue reward text from the Codex pass, Inkwell and achievement screens; doc 15 §2.2 pays the first-run achievement (DECISIONS 137) and Codex marks (DECISIONS 141) through the achievement grade table."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "15-Q1",
+   "question": "How is the palimpsest-verify tool licensed, given DECISIONS 44 (code proprietary, all rights reserved)?",
+   "default_applied": "Source published for inspection under the proprietary licence; §3.4, §4.2, §4.3 and §5.3 specify every algorithm so players can reimplement it (§4.3).",
+   "options": [
+    "Source published under the proprietary licence (applied)",
+    "MIT licence carve-out for the verify tool and palimpsest_econ only",
+    "Binary only, algorithms documented"
+   ]
+  },
+  {
+   "id": "15-Q2",
+   "question": "Keep the §3.9.1 Transcription shelf (16/32 qualified exits per Script, 768 exits for all 36 launch Scripts) as the deterministic Script route for DECISIONS 79?",
+   "default_applied": "Shelf kept as written.",
+   "options": [
+    "Keep as written (applied)",
+    "Keep the shelf with other costs",
+    "Another deterministic route"
+   ]
+  },
+  {
+   "id": "15-Q3",
+   "question": "Approve the authored 19.99 price-matrix row (EUR 19.99, GBP 16.99, BRL 74.99, JPY 2,900, KRW 24,400, AUD 29.95, CAD 25.99, CNY 90)?",
+   "default_applied": "Row kept as authored from the other rows' ratios.",
+   "options": [
+    "Approve as authored (applied)",
+    "Use Steam's recommended regional prices for 19.99"
+   ]
+  },
+  {
+   "id": "15-Q4",
+   "question": "What kind of cosmetic is the exclusive Second Edition Ironman reward (DECISIONS 108)?",
+   "default_applied": "A portrait frame, cosm.frame.ironman, once per account.",
+   "options": [
+    "Portrait frame (applied)",
+    "Outfit",
+    "Title plus frame"
+   ]
+  },
+  {
+   "id": "15-Q5",
+   "question": "Do Codex marks (the long tail of DECISIONS 141) pay Ink, Quires and Codex XP like Steam achievements?",
+   "default_applied": "Yes: Codex marks pay the same grade table, so economy totals (6,440 Ink, 1,960 Quires for the current 59 entries) are unchanged.",
+   "options": [
+    "Same grade table as achievements (applied)",
+    "Codex marks pay Codex XP only",
+    "Codex marks pay nothing"
+   ]
+  }
+ ],
+ "unresolved": [],
+ "summary": "Full wave-2 pass on doc 15. Applied DECISIONS 132 (Prologue mode row retired, Ink formula, Quire and Reliquary notes, tests 12 and 36), 137 (first-run achievement pays the achievement row) and 141 (Codex marks pay the grade table; totals restated as the sum over doc 14 §10's list). Inbound wave2:13 and wave2:14: §2.2 now states that all six Second Edition rank.editor bosses pay Editor kills, the Final Second Edition Folio pays two (80 Ink, 2 Reliquaries), both count in editor_kills_present, and fused Folios read FolioRecord.genre (§5.1). Fixed: glyph rarity-band wording (doc 06 §8.1), pity receipt field names folio_exits and transcription, idem source s = req_id hex for Archive and Transcription, palimpsest-verify as a palimpsest_tools binary and its licence under DECISIONS 44 (product question), doc 12 §25 pointer, end-of-service wording in the invariants. Already satisfied: prices 19.99/9.99, Steam only, no demo, T0 as configuration, 12 genres at EA, voice with non-friends muted, Index naming, Ironman cosmetic. Added tests 43-45 and 3 invariants; header As of 2026-10-12, through row 145. Cross-chapter requests to 14, 16, 17; no canon requests. Lint clean for 15; full run shows only baseline findings."
+}

@@ -1,14 +1,14 @@
 # 01 — Vision, Pillars and Inspiration Ledger
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-12. Status: BINDING. Conforms to canon-1.11.
 
-This chapter fixes what PALIMPSEST is, what it must feel like, which games it learns from and how its success is measured. Every other chapter answers to the pillars in §2. When a system choice is ambiguous, the pillar tests decide. This chapter draws no random numbers and adds no simulation state. Every rule here was checked against canon-1.11 and the product-owner rows of DECISIONS.md, including the cut of mounts (canon-1.8, DECISIONS 55), the removal of item durability (canon-1.10, DECISIONS 65), the softer Erasure clock (DECISIONS 26), all 12 core genres and the Standard run at Early Access (DECISIONS 114, which supersedes the 6 genres of DECISIONS 41), the Second Edition at Early Access (DECISIONS 118) and the PC-only, Steam-only release (DECISIONS 98, 112).
+This chapter fixes what PALIMPSEST is, what it must feel like, which games it learns from and how its success is measured. Every other chapter answers to the pillars in §2. When a system choice is ambiguous, the pillar tests decide. This chapter draws no random numbers and adds no simulation state. Every rule here was checked against canon-1.11 and the product-owner rows of DECISIONS.md, including the cut of mounts (canon-1.8, DECISIONS 55), the removal of item durability (canon-1.10, DECISIONS 65), the softer Erasure clock (DECISIONS 26), all 12 core genres and the Standard run at Early Access (DECISIONS 114, which supersedes the 6 genres of DECISIONS 41), the Second Edition at Early Access (DECISIONS 118) and the PC-only, Steam-only release (DECISIONS 98, 112). It applies DECISIONS.md through row 145.
 
 ## Imports
 
 | Source | Section | Consumed here |
 |---|---|---|
 | DESIGN_BRIEF | §1–§9 | high concept, Archetype × Skin, axioms, run shape, tech, attributes, monetization stance, document contract |
-| DECISIONS | 2026-10-11, rows 1–125 and the orchestrator rows | product-owner answers: Standard plus Abridged (2); first person with a third-person toggle (3); Bevy 0.20 (5); wry literary tone (8); 16+ gore (13) as ink gore with a red-blood toggle, PEGI 16 and ESRB M (94); PvP invasions (15); limited building (16); softer Erasure (26); 250 mm micro-voxels (37); text-only narration (38); base game USD 19.99 (42); procedural ending (46); mounts cut (55); World Laws discovered in play (56); no item durability (65); Steam P2P over Datagram Relay with a headless host for verification (73, whose Epic build 112 withdraws); the walkable 3D Margin hub (77); Margin cast arcs (78); about 80 hours to unlock every non-cosmetic option (79); a Recollection trial for every Echo (80); Errata limbs sever only from a crippled pool (84); host migration paths (93); the movement kit (95); asynchronous traces (96); PC only through 1.0 (98); Second Edition (100–108); streaming votes (104); strict lattice rules with no relaxation (109, 110); no hard dates (111); Steam the only storefront (112); no demo or public playtest build (113); all 12 core genres and the Standard run at Early Access (114, superseding 41); a Volume of the Second Edition never repeats a fused pair (117); the Second Edition at Early Access, and asynchronous traces, streaming votes and invasions in updates before 1.0 (118, 125); the Scribe at 1.0, the template grammar at Early Access (120); Kaiju and Mecha as worn armor, no vehicles (121); Folio Expansions at USD 9.99 (122); Steam networking with our own verifier and no EOS SDK (123) |
+| DECISIONS | 2026-10-11, rows 1–145 and the orchestrator rows | product-owner answers: Standard plus Abridged (2); first person with a third-person toggle (3); Bevy 0.20 (5); wry literary tone (8); 16+ gore (13) as ink gore with a red-blood toggle, PEGI 16 and ESRB M (94); PvP invasions (15); limited building (16); softer Erasure (26); 250 mm micro-voxels (37); text-only narration (38); base game USD 19.99 (42); procedural ending (46); mounts cut (55); World Laws discovered in play (56); no item durability (65); Steam P2P over Datagram Relay with a headless host for verification (73, narrowed to Steam alone by 112); the walkable 3D Margin hub (77); Margin cast arcs (78); about 80 hours to unlock every non-cosmetic option (79); a Recollection trial for every Echo (80); Errata limbs sever only from a crippled pool (84); host migration paths (93); the movement kit (95); asynchronous traces (96); PC only through 1.0 (98); Second Edition (100–108); streaming votes (104); strict lattice rules with no relaxation (109, 110); no hard dates (111); Steam the only storefront (112); no demo or public playtest build (113); all 12 core genres and the Standard run at Early Access (114, superseding 41); a Volume of the Second Edition never repeats a fused pair (117); the Second Edition at Early Access, and asynchronous traces, streaming votes and invasions in updates before 1.0 (118, 125); the Scribe at 1.0, the template grammar at Early Access (120); Kaiju and Mecha as worn armor, no vehicles (121); Folio Expansions at USD 9.99 (122); Steam networking with our own verifier and no second networking SDK (123); Steam Workshop mods synced to co-op peers (126); no Margin relationships, residents' fixed arcs advanced by the Folio quests they give (127, 130); no photo mode (129); the solo last stand (131, 134, 135); no Prologue, contextual first-encounter tips and a first-run achievement in its place (132, 136, 137); Scribe's Mercy and Grades 0 to 20 as the whole difficulty range (133); Fluent localization (138); patch-only tuning (139); opt-in telemetry never for minor-flagged accounts (140); about 40 curated Steam achievements (141); controller aiming (142); the camera (143); 3 save profiles per Steam account (144); hunger as the only survival meter (145) |
 | Canon | §1.1, §1.5, §1.6, §2.1–§2.4, §3.2–§3.4, §4.2–§4.4 | ID grammar, `fnv1a32`, integer content; 60 Hz, "N s" = 60·N ticks; the `rng.run` stream, keyed draws and draw counts; jump and dodge; placeables, fixed terrain, no item durability, 250 mm micro-voxels |
 | Canon | §5.1–§5.11 | axioms, 16 genres, Contradiction, Anachronism Edge, Shock of the New, seam zones, World Laws, Going Native, Unmoored |
 | Canon | §6.4, §7.1, §7.2, §8, §9.1 | derived stats; skill XP normalized by enemy HP before party scaling; skill pace contract; the 45-unit XP anchor (level 29 on arrival at Folio 25, inside the 28 ± 3 target); `kill_xp_std`; severing, with Errata limbs severed only from a crippled pool |
@@ -17,19 +17,20 @@ This chapter fixes what PALIMPSEST is, what it must feel like, which games it le
 | Canon | §14, §16, §17 | currencies, Callings and Echoes, run constants (`ERASURE_ONSET` 720 s, `ERASURE_STEP` 30 s, `BOSS_FOLIOS` including Marginalia, `GENRE_REPEAT_RULE`), party tables, anchors, ghosts, retired mount IDs (§17.7), the Margin trophies (§17.8), invasions |
 | Canon | §19, §22 | this chapter owns `pillar.` and `kpi.`; monetization invariants |
 | Doc 02 | §5.5, §6.4, §14, §15, §16, §17.3, §17.4, Exports | `PlayerCommand` bits and intents; the 5-target determinism matrix; platforms (a Windows client on Steam only, DECISIONS 98, 112); `perf.` budgets including `perf.ci.bot_tps`; the headless bot harness with combat-led, stealth-led and environment-led policies and the signature-moment scenario runner (§16 items 6 and 10); `flag.telemetry.usage` (default false), `flag.telemetry.crash_mode`, `flag.scribe.enabled` (default false); opt-in aggregate telemetry whose run summary carries the per-Folio fields of triage C-14 and bars every minor-flagged account (§17.4) |
-| Doc 03 | §3.3, §5.9, §6, §9, §11, §14 (event table: `ev.damage_dealt`, `ev.entity_killed`, `DmgFlags`) | `StatusInst.env`; the mantle; liquids, temperature and sound on the grid; lethal-hit linkage through `damage_seq`; flag bits `dot` 2, `area` 5, `env` 7, `fall` 8 used by `kpi.pillar.systemic_kill_share`, with `env` carried by the DoT pulses of a status instance whose `env` is set (triage C-32) |
+| Doc 03 | §3.3, §5.9, §5.23, §5.24, §6, §9, §11, §14 (event table: `ev.damage_dealt`, `ev.entity_killed`, `DmgFlags`) | `StatusInst.env`; the mantle up to 2,000 mm, the sprint-slide and the grappling-tool motion; the block-trap hit payload (§14.2: `source` 0, `item_uid` = `placed_meta.uid`, `ability` = the trap block's content ID); liquids, temperature and sound on the grid; lethal-hit linkage through `damage_seq`; flag bits `dot` 2, `area` 5, `env` 7, `fall` 8 used by `kpi.pillar.systemic_kill_share`, with `env` carried by the DoT pulses of a status instance whose `env` is set (triage C-32) |
 | Docs 04, 05, 06 | 04 §1, §8.2, §8.4, §8.6, §10, §12; 05 §1.7, §4; 06 §6.2, §16 | four ability slots; Errata limb severing only from a crippled pool and reattachment with `item.tool.surgical_kit`, Red Ink Marginalia powers, Death's Door; logical inputs and moveset; cast cost falling with skill; IVAN-table supplication and petitions |
-| Doc 07 | §10.1, §10.4 | the placeable catalog (barricades, bridge spans, ladders, block traps such as `block.trap.spikes`, lights, cover) and placed block HP |
+| Doc 07 | §10.1, §10.4 | the placeable catalog (barricades, bridge spans, ladders, block traps such as `block.trap.spikes`, lights, cover) and placed block HP; `block.tag.errata_placeable` and the trap-hit payload (§10.4, doc 07 test 53) |
 | Docs 08, 09, 10 | 08 §12.1, §12.4; 09 §5, §6, §9; 10 §5, §11, §12 | `alch.potion.liquid_flame` and identification by throwing; detection meter, awareness state machine, sneak attacks; identification methods, Sealed contents, Index |
 | Doc 11 | §4, §5, §9.7, §10, §11, §14.4, §15, §17 | genre-skin records; manufacturers; treasure bags; in-run Reliquaries and mimics; Fortune Engines and engine pity; ground-item visibility; Rewrite; co-op loot |
 | Doc 12 | §2.4, §3.3–§3.5, §4, §5, §14, §17.4 | placed light as defense; GPV layout, physics and verb weights; World Laws; Genre Lattice and exit preview; bleed and seam zones; secret exits |
 | Doc 13 | §4.7, §8, §9.2, §10.5, §10.7 | behavior sets and genre rosters for `syntax_delta`; the five Editors `boss.editor_v1` … `boss.ur_editor`, display names the Proofreader, the Censor, the Continuity Editor, the Abridger and the Last Word; the Erasure hunter; the invader template |
-| Doc 14 | §1.1, §2.3, §3, §4.2, §4.7, §5, §6, §7, §8, §9, §11 | `Q_REF`, `Q_WIN`, `UNLOCK_PACE_HOURS`, `TURN_HOLD_TICKS`; content sets (§2.3); Folio flow and the Erasure timeline (§3.8); score and Example B; closing-manuscript inputs; the walkable Margin hub, Bindery totals, unlock pace (§5.4a) and resident arcs (§5.6); Echoes and Recollection trials; Grades; modes, including the Daily's `rng.run` draws (§8.4); the Second Edition run flow (§8.9); Marginalia; Prologue |
+| Doc 14 | §1.1, §2.3, §3, §4.2, §4.7, §5, §6, §7, §8, §9, §10 | `Q_REF`, `Q_WIN`, `UNLOCK_PACE_HOURS`, `TURN_HOLD_TICKS`; content sets (§2.3); Folio flow and the Erasure timeline (§3.8); score and Example B; closing-manuscript inputs; the walkable Margin hub, Bindery totals, unlock pace (§5.4a) and resident arcs (§5.6); Echoes and Recollection trials; Grades; modes, including the Daily's `rng.run` draws (§8.4); the Second Edition run flow (§8.9), including fused-pair reporting, the Ironman rule and the forfeit; Marginalia; achievements (§10) |
 | Doc 15 | §1, §2.7–§2.8, §3.3–§3.6, §4.3, §4.5, §6.7, §8.6, §9, §11, §12 | business model, prices (base game USD 19.99, Folio Expansions USD 9.99) and the separation wall; income, hours to earn and the unlock pace (§2.8.3); hazards, featured split, spark; verifier; offline operation; Codex completion; ratings with ink gore; anti-predatory rules; end of service; economy KPIs |
-| Doc 16 | §3.3, §3.5, §3.6, §5.7, §9.1, §9.3, §9.5, §9.12, §11.3, §11.7, §13 | Steam as the only platform identity, every online session a Steam lobby over Datagram Relay; intents `ChooseExit`, `TradePropose`, `DropItemFor`, `MarkTarget`; drop-in at Folio boundaries; host migration (hot and warm continue the Folio, cold restores its entry save); telemetry endpoint with the per-Folio run-summary aggregates; offline mode |
-| Doc 17 | §12.1–§12.9, §13.1, §13.5, Interface assumptions | the `input.` action list and contexts, `input.preset.folio_kbm` and `input.preset.folio_pad` bindings, including the gamepad cast cancel in `input.ctx.casting`; Scribe's Mercy; `access.gore` (`ink` by default, `full`, `minimal`); the sprint-slide started by `input.crouch` pressed while sprinting (its Interface row for doc 03) |
+| Doc 16 | §3.3, §3.5, §3.6, §5.7, §9.1, §9.3, §9.5, §9.8, §9.12, §11.3, §11.7, §13 | Steam as the only platform identity, every online session a Steam lobby over Datagram Relay; intents `TradePropose`, `DropItemFor`, `MarkTarget`; exit votes as positions in door volumes, with no vote message (§9.8); drop-in at Folio boundaries; host migration (hot and warm continue the Folio, cold restores its entry save); telemetry endpoint with the per-Folio run-summary aggregates; offline mode |
+| Doc 17 | §12.1–§12.9, §13.1, §13.5, Interface assumptions | the `input.` action list and contexts, `input.preset.folio_kbm` and `input.preset.folio_pad` bindings, including the gamepad cast cancel in `input.ctx.casting`; Scribe's Mercy; `access.gore` (`ink` by default, `full`, `minimal`); the sprint-slide started by `input.crouch` pressed while sprinting (§12.1, §12.3, §12.4) |
 | Doc 18 | §8.1, §8.3–§8.5a, §9 | `nar.lore.redactors` and the Censor's office; the Editors' voices; Margin cast arcs as text; Ur-Text endings and the procedural closing manuscript; the text-only Narrator and the Scribe |
-| Doc 21 | §2.2, §2.4, §2.5 | release tiers and the post-1.0 plan; where its text predates DECISIONS 109 to 125 (6 genres at Early Access, Epic, Second Edition at 1.0, calendar dates), the decisions apply (Interface assumptions) |
+| Doc 19 | §1.2, §1.3, §2, §5 | the content-file envelope (`schema` and `records`); schema IDs `01.pillar`, `01.pillar_test`, `01.kpi`; `doc_number` |
+| Doc 21 | §2.2, §2.4, §2.5 | release tiers and the post-1.0 plan; where its text predates DECISIONS 109 to 125 (a smaller Early Access genre set, a second storefront, the Second Edition at 1.0, calendar dates, the retired Prologue), the decisions apply (Interface assumptions) |
 | Triage | `audit/canon_gaps_triage.md` G-051, G-177, G-178, G-185, G-190, G-199, G-200, G-210; C-03, C-14, C-16, C-30, C-32 | rulings applied in this chapter |
 | Research | R1, R2, R3 (Part A, §0, D5, D6), R5, R6 (§1, §2), R7 (§9) as cited | facts, peer bar, law, precedents, syntactic genre channels |
 
@@ -164,7 +165,7 @@ With the doc 12 data on disk the first four channels alone give every pair at le
 |---|---|---|
 | `pillar.fair_page.t1` | SEP-1 to SEP-7 (doc 15 §1.2) pass; `juris.paid_random_items_enabled` is the compile-time constant `false` | content validator, ledger tests, build assert |
 | `pillar.fair_page.t2` | the Inkwell, account Reliquaries, in-run Reliquaries and Fortune Engines each show every outcome's probability through `pct4` (doc 15 §3.11) before the commit input, plus every live pity counter the system has (Inkwell `top_since`, `mid_since` and spark; Reliquary counters; Engine `need − pity`); `palimpsest-verify` (doc 15 §4.3) returns `PASS` for 10,000 logged pulls and 10,000 logged Reliquary opens | UI automation, verifier run |
-| `pillar.fair_page.t3` | with the network disabled: a bot completes the Prologue, Standard Folios 1–10 and a LAN co-op Folio; an online account queues an Inkwell pull as a Sealed Draft; an offline-only profile pulls the Retrospective banner and verifies it locally; Codex XP accrues locally; only leaderboards, invasions, cloud saves and telemetry are unavailable (doc 15 §4.5, §11.3; doc 16 §13) | offline integration test |
+| `pillar.fair_page.t3` | with the network disabled: a bot completes Standard Folios 1–10 and a LAN co-op Folio; an online account queues an Inkwell pull as a Sealed Draft; an offline-only profile pulls the Retrospective banner and verifies it locally; Codex XP accrues locally; only leaderboards, invasions, cloud saves and telemetry are unavailable (doc 15 §4.5, §11.3; doc 16 §13) | offline integration test |
 
 **Anti-patterns.** Premium currency; timers on paid offers; streak rewards; odds hidden behind a link; content that needs a server to exist.
 
@@ -172,21 +173,26 @@ With the doc 12 data on disk the first four channels alone give every pair at le
 
 The registry is `content/01/pillar/pillars.json`, one record per pillar. Fields: `id` (content ID), `order` (`1..=6`; the Statement order of §2.1 to §2.6), `hard_constraint` (`true` only for order 6), `tests` (exactly 3 test IDs `<id>.t1..t3`), `owner_docs` (doc numbers that implement the pillar's tests).
 
+Every content file of this chapter is one doc 19 §1.2 envelope, an object with exactly the keys `schema` and `records`: `pillars.json` names schema `01.pillar`, `tests.json` names `01.pillar_test` and `kpis.json` names `01.kpi` (doc 19 §5). `owner_docs` entries and `owner_doc` are doc 19 `doc_number` values, integers `0..=18`.
+
 ```json
-[
-  { "id": "pillar.one_ruleset", "order": 1, "hard_constraint": false,
-    "tests": ["pillar.one_ruleset.t1", "pillar.one_ruleset.t2", "pillar.one_ruleset.t3"], "owner_docs": [11, 12, 13, 18] },
-  { "id": "pillar.out_of_story", "order": 2, "hard_constraint": false,
-    "tests": ["pillar.out_of_story.t1", "pillar.out_of_story.t2", "pillar.out_of_story.t3"], "owner_docs": [5, 6, 11, 12, 14, 17] },
-  { "id": "pillar.living_page", "order": 3, "hard_constraint": false,
-    "tests": ["pillar.living_page.t1", "pillar.living_page.t2", "pillar.living_page.t3"], "owner_docs": [2, 3, 8, 9, 12] },
-  { "id": "pillar.party_of_errata", "order": 4, "hard_constraint": false,
-    "tests": ["pillar.party_of_errata.t1", "pillar.party_of_errata.t2", "pillar.party_of_errata.t3"], "owner_docs": [4, 11, 13, 14, 16] },
-  { "id": "pillar.every_find_a_question", "order": 5, "hard_constraint": false,
-    "tests": ["pillar.every_find_a_question.t1", "pillar.every_find_a_question.t2", "pillar.every_find_a_question.t3"], "owner_docs": [4, 10, 11, 14] },
-  { "id": "pillar.fair_page", "order": 6, "hard_constraint": true,
-    "tests": ["pillar.fair_page.t1", "pillar.fair_page.t2", "pillar.fair_page.t3"], "owner_docs": [2, 14, 15, 16] }
-]
+{
+  "schema": "01.pillar",
+  "records": [
+    { "id": "pillar.one_ruleset", "order": 1, "hard_constraint": false,
+      "tests": ["pillar.one_ruleset.t1", "pillar.one_ruleset.t2", "pillar.one_ruleset.t3"], "owner_docs": [11, 12, 13, 18] },
+    { "id": "pillar.out_of_story", "order": 2, "hard_constraint": false,
+      "tests": ["pillar.out_of_story.t1", "pillar.out_of_story.t2", "pillar.out_of_story.t3"], "owner_docs": [5, 6, 11, 12, 14, 17] },
+    { "id": "pillar.living_page", "order": 3, "hard_constraint": false,
+      "tests": ["pillar.living_page.t1", "pillar.living_page.t2", "pillar.living_page.t3"], "owner_docs": [2, 3, 8, 9, 12] },
+    { "id": "pillar.party_of_errata", "order": 4, "hard_constraint": false,
+      "tests": ["pillar.party_of_errata.t1", "pillar.party_of_errata.t2", "pillar.party_of_errata.t3"], "owner_docs": [4, 11, 13, 14, 16] },
+    { "id": "pillar.every_find_a_question", "order": 5, "hard_constraint": false,
+      "tests": ["pillar.every_find_a_question.t1", "pillar.every_find_a_question.t2", "pillar.every_find_a_question.t3"], "owner_docs": [4, 10, 11, 14] },
+    { "id": "pillar.fair_page", "order": 6, "hard_constraint": true,
+      "tests": ["pillar.fair_page.t1", "pillar.fair_page.t2", "pillar.fair_page.t3"], "owner_docs": [2, 14, 15, 16] }
+  ]
+}
 ```
 
 Every test result is stored with the build number that produced it. The **EA gate** needs all 18 tests `Pass` on the EA candidate build. Every **later release gate** needs all 18 `Pass` on that build, except `pillar.one_ruleset.t3` (a human playtest), whose most recent `Pass` carries forward while the set of shipped genres and genre skins is unchanged since that playtest.
@@ -194,10 +200,13 @@ Every test result is stored with the build number that produced it. The **EA gat
 Each test also has a record in `content/01/pillar/tests.json`. Fields: `id` (the test ID), `pillar` (its pillar's ID), `index` (`1..=3`, the `tN` suffix), `carry_forward` (`true` only for `pillar.one_ruleset.t3`, the one human playtest; the content validator rejects `true` on any other test). The validator also checks that every test record's `pillar` lists it in `tests` at position `index`.
 
 ```json
-[
-  { "id": "pillar.one_ruleset.t3", "pillar": "pillar.one_ruleset", "index": 3, "carry_forward": true },
-  { "id": "pillar.fair_page.t1", "pillar": "pillar.fair_page", "index": 1, "carry_forward": false }
-]
+{
+  "schema": "01.pillar_test",
+  "records": [
+    { "id": "pillar.one_ruleset.t3", "pillar": "pillar.one_ruleset", "index": 3, "carry_forward": true },
+    { "id": "pillar.fair_page.t1", "pillar": "pillar.fair_page", "index": 1, "carry_forward": false }
+  ]
+}
 ```
 
 **Early Access gate.** Early Access ships all 12 core genres and `mode.standard` (DECISIONS 114, which supersedes the 6-genre Early Access of DECISIONS 41), so the EA gate, like every later gate, reads all 18 tests exactly as written: over the 12 core genres, the 66 core pairs and Standard runs. No test has a reduced Early Access reading; doc 21 §2.3 (e)'s readings were written for DECISIONS 41 (Interface assumptions).
@@ -256,7 +265,7 @@ Each entry lists what we take exactly (with the owning doc), what we improve, wh
 
 ### 3.1 Barony (Turning Wheel; 5.0.2 on 2026-02-18)
 
-- **Take exactly:** first-person real-time 1–4 co-op roguelike frame (brief §1; docs 05, 16); dead players become ghosts who open doors and mark targets (Canon §17.6; doc 16); only an item's magic is hidden, never its base type (Barony 5.0 Lore; Canon §13.6; doc 10); blessed/uncursed/cursed states (doc 10); real-time hunger (`res.satiation`; doc 04); shared-loot co-op as the opt-in `mode.loot_shared` (Canon §17.5; doc 14).
+- **Take exactly:** first-person real-time 1–4 co-op roguelike frame (brief §1; docs 05, 16); dead players become ghosts who open doors and mark targets (Canon §17.6; doc 16); only an item's magic is hidden, never its base type (Barony 5.0 Lore; Canon §13.6; doc 10); blessed/uncursed/cursed states (doc 10); real-time hunger (`res.satiation`; doc 04), the only survival meter, with no thirst or fatigue (DECISIONS 145); shared-loot co-op as the opt-in `mode.loot_shared` (Canon §17.5; doc 14).
 - **Improve:** per-party-size tables for HP, count and damage (Canon §17.2); instanced loot by default; host-authoritative replays; 25 genre-distinct Folios instead of biome swaps.
 - **Reject:** full-strength friendly fire on direct hits (default 5000 Bp, Canon §17.5); appraising mundane gear; item wear and breaking (DECISIONS 65: gear never wears or breaks, while placeables and destructible blocks keep block HP, Canon §4.3).
 - **Signature moment — "The Ghost Opens the Door" (SM-01):** a party member dies in a trap room, floats ahead as a ghost, opens the far door and applies `st.marked` (480 ticks) to the elite; the survivors carry the 75,000 g Remains through the exit and the ghost returns at the next `ev.folio_entered` with 5000 Bp of Max HP (Canon §17.6; docs 14 §3.10, 16 §9.5).
@@ -322,7 +331,7 @@ Each entry lists what we take exactly (with the owning doc), what we improve, wh
 - **Take exactly:** 1 m blocks in 32³ chunks; two-channel integer light 0–15 (Canon §1.2); spawns gated by block light, so placed light is defense (Canon §12.3); liquids on the grid (doc 03 §6); random block ticks (Canon §2.2); commit-only offer streams (Canon §3.5); placeable bridges, ladders, barricades and lights (Canon §4.3; doc 07).
 - **Improve:** authored structure stays intact because terrain is fixed except blocks tagged `block.tag.destructible` (DECISIONS 16; Canon §4.3); 250 mm micro-voxels, 4 × 4 × 4 per 1 m cell, carry collision, shapes, rendering and destruction while the 1 m cell stays the simulation grid (DECISIONS 37; Canon §4.4); fixed-point determinism.
 - **Reject:** terraforming and mining terrain; a goalless sandbox; rerolling offers by reopening a menu.
-- **Signature moment — "Torch the Dark" (SM-10):** in a Gothic Horror Folio (`spawn_block_max` 7) the party plants lanterns until `light_block` exceeds 7 along a corridor, and the ambient spawns there stop (docs 03, 07, 12).
+- **Signature moment — "Torch the Dark" (SM-10):** in a Gothic Horror Folio (`spawn_block_max` 7) the party places lanterns until `light_block` exceeds 7 along a corridor, and the ambient spawns there stop (docs 03, 07, 12).
 
 ### 3.11 Destiny 2 (final content update 2026-06-09)
 
@@ -374,7 +383,7 @@ Status, player counts and prices are R3 facts as of 2026-10-11. "Our answer" nam
 | Hytale | EA 2026-01-13 | multiplayer | 19.99 | voxel adventure with modding as a launch pillar | data packs first, sandboxed WASM, Workshop (doc 02 §13) |
 | Marathon | launched 2026-03-05; ~1.2M sold | 1–3 | 39.99 | criticized for 4 maps a month after launch | all 12 core genres at EA (PAR-12) |
 | PEAK | launched 2025-06-16; 10M+ by mid-August 2025 | 1–4 | about 8 | cheap co-op with voice-driven comedy | pings, text and push-to-talk voice with mute, block and report, voice with strangers off by default (DECISIONS 75; doc 16 §9.12; doc 15 §8.5) |
-| Megabonk | launched 2025-09-18; 1M in 2 weeks | 1 | 5.49 | instant readability and a fast loop | the Prologue (doc 14 §11); icon-plus-color signals (doc 17 P3) |
+| Megabonk | launched 2025-09-18; 1M in 2 weeks | 1 | 5.49 | instant readability and a fast loop | contextual first-encounter tips in the margins, dismissible and shown once per account, with no special first run (DECISIONS 136; doc 17); icon-plus-color signals (doc 17 P3) |
 | Shattered Pixel Dungeon | v4.0.2 on 2026-10-07 | 1 | free with supporter purchases | steady systemic updates from a tiny team | a free systemic update every 6–8 weeks (PAR-11) |
 | Caves of Qud | 1.0 2024-12-05 | 1 | premium | deep systemic simulation | Pillar 3 and every formula written in the canon (Canon §6.4, §10.5) |
 | Path of Exile 2 | 1.0 and free-to-play on 2026-12-11 | 1–6 | free; cosmetics and stash tabs | ARPG looter depth | part-built loot (doc 11); money buys cosmetics only, never storage or power (doc 15 §1.1) |
@@ -387,13 +396,13 @@ Status, player counts and prices are R3 facts as of 2026-10-11. "Our answer" nam
 | PAR-01 | 1–4 co-op, every size tuned on day one | Slay the Spire 2; Nightreign's missing duo | Canon §17.2 tables; `pillar.party_of_errata.t1` | 13, 14, 16 |
 | PAR-02 | drop-in, drop-out, host migration | R3 D5 item 1 | joins at Folio entry; invaders mid-Folio, from an update before 1.0 (DECISIONS 118, 125); host migration in which hot and warm migrations continue the Folio and only a cold migration restores the Folio-entry save (DECISIONS 93; doc 16 §9.3) | 14, 16 |
 | PAR-03 | crossplay on by default with an opt-out | ARC Raiders | one storefront, so every Windows and Steam Deck player shares one lobby pool with no crossplay barrier and no toggle: Steam is the only storefront (DECISIONS 112), and every online session is a Steam lobby over Steam Networking Sockets with Datagram Relay (DECISIONS 123; doc 16 §3.3, §3.5) | 02, 16 |
-| PAR-04 | cross-save | Hades II | Steam Auto-Cloud for `profile/` and `runs/`; account-level economy sync | 02, 15 |
+| PAR-04 | cross-save | Hades II | Steam Auto-Cloud for `profile/` and `runs/`; 3 account profiles per Steam account, each with one suspended run (DECISIONS 144); account-level economy sync | 02, 15 |
 | PAR-05 | Steam Deck Verified | Hades II | the Windows build under Proton (DECISIONS 98) at 1280 × 800 and 60 fps in `perf_saturation_4p`; every screen gamepad-navigable | 02, 17 |
-| PAR-06 | accessibility suite filled into Steam's questionnaire | Hades God Mode | Scribe's Mercy (`access.scribes_mercy`: 20%, +2% per death, cap 80%); solo game speed (`access.game_speed_bp`); FOV 60 to 120 degrees with default 90 (DECISIONS 92), the UI-scale range, subtitles with speaker names and sound captions, full remapping, hold-or-toggle and color-independent signals per doc 17 §12–§13 | 17 |
+| PAR-06 | accessibility suite filled into Steam's questionnaire | Hades God Mode | Scribe's Mercy (`access.scribes_mercy`: 20%, +2% per death, cap 80%); solo game speed (`access.game_speed_bp`); FOV 60 to 120 degrees with default 90 (DECISIONS 92), the UI-scale range, subtitles with speaker names and sound captions, full remapping, hold-or-toggle, color-independent signals, and light stick aim assist with full gyro aiming on Steam Deck, none for mouse and none in invasions (DECISIONS 142), per doc 17 §12–§13 | 17 |
 | PAR-07 | shareable seeds, a daily, a weekly | Slay the Spire daily climb | Canon §3.6 seeds; `mode.daily` (one ranked attempt per UTC date, unlimited practice), `mode.weekly_gauntlet`, `mode.seeded` share strings | 14 |
 | PAR-08 | session-sized runs (R3 D5: 45–75 min) | Nightreign 40–60 min | Daily 25 min, Novella 60 min, Abridged 60–75 min, Standard 100–150 min | 14 |
 | PAR-09 | horizontal meta | Hades II | Bindery nodes add options only; no stat node (doc 14 §5.2) | 14 |
-| PAR-10 | modding | Hytale, Slay the Spire 2 | data packs, sandboxed WASM, Workshop | 02 |
+| PAR-10 | modding | Hytale, Slay the Spire 2 | data packs and sandboxed WASM mods through Steam Workshop; co-op peers auto-sync the host's required mod set (DECISIONS 126) | 02, 16 |
 | PAR-11 | live cadence (R3 A2: free updates every 4–8 weeks) | ARC Raiders monthly; SPD's systemic updates | a free systemic update every 6–8 weeks; a Folio Expansion every 9–12 months; a Codex every 12 weeks | 15, 21 |
 | PAR-12 | launch breadth (R3 D6: at least 6 distinct genres at EA) | Marathon's 4-map criticism | all 12 core genres at EA (DECISIONS 114, superseding the 6 of DECISIONS 41), with the Ur-Text as every full-story run's final Folio; the 4 secret genres follow the canon's unlock rules (Canon §5.2, §17.1; doc 12). Under `GENRE_REPEAT_RULE`'s cap of 3 appearances, the Standard run's 24 non-final Folios need `ceil_div(24, 3) = 8` core genres and the Abridged run's 14 need `ceil_div(14, 3) = 5`; with all 12, doc 12 §5.4 keeps at least 3 genres eligible at every exit, so the strict lattice rules hold in every mode with no relaxation (DECISIONS 109, 110) | 12, 21 |
 | PAR-13 | PC performance | Borderlands 4's lesson | no EA build until every `perf.` budget is green on Deck and on the minimum PC | 02 |
@@ -440,7 +449,7 @@ Each entry is novel in the genre or bleeding-edge in 2026; owners implement it.
 - **NR-22 Erasure clock and desecrated Colophons (owner 13, 14).** Stacks from 720 s, one elite-strength Editor hunter per Folio at 10 stacks with no repeat spawns, a sanctuary that stops the clock, and a run-long punishment for damaging it (Canon §11.6, §17.1; DECISIONS 26).
 - **NR-23 On-device Scribe (owner 18, 02).** An optional on-device small language model writes item lore, Folio intros and text barks through grammar-constrained JSON, cached by seed, never touching simulation state, with a template-grammar fallback; like all narration it is text only, never voiced. It ships at 1.0 as an opt-in; Early Access shows the template grammar (brief §5; DECISIONS 14, 38, 120).
 - **NR-24 Foreign things look foreign (owner 18, 02).** Out-of-genre items and Errata keep their home genre's shader, outline and animation step rate (R6 §6, Spider-Verse).
-- **NR-25 Damage-normalized skill XP (owner 04).** Draining one standard enemy gives 1.5 skill XP whatever the fire rate, so no weapon farms skills (Canon §7.1).
+- **NR-25 Damage-normalized skill XP (owner 04).** Draining one standard enemy gives 1.5 skill XP whatever the fire rate, so no weapon trains skills faster than another (Canon §7.1).
 - **NR-26 Echoes with Recollection trials (owner 14, 15).** Every gacha character has a deterministic earn path whose expected hours stay below the Inkwell's 19.58 (DECISIONS 80; doc 14 §6.1; doc 15 §2.8).
 - **NR-27 The closing manuscript (owner 14, 18).** The Ur-Text ending is procedural: it is assembled from the run's genres, the party's Echoes or Origins, its notable choices and its Folio stories, and rendered as a closing manuscript in the Ur-Text's style, rebuilt from run history whenever it is opened (DECISIONS 46; doc 14 §4.7; doc 18 §8.5a).
 - **NR-28 Second Edition (owner 12, 13, 14, 18).** After an Ur-Text clear the Editors revise the book: the same Errata continue into Folios written in two fused genres, with both rosters, Laws and skins and averaged axioms, against revised Editors and a new final boss, the Author; a Volume never repeats a fused pair. It ships at Early Access (DECISIONS 100–108, 117, 118).
@@ -523,7 +532,7 @@ Reference income (doc 15 §2.7): 400 Ink per hour (2.5 pulls), 20,000 Codex XP p
 
 Quires pay the Bindery: 60 per reference hour of failed runs (`Q_REF`) and 143 per hour of reference Grade-0 victories (`Q_WIN`, 299 Quires per 125 minutes) (doc 14 §1.1; doc 15 §2.4). The whole tree costs 7,670 Quires, of which achievements pay 1,960, leaving 5,710 from runs and the Codex free track: `5710 / 60 = 95.2` hours at the failed-run rate and `5710 / 143 = 39.9` hours at the victory rate (doc 14 §5.4). At 5 hours per week the Bindery completes in 8.0 to 19.0 weeks, and every node adds an option, never power.
 
-About 80 hours of play unlock every non-cosmetic option without spending money (DECISIONS 79; `UNLOCK_PACE_HOURS`, doc 14 §5.4a; doc 15 §2.8.3). The 73 non-cosmetic Bindery nodes cost 7,070 Quires, 70.0 reference hours at `Q_MIX = 101` Quires per hour from run payouts alone. The 24 Echoes take 84.2 reference hours through Recollection trials alone, 2 active at a time, because every Echo also unlocks through its own bounded Recollection trial and the Inkwell is never the only path (DECISIONS 80; doc 14 §6.1); earned Ink shortens that to at most 66.1 hours. The 36 launch Scripts take 76.8 reference hours through Transcription alone at 10 Folios per hour, 64.0 at doc 15's 12 exits per hour (doc 15 §2.8.3, §3.9.1). Every glyph learned in any run joins the account's Glyph Library, from which each run starts with 2 (DECISIONS 33; doc 14 §5.7). Margin residents advance their 6-beat arcs at run ends, at most one beat per arc per run end, delivered as text and granting nothing (DECISIONS 78; doc 14 §5.6).
+About 80 hours of play unlock every non-cosmetic option without spending money (DECISIONS 79; `UNLOCK_PACE_HOURS`, doc 14 §5.4a; doc 15 §2.8.3). The 73 non-cosmetic Bindery nodes cost 7,070 Quires, 70.0 reference hours at `Q_MIX = 101` Quires per hour from run payouts alone. The 24 Echoes take 84.2 reference hours through Recollection trials alone, 2 active at a time, because every Echo also unlocks through its own bounded Recollection trial and the Inkwell is never the only path (DECISIONS 80; doc 14 §6.1); earned Ink shortens that to at most 66.1 hours. The 36 launch Scripts take 76.8 reference hours through Transcription alone at 10 Folios per hour, 64.0 at doc 15's 12 exits per hour (doc 15 §2.8.3, §3.9.1). Every glyph learned in any run joins the account's Glyph Library, from which each run starts with 2 (DECISIONS 33; doc 14 §5.7). Margin residents are vendors and quest-givers with fixed 6-beat arcs: a resident advances its arc through the optional Folio quests it gives, and completing one unlocks its next text scene, which grants nothing; no resident has a friendship meter, gifts or romance (DECISIONS 78, 127, 130; doc 14 §5.6, Interface assumptions).
 
 ### 6.6 Balance check against the canon anchors
 
@@ -566,8 +575,8 @@ Doc 17 owns `input.` and every binding (Canon §19). This table copies doc 17 §
 | Sprint | `input.sprint` | L-Shift hold | L3 toggle | stamina (Canon §6.4 row 6), noise | 04 |
 | Walk quietly | `input.walk` | Caps Lock hold | not bound | footstep noise | 09 |
 | Crouch, sneak | `input.crouch` | L-Ctrl hold | R3 toggle | 1200 mm capsule, stealth | 09 |
-| Jump, air jump, ledge mantle | `input.jump` | Space | A | `JUMP_H` by VERVE, fall damage; a jump press facing a ledge mantles onto it, up to 2,000 mm (DECISIONS 95; doc 03 §5.9 still stops at 1,600 mm, Canon gaps G1) | 03 |
-| Sprint-slide | `input.crouch` pressed while sprinting (doc 17's Interface row for doc 03; Q-25) | L-Ctrl while sprinting | R3 while sprinting | part of the base movement kit (DECISIONS 95); doc 03 owns the motion, not yet specified (Canon gaps G1) | 03, 17 |
+| Jump, air jump, ledge mantle | `input.jump` | Space | A | `JUMP_H` by VERVE, fall damage; a jump press facing a ledge mantles onto it, up to 2,000 mm (DECISIONS 95; doc 03 §5.9) | 03 |
+| Sprint-slide | `input.crouch` pressed while sprinting (doc 17 §12.1; Q-25) | L-Ctrl while sprinting | R3 while sprinting | part of the base movement kit (DECISIONS 95); doc 03 §5.23 owns the motion | 03, 17 |
 | Dodge | `input.dodge` | L-Alt | B | 20 stamina, invulnerable ticks | 05 |
 | Lean left, right | `input.lean_l`, `input.lean_r` | Q, E | LB+ LS X beyond 5000 Bp | eye offset 350 mm, head hitbox | 05 |
 | Attack, fire | `input.attack` | Mouse 1 | RT | damage pipeline, jams, skill XP | 05 |
@@ -582,7 +591,7 @@ Doc 17 owns `input.` and every binding (Canon §19). This table copies doc 17 §
 | Pray, prayer menu | `input.pray` | J (hold 20 frames: menu) | LB+ D-pad up (hold 20 frames: menu) | favor, patrons | 06 |
 | Ability 1–4 | `input.ability_1..=4` | Z, X, C, B | LB+ A, B, X, Y | talents, cooldowns | 04 |
 | Weapon 1–3; next, previous | `input.weapon_1..=3`; `input.weapon_next`, `input.weapon_prev` | 1, 2, 3; wheel down, up | D-pad right, left (hold 15 frames: weapon wheel) | swap ticks | 05 |
-| Use a quickbar item: potion, food, throwable, placeable, grappling tool | `input.quickbar_1..=8` | 4 5 6 7 8 9 0 − | D-pad down uses the selected slot (hold 15 frames: quickbar wheel) | potions, food, placement mode; the genre-skinned grappling tool is an item, never part of the base kit (DECISIONS 95) | 03, 04, 07, 08, 11, 17 |
+| Use a quickbar item: potion, food, throwable, placeable, grappling tool | `input.quickbar_1..=8` | 4 5 6 7 8 9 0 − | D-pad down uses the selected slot (hold 15 frames: quickbar wheel) | potions, food, placement mode; the genre-skinned grappling tool is an item, never part of the base kit (DECISIONS 95; doc 03 §5.24 owns its motion; its doc 11 template is requested, Canon gaps G1) | 03, 04, 07, 08, 11, 17 |
 | Place a barricade, bridge span, ladder, trap, light or cover | a quickbar slot holding a `cat.placeable`, then `input.attack` to confirm, `input.alt` to cancel, `input.weapon_next` / `input.weapon_prev` to rotate | as listed | as listed | placement (Canon §4.3), `skill.fieldcraft`, spawn light | 07, 17 |
 | Interact: open, loot, talk, revive (hold), carry Remains, station, Going Native, lockpick, hack, pickpocket, struggle | `input.interact` | F | Y | containers, doc 09 checks, Colophon services | 07, 09, 11, 14, 16 |
 | Examine an item | `input.examine` (item-card action) | in the Book menu | in the Book menu | `Examine` intent, Analysis checks | 10, 17 |
@@ -592,7 +601,7 @@ Doc 17 owns `input.` and every binding (Canon §19). This table copies doc 17 §
 | Hold breath; whistle, shout | `input.hold_breath`; `input.whistle`, `input.shout` | P hold; emote wheel sockets 0, 1 | LB+R3 hold 15 frames; emote wheel sockets 0, 1 | `SetBreathHold` intent, breath; `Vocalize` noise (doc 09 §12) | 09, 17 |
 | First or third person | `input.camera` | F5 | LB+R3 tap | client only | 17 |
 | Emote, chat, push to talk | `input.emote_wheel`, `input.chat`, `input.push_to_talk` | U hold, Enter, Y | D-pad up hold 15 frames; on-screen keyboard; LB+View hold | social and invader comms with mute, block and report | 16, 17 |
-| Vote for an exit | stand in a door volume, or `input.menu_exits` then `ChooseExit` | walk; N inside a Colophon | walk; the exits list from the Book menu | lattice, exit commit after `TURN_HOLD_TICKS` = 120 | 14 |
+| Vote for an exit | stand in a door volume, or `input.menu_exits` then `ChooseExit` | walk; N inside a Colophon | walk; the exits list from the Book menu | lattice, exit commit after `TURN_HOLD_TICKS` = 120; a vote is a position in a door volume, never a network message (doc 16 §9.8), and the list choice counts as standing in that door while the voter stays inside the Colophon (doc 14 §3.6; doc 17) | 14, 17 |
 | Trade, drop for an ally | `TradePropose`, `DropItemFor` intents from the Book menu | I | View | inventory ownership | 16 |
 | Book menu, map, journal, character, scoreboard, pause | `input.menu_book`, `input.menu_map`, `input.menu_journal`, `input.menu_character`, `input.scoreboard`, `input.pause` | I, M, L, K, O hold, Esc | View, View hold 15 frames, Book tabs, Book tabs, LB+Menu hold, Menu | client only | 17 |
 
@@ -643,7 +652,7 @@ Age target 16+ (DECISIONS 13, 94). Primary input is mouse and keyboard; gamepad 
 
 ### 9.2 Platforms
 
-PC only through 1.0 (DECISIONS 98, which replaces the console plan of DECISIONS 6): Windows x86_64 on Steam, the only storefront (DECISIONS 112: no Epic Games Store and no itch.io), and Steam Deck Verified at 1280 × 800 and 60 fps, running the Windows build through Proton. Online play uses Steamworks lobbies and Steam Networking Sockets with Datagram Relay, and our own headless service re-simulates ranked, daily and weekly replays to verify scores; the EOS SDK is dropped (DECISIONS 123; doc 16 §3.3, §10.2). No console, Switch, native macOS, native Linux or browser client is built or planned; Linux builds exist only for the headless server, bot and verification binaries (doc 02 §2.1, §14). There is no demo and no public playtest build (DECISIONS 113).
+PC only through 1.0 (DECISIONS 98, which replaces the console plan of DECISIONS 6): Windows x86_64 on Steam, the only storefront (DECISIONS 112), and Steam Deck Verified at 1280 × 800 and 60 fps, running the Windows build through Proton. Online play uses Steamworks lobbies and Steam Networking Sockets with Datagram Relay, and our own headless service re-simulates ranked, daily and weekly replays to verify scores; no second networking SDK ships (DECISIONS 123; doc 16 §3.3, §10.2). No console, Switch, native macOS, native Linux or browser client is built or planned; Linux builds exist only for the headless server, bot and verification binaries (doc 02 §2.1, §14). There is no demo and no public playtest build (DECISIONS 113).
 
 ### 9.3 Business model: Earned Randomness, Paid Certainty
 
@@ -721,7 +730,7 @@ PEGI 16, ESRB M, USK 16, ACB MA15+, ClassInd 16, GRAC 18, CERO D (doc 15 §8.6);
 
 ### 10.1 Measurement rules
 
-- **Sources:** (a) opt-in usage telemetry (`flag.telemetry.usage`, default `false`; doc 02 §17.4, doc 16 §11.7), aggregated per run; (b) server-verified ranked submissions (doc 14 §9.4); (c) the economy ledger (doc 15 §10); (d) platform sales and review data; (e) crash reports under `flag.telemetry.crash_mode`; (f) headless bot sweeps, before launch and nightly (doc 02 §16).
+- **Sources:** (a) opt-in usage telemetry (`flag.telemetry.usage`, default `false`; doc 02 §17.4, doc 16 §11.7), aggregated per run, never collected for a minor-flagged account and never carrying free text (DECISIONS 140); (b) server-verified ranked submissions (doc 14 §9.4); (c) the economy ledger (doc 15 §10); (d) platform sales and review data; (e) crash reports under `flag.telemetry.crash_mode`; (f) headless bot sweeps, before launch and nightly (doc 02 §16).
 - **Sample floor:** every KPI record carries `min_sample`, counted in the record's `sample_unit`. Defaults: 2,000 runs or sessions for source (a), 500 submissions for (b), 1,000 accounts for (c), 0 for (d), 2,000 sessions for (e), and the sweep size for (f). Below the floor the verdict is `Insufficient`. Opt-in telemetry means some KPIs stay `Insufficient`; that is accepted and never answered by making telemetry opt-out (Q-16).
 - **Percentile:** nearest rank over the ascending sample, `p_q = sorted[ceil_div(q × n, 100) - 1]` for `n ≥ 1`. **Shares** are Bp: `floor_div(count × 10000, total)`. **Rates per 1,000** are `floor_div(count × 1000, base)`. Every value is an `i64`.
 - **Window:** the trailing `window_days` UTC days ending at 00:00 UTC of the evaluation day. `no_rise` KPIs compare against the immediately preceding window of the same length.
@@ -730,20 +739,23 @@ PEGI 16, ESRB M, USK 16, ACB MA15+, ClassInd 16, GRAC 18, CERO D (doc 15 §8.6);
 
 ### 10.2 Record and evaluation
 
-KPI records live in `content/01/kpi/kpis.json`. Fields: `id` (content ID; its description is the text key `loc.<id>.desc`, never a record field), `unit` (`"s"`, `"min"`, `"h"`, `"bp"`, `"count"`, `"per_1000"`, `"ink_per_h"`, `"quires_per_h"`), `stat` (`"p50"`, `"p90"`, `"share_bp"`, `"max_dev_bp"`, `"rate_per_1000"`, `"count"`), `mode` (`"band"`, `"no_rise"`, `"info"`), `per_genre` (bool), `window_days` (integer), `source` (`"telemetry_opt_in"`, `"ranked"`, `"ledger"`, `"platform"`, `"crash"`, `"bots"`, or an array of these), `sample_unit` (`"runs"`, `"folios"`, `"sessions"`, `"submissions"`, `"accounts"`, `"offers"`, `"hours"`, `"kills"`, `"skus"`, `"units"`), `min_sample`, `target_lo`, `target_hi`, `alert_lo`, `alert_hi` (integers, or `null` for an open bound: a null `_lo` loads as `i64::MIN` and a null `_hi` as `i64::MAX`; JSON never carries `i64` extremes, Canon §1.6), `owner_doc`. A `no_rise` or `info` record has all four bounds `null`.
+KPI records live in `content/01/kpi/kpis.json`, inside the `01.kpi` envelope (§2.7). Fields: `id` (content ID; its description is the text key `loc.<id>.desc`, never a record field), `unit` (`"s"`, `"min"`, `"h"`, `"bp"`, `"count"`, `"per_1000"`, `"ink_per_h"`, `"quires_per_h"`), `stat` (`"p50"`, `"p90"`, `"share_bp"`, `"max_dev_bp"`, `"rate_per_1000"`, `"count"`), `mode` (`"band"`, `"no_rise"`, `"info"`), `per_genre` (bool), `window_days` (integer), `source` (`"telemetry_opt_in"`, `"ranked"`, `"ledger"`, `"platform"`, `"crash"`, `"bots"`, or an array of these), `sample_unit` (`"runs"`, `"folios"`, `"sessions"`, `"submissions"`, `"accounts"`, `"offers"`, `"hours"`, `"kills"`, `"skus"`, `"units"`), `min_sample`, `target_lo`, `target_hi`, `alert_lo`, `alert_hi` (integers, or `null` for an open bound: a null `_lo` loads as `i64::MIN` and a null `_hi` as `i64::MAX`; JSON never carries `i64` extremes, Canon §1.6), `owner_doc`. A `no_rise` or `info` record has all four bounds `null`.
 
 ```json
-[
-  { "id": "kpi.run.folio_seconds_p50", "unit": "s", "stat": "p50", "mode": "band", "per_genre": false,
-    "window_days": 28, "source": ["telemetry_opt_in", "ranked"], "sample_unit": "folios", "min_sample": 2000,
-    "target_lo": 180, "target_hi": 420, "alert_lo": 150, "alert_hi": 480, "owner_doc": 14 },
-  { "id": "kpi.genre.door_pick_bp", "unit": "bp", "stat": "share_bp", "mode": "band", "per_genre": true,
-    "window_days": 28, "source": ["telemetry_opt_in", "bots"], "sample_unit": "offers", "min_sample": 500,
-    "target_lo": 3500, "target_hi": 6500, "alert_lo": 3000, "alert_hi": 7000, "owner_doc": 12 },
-  { "id": "kpi.econ.minor_refunds", "unit": "count", "stat": "count", "mode": "no_rise", "per_genre": false,
-    "window_days": 28, "source": "ledger", "sample_unit": "skus", "min_sample": 0,
-    "target_lo": null, "target_hi": null, "alert_lo": null, "alert_hi": null, "owner_doc": 15 }
-]
+{
+  "schema": "01.kpi",
+  "records": [
+    { "id": "kpi.run.folio_seconds_p50", "unit": "s", "stat": "p50", "mode": "band", "per_genre": false,
+      "window_days": 28, "source": ["telemetry_opt_in", "ranked"], "sample_unit": "folios", "min_sample": 2000,
+      "target_lo": 180, "target_hi": 420, "alert_lo": 150, "alert_hi": 480, "owner_doc": 14 },
+    { "id": "kpi.genre.door_pick_bp", "unit": "bp", "stat": "share_bp", "mode": "band", "per_genre": true,
+      "window_days": 28, "source": ["telemetry_opt_in", "bots"], "sample_unit": "offers", "min_sample": 500,
+      "target_lo": 3500, "target_hi": 6500, "alert_lo": 3000, "alert_hi": 7000, "owner_doc": 12 },
+    { "id": "kpi.econ.minor_refunds", "unit": "count", "stat": "count", "mode": "no_rise", "per_genre": false,
+      "window_days": 28, "source": "ledger", "sample_unit": "skus", "min_sample": 0,
+      "target_lo": null, "target_hi": null, "alert_lo": null, "alert_hi": null, "owner_doc": 15 }
+  ]
+}
 ```
 
 ```rust
@@ -783,7 +795,7 @@ pub fn aggregate(vs: &[KpiVerdict]) -> KpiVerdict {
 | `kpi.run.abridged_minutes_p50` | the same over `mode.abridged` victories | band | 60..=75 | 50..=85 | a, b | 14 |
 | `kpi.run.folio_seconds_p50` | median doc 14 §4.2 `secs_f` over cleared Folios of Standard and Abridged runs | band | 180..=420 | 150..=480 | a, b | 14 |
 | `kpi.run.daily_minutes_p50` | median `floor_div(end_tick, 3600)` over ranked Daily submissions | band | 20..=30 | 15..=35 | b | 14 |
-| `kpi.run.first_editor_5runs` | share of accounts with ≥ 5 runs whose first 5 non-Prologue runs include a `boss.editor_v1` death with the player present, Bp | band | ≥ 5000 | ≥ 4000 | a | 13, 14 |
+| `kpi.run.first_editor_5runs` | share of accounts with ≥ 5 runs whose first 5 runs include a `boss.editor_v1` death with the player present, Bp | band | ≥ 5000 | ≥ 4000 | a | 13, 14 |
 | `kpi.run.g0_victory_bp` | share of Grade-0 `mode.standard` runs ending `run.end.victory`, among accounts with ≥ 10 runs, Bp | band | 1500..=3500 | 1000..=4500 | a, b | 13, 14 |
 | `kpi.genre.door_pick_bp` | per core genre `g`: among committed 2-door offers that contain `g`, the share in which `g`'s door committed, Bp | band, per genre | 3500..=6500 | 3000..=7000 | a, f | 12 |
 | `kpi.genre.contradiction_exposure` | share of (Folio entry, slot) pairs in which the maximum `C` over the slot's equipped components is ≥ 1 on the entry tick, Bp | band | 5000..=8500 | 4000..=9000 | a, f | 05, 11, 12 |
@@ -809,7 +821,7 @@ pub fn aggregate(vs: &[KpiVerdict]) -> KpiVerdict {
 
 Every window is 28 days except `kpi.quality.review_positive_90d` and `kpi.biz.units_90d`, which are evaluated once on EA day 90, and `kpi.econ.codex_completion`, whose window is each Codex's first 24 weeks.
 
-**Systemic kills.** For each `ev.entity_killed` whose victim is not in `fac.errata`, let `h` be the `ev.damage_dealt` that its `damage_seq` names (the lethal hit, emitted before the kill in the same tick; doc 03 §14). The kill is systemic when `h.flags` has `env` (bit 7) or `fall` (bit 8), or when `h` comes from an Errata-placed block trap (`cat.placeable`, such as `block.trap.spikes`, doc 07 §10.4) or from an entity deployed from a `cat.gadget` snare, mine or charge (Canon §13.1). Doc 03 sets `env` on every Canon §10.6 environmental hazard hit, every Canon §12.1 surface, trigger or reaction hit, every environmental explosion and falling-block hit, and every DoT pulse of a status instance whose `env` is set; an instance's `env` is set when the application that created it, last refreshed it or last added a stack came from an `env` hit or from a doc 03 grid contact (doc 03 §3.3 `StatusInst.env`, §14 `DmgFlags`; triage C-32). A DoT pulse (`dot`, bit 2) is therefore systemic exactly when it carries `env`; the pulse of a status applied by a trap or weapon hit without `env` is not. A kill whose `damage_seq` is `0xFFFF_FFFF` names no hit and is not systemic. `systemic_share = floor_div(systemic_kills × 10000, npc_kills)`.
+**Systemic kills.** For each `ev.entity_killed` whose victim is not in `fac.errata`, let `h` be the `ev.damage_dealt` that its `damage_seq` names (the lethal hit, emitted before the kill in the same tick; doc 03 §14). The kill is systemic when `h.flags` has `env` (bit 7) or `fall` (bit 8), or when `h` comes from an Errata-placed block trap, that is `h.source == 0` and `h.ability` is a content ID in the `block.` namespace whose record carries `block.tag.errata_placeable` (such as `block.trap.spikes`; doc 07 §10.4 and its test 53; doc 03 §14.2), or from an entity deployed from a `cat.gadget` snare, mine or charge (Canon §13.1). Doc 03 sets `env` on every Canon §10.6 environmental hazard hit, every Canon §12.1 surface, trigger or reaction hit, every environmental explosion and falling-block hit, and every DoT pulse of a status instance whose `env` is set; an instance's `env` is set when the application that created it, last refreshed it or last added a stack came from an `env` hit or from a doc 03 grid contact (doc 03 §3.3 `StatusInst.env`, §14 `DmgFlags`; triage C-32). A DoT pulse (`dot`, bit 2) is therefore systemic exactly when it carries `env`; the pulse of a status applied by a trap or weapon hit without `env` is not. A kill whose `damage_seq` is `0xFFFF_FFFF` names no hit and is not systemic. `systemic_share = floor_div(systemic_kills × 10000, npc_kills)`.
 
 **Quire rate.** `kpi.econ.quires_per_hour_p50` brackets doc 14's two references: 60 per hour (`Q_REF`, failed runs) and 143 per hour (`Q_WIN`, Grade-0 victories). A median below 50 means the Bindery would take more than `5710 / 50 = 114.2` hours; above 160 it would finish in under `5710 / 160 = 35.7` hours, faster than the horizontal tree is meant to last.
 
@@ -848,7 +860,7 @@ Per the product owner's standing request, every system this chapter designs carr
 | Q-22 | KPIs | Is a Quire rate band of 50..=160 per active hour right for the Bindery's 40-to-95-hour horizon? | yes |
 | Q-23 | Tone | Is "erased" acceptable as the diegetic word for death, given the Editors' Erasure mechanic shares it? | yes; the overlap is intended |
 | Q-24 | Business | Should the supporter pack stay at 4.99 or follow doc 15's cosmetic band up to 9.99? | 4.99 |
-| Q-25 | Verbs | Which input starts the sprint-slide of DECISIONS 95? | `input.crouch` pressed while sprinting, which doc 17 adopts (its Interface row for doc 03) |
+| Q-25 | Verbs | Which input starts the sprint-slide of DECISIONS 95? | `input.crouch` pressed while sprinting, which doc 17 §12.1, §12.3 and §12.4 bind and doc 03 §5.23 moves |
 
 | # | Question | Answer |
 |---|---|---|
@@ -856,7 +868,7 @@ Per the product owner's standing request, every system this chapter designs carr
 | Q-06 | All 16 genres at EA, or fewer? | All 12 core genres at EA, with the 4 secret genres under the canon's unlock rules (DECISIONS 114, which supersedes the 6 of DECISIONS 41; PAR-12) |
 | Q-08 | Keep Erasure onset at 420 s? | No: onset 720 s, one elite-strength hunter at 10 stacks, no repeat spawns (DECISIONS 26; Canon §11.6, §17.1; §6.3) |
 | Q-11 | macOS at EA or at 1.0? | Neither: PC only through 1.0, Windows on Steam only, Steam Deck through Proton (DECISIONS 98, 112; §9.2) |
-| Q-12 | Folio Expansion at 12.99 or 14.99? | Neither: USD 9.99 each (DECISIONS 122, which replaces DECISIONS 42's band; doc 15 §1.1) |
+| Q-12 | What does each Folio Expansion cost? | Neither: USD 9.99 each (DECISIONS 122, which replaces DECISIONS 42's band; doc 15 §1.1) |
 | Q-17 | Keep "Redactor" for both the invader and the Volume II Editor? | No: the Volume II Editor is the Censor (doc 13 §9.2, doc 18 §8.3); invaders stay lowercase "redactors" from the Censor's office (triage C-16, G-177; §1.3) |
 
 ---
@@ -874,27 +886,30 @@ Record schemas: the pillar record, the pillar test record, the Early Access gate
 
 ## Interface assumptions
 
-Only open items are listed; everything else this chapter reads from other documents is on disk and cited under Imports.
+One row per chapter this chapter depends on beyond its Imports citations. "Present" means on disk and cited; "Requested" means still open.
 
-| Doc | Assumed to provide |
-|---|---|
-| 03 | an `ev.damage_dealt` from an Errata-placed block trap identifies that trap (`block.trap.spikes` and the other `cat.placeable` traps), with doc 07, for §10.3's systemic kills; the DECISIONS 95 mantle up to 2,000 mm and the sprint-slide motion (doc 03 G31; Canon gaps G1) |
-| 04 | each of the 13 Calling kits (doc 04 talents and abilities, doc 14 §2.4 kit records) contains at least one verb that targets or benefits an ally, which the `pillar.party_of_errata.t2` content audit checks; no chapter yet lists these verbs per Calling |
-| 07 | block traps identifiable as the source of their hits (§10.3, with doc 03) |
-| 11 | the genre-skinned grappling tool item of DECISIONS 95 (doc 11 Canon gaps item 2; Canon gaps G1) |
-| 12 | the fused Second Edition Folios and their lattice of fused pairs (DECISIONS 101, 117, 118), which wait on a canon fused-genre rule (doc 12 G19; Canon gaps G2) |
-| 13 | the revised Editors and the Author (DECISIONS 103, 118; doc 13 Canon gaps item 3; Canon gaps G2) |
-| 14 | §2.3 per DECISIONS 114: all 12 core genres at Early Access (it still names the 6 genres of DECISIONS 41 and draws the Daily's Origins over `range(6)` at Early Access); §8.1 and §8.9 per DECISIONS 118: `mode.second_edition` from Early Access (they read "from 1.0") |
-| 16 | the asynchronous-trace service and the streaming-vote path (DECISIONS 96, 104, 118; doc 16 O2) |
-| 17 | the sprint-slide in its §12 action list or binding tables as `input.crouch` pressed while sprinting (today only its Interface row for doc 03 states it; Q-25) |
-| 21 | DECISIONS 109 to 125: all 12 core genres, `mode.standard` and the Second Edition at Early Access; invasions, asynchronous traces and streaming votes in updates before 1.0; Steam the only storefront with no EOS; no hard dates; no demo or public playtest build; Folio Expansions at USD 9.99. Its §2.2 scope table, its §2.3 (e) Early Access readings of the pillar tests, its G4, G6 and G16 and its doc 01 Interface row then follow §2.7, PAR-12 and §9.2 |
+| Doc | Assumed to provide | Status |
+|---|---|---|
+| 02 | the 5-target determinism matrix, `perf.` budgets, the bot harness and the per-Folio telemetry aggregates with the minor-flagged bar (§6.4, §15, §16, §17.4) | Present |
+| 03 | the mantle up to 2,000 mm (§5.9), the sprint-slide motion (§5.23), the grappling-tool motion (§5.24) and the block-trap hit payload (§14.2) | Present; the Canon §4.2 text stays requested (doc 03 G31; Canon gaps G1) |
+| 04 | each of the 13 Calling kits (doc 04 talents and abilities, doc 14 §2.4 kit records) contains at least one verb that targets or benefits an ally, which the `pillar.party_of_errata.t2` content audit checks | Requested: no chapter lists these verbs per Calling (cross-chapter request to 04) |
+| 07 | `block.tag.errata_placeable` on every placeable and trap hits identifiable by their payload (§10.4, test 53) | Present |
+| 11 | the genre-skinned grappling tool `cat.tool` template of DECISIONS 95 | Requested (doc 11 Canon gaps item 2; Canon gaps G1) |
+| 12 | the fused Second Edition Folios and their lattice of fused pairs (DECISIONS 101, 117, 118) | Requested: they wait on a canon fused-genre rule (doc 12 G19; Canon gaps G2) |
+| 13 | the revised Editors and the Author (DECISIONS 103, 118); doc 14 §8.9 places each revised Editor through doc 13 §9.4 | Requested for the boss records (doc 13 Canon gaps item 3; Canon gaps G2) |
+| 14 | all 12 core genres at Early Access (§2.3) and the Second Edition from Early Access (§8.9) | Present. Requested: §5.6 advances resident arcs through the Folio quests residents give (DECISIONS 130) and drops its Prologue exception (DECISIONS 132); it still advances arcs by run milestones |
+| 15 | prices (base game USD 19.99, Folio Expansions USD 9.99), the separation wall and the economy KPIs (§1.1, §1.2, §12) | Present |
+| 16 | exit votes by position (§9.8), Steam-only sessions (§3.3, §3.5); the asynchronous-trace service and the streaming-vote path (DECISIONS 96, 104, 118) | Present for votes and sessions; requested for traces and streaming (doc 16 O2) |
+| 17 | the sprint-slide as `input.crouch` pressed while sprinting in §12.1, §12.3 and §12.4 | Present |
+| 19 | the envelope and the `01.pillar`, `01.pillar_test` and `01.kpi` schemas (§1.2, §5) | Present; the §6.01 fragment is doc 19's to fill from §2.7 and §10.2 |
+| 21 | DECISIONS 109 to 145: all 12 core genres, `mode.standard` and the Second Edition at Early Access; invasions, asynchronous traces and streaming votes in updates before 1.0; Steam the only storefront with no second networking SDK; no hard dates; no demo or public playtest build; no Prologue; Folio Expansions at USD 9.99. Its §2.2 scope table, its §2.3 (e) Early Access readings of the pillar tests and its doc 01 Interface row then follow §2.7, PAR-12 and §9.2 | Requested (cross-chapter request to 21) |
 
 ## Canon gaps
 
-Every gap this chapter raised against canon-1.4 is closed by canon-1.11 or by the triage (`audit/canon_gaps_triage.md`): the header names canon-1.11 (G-051); the Volume II Editor is the Censor and invaders are lowercase "redactors" from the Censor's office, with no canon wording change (G-177 rejected, C-16 applied in §1.3); the Margin plot is doc 14's trophy alcove and the Prologue's room L3 harvests a resource node and places ladders and planks instead of mining terrain (G-210, C-03, resolved on disk); doc 03 carries `env` on the DoT pulses of a status instance whose `env` is set (G-185, C-32, resolved on disk in doc 03 §3.3 and §14); the per-Folio telemetry aggregates and the opt-in consent channel are docs 02 and 16's (G-199, C-14: doc 02 §17.4 and doc 16 §11.7 carry them on disk); the gamepad cast cancel is B in `input.ctx.casting` (G-200, the stale former G7); the ghost mark is doc 17's `MarkTarget` intent implementing Canon §17.6 (G-178). Open items:
+Every gap this chapter raised against canon-1.4 is closed by canon-1.11 or by the triage (`audit/canon_gaps_triage.md`): the header names canon-1.11 (G-051); the Volume II Editor is the Censor and invaders are lowercase "redactors" from the Censor's office, with no canon wording change (G-177 rejected, C-16 applied in §1.3); the Margin plot is doc 14's trophy alcove (G-210 and C-03, resolved on disk; DECISIONS 132 has since retired the Prologue, so no Prologue room remains); doc 03 carries `env` on the DoT pulses of a status instance whose `env` is set (G-185, C-32, resolved on disk in doc 03 §3.3 and §14); the per-Folio telemetry aggregates and the opt-in consent channel are docs 02 and 16's (G-199, C-14: doc 02 §17.4 and doc 16 §11.7 carry them on disk); the gamepad cast cancel is B in `input.ctx.casting` (G-200, the stale former G7); the ghost mark is doc 17's `MarkTarget` intent implementing Canon §17.6 (G-178). Open items:
 
-- **G1. Movement kit.** DECISIONS 95 puts jump, crouch, sprint, a ledge mantle up to 2,000 mm, a sprint-slide and a genre-skinned grappling tool item into the game and lands them in Canon §4, which does not yet state them. Doc 03 §5.9 mantles only ledges more than 550 mm and at most 1,600 mm high and has no slide or grapple mode (doc 03 G31, which also asks whether the 2,000 mm is measured from the feet), doc 11 has no grappling tool record (its Canon gaps item 2), and only doc 17's Interface row for doc 03 names the slide's input, `input.crouch` pressed while sprinting. §7 states the decision and that input (Q-25); the owners' numbers will replace this text when they land.
-- **G2. Second Edition and asynchronous traces.** DECISIONS 96, 101 and 106 land partly in the canon (Canon §3, §5, §13.8, §17), which states no fused-genre rule, no Second Edition depth or structure and no trace rule. Doc 14 §8.9 now owns the Second Edition run flow, including its offer at every Ur-Text victory of a Standard or Abridged run, the first included; docs 12 and 13 wait on the canon for the fused Folios, the revised Editors and the Author (doc 12 G19, doc 13 Canon gaps item 3), and doc 16 has not specified the trace service (its O2). §1.3, §5 (NR-28, NR-29) and §6.4 state only what the decisions and doc 14 fix.
+- **G1. Movement kit.** DECISIONS 95 puts jump, crouch, sprint, a ledge mantle up to 2,000 mm, a sprint-slide and a genre-skinned grappling tool item into the game and lands them in Canon §4, which does not yet state them. Doc 03 now specifies the mantle (§5.9), the slide (§5.23) and the grapple motion (§5.24), and doc 17 §12.1 binds the slide to `input.crouch` pressed while sprinting; doc 11 still has no grappling-tool template (its Canon gaps item 2). Requested canon text, appended to Canon §4.2: "**Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet, and a sprint-slide started by a crouch press while sprinting (doc 03 §5.9, §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11)." (doc 03 G31 requests the same text.)
+- **G2. Second Edition and asynchronous traces.** DECISIONS 96, 101 and 106 land partly in the canon (Canon §3, §5, §13.8, §17), which states no fused-genre rule, no Second Edition depth or structure and no trace rule. Doc 14 §8.9 owns the Second Edition run flow: its offer at every Ur-Text victory of a Standard or Abridged run, the account's first included; each revised Editor's placement (through doc 13 §9.4); fused-pair reporting, with `FolioRecord.genre` the pair's genre of the lower Canon §5.2 row and `fused` the other; the Ironman rule, no `ev.player_died` in any Second Edition Folio; and `victory_present = 0` for every slot on a forfeit. Doc 14 records the offer rule as a product question to the owner (doc 14 harvest pq_se_offer); the rule stands until answered (product question 01-Q1). Docs 12 and 13 wait on the canon for the fused Folios, the revised Editors and the Author (doc 12 G19, doc 13 Canon gaps item 3), and doc 16 has not specified the trace service (its O2). §1.3, §5 (NR-28, NR-29) and §6.4 state only what the decisions and doc 14 fix.
 
 ## Acceptance tests
 
@@ -920,9 +935,12 @@ Every gap this chapter raised against canon-1.4 is closed by canon-1.11 or by th
 20. **Signature moments.** All 11 scenarios of §3.13 pass headless on every pull request; SM-09's light-column color passes the UI screenshot test.
 21. **Bindings.** Every `input.` ID in §7 exists in doc 17 §12.1, and every KB/M and gamepad binding in §7 equals doc 17 §12.3 and §12.4; the sprint-slide row reuses the crouch bindings while sprinting. No §7 row names a mount input or a Canon §17.7 retired ID.
 22. **Genre floor.** Under `GENRE_REPEAT_RULE`'s run cap of 3 appearances, the Standard run's 24 non-final Folios need `ceil_div(24, 3) = 8` core genres and the Abridged run's 14 need `ceil_div(14, 3) = 5`; the 12 core genres that ship from Early Access (DECISIONS 114) meet both, and PAR-12 names no lattice relaxation (DECISIONS 110).
-23. **JSON.** Every JSON block in this chapter parses, contains no fractional or exponent number, and every numeric field is an integer.
+23. **JSON.** Every JSON block in this chapter parses, contains no fractional or exponent number, and every numeric field is an integer; every content example is a doc 19 §1.2 envelope (§2.7, §10.2).
 24. **Decisions.** §9.3 lists the base game at USD 19.99 at Early Access and at 1.0, equal to doc 15 §1.1 `store.sku.base_game`; §9.3 lists each Folio Expansion at USD 9.99, equal to doc 15 §1.1 `store.sku.folio_exp_<nn>` (DECISIONS 122); §9.2 lists Steam as the only storefront and no console, Switch, native macOS, native Linux or browser client (DECISIONS 98, 112); PAR-12 and §2.7 put all 12 core genres and `mode.standard` at Early Access (DECISIONS 114); no rule in this chapter gives gear wear, breaking or repair (Canon §4.3, DECISIONS 65).
 25. **Test records and gate counts.** `content/01/pillar/tests.json` holds exactly 18 records; `carry_forward` is `true` only for `pillar.one_ruleset.t3`; each record's `pillar` lists it in `tests` at position `index`. At every gate, Early Access included, `pillar.living_page.t3` has `3 × 3 × 12 = 108` cells, `pillar.one_ruleset.t3` offers 12 display names and `pillar.out_of_story.t2` sweeps `12 × 13 = 156` pairs.
+26. **Block-trap kills (§10.3).** A kill whose lethal hit has `source` 0, `ability` the content ID of `block.trap.spikes` and neither `env` nor `fall` is systemic; a kill whose lethal hit has `source` 0 and an `ability` outside the `block.` namespace, with neither `env` nor `fall`, is not systemic; doc 07 test 53's trap hit (`item_uid` `u`, `instigator_slot` 2) meets the trap rule.
+27. **Envelope (§2.7, §10.2).** `content/01/pillar/pillars.json` is an object with exactly the keys `schema` = `"01.pillar"` and `records` (6 records); `content/01/pillar/tests.json` has `schema` = `"01.pillar_test"` (18 records); `content/01/kpi/kpis.json` has `schema` = `"01.kpi"` (27 records). A file holding a bare array fails doc 19 stage 5 with `E_ENVELOPE`; an `owner_doc` of 19 fails `doc_number`.
+28. **Rows 126 to 145.** PAR-04 lists 3 account profiles per Steam account, each with one suspended run (DECISIONS 144); PAR-10 names Steam Workshop and the host's mod-set sync (DECISIONS 126); the offline run of `pillar.fair_page.t3` starts at Standard Folio 1 (DECISIONS 132); §6.5 advances resident arcs only through the Folio quests residents give and grants nothing (DECISIONS 130); §10.1 source (a) excludes minor-flagged accounts and free text (DECISIONS 140); the Barony entry names hunger as the only survival meter (DECISIONS 145).
 
 ## Invariants annex
 
@@ -946,4 +964,8 @@ W! KPI values i64 ∧ shares in Bp ∧ open bound := null    N! KPI target on st
 W! bindings := doc 17                                     N! a second binding table that disagrees with doc 17
 W! tone := literary ∧ wry ∧ manuscript ∧ mild language   N! casino lexicon near Inkwell|Reliquary|Engine
 W! Scribe text → cosmetic only                           N! LLM output → sim state
+W! content file := doc 19 envelope {schema, records}     N! bare JSON array as a content file
+W! trap kill systemic ⇔ source 0 ∧ block. ability ∧ errata_placeable   N! trap hit without placed_meta.uid
+W! resident arc := fixed ∧ advanced by its Folio quests  N! relationship meter ∨ gifts ∨ romance
+W! telemetry opt-in ∧ never minor-flagged ∧ no free text N! a run path that needs a first-run Prologue
 ```
