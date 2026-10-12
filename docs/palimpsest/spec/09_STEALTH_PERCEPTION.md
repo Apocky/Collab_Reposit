@@ -1,7 +1,7 @@
 # 09 — Stealth and Perception
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.4, including the canon-1.2 additions this chapter owns.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
 
-This chapter owns how every simulated observer sees, hears, smells and feels the world, the per-pair detection meter and the awareness state machine, the noise catalog and its conversion into `ev.noise`, sneak attacks and takedowns, hiding, bodies, disguises, distractions, light manipulation, locks, hacking, traps, pickpocketing, co-op stealth and the genre stealth flavors. Everything here runs inside `palimpsest_sim` on integers. Detection is deterministic: it draws no random numbers. Only lockpicking, hacking, trap work, pickpocketing, disguise bluffs and passive trap and secret detection draw, all from keyed `rng.stealth`. The canon on disk at writing time is canon-1.4; every rule below was checked against it (Canon gaps G1).
+This chapter owns how every simulated observer sees, hears, smells and feels the world, the per-pair detection meter and the awareness state machine, the noise catalog and its conversion into `ev.noise`, sneak attacks and takedowns, hiding, bodies, disguises, distractions, light manipulation, locks, hacking, traps, pickpocketing, co-op stealth and the genre stealth flavors. Everything here runs inside `palimpsest_sim` on integers. Detection is deterministic: it draws no random numbers. Only lockpicking, hacking, trap work, pickpocketing, disguise bluffs and passive trap and secret detection draw, all from keyed `rng.stealth` in the `seq` range `1000..=1006` that Canon §3.3 reserves for this chapter (§1.5). Every rule below was checked against canon-1.11. Mounts are cut (DECISIONS 55, Canon §17.7), so no rule here reads a rider. Gear never wears or breaks (DECISIONS 65, Canon §4.3), so lockpicks, toolkits and hacking decks are carried tools that no attempt consumes. Alarms are recoverable, but the guards they reach search longer and stay wary until Folio exit (DECISIONS 61, §6.6). Subdue takedowns and Hacking-100 seizes are the stealth routes to pacifist play (DECISIONS 62, §9.4, §13.5). Hacking has the same optional minigame as lockpicking, and auto-resolving either one costs risk and time (DECISIONS 63, §13.3). Every sapient native faction of every genre can be impersonated (DECISIONS 64, §11.1).
 
 ## Imports
 
@@ -10,28 +10,28 @@ This chapter owns how every simulated observer sees, hears, smells and feels the
 | Canon | §1.2–§1.6 | `Fx`, `Bp`, `Bam`, `Ticks`, `Db`; two-channel `Light`; `floor_div`, `mul_bp`, `dist2`, `sqrt_fx`; integer-only content in mm, Bam, ticks |
 | Canon | §1.8, §1.9 | coordinates; `ang_diff`, `atan2_bam`, `fwd`, `sin_bam`, `cos_bam` |
 | Canon | §1.11 | ascending-`EntityId` iteration; phase key; no `HashMap` |
-| Canon | §2.2, §2.3 | perception period 3, AI think period 6; rate accumulator; `in_combat`; `light_at` |
-| Canon | §3.3, §3.4 | keyed `rng.stealth` (owner 09); trap and secret detection cadence and `seq` rule; documented draw counts |
-| Canon | §4.1–§4.3 | humanoid capsule and eye heights; speeds; lean; terrain and placeables |
+| Canon | §2.2, §2.3 | perception period 3, AI think period 6; rate accumulator; `in_combat`; `light_at`, clamped by doc 03 §10.6 light overrides, as the start of `stealth_light` |
+| Canon | §3.3, §3.4 | keyed `rng.stealth` (owner 09) and its reserved `seq` range `1000..=1006`; `rng.check` (owner 04), which disguise challenges never use; trap and secret detection cadence with `seq` below 1000; documented draw counts |
+| Canon | §4.1–§4.4 | humanoid capsule and eye heights; speeds; lean; fixed terrain, `block.tag.destructible` and `cat.placeable` placeables; no item durability; micro-voxel cells (Canon gaps G23) |
 | Canon | §5.3–§5.8 | dependencies, Contradiction potency and failure for tools; local genre and local axioms |
 | Canon | §6.4, §6.5 | rows 17, 24, 31–35, 40; NPC rows 31–35 |
 | Canon | §7 | `skill.sneak`, `skill.security`, `skill.pickpocket`, `skill.hacking`, `skill.awareness` and their scope notes |
-| Canon | §10.5, §10.6 | step 2.4 sneak eligibility per (attacker, target); step 2.4b flanking cone; step 5 `ignore_armor`; entry points |
-| Canon | §11.1, §11.4 | statuses owned here: `st.deafened`, `st.marked`, `st.invisible`, `st.hidden`, `st.hacked`; `st.sleeping`, `st.blinded`, `st.mounted`; direct-application duration |
-| Canon | §12, §12.1, §12.2 | `res.breath`; smoke and surfaces; sight concealment sums |
+| Canon | §10.5, §10.6 | step 2.4 sneak eligibility per (attacker, target); step 2.4b flanking cone; step 5 `ignore_armor`; entry points, including the lethal-takedown row |
+| Canon | §11.1, §11.4, §11.6 | statuses owned here: `st.deafened`, `st.marked` (visible to the marker and its allies), `st.invisible`, `st.hidden`, `st.hacked`; `st.sleeping`, `st.blinded`; direct-application duration; the Erasure hunter keeps `rank.hunter` |
+| Canon | §12, §12.1, §12.2 | `res.breath`; smoke and surfaces; sight concealment sums; tall grass only against crouched or downed targets and corpses |
 | Canon | §13.2 | `slot.face` masks; `slot.body`, `slot.back` |
-| Canon | §15, §17.3, §17.6, §17.7, §17.9 | factions and stances; ranks; ghosts imperceptible; mounted cannot be hidden; invaders |
-| Canon | §18 | `ev.noise`, `ev.awareness_changed`, `ev.damage_dealt`, `ev.block_changed`, `ev.entity_killed`, `ev.folio_entered`, `ev.mounted` |
-| Doc 03 | §2.2, §3.3, §5.8, §5.12, §5.15, §5.18, §7.6, §10, §11, §12.5, §13.4, §13.6, §14.2, §15.2 | system slots `sys.perception` (#5) and `sys.hearing` (#31); `comp.perception`; lean offset; downed crawl; `ev.footstep`, `ev.entity_landed`; `raycast_blocks`; `cell_conceal`; light grid and `flashes`; `emit_noise`, sound propagation, `HeardNoise`; explosion noise and flash; door toggles; `grid.cause.fell` and `grid.cause.landed`; payload schemas and `DmgFlags`; sleep query |
-| Doc 04 | §2.4, §4.2, §5.2, §5.3, §7.2, §10.1 | check chance curve, DC ladder and the Deceive check rating; stealth XP events; mastery perks of Sneak, Security, Pickpocket, Hacking, Awareness, Illusion, Divination; Shade and Netrunner talents; `light_step`, `night_eyes`, `fair_folk`, `wired`, `gumshoe` traits; `res.breath` drain while holding breath; `avatar_of_fate` double draws |
+| Canon | §15, §17.3, §17.6, §17.7, §17.9 | factions and stances; ranks; ghosts imperceptible; mounts cut and their IDs retired; invaders |
+| Canon | §18 | `ev.noise`, `ev.awareness_changed`, `ev.damage_dealt`, `ev.block_changed`, `ev.entity_killed`, `ev.folio_entered`, `ev.status_applied`; further events registered by doc 03 §14.3 |
+| Doc 03 | §2.2, §3.3, §5.8, §5.12, §5.14, §5.15, §5.18, §7.6, §10, §11, §12.5, §13.4, §13.6, §13.8, §14.2, §14.3, §15.2 | system slots `sys.perception` (#5) and `sys.hearing` (#31); `comp.perception`; lean offset; `push_contacts`; downed crawl (`grid.gait.crawl`); `ev.footstep`, `ev.entity_landed`; `raycast_blocks`; `cell_conceal`; light grid, light overrides and doc 06 shadow areas inside every light read (§10.6), and `flashes`; `emit_noise`, sound propagation, `HeardNoise` with `req`; explosion noise and flash; door toggles; `grid.cause.fell`, `grid.cause.landed` and `grid.cause.erased`; payload schemas, `DmgFlags` bit 13 `takedown` and the stealth events registered in §14.3; sleep query |
+| Doc 04 | §2.4, §4.2, §5.2, §5.3, §6.1, §7.2, §9.4, §10.1, §13 | check chance curve, DC ladder and the Deceive check rating; stealth XP events; mastery perks of Sneak, Security, Pickpocket, Hacking, Awareness, Illusion, Divination; Shade and Netrunner talents; `light_step`, `night_eyes`, `fair_folk`, `wired`, `gumshoe` traits; `aug.silent_pads` and the `body.serpentine` footstep rule; `res.breath` drain while holding breath; `avatar_of_fate` double draws; §6.1 pacification for subdues and Hacking-100 seizes |
 | Doc 05 | §1.6, §3.2, §4.9, §5.2, §6.8, §9.3, §10.2, §10.3, §11.1, §11.4 | archetype `sneak_tier` and hands; grenade archetypes; stance speeds; lean; armor `noise_db`; the hit pipeline's call into `sneak_eligible` and `sneak_mult`; the tier values 1 = 30000, 2 = 22500, 3 = 15000 that doc 05 assumes |
-| Doc 06 | §5.2, §7.1, §13, §14 | form cast noise; schools; shadow essence darkness; `glyph.ess.veil`; hushed; sight essence; `st.sleeping` awareness drop |
-| Doc 07 | §2, §10, §11.1, §12 | material `conceal` and `acoustic` class; block records with `light_emit`, `destructible`, door shapes; placeables and traps as `cat.placeable`; Errata gadgets immune to `st.hacked`; lockpick, toolkit and hacking-deck durability and quality |
+| Doc 06 | §5.2, §7.1, §13, §14 | form cast noise; schools; shadow essence darkness, read through doc 03 §10.6's `light_at`; `glyph.ess.veil`; hushed; sight essence; `st.sleeping` awareness drop |
+| Doc 07 | §2, §10, §11.1 | material `conceal` and `acoustic` class (no material carries `noise.surface.snow`); block records with `light_emit`, `lightsrc`, `block.tag.destructible`, `hide`, `conceal_crouch_only` and door shapes; placeables and traps as `cat.placeable`, including `block.trap.spikes`; Errata gadgets immune to `st.hacked`, and seized hostile devices outside Errata gadget limits (§11.1 rule 2); the hacking-deck failure spark (§11.1 rule 4); lockpick, toolkit and hacking-deck quality, with no durability |
 | Doc 08 | §3, §4.3, §6.3, §7 | liquid and gas conceal; respirators and their hearing penalty; shatter noise; phosphor; mind vision; night-eye; invisibility potions |
-| Doc 10 | §5.3, curse table | witness sight pass; `curse.loud`, `curse.beacon` |
+| Doc 10 | §5.3, §7.3, §7.8 | witness sight pass; `curse.loud`, `curse.beacon`; the pact `curse.pact.hush` |
 | Doc 11 | items, affixes, manufacturers | `item.face.mask`, `item.tool.lockpicks`, `item.tool.hacking_deck`, `item.tool.toolkit`, `item.tool.torch`, `item.trinket.warning_bell`, `item.exotic.quietus`, `item.exotic.dead_drop`, `affix.quiet`, `affix.soft_step`, `affix.ambusher`, `perk.leg.shadowweave`, Silverbough and Midnight Avenue traits; `cat.key` key tags |
-| Doc 12 | §2.3, §10.2, §16.3, §17, §19 | GPV `fog` (§2.3); light bands; `room.stealth`, `room.electronic`; hiding methods of secrets; `hazard.camera`, `hazard.alarm`, trap placement; `gpv.evt.weather_front` (fog +1 per 8 m, sound attenuation × 12000) and `lattice.marg.silent` (sound attenuation × 7000), both multiplying this chapter's `SOUND_BP` (§15.1) |
-| Doc 13 | §2.1, §2.2, §2.4, §4.2, §4.7, §5.4, §5.7, §9.1, §10.5 | template `senses`, `perception`, tags (closed vocabulary incl. `flier`, `breathless`, `electronic`, `enforcer`), roles, ranks; blackboard `last_known`; investigate, search (`min(3, n)` draws), call_allies, raise_alarm, relight and wake_ally actions; reaction delay; stalkers; hacked constructs; boss arena omniscience; hunters |
+| Doc 12 | §2.3, §11.3, §11.4, §12, §16, §17.3, §18, §19.1, §22 | GPV `fog` (§2.3); light bands (§11.3); trap placement (§11.4); `room.restricted` with its faction (§12); `room.stealth`, `room.electronic` (§16); hiding methods of secrets (§17.3); `hazard.camera`, `hazard.alarm` (§18); `gpv.evt.weather_front` (§19.1: fog +1 per 8 m, sound attenuation × 12000) and `lattice.marg.silent` (§22: sound attenuation × 7000), both multiplying this chapter's `SOUND_BP` (§15.1) |
+| Doc 13 | §2.1, §2.2, §2.4, §4.2, §4.7, §5.4, §5.7, §9.1, §10.5, §11.1, §12.1 | template `senses`, `perception`, the `outfit` flag and `outfit_mass_g`; the native factions `fac.native.*`; defeats and `ev.entity_pacified`; tags (closed vocabulary incl. `flier`, `breathless`, `electronic`, `enforcer`), roles, ranks; blackboard `last_known`; investigate, search (`min(3, n)` draws), call_allies, raise_alarm, relight and wake_ally actions; reaction delay; stalkers; hacked constructs; boss arena omniscience; hunters |
 | R5 | §2, §9.2 | per-pair meter, zone rates, light table, footstep dB, hysteresis, callouts, Vigilance, darkness defense |
 | R2 | §2.10, §2.11, §3.6 | Oblivion detection hysteresis and sneak perks; tumbler pity; BG3 obscurement |
 | R7 | §1.4 C2, R-BA2, R-BA4 | the R5 meter as the base model; lock-health pity; engineered noise counts as stealth |
@@ -73,7 +73,7 @@ pub struct PerceptionState {
     pub senses: u8,                    // bit 0 sight, 1 hearing, 2 breath, 3 tremor, 4 thermal, 5 scent (doc 13 order)
     pub pairs: Vec<PairAware>,         // sorted by subject EntityId; at most 16 (§6.8)
     pub disturb: Option<Disturbance>,  // subject 0: the environment (§6.4)
-    pub wary_until: Tick,              // Vigilance (§6.3)
+    pub wary_until: Tick,              // Vigilance (§6.3); WARY_FOLIO = Tick::MAX after an alarm (§6.6)
     pub corpse: Option<CorpseEval>,    // body under evaluation (§10.4)
     pub search: Option<SearchPlan>,    // §6.7; one plan per observer, for its highest-ordinal searching stimulus
     pub cam_seen: i32,                 // camera sight ticks (§15.2)
@@ -110,6 +110,7 @@ pub struct StealthAction { pub kind: u8 /* 0 pick, 1 pick_manual, 2 hack_device,
                            13 strip, 14 snuff, 15 relight, 16 bluff, 17 active_search */,
                            pub target: u64 /* EntityId or Gidx */, pub start: Tick, pub end: Tick,
                            pub origin: Fx3 /* actor position at start, for the 500 mm cancel rule */,
+                           pub manual: bool /* §13.3 lock_mode at the start; true for kind 1, and for kinds 2 and 3 in manual mode */,
                            pub pins: [u8; 8], pub pin: u8, pub pin_start: Tick, pub misses: u8, pub item: u64 }
 pub struct RadioMsg { pub due: Tick, pub receiver: EntityId, pub callout: Callout }
 pub struct StealthWorld {
@@ -122,6 +123,7 @@ pub struct StealthWorld {
     pub discovered: BTreeSet<EntityId>,           // bodies already reported (§10.4)
     pub blood_seen: BTreeSet<Gidx>,               // blood cells already reported (§10.4)
     pub alarms: BTreeMap<u64, Tick>,              // alarm source → cooldown end (§6.6)
+    pub alarmed: BTreeSet<Id32>,                  // factions whose alarm went off this Folio (§6.6)
     pub callout_log: BTreeMap<(u64, EntityId), Tick>, // (squad id, or faction id32 | 1 << 63 without a squad; subject) → last callout tick (§6.6)
     pub callouts: Vec<Callout>,                   // this tick's callout payloads; cleared at sys.tick_begin
     pub radio: VecDeque<RadioMsg>,                // radio callouts in flight, ordered by (due, receiver) (§6.6)
@@ -147,15 +149,15 @@ Every draw uses `keyed_rng("rng.stealth", folio, actor, now, seq)` (Canon §3.3)
 | `seq` | `actor` | Draws, in order | Count |
 |---|---|---|---|
 | object index `i` (`0..=999`) | the observer | passive trap and secret detection, Canon §3.3 and §13.6 | 1 per object in range |
-| 1000 | the picker | lockpick attempt: success roll, then break roll | 2 |
-| 1001 | the hacker | device hack (Loop, Unlock, Disable, Test, Cut) or Seize (§13.4, §13.5): success roll | 1 |
+| 1000 | the picker | auto lockpick attempt (§13.2): success roll, then slip roll | 2 |
+| 1001 | the hacker | auto device hack (Loop, Unlock, Disable, Test, Cut) or auto Seize (§13.4, §13.5): success roll | 1 |
 | 1002 | the disarmer | trap disarm: success roll, then trigger-on-failure roll | 2 |
 | 1003 | the thief | pickpocket or plant: success roll | 1 |
-| 1004 | the picker | manual lock minigame layout: one `range(40)` per pin | `2 + tier` |
-| 1005 | the picker | manual minigame pick-break roll, one per missed pin, in miss order | 0..=3 |
+| 1004 | the picker or hacker | manual minigame layout for a lock, a device or a Seize (§13.3): one `range(40)` per pin | `2 + tier` |
+| 1005 | — | unused: the manual minigame's pick-break roll was retired with item durability (Canon §4.3); a miss draws nothing | 0 |
 | 1006 | the disguised Erratum | disguise bluff: the Deceive success roll (§11.4) | 1 |
 
-Perception, meters, transitions, scent, hearing, search patterns and corpse discovery draw nothing. Under doc 04's `avatar_of_fate`, every **success** roll in this table (lockpick, hack, disarm, steal, bluff, passive detection) draws twice from the same keyed generator and keeps the result better for the roller; break, trigger and layout draws are unchanged. Each such roll therefore adds exactly 1 to its row's count. A pick-break roll succeeds when its value is below `break_bp`, and a disarm trigger roll fires the trap when its value is below 5000; neither is a success roll.
+Perception, meters, transitions, scent, hearing, search patterns and corpse discovery draw nothing. Under doc 04's `avatar_of_fate`, every **success** roll in this table (lockpick, hack, disarm, steal, bluff, passive detection) draws twice from the same keyed generator and keeps the result better for the roller; slip, trigger and layout draws are unchanged. Each such roll therefore adds exactly 1 to its row's count. A slip roll slips when its value is below `slip_bp` (§13.2), and a disarm trigger roll fires the trap when its value is below 5000; neither is a success roll. An actor runs at most one stealth action at a time (§1.4 `actions`), so a lock attempt and a hack never share a key at seq 1004. Canon §3.3 reserves `1000..=1006` on `rng.stealth` for this table and keeps detection's object-index `seq` below 1000. Disguise challenges are AI detection rolls and never draw on doc 04's `rng.check` (Canon §3.3).
 
 ### 1.6 Budget
 
@@ -163,19 +165,33 @@ Perception, meters, transitions, scent, hearing, search patterns and corpse disc
 
 **Candidates.** A check considers as sight candidates the live, non-ghost entities `s` with all of: `s` is hostile to `o` by Canon §15 stance, or wears a disguise of `o`'s faction or of a faction friendly or allied to it (§11.1), or is the subject of an existing pair of `o`; `dist2(o_eye, torso(s)) ≤ (max(R_far(o), dv(o)) as i128)²`, with `R_far` and `dv` from §3.3 and §4.3; and, for a civilian, `s` is an Erratum. Each check gathers at most 8 candidates, nearest first by `dist2`, ties by lower `EntityId`. Every existing pair is still processed for decay, timers and removal on every check (§6.2); a pair whose subject is not among the 8 candidates gets `V = 0` that check. When the next observer's worst case (3 rays per subject) would exceed the remaining budget, that observer and every later due observer are pushed to `backlog` in ascending `EntityId`; the next tick processes the backlog first, then its own due observers. A deferred check runs with `now` of the tick it actually runs and does not change the observer's phase. Reference cost: 85 due observers × 2 subjects × 3 rays = 510 rays per tick in a typical Folio.
 
+### 1.7 Events produced
+
+Besides Canon §18's `ev.noise` (through doc 03's `emit_noise`) and `ev.awareness_changed` (§6.2), this chapter produces eight bus events that doc 03 §14.3 registers with their payloads. Each is emitted once per occurrence, on the tick its rule fires:
+
+| Event | Emitted when | Payload values |
+|---|---|---|
+| `ev.alarm_raised` | `raise_alarm` passes its cooldown and no disabled alarm panel silences it (§6.6, §13.4) | `raiser` = the source `EntityId`, 0 for a block device; `pos`; `kind` 2 for a camera (§6.6 row 1), 1 for every other device (rows 2 to 5 and 9), 0 for a creature (rows 6 to 8) |
+| `ev.body_discovered` | a body's meter reaches 5000 (§10.4) | the observer, the body, the body's origin |
+| `ev.disguise_blown` | a compromise (§11.4) | the wearer and the compromising observer |
+| `ev.lock_opened` | a lock opens (§13.1 to §13.4) | `method` 0 key, 1 picked (pity, a manual pick and Security 100 included), 2 hacked (auto or manual; a terminal's Unlock emits one per lock it opens), 3 forced |
+| `ev.object_revealed` | an Erratum's detection or doc 06's sight essence first sets a hidden object's party mask (§13.6) | the detecting Erratum (the caster for sight essence); `kind` 1 for a doc 12 secret, 0 for every other hidden object |
+| `ev.device_hacked` | a hack verb or a Seize succeeds (§13.4, §13.5) | the hacker; the device's `EntityId`, or its `Gidx` value for a block device |
+| `ev.takedown` | a takedown's result applies on its last tick (§9.4) | the attacker and the target; `lethal` true for a lethal takedown |
+| `ev.item_stolen` | a steal succeeds (§13.7); a plant emits nothing | the thief, the victim, the item's uid |
+
 ---
 
 ## 2. Light at the target
 
 ### 2.1 Two-channel light and stealth light
 
-Each cell stores `light_sky` and `light_block` (Canon §1.2). Effective light is `max(light_sky, light_block)`; `light_at(e)` reads the cell at `e.pos + (0, 500 mm, 0)` (Canon §2.3). Spawning reads `light_block` only (Canon §12.3); stealth always reads effective light. Stealth light adds the target's own light, flashes and magical darkness:
+Each cell stores `light_sky` and `light_block` (Canon §1.2). Effective light is `max(light_sky, light_block)`; `light_at(e)` reads the cell at `e.pos + (0, 500 mm, 0)` (Canon §2.3). Spawning reads `light_block` only (Canon §12.3); stealth always reads effective light. Stealth light starts from `light_at`, which already carries doc 06's magical darkness (doc 03 §10.6 lowers every light read inside a shadow field or `linger` area by 8, floor 0), and adds the target's own light, flashes, phosphor and drone spotlights:
 
 ```
 fn stealth_light(e, now) -> u8:
-    env   = light_at(e)                                    // includes the grid's copy of e's own emitter, capped at 10 by doc 03 §10.4
-    dark  = 8 if e's light cell lies in a doc 06 shadow area (field or linger) else 0
-    env   = max(0, env - dark)
+    env   = light_at(e)                                    // includes the grid's copy of e's own emitter, capped at 10 by doc 03 §10.4;
+                                                           // doc 03 §10.6 shadow areas and light overrides already applied, so no second shadow term
     own   = max(0, max over e's lit equipment and held items of item_light(i))   // §2.3 table
     fl    = max(0, max over flashes f in flash_ring[0..3] of (f.level - taxicab(cell(e), f.cell)))
     ph    = 9 if e is phosphor-marked (doc 08) else 0
@@ -183,9 +199,9 @@ fn stealth_light(e, now) -> u8:
     min(15, max(env, own, fl, ph, spot))
 ```
 
-Flashes come from doc 03 §10.4's per-tick list, which the systems after #5 fill. At the end of the `sys.sound` prelude of tick `t`, the ring shifts (`[2] = [1]`, `[1] = [0]`) and `[0]` receives tick `t`'s list. A check at tick `t + 1` therefore sees the flashes of ticks `t`, `t − 1` and `t − 2`, so every observer, whose checks are exactly 3 ticks apart, sees every flash on exactly one check. `taxicab` is the sum of the absolute block-coordinate differences.
+Flashes come from doc 03 §10.4's per-tick list, which the systems after #5 fill. At the end of the `sys.sound` prelude of tick `t`, the ring shifts (`[2] = [1]`, `[1] = [0]`) and `[0]` receives tick `t`'s list. A check at tick `t + 1` therefore sees the flashes of ticks `t`, `t − 1` and `t − 2`, so every observer, whose checks are exactly 3 ticks apart, sees every flash on exactly one check. `taxicab` is the sum of the absolute block-coordinate differences. Doc 03 §10.6 light overrides, such as an Editor's blackout, clamp `light_at` and therefore `env` (Canon §2.3); `own`, flashes, phosphor and drone spotlights are not cell reads and are never clamped, so a torch-bearer inside a blackout still has `L_s = 12`.
 
-**Example.** A Gothic Horror crypt corridor (`ambient_light` 2, no fixtures) has effective light 2. An Erratum holding a torch (`own` 12) has `L_s = 12`. Without the torch, a muzzle flash of level 12 fired on tick `t` in its own cell gives `L_s = 12` on ticks `t + 1` to `t + 3`, then 2 again. Standing 2 cells (taxicab) from an ally's flash gives `12 − 2 = 10`. Inside a doc 06 shadow field the dark corridor stays `max(0, 2 − 8) = 0`, but the torch still gives 12.
+**Example.** A Gothic Horror crypt corridor (`ambient_light` 2, no fixtures) has effective light 2. An Erratum holding a torch (`own` 12) has `L_s = 12`. Without the torch, a muzzle flash of level 12 fired on tick `t` in its own cell gives `L_s = 12` on ticks `t + 1` to `t + 3`, then 2 again. Standing 2 cells (taxicab) from an ally's flash gives `12 − 2 = 10`. Inside a doc 06 shadow field `light_at` reads `max(0, 2 − 8) = 0` (doc 03 §10.6), but the torch still gives 12.
 
 ### 2.2 Light factor and bands
 
@@ -195,7 +211,7 @@ Flashes come from doc 03 §10.4's per-tick list, which the systems after #5 fill
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Bp | 800 | 1000 | 1300 | 1700 | 2200 | 2800 | 3500 | 4300 | 5100 | 5900 | 6700 | 7500 | 8200 | 8900 | 9500 | 10000 |
 
-Bands follow doc 12 §10.2: **dark** `L ≤ 4`, **dim** `5..=9`, **bright** `≥ 10`. The far-zone posture rule (§3.3) and every "in darkness" condition below use `L ≤ 7` or the band named.
+Bands follow doc 12 §11.3: **dark** `L ≤ 4`, **dim** `5..=9`, **bright** `≥ 10`. The far-zone posture rule (§3.3) and every "in darkness" condition below use `L ≤ 7` or the band named.
 
 ### 2.3 Own emitted light
 
@@ -224,7 +240,7 @@ Light blocks are doc 07 records with `light_emit > 0`. Doc 09 classifies them by
 | 5 | Break | any destructible fixture | weapon | block break noise of its acoustic class (§7.5) | fixture removed; light gone |
 | 6 | Power cut: hack or break `block.fuse_box` | electric, whole room | §13.4 | `noise.light.power` 45 dB | every electric fixture of the room unlit; `power_cuts[room] = now + 1800`; on that tick `sys.hearing` relights each fixture through `set_block` unless the box is broken, which keeps the room dark until Folio exit |
 
-Every change goes through `set_block`, so doc 03 relights the grid within its 4,096-pop budget and both channels stay correct. Worldgen fixtures are destructible (doc 12 §2.2).
+Every change goes through `set_block`, so doc 03 relights the grid within its 4,096-pop budget and both channels stay correct. Worldgen light fixtures are destructible (Canon §4.3).
 
 **AI reaction to darkness.** On every `ev.block_changed` whose old state emitted light and whose new state emits less by at least 4 levels, each awake sapient NPC within 16000 mm of the cell whose eye has a clear line to the cell gains a disturbance (§6.4) at `aware.suspicious` with position the cell. A clear line means `raycast_blocks` from the eye toward the cell center reports no hit before the ray enters the fixture cell; a hit on the fixture's own box counts as clear. The change is evaluated in `sys.hearing` from this tick's `ev.block_changed`, comparing `light_emit` of `old` and `new`. On arrival the NPC relights a flame source if its template carries `uses_items`, or walks to the room's fuse box for an electric cut; relighting takes 60 ticks. Doc 13 runs the walk; doc 09 sets the goal. Beasts, undead and constructs ignore light changes.
 
@@ -246,7 +262,6 @@ X(t, o) = 10000 → × f_stance → × f_motion → × f_size → × f_armor →
 
 | Condition | Bp |
 |---|---|
-| `st.mounted` (Canon §17.7) | 15000 |
 | `st.downed`, a body or Remains (§10.3), or lying under a `hide: under` prop (§10.1) | 3500 |
 | eye cell submerged (doc 03 `eye_submerged`) | 3000 |
 | swimming, eye above the surface | 7000 |
@@ -260,7 +275,7 @@ X(t, o) = 10000 → × f_stance → × f_motion → × f_size → × f_armor →
 | Condition | Bp |
 |---|---|
 | `s ≤ 300` | 6000 (still) |
-| `s > 7500` (gallop, knockback, dodge burst) | 16000 |
+| `s > 7500` (knockback, dodge burst) | 16000 |
 | gait crouch or crawl, or swimming or climbing | 8000 |
 | gait walk | 10000 |
 | gait sprint | 13000 |
@@ -308,7 +323,7 @@ fn ray(o_eye, sample, o, t) -> Option<i32>:                 // None = blocked, S
     Some(sum)
 ```
 
-`n` = number of `Some` results. `f_frac = [0, 4000, 7000, 10000][n]`. `c_min` = the smallest `Some` value. `f_conc = 10000 − 667 × c_min` (Canon §12.2). Other bodies never block sight. A target inside an occupied enclosed hiding spot (§10.2) has `n = 0` for everyone except the checker of that spot.
+`n` = number of `Some` results. `f_frac = [0, 4000, 7000, 10000][n]`. `c_min` = the smallest `Some` value. `f_conc = 10000 − 667 × c_min` (Canon §12.2). Other bodies never block sight. A cell's micro-voxels (Canon §4.4) block a ray only where doc 03's `raycast_blocks` meets one of that cell's boxes; a crossed cell whose boxes the ray misses adds its `cell_conceal`, which doc 03 reads through Canon §4.4's fill rule: 15, so the ray is blocked, at 48 or more micro-voxels, otherwise scaled by the fill fraction (Canon gaps G23). A target inside an occupied enclosed hiding spot (§10.2) has `n = 0` for everyone except the checker of that spot.
 
 **Lean.** A standing, still Erratum leaning 9 steps past a corner exposes only its head ray: `n = 1`, so `f_frac = 4000`. At `L_s` 10, 7 m in a guard's near cone, `X = 6000` and `V = 1608`; stepping out still gives `V = 4020`, walking out `V = 6700`. The capsule never moves while leaning, so motion stays "still" and no footsteps are emitted.
 
@@ -373,7 +388,7 @@ A profile (`aware.profile.*`) holds every number of a creature class. Doc 13 tem
 | `aware.profile.swarm` | 4000 / 8000 | 32768 / 32768 / 32768 | 1500 | 10 | 0 | 20 | 4000 | — |
 | `aware.profile.horror` | 0 / 0 | — | 0 | 40 | 30 | 5 | 0 | hearing only; hearing can alert; tremor |
 | `aware.profile.civilian` | 6000 / 16000 | 6372 / 10012 / 18204 | 1500 | 10 | 0 | 20 | 0 | crime triggers only (§15.2) |
-| `aware.profile.boss` | 16000 / 40000 | 10923 / 16384 / 24576 | 5000 | 60 | 0 | 15 | 4000 | — |
+| `aware.profile.boss` | 16000 / 40000 | 10923 / 16384 / 24576 | 5000 | 60 | 0 | 15 | 4000 | ignores disguises |
 | `aware.profile.editor` | 12000 / 32000 | 8192 / 12743 / 21845 | 3500 | 50 | 0 | 15 | 8000 | ignores disguises |
 | `aware.profile.camera` | 16000 / 16000 | 8192 / 8192 / 0 | timer | 0 | 0 | — | 0 (8000 at local TEC ≥ 8) | §15.2 |
 | `aware.profile.turret` | 12000 / 20000 | 8192 / 8192 / 0 | 4000 | 30 | 0 | 15 | 8000 | hackable |
@@ -422,7 +437,7 @@ sound_bp_eff(pos) = SOUND_BP[local_genre(pos)]              // §15.1, owned her
                     → × 7000 in a Folio carrying lattice.marg.silent (doc 12)
 ```
 
-each arrow one `mul_bp`. `sys.hearing` reconstructs each `HeardNoise` record's path cost and rescales it with `sound_bp_eff` at the noise position, which it reads with the source level through `HeardNoise.req` (doc 03 interface, Canon gaps G15):
+each arrow one `mul_bp`. `sys.hearing` reconstructs each `HeardNoise` record's path cost and rescales it with `sound_bp_eff` at the noise position, which it reads with the source level through `HeardNoise.req` (doc 03 §11.5):
 
 ```
 L0    = 10 × source_db;  cost = L0 − 10 × heard_db
@@ -435,7 +450,7 @@ Example: a 45 dB step heard at 25 dB in Hardboiled Noir (13000): `cost = 200`, `
 
 **Scented creatures.** Every living, non-ghost creature is scented except those tagged `construct`, `elemental` or `editor` (doc 13 §2.2). Every Erratum is scented; kin traits that change this belong to doc 04.
 
-**Layers.** A scented creature lays marks only when something can track it: every Erratum, every `fac.errata` minion, the invader, a mount while it carries an Erratum, and every other scented creature only while at least one living `fac.errata` minion with the `scent` sense is in the Folio. A layer owns one `Trail` in `StealthWorld.scent`, created on its first mark. On ticks where `(now + (id & 0xFF_FFFF_FFFF) % 30) % 30 == 0` (its §1.11 phase with period 30), while grounded and not mounted, it writes `ScentMark { cell: Gidx of its feet cell, tick: now, s0 }` at `head` and advances `head` modulo 120, overwriting the oldest mark. `s0 = 10000 → × 5000 with st.soaked → × 15000 for kin undead`, one `mul_bp` each. No mark is written while the feet cell holds ≥ 1 liquid unit or the body is airborne, swimming or mounted. 120 marks × 30 ticks = 3600 ticks, the full lifetime, so no live mark is ever overwritten. A trail is deleted when its owner dies, despawns or leaves the Folio.
+**Layers.** A scented creature lays marks only when something can track it: every Erratum, every `fac.errata` minion, the invader, and every other scented creature only while at least one living `fac.errata` minion with the `scent` sense is in the Folio. A layer owns one `Trail` in `StealthWorld.scent`, created on its first mark. On ticks where `(now + (id & 0xFF_FFFF_FFFF) % 30) % 30 == 0` (its §1.11 phase with period 30), while grounded, it writes `ScentMark { cell: Gidx of its feet cell, tick: now, s0 }` at `head` and advances `head` modulo 120, overwriting the oldest mark. `s0 = 10000 → × 5000 with st.soaked → × 15000 for kin undead`, one `mul_bp` each. No mark is written while the feet cell holds ≥ 1 liquid unit or the body is airborne or swimming. 120 marks × 30 ticks = 3600 ticks, the full lifetime, so no live mark is ever overwritten. A trail is deleted when its owner dies, despawns or leaves the Folio.
 
 **Strength** at `now` is `s(m) = s0 − floor_div(s0 × (now − m.tick), life)`, with `life = 3600`, or 1800 while a weather front is active in the mark cell's room at the time of evaluation.
 
@@ -449,7 +464,7 @@ Example: a 45 dB step heard at 25 dB in Hardboiled Noir (13000): `cost = 200`, `
 
 ### 4.7 Marking, mind vision and seeing the invisible
 
-- **`st.marked`** (Canon §11.1, owner 09). While target `t` bears `st.marked` applied by source `S`, every observer allied with `S` (same faction, or the party for Errata sources) treats `t` as a near-zone sight pass with `f_frac = 10000`, `f_conc = 10000` and `f_zone = 10000` at any distance up to its `R_far`, and sets `lkp` to `t`'s exact position each check (`lkp_src = 5`). Errata see marked entities through walls (doc 17 renders the outline).
+- **`st.marked`** (Canon §11.1, owner 09). While target `t` bears `st.marked` applied by source `S`, `S` itself and every observer allied with `S` (same faction, or the party for Errata sources) treat `t` as a near-zone sight pass with `f_frac = 10000`, `f_conc = 10000` and `f_zone = 10000` at any distance up to their `R_far`, and set `lkp` to `t`'s exact position each check (`lkp_src = 5`). Errata see marked entities through walls (doc 17 renders the outline).
 - **Mind vision** (doc 08). The bearer sees every creature within the radius through walls. In the simulation this counts as a sight pass for the doc 10 witness check and for reveal meters (§4.8) with `f_frac = 10000`.
 - **Seeing invisible**: Awareness 75 within 4000 mm and the Divination hook within 12000 mm set `f_invis = 10000` (§3.1).
 
@@ -553,7 +568,7 @@ In V1 the guard turns suspicious at tick 126 (2.1 s) and walks over; a Shade who
 | 4 | `aware.lost` | lost a target it was fighting | runs to `lkp`, attacks on reacquisition | 8000 |
 | 5 | `aware.alert` | combat | doc 13 combat | 10000 |
 
-"At or above `aware.suspicious`" means ordinal ≥ 2; "below alert" means ordinal ≤ 4. The interim names other chapters used map as "investigating" → `aware.suspicious`, "returning" → `aware.unaware` with Vigilance (Canon gaps G2).
+"At or above `aware.suspicious`" means ordinal ≥ 2; "below alert" means ordinal ≤ 4.
 
 ### 6.2 Transitions
 
@@ -566,7 +581,7 @@ In V1 the guard turns suspicious at tick 126 (2.1 s) and walks over; a Shade who
 | T5 | lost | alert | a sight pass with `V ≥ 300`; an attributed noise with margin ≥ 10; §5.4 contact | as T3, no new callout |
 | T6 | lost | searching | within 1500 mm of `lkp`; or `now − state_since ≥ LOST_MAX (600)` | build the search plan (§6.7); check enclosed spots near `lkp` first (§10.2) |
 | T7 | suspicious | searching | within 1500 mm of `lkp` and 120 ticks of look-around elapsed (`SUSP_LOOK`); or `now − state_since ≥ SUSP_MAX (900)` | build the search plan (§6.7); check enclosed spots near `lkp` first (§10.2) |
-| T8 | searching | unaware | `now − state_since ≥ search_ticks` (1200; 1800 after an alarm) and `M < 2500` | `wary_until = now + 5400`; clear `HUNTED`; drop the plan; doc 13 returns to post |
+| T8 | searching | unaware | `now − state_since ≥ search_ticks` (1200; 1800 after an alarm) and `M < 2500` | Vigilance (§6.3); clear `HUNTED`; drop the plan; doc 13 returns to post |
 | T9 | searching | suspicious | a new stimulus whose position is more than 6000 mm from the plan center | new `lkp`; a stimulus within 6000 mm instead updates `lkp`, rebuilds the plan around it and sets `state_since = now`, staying searching |
 | T10 | curious | unaware | `M < 1000` and `now − last_gain ≥ CURIOUS_HOLD (240)` | none |
 | T11 | any | (pair removed) | subject dead, despawned, a ghost, out of the Folio, no longer hostile and not disguised, or pacified | `ev.awareness_changed` to unaware |
@@ -584,8 +599,9 @@ Each check evaluates a pair in this order: removal (T11), sight fill, T3, T5, T4
 | `SUSP_MAX` | 900 | `WARY_TICKS` (Vigilance) | 5400 |
 | `CALLOUT_COOLDOWN` | 300 | `RADIO_DELAY` | 30 |
 | `ALARM_COOLDOWN` | 600 per source | `BARK_COOLDOWN` | 300 |
+| `WARY_FOLIO` (Vigilance after an alarm) | `Tick::MAX`, until Folio exit | | |
 
-Vigilance (MGS Caution, R5 §9.2) multiplies every gain by 12500 while `now < wary_until`.
+Vigilance (MGS Caution, R5 §9.2) multiplies every gain by 12500 while `now < wary_until`. Granting Vigilance sets `wary_until = max(wary_until, now + WARY_TICKS)`, so a grant never shortens a longer one. An alarm grants it until Folio exit instead (`wary_until = WARY_FOLIO`, §6.6). An alarm is therefore recoverable: its searchers return to unaware through T8 when their 1800-tick search ends with `M < 2500`, but they stay wary for the rest of the Folio (DECISIONS 61). Perception state ends with the Folio, so `WARY_FOLIO` needs no reset.
 
 ### 6.4 Disturbances
 
@@ -611,10 +627,10 @@ Doc 13's blackboard copies `lkp`, `lkp_tick` and `lkp_src` each think (doc 13 §
 ### 6.6 Group alert propagation
 
 - **Callout.** On T3, a sapient observer emits `noise.voice.callout` (85 dB) at its eye, unless `callout_log[(key, subject)] > now − CALLOUT_COOLDOWN`, where `key` is its squad id (doc 13 §4.10) or, without a squad, `faction.id32 as u64 | 1 << 63`; emitting writes `callout_log[(key, subject)] = now`. The payload `Callout { emitter, subject, lkp, tick, disguise_blown: bool }` rides with the noise request and is pushed to `StealthWorld.callouts`. Doc 13's `ai.action.call_allies` re-emits it under the same cooldown.
-- **Hearing a callout.** A listener of the emitter's faction, or of a faction friendly or allied to it (Canon §15), that hears the callout above its gate: a pair for the subject below suspicious becomes suspicious with `M = max(M, 7000)` and the payload `lkp`; a pair at suspicious, searching or lost takes the newer `lkp` and restarts its state timer; alert is unchanged. Every such listener sets `wary_until = now + 5400`.
+- **Hearing a callout.** A listener of the emitter's faction, or of a faction friendly or allied to it (Canon §15), that hears the callout above its gate: a pair for the subject below suspicious becomes suspicious with `M = max(M, 7000)` and the payload `lkp`; a pair at suspicious, searching or lost takes the newer `lkp` and restarts its state timer; alert is unchanged. Every such listener gains Vigilance (§6.3).
 - **Radio.** When the emitter's faction carries the doc 13 `radio` flag and the local TEC at the emitter is ≥ 5, the callout pushes `RadioMsg { due: now + RADIO_DELAY, receiver, callout }` for every other living member of its squad in ascending receiver `EntityId`. At `due`, `sys.hearing` step 3 applies each message as a heard callout without a hearing check, and the receiver emits `noise.alarm.radio` (50 dB) at itself, which Errata can hear. A message whose receiver died or became pacified is dropped.
 - **Allied combat noise.** An alarm-class noise (gunfire, explosion, scream) emitted by an allied NPC that holds some subject at alert is processed by allied listeners as a callout about that subject.
-- **Alarms.** `raise_alarm(faction, pos, subject, source)` does nothing while `alarms[source] > now`; otherwise it sets `alarms[source] = now + ALARM_COOLDOWN`, emits the source's alarm noise from the table below at the source, and for every awake member of the faction and of friendly or allied factions within 48000 mm of `pos`, in ascending `EntityId`: `wary_until = now + 5400`; when `subject ≠ 0`, the pair for `subject` (created if absent) becomes searching at `pos` with `lkp_src = 6` and `search_ticks = 1800` if its ordinal is below searching; when `subject = 0`, the disturbance does the same. Doc 13's Director receives `alarm_raised(pos, faction)`. `source` is the device's `EntityId` (or `Gidx` for a block device), or the raising creature's `EntityId`. A device's faction is the faction doc 12 records when placing it, by default the Folio's primary native faction (doc 13).
+- **Alarms.** `raise_alarm(faction, pos, subject, source)` does nothing while `alarms[source] > now`; otherwise it sets `alarms[source] = now + ALARM_COOLDOWN`, emits the source's alarm noise from the table below at the source, and for every awake member of the faction and of friendly or allied factions within 48000 mm of `pos`, in ascending `EntityId`: `wary_until = WARY_FOLIO`; when `subject ≠ 0`, the pair for `subject` (created if absent) becomes searching at `pos` with `lkp_src = 6` and `search_ticks = 1800` if its ordinal is below searching; when `subject = 0`, the disturbance does the same. The faction joins `alarmed`, the call emits `ev.alarm_raised` (§1.7), and doc 13's Director receives `alarm_raised(pos, faction)`. A perceiving creature of a faction in `alarmed` that spawns later in the Folio (doc 13 reinforcements and reserve waves) starts with `wary_until = WARY_FOLIO`; `alarmed` resets with the rest of `StealthWorld` on `ev.folio_entered`. `source` is the device's `EntityId` (or `Gidx` for a block device), or the raising creature's `EntityId`. A device's faction is the faction doc 12 records when placing it, by default the Folio's primary native faction (doc 13).
 
 | # | Source | Trigger | Alarm noise | `subject` |
 |---|---|---|---|---|
@@ -657,7 +673,7 @@ Example: center (100.5, 8.0, 60.5) m, last velocity east. P1 is (106.5, 8, 60.5)
 - `sneak_eligible(att, tgt, now) = tgt has st.sleeping ∨ (tgt has comp.perception ∧ ordinal(aware_state(tgt, att)) < 5)` (Canon §10.5 step 2.4). Entities without perception (Errata, invaders, containers) are eligible only while sleeping, so NPCs never sneak-attack Errata (doc 13 §5.4).
 - `sight_pass(o, s)`: the `SIGHT_PASS` flag of the latest check.
 - `awareness_above_unaware(e)` for doc 03 §15.2: any pair toward an Erratum or the disturbance has ordinal ≥ 1.
-- **`st.hidden`** (Canon §11.1): at the end of `sys.hearing`, for each Erratum in ascending `EntityId`, apply it when the Erratum is not mounted, not a ghost, and no observer holds it at alert; remove it otherwise. It never gates sneak attacks.
+- **`st.hidden`** (Canon §11.1): at the end of `sys.hearing`, for each Erratum in ascending `EntityId`, apply it when the Erratum is not a ghost and no observer holds it at alert; remove it otherwise. It never gates sneak attacks.
 
 ```rust
 fn check_pair(o: &mut Observer, p: &mut PairAware, t: &Entity, now: Tick) {
@@ -707,13 +723,16 @@ armor_db(e) = Σ worn pieces max(0, noise_db − floor_div(skill.armor, 25)), an
 | 4 | `trait.kin.fae.light_step` | steps, landing | −3 |
 | 5 | `affix.soft_step` (doc 11) | steps, landing | −X |
 | 6 | Silverbough armor (any piece) | steps, landing | −6 once |
-| 7 | `st.encumbered` / `st.overburdened` | steps, landing | +3 / +6 |
-| 8 | `affix.quiet` | attack noises: `noise.melee.swing`, `noise.shot.*` | −X |
-| 9 | Silverbough weapon | attack noises | −20 |
-| 10 | `curse.loud` (doc 10) | every noise the bearer emits | +m |
-| 11 | `st.erasure` (Canon §11.6) | every noise the bearer emits | +stacks |
-| 12 | Midnight Avenue weapon (cap) | shots ≤ 50, swings ≤ 40 | cap |
-| 13 | `talent.shade.quiet_kill`, takedowns (cap) | the victim's death cry and body fall | ≤ 24 (audible to 2 m) |
+| 7 | `aug.silent_pads` (doc 04 §9.4) | steps | −6 |
+| 8 | `body.serpentine` body plan (doc 04 §13, `echo.jormungandr`) | steps | −6 |
+| 9 | `st.encumbered` / `st.overburdened` | steps, landing | +3 / +6 |
+| 10 | `affix.quiet` | attack noises: `noise.melee.swing`, `noise.shot.*` | −X |
+| 11 | Silverbough weapon | attack noises | −20 |
+| 12 | `curse.loud` (doc 10) | every noise the bearer emits | +m |
+| 13 | `curse.pact.hush` (doc 10 pact) | every noise the bearer emits | −m, the pact's boon magnitude (doc 10 §7.8) |
+| 14 | `st.erasure` (Canon §11.6) | every noise the bearer emits | +stacks |
+| 15 | Midnight Avenue weapon (cap) | shots ≤ 50, swings ≤ 40 | cap |
+| 16 | `talent.shade.quiet_kill`, takedowns (cap) | the victim's death cry and body fall | ≤ 24 (audible to 2 m) |
 
 ### 7.2 Movement and footsteps
 
@@ -751,7 +770,7 @@ NPC steps add the profile `step_db` (§4.1). **Surface** is the `acoustic` class
 | `noise.surface.grass` | −6 | override: a `block.tall_grass` cell as the feet cell |
 | `noise.surface.paper` | −6 | paper, vellum |
 | `noise.surface.cloth` | −8 | linen, tweed, silk, nanoweave, dreamstuff, web |
-| `noise.surface.snow` | −8 | none yet: reserved for a doc 07 snow-layer block (Canon gaps G21); nothing emits it until doc 07 adds one |
+| `noise.surface.snow` | −8 | none: doc 07 defines no snow material or block (doc 07 §2.4, triage G-203), so the base game never emits it; it stays defined for data-pack materials (doc 02 modding) and doc 18's 17 audio classes |
 
 Examples: walking on metal in a full heavy set at Armor 0 with `curse.loud` 2: `40 + 10 + 11 + 2 = 63` dB. A Shade crouch-walking on stone in a light set with Sneak 25 and `soft_step`: `25 + 6 + 3 − 3 − 6 = 25` dB. A 4000 mm drop onto stone in a medium set: `40 + 20 + 6 + 6 = 72` dB.
 
@@ -823,7 +842,7 @@ Grimoire spells take the form's cast noise from doc 06 §5.2 with doc 06's hushe
 | `noise.block.erase` | 50 (Editor erasure) | `noise.node.harvest` | 50 (resource nodes) |
 | `noise.door.open` | 45 wood, 55 metal; −15 when crouched | `noise.door.close` | open + 5; −15 when crouched |
 | `noise.door.locked` | 40 (rattling a locked door) | `noise.lock.pick` | 25 per attempt |
-| `noise.lock.snap` | 35 (a pick breaks) | `noise.lock.open` | 40 |
+| `noise.lock.snap` | 35 (a pick slips, §13.2) | `noise.lock.open` | 40 |
 | `noise.lock.force` | 75 (Force check, doc 04) | `noise.hack.beep` | 30 per attempt |
 | `noise.hack.fail` | 60 at the device | `noise.light.snuff` | 20 |
 | `noise.light.switch` | 25 | `noise.light.power` | 45 |
@@ -833,7 +852,7 @@ Grimoire spells take the form's cast noise from doc 06 §5.2 with doc 06's hushe
 | `noise.body.thud` | 65 (thrown body) | `noise.hide.enter`, `noise.hide.exit` | 35 |
 | `noise.takedown.lethal` | 35 | `noise.takedown.subdue` | 30 |
 
-### 7.6 Voices, explosions, alarms, gadgets, mounts and environment
+### 7.6 Voices, explosions, alarms, gadgets and environment
 
 | ID | dB | ID | dB |
 |---|---|---|---|
@@ -849,23 +868,21 @@ Grimoire spells take the form's cast noise from doc 06 §5.2 with doc 06's hushe
 | `noise.alarm` | 90 | `noise.alarm.bell` | 100 |
 | `noise.alarm.radio` | 50 | `noise.trap.trigger` | 60 |
 | `noise.gadget.deploy` | 45 | `noise.gadget.noisemaker` | 70 every 60 ticks for 600 ticks |
-| `noise.gadget.hum` | 40 every 60 ticks (drones, turrets idle) | `noise.mount.walk` | 50 |
-| `noise.mount.gallop` | 65 | `noise.mount.hover` | 60 every 30 ticks |
-| `noise.mount.glide` | 30 | `noise.mount.summon` | 60 |
-| `noise.env.distant` | 70 (doc 12 event) | `noise.env.debris` | 80 |
-| `noise.env.steam` | 50 | `noise.env.fire` | 45 on `ev.fire_started` |
+| `noise.gadget.hum` | 40 every 60 ticks (drones, turrets idle) | `noise.env.distant` | 70 (doc 12 event) |
+| `noise.env.debris` | 80 | `noise.env.steam` | 50 |
+| `noise.env.fire` | 45 on `ev.fire_started` | | |
 
-Doc 05 grenades map: frag `noise.explosion.grenade`, concussion `.concussion`, flash `.flash`, incendiary `.incendiary`, smoke `.smoke`, counter `.grenade`; the launcher blast is `.grenade`. Doc 08 §13.2 bombs name their own detonation noise from this table (`.grenade`, `.incendiary`, `.smoke`, `.flash`, or `noise.item.shatter_ceramic` for bombs that only shatter); doc 08 §5.2 liquid blasts use `.surface`. Doc 03 reads levels through `noise_level` for `ExplosionSpec.noise`.
+Doc 05 grenades map: frag `noise.explosion.grenade`, concussion `.concussion`, flash `.flash`, incendiary `.incendiary`, smoke `.smoke`, counter `.grenade`; the launcher blast is `.grenade`. Doc 08 §13.2 bombs name their own detonation noise from this table (`.grenade`, `.incendiary`, `.smoke`, `.flash`, or `noise.item.shatter_ceramic` for bombs that only shatter); doc 08 §5.2 liquid blasts use `.surface`. Doc 03 reads levels through `noise_level` for `ExplosionSpec.noise`. Mounts are cut (Canon §17.7), so the five mount noises of earlier drafts are retired and the `noise.mount.` family is empty.
 
 ### 7.7 Attribution and AI reactions
 
-A noise is **attributed** to its emitter when the emitter is a living entity and the ID is a body noise, a weapon-use noise (`noise.melee.swing`, `noise.shot.*`, `noise.weapon.*`), a cast (`noise.spell.<school>`, `noise.prayer`), or one of `noise.lock.*`, `noise.hack.*`, `noise.door.*`, `noise.hide.*`, `noise.takedown.*`, `noise.mount.*`, `noise.light.*`, `noise.item.drop`, `noise.body.drop`. Every other noise is unattributed: impacts, explosions, alarms, gadgets, traps, block breaks, items landing, environment. A grenade thrower is never revealed by its explosion; the guards search the blast.
+A noise is **attributed** to its emitter when the emitter is a living entity and the ID is a body noise, a weapon-use noise (`noise.melee.swing`, `noise.shot.*`, `noise.weapon.*`), a cast (`noise.spell.<school>`, `noise.prayer`), or one of `noise.lock.*`, `noise.hack.*`, `noise.door.*`, `noise.hide.*`, `noise.takedown.*`, `noise.light.*`, `noise.item.drop`, `noise.body.drop`. Every other noise is unattributed: impacts, explosions, alarms, gadgets, traps, block breaks, items landing, environment. A grenade thrower is never revealed by its explosion; the guards search the blast.
 
 | Class (`aware.react.*`) | Noises | Hostile attributed emitter | Unattributed | Allied emitter |
 |---|---|---|---|---|
-| `aware.react.ignore` | `noise.voice.bark`, `noise.gadget.hum`, `noise.mount.glide` | none | none | none |
+| `aware.react.ignore` | `noise.voice.bark`, `noise.gadget.hum` | none | none | none |
 | `aware.react.curious` | steps, landing below 60 dB, swim, climb, mantle, dodge, flap, swing, reload, swap, dryfire, throw, item drop and use, lock pick and beep, light snuff and switch, door, hide, takedowns, breath, groan, casts emitted at 45 dB or less | pair gain | disturbance gain | none |
-| `aware.react.investigate` | landing ≥ 60 dB, splash, melee hit, clang, block, parry, impacts (sonic included), item impact and shatter, block hit, break, place, fall, erase, harvest, lock snap, open and force, hack fail, light power, suppressed and mundane shots, energy shots, casts emitted above 45 dB, spell impact, fizzle, pain, whistle, shout, squawk, trap trigger, deploy, noisemaker, smoke burst, mount noises, steam, fire, distant | pair gain; T2 when margin ≥ 10 | disturbance gain; T2 when margin ≥ 10 | none |
+| `aware.react.investigate` | landing ≥ 60 dB, splash, melee hit, clang, block, parry, impacts (sonic included), item impact and shatter, block hit, break, place, fall, erase, harvest, lock snap, open and force, hack fail, light power, suppressed and mundane shots, energy shots, casts emitted above 45 dB, spell impact, fizzle, pain, whistle, shout, squawk, trap trigger, deploy, noisemaker, smoke burst, steam, fire, distant | pair gain; T2 when margin ≥ 10 | disturbance gain; T2 when margin ≥ 10 | none |
 | `aware.react.alarm` | powered unsuppressed shots, explosions (except smoke), surge, scream, death cry, dog bark, alarms, debris | pair gain; T2 always; doc 13 runs instead of walks | disturbance becomes searching (1800 ticks) | callout rule if the ally is alert (§6.6) |
 | `aware.react.callout` | `noise.voice.callout` | — | — | §6.6 |
 
@@ -885,8 +902,8 @@ A noise is **attributed** to its emitter when the emitter is a living entity and
 | `ev.block_changed` cause `landed` (doc 03 §13.6) | `noise.block.fall` by the new block's acoustic class |
 | `ev.block_changed` cause `placed` | `noise.block.place` |
 | `ev.block_changed` cause `toggled` on a door or trapdoor state | `noise.door.open` when the open bit goes 0 → 1, `noise.door.close` when it goes 1 → 0, wood or metal by the door's acoustic class, −15 dB when `actor` is crouched |
-| `ev.block_changed` cause `erased` (Canon gaps G16) | `noise.block.erase` |
-| `ev.block_changed` with any other cause (`explosion`, `fire`, `fell`, `froze`, `melted`, `toggled` on a non-door, `liquid`, `grew`, `spread`, `decayed`, `script`, `worldgen`) | nothing: explosions, fires and light actions emit their own noise |
+| `ev.block_changed` cause `erased` (doc 03 §13.8) | `noise.block.erase` |
+| `ev.block_changed` with any other cause (`explosion`, `fire`, `fell`, `froze`, `melted`, `toggled` on a non-door, `liquid`, `connected`, `reaction`, `grew`, `spread`, `decayed`, `reverted`, `expired`, `script`, `worldgen`) | nothing: explosions, fires and light actions emit their own noise |
 | `ev.damage_dealt` with `dmg.sonic` above 0 in `per_type` | `noise.impact.sonic` at `pos` |
 | `ev.entity_killed` of a creature tagged sapient or beast | `noise.voice.death` at the victim's eye and `noise.body.fall` at its origin, both capped at 24 dB after a takedown or with the killer's `quiet_kill` |
 | `ev.fire_started` | `noise.env.fire` at the cell |
@@ -951,7 +968,7 @@ sneak_mult(att, tgt, tier) =
 | melee and ranged archetypes | doc 05 `sneak_tier`: 1 for dagger, blade_short, fist, unarmed; 2 for blade_long, axe, mace, spear, whip, chain, pistol, pistol_heavy, rifle_marksman, sniper, charge_rifle, crossbow, thrown; 3 for blade_great, axe_great, warhammer, halberd, quarterstaff, smg, rifle_auto, shotgun, launcher, beam |
 | spells: bolt, beam, chain, orb, cone | 3 |
 | spells: touch | 2 |
-| spells: nova, aura, field, wall, rune; throwables, bombs, flasks; gadgets, turrets, traps; hits from a mounted rider | 4 |
+| spells: nova, aura, field, wall, rune; throwables, bombs, flasks; gadgets, turrets, traps | 4 |
 | minions and seized units | their basic attack: melee 2, ranged 3 |
 
 `affix.ambusher` and `item.exotic.quietus` add to the step-1 additive bucket on sneak hits (doc 11) and do not change `sneak_mult`. The multiplier enters Canon §10.5 at step 2.4, after precision and before elevation and flanking, and the hit draws no crit roll (Canon §3.4).
@@ -962,14 +979,14 @@ A sneak hit carries `ignore_armor` (Canon §10.5 step 5) when the attacker has S
 
 ### 9.4 Takedowns
 
-**Eligibility** (evaluated every tick while the prompt shows): attacker is an Erratum, grounded, not mounted, not carrying; target has `comp.perception`, rank minion or standard (elite: lethal only, attacker Sneak ≥ 75), not tagged `swarm`; origins within 1500 mm; attacker outside the target's frontal cone (`ang_diff(target.yaw, bearing target→attacker) > 10923`, Canon step 2.4b) unless the target has `st.sleeping`, `st.stunned` or `st.knocked_down`, or the attacker is inside an enclosed hiding spot facing it (§10.2); the target's pair for the attacker is at most suspicious.
+**Eligibility** (evaluated every tick while the prompt shows): attacker is an Erratum, grounded, not carrying; target has `comp.perception`, rank minion or standard (elite: lethal only, attacker Sneak ≥ 75), not tagged `swarm`; origins within 1500 mm; attacker outside the target's frontal cone (`ang_diff(target.yaw, bearing target→attacker) > 10923`, Canon step 2.4b) unless the target has `st.sleeping`, `st.stunned` or `st.knocked_down`, or the attacker is inside an enclosed hiding spot facing it (§10.2); the target's pair for the attacker is at most suspicious.
 
 | Kind | Input | Ticks | Result |
 |---|---|---|---|
-| Lethal | hold `input.heavy` 10 ticks | 45 | the target takes a hit with flags `sneak` and `takedown` that enters Canon §10.5 at step 7 as `dmg.true` equal to its current HP plus its remaining ward; an elite instead takes `mul_bp(max_hp_mhp, 5000)` plus its remaining ward, so it loses half its Max HP, and gains `st.staggered` directly; `noise.takedown.lethal` 35 dB; the death cry and body fall are capped at 24 dB |
+| Lethal | hold `input.heavy` 10 ticks | 45 | the target takes a hit with flags `sneak` and `takedown` through Canon §10.6's lethal-takedown row: it enters §10.5 at step 7 as `dmg.true` equal to its current HP plus its remaining ward and skips crit, resistance, armor and the chip floor; an elite instead takes `mul_bp(max_hp_mhp, 5000)` plus its remaining ward through the same row, so it loses half its Max HP (Canon gaps G24), and gains `st.staggered` directly; `noise.takedown.lethal` 35 dB; the death cry and body fall are capped at 24 dB |
 | Subdue | hold `input.interact` 10 ticks | 90 | `st.sleeping` by direct application (Canon §11.4) and `subdued_until = now + 3600`; the sleep is re-applied directly on every status pulse until then; `noise.takedown.subdue` 30 dB |
 
-The ticks column counts from the tick the hold completes; the result applies on the last tick. During either, the target is held: `st.grappled` is applied directly on the first tick and re-applied directly every 15 ticks (Canon §2.3 refresh), and removed when the takedown ends or cancels. The attacker cannot act, move or change weapons. The takedown cancels with no effect when either takes damage, when the target's pair for the attacker becomes alert, or when the attacker's origin moves more than 500 mm from `StealthAction.origin`. Each observer other than the target that has a sight pass on the attacker on any check during the takedown gains a flat 4000 meter at once, once per takedown. A lethal takedown hit sets `DmgFlags` bit 1 (sneak) and bit 13 (takedown, Canon gaps G16). A subdued NPC wakes early on any damage (Canon `st.sleeping`) or after an ally's 60-tick wake interact, then enters searching at its own position with Vigilance. A subdue counts once per entity as a pacification defeat for doc 13 §11.1 XP. A lethal takedown kill grants doc 04's 1500 Sneak milli-XP.
+The ticks column counts from the tick the hold completes; the result applies on the last tick. During either, the target is held: `st.grappled` is applied directly on the first tick and re-applied directly every 15 ticks (Canon §2.3 refresh), and removed when the takedown ends or cancels. The attacker cannot act, move or change weapons. The takedown cancels with no effect when either takes damage, when the target's pair for the attacker becomes alert, or when the attacker's origin moves more than 500 mm from `StealthAction.origin`. Each observer other than the target that has a sight pass on the attacker on any check during the takedown gains a flat 4000 meter at once, once per takedown. A lethal takedown hit sets `DmgFlags` bit 1 (sneak) and bit 13 (takedown, doc 03 §14.2). Every completed takedown emits `ev.takedown` (§1.7). A subdued NPC wakes early on any damage (Canon `st.sleeping`) or after an ally's 60-tick wake interact, then enters searching at its own position with Vigilance. A subdue counts once per entity as a pacification defeat for doc 13 §11.1 XP: doc 13 reads its `ev.takedown` with `lethal` false and emits `ev.entity_pacified` with method 4 (doc 03 §14.3) the first time that entity is subdued, so pacifist tracking (DECISIONS 62; docs 04 and 14) counts a subdue as non-lethal even if the NPC later wakes. A lethal takedown that kills is a kill (`ev.entity_killed`) and grants doc 04's 1500 Sneak milli-XP.
 
 ### 9.5 Bosses
 
@@ -999,7 +1016,7 @@ Ranks boss, editor and hunter: multiplier capped at 15000, no `ignore_armor`, no
 | `aware.hide.shadow` | effective light ≤ 4 | §2.2, §3.3 posture rule |
 | `aware.hide.crowd` | moving at walk or slower within a crowd | §15.2 |
 
-A mounted Erratum cannot enter any hiding spot (Canon §17.7). `HideState { kind, occupant: Option<EntityId>, bodies: [Option<EntityId>; 2] }` lives in `StealthWorld.hides`, keyed by the prop's `Gidx` or `EntityId`.
+`HideState { kind, occupant: Option<EntityId>, bodies: [Option<EntityId>; 2] }` lives in `StealthWorld.hides`, keyed by the prop's `Gidx` or `EntityId`.
 
 ### 10.2 Enclosed spots
 
@@ -1015,7 +1032,7 @@ Corpses (`grid.ekind.corpse`), subdued NPCs and Errata Remains are picked up wit
 
 Each check, a sapient, hound or civilian observer evaluates the nearest undiscovered body within `R_far` that belonged to its own or a friendly or allied faction (civilians: any humanoid body), plus subdued allies. Its exposure is `X = 10000 → × 3500 → × 6000 → × f_size` and `V` follows §3.4 with the posture rule. `body_meter += mul_bp(profile.fill, V)`; it resets when the candidate changes or after 60 ticks without a sight pass. At 5000 the body is discovered:
 
-- `discovered.insert(body)`; the observer's disturbance becomes searching at the body (1800 ticks) and it emits a body callout (`noise.voice.callout`, subject 0); civilians scream instead (`noise.voice.scream`, alarm class).
+- `discovered.insert(body)` and `ev.body_discovered` (§1.7); the observer's disturbance becomes searching at the body (1800 ticks) and it emits a body callout (`noise.voice.callout`, subject 0); civilians scream instead (`noise.voice.scream`, alarm class).
 - Allies who hear set their disturbance to suspicious at the body and gain Vigilance; the doc 13 Director may order a bell or alarm (§6.6).
 - A subdued body is woken (60 ticks) before the search starts.
 - A cell holding at least 1000 ml of `liq.blood` within `R_near` whose center a §3.2 sight ray reaches gives a suspicious disturbance at that cell, once per cell per Folio (`blood_seen`).
@@ -1028,7 +1045,7 @@ Examples: a corpse at 6 m in a humanoid's near cone at light 9: `X = 2100`, `V =
 
 ### 11.1 Outfits and masks
 
-An **outfit** is a `slot.body` item whose instance carries `outfit_of: fac.*` (doc 11 instance field). Sources: stripping a sapient humanoid corpse or subdued NPC of faction F (`input.interact`, 120 ticks; the item copies the template's body armor archetype), faction lockers and shops. A **mask** is any `item.face.mask` in `slot.face` (Canon §13.2); respirators are not masks (doc 08 §4.5).
+An **outfit** is a `slot.body` item whose instance carries `outfit_of: fac.*` (doc 11 instance field). Sources: stripping a corpse or subdued NPC of faction F whose doc 13 template carries the `outfit` flag (`input.interact`, 120 ticks; the item copies the template's body armor archetype and weighs its `outfit_mass_g`), faction lockers and shops. **Coverage** (DECISIONS 64): every sapient native faction of every genre, that is every `fac.native.*` faction of doc 13 §12.1, can be impersonated, so doc 13 gives at least one template of each the `outfit` flag. Only native factions have outfits: `fac.editors` observers ignore disguises, and `fac.wild.*` members are not sapient (Canon §15). A **mask** is any `item.face.mask` in `slot.face` (Canon §13.2); respirators are not masks (doc 08 §4.5).
 
 | Tier | Requirement | Suspicion factor |
 |---|---|---|
@@ -1036,7 +1053,7 @@ An **outfit** is a `slot.body` item whose instance carries `outfit_of: fac.*` (d
 | `disguise.tier.partial` | outfit of F, no mask | 20000 |
 | `disguise.tier.none` | anything else | — |
 
-A disguise of F is **active** toward observer `o` when `o` is of F or of a faction friendly or allied to F, `o`'s profile does not ignore disguises (hounds, editors, bosses), the wearer is not mounted, and `(wearer, F) ∉ blown`. While active, `o` treats the wearer as a member of F for every stance check, so it gets no sight fill; every other faction treats the wearer by its own stance toward F, so a rival gang attacks a disguised Erratum.
+A disguise of F is **active** toward observer `o` when `o` is of F or of a faction friendly or allied to F, `o`'s profile does not ignore disguises (hounds, editors, bosses), and `(wearer, F) ∉ blown`. While active, `o` treats the wearer as a member of F for every stance check, so it gets no sight fill; every other faction treats the wearer by its own stance toward F, so a rival gang attacks a disguised Erratum.
 
 ### 11.2 Suspicion
 
@@ -1071,7 +1088,7 @@ Cameras of F never fill suspicion; a trigger they see adds 60 to their sight tim
 
 ### 11.4 Bluff and compromise
 
-When `S ≥ 5000` a sapient observer walks to the wearer and challenges it (`noise.voice.bark`, `challenge = (wearer, now + 120)`). Before the deadline the wearer may answer with `input.interact` aimed at the challenger: doc 04's Deceive check, `rating = GUI + floor_div(skill.speech × 6, 10)` plus doc 04 §4.2 situational modifiers, `chance = clamp(5000 + (rating − DC) × 200, 500, 9500)` against `DC = 40 + 10 × bluffs(o)`, one success roll on keyed `rng.stealth` with `actor` = the wearer and `seq` 1006 (Canon §3.3 lists no `rng.check`; Canon gaps G9). Example: GUI 55 and Speech 20 give `rating = 67`; the first bluff succeeds at 9500, the second (DC 50) at 8400, the third (DC 60) at 6400. Success: `S = 0`, `satisfied_until = now + 1800`, `bluffs += 1`. Failure or silence: compromise. **Compromise** also happens when `S` reaches 10000: the pair becomes alert (`M = 10000`, T3) and its callout carries `disguise_blown`; the observer and every F member that hears the callout add `(wearer, F)` to `blown` for the rest of the Folio.
+When `S ≥ 5000` a sapient observer walks to the wearer and challenges it (`noise.voice.bark`, `challenge = (wearer, now + 120)`). Before the deadline the wearer may answer with `input.interact` aimed at the challenger: doc 04's Deceive check, `rating = GUI + floor_div(skill.speech × 6, 10)` plus doc 04 §4.2 situational modifiers, `chance = clamp(5000 + (rating − DC) × 200, 500, 9500)` against `DC = 40 + 10 × bluffs(o)`, one success roll on keyed `rng.stealth` with `actor` = the wearer and `seq` 1006 (Canon §3.3: a disguise challenge is an AI detection roll and never draws on `rng.check`). Example: GUI 55 and Speech 20 give `rating = 67`; the first bluff succeeds at 9500, the second (DC 50) at 8400, the third (DC 60) at 6400. Success: `S = 0`, `satisfied_until = now + 1800`, `bluffs += 1`. Failure or silence: compromise. **Compromise** also happens when `S` reaches 10000: the pair becomes alert (`M = 10000`, T3), `ev.disguise_blown` is emitted (§1.7), and its callout carries `disguise_blown`; the observer and every F member that hears the callout add `(wearer, F)` to `blown` for the rest of the Folio.
 
 ### 11.5 Worked example
 
@@ -1113,7 +1130,7 @@ A lock is genre-neutral; its skin decides the tool. Worldgen (doc 12) gives a lo
 
 `LOCK_DC[t]`, `PICK_TICKS[t]` and `HACK_TICKS[t]` name the DC, pick-ticks and hack-ticks columns.
 
-Tier is `lock_tier(d) = clamp(1 + floor_div(d − 1, 5), 1, 6)`, +1 for vaults, capped at 6. Kinds: `lock.kind.door` (`lock_hp` as listed), `lock.kind.container` (`lock_hp × 2`, R7 chest rule), `lock.kind.vault` (no pity), `lock.kind.quest` (key only, never picked). Skins: `lock.skin.mechanical` (Security, `item.tool.lockpicks`) and `lock.skin.electronic` (Hacking, the hacking deck, dependency techne). `LockState { tier, kind, skin, locked, progress: i32, key_tags: [u32; 2], fails: u8 }`, where a `key_tag` of 0 means no key. An opener holding a matching key (`cat.key` with the same `key_tag`, doc 11) for every non-zero entry of `key_tags` opens it in 20 ticks with no roll. Doc 03 asks `door_locked(gidx)` before toggling a door; a locked door refuses and emits `noise.door.locked`.
+Tier is `lock_tier(d) = clamp(1 + floor_div(d − 1, 5), 1, 6)`, +1 for vaults, capped at 6. Kinds: `lock.kind.door` (`lock_hp` as listed), `lock.kind.container` (`lock_hp × 2`, R7 chest rule), `lock.kind.vault` (no pity), `lock.kind.quest` (key only, never picked). Skins: `lock.skin.mechanical` (Security, `item.tool.lockpicks`) and `lock.skin.electronic` (Hacking, the hacking deck, dependency techne). Both tools are carried, never consumed, worn or broken by an attempt (Canon §4.3, DECISIONS 65). `LockState { tier, kind, skin, locked, progress: i32, key_tags: [u32; 2], fails: u8 }`, where a `key_tag` of 0 means no key. An opener holding a matching key (`cat.key` with the same `key_tag`, doc 11) for every non-zero entry of `key_tags` opens it in 20 ticks with no roll (`ev.lock_opened` method 0). Doc 03 asks `door_locked(gidx)` before toggling a door; a locked door refuses and emits `noise.door.locked`.
 
 ```json
 { "id": "lock.t3", "dc": 55, "lock_hp": 28, "pick_ticks": 90, "hack_ticks": 120,
@@ -1137,35 +1154,39 @@ The `hack` verb seal of doc 12 §17.3 (`secret.hide.verb_lock`) is a §13.4 devi
 your_tier = min(5, 2 + floor_div(skill.security, 14)) + [skill.security ≥ 75]   // doc 04 Security 75 is the +1; attempt only if lock tier ≤ your_tier
 rating    = floor_div(3 × skill.security, 2) + floor_div(d(SLT), 2) + TOOL_Q[lockpicks quality]
 chance    = clamp(5000 + (rating − DC) × 200, 500, 9500)
-ticks     = PICK_TICKS[tier] → × 8000 with talent.shade.light_fingers
-draws     = keyed rng.stealth, seq 1000: success roll, then break roll (always 2)
-success   → unlocked; noise.lock.open; doc 04 Security XP 150 × DC
-failure   → progress += PITY[band]; unlocked at progress ≥ lock_hp (vaults excepted), which counts as picked for XP; noise.lock.pick
-break     → roll < break_bp: lockpicks durability −1 (doc 07), noise.lock.snap; break_bp = 2500, × 5000 at Security 25
+ticks     = PICK_TICKS[tier] → × 8000 with talent.shade.light_fingers; + SLIP_TICKS (30) after a slip
+draws     = keyed rng.stealth, seq 1000, on the attempt's first tick: success roll, then slip roll (always 2)
+slip      → slip roll < slip_bp: noise.lock.snap (35 dB) at once, and the attempt lasts SLIP_TICKS longer; slip_bp = 2500, × 5000 at Security 25
+success   → unlocked at the attempt's end; noise.lock.open; ev.lock_opened (method 1); doc 04 Security XP 150 × DC
+failure   → progress += PITY[band]; unlocked at progress ≥ lock_hp (vaults excepted), which counts as picked for XP and ev.lock_opened; noise.lock.pick
 TOOL_Q    = awful −10, poor −5, normal 0, good 3, excellent 6, masterwork 10, peerless 15
 PITY      = Security 0–19: 3; 20–59: 4; 60–99: 6; 100: 8               // Barony lock health, R7 R-BA2
 ```
 
-`your_tier` by Security: 0–13 → 2, 14–27 → 3, 28–41 → 4, 42–74 → 5, 75–100 → 6. Security 100 opens non-quest mechanical locks in 60 ticks with no picks and no draws. Every attempt emits `noise.lock.pick` (25 dB). **Example:** Security 45, SLT 50, normal picks on a `lock.t3` door: `your_tier = 5`, rating `67 + 5 + 0 = 72`, chance 8400, 90 ticks per attempt, break chance 1250, pity 4 per failure, so the 7th failure (28 progress) opens it at the latest.
+`your_tier` by Security: 0–13 → 2, 14–27 → 3, 28–41 → 4, 42–74 → 5, 75–100 → 6. Security 100 opens non-quest mechanical locks in 60 ticks with no picks and no draws. Every attempt emits `noise.lock.pick` (25 dB). The picker must carry `item.tool.lockpicks`; the slip replaces the pick break of earlier drafts, so a bad attempt costs time and noise, never the tool (Canon §4.3). The slip is the price of auto-resolving (§13.3). **Example:** Security 45, SLT 50, normal picks on a `lock.t3` door: `your_tier = 5`, rating `67 + 5 + 0 = 72`, chance 8400, 90 ticks per attempt (120 after a slip), slip chance 1250, pity 4 per failure, so the 7th failure (28 progress) opens it at the latest.
 
 **Pacing (balance fix).** Doc 04's stealth build (Security 20, then 20 skill XP per Folio at MEM 40) enters Folios 1, 6, 11, 16, 21 and 25 with Security 20, 27, 33, 39, 44 and 47. With SLT 40, 42, 45, 47, 48, 50 and picks normal, normal, good, good, excellent, excellent, against that depth's lock tier (DC 25, 40, 55, 70, 85, 85) its `your_tier` is 3, 3, 4, 4, 5, 5, always enough, and its chance is 6000, 5200, 4800, 3800, 3200, 4200. A gate of `1 + floor_div(skill, 20)` with an unweighted rating would have left the thief Calling unable to attempt any lock from Folio 11 (gate 2 against tier 3) and at the 500 floor from Folio 16; the 3/2 skill weight and the `2 + skill / 14` gate keep lockpicking a skill game for the Calling built around it. A character with Security 0 still opens only tiers 1 and 2, almost always through pity.
 
-### 13.3 Optional minigame
+### 13.3 Optional minigame for locks and hacks
 
-A per-player setting `lock_mode` (default `auto`) switches to `manual`. A manual attempt sets `2 + tier` pins in order. At start it draws one `range(40)` per pin (seq 1004) as the pin targets. For each pin a cursor runs over positions `0..=39`, `c = (now − pin_start) mod 40`, one position per tick from the pin's first tick. Pressing `input.attack` sets the pin when `min(|c − target|, 40 − |c − target|) ≤ W`, with `W = clamp(1 + floor_div(rating − DC + 40, 10), 1, 8)`. A miss, or 120 ticks without a press, draws one break roll (seq 1005, keyed on the miss tick) and restarts that pin with `pin_start = now + 1`; the third miss fails the attempt (pity progress as in auto). Setting every pin unlocks with no success roll and grants the same XP as an auto success. Draws: `2 + tier` plus at most 3. Commands come from the replay log, so the minigame is deterministic. Example: rating 50 against DC 55 gives `W = 4`, a window of 9 of the 40 positions; the §13.2 rating 72 gives `W = 6`.
+A per-player setting `lock_mode` (default `auto`) switches every lockpick attempt and every hack, Seize included, to `manual`: hacking uses the same model as lockpicking (DECISIONS 63). An attempt keeps the mode it started with. A manual attempt sets `2 + tier` pins in order, where `tier` is the lock tier for a lock, the device tier of §13.4 for a device verb or for a Seize on a doc 12 camera or turret, and 1, 2, 3 or 4 for a Seize on a minion, standard, elite or champion (§13.5). At start it draws one `range(40)` per pin (seq 1004, `actor` = the picker or hacker) as the pin targets. For each pin a cursor runs over positions `0..=39`, `c = (now − pin_start) mod 40`, one position per tick from the pin's first tick, `pin_start`; before `pin_start` the cursor waits and a press does nothing. Pressing `input.attack` sets the pin when `min(|c − target|, 40 − |c − target|) ≤ W`, with `W = clamp(1 + floor_div(rating − DC + 40, 10), 1, 8)` from the auto attempt's rating and DC (§13.2, §13.4, §13.5). A miss, or 120 ticks without a press, restarts that pin with `pin_start = now + 1 + SLIP_TICKS` and emits the attempt's noise again (`noise.lock.pick`, or `noise.hack.beep` for a hack); a miss draws nothing. The third miss fails the attempt: a lockpick failure adds pity progress as in §13.2, a hack failure is a failed hack of §13.4 (pity for an electronic lock, `noise.hack.fail`, `hack_fails += 1`), and a failed Seize applies §13.5's failure. Setting every pin succeeds with no success roll and no slip roll and grants the same XP and events as an auto success. Draws: exactly `2 + tier`. The `ticks` formulas and their multipliers time auto attempts only; a manual attempt lasts as long as its pins take and keeps the auto attempt's `your_tier` gate and its range, tool, sight-pass and cancel rules. Security 100's 60-tick opening and key openings skip the minigame. Commands come from the replay log, so the minigame is deterministic.
+
+**Auto-resolve has a cost** in both skills, and playing the minigame avoids it: an auto attempt's success chance is at most 9500, a failure costs the attempt's time (and for a hack a `noise.hack.fail` and a step toward the device's alarm, §13.4), and an auto pick also risks a slip (§13.2). A manual attempt draws no success roll; the player's timing alone decides it.
+
+Example: rating 50 against DC 55 gives `W = 4`, a window of 9 of the 40 positions; the §13.2 rating 72 gives `W = 6`. A manual Loop on the §16 heist camera (device tier 3, rating 80, DC 55) has 5 pins and `W = 7`.
 
 ### 13.4 Electronic locks and devices (TECHNE skins)
 
-Hacking replaces Security on electronic skins. The deck (`item.tool.hacking_deck`) is a gadget component with dependency techne: its `TOOL_Q` bonus is multiplied by its Contradiction potency, and doc 07 rolls its failure spark (Canon §5.5).
+Hacking replaces Security on electronic skins. The deck (`item.tool.hacking_deck`) is a gadget component with dependency techne: its `TOOL_Q` bonus is multiplied by its Contradiction potency, and doc 07 rolls its failure spark (Canon §5.5). The hacker must carry it; no hack consumes or wears it (Canon §4.3). A Disconnected deck cannot start a hack (Canon §5.5). While the deck's failure chance is above 0, doc 07 rolls its failure once as an attempt starts (doc 07 §11.1 rule 4, keyed `rng.combat`); a failure sparks the hacker and ends the attempt on that tick with no other effect: no `rng.stealth` draw at seq 1001 or 1004, no `noise.hack.beep` or `noise.hack.fail`, and `hack_fails` and pity progress unchanged. This holds for device verbs, Seizes (§13.5) and manual attempts (§13.3) alike.
 
 ```
 your_tier = min(6, 2 + floor_div(skill.hacking, 14))                 // attempt only if the device tier ≤ your_tier
 rating    = floor_div(3 × skill.hacking, 2) + floor_div(d(LOG), 2) + mul_bp(TOOL_Q[deck quality], potency)
 DC        = LOCK_DC[device tier]; device tier = the lock's tier for an electronic lock, lock_tier(d) (§13.1) for every other device
-chance    = clamp(5000 + (rating − DC) × 200, 500, 9500);  draws: seq 1001, 1 draw
+chance    = clamp(5000 + (rating − DC) × 200, 500, 9500);  draws: seq 1001, 1 draw (auto; manual per §13.3)
 ticks     = HACK_TICKS[tier] → × (10000 − 50 × skill.hacking) → × 8000 trait.origin.wired → × 7500 talent.netrunner.backdoor
 range     = 2500 mm; cameras 10000 mm at Hacking 25; every hack 15000 mm with talent.netrunner.remote_access
-success   → the device row below; hack_fails[device] = 0; doc 04 Hacking XP 150 × DC
+success   → the device row below; hack_fails[device] = 0; ev.device_hacked, plus ev.lock_opened (method 2) per lock opened; doc 04 Hacking XP 150 × DC
 failure   → an electronic lock gains pity progress as in §13.2 (PITY by Hacking band); noise.hack.fail at the device;
             hack_fails[device] += 1; at 3 the device's faction raises an alarm (§6.6) with subject = the hacker and the count resets to 0
 ```
@@ -1187,7 +1208,7 @@ Loop and device verbs channel `ticks` at `range`; Seize channels as §13.5. Seiz
 
 ### 13.5 Seizing units (`st.hacked`)
 
-Targets: cameras and turrets (§13.4), drones, and NPCs with body plan `body.construct` or tag `electronic` (Canon §11.1, doc 13 §5.7); never ranks boss, editor or hunter (Canon §11.4), never Errata gadgets (doc 07 §11.1), never an Erratum with `talent.netrunner.firewall`. The hacker channels within 8000 mm (15000 mm with `remote_access`) while its eye keeps a sight pass to the target: `ticks = mul_bp(120, 10000 − 50 × skill.hacking)` with the §13.4 multipliers; damage to either or a lost sight pass cancels it. Then one draw (seq 1001):
+Targets: cameras and turrets (§13.4), drones, and NPCs with body plan `body.construct` or tag `electronic` (Canon §11.1, doc 13 §5.7); never ranks boss, editor or hunter (Canon §11.4), never Errata gadgets (doc 07 §11.1), never an Erratum with `talent.netrunner.firewall`. The hacker channels within 8000 mm (15000 mm with `remote_access`) while its eye keeps a sight pass to the target: `ticks = mul_bp(120, 10000 − 50 × skill.hacking)` with the §13.4 multipliers; damage to either or a lost sight pass cancels it. Then one draw (seq 1001), or §13.3's minigame in manual mode:
 
 ```
 DC     = {minion 25, standard 40, elite 55, champion 70} + floor_div(d, 2)      // device-tier DC for doc 12 cameras and turrets (§13.4)
@@ -1197,20 +1218,21 @@ success → st.hacked by direct application: mul_bp(360, clamp(floor_div(1_000_0
 failure → the target's pair for the hacker becomes alert (a camera instead gains cam_seen += 60, §15.2)
 ```
 
-`thr_mind` is Canon §6.4 row 24 from the target's effective RSV. A device with no doc 13 template (doc 12 cameras and turrets) has `RSV = min(150, 40 + floor_div(3 × (d − 1), 2))` and rank standard. While `st.hacked` lasts the unit's pairs reset (T12) and it perceives the hacker's hostiles as its hostiles. At most 1 seized unit, +1 at Hacking 75, +1 with `talent.netrunner.botnet`; a new Seize past the limit ends the oldest `st.hacked` it applied. Loops and device verbs do not count. Example: Hacking 50, LOG 50, an unaware standard drone in Folio 10: rating `75 + 5 + 10 = 90`, DC 45, chance 9500, 90 ticks; its RSV is `40 + floor_div(27, 2) = 53`, mind threshold 126, so `st.hacked` lasts `mul_bp(360, 7936) = 285` ticks. A Folio-12 doc 12 camera has RSV `40 + 16 = 56`, threshold 132, and stays seized `mul_bp(360, 7575) = 272` ticks.
+A successful Seize emits `ev.device_hacked` (§1.7); at Hacking 100 against a non-boss it is also a pacification (doc 04 §6.1), which doc 13 reports as `ev.entity_pacified` method 3. `thr_mind` is Canon §6.4 row 24 from the target's effective RSV. A device with no doc 13 template (doc 12 cameras and turrets) has `RSV = min(150, 40 + floor_div(3 × (d − 1), 2))` and rank standard. While `st.hacked` lasts the unit's pairs reset (T12) and it perceives the hacker's hostiles as its hostiles. At most 1 seized unit, +1 at Hacking 75, +1 with `talent.netrunner.botnet`; a new Seize past the limit ends the oldest `st.hacked` it applied. Loops and device verbs do not count. Example: Hacking 50, LOG 50, an unaware standard drone in Folio 10: rating `75 + 5 + 10 = 90`, DC 45, chance 9500, 90 ticks; its RSV is `40 + floor_div(27, 2) = 53`, mind threshold 126, so `st.hacked` lasts `mul_bp(360, 7936) = 285` ticks. A Folio-12 doc 12 camera has RSV `40 + 16 = 56`, threshold 132, and stays seized `mul_bp(360, 7575) = 272` ticks.
 
 ### 13.6 Traps: detection and disarming
 
-Hidden objects are doc 12 hidden hazards and secrets, doc 11 mimics, doc 06 runes and §15.2 wards and tripwires. **Passive detection** is Canon §6.4 row 35: each Erratum within 3000 mm rolls once per object on ticks where `(t + observer_phase) % 60 == 0`, `observer_phase = (EntityId & 0xFF_FFFF_FFFF) % 60`, `seq` = the object's index in ascending ID order among objects in range, one draw each (doc 04 `gumshoe` adds `RowFlat(35, 1000)` and never changes this cadence). **Active search** (`StealthAction` kind 17): while crouched and still for at least 30 ticks, the same detection ticks roll for objects within 5000 mm at `min(9000, mul_bp(row35, 15000))`; row 35 itself is unchanged. Doc 06's sight essence reveals objects in its area without a roll. A success sets the object's party mask in `revealed` (the whole party sees it) and grants the detector doc 04's 3000 Awareness milli-XP. NPCs never detect Errata traps; `fac.editors` members detect them at 5000 Bp under the same cadence, keyed with their own `EntityId`.
+Hidden objects are doc 12 hidden hazards and secrets, doc 11 mimics, doc 06 runes and §15.2 wards and tripwires. **Passive detection** is Canon §6.4 row 35: each Erratum within 3000 mm rolls once per object on ticks where `(t + observer_phase) % 60 == 0`, `observer_phase = (EntityId & 0xFF_FFFF_FFFF) % 60`, `seq` = the object's index in ascending ID order among objects in range, one draw each (doc 04 `gumshoe` adds `RowFlat(35, 1000)` and never changes this cadence). **Active search** (`StealthAction` kind 17): while crouched and still for at least 30 ticks, the same detection ticks roll for objects within 5000 mm at `min(9000, mul_bp(row35, 15000))`; row 35 itself is unchanged. Doc 06's sight essence reveals objects in its area without a roll. A success sets the object's party mask in `revealed` (the whole party sees it) and grants the detector doc 04's 3000 Awareness milli-XP; the first such reveal of an object emits `ev.object_revealed` (§1.7). NPCs never detect Errata traps; `fac.editors` members detect them at 5000 Bp under the same cadence, keyed with their own `EntityId`.
 
-**Disarm** a revealed trap within 1500 mm: mechanical and arcane with Security (lockpicks or toolkit), electronic with Hacking (deck).
+**Disarm** a revealed trap within 1500 mm: mechanical and arcane with Security (lockpicks or toolkit), electronic with Hacking (deck). The tool is carried and never consumed.
 
 ```
 trap_dc = min(100, 25 + 2 × d)                    // Folio 1: 27, Folio 10: 45, Folio 25: 75
 rating  = floor_div(3 × skill, 2) + floor_div(d(SLT or LOG), 2) + TOOL_Q
 chance  = clamp(5000 + (rating − trap_dc) × 200, 500, 9500); ticks 60
 draws   = seq 1002: success roll, then trigger roll (always 2)
-success → disarmed; at Security 50 it becomes a redeployable cat.placeable trap item (Canon §4.3, doc 07); XP 150 × DC
+success → disarmed; XP 150 × DC; at Security 50 a worldgen spike, blade or dart trap also yields one block.trap.spikes
+          cat.placeable item at ilvl = the Folio index (doc 07 §10.4, Canon §13.1); wards, alarms, tripwires and explosive traps yield nothing
 failure → the trap fires on the disarmer when the trigger roll < 5000
 ```
 
@@ -1229,7 +1251,7 @@ chance = clamp(5000 + (rating − DC) × 200, 500, 9500); draw seq 1003 at compl
 ticks  = min(180, 60 + floor_div(mass_g, 100)) → × 7500 at Pickpocket 25 → × 8000 light_fingers
 ```
 
-Success moves the item and grants doc 04 XP. Failure: the target's pair becomes alert (suspicious with `M = 7000` at Pickpocket 100); doc 13 applies its witnessed reputation rule; a `fac.neutral` vendor turns hostile for 600 ticks and screams; a disguise takes the crime trigger. **Planting** uses DC − 10; a primed throwable detonates on its fuse at the target's origin. Example: Pickpocket 20, SLT 45, directly behind in darkness, a 300 g pouch on a Folio-4 guard: rating `30 + 2 + 10 + 5 = 47`, DC `20 + 24 + 1 = 45`, chance 5400, 63 ticks.
+Success moves the item, emits `ev.item_stolen` for a steal (§1.7) and grants doc 04 XP. Failure: the target's pair becomes alert (suspicious with `M = 7000` at Pickpocket 100); doc 13 applies its witnessed reputation rule; a `fac.neutral` vendor turns hostile for 600 ticks and screams; a disguise takes the crime trigger. **Planting** uses DC − 10; a primed throwable detonates on its fuse at the target's origin. Example: Pickpocket 20, SLT 45, directly behind in darkness, a 300 g pouch on a Folio-4 guard: rating `30 + 2 + 10 + 5 = 47`, DC `20 + 24 + 1 = 45`, chance 5400, 63 ticks.
 
 ---
 
@@ -1246,7 +1268,7 @@ Success moves the item and grants doc 04 XP. Failure: the target's pair becomes 
 
 ### 14.5 Invaders
 
-An invader (Canon §17.9) is player-controlled `fac.editors` at rank hunter: it has no meters and cannot be sneak-attacked unless asleep. To deny wallhacks, the host sends the invader's client an Erratum's transform only while `V(invader, erratum) ≥ 300` with `aware.profile.invader` on the invader's own period-3 check, or while that Erratum's noise reached the invader with `L_eff ≥ 20` within the last 60 ticks (then quantized to 4000 mm), or while the Erratum bears `st.marked` from a `fac.editors` source. NPC hunters stay omniscient (doc 13 §10.5).
+An invader (Canon §17.9) is player-controlled `fac.editors` at rank hunter: it has no meters and cannot be sneak-attacked unless asleep. To deny wallhacks, the host sends the invader's client an Erratum's transform only while `V(invader, erratum) ≥ 300` with `aware.profile.invader` on the invader's own period-3 check, or while that Erratum's noise reached the invader with `L_eff ≥ 20` within the last 60 ticks (then quantized to 4000 mm), or while the Erratum bears `st.marked` from a `fac.editors` source. This chapter's actions are closed to the invader, whose Editor kit binds only attacks (doc 13 §10.7): it never takes anyone down, picks, hacks, disarms, steals or plants, so it never opens a container or takes an item (Canon §17.9). NPC hunters stay omniscient (doc 13 §10.5).
 
 ---
 
@@ -1328,7 +1350,7 @@ Namespaces owned by Canon §19: `noise.`, `aware.`, `disguise.`, `lock.`. Every 
 | Items, bodies, hiding, takedowns (§7.5) | `noise.item.drop`, `noise.item.use`, `noise.item.impact`, `noise.item.shatter_glass`, `noise.item.shatter_ceramic`, `noise.body.fall`, `noise.body.drop`, `noise.body.thud`, `noise.hide.enter`, `noise.hide.exit`, `noise.takedown.lethal`, `noise.takedown.subdue` |
 | Voices (§7.6) | `noise.voice.shout`, `noise.voice.whistle`, `noise.voice.callout`, `noise.voice.bark`, `noise.voice.scream`, `noise.voice.pain`, `noise.voice.death`, `noise.voice.breath`, `noise.voice.groan`, `noise.voice.dog_bark`, `noise.voice.squawk` |
 | Explosions (§7.6) | `noise.explosion`, `noise.explosion.grenade`, `noise.explosion.concussion`, `noise.explosion.flash`, `noise.explosion.incendiary`, `noise.explosion.smoke`, `noise.explosion.surface` |
-| Alarms, traps, gadgets, mounts, environment (§7.6) | `noise.alarm`, `noise.alarm.bell`, `noise.alarm.radio`, `noise.trap.trigger`, `noise.gadget.deploy`, `noise.gadget.noisemaker`, `noise.gadget.hum`, `noise.mount.walk`, `noise.mount.gallop`, `noise.mount.hover`, `noise.mount.glide`, `noise.mount.summon`, `noise.env.distant`, `noise.env.debris`, `noise.env.steam`, `noise.env.fire` |
+| Alarms, traps, gadgets, environment (§7.6) | `noise.alarm`, `noise.alarm.bell`, `noise.alarm.radio`, `noise.trap.trigger`, `noise.gadget.deploy`, `noise.gadget.noisemaker`, `noise.gadget.hum`, `noise.env.distant`, `noise.env.debris`, `noise.env.steam`, `noise.env.fire` |
 | Disguise tiers (§11.1) | `disguise.tier.full`, `disguise.tier.partial`, `disguise.tier.none` |
 | Disguise triggers (§11.3) | `disguise.trigger.weapon_raised`, `disguise.trigger.trespass`, `disguise.trigger.climb`, `disguise.trigger.sprint`, `disguise.trigger.company`, `disguise.trigger.crouch`, `disguise.trigger.body`, `disguise.trigger.crime`, `disguise.trigger.attack`, `disguise.trigger.strip` |
 | Lock tiers (§13.1) | `lock.t1`, `lock.t2`, `lock.t3`, `lock.t4`, `lock.t5`, `lock.t6` |
@@ -1339,53 +1361,36 @@ Namespaces owned by Canon §19: `noise.`, `aware.`, `disguise.`, `lock.`. Every 
   "react": "aware.react.curious", "stride_mm": 700 }
 ```
 
-**Constants:** `RAY_BUDGET` 1536, `ALERT_KEEP_V` 300, `HUNTED_CAP` 15000, `SCENT_OWNER_RANGE` 64000 mm, the §6.3 timers, `LIGHT_BP`, `TIER_BP`, `TOOL_Q`, `PITY`, `LOCK_DC`, `PICK_TICKS`, `HACK_TICKS`, `AMBIENT_DB` and `SOUND_BP` (§15.1).
+**Constants:** `RAY_BUDGET` 1536, `ALERT_KEEP_V` 300, `HUNTED_CAP` 15000, `SCENT_OWNER_RANGE` 64000 mm, `SLIP_TICKS` 30, `slip_bp` 2500, the §6.3 timers (`WARY_FOLIO` included), `LIGHT_BP`, `TIER_BP`, `TOOL_Q`, `PITY`, `LOCK_DC`, `PICK_TICKS`, `HACK_TICKS`, `AMBIENT_DB` and `SOUND_BP` (§15.1).
 
-**Functions and data:** `stealth_light`, `noise_level`, `convert_events`, `aware_state` (doc 05's `aware_of`), `sneak_eligible`, `sneak_mult(att, tgt, tier)`, `grants_ignore_armor`, `sight_pass`, `erratum_sees`, `awareness_above_unaware`, `door_locked`, `raise_alarm`, `search_plan`, `sound_bp_eff`, `lock_tier`, `StealthHud`, `PerceptionState`, `StealthWorld`, `StealthAction`, `HackState`. Intents consumed: `Steal`, `Plant`, `Hack { target, verb }`. Behavior of `st.deafened`, `st.marked`, `st.invisible`, `st.hidden`, `st.hacked` (Canon §11.1 owner 09).
+**Functions and data:** `stealth_light`, `noise_level`, `convert_events`, `aware_state` (doc 05's `aware_of`), `sneak_eligible`, `sneak_mult(att, tgt, tier)`, `grants_ignore_armor`, `sight_pass`, `erratum_sees`, `awareness_above_unaware`, `door_locked`, `raise_alarm`, `search_plan`, `sound_bp_eff`, `lock_tier`, `StealthHud`, `PerceptionState`, `StealthWorld`, `StealthAction`, `HackState`. Intents consumed: `Steal`, `Plant`, `Hack { target, verb }`; the per-player `lock_mode` for picks and hacks (§13.3). Events produced: the eight doc 03 §14.3 events listed in §1.7. Behavior of `st.deafened`, `st.marked`, `st.invisible`, `st.hidden`, `st.hacked` (Canon §11.1 owner 09).
 
 ## Interface assumptions
 
 | Doc | This chapter assumes |
 |---|---|
-| 02 | a save section `stealth` for `StealthWorld` in its declared field order (flash ring, radio queue and per-owner scent trails included); `closest_seg_seg` for lasers |
-| 03 | a `sys.sound` prelude hook calling `convert_events()`; `HeardNoise` gains `req: u32`, the index of its request in the tick's noise list, so `sys.hearing` reads source position, source level, emitter and callout payload; `DmgFlags` bit 13 `takedown`; a cause `grid.cause.erased` for Editor erasure; `ev.footstep` with gait `grid.gait.crawl` every 500 mm while downed; `door_locked(gidx)` consulted before door toggles; `cell_conceal` split into block, liquid and gas terms for thermal rays; the tick's push-contact pairs from §5.14 reported to `sys.hearing`; `ExplosionSpec.noise` levels read through `noise_level` |
-| 04 | the §5.2 XP events as written plus 750 Sneak milli-XP for engineered-noise kills (§12); the §4.2 Deceive chance drawn on `rng.stealth` seq 1006 for disguise challenges (Canon gaps G9); `RowFlat(31)`, `RowFlat(33)`, `RowFlat(34)`, `RowFlat(35)` terms; `light_fingers` applying to lockpicking and pickpocketing only; talent and trait IDs cited here |
+| 02 | a save section `stealth` for `StealthWorld` in its declared field order (flash ring, radio queue, per-owner scent trails and the `alarmed` set included); `closest_seg_seg` for lasers; doc 17's `SetLockMode` intent in the replay log |
+| 03 | (present on disk) a `sys.sound` prelude hook calling `convert_events()`; `HeardNoise.req` (§11.5), so `sys.hearing` reads source position, source level, emitter and callout payload; `DmgFlags` bit 13 `takedown`; `grid.cause.erased` (§13.8); `ev.footstep` with gait `grid.gait.crawl` every 500 mm while downed; `door_locked(gidx)` consulted before door toggles; `cell_conceal_parts` for thermal rays; `push_contacts` (§5.14) read by `sys.hearing`; `ExplosionSpec.noise` levels read through `noise_level`; the eight §1.7 events registered in §14.3 with doc 09 as producer, with `device: u64` on `ev.device_hacked` and `kind` 0 of `ev.alarm_raised` as a creature alarm (hound, civilian, bell or klaxon); light overrides and doc 06 shadow areas applied inside every light read (§10.6); sight per Canon gaps G23: `raycast_blocks` against each cell's micro-voxel boxes (§5.18) and `conceal_at` read through the §4.4 fill rule (§7.6) |
+| 04 | the §5.2 XP events as written plus 750 Sneak milli-XP for engineered-noise kills (§12); the §4.2 Deceive chance drawn on `rng.stealth` seq 1006 for disguise challenges, never on `rng.check` (Canon §3.3, triage C-20); `RowFlat(31)`, `RowFlat(33)`, `RowFlat(34)`, `RowFlat(35)` terms; `light_fingers` applying to auto lockpicking and pickpocketing only; `aug.silent_pads` (§9.4) and the `body.serpentine` plan (§13) lowering footsteps by 6 dB, as §7.1 rows 7 and 8 apply them; Security 25 halving the slip chance (§13.2) in place of a lockpick break chance (triage C-31); §6.1 pacification for an entity's first subdue and for Hacking-100 seizes; talent and trait IDs cited here |
 | 05 | calls `sneak_mult(att, tgt, tier)` (three arguments, for the boss and hunted caps) with `att` = the hit's owner; emits shot, swing, impact, block-hit, reload and jam noise through `noise_level`; a `suppressor` part tag for powered ranged skins only; `st.grappled` applied and refreshed directly for a takedown's duration; the `IGNORE_ARMOR` flag from `grants_ignore_armor` |
-| 06 | form cast noise and school; a query "is this cell inside a shadow area"; `summon.phantasm` as a hostile-perceived decoy; the Divination see-invisible hook |
-| 07 | material `acoustic` class, one `noise.surface.*` value per material, which §7.2's material lists repeat verbatim (doc 07 §2.4 is consumer data for these IDs; their definitions and dB values are §7.2's); `block.tall_grass` as the grass override; block `lightsrc` (`flame`, `electric`, `arcane`) and lit/unlit states; prop field `hide` (`enclosed`, `under`); crouch-only conceal flag; `block.light_switch`, `block.fuse_box`; lockpick, toolkit and hacking-deck durability and quality; noisemaker gadget; disarmed traps as redeployable `cat.placeable` items; doc 07 §11.1 rule 2 read as: a seized hostile turret or drone fights for the hacker per Canon §11.1 while never becoming an Errata gadget (Canon gaps G14) |
+| 06 | form cast noise and school; shadow fields and `linger` areas reported by `in_shadow_area`, which doc 03 §10.6 applies inside `light_at`, so this chapter adds no shadow term of its own (§2.1); `summon.phantasm` as a hostile-perceived decoy; the Divination see-invisible hook |
+| 07 | material `acoustic` class, one `noise.surface.*` value per material, which §7.2's material lists repeat verbatim (doc 07 §2.4 is consumer data for these IDs; their definitions and dB values are §7.2's); `block.tall_grass` as the grass override; block `lightsrc` (`flame`, `electric`, `arcane`) and lit/unlit states; prop field `hide` (`enclosed`, `under`); crouch-only conceal flag; `block.light_switch`, `block.fuse_box`; lockpick, toolkit and hacking-deck quality and no durability (Canon §4.3); noisemaker gadget; `block.trap.spikes` as the Security-50 disarm item of worldgen spike, blade and dart traps (§13.6, doc 07 §10.4, present); the deck's failure spark rolled as a hack starts (doc 07 §11.1 rule 4, present), after which §13.4 ends the attempt; seized hostile turrets and drones fighting for the hacker outside Errata gadget limits (doc 07 §11.1 rule 2, present); no snow material or block, so nothing emits `noise.surface.snow` (doc 07 §2.4) |
 | 08 | phosphor marking; respirator hearing penalty; mind vision radius; blood volume per cell; night-eye magnitude in mm; `liq.mud` as the mud surface override (§7.2) |
-| 11 | instance field `outfit_of`; `item.tool.hacking_deck`; door keys in `cat.key` with `key_tag`; tool qualities; `loot.chest.locked` chests carry a `lock.kind.container` lock (§13.1) |
-| 12 | lock tiers and skins at placement, with kinds and `key_tags` per the §13.1 placed-locks table (two-key `Locked(k1, k2)` doors fill both entries; the `clearance` door only where local TEC ≥ 5); the `hack` verb seal as a §13.4 device; tag `room.restricted` (Canon gaps G19); biome `camo`; `hazard.alarm` skins by dependency; laser heights; hiding props in stealth rooms; one fuse box per electric room; a room id per cell for power cuts and weather fronts; the faction recorded on every placed device; the `lattice.marg.silent` flag readable by `sound_bp_eff` |
-| 13 | template field `perception`; tags `enforcer`, `flier`, `breathless`, `electronic`; faction flag `radio`; template `outfit` flag and mass; investigate and search actions using §6.5 and §6.7 with `min(3, n)` draws; relight, bell and wake behaviors; reputation event `pickpocket_caught`; Director `alarm_raised`; subdue as a pacification defeat; each Folio's primary native faction (default device faction) |
-| 14 | `run.note.silent` and heist challenge read `run_alerted` and `folio_alerted` |
-| 16 | `StealthHud` in each player's snapshot; the §14.5 invader interest filter |
-| 17 | inputs `input.hold_breath`, `input.whistle`, `input.shout` as simulation intents (Canon gaps G19); setting `lock_mode`; the pickpocket panel sending `Steal { target, uid }` and `Plant { target, uid }`; the hack panel sending `Hack { target, verb }`; HUD rendering of §8 |
-| 18 | text keys and audio for every `noise.*`; HUD strings |
+| 11 | instance field `outfit_of`; `item.face.mask`; `item.tool.lockpicks`, `item.tool.toolkit` and `item.tool.hacking_deck` as carried tools that no attempt consumes, so one of each suffices (Canon §4.3); door keys in `cat.key` with `key_tag`; tool qualities; `loot.chest.locked` chests carry a `lock.kind.container` lock (§13.1) |
+| 12 | lock tiers and skins at placement, with kinds and `key_tags` per the §13.1 placed-locks table (two-key `Locked(k1, k2)` doors fill both entries; the `clearance` door only where local TEC ≥ 5); the `hack` verb seal as a §13.4 device; tag `room.restricted` with its faction (doc 12 §12, present); biome `camo`; `hazard.alarm` skins by dependency; laser heights; hiding props in stealth rooms; one fuse box per electric room; a room id per cell for power cuts and weather fronts; the faction recorded on every placed device; the `lattice.marg.silent` flag readable by `sound_bp_eff`; the per-Folio weather state of DECISIONS 99, once doc 12 defines it, with a fog term and a sound-attenuation term that this chapter adds to `fog_q` and `sound_bp_eff` as it adds the weather front's (until then the weather front is the only weather input) |
+| 13 | template field `perception`; tags `enforcer`, `flier`, `breathless`, `electronic`; faction flag `radio`; template `outfit` flag and `outfit_mass_g`, set on at least one template of every `fac.native.*` faction (DECISIONS 64, §11.1); investigate and search actions using §6.5 and §6.7 with `min(3, n)` draws; relight, bell and wake behaviors; reputation event `pickpocket_caught`; Director `alarm_raised`; subdue as a pacification defeat, emitted as `ev.entity_pacified` method 4 on an entity's first subdue (read from `ev.takedown` with `lethal` false), and a Hacking-100 Seize as method 3; each Folio's primary native faction (default device faction) |
+| 14 | `run.note.silent` and heist challenge read `run_alerted` and `folio_alerted`; pacifist tracking (DECISIONS 62) counts the party's kills from `ev.entity_killed` and its non-lethal defeats from `ev.entity_pacified`: subdue takedowns (§9.4) and Hacking-100 seizes (§13.5) are this chapter's non-lethal routes, and a lethal takedown that kills is a kill |
+| 16 | `StealthHud` in each player's snapshot (present); the §14.5 invader interest filter, which doc 16 does not apply yet: its §6.6 rule 2 governs invader replication in both directions until the two rules are reconciled (doc 16 Canon gaps O1, open) |
+| 17 | inputs `input.hold_breath`, `input.whistle`, `input.shout` as simulation intents (present); `access.lock_mode` (`SetLockMode`) governing lockpicks and every hack, Seize included (§13.3, present); the auto lock panel showing the slip chance beside the success chance (present); the manual dial for hacks as for locks (`2 + tier` pins, misses as cracks, a 30-tick pin restart); the pickpocket panel sending `Steal { target, uid }` and `Plant { target, uid }`; the hack panel sending `Hack { target, verb }`; HUD rendering of §8 |
+| 18 | text keys and audio for every `noise.*` this chapter exports; HUD strings |
 
 ## Canon gaps
 
-- **G1. Version.** The header conforms to canon-1.4, the canon on disk, and keeps every canon-1.2 addition this chapter owns: per-target sneak eligibility and `ignore_armor` at Sneak 100 (§9), sight concealment sums (§3.2), two-channel light (§2), Awareness against Sneak (§5.1), Hacking and `st.hacked` for cameras, turrets, drones and constructs (§13.4, §13.5), lean (§3.2), masks in `slot.face` (§11.1) and the mounted rules (G10). Canon-1.3 and 1.4 items checked: placeables and destructible terrain (block noises apply to destructible blocks and placeables only; `noise.node.harvest` covers resource nodes), Fieldcraft, invasions (§14.5), seam zones (§15.1) and World Laws (no stealth effect).
-- **G2. Awareness IDs.** Canon names only `aware.alert` and `aware.unaware`. Doc 13 used the interim names "returning" and "investigating" in the `aware.` namespace, doc 14 "alerted", doc 17 the same interim names on its awareness eye. This chapter, as namespace owner, defines six states and maps `investigating` → `aware.suspicious`, `returning` → `aware.unaware` with Vigilance, `alerted` → `aware.alert`.
-- **G3. Keyed `seq`.** Canon §3.3 calls `seq` a per-actor counter and assigns detection the object index. To avoid key collisions this chapter uses fixed action slots 1000–1006 (§1.5), as doc 05 did for `rng.combat`.
-- **G4. Takedown entry point.** Canon §10.6 has no execution entry. Lethal takedowns enter at step 7 as `dmg.true` equal to HP plus ward (no crit, armor or chip floor). Requested as a §10.6 row.
-- **G5. Events.** Canon §18 lacks `ev.alarm_raised`, `ev.body_discovered`, `ev.disguise_blown`, `ev.lock_opened`, `ev.object_revealed`, `ev.device_hacked`, `ev.takedown`, `ev.item_stolen`. Assumed added as doc 03 bus events.
-- **G6. Stealth light.** Canon §2.3 `light_at` reads the grid only. `stealth_light` layers own light, flashes, phosphor, drone spotlights and shadow on top for stealth alone; composure and spawning keep Canon's `light_at`.
-- **G7. Sound attenuation.** Doc 12 refers to "doc 09 sound attenuation" (weather front × 12000, `lattice.marg.silent` × 7000) and defines no per-genre value. This chapter owns `SOUND_BP` (§15.1) and `sound_bp_eff` (§4.4). The rescale happens in `sys.hearing`; noises doc 03 already dropped stay dropped, so a `SOUND_BP` below 10000 cannot extend range past doc 03's unscaled bound, and doc 03's propagation stays genre-neutral.
-- **G8. Sneak tiers** for spells, area effects, minions and riders are not in the canon or doc 05; defined in §9.2.
-- **G9. Checks on `rng.stealth`.** Lockpicking, hacking, disarming and pickpocketing use doc 04's chance curve with this chapter's ratings on Canon §3.3's `rng.stealth`. Doc 04 assumes a keyed stream `rng.check` (its gap 1) and lists disguise Deceive checks on it, but Canon §3.3 lists no `rng.check`, and a disguise challenge is an AI detection roll, which Canon §3.3 assigns to `rng.stealth`. This chapter therefore draws the bluff on `rng.stealth` seq 1006 with doc 04's §4.2 Deceive chance; doc 04's interface row for doc 09 must read `rng.stealth`.
-- **G10. Mounted.** Canon §17.7 bars `st.hidden` for riders; this chapter also bars hiding spots, disguises and takedowns.
-- **G11. Tall grass.** Canon §12.2 says "only against crouched targets"; this chapter also applies it to downed targets and bodies.
-- **G12. Ghost noises.** Canon §17.6 lets ghosts open doors; their door noises are unattributed (§7.9, §14).
-- **G13. `st.marked` wording.** Canon §11.1 says the bearer is "visible through walls to every hostile of the marker", which read literally reveals the bearer to the marker's enemies. This chapter implements the evident intent: every entity allied with the marker sees the bearer (§4.7). Requested canon wording: "visible through walls to every ally of the marker".
-- **G14. Seized devices.** Doc 07 §11.1 rule 2 says an Erratum's hack "leaves it a hostile device", while Canon §11.1 says a unit with `st.hacked` "fights for the hacker's faction". The canon wins: seized turrets and drones fight for the hacker for the status's duration and never become Errata gadgets for doc 07's limits. A camera cannot fight, so its Seize effect is marking for the hacker (§13.4).
-- **G15. `HeardNoise` fields.** Doc 03 §11.5's `HeardNoise` carries no source position or source level, which `lkp`, the genre rescale and callouts need. Requested field `req: u32` (Interface assumptions, doc 03).
-- **G16. Doc 03 additions.** `grid.cause.erased` for Editor erasure of placeables (Canon §11.6), `DmgFlags` bit 13 `takedown`, and `grid.gait.crawl` footsteps while downed.
-- **G17. Row 35 radius.** Canon §6.4 row 35 says "within 3 m". Passive detection keeps it exactly. Active search (§13.6) is a separate action that rolls row 35's value × 15000, capped at 9000, within 5000 mm: a situational multiplier on the row's result, not a competing formula.
-- **G18. Balance rules owned here.** The lock, hack, disarm and pickpocket ratings weight the skill × 3/2 and the gates use `2 + skill / 14` (§13.2, §13.4); doc 04 owns only the chance curve and the DC ladder, both kept. The hunted cap (§9.2) changes the doc 09 multiplier only; Canon §10.5 step 2.4 eligibility and its no-crit rule are unchanged.
-- **G19. Foreign-namespace IDs used here.** This chapter needs but does not define `input.hold_breath`, `input.whistle`, `input.shout` (doc 17), `room.restricted` (doc 12), `block.light_switch`, `block.fuse_box` (doc 07), `grid.cause.erased`, `grid.gait.crawl` (doc 03) and the G5 events. Each owner adds them; a rule here that names a missing ID does nothing until the owner adds it, and is never reinterpreted.
-- **G20. Ur-Text rooms.** Doc 12 §20.3 defines no per-room genre wedges for the Ur-Text, so the Ur-Text uses its own §15.1 row.
-- **G21. Surface sources.** Doc 07 §2.4 assigns every material one `acoustic` class, and §7.2 repeats those lists exactly. Four of the 17 classes have no material: `noise.surface.water` and `noise.surface.mud` come from liquid in the feet cell (`liq.mud` gives mud, any other liquid water), `noise.surface.grass` from a `block.tall_grass` feet cell, and `noise.surface.snow` waits for a doc 07 snow-layer block (requested; until then nothing emits it). All 17 classes stay defined because doc 18 builds one audio set per (gait, class).
-- **G22. Namespace reconciliation (2026-10-11).** Every concrete `noise.`, `aware.`, `disguise.` and `lock.` ID that another chapter uses is defined in this chapter, so no rename is needed. Two lint flags are layout artifacts, not foreign definitions: doc 07 §2.4's acoustic table puts the `noise.surface.*` class in its first column as a field value (listing materials first removes the flag), and a doc 13 Director tension row starts with prose that mentions `aware.alert`. Doc 17's `noise.<category>.<name>` pattern is read to include the four two-part IDs `noise.shot`, `noise.prayer`, `noise.alarm` and `noise.explosion`.
+Every gap of the canon-1.4 draft is closed by canon-1.11 or by the canon gap triage: G1 (G-051), G2 (G-196), G3 (G-021), G4 (G-092), G5 (G-184: doc 03 §14.3 registers the eight events of §1.7), G6 (G-020), G7, G8, G12, G18, G20 and G21 (G-203: rulings owned here; doc 07 adds no snow block), G9 (G-023, C-20), G10 (G-172, C-30: mounts cut), G11 (G-124), G13 (G-111), G14 (doc 07 §11.1 rule 2 now agrees), G15 and G16 (triage §4.1: present in doc 03), G17 (G-069), G19 and G22 (G-194: every ID this chapter uses is defined by its owner). Three items remain open:
+
+- **G23. Sight through partial cells.** Canon §4.4 says a cell blocks sight when its mask holds at least 48 micro-voxels, and otherwise scales its concealment by the fill fraction. Read literally, a closed door, whose panel fills far fewer than 48 micro-voxels, would never block sight. This chapter keeps doc 03's geometric test (§3.2): a sight ray is blocked where `raycast_blocks` meets one of a cell's occupied boxes, and a crossed cell whose boxes the ray misses adds its fill-scaled `cell_conceal`. For full and empty cells both readings agree. Requested canon §4.4 wording: "A cell blocks light when `popcount(mask) >= 48`. A sight ray (doc 09) is blocked by a cell's occupied micro-voxel boxes; a crossed cell whose boxes it misses scales its concealment by the fill fraction."
+- **G24. Elite takedowns.** Canon §10.6's lethal-takedown row sets the amount to the target's HP plus ward. §9.4 keeps elites alive: a lethal takedown on a `rank.elite` target deals `mul_bp(max_hp_mhp, 5000)` plus its ward through the same row and staggers it. Requested addition to the row's Notes cell: "against `rank.elite`, `mul_bp(max HP, 5000)` plus ward instead (doc 09 §9.4)".
+- **G25. `in_combat` wording.** Canon §2.3 defines `in_combat` through a hostile AI that "held awareness `alerted`", an interim state name; triage G-196 made §6.1's six states the only awareness IDs, and every chapter uses them. This chapter reads `alerted` there as `aware.alert`: a subject is in combat while some hostile pair toward it is at `aware.alert` or was within the last 300 ticks. Requested canon §2.3 wording: "or any hostile AI held awareness `aware.alert` (doc 09) toward `e` within that window".
 
 ## Acceptance tests
 
@@ -1411,23 +1416,23 @@ Namespaces owned by Canon §19: `noise.`, `aware.`, `disguise.`, `lock.`. Every 
 20. **Search plan.** Center (100.5, 8, 60.5), velocity east: P1 (106.5, 8, 60.5); ring k 0, r 4000 at (100.5, 8, 56.5); k 2, r 8000 at (92.5, 8, 60.5). The plan draws nothing; doc 13 draws exactly `min(3, n)` `rng.ai` values, 3 for this plan.
 21. **Scent.** `s0 = 10000` laid at tick 1000: 5000 at tick 2800, usable at 4240, lost at 4241; soaked (`s0 = 5000`) lost at 3881.
 22. **Sneak multiplier.** Shade Sneak 60 with `backstab`, tier 1: 41200; the S1 hit totals 118,040 mHP; at Sneak 0 doc 05's 84,899; against a mini-boss 15000; S2 with `ignore_armor` 124,493.
-23. **Takedown.** A lethal takedown on a standard leaves it at 0 HP with death noises at 24 dB; it is refused on ranks boss, editor, hunter and champion; damage to the attacker cancels it.
+23. **Takedown.** A lethal takedown on a standard leaves it at 0 HP with death noises at 24 dB; it is refused on ranks boss, editor, hunter and champion; damage to the attacker cancels it. A completed takedown emits exactly one `ev.takedown`; an entity's first subdue makes doc 13 emit one `ev.entity_pacified` with method 4, and a second subdue of it emits none.
 24. **Noise levels.** Heavy walk on metal with `curse.loud` 2: 63 dB; Shade crouch on stone: 25 dB; 4000 mm drop on stone in medium armor: 72 dB.
 25. **Ring.** 52 dB in Mythic Fantasy: 14500 mm; 63 dB in Cyberpunk: 10416 mm.
 26. **Gem.** V1 Shade: 471, no pips; with a lantern: 2467, two pips.
 27. **Bodies.** 6 m, near cone, light 9: discovered on check 17; 14 m, far cone, light 11: check 87; far cone at light 7: never.
 28. **Disguise.** Full, GUI 55, enforcer at 5 m, light 12: 153 per check, challenge on check 33, compromise on check 66; partial: 306, checks 17 and 33; light 5: 51.
-29. **Lockpicking.** Security 45, SLT 50, normal picks, `lock.t3`: `your_tier` 5, rating 72, chance 8400, 90 ticks, break 1250, opens by the 7th failure; each attempt draws exactly 2 values at seq 1000 (3 under `avatar_of_fate`).
-30. **Minigame.** Rating 50 against DC 55: `W = 4`; rating 72: `W = 6`. With `W = 2`, cursor 39 against target 1 sets the pin (circular distance 2). A `lock.t3` manual attempt with 1 miss draws exactly 6 values.
-31. **Device hack.** Hacking 40, LOG 55, normal deck, `lock.t3`, `wired`: rating 67, chance 7400, 76 ticks; 1 draw at seq 1001.
+29. **Lockpicking.** Security 45, SLT 50, normal picks, `lock.t3`: `your_tier` 5, rating 72, chance 8400, 90 ticks, slip chance 1250, opens by the 7th failure; each attempt draws exactly 2 values at seq 1000 on its first tick (3 under `avatar_of_fate`); a slipped attempt lasts 120 ticks and emits `noise.lock.snap` at 35 dB; after 50 attempts the picker still carries the same lockpicks.
+30. **Minigame.** Rating 50 against DC 55: `W = 4`; rating 72: `W = 6`. With `W = 2`, cursor 39 against target 1 sets the pin (circular distance 2). A `lock.t3` manual attempt draws exactly 5 values at seq 1004 whatever its misses, and a miss at tick `t` restarts the pin with `pin_start = t + 31`. A manual Loop on a tier-3 camera draws 5 values at seq 1004 and none at seq 1001; its third miss adds 1 to `hack_fails`.
+31. **Device hack.** Hacking 40, LOG 55, normal deck, `lock.t3`, `wired`: rating 67, chance 7400, 76 ticks; 1 draw at seq 1001. With a Contradicted deck whose doc 07 failure roll fails, the attempt ends on its first tick with the spark only: 0 draws at seq 1001, no `noise.hack.fail` and `hack_fails` unchanged.
 32. **Construct hack.** Hacking 50, LOG 50, unaware standard drone, Folio 10: rating 90, DC 45, chance 9500, 90 ticks, `st.hacked` 285 ticks; a hack on a boss, or on an Errata gadget, is rejected with no draw.
-33. **Traps.** `trap_dc` 27, 45, 75 at Folios 1, 10, 25; Security 30, SLT 45 at Folio 6: rating 47, chance 7000; 2 draws at seq 1002. Passive detection rolls on ticks with `(t + phase) % 60 == 0` with or without `gumshoe`; a successful disarm at Security 50 yields a `cat.placeable` item.
+33. **Traps.** `trap_dc` 27, 45, 75 at Folios 1, 10, 25; Security 30, SLT 45 at Folio 6: rating 47, chance 7000; 2 draws at seq 1002. Passive detection rolls on ticks with `(t + phase) % 60 == 0` with or without `gumshoe`; a successful disarm of a dart trap at Security 50 yields one `block.trap.spikes` item, and of a ward nothing.
 34. **Pickpocket.** The §13.7 example (Pickpocket 20) gives rating 47, DC 45, chance 5400 and 63 ticks; a sleeping target is robbed with no draw.
 35. **Camera.** Standing still at light 10 (`V = 4020`) raises the alarm 60 ticks after first sight; crouched still at light 4 (`V = 726`) never; sweep offsets at p 0, 90, 180, 359 are −4096, 0, 4096, −4050.
 36. **Lock tiers.** Depth 1, 5, 6, 10, 11, 25, 26 gives tiers 1, 1, 2, 2, 3, 5, 6; no electronic lock is placed where local TEC ≤ 4.
 37. **Determinism.** Perception, hearing, search plans and corpse discovery make no draws; a lockpick attempt's draws are identical whether 0 or 50 detection rolls happened that tick for the same actor.
 38. **Co-op.** Canon §21 test 38 holds. When G1 turns alert on A, G1's pair for B (within `R_far`) gains exactly 2500.
-39. **Hidden.** A mounted Erratum never has `st.hidden`; an Erratum with no alert observer has it.
+39. **Hidden.** An Erratum that no observer holds at alert has `st.hidden`; one held at alert by any observer does not, and a ghost never has it.
 40. **Budget.** With 600 due rays of demand above 1536 in one tick, the deferred observers run first on the next tick in ascending `EntityId`.
 41. **Invader filter.** An Erratum behind a solid wall, silent for 60 ticks and unmarked, is absent from the invader's snapshot.
 42. **Hunted cap.** S5: the first shot on the unaware elite uses 22700; after §5.4 leaves its pair lost, the second shot is a sneak attack with no crit draw at 15000; after T8 the next shot uses 22700 again; the same lost elite under `st.sleeping` takes 22700. Canon §21 test 38 still holds.
@@ -1438,14 +1443,18 @@ Namespaces owned by Canon §19: `noise.`, `aware.`, `disguise.`, `lock.`. Every 
 47. **Flash ring.** A flash fired on tick `t` is seen by every observer on exactly one check among ticks `t + 1` to `t + 3`; saving at boundary `t + 1` and loading gives the same detection results.
 48. **Bluff.** GUI 55 and Speech 20 give rating 67 and chances 9500, 8400, 6400 for `bluffs` 0, 1, 2; each answer draws exactly 1 value on `rng.stealth` at seq 1006 (2 under `avatar_of_fate`); no draw on any other stream occurs.
 49. **Event conversion.** A hit with 12,000 mHP of `dmg.sonic` emits `noise.impact.sonic` at 72 dB at its `pos`. A door toggle emits `noise.door.open` or `.close`; a torch snuff (cause `toggled`, not a door) emits only the action's 20 dB `noise.light.snuff`; a falling block emits `noise.block.fall` on `landed` and nothing on `fell`.
-50. **Alarm.** `raise_alarm` with a subject puts every awake faction member within 48000 mm at searching with `search_ticks` 1800, creating pairs that did not exist; a second call from the same source within 600 ticks does nothing. A tattler's alarm has subject 0 and emits `noise.voice.squawk` at 90 dB.
+50. **Alarm.** `raise_alarm` with a subject puts every awake faction member within 48000 mm at searching with `search_ticks` 1800, creating pairs that did not exist; a second call from the same source within 600 ticks does nothing. A tattler's alarm has subject 0 and emits `noise.voice.squawk` at 90 dB. Every member an alarm reaches gets `wary_until = Tick::MAX`; after its 1800-tick search it returns to unaware through T8 with `wary_until` still `Tick::MAX`, and a later callout's Vigilance grant leaves it unchanged; a member of the alarmed faction spawned 3000 ticks later starts with `wary_until = Tick::MAX`; each call that passes the cooldown emits one `ev.alarm_raised`.
 51. **Radio.** A radio squad's callout at tick 5000 reaches its squadmates at tick 5030, each emitting `noise.alarm.radio` at 50 dB; saving at boundary 5010 and loading gives the same delivery.
 52. **Takedown witnesses.** An observer with a sight pass on the attacker during a takedown gains exactly 4000 meter once; the takedown hit carries `DmgFlags` bits 1 and 13.
 53. **Hiding under.** An Erratum under a `hide: under` prop has the 600 mm capsule, `f_stance` 3500 and `f_frac` at most 4000; an Erratum seen entering an enclosed spot within 1500 mm of a searcher's `lkp` is found on the searcher's T6 or T7 entry.
 54. **Content lint.** Every JSON block in this chapter parses with integers only, and every ID in Exports matches the Canon §1.1 grammar and lies in `noise.`, `aware.`, `disguise.` or `lock.`.
-55. **Surfaces.** For each of doc 07's 68 non-air materials the §7.2 class equals its doc 07 §2.4 `acoustic` value (granite stone, hide soft, web cloth, coal dirt, gold metal). An unarmored walk with no §7.1 modifiers on soil gives 40 dB; the same step with 1 unit of `liq.mud` in the feet cell gives 42 (mud), with 1 unit of `liq.water` 48 (water), and in a `block.tall_grass` feet cell 34 (grass). No step ever reads `noise.surface.snow` while doc 07 has no snow block.
+55. **Surfaces.** For each of doc 07's 68 non-air materials the §7.2 class equals its doc 07 §2.4 `acoustic` value (granite stone, hide soft, web cloth, coal dirt, gold metal). An unarmored walk with no §7.1 modifiers on soil gives 40 dB; the same step with 1 unit of `liq.mud` in the feet cell gives 42 (mud), with 1 unit of `liq.water` 48 (water), and in a `block.tall_grass` feet cell 34 (grass). No base-game step reads `noise.surface.snow`, because no doc 07 material carries it.
 56. **Placed locks.** A `Locked(k1, k2)` door at Folio 12 is `lock.kind.door` at `lock.t3` with `key_tags = [k1, k2]`: an opener holding only `k1` cannot use the key path and must pick or hack it, while holding both opens it in 20 ticks with no draw. A `loot.chest.locked` chest at the same depth has `lock_hp` 56. A `hack` verb seal at Folio 12 with local TEC 3 is hacked at device DC 55 and never becomes an electronic lock.
 57. **Cross-chapter IDs.** Every concrete `noise.`, `aware.`, `disguise.` or `lock.` ID that appears in any chapter appears in this chapter's Exports.
+58. **No mounts, no wear.** No rule of this chapter reads a mount or a rider, and no exported ID starts with the `noise.mount.` prefix. After 100 lockpick, hack and disarm attempts, successes and failures alike, the actor's lockpicks, toolkit and hacking deck are unchanged.
+59. **Events.** An auto pick that succeeds emits exactly one `ev.lock_opened` with method 1, a key opening one with method 0; a terminal Unlock in a room with two electronic locks emits one `ev.device_hacked` and two `ev.lock_opened` with method 2; a compromise emits one `ev.disguise_blown`; a discovered body one `ev.body_discovered`; a successful plant emits no `ev.item_stolen`.
+60. **Disguise coverage.** Every `fac.native.*` faction of doc 13 §12.1 has at least one template with `outfit`; an outfit stripped from it makes the disguise active toward that faction's humanoid-profile members and inactive toward `aware.profile.editor` and `aware.profile.hound` observers.
+61. **Light override.** Inside a doc 03 light override with `max_level` 0, an Erratum's `env` is 0, and the same Erratum holding a torch has `L_s = 12`.
 
 ## Invariants annex
 
@@ -1457,10 +1466,10 @@ W! sneak hit ⇒ no crit roll                                     W! ignore_armo
 W! boss|editor|hunter ⇒ sneak_mult ≤ 15000 ∧ no takedown       N! NPC sneak multiplier vs Errata
 W! M ∈ 0..=10000; gains chain in listed order                  N! hearing alone → M ≥ 7500 (except hear_alerts)
 W! alert ⇔ M reached 10000 ∨ contact ∨ compromise              W! lost/alert decay := timers only
-W! stealth_light = max(env − shadow, own, flash, phosphor, spot)  N! stealth_light written to the light grid
+W! stealth_light = max(light_at, own, flash, phosphor, spot)     N! stealth_light written to the light grid
 W! concealment sum ≥ 15 ⇒ ray blocked                          W! f_conc = 10000 − 667 × sum
 W! st.invisible ⇒ sight factor 1000 unless see-invisible       N! invisibility vs scent | tremor | breath | wards | lasers
-W! mounted ⇒ ¬st.hidden ∧ ¬hide spot ∧ ¬disguise ∧ ¬takedown   N! ghost perceived
+N! mount or rider rule; no noise.mount id (Canon §17.7)        N! ghost perceived
 W! every noise has a noise.* id and a level from noise_level   W! unattributed noise → disturbance only
 W! Unseen ⇔ ¬folio_alerted                                     W! electronic lock ⇒ local TEC ≥ 5
 W! lock pity: progress ≥ lock_hp ⇒ open (¬vault, ¬quest)        N! HashMap in StealthWorld
@@ -1475,4 +1484,8 @@ W! raise_alarm source ∈ §6.6 table ∧ cooldown 600 per source    W! SOUND_BP
 W! convert_events: door noise ⇔ door state toggled             W! block fall noise ⇔ cause landed
 W! surface(material) = doc 07 acoustic(material), then the feet-cell overrides mud, water, grass
 W! key open ⇔ opener holds a key for every non-zero key_tags entry   W! used noise.|aware.|disguise.|lock. id ⊆ Exports
+N! tool worn, broken or consumed by a pick, hack or disarm       W! slip ⇒ + SLIP_TICKS ∧ noise.lock.snap
+W! lock_mode governs picks and hacks (Seize included)           W! manual attempt ⇒ 0 success draws ∧ exactly 2 + tier draws
+W! alarm ⇒ wary_until = Tick::MAX for every member it reaches   W! Vigilance grant := max(wary_until, now + 5400)
+W! every fac.native.* faction has an outfit template            W! each §1.7 event emitted once per occurrence
 ```

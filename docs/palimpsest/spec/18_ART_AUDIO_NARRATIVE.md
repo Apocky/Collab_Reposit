@@ -1,42 +1,44 @@
 # 18 — Art, Audio, Narrative and the Narrator
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.7.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
 
-This chapter was checked line by line against the on-disk canon, canon-1.7 (Canon §23), including §4.4 micro-voxels, the softer Erasure of §11.6 and §17.1, and the public-domain Echoes of §16.2, against DECISIONS.md items 28, 37, 38, 40, 41 and 46, and against the on-disk chapters 01 to 17 named in Imports. It owns everything the player sees, hears and reads that the simulation never reads: art direction and the per-genre art bibles, rendering style techniques built on doc 02's pipeline, animation, music and sound, the text skins and registers of every genre, the lore, and the Narrator with its optional on-device Scribe model. Every record here is presentation. `palimpsest_sim` never depends on any of it (Canon §22: rendering reads the simulation and never feeds it; language-model text is cosmetic only).
+This chapter conforms to canon-1.11 (Canon §23), including §2.4's `presentation_hash`, §3.8's presentation generators, §4.3's fixed terrain and the end of item durability, §4.4's micro-voxels, the softer Erasure of §11.6 and §17.1, the public-domain Echoes of §16.2 and the mount retirement of §17.7; to DECISIONS.md items 28, 37, 38, 40, 46, 49, 53, 55, 65, 69, 77, 78, 87, 90, 91, 94, 97, 98, 100 and 114 (114 supersedes 41); to the rulings of `audit/canon_gaps_triage.md` that name it; and to the on-disk chapters 01 to 17 named in Imports. It owns everything the player sees, hears and reads that the simulation never reads: art direction and the per-genre art bibles, rendering style techniques built on doc 02's pipeline, animation, music and sound, the text skins and registers of every genre, the lore, and the Narrator with its optional on-device Scribe model. Every record here is presentation. `palimpsest_sim` never depends on any of it (Canon §22: rendering reads the simulation and never feeds it; language-model text is cosmetic only).
 
 ## Imports
 
 |Source|Consumed|
 |---|---|
 |Canon §1.1, §1.6, §1.10|ID grammar, integer content, skin text keys, name resolution order|
-|Canon §2, §3.1–§3.3|ticks and durations; RNG primitives and `stream_seed`, reused as pure functions (§1.2)|
-|Canon §4.1–§4.2, §4.4; §6.4 rows 17, 31, 34|body capsule, walk speed, micro-voxels (250 mm, triplanar texturing at 64 texels per meter, render-only debris); action speed, dark-vision radius, footstep radius|
+|Canon §2, §2.4, §3.1–§3.3, §3.8|ticks and durations; `content_hash` and `presentation_hash`; RNG primitives and `stream_seed`, reused as pure functions; the presentation generators `nar_rng` and `pres_hash` (§1.2)|
+|Canon §4.1–§4.4; §6.4 rows 17, 31, 34|body capsule, walk speed; fixed terrain, destructible cells (`block.tag.destructible`) and no item durability (§4.3); micro-voxels (250 mm, triplanar texturing at 64 texels per meter, render-only debris); action speed, dark-vision radius, footstep radius|
 |Canon §5.2, §5.5–§5.11|genres, skins and the naming rule; Contradiction, Anachronism, palettes and music registers, Going Native, Unmoored|
 |Canon §9, §10.1, §11, §12.2, §13.3, §13.6|body plans and pose tables, damage colors, statuses and Erasure, concealment and genre fog, rarity colors, appearances|
-|Canon §14, §16.2, §16.3, §16.5, §17, §18, §19, §22|currency names, the 24 Echoes with the required public-domain figures (Sun Wukong, Loki, Lilith, Fenrir as `body.quadruped`, Jörmungandr as `body.serpentine`), kin, patrons, run rules (Erasure onset 720 s), events, namespaces `art.`, `aud.`, `nar.`, `vfx.` and `loc.` text keys, invariants|
-|Brief §1, §2, §5; DECISIONS 8, 13, 14, 23, 28, 37, 38, 39, 40, 41, 45, 46|premise, archetype × skin, runtime-model rules; tone, gore, opt-in model, UI skins; public-domain Echo cast; micro-voxels; text-only Narrator; original adaptive score; 15 launch locales; 6 Early Access genres (Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West, Wuxia, Steampunk); literary-bureaucrat Editors; the procedural Ur-Text ending|
+|Canon §14, §16.2, §16.3, §16.5, §17, §18, §19, §22|currency names, the 24 Echoes with the required public-domain figures (Sun Wukong, Loki, Lilith, Fenrir as `body.quadruped`, Jörmungandr as `body.serpentine`), kin, patrons, run rules (Erasure onset 720 s, one Erasure hunter per Folio carrying `rank.hunter`), the mount retirement and the unmounted `enemy.role.charger` (§17.7), events, namespaces `art.`, `aud.`, `nar.`, `vfx.` and `loc.` text keys, invariants|
+|Brief §1, §2, §5; DECISIONS 8, 13, 14, 23, 28, 37, 38, 39, 40, 45, 46, 49, 53, 55, 65, 69, 77, 78, 87, 90, 91, 94, 97, 98, 100, 114|premise, archetype × skin, runtime-model rules; tone, gore, opt-in model, UI skins; public-domain Echo cast; micro-voxels; text-only Narrator; original adaptive score; 15 launch locales; literary-bureaucrat Editors; the procedural Ur-Text ending; deceptive madness hallucinations; the first Folio Expansions (Age of Sail and Pirates, then Kaiju and Mecha); no mounts or vehicles; no item durability; 2 or more mini-bosses per genre; the walkable Margin hub; resident arcs delivered as text; cosmetic differences between co-op peers; "Crowns" kept; the Erasure hunter's `rank.hunter` identity and music cue; ink gore by default; 12 appearance presets per kin with palette and marking colors; PC only through 1.0; the Second Edition's second ending layer; all 12 core genres at Early Access (114, which supersedes 41)|
 |Doc 01 §1.3, §9.5, §11|fiction rules; the tone guide and house lexicon, adopted as the voice bible; defaults Q-07 (Scribe off) and Q-14 (mild language)|
-|Doc 02 §2–§3, §7–§11, §15|crates and `crate.scribe`, `bevy_rapier3d =0.37.0`, view frame (`ViewEntity.flags` INVISIBLE and GHOST bits), event routing by `trigger` (at most one VFX and one audio record per event), render and audio pipelines, the light agreement clamp and `ambient_milli` table, page-turn and bleed geometry, five stems and music levels, occlusion, Fluent, asset paths, BC7 texture arrays with full mip chains, memory budgets, `flag.scribe.enabled`, gap G1|
+|Doc 02 §2–§3, §7–§11, §15|crates and `crate.scribe`, `bevy_rapier3d =0.37.0`, view frame (`ViewEntity.flags` INVISIBLE and GHOST bits; `ViewPlayer.revealed` and `dark_vision_mm`; `FolioView.seams`; `ChunkView` micro-voxel masks), event routing by `trigger` (at most one VFX and one audio record per event), render and audio pipelines, the light agreement clamp and `ambient_milli` table, page-turn and bleed geometry, five stems and music levels (level 4 while an alerted `rank.boss`, `rank.editor` or `rank.hunter` lives, §9), occlusion, Fluent, asset paths, BC7 texture arrays with full mip chains, memory budgets, `flag.scribe.enabled`, the canonical serialization behind both hashes (§11.2)|
 |Doc 03 §4.5, §5.15–§5.16, §11, §14|block `skins`, pose tables, sound grid, event payloads: `ev.footstep {entity, gait, material}`, `ev.entity_landed {entity, fall_mm, material}`, `ev.explosion {center, radius_mm}`, `ev.fire_started`, `ev.fire_out`, `DmgFlags` bits (crit 0, sneak 1, dot 2, blocked 4, area 5, precision 6, lethal 12)|
-|Docs 04, 05, 06|kin skin names per Origin (04 §2.4) and Going Native (04 §2.8); combat feel and the audio request for clang, parry, jam and ward break (05 §18); registers, the 84 glyphs and their skins (06 §5.7), patrons, taboos and prayer outcomes (06 §16.1)|
-|Docs 09, 10, 11|awareness states `aware.unaware`, `aware.curious`, `aware.suspicious`, `aware.searching`, `aware.lost`, `aware.alert` (09 §6.1), reveal meters (09 §4.8), `noise.*` IDs and acoustic classes `noise.surface.*` (09 §7); appearance descriptors, form nouns of the 12 core genres and the sigil atlas request (10 §3.3–§3.4); weapon skins, manufacturers and vendor names (11)|
-|Doc 12 §2–§4, §14, §18–§20|fog, `render_style`, tilesets, Laws, bleed and seams, hazard and event names, story fragments|
-|Doc 13 §2.1, §3, §8–§10, §13|`body_state.stand_mm`, the 16 roles, rosters, bosses, Editors (display names the Proofreader, the Censor, the Continuity Editor, the Abridger, the Last Word), the Revisor and its three named skins, Margin NPC IDs, deterministic dialogue checks and barks|
-|Doc 14 §1.2, §3–§6, §8|`RunState`, `SlotStatus`, phases `Exploring`, `ColophonOpen`, `InColophon`, `ExitVote`, `BossAntechamber`, `BossFight`, `Endpaper`, `VictoryChoice`, `Ended`; exit vote, end states `run.end.*`, `RunSummary`, the 9 milestones, Margin facilities, Echoes, Novella and Abridged|
+|Docs 04, 05, 06|the creation Cosmetics step (04 §2.1); kin skin names per Origin (04 §2.4) and Going Native (04 §2.8); madness phantoms (04 §12.4); Echo bodies, eye heights and slots (04 §13); combat feel and the audio request for clang, parry, jam and ward break (05 §18); registers, the 84 glyphs and their skins (06 §5.7), patrons, taboos and prayer outcomes (06 §16.1)|
+|Doc 07 §2.2|every `mat.` ID of §3.4's material sets and each material's `acoustic` override (doc 09 §7.2)|
+|Docs 09, 10, 11|awareness states `aware.unaware`, `aware.curious`, `aware.suspicious`, `aware.searching`, `aware.lost`, `aware.alert` (09 §6.1), reveal meters (09 §4.8), `noise.*` IDs and acoustic classes `noise.surface.*` (09 §7), `StealthHud.marks` states and meters (09 §8); appearance descriptors, form nouns of the 12 core genres and the sigil atlas request (10 §3.3–§3.4); weapon skins, manufacturers and vendor names (11)|
+|Doc 12 §2–§4, §14, §18–§20|fog, `render_style`, tilesets, Laws, bleed and seams, hazard and event names, `gpv.evt.weather_front`, story domains, fragments and the story plan JSON (§20.5)|
+|Doc 13 §2.1, §3, §8–§10, §13|`body_state.stand_mm`, the 16 roles including the unmounted `enemy.role.charger`, rosters, bosses, Editors (display names the Proofreader, the Censor, the Continuity Editor, the Abridger, the Last Word), the genre mini-bosses (§9.3), the Revisor and its three named skins, Margin NPC IDs, deterministic dialogue checks and barks|
+|Doc 14 §1.2, §3–§6, §8|`RunState`, `SlotStatus`, phases `Exploring`, `ColophonOpen`, `InColophon`, `ExitVote`, `BossAntechamber`, `BossFight`, `Endpaper`, `VictoryChoice`, `Ended`; exit vote, end states `run.end.*`, `RunSummary` (`mode`, `end`, `deepest_folio`, `party_size_max`, `score_at_victory`, `colophon_marked`, `ironman`; per slot `display_name`, `status_at_end`, `went_native`, `red_ink_doses`, `top_patron`) and `FolioRecord` (`index`, `genre`, `volume`, `kind`, `story`, `story_solved`, `leaf_carried`, `invasion`), the closing-manuscript inputs (§4.7), the 9 milestones, Margin facilities, the resident arcs `margin.arc.<resident>` of 6 beats (§5.6), Echoes, Novella, Abridged and the Second Edition flow (`mode.second_edition`, §8.9)|
 |Doc 15 §3.1, §7.1, AP-7|cosmetics, the readability-limit request, reveal limits|
-|Docs 16, 17|ghosts are never sent to an invader's client (16 §6); settings `access.gore`, `access.reduce_motion`, `access.photosensitive`, `access.sound_ripples`, `access.shimmer_bp`, `access.font`, captions (17 §13); UI tokens (17 §2.2) and requests G8, G23, G26|
+|Docs 16, 17|ghosts are never sent to an invader's client (16 §6); settings `access.gore`, `access.reduce_motion`, `access.photosensitive`, `access.sound_ripples`, `access.shimmer_bp`, `access.font`, `access.mark_hallucinations`, captions (17 §13); Narrator-note placement (17 §16.4); the Margin dialogue box `ui.menu.margin_dialogue` (17 §11.1) and the creation screen's preset picker (17 §5.7); UI tokens (17 §2.2), typography (17 §2.4) and the stealth meter's crosshair rings (17 §10.10)|
 |R4 §2, §4, §7.5, §8, §10; R6 §7, §9, §11|graphics, meshing, authoring-time LLMs, small models and constraints, disclosure, the two acoustic systems; genre signals, GPV presentation fields, foreign-looks-foreign|
 
 ## 1. Scope, ownership and conventions
 
 ### 1.1 Ownership and encodings
 
-- Namespaces: `art.` (meshes, clips, rigs, block arrays and layers, textures, icons, LUTs, fonts, palettes, lights, post stacks, bibles, visual records, viewmodels, silhouettes, native forms, readability limits), `vfx.` (damage, status, awareness, Contradiction, sprites, transitions, telegraphs, ragdolls), `aud.` (music, effects, ambience, voice, sets, buses, pools, mix), `nar.` (lore, Authors, Editors, Margin cast, Narrator, endings, grammars, names, registers, Scribe jobs and models, name review) and every `loc.` string, stored in `assets/loc/<locale>/<owner_doc>.ftl` (doc 02 §10).
+- Namespaces: `art.` (meshes, clips, rigs, block arrays and layers, textures, icons, LUTs, fonts, palettes, lights, post stacks, bibles, visual records, viewmodels, silhouettes, native forms, appearance presets, readability limits), `vfx.` (damage, status, awareness, Contradiction, sprites, transitions, telegraphs, ragdolls), `aud.` (music, effects, ambience, voice, sets, buses, pools, mix), `nar.` (lore, Authors, Editors, Margin cast, Narrator, endings, grammars, names, registers, Scribe jobs and models, name review) and every `loc.` string, stored in `assets/loc/<locale>/<owner_doc>.ftl` (doc 02 §10).
 - No crate in `palimpsest_sim`'s dependency closure loads these records (acceptance test 25).
 - Content stays integer (Canon §1.6). A float the renderer uses is authored in milli-units with the suffix `_milli` (`bloom_milli: 250` is 0.25). Colors are `#RRGGBB` in tables and decimal integers in JSON, as doc 12 §3.6 encodes palettes (`#3A1F2B` → `3809067`).
+- **Hashing** (Canon §2.4, DECISIONS 87). Every record in these namespaces and every `loc.` table is hashed into `presentation_hash`, never into `content_hash`, so co-op peers may differ in art, audio, VFX, narration and localization. Replays record `presentation_hash`, and a mismatch only warns.
 
 ### 1.2 Presentation randomness
 
-Presentation never draws from a simulation stream. Two pure functions supply every cosmetic or narrative choice:
+Presentation never draws from a simulation stream. Canon §3.8 names the two pure functions that supply every cosmetic or narrative choice:
 
 ```rust
 /// Narrative draws: names, grammars, Scribe sampling seeds. Same inputs, same text, on every machine.
@@ -48,14 +50,14 @@ fn nar_rng(run_seed: u64, folio: u32, job: &str, key: u64) -> Rng {
 fn pres_hash(tag: &str, a: u64, b: u64) -> u64 { mix64(fnv1a64(tag) ^ mix64(a ^ mix64(b))) }
 ```
 
-`stream_seed` is the Canon §3.2 formula evaluated as a pure function; no stream state exists. Example: run seed `0x0123456789ABCDEF`, Folio 4, job `nar.job.story_retelling`, key 512 gives seed `0xae27e411c755d822`. Presentation draw counts depend on content (a grammar draws once per multi-alternative symbol it expands); each family below states its count. A replay reproduces narrative text exactly because every input is in the replay header and the run history.
+`stream_seed` is the Canon §3.2 formula evaluated as a pure function; no stream state exists. Example: run seed `0x0123456789ABCDEF`, Folio 4, job `nar.job.story_retelling`, key 512 gives seed `0xae27e411c755d822`. Presentation draw counts depend on content (a grammar draws once per multi-alternative symbol it expands); each family below states its count. A replay reproduces narrative text exactly because every input is in the replay header and the run history. Name grammars (§7.4) expand a name seed that doc 12 §20.1 already drew and recorded, with `Rng::from_seed64(name_seed)`; that expansion advances no stream (Canon gaps 1).
 
 ## 2. Art direction: the living manuscript
 
 ### 2.1 Five rules
 
 1. **Every Folio is an illustrated page** in one illustrative tradition (§2.2); paper grain, ink edges and page turns keep the book in view.
-2. **The palimpsest shows through.** When destruction removes micro-voxels (Canon §4.4), every newly exposed micro-voxel face shows, for 600 ticks, the previous Folio's genre texture at 15% opacity; in Folio 1 the underlayer is the Unwritten's pencil grid. An Editor's erasure leaves red correction marks instead.
+2. **The palimpsest shows through.** When destruction removes micro-voxels from a destructible cell (Canon §4.3, §4.4; fixed terrain never loses any), every newly exposed micro-voxel face shows, for 600 ticks, the previous Folio's genre texture at 15% opacity; in Folio 1 the underlayer is the Unwritten's pencil grid. An Editor's erasure leaves red correction marks instead.
 3. **Ink and paper are physical**: outlines are ink (§4.1), shading sits on paper (§4.2), Folios turn (§4.3), genre borders are stitched or bled (§4.4).
 4. **Foreign things look foreign.** Errata, their gear and bleed visitors render in their origin genre's style, ink and animation step (R6 R12; doc 02 §8.6).
 5. **Readability beats style.** Damage colors, rarity colors, telegraph hatching and awareness glyphs are global; color is never the only signal.
@@ -104,7 +106,7 @@ Each genre has five records: `art.palette.<g>`, `art.light.<g>`, `art.post.<g>`,
 
 ### 3.1 Palettes (`art.palette.<genre_suffix>`)
 
-`key`, `fill`, `accent` are canon. `ink` draws outlines and diegetic text. `paper` is the page tone of diegetic manuscript surfaces: paper grain (§4.2), deckled edges, title cards, Lore and Journal pages and the page-turn back face. UI chrome and functional UI text use doc 17 §2.2's tokens, never these two swatches (doc 17 G8). `danger` fills enemy telegraphs (§4.7). `glow` tints fixtures, motes and pickups.
+`key`, `fill`, `accent` are canon. `ink` draws outlines and diegetic text. `paper` is the page tone of diegetic manuscript surfaces: paper grain (§4.2), deckled edges, title cards, Lore and Journal pages and the page-turn back face. UI chrome and functional UI text use doc 17 §2.2's tokens, never these two swatches. `danger` fills enemy telegraphs (§4.7). `glow` tints fixtures, motes and pickups.
 
 |Genre|key|fill|accent|ink|paper|danger|glow|
 |---|---|---|---|---|---|---|---|
@@ -129,7 +131,7 @@ Global colors, never restyled: **Red Ink** `#D7262E` (Editors, Erasure, `liq.red
 
 **Telegraph contrast rule.** Let `cr(a, b)` be the WCAG 2.x contrast ratio. Each genre's telegraph edge color is whichever of `ink` and `paper` contrasts more with `danger`, and that ratio must be at least 4.0. The table passes with minimum 4.07 (wuxia, paper edge). Examples: mythic_fantasy 4.22 (paper), gothic_horror 4.58 (ink), cyberpunk 6.52 (ink), ur_text 4.80 (ink). The Ur-Text danger was moved from the vermilion `#C8341E` (3.78) to `#E04A2A` to pass.
 
-**Reading contrast rule.** Lore and Journal text is `ink` on `paper`, so `cr(ink, paper) ≥ 7.0` in every genre. The table passes with minimum 7.00 (unwritten, `#595959` on `#FFFFFF`); the next lowest is post_apocalypse at 10.46. The Unwritten ink was darkened from `#8A8A8A` (3.45) to `#595959` for this rule (doc 17 G8).
+**Reading contrast rule.** Lore and Journal text is `ink` on `paper`, so `cr(ink, paper) ≥ 7.0` in every genre. The table passes with minimum 7.00 (unwritten, `#595959` on `#FFFFFF`); the next lowest is post_apocalypse at 10.46. The Unwritten ink was darkened from `#8A8A8A` (3.45) to `#595959` for this rule.
 
 ### 3.2 Lighting rig and fog (`art.light.<genre_suffix>`)
 
@@ -207,12 +209,12 @@ Block families are doc 12's tilesets dressed in Canon §5.9's materials. Silhoue
 |cosmic_horror|`sunken_town` barnacled clapboard; `abyss` wrong-angled basalt, lit fungus|chalk circles, specimen jars, dripping idols|cultist hood and raised arms; deep_one fish-backed hunch; shoggoth_spawn eyed blob; star_seer three-armed|tendrils, wet-ink blooms, witchlight motes|
 |space_opera|`starship` hull plate, deck grating; `station` glass, hydroponics|consoles, cargo pods, holo-tables|navy_trooper helmet and rifle; psi_adept floating robe; hive_warrior crescent claws; security_droid boxy shield|plasma bolts, lens flares, hex shield ripples|
 |cyberpunk|`megablock` wet concrete, invented-brand neon; `undercity` pipes, graffiti|kiosks, noodle stalls, holo-ads with fictional logos|corp_enforcer visor and rifle; chrome_brawler huge chrome arms; mantis_assassin arm blades; riot_mech box on legs|glitch blocks, scanline holograms|
-|post_apocalypse|`wasteland` cracked asphalt, rebar; `bunker` rusted steel, rad-glass|car hulks, drums, scrap barricades|raider_scav spiked shoulders; glow_zealot glowing chest and a rad-sling launcher; mutant_behemoth asymmetric giant; war_rig_rider motorbike|rust flecks, oily smoke, rad motes|
-|weird_west|`boomtown` weathered planks, adobe; `mine` timber shoring, ore carts|hitching posts, wanted posters with invented names, gallows|dead_miner lantern and dynamite belt; marshal_rifleman long rifle; railroad_automaton smokestack head; posse_rider lasso|dust puffs, powder smoke, hex sigils|
+|post_apocalypse|`wasteland` cracked asphalt, rebar; `bunker` rusted steel, rad-glass|car hulks, drums, scrap barricades|raider_scav spiked shoulders; glow_zealot glowing chest and a rad-sling launcher; mutant_behemoth asymmetric giant; ram_raider welded car-door shield|rust flecks, oily smoke, rad motes|
+|weird_west|`boomtown` weathered planks, adobe; `mine` timber shoring, ore carts|hitching posts, wanted posters with invented names, gallows|dead_miner lantern and dynamite belt; marshal_rifleman long rifle; railroad_automaton smokestack head; posse_deputy coiled lasso|dust puffs, powder smoke, hex sigils|
 |hardboiled_noir|`city_street` wet brick, fire escapes; `tenement` peeling paper, blinds|payphones, desk lamps, blinds that stripe light|mob_torpedo fedora and drum gun; leg_breaker wide coat and bat; shadow_tail thin trench coat; dock_heavy carrying a crate|rain splashes, smoke curls, flashbulbs|
 |wuxia|`mountain_sect` terraces, red lacquer pillars; `bamboo_vale` bamboo, rope bridges|incense burners, bronze bells, stone lanterns|jiangshi outstretched arms; sect_disciple flowing sleeves; court_crossbowman box crossbow; fox_spirit fan of tails|brush strokes, petals, qi swirls|
 |steampunk|`foundry` riveted iron, kilns; `airship` varnished decks, brass rails|boilers, gauges, gear trains, tesla coils|brass_automaton barrel torso; sky_aeronaut goggles, grapnel and ornithopter wings; galvanist coil pack; steam_juggernaut furnace body|steam puffs, brass sparks, gears|
-|fairy_tale|`deep_wood` mossy trunks, toadstools; `cottage` thatch, gingerbread trim|spinning wheels, mirrors, wells|big_bad_wolf oversized wolf, head above an Erratum's; bridge_troll stooped giant; hedge_witch pointed hat; wild_hunt_rider antlers|glitter, petals, watercolor blooms|
+|fairy_tale|`deep_wood` mossy trunks, toadstools; `cottage` thatch, gingerbread trim|spinning wheels, mirrors, wells|big_bad_wolf oversized wolf, head above an Erratum's; bridge_troll stooped giant; hedge_witch pointed hat; wild_huntsman antlers and hunting horn|glitter, petals, watercolor blooms|
 |mythic_antiquity|`temple` marble columns, mosaics; `labyrinth` limestone meanders|amphorae, braziers, statues|hoplite round shield and spear; harpy wings; oracle_priestess veil and tripod; centaur_archer horse body and bow|golden motes, laurel leaves, red-figure flames|
 |oneiric|`dreamscape` impossible stairs, cloud blocks; `nursery` giant toys|doors in midair, handless clocks, music boxes|sleepwalker arms out; nightmare_mare burning mane; stair_mimic drawn as a stair; faceless_teacher third arm|paper cut-outs, floating letters, reversed particles|
 |redacted|`bureau` grey cubicles, ceiling panels; `archive` cabinets|water coolers, shredders, stamps, ceiling domes|clerk clipboard; blackbar_sentinel black rectangle; shredder_unit toothed box; faceless_agent blurred face|black bars, pixel noise|
@@ -266,7 +268,7 @@ Every font is SIL Open Font License 1.1 or Apache 2.0, verified against its lice
 |ur_text|Cinzel Decorative|EB Garamond|EB Garamond|full illuminated initial|
 |the Margin (hub)|EB Garamond|EB Garamond|EB Garamond|pencil versal, 2 lines|
 
-Every locale also ships Noto Sans CJK and Noto Serif CJK for Chinese, Japanese and Korean, and Atkinson Hyperlegible as the legibility font that doc 17's `access.font` substitutes for every body face. Functional UI text (HUD, menus, item cards, tooltips, numbers) uses doc 17's `access.font` body font; the heading faces above are doc 17's display fonts, and the body and numeral faces set Lore and Journal pages and title cards (doc 17 G23). A heading face without the glyphs of the active locale falls back to Noto Serif CJK or Noto Serif.
+Every locale also ships Noto Sans CJK and Noto Serif CJK for Chinese, Japanese and Korean, and Atkinson Hyperlegible as the legibility font that doc 17's `access.font` substitutes for every body face. Functional UI text (HUD, menus, item cards, tooltips, numbers) uses doc 17's `access.font` body font; the heading faces above are doc 17's display fonts, and the body and numeral faces set Lore and Journal pages and title cards (doc 17 §2.4). A heading face without the glyphs of the active locale falls back to Noto Serif CJK or Noto Serif.
 
 ### 3.6 Silhouette roles (`art.silhouette.<role>`)
 
@@ -281,7 +283,7 @@ Every enemy reads its doc 13 role (§3, 16 roles) from its idle-pose LOD0 boundi
 |guardian|a frontal shield, crate or plate of at least 900 wide × 1200 high, facing forward in idle|
 |caster, controller, support, summoner|humanoid: hands at shoulder height or above in the cast pose, with an emissive mask on the hands or focus. Other plans: an emissive mask covering at least 1000 Bp of the front-view area during the cast pose|
 |flier|avian and construct plans: span ≥ 2 × body height; humanoid fliers: a visible lift device (wings, rotors, balloon, jets) with span ≥ `mul_bp(H, 12000)`|
-|cavalry|mounted (doc 13 `mounted` tag)|
+|charger|humanoid: a runner's split stance in idle, the lead foot at least 500 ahead of the trailing foot, with the weapon, shield or device held forward of the chest; no mount or vehicle (Canon §17.7)|
 |sapper, artillery|a carried charge, launcher or digging tool ≥ 400 in its largest dimension|
 
 Examples against doc 13 §8: `orc_raider` (swarmer, humanoid, `H` 1650, hunched) passes; `leg_breaker` (brute, humanoid) needs `H ≥ 2200` and width ≥ 1320, so doc 13 authors it at `stand_mm` 2200 (Interface assumptions); `stair_mimic` (stalker, amorphous) passes at idle top 1000; `sky_aeronaut` (flier, humanoid, `H` 1800) needs wings spanning at least 2160.
@@ -325,6 +327,10 @@ Examples against doc 13 §8: `orc_raider` (swarmer, humanoid, `H` 1650, hunched)
 ```
 
 Each `anims` entry is a doc 03 pose-table ID and the clip of the same name inside the `.glb`. `underlayer: 1` enables the §2.1 rule-2 reveal on that block.
+
+### 3.9 The Margin (`art.bible.margin`)
+
+The Margin is a walkable first-person 3D hub with fixed architecture (DECISIONS 77, doc 14 §5, Canon §17.8). It is the blank edge of the page, so `art.bible.margin` renders it with the Unwritten's records unchanged: `art.palette.unwritten`, `art.light.unwritten`, `art.lut.unwritten` and `art.post.unwritten`, over the Unwritten's `margin` tileset (§3.4) of ruled lines on `mat.paper` and `mat.vellum`. Residents, trophies and visiting Errata keep their origin genres' style, ink and animation step (§2.1 rule 4), so every story's color reads as foreign against the white page. Its typography is §3.5's Margin row, its music `aud.music.margin` (§6.1), and the Narrator's arc notes sit in the Ledger (§8.4).
 
 ## 4. Rendering techniques
 
@@ -408,7 +414,7 @@ Every damage type owns one shape motif, its Canon §10.1 default color and a uni
 
 The `trigger` follows doc 02 §7.6. Each status also has a HUD glyph `art.icon.<status_suffix>` (for example `art.icon.bleeding`) that doc 17 frames by category, and each genre's Aether skin has `art.icon.aether.<genre_suffix>`.
 
-**4.5a Ward feedback and status VFX.** `ev.ward_broken` plays `vfx.ward.break`: the ward shell shatters into 12 hexagonal paper flakes (life 30 ticks, speed 3000 mm/s, spread 32768 Bam) in `#3FE0D0`; a hit fully absorbed by ward plays `vfx.ward.ripple`, a 6-tick hex ripple at the impact point. Status VFX (`vfx.status.*`) use the manuscript's own typography over the bearer: `st.stunned` orbiting asterisks, `st.sleeping` a rising ellipsis, `st.confused` an interrobang, `st.charmed` a rose fleuron, `st.feared` a trembling outline, `st.marked` a manicule above the head plus doc 17's through-wall outline, `st.dread` an ink vignette on the bearer's screen, `st.inspired` a gold underline at the feet, `st.unmoored` desaturation with fraying paper edges on the body, `st.erasure` one struck-through line crawling over the outline per stack (the outline turns Red Ink at the bearer's hunter threshold), `st.madness` hallucinations drawn in Narrator pencil. Body emitters show `st.burning`, `st.frozen` (an ice shell), `st.shocked` (an arc every 30 active ticks), `st.bleeding` (drips) and `st.poisoned` (green breath).
+**4.5a Ward feedback and status VFX.** `ev.ward_broken` plays `vfx.ward.break`: the ward shell shatters into 12 hexagonal paper flakes (life 30 ticks, speed 3000 mm/s, spread 32768 Bam) in `#3FE0D0`; a hit fully absorbed by ward plays `vfx.ward.ripple`, a 6-tick hex ripple at the impact point. Status VFX (`vfx.status.*`) use the manuscript's own typography over the bearer: `st.stunned` orbiting asterisks, `st.sleeping` a rising ellipsis, `st.confused` an interrobang, `st.charmed` a rose fleuron, `st.feared` a trembling outline, `st.marked` a manicule above the head plus doc 17's through-wall outline, `st.dread` an ink vignette on the bearer's screen, `st.inspired` a gold underline at the feet, `st.unmoored` desaturation with fraying paper edges on the body, `st.erasure` one struck-through line crawling over the outline per stack (the outline turns Red Ink at the bearer's hunter threshold). `st.madness` draws no marker of its own: doc 04 §12.4's madness phantoms render with the full presentation of the native template they imitate, so madness stays deceptive (DECISIONS 49), and only doc 17's `access.mark_hallucinations` (forced on under Scribe's Mercy) adds its dashed outline and "?" glyph. Body emitters show `st.burning`, `st.frozen` (an ice shell), `st.shocked` (an arc every 30 active ticks), `st.bleeding` (drips) and `st.poisoned` (green breath).
 
 ### 4.6 Stealth readability
 
@@ -417,7 +423,7 @@ The rule: **nothing on screen may tell the player they are hidden, lit, heard or
 1. **Light.** Doc 02's agreement clamp makes visual darkness equal simulation darkness. Fixture and emissive colors never add luminance past the clamp.
 2. **Fog.** Visual fog equals simulated concealment (§3.2).
 3. **Dark vision.** Inside the local Erratum's dark-vision radius (Canon §6.4 row 31, 4 m at SGT 40) the scene gets a desaturated blue-grey luminance floor of `ambient_milli(4) = 22` from doc 02's table. It changes only the local player's image and never makes a cell look lit.
-4. **Awareness glyphs** (`vfx.aware.*`) draw above each observer listed in the local slot's `StealthHud.marks` (doc 09 §8: that observer's state and meter toward the local Erratum) whose state ordinal (doc 09 §6.1) is at least 1 and that the local player can see. Shapes and colors match doc 17's crosshair ring, so the two never disagree: `vfx.aware.curious` (ordinal 1) a thin white "?" that fills bottom-up with the mark's `meter` toward the next threshold; `vfx.aware.suspicious` (2) a bold yellow "?"; `vfx.aware.searching` (3) an orange "?" inside a rotating sweep ring; `vfx.aware.lost` (4) a hollow orange "!" inside a rotating sweep ring; `vfx.aware.alert` (5) a solid Red Ink "!". `aware.unaware` draws nothing. Glyphs never draw through walls unless the observer bears `st.marked`. Doc 09's interim names map as `investigating` → `vfx.aware.suspicious` and `returning` → nothing (doc 17 G26).
+4. **Awareness glyphs** (`vfx.aware.*`) draw above each observer listed in the local slot's `StealthHud.marks` (doc 09 §8: that observer's state and meter toward the local Erratum) whose state ordinal (doc 09 §6.1) is at least 1 and that the local player can see. Shapes and colors match doc 17 §10.10's crosshair rings, so the two never disagree: `vfx.aware.curious` (ordinal 1) a thin white "?" that fills bottom-up with the mark's `meter` toward the next threshold; `vfx.aware.suspicious` (2) a bold yellow "?"; `vfx.aware.searching` (3) an orange "?" inside a rotating sweep ring; `vfx.aware.lost` (4) a hollow orange "!" inside a rotating sweep ring; `vfx.aware.alert` (5) a solid Red Ink "!". `aware.unaware` draws nothing. Glyphs never draw through walls unless the observer bears `st.marked`.
 5. **Stealthy and invisible NPCs** (doc 09 §4.8) render as a refraction shimmer at doc 17's `access.shimmer_bp` opacity (default 2500 Bp) until revealed to the local Erratum, then as the full model with a manicule marker.
 6. **Sound ripples** (doc 17 accessibility option): each `ev.noise` the local slot heard draws a ring at its apparent position (doc 02 §9) with radius `min(3000, 50 × L_lis)` mm for 30 ticks. Unheard noises draw nothing.
 7. **Footsteps.** Hostile footsteps inside the footstep-indicator radius (Canon §6.4 row 34) play their sound even when the voice cap is full (§6.6).
@@ -445,9 +451,9 @@ The rule: **nothing on screen may tell the player they are hidden, lit, heard or
 
 - The viewmodel is a separate camera layer (doc 02 §8.4) and always animates on 1s, whatever the genre's `anim_step`, because aim feel outranks style.
 - **Action sync.** Each action clip has an authored length `clip_ticks`. It plays at rate `clip_ticks / action_ticks`, where `action_ticks` is the simulation's duration (Canon §6.4 row 17 for reload, swap and use). Example: a 120-tick reload with SLT 60 gives `mult = 10000 + 20 × 50 = 11000` and `action_ticks = max(1, ceil_div(120 × 10000, 11000)) = 110`, so the clip plays at rate 120 / 110 ≈ 1.091 and ends on the tick the simulation finishes.
-- **Motion** from `art.vm.<archetype>` (example `art.vm.ranged.sidearm`: `bob_v_mm` 6, `bob_h_mm` 10, `sway_max_mm` 25, `sway_return_ticks` 7). Bob amplitude scales with `speed / 4300`, and its low point lands on each `ev.footstep` of the local player, so steps and bob agree. Sway lags look input by at most `sway_max_mm`, then springs back. Recoil kick and hitstop are doc 05's.
+- **Motion** from `art.vm.<archetype>` (example `art.vm.ranged.pistol`, for doc 05's `arch.ranged.pistol`: `bob_v_mm` 6, `bob_h_mm` 10, `sway_max_mm` 25, `sway_return_ticks` 7). Bob amplitude scales with `speed / 4300`, and its low point lands on each `ev.footstep` of the local player, so steps and bob agree. Sway lags look input by at most `sway_max_mm`, then springs back. Recoil kick and hitstop are doc 05's.
 - **Full-body awareness**: doc 02 §8.4 renders the avatar body headless; looking down shows the legs, held off-hand items and the belt quickbar.
-- **Non-humanoid Echoes** (Canon §16.2, DECISIONS item 28): `echo.fenrir` (`body.quadruped`) shows the lower edge of the muzzle and both forepaws, and its natural-weapon actions (bite, claw, pounce) play muzzle and paw clips; `echo.jormungandr` (`body.serpentine`) shows the lower jaw and the front coil, with bite, constrict and spit clips. Both keep the eye at their template's `eye_mm`, bob from their own gait (§5.2 layers) instead of footstep bob, and use rigs `art.rig.quadruped` and `art.rig.serpentine` within the Errata budget of §10.2. Held items follow doc 04's slot rules for their plans: an item they may hold renders in the jaw socket.
+- **Non-humanoid Echoes** (Canon §16.2, DECISIONS item 28): `echo.fenrir` (`body.quadruped`) shows the lower edge of the muzzle and both forepaws, and its natural-weapon actions (bite, claw, pounce) play muzzle and paw clips; `echo.jormungandr` (`body.serpentine`) shows the lower jaw and the front coil, with bite, constrict and spit clips. Both keep the eye at doc 04 §13's eye height (1,100 mm for the quadruped, 1,000 mm for the serpentine), bob from their own gait (§5.2 layers) instead of footstep bob, and use rigs `art.rig.quadruped` and `art.rig.serpentine` within the Errata budget of §10.2. Held items follow doc 04 §13: Fenrir's one `slot.weapon_1` item renders in the `jaw` socket of `art.rig.quadruped`; Jörmungandr's `slot.hand_extra_1` and `slot.hand_extra_2` items render in the `grip_1` and `grip_2` sockets of `art.rig.serpentine`, two prehensile coil tips that grow from the front coil (doc 04's `bp.arm_extra_1` and `bp.arm_extra_2`), and the viewmodel shows a grip only while it holds an item.
 - **Third person** (doc 02 §8.4 spring arm): the viewmodel layer is hidden and the full avatar plays the same action clips at the same `clip_ticks / action_ticks` rate, on the genre's `anim_step` like any other entity except for the §5.3 combat exemption.
 
 ### 5.2 Procedural creature animation
@@ -483,7 +489,7 @@ explosion: dv_mm_s += floor_div(6000 × max(0, r_mm − d_mm), r_mm)    // radia
   Examples: a target at 3000 Bp before the killing hit flies at 3800 mm/s; one killed from full HP at 8000 mm/s. The total impulse is capped at 14,000 mm/s (8,000 from the first line plus at most 6,000 from an explosion at its center).
 - A ragdoll lives 1800 ticks or until doc 02 despawns its corpse, sleeps when at rest, collides only with the client's block colliders and other ragdolls, and never writes anywhere the simulation reads. When the simulation spawns a corpse entity, doc 02 §7.4's cosmetic spring keeps the ragdoll root within 500 mm of the corpse position, so the lootable corpse and the visible body stay together. Severed parts and debris count toward doc 02's cap of 256 cosmetic rigid bodies; at the cap the oldest is removed.
 - **Severing** (Canon §9.1): the part detaches as its own rigid body cut at the joint, with an ink-cap decal on both cut faces. The `cat.body_part` item keeps its own visual record.
-- **Gore modes** (doc 17 `access.gore`): `full` (blood decals and mist in deep red `#8A1010`), `ink` (blood renders as the genre's ink color), `minimal` (no decals; severing still shows the ink-cap).
+- **Gore modes** (doc 17 `access.gore`; DECISIONS 94: ink gore by default, with a toggle to red blood). `ink`, the default: wounds bleed ink, so blood decals and mist render in the local genre's `ink` swatch (a foreign entity's in its origin genre's), and a severed part unravels into script: for 120 ticks after it detaches, its cut faces shed handwritten letters as glyph particles in that ink, 4 per second, while the part itself stays visible and lootable (`cat.body_part`, Canon §9.1). `full`: blood decals and mist in deep red `#8A1010`, and no script. `minimal`: no decals, mist or script; severing still shows the ink-cap. The rating target (PEGI 16, ESRB M) is doc 15's.
 
 ### 5.5 Going Native forms (`art.native.<genre_suffix>.<kin_suffix>`)
 
@@ -499,6 +505,16 @@ Going Native (Canon §5.11, doc 04 §2.8) switches an Erratum's Origin to genre 
   "outfit": "art.mesh.native.wuxia.construct_outfit", "head": "art.mesh.native.wuxia.construct_head",
   "accessories": ["art.mesh.native.wuxia.jade_talisman"], "palette_bias": "art.palette.wuxia" }
 ```
+
+### 5.6 Appearance presets (`art.preset.<kin_suffix>.<nn>`)
+
+DECISIONS 97 gives the character creator 12 presets per kin with palette and marking colors, and no slider editor. Doc 04 §2.1's Cosmetics step offers them on the Custom path, doc 17 §5.7 draws the screen, and this chapter authors them.
+
+- **Records.** For each of the 6 Canon §16.3 kin, `art.preset.<kin_suffix>.<nn>` with `nn` from `01` to `12` (72 records) fixes a head (face, hair or headgear), a build and a base costume on `art.rig.humanoid` within the Errata budget of §10.2, plus a marking mask `art.tex.marking.<kin_suffix>.<nn>`. Every preset reads as its kin: beastkin presets carry ears and the `bp.tail` mesh (Canon §16.3), constructs show plating seams, undead show pallor and stitching, fae show pointed ears, and mutants show one asymmetric growth.
+- **Colors.** `art.preset.<kin_suffix>.colors` lists 8 base swatches (skin, fur or plating tones across the kin's natural range) and 8 marking swatches (paint, tattoo, fur pattern, circuit inlay, stitch or sigil colors) for all 12 of its kin's presets. An Erratum's look is `Appearance { preset: Id32, base: u8, marking: u8 }` with `base` and `marking` in `0..=7`, so each kin offers 12 × 8 × 8 = 768 looks.
+- **Limits.** Preset `01` with both swatch indices 0 is the kin's default skin. Every look passes §4.7's body envelope, role mimicry and emissive rules; its base costume passes the luminance rule against preset `01`'s; and no marking swatch lies within CIEDE2000 ΔE 10 of Red Ink or of any genre's `danger` swatch. Base swatches are exempt from the luminance rule so that skin tones cover the full human range; the outline every Erratum draws on an invader's client (§4.6 rule 8) keeps a dark look visible.
+- **Style.** A preset renders in its Erratum's origin style like the rest of the body (§2.1 rule 4). Going Native replaces only the base costume with its `art.native.<g>.<kin>` layer (§5.5) and keeps the head, build and colors. Echoes fix their own looks and skip the step (doc 04 §2.1).
+- **Presentation only.** The choice changes no number (doc 04 §2.1) and never enters simulation state, the simulation sections of saves, the replay command log or `content_hash`; the records are hashed into `presentation_hash` (§1.1).
 
 ## 6. Audio
 
@@ -539,6 +555,7 @@ loop_ticks  = bar_ticks × loop_bars
 - **Ur-Text counterpoint** (Canon §5.9 "every register in counterpoint"): each core genre has three 8-bar quote stems `aud.music.ur_text.quote.<core_genre_suffix>.<stem>`, `stem` ∈ {`pulse`, `tension`, `combat`}, re-arranging that genre's motif at 90 bpm in D dorian (36 files of 1,280 ticks). In phrase `k` (`k = floor_div(t − folio_entry_tick, 1280)`, counted from Folio entry and never wrapped by the 10,240-tick loop) the Ur-Text track replaces its own `pulse`, `tension` and `combat` stems with the quote stems of genre `history[k mod n]`, where `history` lists the genres of every Folio before the final one in order with secret genres skipped, and `n = len(history)`. Folio 1 is always a core genre (doc 14 rule F1), so `n ≥ 1`. Example: history (Wuxia, Noir, Wuxia) gives phrases Wuxia, Noir, Wuxia, Wuxia, Noir and so on.
 - **Editor overlays** `aud.music.editor.<boss_suffix>`: an unpitched Red Ink motif of three hits (`a`, `b`, `stamp`, files `aud.music.editor.<boss_suffix>.<hit>`, 15 one-shots) that plays in every 4th bar at level 4 in Editor Folios, at bar offsets 0, `floor_div(bar_ticks, 4)` and `floor_div(bar_ticks, 2)`, so it fits every meter and tempo without transposition. Timbres: the Proofreader red-pen scratch and rubber stamp, the Censor marker squeak and bar thud, the Continuity Editor clock tick and date stamp, the Abridger scissor snip and guillotine slam, the Last Word all four layered. In phase `p` (1 to 4) the Last Word plays the motif of `boss.editor_v<p>`.
 - **Stingers** `aud.music.sting.*` play on the next beat: `folio_enter`, `colophon_open`, `editor_phase`, `player_downed`, `run_victory`, `run_erased`.
+- **Level 4** (`apex`) plays while doc 02 §9 sets it: an alerted `rank.boss`, `rank.editor` or `rank.hunter` entity, an invader included. The softer Erasure hunter keeps that cue, because it carries `rank.hunter` for presentation under `rank.elite`'s multipliers (Canon §11.6, DECISIONS 91).
 - Level timing (doc 02 §9): a rise applies at the next bar line; a fall applies at a bar line once the lower level has held 8 s. Example: Gothic Horror with the track started at Folio entry tick 0 and a rise computed on tick 1000 applies at tick 1050 (bar 7 starts at 7 × 150).
 
 ### 6.2 Bleed crossfades
@@ -612,19 +629,20 @@ Doc 02 §9 owns the formulas. Every sound with an `ev.noise` plays only for part
 |---|---|---|---|
 |The five Editors|700 (140 each)|yes|intros, phase lines, one line per verse per attack, kills, deaths|
 |Revisor hunters|80|yes|one actor; per-genre `voice_fx`|
-|Margin NPCs (8)|1,200 (150 each)|yes|milestone-gated lines (§8.4)|
+|Margin residents (8)|160 (20 each)|yes|greetings, farewells and vendor acknowledgements only; their dialogue and arc beats are text (§8.4, DECISIONS 78)|
 |The Narrator|0 (600 authored notes, text only)|no|DECISIONS item 38: narration is manuscript marginalia in pencil (§9.1)|
 |Patron answers|0 (64 text lines, §8.2)|no|Authors never appear in person; answers are marginalia in the Author's genre ink|
 |Echoes (24)|960 (40 each)|yes|short lines and barks; Fenrir and Jörmungandr speak in a processed human voice with a creature layer, as the myths have them speak|
-|Genre mini-bosses (14)|420 (30 each)|yes||
+|Genre mini-bosses (28)|840 (30 each)|yes|2 per genre that has mini-bosses (DECISIONS 69); doc 13 §9.3 holds the first, and the Unwritten and the Ur-Text have none|
 |Native NPC efforts|1,280 (2 voice sets × 40 per genre)|non-verbal|spoken barks are text bubbles (`loc.npc.bark.*`)|
 |Errata efforts|240 (4 voice types × 60)|non-verbal|grunts, breaths, pain, death|
 |Non-humanoid Echo efforts|120 (wolf set and serpent set × 60)|non-verbal|Fenrir and Jörmungandr growls, hisses, pain, death|
-|**Total**|**5,000**||100.0 MB at a 2.5 s mean, 64 kbit/s mono Opus (`5000 × 2.5 × 8000` B)|
+|**Total**|**4,380**||87.6 MB at a 2.5 s mean, 64 kbit/s mono Opus (`4380 × 2.5 × 8000 = 87,600,000` B)|
 
 - Recording: 48 kHz, 24-bit, mono; delivered at −20 LUFS per line ±2, true peak ≤ −3 dBTP.
 - Launch VO is English; every locale has subtitles for every voiced line.
 - Per-genre `voice_fx` on Editors, hunters and barks: gothic_horror gramophone, space_opera and cyberpunk comm radio, mythic_antiquity choir-double, redacted glitch, unwritten whisper; none elsewhere.
+- Text only, never voiced: Narrator notes (DECISIONS 38), patron answers (§8.2), Margin dialogue and arc beats (DECISIONS 78), closing manuscripts (§8.5a) and every Scribe text (§9).
 - No synthetic or cloned human voice ships (§10.3). Voiced lines are never rewritten by the Scribe.
 
 ### 6.6 Mix budget (`aud.mix.default`)
@@ -637,7 +655,7 @@ Doc 02 §9 owns the formulas. Every sound with an `ev.noise` plays only for part
 |`ambience`|`aud.bus.ambience`|−10|6 / 10|2||
 |`music`: two tracks of 5 stems during a crossfade, plus Editor hits and stingers|`aud.bus.music`|−8|14 / 24|6 (stems streamed)||
 |`ui`: menus and `aud.sfx.hit.*` confirmations|`aud.bus.ui`|−6|4 / 4|4||
-|**Total**||**64 / 128** (doc 02 caps)|||
+|**Total**|||**64 / 128** (doc 02 caps)|||
 
 - Loudness: −18 LUFS integrated ±1 and true peak ≤ −1 dBTP over a 10-minute capture of doc 02's `bot_typical` scenario played with rendering and audio on.
 - **Voice allocation.** Each pool owns its voices; pools never borrow from each other, and the pool sizes sum to doc 02's caps. A request takes a free voice of its pool. When the pool is full, a priority-7 pool (`voice`, `stealth`) stops its oldest voice (earliest start, ties lower emitter `EntityId`) and plays the request; every other pool replaces its quietest voice (lowest current gain at the listener, ties oldest) only when the request's gain at the listener is strictly higher, and otherwise drops the request. A combat sound therefore never takes a stealth-critical voice.
@@ -661,12 +679,14 @@ fn allocate(pool: &mut Pool, req: Request) -> Option<VoiceId> {
 
 Canon §5.2 forbids a Lucre or Aether skin that matches a real-world brand, a third-party game's currency or resource name, the display name of any `cur.` or `ent.` entry, or the word Ink. This chapter applies the review to every name in scope: every genre skin name (`loc.<id>.skin.<g>.name`: damage types, glyph forms, hazards, events, archetypes, kin, Revisor skins, appearance forms, curse states), every Lucre and Aether skin, procedural names (§7.4), manufacturer names and slogans, vendor names, doc 10 implant stamps and sigils, and invented signage. Base names such as "Red Ink" or "Silver" are outside the scope of tests 1 and 4, because the canon itself uses them. A name in scope **fails** when any test holds, compared case-insensitively on whole words with a trailing plural "s" ignored:
 
-1. It equals the display name of a `cur.` or `ent.` entry (Lucre, Quires, Ink, Vellum, Quill), or contains the standalone word "Ink". Exemption: a currency's identity skin, the skin equal to its own base name (Unwritten "Lucre"; Canon gaps).
+1. It equals the display name of a `cur.` or `ent.` entry (Lucre, Quires, Ink, Vellum, Quill), or contains the standalone word "Ink". Exemption: a currency's identity skin, the skin equal to its own base name (Unwritten "Lucre"; Canon §5.2).
 2. It contains an entry of banlist group `brand`: trademarks, companies, products and real persons' names. The automated seed list below runs in the lint and the Scribe filter; the full screen is the trademark search export the legal reviewer attaches to each build.
 3. It contains an entry of group `game_coinage`, a coinage that exists primarily as one third-party game's currency or resource.
 4. Lucre and Aether skins only: it equals an entry of group `game_premium`, the name of a purchasable premium currency in a third-party game, even when it is also a common word.
 5. It contains an entry of group `casino` (doc 01 §9.5 rule 5, doc 15 AP-7). This test also runs on every other `loc.` string.
 6. Diegetic text only (flavor, Narrator notes, Folio intros, Editor lines, barks, grammar terminals, Scribe output): it contains an entry of group `nondiegetic` (doc 01 §9.5 rule 2). Menus and tooltips are exempt.
+
+**Product-owner exemption.** The canon Mythic Fantasy Lucre skin "Crowns" passes tests 1 to 4 (DECISIONS 90; Canon §5.2, §22). The exemption covers that one skin: "Crown" or "Crowns" as any other Lucre or Aether skin still fails test 4.
 
 **Eponym allowance.** A word that is an SI unit or a generic device name derived from a person passes test 2: tesla, volt, ampere, ohm, watt, galvanic, mesmeric, gatling, derringer, bowie. So steampunk's "Galvanic" and doc 06's "Tesla Relay" pass.
 
@@ -700,7 +720,7 @@ Common words and real or historical coin names pass otherwise. The lint `pal lin
 
 |Genre|Lucre skin|Verdict|Aether skin|Verdict|
 |---|---|---|---|---|
-|mythic_fantasy|Crowns|**fails test 4** (The Elder Scrolls Online's purchasable Crowns [RECALLED]); proposal **Nobles**, the medieval English gold noble (Canon gaps)|Mana|passes: generic resource word|
+|mythic_fantasy|Crowns|passes by the product-owner exemption (DECISIONS 90); test 4 alone would fail it, because The Elder Scrolls Online sells Crowns|Mana|passes: generic resource word|
 |gothic_horror|Shillings|passes: historical coin|Sanguine|passes|
 |cosmic_horror|Bonds|passes|Gnosis|passes|
 |space_opera|Credits|passes: generic, earned in the games that use it|Psi|passes|
@@ -716,8 +736,6 @@ Common words and real or historical coin names pass otherwise. The lint `pal lin
 |redacted|Vouchers|passes|Clearance|passes|
 |unwritten|Lucre|passes by the identity exemption of test 1|Potential|passes|
 |ur_text|Words|passes|Logos|passes|
-
-Until the canon renames it, this chapter ships the canon value "Crowns".
 
 ### 7.2 Damage-type text skins
 
@@ -922,7 +940,7 @@ Names, boons and taboos are doc 06 §16.1's, except one display name this chapte
 |The Rider at the Crossroads|wrote the deal at midnight and the duel at noon|shooting a fleeing foe is not a fair fight|"Fair draw. Keep your hand steady."|
 |The Witness|wrote the city and saw everything in it; never testifies|a lifted wallet is a crime in front of a witness|"I saw. I'm not telling. Go."|
 |The Sage of the Ninth Peak|wrote the rivers and lakes and the code of the sword|a blade in the back has no honor|"The mountain is patient. Be the mountain."|
-|The Grand Engineer|wrote the patent office and every machine filed there|a tool run to ruin insults its maker|"Splendid tolerances. Mind the boiler."|
+|The Grand Engineer|wrote the patent office and every machine filed there|a Device that sputters or surges is shoddy work filed under the Engineer's name|"Splendid tolerances. Mind the boiler."|
 |The Godmother of Thorns|wrote every bargain with a price hidden in the third clause|a debt carried out of the story is a promise broken|"Granted. Remember the price."|
 |The Laurel-Crowned|wrote heroes and their downfalls in the same hexameter|forty deaths without an offering is hubris|"Sing, and you are remembered."|
 |The Dreamer Who Writes Us|dreams every page; the Errata may be its waking thoughts|waking a sleeper with a wound is a nightmare|"Shh. You were never falling."|
@@ -930,7 +948,7 @@ Names, boons and taboos are doc 06 §16.1's, except one display name this chapte
 |The Blank Page|not an Author but the absence of one; resets every prayer it hears|—|"…"|
 |The First Author|the voice under the Ur-Text; whether it is the Style itself is never answered|—|"In the beginning, you."|
 
-**Display name of `patron.redacted`.** Doc 06 §16.1 calls it "The Censor", and doc 13 §9.2 gives `boss.editor_v2` the display name "The Censor". Two beings cannot share a name, and lore rule "never show an Author's face" forbids the patron being the boss the party fights. This chapter owns `loc.` strings and rules: `loc.boss.editor_v2.name` = "The Censor" (doc 13's reason stands: Canon §17.9 calls every invader a Redactor), and `loc.patron.redacted.name` = "The Undersigned" (Canon gaps).
+**Display name of `patron.redacted`.** Doc 06 §16.1 first called it "The Censor", and doc 13 §9.2 gives `boss.editor_v2` the display name "The Censor". Two beings cannot share a name, and lore rule "never show an Author's face" forbids the patron being the boss the party fights. This chapter owns `loc.` strings and rules: `loc.boss.editor_v2.name` = "The Censor" (doc 13's reason stands: Canon §17.9 calls every invader a Redactor), and `loc.patron.redacted.name` = "The Undersigned" (triage G-177; doc 06 §16.1 now uses it).
 
 **Answers by outcome** (`loc.nar.author.<g>.answer.<outcome>`, outcome ∈ `pleased`, `helped`, `displeased`, `angry`, doc 06 §16.3). Pleased is the table above.
 
@@ -972,7 +990,9 @@ Each Editor has one line per verse per attack (doc 13 §9.2 dominant axiom), voi
 
 ### 8.4 The Margin cast (`nar.margin.<npc>`)
 
-The eight doc 13 §13.6 NPCs are retired Errata who chose neither a story nor erasure. They are voiced (§6.5). Each has 150 lines: 120 are available from the start and 30 unlock in order, one at each of the 9 doc 14 §5.1 milestones and then one per 5 completed runs (all 30 after 105 runs).
+The eight doc 13 §13.6 NPCs are retired Errata who chose neither a story nor erasure. Their dialogue is text in doc 17's Margin dialogue box (`ui.menu.margin_dialogue`, doc 17 §11.1): each has 120 lines of facility talk, available from the start, plus a 20-line voiced greeting set (§6.5) that never carries arc content.
+
+**Arcs** (DECISIONS 78, doc 14 §5.6). Each resident's arc `margin.arc.<resident>` has 6 beats. This chapter writes each beat as a text exchange of 2 to 6 lines, each at most 90 characters (§8.8), stored as `loc.margin.arc.<resident>.beat_<n>.<line>` with `n` from 1 to 6 and `line` counted from 0. Doc 14 decides when a beat becomes available, and doc 17 shows it the next time the player speaks to that resident. Beats are never voiced, state no numbers (§8.6 rule 3) and grant nothing. Example, `margin.arc.binder` beat 1 (condition `first_run_end`): Tamsin Stitchwort: "You came back with the spine cracked. Good. Means it was read." / Tamsin Stitchwort: "Bring me what's left of the next one, and I'll sew you a better binding."
 
 |Record|NPC (doc 13 §13.6)|Name, origin|Look and voice|Sample line|
 |---|---|---|---|---|
@@ -985,7 +1005,7 @@ The eight doc 13 §13.6 NPCs are retired Errata who chose neither a story nor er
 |`nar.margin.quartermaster`|`npc.margin.quartermaster`|Mags Ferrule, Post-Apocalypse|goggles, a ledger and a cart; blunt and fair|"Price is the price. Same tomorrow."|
 |`nar.margin.drillmaster`|`npc.margin.drillmaster`|Master Kerning, Wuxia|old swordsman in plain robes; spare|"Again. Slower. Now the same, but correctly."|
 
-Inkwell Keeper and Quartermaster lines obey doc 15: no urgency, no scarcity claims, no casino lexicon, no reference to money pressure; the Keeper always names the exact odds panel. The **Narrator** (`nar.narrator`) is the Margin's ninth resident and never seen: a former Editor who resigned, now annotating in pencil instead of red. That is why marginal notes are pencil grey `#4D4D4D` and affectionate.
+Inkwell Keeper and Quartermaster lines obey doc 15: no urgency, no scarcity claims, no casino lexicon, no reference to money pressure; the Keeper always names the exact odds panel. The **Narrator** (`nar.narrator`) is the Margin's ninth resident and never seen: a former Editor who resigned, now annotating in pencil instead of red. That is why marginal notes are pencil grey `#4D4D4D` and affectionate. Its arc `margin.arc.narrator` has 6 beats, each one pencil note of at most 2 sentences in the Ledger, stored as `loc.margin.arc.narrator.beat_<n>` and never voiced.
 
 ### 8.5 Ur-Text endings (`nar.ending.*`)
 
@@ -993,13 +1013,14 @@ An ending is text plus a sequence of 3 to 5 illustrated plates in the final genr
 
 ```rust
 // Ids are id32 constants of the named content IDs. `slots` is indexed by party slot 0..=3; slot 0 is the host
-// (doc 14 rule F1). `h` is RunState.history; `RunSummary` and `SlotEnd` follow doc 14 §4.6 plus the
-// three per-slot fields of Interface assumptions.
+// (doc 14 rule F1). `h` is RunState.history; `RunSummary` and its per-slot `SlotEnd` follow doc 14 §4.6
+// and §4.7.
 fn select_ending(s: &RunSummary, h: &[FolioRecord], slots: &[Option<SlotEnd>; 4]) -> Id32 {
     let end = s.end;
     let final_is_ur = h.last().map(|f| f.genre) == Some(GENRE_UR_TEXT);
     let present = || slots.iter().flatten();
     if end == RUN_END_VICTORY {
+        if s.mode == MODE_SECOND_EDITION { return NAR_ENDING_SECOND_EDITION; }   // second layer; first layer: ur_clear_ending
         if !final_is_ur { return NAR_ENDING_SHORT_STORY; }                       // Novella, Daily, Weekly
         if present().any(|x| x.red_ink_doses >= 3) { return NAR_ENDING_RED_LETTER; }
         if slots[0].as_ref().map_or(false, |x| x.went_native.is_some()) { return NAR_ENDING_ADOPTED; }
@@ -1011,15 +1032,25 @@ fn select_ending(s: &RunSummary, h: &[FolioRecord], slots: &[Option<SlotEnd>; 4]
     if end == RUN_END_MARGIN_CLOSED    { return NAR_ENDING_CLOSED_IN_MARGIN; }
     if end == RUN_END_MARGIN_EXHAUSTED { return NAR_ENDING_LAST_MARGIN; }
     if end == RUN_END_ERASED {
-        return if s.score_at_victory > 0 { NAR_ENDING_ERASED_IN_MARGIN } else { NAR_ENDING_ERASED };
+        let endless = s.score_at_victory > 0 && s.mode != MODE_SECOND_EDITION;   // a Second Edition wipe forfeits (doc 14 §8.9)
+        return if endless { NAR_ENDING_ERASED_IN_MARGIN } else { NAR_ENDING_ERASED };
     }
     NAR_ENDING_SET_ASIDE                       // run.end.abandoned, run.end.abandoned_version, run.end.departed
 }
+/// First layer of a Second Edition victory: the ending its Ur-Text victory earned (doc 14 §8.9).
+fn ur_clear_ending(s: &RunSummary, h: &[FolioRecord], slots: &[Option<SlotEnd>; 4]) -> Id32 {
+    let ur = h.iter().position(|f| f.genre == GENRE_UR_TEXT).unwrap();           // the Ur-Text Folio f_ur
+    // select_ending and §8.5a read `mode` only to tell Second Edition apart; volumes() is 5 for Standard and Abridged.
+    let clear = RunSummary { mode: MODE_STANDARD, end: RUN_END_VICTORY, ..s.clone() };
+    select_ending(&clear, &h[..=ur], slots)
+}
 ```
 
-Rows are checked top to bottom, so a victory with 3 Red Ink doses on any slot is `red_letter` even if the host also went native. `erased` keys its plate text by the Volume of the last Folio in `h` (1 to 5). `departed` is a per-slot end (doc 14 §4.3): the departing player sees `set_aside` while the run continues for the others.
+Rows are checked top to bottom, so a victory with 3 Red Ink doses on any slot is `red_letter` even if the host also went native. `erased` keys its plate text by the Volume of the last Folio in `h` (1 to 5, and 6 to 8 in Second Edition). `departed` is a per-slot end (doc 14 §4.3): the departing player sees `set_aside` while the run continues for the others.
 
 Committing a Margins door is not an ending: `nar.ending.into_margins` plays as an interstitial at Folio 26 entry.
+
+**Second Edition** (`mode.second_edition`, doc 14 §8.9; DECISIONS 100, 108). A Second Edition victory shows two layers: first the ending its Ur-Text victory earned, `ur_clear_ending`, with that ending's §8.5a manuscript; then the second layer `second_edition`, whose closing line is its Ironman line (`loc.nar.ending.second_edition.ironman`) when `RunSummary.ironman` is true. Every other Second Edition end forfeits the clear and goes through `select_ending` like any other run, so a wipe in Volume 7 shows only `erased` with Volume 7's plate text and no manuscript (doc 14 §4.7).
 
 |Ending|Closing line (en-US)|
 |---|---|
@@ -1034,12 +1065,13 @@ Committing a Margins door is not an ending: `nar.ending.into_margins` plays as a
 |`erased_in_margin`|"Corrected at last, far past the final page."|
 |`erased`|"Struck through in Volume {volume}. The page reads cleaner. It reads worse."|
 |`set_aside`|"Set aside, spine uncracked. It will keep."|
+|`second_edition`|"The Editors revised every page but yours. The second printing kept you." Ironman: "The second printing went to press without a single correction."|
 
 Record: `{ "id": "nar.ending.red_letter", "line": "loc.nar.ending.red_letter.line", "plates": ["art.tex.plate.red_letter_1", "art.tex.plate.red_letter_2", "art.tex.plate.red_letter_3"] }`. After the closing line, one epilogue line per Erratum comes from `nar.grammar.epilogue.<origin_genre_suffix>` (§8.7) with slots `name`, `calling` and `genre`, drawn with `nar_rng(run_seed, 0, "nar.job.ending_epilogue", slot)`.
 
 ### 8.5a The closing manuscript (DECISIONS item 46)
 
-The Ur-Text ending is procedural: the run-end screen assembles a closing manuscript from the run's genres, the party's Echoes or Origins, its notable choices and its solved Folio stories, and renders it as illustrated pages in the Ur-Text's style. It appears for the endings that follow an Ur-Text victory (`written_back`, `anthology`, `adopted`, `red_letter`, `closed_in_margin`, `last_margin`, `erased_in_margin`); every other ending shows only its closing line and plates. It is text and pictures only, and is regenerated from the run summary and history whenever it is opened, so the Codex stores no text.
+The Ur-Text ending is procedural: the run-end screen assembles a closing manuscript from the run's genres, the party's Echoes or Origins, its notable choices and its solved Folio stories, and renders it as illustrated pages in the Ur-Text's style. It appears for the endings that follow an Ur-Text victory (`written_back`, `anthology`, `adopted`, `red_letter`, `closed_in_margin`, `last_margin`, `erased_in_margin`); every other ending shows only its closing line and plates. After a Second Edition victory it is the first layer's manuscript, built by `closing_manuscript` over the summary and history that `ur_clear_ending` uses, and the `second_edition` layer follows it with its closing line and plates; the Second Edition Volumes get no sections yet (Canon gaps item 2). It is text and pictures only, and is regenerated from the run summary and history whenever it is opened, so the Codex stores no text.
 
 ```rust
 // Section s uses nar_rng(run_seed, 0, "nar.job.closing_manuscript", s); every multi-alternative symbol draws once.
@@ -1047,7 +1079,7 @@ fn closing_manuscript(s: &RunSummary, h: &[FolioRecord], slots: &[Option<SlotEnd
     let party = list_join(present(slots).map(|x| x.display_name));        // Echo name, else the Erratum's name
     let mut out = vec![expand("nar.grammar.closing.title.any", 0, &[("party", &party)])];
     for v in 1..=volumes(s.mode) {                                          // 5 in Standard and Abridged
-        let fs: Vec<&FolioRecord> = h.iter().filter(|f| f.volume == v && f.index <= s.final_folio).collect();
+        let fs: Vec<&FolioRecord> = h.iter().filter(|f| f.volume == v && f.index <= s.deepest_folio).collect();
         let mut sec = expand("nar.grammar.closing.volume.any", v, &[
             ("party", &party),
             ("genres", &list_join(fs.iter().map(|f| genre_display(f.genre)))),   // in Folio order
@@ -1149,7 +1181,7 @@ Each public-domain Echo has its own `art.visual.echo.<name>` record, `aud.set.vo
 
 ### 9.1 Roles
 
-The **Narrator** is the pencil voice in the margins: authored, text-only (DECISIONS item 38: no voiced Narrator), always on. Its notes (`loc.nar.note.<moment>.<n>`) appear on the page turn under the Folio intro, on the Colophon lectern, on firsts (first jam, first Disconnected item, first Erasure stack, first death, first Editor), in tooltip footnotes and on loading pages. The **Scribe** (`crate.scribe`, doc 02) is the optional on-device model that rewrites a fixed set of text jobs in the Narrator's and genres' voices. Every Scribe job has a template grammar producing the same JSON shape, and the template is what the player sees whenever the Scribe is off, late, unsure or unsafe.
+The **Narrator** is the pencil voice in the margins: authored, text-only (DECISIONS item 38: no voiced Narrator), always on. Its notes (`loc.nar.note.<moment>.<n>`) appear on the page turn under the Folio intro, on the Colophon lectern, on firsts (first jam, first Disconnected item, first Erasure stack, first death, first Editor), in tooltip footnotes and on loading pages. `<moment>` is one of `page_turn`, `colophon`, `first_jam`, `first_disconnected`, `first_erasure`, `first_death`, `first_editor`, `tooltip` and `loading`, so doc 17 §16.4 places each note by its key. Notes are manuscript marginalia only: they play no audio, enter no subtitle and carry no caption. The **Scribe** (`crate.scribe`, doc 02) is the optional on-device model that rewrites a fixed set of text jobs in the Narrator's and genres' voices. Every Scribe job has a template grammar producing the same JSON shape, and the template is what the player sees whenever the Scribe is off, late, unsure or unsafe.
 
 ### 9.2 Model choice (`nar.scribe.model.*`)
 
@@ -1321,11 +1353,13 @@ Story domains enter as their lexicon nouns (`blood`, `moon`, `crypt`, `mirror`).
 |Author|Blender `.blend`, MagicaVoxel `.vox`, Krita or Aseprite layers, DAW sessions|source in `art_src/` (LFS)|manifest entry exists (§10.3)|
 |Export|glTF 2.0 binary; PNG; WAV 48 kHz 24-bit|`assets/art/mesh/…`, staging textures and audio|names follow doc 02 §11.4 path rule|
 |Bake|`.glb` clips|hitbox pose tables (`pal bake-poses`, doc 03 §5.16)|clip name equals its `art.anim.*` ID|
-|Compress|textures; audio|KTX2 BC7 with zstd (UASTC on web); Ogg Opus|sizes within §10.2|
+|Compress|textures; audio|KTX2 BC7 with zstd; Ogg Opus|sizes within §10.2|
 |Lint|every asset and `loc.` file|report|§3.6 silhouettes, §4.7 cosmetic limits, §7.1 names, §8.7 grammar lint, palette and LUT checks, license manifest|
-|Hash|all content|`content_hash` (doc 02 §11.2)|committed schemas match|
+|Hash|all content|`content_hash` over simulation records; `presentation_hash` over every `art.`, `aud.`, `nar.` and `vfx.` record and every `loc.` table (Canon §2.4, doc 02 §11.2)|committed schemas match|
 
-**Production order** (DECISIONS item 41). Early Access ships 6 genres, so every per-genre asset family (block array, bible, palette, light, post, LUT, sprites, fonts, music track, ambience, SFX sets, grammars, damage and glyph skins) is produced first for Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West, Wuxia and Steampunk, then for the other 6 core genres, then the 4 secret genres, by 1.0. Global assets (Errata, Echoes, Editors, Red Ink, the Margin, UI sounds) ship complete at Early Access. The Early Access build's lint runs every per-genre check on the 6 genres it ships and refuses content that references an unshipped genre's assets.
+**Production order** (DECISIONS 114, which supersedes item 41). Early Access ships all 12 core genres, so the 25-Folio Standard run ships there, and the 4 secret genres follow the canon's unlock rules (Canon §17.1: reached only through secret exits). Every per-genre asset family (block array, bible, palette, light, post, LUT, sprites, fonts, music track, ambience, SFX sets, grammars, damage and glyph skins) is therefore produced for the 12 core genres, the Ur-Text (every full run's final Folio) and the Unwritten (whose records the Margin reuses, §3.9) before Early Access, and for Oneiric and the Redaction before the first build whose content set holds them (doc 21 §2.2). Global assets (Errata, Echoes, Editors, Red Ink, the Margin, UI sounds) ship complete at Early Access. Each build's lint runs every per-genre check on the genres its content set holds and refuses content that references an asset of a genre outside that set.
+
+**Folio Expansion genres** (DECISIONS 53, doc 12 §25). The first two planned are Age of Sail and Pirates, then Kaiju and Mecha. An expansion genre has no ID until the canon adds its §5.2 row, so this chapter reserves none; its records use that row's suffix, written `<exp_g>` here. Before its pack enters any content set, it ships every per-genre record of this chapter: `art.palette.<exp_g>`, `art.light.<exp_g>`, `art.post.<exp_g>`, `art.bible.<exp_g>`, `art.lut.<exp_g>`, `art.blockarray.<exp_g>`, `art.tex.paper.<exp_g>`, `art.icon.aether.<exp_g>`, `vfx.sprites.<exp_g>`, `aud.music.<exp_g>`, `nar.register.<exp_g>`, `nar.names.<exp_g>`, `nar.author.<exp_g>`, the §8.7 grammar families, its 15 damage, 13 glyph-Form, 7 appearance-form, 2 curse-state and 1 Revisor skin names, and the three Ur-Text quote stems `pulse`, `tension` and `combat` of §6.1, plus a §2.2 tradition, a §3.4 bible row and a §3.4 material set. Every rule and lint here applies to it: palette swatches 0 to 2 equal its Canon §5.9 row, the §3.1 contrast rules, the §3.5 font licenses, the §6.1 bar lint and the §7.1 review of every name. Traditions: Age of Sail and Pirates is copperplate marine engraving with sea-chart vignettes; Kaiju and Mecha is mid-century monster-film poster lithography over engineering cutaway plates. Ships, airships and mecha are architecture, enemies and bosses, never a ridden or piloted viewmodel (Canon §17.7, doc 12 §25 rule 6). The counts in this chapter (16 genres, 240 damage names, 36 quote stems) are the base game's, and rules that count the 12 base core genres keep counting them (doc 12 §25 rule 5), so §7.4's Ur-Text name draw stays `range(12)`.
 
 ### 10.2 Budgets
 
@@ -1334,12 +1368,11 @@ Story domains enter as their lexicon nouns (`blood`, `moon`, `crypt`, `mirror`).
 |Errata and Echoes|6,000 / 2,400 / 800|0 / 16 / 40 m|≤ 64|2 × 512²|
 |Standard enemy, native NPC|3,000 / 1,200 / 400|0 / 16 / 40 m|≤ 48 (insectoid 56)|2 × 256²|
 |Mini-boss, Editor|15,000 / 6,000 / 2,000|0 / 24 / 60 m|≤ 96|2 × 512²|
-|Mount|4,000 / 1,600 / 500|0 / 16 / 40 m|≤ 56|2 × 256²|
 |Block prop, placeable|≤ 1,500|single LOD|0 or 4|2 × 128²|
 |Viewmodel weapon plus arms|4,000 + 3,000|single|≤ 40|2 × 512²|
 |Micro-voxel debris cube|12|single|0|the block layer|
 
-BC7 sizes with full mip chains to 1 × 1 (each level below 4 × 4 still takes one 16-byte block, doc 02 §8.3): 128² 21,872 B; 256² 87,408 B; 512² 349,552 B; a 64² block layer 5,488 B. Sixteen block arrays of 256 layers take `16 × 256 × 5488 = 22,478,848` B (21.44 MiB), inside doc 02 §15's 32 MiB VRAM line for block arrays; only the Folio genre and at most 4 bleed genres are resident, 5 × 256 × 5488 = 7,024,640 B. Audio totals 430 MB on disk: music 189 MB (16 genre tracks of 5 stems over 2,186.7 s of loops, the Margin's single 96 s bed, 36 Ur-Text quote stems of 21.3 s, 15 one-second Editor hits and 6 four-second stingers, all at 128 kbit/s, which is 16,000 B/s), VO 100 MB (§6.5), genre SFX 63 MB, core SFX 17 MB, ambience 61 MB. Base install ≤ 6 GiB; the Scribe depot adds 485 MB (compact) or 1,212 MB (rich). Runtime memory stays inside doc 02 §15: entity textures 896 MiB VRAM, CPU-side assets 1,408 MiB, audio 256 MiB (§6.6), Scribe 1,024 MiB.
+BC7 sizes with full mip chains to 1 × 1 (each level below 4 × 4 still takes one 16-byte block, doc 02 §8.3): 128² 21,872 B; 256² 87,408 B; 512² 349,552 B; a 64² block layer 5,488 B. Sixteen block arrays of 256 layers take `16 × 256 × 5488 = 22,478,848` B (21.44 MiB), inside doc 02 §15's 32 MiB VRAM line for block arrays; only the Folio genre and at most 4 bleed genres are resident, 5 × 256 × 5488 = 7,024,640 B. Audio totals 417.6 MB on disk: music 189 MB (16 genre tracks of 5 stems over 2,186.7 s of loops, the Margin's single 96 s bed, 36 Ur-Text quote stems of 21.3 s, 15 one-second Editor hits and 6 four-second stingers, all at 128 kbit/s, which is 16,000 B/s), VO 87.6 MB (§6.5), genre SFX 63 MB, core SFX 17 MB, ambience 61 MB. Base install ≤ 6 GiB; the Scribe depot adds 485 MB (compact) or 1,212 MB (rich). Runtime memory stays inside doc 02 §15: entity textures 896 MiB VRAM, CPU-side assets 1,408 MiB, audio 256 MiB (§6.6), Scribe 1,024 MiB.
 
 ### 10.3 AI-assisted production, curation and licensing
 
@@ -1368,45 +1401,31 @@ Every shipped asset has a manifest record:
 
 All IDs below are in this chapter's namespaces (`art.`, `aud.`, `nar.`, `vfx.`) or are `loc.` text keys (Canon §19).
 
-- **`art.`**: `art.palette.<g>`, `art.light.<g>`, `art.post.<g>`, `art.bible.<g>`, `art.lut.<g>`, `art.blockarray.<g>`, `art.tex.paper.<g>` for the 16 genre suffixes; `art.tex.decal.*`; `art.tex.plate.*` (ending plates), `art.tex.plate.title.ur_text`, `art.tex.plate.volume.<g>` (16); `art.tex.sigil_atlas` (doc 10's 28 sigils); `art.idc.<class>.<name>` (doc 10's 176 descriptors); icons `art.icon.dmg_<type_suffix>` (15), `art.icon.<status_suffix>` (one per Canon §11.1 status, for example `art.icon.bleeding`), `art.icon.aether.<g>` (16); `art.font.<family>` for the §3.5 families plus `art.font.noto_sans_cjk`, `art.font.noto_serif_cjk`, `art.font.atkinson_hyperlegible`; `art.silhouette.<role_suffix>` (16, one per doc 13 role); `art.readability.cosmetic`; `art.vm.<archetype>` including `art.vm.ranged.sidearm`; `art.native.<g>.<kin_suffix>` (96); rigs `art.rig.humanoid`, `art.rig.quadruped`, `art.rig.avian`, `art.rig.serpentine`, `art.rig.insectoid`, `art.rig.amorphous`, `art.rig.construct`; families `art.mesh.*`, `art.anim.*`, `art.block.*`, `art.visual.*` (including `art.visual.echo.<name>`).
+- **`art.`**: `art.palette.<g>`, `art.light.<g>`, `art.post.<g>`, `art.bible.<g>`, `art.lut.<g>`, `art.blockarray.<g>`, `art.tex.paper.<g>` for the 16 genre suffixes (the Margin reuses `art.palette.unwritten`, `art.light.unwritten`, `art.lut.unwritten` and `art.post.unwritten`, §3.9); `art.tex.decal.*`; `art.tex.plate.*` (ending plates), `art.tex.plate.title.ur_text`, `art.tex.plate.volume.<g>` (16); `art.tex.sigil_atlas` (doc 10's 28 sigils); `art.idc.<class>.<name>` (doc 10's 176 descriptors); icons `art.icon.dmg_<type_suffix>` (15), `art.icon.<status_suffix>` (one per Canon §11.1 status, for example `art.icon.bleeding`), `art.icon.aether.<g>` (16); `art.font.<family>` for the §3.5 families plus `art.font.noto_sans_cjk`, `art.font.noto_serif_cjk`, `art.font.atkinson_hyperlegible`; `art.silhouette.<role_suffix>` (16, one per doc 13 role); `art.readability.cosmetic`; `art.bible.margin` (§3.9); `art.vm.<archetype>` (the archetype ID without `arch.`) including `art.vm.ranged.pistol`; `art.native.<g>.<kin_suffix>` (96); `art.preset.<kin_suffix>.<nn>` (72), `art.preset.<kin_suffix>.colors` (6) and `art.tex.marking.<kin_suffix>.<nn>` (72) (§5.6); rigs `art.rig.humanoid`, `art.rig.quadruped`, `art.rig.avian`, `art.rig.serpentine`, `art.rig.insectoid`, `art.rig.amorphous`, `art.rig.construct`; families `art.mesh.*`, `art.anim.*`, `art.block.*`, `art.visual.*` (including `art.visual.echo.<name>`).
 - **`vfx.`**: `vfx.dmg.slash`, `vfx.dmg.pierce`, `vfx.dmg.blunt`, `vfx.dmg.fire`, `vfx.dmg.frost`, `vfx.dmg.shock`, `vfx.dmg.acid`, `vfx.dmg.radiation`, `vfx.dmg.sonic`, `vfx.dmg.toxin`, `vfx.dmg.radiant`, `vfx.dmg.umbral`, `vfx.dmg.psychic`, `vfx.dmg.arcane`, `vfx.dmg.true`; `vfx.status.<status_suffix>`; `vfx.aware.curious`, `vfx.aware.suspicious`, `vfx.aware.searching`, `vfx.aware.lost`, `vfx.aware.alert`; `vfx.contra.strained`, `vfx.contra.contradicted`, `vfx.contra.disconnected`, `vfx.contra.failure`; `vfx.ward.break`, `vfx.ward.ripple`; `vfx.debris.microvoxel`; `vfx.sprites.<g>` (16); `vfx.trans.page_turn`, `vfx.trans.ink_bleed`, `vfx.trans.glitch`, `vfx.trans.iris`, `vfx.trans.film_burn`; `vfx.telegraph.<shape>`; `vfx.ragdoll`.
 - **`aud.`**: `aud.music.<g>` (16) and `aud.music.margin`; stems `aud.music.<track>.<stem>`; `aud.music.ur_text.quote.<core_g>.<stem>` (36); `aud.music.editor.<boss_suffix>` (5) with hits `aud.music.editor.<boss_suffix>.<hit>` (15); `aud.music.sting.folio_enter`, `aud.music.sting.colophon_open`, `aud.music.sting.editor_phase`, `aud.music.sting.player_downed`, `aud.music.sting.run_victory`, `aud.music.sting.run_erased`; `aud.sfx.<family>.*` for the §6.3 families (`wpn`, `imp`, `foot`, `hit`, `body`, `mag`, `env`, `status`, `ui`), including `aud.sfx.foot.<gait>.<class>` and `aud.sfx.imp.<type_suffix>.<class>` over doc 09's 17 acoustic classes; `aud.set.<archetype_suffix>.<g>`; `aud.set.voice.<name>`; `aud.amb.<tileset>`; `aud.vo.<speaker>.<line>`; `aud.bus.voice`, `aud.bus.sfx`, `aud.bus.ambience`, `aud.bus.music`, `aud.bus.ui`; `aud.mix.default`.
-- **`nar.`**: `nar.lore.palimpsest`, `nar.lore.first_edition`, `nar.lore.authors`, `nar.lore.scraping`, `nar.lore.style`, `nar.lore.errata`, `nar.lore.red_ink`, `nar.lore.margin`, `nar.lore.marginalia`, `nar.lore.colophon`, `nar.lore.redactors` (11); `nar.author.<g>` (16); `nar.editor.proofreader`, `nar.editor.censor`, `nar.editor.continuity_editor`, `nar.editor.abridger`, `nar.editor.last_word`; `nar.margin.<npc_suffix>` (8); `nar.narrator`; `nar.ending.written_back`, `nar.ending.anthology`, `nar.ending.adopted`, `nar.ending.red_letter`, `nar.ending.short_story`, `nar.ending.closed_in_margin`, `nar.ending.last_margin`, `nar.ending.erased_in_margin`, `nar.ending.erased`, `nar.ending.set_aside`, `nar.ending.into_margins` (interstitial); `nar.grammar.*` (§8.7 families, including `nar.grammar.colophon_note.any`); `nar.names.<g>` (15; the Ur-Text reuses core tables); `nar.register.<g>` (16); `nar.job.colophon_note`, `nar.job.folio_intro`, `nar.job.bark_pack`, `nar.job.ending_epilogue`, `nar.job.codex_story`, `nar.job.codex_item`, `nar.job.story_retelling` and `nar.job.closing_manuscript` (template-only); `nar.grammar.closing.title.any`, `nar.grammar.closing.volume.any`, `nar.grammar.closing.choice.<kind>` (6 kinds); `nar.scribe.model.compact`, `nar.scribe.model.rich`, `nar.scribe.budget`; `nar.review.banlist`, `nar.review.banlist.safety`.
-- **`loc.` text keys**: `loc.dmg.<type>.skin.<g>.name` (240); `loc.glyph.form.<form>.skin.<g>.name` (130 here); `loc.idc.<class>.form.<g>` for the 4 secret genres (28); `loc.buc.blessed.skin.<g>.name` and `loc.buc.cursed.skin.<g>.name` (32); `loc.enemy.editors.revisor.skin.<g>.name` (16); `loc.nar.author.<g>.answer.<outcome>` (64); `loc.boss.editor_v2.name` ("The Censor") and `loc.patron.redacted.name` ("The Undersigned"); `loc.<hazard id>.skin.<g>.name`; `loc.<event id>.skin.<g>.name`; `loc.nar.note.<moment>.<n>`; `loc.npc.bark.<set>.<n>`; `loc.npc.dlg.<name>.<node>`; `loc.<mfr id>.slogan`; `loc.gpv.story.*`; `loc.aud.caption.*`; `loc.idc.*` strings; every `.name`, `.desc` and `.flavor` string.
-- **Functions**: `nar_rng`, `pres_hash` (§1.2), `select_ending` (§8.5), `allocate` (§6.6), `accept` (§9.8).
+- **`nar.`**: `nar.lore.palimpsest`, `nar.lore.first_edition`, `nar.lore.authors`, `nar.lore.scraping`, `nar.lore.style`, `nar.lore.errata`, `nar.lore.red_ink`, `nar.lore.margin`, `nar.lore.marginalia`, `nar.lore.colophon`, `nar.lore.redactors` (11); `nar.author.<g>` (16); `nar.editor.proofreader`, `nar.editor.censor`, `nar.editor.continuity_editor`, `nar.editor.abridger`, `nar.editor.last_word`; `nar.margin.<npc_suffix>` (8); `nar.narrator`; `nar.ending.written_back`, `nar.ending.anthology`, `nar.ending.adopted`, `nar.ending.red_letter`, `nar.ending.short_story`, `nar.ending.closed_in_margin`, `nar.ending.last_margin`, `nar.ending.erased_in_margin`, `nar.ending.erased`, `nar.ending.set_aside`, `nar.ending.second_edition` (§8.5), `nar.ending.into_margins` (interstitial); `nar.grammar.*` (§8.7 families, including `nar.grammar.colophon_note.any`); `nar.names.<g>` (15; the Ur-Text reuses core tables); `nar.register.<g>` (16); `nar.job.colophon_note`, `nar.job.folio_intro`, `nar.job.bark_pack`, `nar.job.ending_epilogue`, `nar.job.codex_story`, `nar.job.codex_item`, `nar.job.story_retelling` and `nar.job.closing_manuscript` (template-only); `nar.grammar.closing.title.any`, `nar.grammar.closing.volume.any`, `nar.grammar.closing.choice.<kind>` (6 kinds); `nar.scribe.model.compact`, `nar.scribe.model.rich`, `nar.scribe.budget`; `nar.review.banlist`, `nar.review.banlist.safety`.
+- **`loc.` text keys**: `loc.dmg.<type>.skin.<g>.name` (240); `loc.glyph.form.<form>.skin.<g>.name` (130 here); `loc.idc.<class>.form.<g>` for the 4 secret genres (28); `loc.buc.blessed.skin.<g>.name` and `loc.buc.cursed.skin.<g>.name` (32); `loc.enemy.editors.revisor.skin.<g>.name` (16); `loc.nar.author.<g>.answer.<outcome>` (64); `loc.boss.editor_v2.name` ("The Censor") and `loc.patron.redacted.name` ("The Undersigned"); `loc.<hazard id>.skin.<g>.name`; `loc.<event id>.skin.<g>.name`; `loc.nar.note.<moment>.<n>`; `loc.npc.bark.<set>.<n>`; `loc.npc.dlg.<name>.<node>`; `loc.margin.arc.<resident>.beat_<n>.<line>` for the 8 residents and `loc.margin.arc.narrator.beat_<n>` (54 beats, §8.4); `loc.<mfr id>.slogan`; `loc.gpv.story.*`; `loc.aud.caption.*`; `loc.idc.*` strings; every `.name`, `.desc` and `.flavor` string.
+- **Functions**: `nar_rng`, `pres_hash` (§1.2), `select_ending` and `ur_clear_ending` (§8.5), `allocate` (§6.6), `accept` (§9.8).
 
 ## Interface assumptions
 
+Only open requests are listed; what this chapter reads from chapters that already provide it is in Imports.
+
 |Doc|Assumed to provide|
 |---|---|
-|01|§1.3's premise names `boss.editor_v2` "the Redactor" and its office; it changes to "the Censor" and "the Censor's office" to match doc 13 and §8.3 (Canon gaps)|
-|02|in `ViewFrame` for the local slot: reveal flags of doc 09 §4.8 and the local dark-vision radius; in `FolioView`, a seam-cell mask that names each seam zone's second genre; `ViewEntity.hp_bp` on consecutive frames (already present); §8.3 block arrays at 64 × 64 px per layer with full mip chains (5,488 B per layer) and world-space triplanar sampling (Canon §4.4); an `art.icon.` row (`.ktx2`) in the §11.4 path table; the §6.6 pool allocation as the concrete form of §9's stealing rule|
-|03|micro-voxel masks in `ChunkView` for meshing, rims and debris (Canon §4.4); `ev.footstep` and `ev.entity_landed` with `material` (present)|
-|04|slot rules for `body.quadruped` and `body.serpentine` Echoes, including which items they hold in a jaw socket|
-|06|`loc.patron.redacted.name` = "The Undersigned" in its §16.1 table; the Form names of §7.5 (adopted)|
-|07|the `acoustic` override field per material (doc 09 §7.2); block records whose `skins` reference `art.block.*`; every `mat.` ID named in §3.4's material sets (present in §2.2)|
-|09|`StealthHud.marks` state and meter (present); every `noise.*` ID and the 17 acoustic classes (present)|
-|10|descriptor IDs and `art.idc.<class>.<name>` references (present); form nouns of the 12 core genres (present)|
-|11|weapon skin names (doc 11 §4), the manufacturer list for slogans, vendor names|
-|12|tilesets, story domains, the story plan JSON of §20.5, seam zones, hazard and event skin names, `gpv.evt.weather_front` (present)|
-|13|a `visual: art.visual.*` field on every template; every template's `body_state.stand_mm` within 150 mm of its mesh, with humanoid brutes at `stand_mm ≥ 2200` (§3.6); telegraph shape IDs; bark sets per native faction; Editor attack IDs for line timing|
-|14|`RunSummary` per slot: `red_ink_doses: u8`, `went_native: Option<Id32>`, `status_at_end: SlotStatus`, `display_name` and `top_patron: Option<Id32>` (highest favor above 250); per `FolioRecord`: `story_solved: Option<(Id32, u64, u64)>` (the deed template and the hero and rival name seeds) and `invasion: u8` (0 none, 1 invader killed, 2 party Redacted, 3 timed out or left); `score_at_victory`; Folio history genres; the phase machine; Margin facilities and trophy slots (Canon §17.8); the `echo.` IDs of §8.9|
-|15|`cosm.*` catalog for the cosmetic lint; AP-7 reveal limits|
-|16|a reliable host-to-client message carrying `ScribeText { key: [u8; 32], job: Id32, subject: u64, json: ≤ 4,096 bytes }`; ghosts never sent to an invader's client (present)|
-|17|settings `access.gore`, `access.photosensitive`, `access.reduce_motion`, `access.sound_ripples`, `access.shimmer_bp`, `access.font`, the Scribe toggle and captions (present); the references `art.icon.<status>` and `art.icon.aether.<genre_suffix>` (match §4.5); its G8 and G26 requests are met here (§3.1, §4.6)|
+|02|§9's summary of `aud.mix.default` as §6.6 defines it: each pool owns its voices and never borrows; a full priority-7 pool stops its oldest voice; any other full pool replaces its quietest voice only for a louder request (doc 02 §9 still says a full mix steals the quietest voice of a lower-priority pool)|
+|04|the Cosmetics step (§2.1) records the chosen `Appearance` (§5.6) with the Erratum's creation choices, and Going Native (§2.8) keeps it|
+|07|block records whose `skins` (doc 03 §4.5) name the `art.block.*` records of §3.8|
+|13|a `visual: art.visual.*` field on every template; every template's `body_state.stand_mm` within 150 mm of its mesh, with humanoid brutes at `stand_mm ≥ 2200` (§3.6); telegraph shape IDs; bark sets per native faction; Editor attack IDs for line timing; the second mini-boss of each genre (DECISIONS 69, doc 13 Canon gaps item 1), which §6.5 already budgets|
+|16|a reliable host-to-client message carrying `ScribeText { key: [u8; 32], job: Id32, subject: u64, json: ≤ 4,096 bytes }`; each slot's `Appearance` (§5.6) in the data a joining peer receives, so every peer draws the same look|
 
 ## Canon gaps
 
-1. **"Crowns" fails the name review** (§7.1 test 4: The Elder Scrolls Online's purchasable Crowns [RECALLED]). Proposal: Canon §5.2 renames the Mythic Fantasy Lucre skin to "Nobles". Until then this chapter ships the canon value.
-2. **Identity skin.** The Unwritten's Lucre skin "Lucre" literally matches `cur.lucre`'s display name, which Canon §5.2 forbids. Assumed: a skin equal to its own base currency's name is exempt. Proposal: Canon §5.2 states the exemption.
-3. **Presentation randomness.** Canon §3 defines only simulation streams. This chapter defines `nar_rng` and `pres_hash` (§1.2) outside the `rng.` namespace, keyed by `nar.` IDs and tags, never advancing a simulation stream. Proposal: Canon §3 names them as the only presentation generators.
-4. **Palette size.** Canon §5.9 gives 3 swatches; this chapter adds 4 and keeps the canon 3 first and exact.
-5. **`presentation_hash`.** `art.`, `aud.`, `nar.`, `vfx.` records sit in `content_hash`, so a text fix breaks co-op compatibility. This chapter supports doc 02 gap G1's split.
-6. **Voiced barks.** Doc 13 §13.7 lets the Scribe rewrite barks; voiced lines cannot change without new audio. Ruled: native spoken barks are text bubbles (rewritable), voiced lines never are.
-7. **Margin plot.** Doc 14 §5.1 still lists `margin.plot` as a building plot; Canon §17.8 replaced it with trophy slots. The Margin's art follows the canon.
-8. **Display-name collision.** Doc 06 §16.1 names `patron.redacted` "The Censor"; doc 13 §9.2 names `boss.editor_v2` "The Censor"; doc 01 §1.3 still calls that boss "the Redactor". This chapter owns `loc.` strings and rules: the boss is "The Censor", the patron is "The Undersigned" (§8.2). Docs 01 and 06 update their tables; no canon change is needed.
-9. **Micro-voxel textures.** Canon §4.4 sets triplanar texturing at 64 texels per meter, while doc 02 §8.3 still describes 32 × 32 layers of 1,392 B. This chapter follows the canon (64 × 64 layers, 5,488 B, §10.2); doc 02 updates §8.3.
-10. **Erasure hunter rank.** Canon-1.6 §11.6 spawns the Erasure hunter "with `rank.elite` stats", while doc 02 §9 raises music to level 4 for `rank.hunter`. Assumed: the hunter keeps the rank ID `rank.hunter` for presentation (music level 4, `vfx` overlay, VO) and only its stat multipliers come from `rank.elite`. Proposal: Canon §11.6 states which rank ID the entity carries.
+Every gap this chapter raised against canon-1.7 is closed by canon-1.11 or by the triage (`audit/canon_gaps_triage.md`): the Unwritten's identity skin is Canon §5.2's own-currency exemption (G-053); "Crowns" stays by product-owner exemption (DECISIONS 90, which overrules G-052); `nar_rng` and `pres_hash` are Canon §3.8 (G-032); the 7-swatch palette is this chapter's (G-054); `presentation_hash` is Canon §2.4 (G-017, DECISIONS 87); spoken barks are rewritable text bubbles and voiced lines never are (G-202, §6.5); the Margin plot is doc 14's trophy alcove (G-210); the boss is the Censor and the patron the Undersigned (G-177, C-16); texture layers are 64 × 64 per Canon §4.4 (G-217, C-12); and the Erasure hunter carries `rank.hunter` with `rank.elite` multipliers (G-112, DECISIONS 91). Open items:
+
+1. **Name-seed generator.** Canon §3.8 names `nar_rng` and `pres_hash` as the only presentation generators, while §7.4 expands doc 12 §20.1's recorded `hero_name` and `rival_name` seeds with `Rng::from_seed64(name_seed)`, which advances no stream and keeps the §7.4 and §8.7 test vectors. Proposal: Canon §3.8 adds "and `Rng::from_seed64(seed)` over a name seed the simulation already recorded (doc 12 §20.1, doc 18 §7.4)".
+2. **Later product-owner items waiting on owner records.** DECISIONS 99 (one time of day and one weather state per Folio) and 103 (revised Editors and a new final boss, the Author) name this chapter, but doc 12 has no time-of-day or weather records (its gap G19) and doc 13 has not defined the revised Editors or the Author (its gap 3), so this chapter defines none of their presentation records yet. For the same reason §8.5a writes no manuscript sections for the Second Edition Volumes, whose fused genres and revised Editors have no records; §8.5's second ending layer (DECISIONS 100) and §5.6's creator presets (DECISIONS 97) are defined. Decision 103 also needs a ruling against §8.1's rules that Authors never appear in person and never show a face. Proposal: the Author appears as a writing hand, a quill and its handwriting, never a face, and is the only Author that appears in person, in Second Edition only.
 
 ## Acceptance tests
 
@@ -1425,7 +1444,7 @@ All IDs below are in this chapter's namespaces (`art.`, `aud.`, `nar.`, `vfx.`) 
 13. Every `dmg.` type has exactly one `vfx.dmg.<type_suffix>` record whose color equals Canon §10.1's default.
 14. All 240 `loc.dmg.<type>.skin.<g>.name` keys exist in `en-US`; `loc.dmg.shock.skin.steampunk.name` = "Galvanic"; within each genre the 15 names are distinct.
 15. All 130 glyph-form keys of §7.5 exist; no `loc.glyph.form.*.skin.unwritten.name` key exists.
-16. Name review: "Crowns" fails test 4; "V-Bucks" fails test 3; "Ink" fails test 1; "Galvanic", "Nobles" and "Credits" pass; Unwritten "Lucre" passes by exemption; "Lucky Streak Charm" fails test 5.
+16. Name review: "Crowns" as the Mythic Fantasy Lucre skin passes by the DECISIONS 90 exemption, and "Crowns" as any other Lucre or Aether skin fails test 4; "V-Bucks" fails test 3; "Ink" fails test 1; "Galvanic" and "Credits" pass; Unwritten "Lucre" passes by the Canon §5.2 exemption; "Lucky Streak Charm" fails test 5.
 17. Names: steampunk seed `0x9c1f00d2a4be7731` → "Gideon Pennyfeather", draws (0, 4, 1, 2); seed `0x13a4c0ffee0f1e2d` → "Captain Gearwright", draws (1, 4, 0, 1); each name consumes exactly 4 draws.
 18. `nar_rng(0x0123456789ABCDEF, 4, "nar.job.story_retelling", 512)` is seeded with `0xae27e411c755d822`; expanding §8.7's grammar with voice praise yields "They say Gideon Pennyfeather built a clockwork cathedral in nine days, with nothing but borrowed coal." after exactly 4 draws.
 19. Key 513, voice slander yields "Gideon Pennyfeather signed a sky-dock, but every rivet was Captain Gearwright's." after 2 draws; the overwritten variant swaps the two names.
@@ -1458,16 +1477,24 @@ All IDs below are in this chapter's namespaces (`art.`, `aud.`, `nar.`, `vfx.`) 
 46. Skin families: 16 Revisor skin keys exist and gothic_horror, cyberpunk and hardboiled_noir equal doc 13's Inquisitor, Liquidator and Revenue Agent; 32 curse-state keys exist and the Blessed and Cursed names differ in every genre; 28 secret-genre appearance form keys exist; every one passes §7.1.
 47. Invader rendering: an Erratum with INVISIBLE renders at shimmer 2500 Bp on an invader's client whose `access.shimmer_bp` is 6000; a ghost is never drawn on an invader's client.
 48. Combat exemption: a clip tagged `combat` at `anim_tick` 37 on a step-3 genre shows pose 37; an idle clip at the same tick shows pose 36.
-49. Micro-voxels: removing one micro-voxel from a full stone cell shows the previous genre's texture on the newly exposed faces for 600 ticks, draws the 1 px rim from `fract(world_pos × 4)` on that cell, and spawns one debris cube while fewer than 256 cosmetic rigid bodies exist.
+49. Micro-voxels: removing one micro-voxel from a full destructible cell (a cracked wall tagged `block.tag.destructible`) shows the previous genre's texture on the newly exposed faces for 600 ticks, draws the 1 px rim from `fract(world_pos × 4)` on that cell, and spawns one debris cube while fewer than 256 cosmetic rigid bodies exist; a fixed-terrain cell never loses a micro-voxel, so it never shows the underlayer.
 50. Audio coverage: every `noise.*` ID in doc 09 maps to at least one audio record; every (gait, acoustic class) and (damage type, acoustic class) set exists; every record with a `caption` field names an existing `loc.aud.caption.*` key.
 51. Weather front: in Cyberpunk (fog 0) during `gpv.evt.weather_front`, `fog_pts` is 1, opacity at 48,000 mm is 400 and haze is off.
-52. Budgets: `16 × 256 × 5488 = 22,478,848` B of block arrays; VO 5,000 lines at 100.0 MB; music 189 MB; audio 430 MB; the compact model file ≤ 512 MiB.
-53. Early Access lint: a content set limited to the 6 Early Access genres refuses any record that references an asset of a genre outside them.
-54. Non-humanoid Echoes: `echo.fenrir`'s viewmodel uses `art.rig.quadruped` and has no arm clips; `echo.jormungandr`'s uses `art.rig.serpentine`; each of the 5 public-domain Echoes has a manifest record naming its source text, and a line containing a modern adaptation's franchise name fails test 2.
-55. VO plan: no `aud.vo.narrator.*` and no `aud.vo.patron.*` record exists (DECISIONS item 38).
+52. Budgets: `16 × 256 × 5488 = 22,478,848` B of block arrays; VO 4,380 lines at 87,600,000 B, 840 of them for 28 genre mini-bosses; music 189 MB; audio 417.6 MB; the compact model file ≤ 512 MiB.
+53. Content-set lint: a content set refuses any record that references an asset of a genre outside it; the Early Access set holds the 12 core genres, the Ur-Text and the Unwritten (DECISIONS 114), and every per-genre check runs on each of them.
+54. Non-humanoid Echoes: `echo.fenrir`'s viewmodel uses `art.rig.quadruped` and has no arm clips; `echo.jormungandr`'s uses `art.rig.serpentine`; Fenrir's held weapon renders at the `jaw` socket, and Jörmungandr's viewmodel shows `grip_1` only while `slot.hand_extra_1` holds an item; each of the 5 public-domain Echoes has a manifest record naming its source text, and a line containing a modern adaptation's franchise name fails test 2.
+55. VO plan: no `aud.vo.narrator.*` and no `aud.vo.patron.*` record exists (DECISIONS item 38); each Margin resident has exactly 20 voiced greeting records, and no audio record references a `loc.margin.arc.*` key (DECISIONS item 78).
 56. Narrator pencil: `cr(#4D4D4D, paper) ≥ 4.5` for all 16 genres, minimum 5.17 (post_apocalypse `#D9C9A3`).
 57. Phrase clock: in an Ur-Text Folio entered at tick 0, tick 12,800 is phrase `k = 10` (not `10 mod 8`), so with an 11-genre history it plays the quote of `history[10]`.
 58. Closing manuscript: §8.5a's worked example yields exactly the three quoted sections with section seeds `0xe3bffbb566a8741e`, `0xf0324ad0cf4755ff` and `0xee582d0bb6b9f352`; a `set_aside` ending shows no manuscript; no manuscript exceeds 2,400 characters or contains a digit.
+59. Hash split: changing one `loc.` string or one swatch of an `art.palette.<g>` record changes `presentation_hash` and leaves `content_hash` unchanged, and two co-op peers whose content differs only in `art.`, `aud.`, `nar.` or `vfx.` records or `loc.` tables join the same run (Canon §2.4).
+60. Margin arcs: all 54 beat keys exist in `en-US`: 8 residents × 6 beats of 2 to 6 lines, each at most 90 characters, and 6 Narrator notes of at most 2 sentences; no beat contains a digit.
+61. Gore: with `access.gore` at its default `ink`, a wound decal in a Wuxia Folio uses wuxia's `ink` `#141414`, and a severed arm sheds 8 glyph particles over its 120 ticks while staying lootable; `full` uses `#8A1010` and sheds none; `minimal` places no decal.
+62. Madness: with `access.mark_hallucinations` and Mercy both off, a madness phantom renders identically to the native template it imitates; with the setting on, it also draws doc 17's dashed outline and "?".
+63. Mounts retired: §3.6 has a `charger` row and no `cavalry` row; a charger whose idle lead foot is 600 mm ahead of its trailing foot passes and one at 300 mm fails; §10.2 has no mount class; no record of this chapter names a Canon §17.7 retired ID.
+64. Expansions: with no expansion in the content set, every per-genre count of this chapter is unchanged (16 palettes, 240 damage names, 36 quote stems); an expansion whose `art.palette.<exp_g>` swatch 0 differs from its Canon §5.9 row fails the lint.
+65. Appearance presets: each of the 6 kin has exactly 12 `art.preset.<kin_suffix>.<nn>` records and one `.colors` record of 8 base and 8 marking swatches; every one of a kin's 768 looks passes §5.6's limits against preset `01` with swatches 0 and 0; a marking swatch within ΔE 10 of `#D7262E` fails the lint; two runs that differ only in an Erratum's `Appearance` have the same `content_hash` and the same `state_hash` sequence.
+66. Second Edition endings: a `mode.second_edition` victory whose Ur-Text clear had a solo host with no Red Ink dose and no Going Native shows `written_back` with its §8.5a manuscript, then `second_edition`; with `ironman` true the second layer shows the Ironman line; no Second Edition victory selects `short_story`; a Second Edition wipe that ends `run.end.erased` in Volume 7 with a stored `score_at_victory` shows only `erased` with Volume 7's plate text and no manuscript.
 
 ## Invariants annex
 
@@ -1499,4 +1526,9 @@ W! every Scribe job has template fallback of same JSON shape       W! schema ∧
 N! Scribe text ∈ saves.sim | replays | RunSummary                  N! voiced line rewritten by Scribe
 W! scribe default off ∧ opt-in ∧ local opt-out beats host text    N! player-typed text ∈ prompt
 W! asset ⇒ manifest(owner ≠ reviewer, license ∈ allowed)          N! shipped generated voice | music | living-artist prompt
+W! art|aud|nar|vfx|loc ∈ presentation_hash ∧ ∉ content_hash      N! mount | vehicle | rider | item wear in any record
+W! access.gore default ink; red blood only under full             N! madness phantom marked unless access.mark_hallucinations
+W! underlayer reveal only on destructible cells                   N! voiced Margin arc beat | voiced closing manuscript
+W! appearance preset ⇒ §4.7 limits vs kin default                 N! Appearance ∈ sim state | content_hash
+W! Second Edition victory ⇒ ur_clear_ending, then second_edition  N! Second Edition victory → short_story
 ```

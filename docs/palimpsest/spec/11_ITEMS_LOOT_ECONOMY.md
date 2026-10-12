@@ -1,34 +1,34 @@
 # 11 — Items, Loot, Reliquaries, Fortune Engines and Economy
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.4.
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
 
-This chapter defines item templates and instances, the deterministic loot generator, genre skins for every weapon archetype, manufacturers, affixes, perks, Legendary perks, Exotics and Palimpsestic uniques, every loot source (kills, chests, in-run Reliquaries, bosses, secrets, Fortune Engines, shops), the Lucre economy, the inventory, Rewriting, Emendations, reforging, salvage, co-op loot and the Item Power score. Archetype mechanics stay with their owners (Canon §19): doc 05 owns `arch.*`, `ammo.` and `counter.`; doc 06 owns spells, staves, foci and tomes; doc 08 owns `alch.` potions and bombs and `apparatus.` vessels; doc 04 owns `aug.` implants; doc 07 owns `gadget.` and `part.`. This chapter attaches loot-facing records (value, weight, deck card, stack, manufacturer class) to those IDs and mints new IDs only in its own namespaces.
+This chapter defines item templates and instances, the deterministic loot generator, genre skins for every weapon archetype, manufacturers, affixes, perks, Legendary perks, Exotics and Palimpsestic uniques, every loot source (kills, chests, in-run Reliquaries, bosses, secrets, Fortune Engines, shops), the Lucre economy, the inventory, Rewriting, Emendations, reforging, salvage, co-op loot and the Item Power score. Archetype mechanics stay with their owners (Canon §19): doc 05 owns `arch.*`, `ammo.` and `counter.`; doc 06 owns spells, staves, foci and tomes; doc 08 owns `alch.` potions and bombs and `apparatus.` vessels and respirators; doc 04 owns `aug.` implants; doc 07 owns `gadget.` and `part.`. This chapter attaches loot-facing records (value, weight, deck card, stack, manufacturer class) to those IDs and mints new IDs only in its own namespaces.
 
 ## Imports
 
 | Source | Section | What this chapter consumes |
 |---|---|---|
-| Canon | §1.1, §1.10 | ID grammar, `id32`, skin text keys `loc.<id>.skin.<suffix>.name`, name resolution order |
+| Canon | §1.1, §1.10 | ID grammar, `id32`, mod IDs with second segment `x_<mod_id>`, skin text keys `loc.<id>.skin.<suffix>.name`, name resolution order |
 | Canon | §1.3, §1.5, §1.6 | `floor_div`, `ceil_div`, `mul_bp`, left-to-right Bp chains; display-unit rule; integer-only content |
 | Canon | §1.11 | item `uid` layout, per-Folio counters, ascending-uid iteration |
 | Canon | §2.3, §2.5 | "N s" = N × 60 ticks; rate accumulator; save contract (every counter in this chapter is saved) |
-| Canon | §3.1–§3.5 | `Rng`, `range`, `weighted`, `roll_bp`, `stream_seed`, sequential `rng.loot_place`, keyed `rng.loot`, `rng.combat`, `rng.status`, commit-only `rng.offer.p<slot>` |
-| Canon | §4, §4.3 | `GROUND_ITEM_CAP = 2048` and the Lost Satchel hand-off; fixed terrain and `destructible` blocks |
+| Canon | §3.1–§3.5 | `Rng`, `range`, `weighted`, `roll_bp`, `stream_seed`, sequential `rng.loot_place` and its labeled sub-streams (§3.2), keyed `rng.loot`, `rng.combat`, `rng.status`, commit-only `rng.offer.p<slot>` and its offer generators (§3.5) |
+| Canon | §4, §4.3 | `GROUND_ITEM_CAP = 2048` and the Lost Satchel hand-off; fixed terrain, blocks tagged `block.tag.destructible`, projectiles stopped by fixed terrain; no item durability |
 | Canon | §5.2–§5.11 | genre table, axiom-0 generation ban, `Req`, `Tol`, `gear_tol`, Contradiction, Anachronism, local genre, seam zones, the §5.9 manufacturers, World Laws, `st.unmoored` |
 | Canon | §6.4 rows 10, 13, 14, 19, 37, 38, 42 | carry capacity, gear crit terms, shield stability, buy and sell multipliers, Serendipity |
 | Canon | §10.4–§10.6, §10.9 | source magnitude chain, additive bucket, reflected and environmental entry points, healing |
 | Canon | §11.2, §11.4 | status power, direct application |
-| Canon | §13.1–§13.9 | categories, slots, rarity table and roll, quality, knowledge, curses, Emendations, `P`, `T`, `S`, `ITEM_MULT_MAX`, instance contract |
-| Canon | §14 | `cur.lucre` |
+| Canon | §13.1–§13.9 | categories, slots, rarity table and roll, quality, knowledge, curses and pact curses, Emendations and `ENH_CAP`, `P`, `T`, `S`, `ITEM_MULT_MAX`, instance contract |
+| Canon | §14 | `cur.lucre`: per Erratum, passing between party members only as dropped piles |
 | Canon | §16.4, §16.5 | affliction cure price, sacrifice value |
-| Canon | §17.1–§17.9 | run constants, Colophon, Abridged loot quantity, party tables, ranks, champion counters, reference anchors, `mode.loot_shared`, ghost item loss, mounts, invasions |
+| Canon | §17.1–§17.9 | run constants, Colophon, Abridged loot quantity, party tables, ranks, champion counters, reference anchors, `mode.loot_shared`, ghost item loss, invasions; the §17.7 retired IDs |
 | Canon | §18 | `ev.entity_killed`, `ev.item_picked_up`, `ev.item_dropped`, `ev.item_used`, `ev.container_opened`, `ev.engine_spun`, `ev.folio_entered`, `ev.folio_exited`, `ev.invasion_ended` |
 | Canon | §19 | this chapter owns `item.`, `rar.`, `affix.`, `perk.`, `mfr.`, `loot.`, `reliq.`, `engine.`, `shop.`, `cat.`, `slot.` |
-| Doc 02 | intents | `ShopBuy`, `ShopSell`, `CommitOffer`, `DropItem`, `UseItemOn`, `EquipItem`, `MoveItem` |
+| Doc 02 | intents | `ShopBuy`, `ShopSell`, `CommitOffer`, `DropItem`, `UseItemOn`, `EquipItem`, `MoveItem`, `ShopHaggle { shop }` and `DropLucre { amount: i64 }` |
 | Doc 04 | §2.5, §8.4, §9.3–§9.5, §11.2 | kit roles; treatments (bandage, splint, salve, surgical kit); implant-form `aug.*` augments; "Emend the Flesh" price `mul_bp(400, P(d))`; food values |
-| Doc 05 | §3.2, §5.2, §8, §9.3, §11.1, §12.1, §15, §17.1 | `arch.melee.*`, `arch.ranged.*`, `arch.armor.*`, `arch.offhand.*`, `arch.ward.*` and `arch.mount.*` records; ammunition families, carry caps, pickup sizes and the §8.3 need weights; grenade archetypes; counter bits, counter charges and delivery channels; ward capacity chain and depletion profiles |
+| Doc 05 | §3.2, §5.2, §8, §9.3, §11.1, §12.1, §15 | `arch.melee.*`, `arch.ranged.*`, `arch.armor.*`, `arch.offhand.*` and `arch.ward.*` records; ammunition families, carry caps, pickup sizes and the §8.3 need weights; grenade archetypes; counter bits, counter charges and delivery channels; ward capacity chain and depletion profiles |
 | Doc 06 | §3.8, §8.1, §8.3, §8.4, §8.5 | `arch.ranged.staff`, `arch.offhand.tome`, `arch.offhand.focus` casting fields; texts and inscription; trainer price; wand charges by rarity; bound-glyph list |
-| Doc 08 | §6.1, §12.1, §12.2, §13.2 | `apparatus.vessel.*`; the 16 found `alch.potion.*` types and their values; the 12 Reliquary-only potions; `alch.bomb.*` |
-| Doc 10 | §2.1, §3.2, §4, §5.9, §6, §7.1, §8, §9, §10, §11 | knowledge flags and mundane categories; `idc` budgets; `wand_pool` spells; `appr.svc.*` prices; `value_true`, `value_vendor`; `roll_curse` (3 draws); the 3000 Bp malign share; Unread Edge SER; vendor rules; sealing |
+| Doc 08 | §4.3, §6.1, §12.1, §12.2, §13.2 | `apparatus.respirator.*` and `apparatus.vessel.*`; the 16 found `alch.potion.*` types and their values; the 12 Reliquary-only potions; `alch.bomb.*` |
+| Doc 10 | §2.1, §3.2, §4, §5.9, §6, §7.1, §7.8, §8, §9, §10, §11 | knowledge flags and mundane categories; `idc` budgets; `wand_pool` spells; `appr.svc.*` prices; `value_true`, `value_vendor`; `roll_curse` (3 draws), its pacts and its `CursedCapsule` source; the 3000 Bp potion and 1000 Bp text malign shares; Unread Edge SER; vendor rules; sealing |
 | Doc 12 | §6 | Folio types (standard, challenge, rest, boss), the rest Folio's shop and Engine hall, challenge success rewards, room and container spots |
 | Doc 13 | §2.1, §5.1, §9, §12.4, §13 | `loot_role`, `no_loot`, ranks; carried items; boss loot draws and `palimpsestic_bp`; war spoils; vendor types, reputation price factor, quests and companion rewards |
 | Doc 14 | §2.4, §3.1, §3.9, §5.3, §7.1, §7.2, §8 | kits; Folio positions and depth `d(f)`; Colophon, Interleaf, Endpaper and the Volume reward; Bindery pool tags; `RunState.grade`, `GradeParams.lucre_bp`, `shop_price_bp`, `reliq_key_delta`; boons; modes (Standard, Novella, Abridged, Daily, Endless) |
@@ -45,9 +45,10 @@ This chapter defines item templates and instances, the deterministic loot genera
 3. **Keyed and isolated.** Every random step of item generation draws from its own sub-generator derived from one `u64` item seed. Adding a draw to one step never shifts another step.
 4. **Earned randomness.** Every randomized container here is paid for with in-run Lucre or in-run keys only. Odds are displayed before every commitment. Fortune Engines always pay out an item.
 5. **Horizontal unlocks.** A Bindery pool tag (`loot.pool.<suffix>`) adds templates inside their rarity band and category only; weights renormalize within the band, so rarity shares never change (doc 15 Script neutrality rule).
-6. **Owners' IDs.** This chapter never mints an ID in another owner's namespace (Canon §19). It stores a loot record under the owner's ID.
+6. **Owners' IDs.** This chapter never mints an ID in another owner's namespace (Canon §19). It attaches a loot record to the owner's ID and never defines a second record under it (doc 19 §1.2: one ID, one record).
 7. **Placed loot is isolated.** Everything generated at Folio generation (shop stock, floor loot, placed caches, Reliquary and Engine placement) depends only on the run seed, the Folio index, the Folio's genre, the mode, the Grade and the run's content set, never on party size, earlier play or player state.
-8. **Mod segments.** In this chapter's namespaces a second segment beginning with `x_` belongs to a mod (doc 02 G5: `x_<mod_id>`). This chapter defines no such ID. A mod item is a §2.1 template record with its own category, `template_weight` and `pool`; a mod patch of a loot table edits that table's `lines` (§9.5 record), the only list a table has.
+8. **Mod segments.** In this chapter's namespaces a second segment beginning with `x_` belongs to a mod (Canon §1.1: `x_<mod_id>`). This chapter defines no such ID. A mod item is a §2.1 template record with its own category, `template_weight` and `pool`; a mod patch of a loot table appends to that table's `lines` (§9.5 record), the only list a table has, which the schema marks `"x-patchable": true` (doc 02 §13.1, doc 19 §3.6).
+9. **No wear.** Items have no durability (Canon §4.3, DECISIONS 65): nothing in this chapter wears, breaks or repairs an item. Block HP of placeables and destructible blocks is doc 07's.
 
 ---
 
@@ -55,7 +56,7 @@ This chapter defines item templates and instances, the deterministic loot genera
 
 ### 2.1 Template record
 
-Every template is either an `item.` record owned here or an owner's ID listed in §3: doc 05 `arch.*` and `ammo.*`, doc 06 `arch.ranged.staff` and `arch.offhand.tome`, doc 08 `alch.potion.*`, `alch.bomb.*` and `apparatus.vessel.*`, doc 04 implant-form `aug.*`, doc 07 `gadget.*` and `part.*`. For an owner's ID this chapter stores a loot record with the fields below under the same ID; the owner's record holds the mechanics. Doc 19 owns the serialized schema.
+Every template is either an `item.` record owned here or an owner's ID listed in §3: doc 05 `arch.*` and `ammo.*`, doc 06 `arch.ranged.staff` and `arch.offhand.tome`, doc 08 `alch.potion.*`, `alch.bomb.*`, `apparatus.vessel.*` and `apparatus.respirator.*`, doc 04 implant-form `aug.*`, doc 07 `gadget.*` and `part.*`. For an owner's ID this chapter keeps a loot record with the fields below that references the owner's ID; the owner's record holds the mechanics. Doc 19 owns the serialized schema and stores these as `11.template_loot` records, one per template, so no ID gets a second record (doc 19 §1.2).
 
 ```json
 {
@@ -79,7 +80,7 @@ Every template is either an `item.` record owned here or an owner's ID listed in
 |---|---|
 | `base_value` | Lucre at ilvl 1, Common, Normal, +0 (§13.1). Where the owner states a value (doc 05 ammunition, doc 08 potions), this chapter copies it. |
 | `stack_max` | 1 for every equipment item except thrown weapons (20); §3.5 for stackables |
-| `rarity_eligible` | true for weapons, wands, armor, off-hands, ward generators, mount tokens, implants and accessories; false otherwise (always `rar.common`) |
+| `rarity_eligible` | true for weapons, wands, armor, off-hands, ward generators, implants and accessories; false otherwise (always `rar.common`) |
 | `template_weight` | weight inside its category for the template draw (§2.3 step 2) |
 | `pool` | `base` (in `unlock.set.starter`) or a `loot.pool.<suffix>` tag gated by a doc 14 Bindery node |
 | `implicit` | the template's fixed effect; `value = base + per_enh × eff_enh` (Canon §13.7 `eff_enh`) |
@@ -90,7 +91,7 @@ The canon fields of §13.9 are mandatory. This chapter adds the fields marked "d
 
 | Field | Type | Owner | Meaning |
 |---|---|---|---|
-| canon §13.9 fields | | canon | `uid`, `template`, `origin_genre`, `rarity`, `quality`, `ilvl`, `enhancement`, `buc`, `curse_penalty`, `knowledge`, `affixes`, `parts`, `materials`, `durability`, `charges`, `stack`, `mass_g`, `value`, `manufacturer`, `gear_tier`, `perk_columns`, `illuminated`, `finder_slot` |
+| canon §13.9 fields | | canon | `uid`, `template`, `origin_genre`, `rarity`, `quality`, `ilvl`, `enhancement`, `buc`, `curse_penalty`, `knowledge`, `affixes`, `parts`, `materials`, `charges`, `stack`, `mass_g`, `value`, `manufacturer`, `gear_tier`, `perk_columns`, `illuminated`, `finder_slot` |
 | `genre_trait` | perk ID or none | doc 11 | the column-5 genre trait (§7.2); weapons only |
 | `legendary_perk` | perk ID or none | doc 11 | present iff rarity is Legendary (§8.1) |
 | `exotic` | bool | doc 11 | true iff `template` is an `item.exotic.*` |
@@ -105,8 +106,11 @@ The canon fields of §13.9 are mandatory. This chapter adds the fields marked "d
 | `illum_pending` | bool | doc 11 | true for a Legendary-or-better item from a Placed or Offer source until it first enters an inventory (§2.3 step 13) |
 | `fresh` | bool | doc 11 | `item.lucre` piles only: true until the first pickup applies the Lucre-find multipliers (§9.1) |
 | `teaches` | list of `glyph.*`, one `recipe.*`, or none | doc 11 (rules doc 06 §8.1, doc 07 §6.5) | `cat.book` only: a glyph tome's 1 to 3 glyphs, or a schematic's one recipe (§3.5 Books) |
+| `zaps_total` | u32 | doc 10 §7.8, stored here | wands only: zaps made with this wand since creation, starting at 0; `curse.pact.overcharge` reads it |
+| `dropped_by` | slot or none | doc 11 | `item.lucre` piles made by `DropLucre`: the dropper's slot, whose auto-pickup skips the pile (§17) |
+| `keepsake` | bool | doc 11 (rules doc 15 §5.4, doc 16 §9.6) | true for an item created by `generate_keepsake` (§2.3); `DropItemFor` refuses it (§14.4) |
 
-`affixes` entries are `{id, tier: 1..=5, roll_bp: 0..=10000}`. The value of an affix is `lo + floor_div((hi - lo) × roll_bp, 10000)` with `(lo, hi)` from its tier row in §6.2; a descending row (`lo > hi`, `affix.self_repair`) uses the same formula and yields a smaller number for a higher roll.
+`affixes` entries are `{id, tier: 1..=5, roll_bp: 0..=10000}`. The value of an affix is `lo + floor_div((hi - lo) × roll_bp, 10000)` with `(lo, hi)` from its tier row in §6.2; a descending row (`lo > hi`, `affix.self_injector`) uses the same formula and yields a smaller number for a higher roll.
 
 **Example instance** (the §20 worked example after generation):
 
@@ -115,10 +119,10 @@ The canon fields of §13.9 are mandatory. This chapter adds the fields marked "d
   "uid": "0x000007000000019c", "template": "arch.ranged.smg", "origin_genre": "genre.weird_west",
   "rarity": "rar.epic", "quality": "q.excellent", "ilvl": 7, "enhancement": 0, "buc": "buc.uncursed",
   "curse_penalty": 0, "knowledge": { "state": "know.classified", "flags": 0 },
-  "affixes": [ { "id": "affix.self_repair", "tier": 2, "roll_bp": 4095 },
+  "affixes": [ { "id": "affix.self_injector", "tier": 2, "roll_bp": 4095 },
                { "id": "affix.infuse_fire", "tier": 2, "roll_bp": 4630 },
                { "id": "affix.dmg_vs_beast", "tier": 2, "roll_bp": 1146 } ],
-  "parts": [], "materials": ["mat.hexed_silver"], "durability": { "cur": 0, "max": 0 }, "charges": { "cur": 0, "max": 0 },
+  "parts": [], "materials": ["mat.hexed_silver"], "charges": { "cur": 0, "max": 0 },
   "stack": 1, "mass_g": 0, "value": 1382, "manufacturer": "mfr.weird_west.sundown_rail",
   "gear_tier": 3,
   "perk_columns": [
@@ -135,7 +139,7 @@ The canon fields of §13.9 are mandatory. This chapter adds the fields marked "d
 }
 ```
 
-`durability` and `mass_g` are filled by doc 07 from archetype volume and material (shown as 0 here because doc 07 values are not part of this chapter). `uid` `0x000007000000019c` is `(7 << 40) | 412` (§20).
+`mass_g` is filled by doc 07 from archetype volume and material (shown as 0 here because doc 07 values are not part of this chapter). `uid` `0x000007000000019c` is `(7 << 40) | 412` (§20).
 
 ### 2.3 Generation pipeline
 
@@ -212,9 +216,9 @@ fn roll_drop(table: &LootTable, src: &DropSource, slot: u8, ctx: &mut LootCtx) -
 | 11 Legendary perk | `loot.legendary` | 1 `weighted` (iff Legendary) | §8.1 pool for the category group. |
 | 11b Bound glyph | `loot.glyph` | 1 `weighted` (iff Legendary or Exotic staff, focus or tome) | Doc 06 §8.5 list `glyph.mod.{anchor, empower, extend, heavy, hushed, keen, reach, thrift}`, ascending ID, weight 100 each. |
 | 11c Wand spell | `loot.spell` | 1 `weighted` (wands only) | Doc 10 `wand_pool` spells whose every glyph dependency is legal in `origin_genre` (Canon §5.3), ascending ID, weight 100 each; stored in `spell`. |
-| 12 Curse state | `loot.buc` | 3 (doc 10 §7.1) | `doc10::roll_curse(rng, draft, local_myt, source)` for categories whose doc 10 §2.1 row has BUC. Shop stock, Engine faces, Volume rewards and quest rewards skip it (`buc.uncursed`, no draw). Reliquary contents and Editor tables call it with source factor 0 (doc 10 §7.1), so they can be blessed but never cursed. |
+| 12 Curse state | `loot.buc` | 3 (doc 10 §7.1) | `doc10::roll_curse(rng, draft, local_myt, source)` for categories whose doc 10 §2.1 row has BUC. Shop stock, Engine faces other than the cursed capsule, Volume rewards and quest rewards skip it (`buc.uncursed`, no draw); the cursed capsule (§11.2) calls it with source `CursedCapsule`, which always gives a pact (doc 10 §7.8). Reliquary contents and Editor tables call it with source factor 0 (doc 10 §7.1), so they can be blessed but never cursed. |
 | 13 Illuminated | `loot.illum` | 1 `roll_bp(5)` (iff Legendary or better and Keyed or Keepsake) | Canon §13.9. Placed and Offer items set `illum_pending = true` instead; when such an item first enters an inventory it rolls `keyed_rng("rng.loot", folio, uid, tick, slot).roll_bp(5)` once and clears the flag. |
-| 14 Derived fields | none | 0 | `uid` from the Folio item counter; `gear_tier = min(5, 1 + floor_div(run.grade, 5))`; `finder_slot = req.slot`; `knowledge` and `sealed` (§2.4); `charges` (wands: doc 06 §8.4 maximum by rarity, full; gadgets: doc 07); `value` (§13.1); `mass_g` and `durability` from doc 07; `stack` (§3). |
+| 14 Derived fields | none | 0 | `uid` from the Folio item counter; `gear_tier = min(5, 1 + floor_div(run.grade, 5))`; `finder_slot = req.slot`; `knowledge` and `sealed` (§2.4); `charges` (wands: doc 06 §8.4 maximum by rarity, full; gadgets: doc 07); `value` (§13.1); `mass_g` from doc 07; `stack` (§3). |
 
 Steps 1 to 3b select the template and run first; the remaining steps may run in any order because each uses its own sub-generator.
 
@@ -235,18 +239,20 @@ fn generate_item(seed: u64, req: &GenRequest, st: &mut PlayerLootState, run: &Ru
     if rar == RAR_LEGENDARY { it.legendary_perk = Some(pick_legendary(&it, &mut sub(seed, "loot.legendary"))); }
     if it.is_implement() && (rar == RAR_LEGENDARY || rar == RAR_EXOTIC) { it.bound_glyph = Some(pick_glyph(&mut sub(seed, "loot.glyph"))); }
     if it.is_wand() { it.spell = Some(pick_wand_spell(genre, &mut sub(seed, "loot.spell"))); }
-    if req.source.rolls_curse() && it.bears_buc() { doc10::roll_curse(&mut sub(seed, "loot.buc"), &mut it, local_myt(req), req.source); }
+    if req.source.rolls_curse() && it.bears_buc() {                 // false for shop, Engine-face, Volume-reward and quest sources, except the cursed capsule (§11.2)
+        doc10::roll_curse(&mut sub(seed, "loot.buc"), &mut it, local_myt(req), req.source);
+    }
     if rar >= RAR_LEGENDARY {
         if req.source.is_keyed_or_keepsake() { it.illuminated = sub(seed, "loot.illum").roll_bp(5); } else { it.illum_pending = true; }
     }
-    it.finalize_derived(run, req);    // gear_tier, knowledge, sealed, charges, value, mass, durability, stack
+    it.finalize_derived(run, req);    // gear_tier, knowledge, sealed, charges, value, mass, stack
     if req.uses_blp() { st.blp_update(rar, it.is_equipment()); }     // Keyed generic lines only (§9.4)
     if req.deck_mode == DeckMode::Decrement { st.deck.decrement(cat); }
     Some(it)
 }
 ```
 
-**Keepsake entry point** (doc 15 §5.4): `generate_keepsake(genre, rarity, rng)` draws `seed = rng.next_u64()` (1 draw) and calls `generate_item` with table `loot.keepsake.<genre_suffix>`, source `Keepsake`, forced rarity, `ilvl = 1`, `origin_genre = genre`, SER 40, `Fixed` equipment cards (§9.2), `run.grade = 0` for `gear_tier`, no bad-luck state, and the curse roll with the source genre's MYTHOS (doc 10 §7.1). The result is sealed (doc 10 §11).
+**Keepsake entry point** (doc 15 §5.4): `generate_keepsake(genre, rarity, rng)` draws `seed = rng.next_u64()` (1 draw) and calls `generate_item` with table `loot.keepsake.<genre_suffix>`, source `Keepsake`, forced rarity, `ilvl = 1`, `origin_genre = genre`, SER 40, `Fixed` equipment cards (§9.2), `run.grade = 0` for `gear_tier`, no bad-luck state, and the curse roll with the source genre's MYTHOS (doc 10 §7.1). The result is sealed (doc 10 §11) and has `keepsake = true`.
 
 ### 2.4 Knowledge and sealing at creation
 
@@ -255,7 +261,7 @@ fn generate_item(seed: u64, req: &GenRequest, st: &mut PlayerLootState, run: &Ru
 | kill drops, chests, floor loot, bags, secrets, war spoils | every flag clear; doc 10 §2.4 derives `know.unknown` or `know.classified` | false |
 | quest and companion rewards | RARITY set | false |
 | shop stock | equipment: every required flag set (`know.identified`); type-hidden consumables: RARITY and BUC set, type knowledge from the party table (doc 10 §10.1) | false |
-| Reliquary contents, Engine faces and capsules, Volume rewards, Keepsakes | RARITY set | true |
+| Reliquary contents, Engine faces and capsules, Volume rewards, Keepsakes | RARITY set; a cursed capsule also has OMEN set (doc 10 §7.8) | true |
 | mundane categories (doc 10 §2.1) | `know.classified`, terminal | false |
 | kit items (doc 14) | every required flag set; type added to the party table | false |
 
@@ -294,7 +300,6 @@ Pool unlocks are horizontal (§1 principle 5): a tag adds templates inside their
 | `cat.armor` | 20 `arch.armor.<slot>_<class>` (05) | yes | `cat.armor` | 1 | yes |
 | `cat.offhand` | `arch.offhand.{shield_buckler, shield_heater, shield_tower, lantern, focus}` (05), `arch.offhand.tome` (06) | yes | `cat.offhand` | 1 | yes |
 | `cat.ward_gen` | `arch.ward.{aegis, kinetic, reflector, bulwark}` (05) | yes | `cat.ward_gen` | 1 | yes |
-| `cat.mount` | tokens of `arch.mount.{runner, hover, glider}` (05) | yes | none (§9.10) | 1 | vehicle skins only |
 | `cat.implant` | implant-form `aug.*` (04) | yes | `cat.implant` | 1 | no |
 | `cat.accessory` | `item.ring.*`, `item.amulet.*`, `item.trinket.*`, `item.belt.*`, `item.back.*`, `item.face.*` (11); `apparatus.respirator.*` (08, §3.4) | yes | `cat.accessory` | 1 | no |
 | `cat.potion` | `alch.potion.*` (08) | no | `cat.potion` | 10 | no |
@@ -352,9 +357,9 @@ Families: E melee edged, B melee blunt, D draw, bolt and thrown, G gun, H heavy,
 | `casting` | family C, `arch.offhand.focus`, `arch.offhand.tome` |
 | `armored` | armor and shields; `shield` = `arch.offhand.shield_*`; `legs_feet` = legs or feet armor |
 
-### 3.3 Armor, off-hands, ward generators and mount tokens
+### 3.3 Armor, off-hands and ward generators
 
-Doc 05 owns AR, poise, mass and noise (doc 05 §11.1), shield stability (§12.1), ward capacity and profiles (§15.4) and mount stats (§17.1).
+Doc 05 owns AR, poise, mass and noise (doc 05 §11.1), shield stability (§12.1) and ward capacity and profiles (§15.4).
 
 **Armor** `arch.armor.<slot>_<class>` (class AR):
 
@@ -367,7 +372,7 @@ Doc 05 owns AR, poise, mass and noise (doc 05 §11.1), shield stability (§12.1)
 | feet | 6 / 800 | 10 / 1000 | 12 / 1000 | 16 / 800 |
 | full set value | 52 | 80 | 98 | 128 |
 
-**Off-hands, ward generators and mount tokens:**
+**Off-hands and ward generators:**
 
 | Template | Value | Weight | Class | Template | Value | Weight | Class |
 |---|---|---|---|---|---|---|---|
@@ -375,10 +380,10 @@ Doc 05 owns AR, poise, mass and noise (doc 05 §11.1), shield stability (§12.1)
 | `arch.offhand.shield_heater` | 52 | 1000 | SH | `arch.ward.kinetic` (24 HP) | 80 | 800 | WG |
 | `arch.offhand.shield_tower` | 70 | 600 | SH | `arch.ward.reflector` (16 HP) | 80 | 600 | WG |
 | `arch.offhand.focus` | 44 | 800 | CA | `arch.ward.bulwark` (36 HP) | 100 | 600 | WG |
-| `arch.offhand.tome` (06) | 48 | 600 | CA | mount token `arch.mount.runner` | 120 | 1000 | RH (vehicle skins) |
-| `arch.offhand.lantern` | 28 | 600 | CA | mount token `arch.mount.hover` / `.glider` | 160 / 140 | 600 / 600 | RH (vehicle skins) |
+| `arch.offhand.tome` (06) | 48 | 600 | CA | | | | |
+| `arch.offhand.lantern` | 28 | 600 | CA | | | | |
 
-Ward capacity follows doc 05 §15.4: `cap_base_mhp → × T(ilvl) → × rarity power → × quality → × (10000 + 600 × eff_enh) → × potency`. Skin dependencies (§4.3) give each generator, focus and tome its dependency; armor, shields and lanterns have dependency none in every genre (Canon §5.3 mundane armor base).
+Ward capacity follows Canon §13.2 and doc 05 §15.4: `cap_base_mhp → × T(ilvl) → × rarity power → × quality → × (10000 + 600 × eff_enh) → × Contradiction potency`, one `mul_bp` per arrow, with no material term. Skin dependencies (§4.3) give each generator, focus and tome its dependency; armor, shields and lanterns have dependency none in every genre (Canon §5.3 mundane armor base).
 
 ### 3.4 Accessories
 
@@ -458,13 +463,13 @@ All accessories have `rarity_eligible = true`, roll affixes per Canon §13.3, ha
 | `item.face.mask` | `slot.face` | 30 | 200 | disguise item (doc 09) |
 | `item.face.goggles` | `slot.face` | 40 | 300 | +4 SGT |
 
-**Respirators** are doc 08's `apparatus.respirator.cloth`, `apparatus.respirator.mask` and `apparatus.respirator.rebreather` (doc 08 §4.3 owns filter, mass, hearing penalty and dependency; the rebreather depends on techne). This chapter stores their loot records as face accessories: `slot.face`, not type-hidden, rarity-eligible, no manufacturer, pool `base`, values 15, 40 and 90, template weights 40, 40 and 20. The three weights sum to the 100 of the single respirator they replace (§3.10), so the accessory card's other shares are unchanged.
+**Respirators** are doc 08's `apparatus.respirator.cloth`, `apparatus.respirator.mask` and `apparatus.respirator.rebreather` (doc 08 §4.3 owns filter, mass, hearing penalty and dependency; the rebreather depends on techne). This chapter stores their loot records as face accessories: `slot.face`, not type-hidden, rarity-eligible, no manufacturer, pool `base`, values 15, 40 and 90, template weights 40, 40 and 20. These are the chapter's only respirator records (triage C-26); the three weights sum to 100, the weight of one ordinary accessory template.
 
 **Implants** (`cat.implant`): every implant-form `aug.*` of doc 04 §9.4 is a template with `base_value = 40 + 40 × region points`, weight 100, mass 300 g, dependency from its implant skin (techne, Canon §5.3). Where the local TECHNE is below 5, the implant card is merged into the accessory card (§9.2).
 
 ### 3.5 Consumables, ammunition, tools, keys, bags and currency
 
-Consumables are never rarity-eligible. `value` is per unit and scales with `P(ilvl)` like every value (§13.1). Doc 10 §8 requires harmful types to hold exactly 3000 Bp of each consumable class's generation weight; the weights below meet it.
+Consumables are never rarity-eligible. `value` is per unit and scales with `P(ilvl)` like every value (§13.1). Doc 10 §8 requires harmful types to hold exactly 3000 Bp of potion generation weight and 1000 Bp of text generation weight; the weights below meet it.
 
 **Potions** (`alch.potion.*`, doc 08 §12.1 effects and values; type-hidden; stack 10; a found potion is a filled `apparatus.vessel.flask` whose mass follows doc 08 §6.1, 400 g for a water base). Found-potion weights, Σ 10000:
 
@@ -481,26 +486,26 @@ Consumables are never rarity-eligible. `value` is per unit and scales with `P(il
 
 **Reliquary-only potions** (doc 08 §12.2), drawn only by Reliquary consumable bundles (§10): `alch.potion.{shielding, adrenaline, shadowmeld, cleansing, panacea, honeyed_healing, dragons_blood, aquatic_rejuvenation, arcane_armor}` weight 700 each and the harmful `alch.potion.{dragonfire, snap_freeze, corrosive_gas}` weight 900 each, Σ 9000 (harmful 2700 = 3000 Bp of the total). Values follow doc 08's `Σ value(e)` rule. `alch.potion.draught` is brewing-only and never loot.
 
-**Texts** (`item.text.*`, `cat.text`; type-hidden; stack 10; 50 g). Weights Σ 10000, harmful 3000:
+**Texts** (`item.text.*`, `cat.text`; type-hidden; stack 10; 50 g). Weights Σ 10000, harmful 1000 (doc 10 §8):
 
 | ID | Value | Weight | Effect owner |
 |---|---|---|---|
-| `item.text.appraisal` | 22 | 500 | doc 10 `appr.eff.identify` |
-| `item.text.sanctify` | 30 | 500 | doc 10 `appr.eff.unbind` |
-| `item.text.survey` | 20 | 500 | doc 10 `appr.eff.survey` |
-| `item.text.omen` | 18 | 500 | doc 10 `appr.eff.omen` |
-| `item.text.consecrate` | 30 | 500 | doc 10 `appr.eff.consecrate` |
-| `item.text.intuit` | 24 | 500 | doc 10 `appr.eff.intuit` |
-| `item.text.amnesia` (harmful) | 12 | 3000 | doc 10 `appr.eff.amnesia` |
-| `item.text.mending` | 20 | 500 | doc 06 authored spell text |
-| `item.text.blink` | 26 | 500 | doc 06 |
-| `item.text.mapping` | 20 | 500 | doc 06 |
-| `item.text.demolition` | 24 | 500 | doc 06; breaks only `destructible` blocks (Canon §4.3) |
-| `item.text.recharge` | 26 | 500 | doc 06 (wands only) |
-| `item.text.warding` | 26 | 500 | doc 06 |
-| `item.text.silence` | 24 | 500 | doc 06 |
-| `item.text.summoning` | 30 | 500 | doc 06 |
-| `item.text.inscribed` | 20 | 0 | created only by inscription (doc 06 §8.3) from `item.tool.blank_text`; enters the party's known types at creation |
+| `item.text.appraisal` | 22 | 1000 | doc 10 `appr.eff.identify` |
+| `item.text.sanctify` | 30 | 600 | doc 10 `appr.eff.unbind` |
+| `item.text.survey` | 20 | 600 | doc 10 `appr.eff.survey` |
+| `item.text.omen` | 18 | 600 | doc 10 `appr.eff.omen` |
+| `item.text.consecrate` | 30 | 600 | doc 10 `appr.eff.consecrate` |
+| `item.text.intuit` | 24 | 600 | doc 10 `appr.eff.intuit` |
+| `item.text.amnesia` (harmful) | 12 | 1000 | doc 10 `appr.eff.amnesia` |
+| `item.text.mending` | 20 | 800 | doc 06 authored spell text |
+| `item.text.blink` | 26 | 600 | doc 06 |
+| `item.text.mapping` | 20 | 600 | doc 06 |
+| `item.text.demolition` | 24 | 600 | doc 06; breaks only blocks tagged `block.tag.destructible` (Canon §4.3) |
+| `item.text.recharge` | 26 | 600 | doc 06 (wands only) |
+| `item.text.warding` | 26 | 600 | doc 06 |
+| `item.text.silence` | 24 | 600 | doc 06 |
+| `item.text.summoning` | 30 | 600 | doc 06 |
+| `item.text.inscribed` | 20 | 0 | created only by inscription (doc 06 §8.3) from `item.tool.blank_text` or a scraped identified `cat.text`; enters the party's known types at creation |
 
 **Throwables** (`cat.throwable`, mundane; stack 10). Weights Σ 10000; the five counter grenades hold 4000:
 
@@ -557,7 +562,7 @@ Raw meat comes from butchering (doc 04) and `loot.trophy`.
 | `item.tool.torch` | 2 | 400 | 10 | held light source, `light_block` 12, burns 3600 ticks (doc 03) |
 | `item.tool.pick` | 12 | 2500 | 1 | harvests resource nodes (Canon §4.3, doc 07) |
 | `item.tool.lockpicks` | 40 | 100 | 10 | locks (doc 09) |
-| `item.tool.toolkit` | 24 | 1500 | 1 | repair and gadgets (doc 07) |
+| `item.tool.toolkit` | 24 | 1500 | 1 | crafting tool tier and gadgets (doc 07); tagged `repair_kit` for the construct kin's body `self_repair` (doc 04), never consumed |
 | `item.tool.hacking_deck` | 60 | 600 | 1 | hacking (doc 09); dependency techne |
 | `item.tool.rope` | 6 | 1000 | 5 | climbing (doc 07) |
 | `item.tool.crutch` | 10 | 2000 | 1 | held in `slot.offhand`: a severed or tier-4 leg moves at × 7000 (Canon §9.1, doc 04 §8.5) |
@@ -666,11 +671,10 @@ Canon §13.2 owns what each slot accepts; this table restates it with the templa
 | `slot.implant_legs` | implants | implant-form `aug.*` of the legs region | other |
 | `slot.ward` | one ward generator | `cat.ward_gen` templates | other |
 | `slot.face` | masks, goggles, respirators | `item.face.*`; doc 08 `apparatus.respirator.*` (§3.4) | other |
-| `slot.mount` | one mount token | `cat.mount` tokens | other |
-| `slot.hand_extra_1` | granted by `bp.arm_extra_1`: one one-handed weapon or off-hand item | one-handed `cat.weapon_melee` and `cat.weapon_ranged` templates, `cat.offhand` templates | weapon (Canon gaps 19) |
+| `slot.hand_extra_1` | granted by `bp.arm_extra_1`: one one-handed weapon or off-hand item | one-handed `cat.weapon_melee` and `cat.weapon_ranged` templates, `cat.offhand` templates | weapon |
 | `slot.hand_extra_2` | granted by `bp.arm_extra_2`, as `slot.hand_extra_1` | as `slot.hand_extra_1` | weapon |
 
-Doc 04 defines two extra-arm parts, `bp.arm_extra_1` and `bp.arm_extra_2` (from `aug.extra_arm`, `body.serpentine` and the mutant `extra_arm`), so `slot.hand_extra_N` exists for N = 1 and 2 (Canon gaps 19).
+Canon §13.2 grants `slot.hand_extra_1` and `slot.hand_extra_2` through doc 04's two extra-arm parts, `bp.arm_extra_1` and `bp.arm_extra_2` (from `aug.extra_arm`, `body.serpentine` and the mutant `extra_arm`), and Canon §13.3 counts both in the weapon Exotic group.
 
 ### 3.10 Retired IDs
 
@@ -678,9 +682,9 @@ A retired ID is never generated, exported or loaded as a record. The loader reso
 
 | ID | Retired | Replacement | Reason |
 |---|---|---|---|
-| `cat.block` | canon-1.4 | `cat.placeable` | limited building: Errata place only `cat.placeable` items (Canon §4.3) |
 | `item.relic.lattice_lens` | before first ship | `item.trinket.lattice_lens` | every trinket uses the `item.trinket.` prefix (§3.4) |
-| `item.face.respirator` | before first ship | `apparatus.respirator.mask` | doc 08 owns respirator mechanics (doc 08 §4.3 and its Canon gaps 8); §3.4 keeps loot records for its three respirators |
+
+Mounts are cut (DECISIONS 55, Canon §17.7), so this chapter defines no mount category, slot, token, affix, shop or loot line, and keeps no alias for them.
 
 ---
 
@@ -709,7 +713,7 @@ A retired ID is never generated, exported or loaded as a record. The loader reso
 | weird_west | Bowie Knife | Arkansas Toothpick | Hexed Saber [M] | Sodbuster Scythe-Blade | Tomahawk | Felling Axe | Silver-Capped Cudgel [M] |
 | hardboiled_noir | Switchblade | Machete | Sword Cane | Antique Claymore | Hatchet | Fireman's Axe | Blackjack |
 | wuxia | Bishou | Dao | Jian | Zhanmadao | Fu Axe | Moon Axe | Bian Rod |
-| steampunk | Clockwork Stiletto [T] | Naval Cutlass | Cavalry Sabre | Steam Claymore [T] | Boiler Axe [T] | Steam Axe [T] | Piston Mace [T] |
+| steampunk | Clockwork Stiletto [T] | Naval Cutlass | Officer's Sabre | Steam Claymore [T] | Boiler Axe [T] | Steam Axe [T] | Piston Mace [T] |
 | fairy_tale | Silver Bodkin | Huntsman's Knife | Knight's Sword | Giant-Slayer Blade [A] | Woodcutter's Axe | Ogre's Axe | Troll Club |
 | mythic_antiquity | Parazonium | Xiphos | Kopis | Rhomphaia | Labrys [M] | Double Labrys [M] | Olive-Wood Club |
 | oneiric | Thought-Splinter [A] | Recurring Blade [A] | Sleepwalker's Sword | Nightmare Edge [M] | Clock-Hand Axe | Guillotine Axe [M] | Bell of Waking [A] |
@@ -743,7 +747,7 @@ A retired ID is never generated, exported or loaded as a record. The loader reso
 | Genre | pistol | pistol_heavy | smg | rifle_auto | rifle_marksman | shotgun | sniper |
 |---|---|---|---|---|---|---|---|
 | mythic_fantasy | Dwarven Handgonne [T] | Dwarven Hand Cannon [T] | Repeating Crossbow | Repeating Ballista | Dwarven Long-Gonne [T] | Blunderbuss [T] | Siege Arbalest |
-| gothic_horror | Flintlock Pistol [T] | Horse Pistol [T] | Pepperbox [T] | Volley Gun [T] | Hunting Musket [T] | Dragoon Blunderbuss [T] | Long Rifle [T] |
+| gothic_horror | Flintlock Pistol [T] | Holster Pistol [T] | Pepperbox [T] | Volley Gun [T] | Hunting Musket [T] | Dragoon Blunderbuss [T] | Long Rifle [T] |
 | cosmic_horror | Service Pistol [T] | Elephant Revolver [T] | Drum-Fed Submachine Gun [T] | Pan-Fed Machine Gun [T] | Bolt-Action Rifle [T] | Coach Gun [T] | Elephant Gun [T] |
 | space_opera | Blaster Pistol [T] | Heavy Blaster [T] | Pulse Repeater [T] | Rotary Blaster [T] | Blaster Rifle [T] | Scatter Blaster [T] | Long Blaster [T] |
 | cyberpunk | Smart Pistol [T] | Hand Cannon [T] | Machine Pistol [T] | Smart Rifle [T] | Tech Rifle [T] | Smart Shotgun [T] | Coil Sniper [T] |
@@ -779,30 +783,29 @@ A retired ID is never generated, exported or loaded as a record. The loader reso
 | redacted | Containment Launcher [T] | Incinerator [T] | Compliance Railgun [T] | Bolt Stapler [T] | Letter Openers | Clearance Rod [T] | Badge Reader [T] |
 | unwritten | Blank Launcher | Smudge Sprayer | Outline Longbow | Draft Crossbow | Draft Darts | — | — |
 | ur_text | Ur-Launcher | Ur-Sprayer | Ur-Longbow | Ur-Crossbow | Ur-Javelins | Ur-Rod [A] | Ur-Wand [A] |
-### 4.3 Ward generator, implement and mount skins
+
+### 4.3 Ward generator and implement skins
 
 A ward generator skin is one genre noun with its dependency; the archetype adds a fixed prefix: `arch.ward.aegis` none, `arch.ward.kinetic` "Bracing", `arch.ward.reflector` "Mirrored", `arch.ward.bulwark` "Heavy" (for example the Cyberpunk Kinetic Barrier, Bracing Kinetic Barrier, Mirrored Kinetic Barrier and Heavy Kinetic Barrier). Foci and tomes depend on the genre's aether axis exactly like staves (§4.2) and are `—` in `genre.unwritten`; their names are doc 18's.
 
-| Genre | Ward generator noun | runner | hover | glider |
-|---|---|---|---|---|
-| mythic_fantasy | Aegis Charm [A] | Warhorse | Flying Carpet [A] | Griffon |
-| gothic_horror | Reliquary Locket [M] | Black Stallion | Spectral Carriage [M] | Bat-Wing Cloak [M] |
-| cosmic_horror | Warding Star [M] | Motorcycle Combination [T] | Shoggoth Skiff [M] | Nightgaunt |
-| space_opera | Deflector Belt [T] | Sand-Strider | Speeder [T] | Jet-Wing [T] |
-| cyberpunk | Kinetic Barrier [T] | Superbike [T] | Hoverbike [T] | Wingsuit Drone [T] |
-| post_apocalypse | Scrap Bubble [T] | Dirt Bike [T] | Airboat [T] | Hang-Glider |
-| weird_west | Medicine Bag [M] | Mustang | Spirit Canoe [M] | Thunderbird [M] |
-| hardboiled_noir | Lucky Rabbit's Foot [V] | Roadster [T] | Getaway Car [T] | Wingsuit |
-| wuxia | Golden Bell Shield [V] | Celestial Horse | Cloud Chariot [V] | Qinggong Kite [V] |
-| steampunk | Faraday Harness [T] | Velocipede [T] | Steam Hovercraft [T] | Ornithopter [T] |
-| fairy_tale | Godmother's Ribbon [A] | White Stag | Pumpkin Coach [A] | Giant Swan |
-| mythic_antiquity | Gorgon Ward [M] | Thessalian Horse | Sun Chariot [M] | Pegasus |
-| oneiric | Pillow Fort [A] | Nightmare [A] | Paper Boat [A] | Umbrella [A] |
-| redacted | Clearance Badge [T] | Patrol Scooter [T] | Transport Drone [T] | Glide Pack [T] |
-| unwritten | Padded Margin | Sketch Horse | Outline Raft | Paper Plane |
-| ur_text | Ur-Ward | Ur-Steed | Ur-Chariot | Ur-Wing |
-
-Beast mounts are untagged (Canon §5.3). A mount token with a vehicle skin (any `[T]` runner, hover or glider cell, and the Wingsuit and Hang-Glider) carries a manufacturer of its genre that makes class `RH`; beast, `[A]`, `[M]` and `[V]` skins have none.
+| Genre | Ward generator noun |
+|---|---|
+| mythic_fantasy | Aegis Charm [A] |
+| gothic_horror | Reliquary Locket [M] |
+| cosmic_horror | Warding Star [M] |
+| space_opera | Deflector Belt [T] |
+| cyberpunk | Kinetic Barrier [T] |
+| post_apocalypse | Scrap Bubble [T] |
+| weird_west | Medicine Bag [M] |
+| hardboiled_noir | Lucky Rabbit's Foot [V] |
+| wuxia | Golden Bell Shield [V] |
+| steampunk | Faraday Harness [T] |
+| fairy_tale | Godmother's Ribbon [A] |
+| mythic_antiquity | Gorgon Ward [M] |
+| oneiric | Pillow Fort [A] |
+| redacted | Clearance Badge [T] |
+| unwritten | Padded Margin |
+| ur_text | Ur-Ward |
 
 ---
 
@@ -810,33 +813,33 @@ Beast mounts are untagged (Canon §5.3). A mount token with a vehicle skin (any 
 
 ### 5.1 Rules
 
-- A manufacturer stamps weapons, off-hands, armor, ward generators, vehicle mount tokens and loose parts. Accessories, implants and consumables have none.
-- **Tendencies** multiply doc 05 base stats once at generation: `stat = mul_bp(stat, 10000 + delta)`, with tick and count results rounded by `round_half_even` and kept at least 1. Legend: D damage `base_mhp`, S attack speed, P spread, M magazine, L reload ticks, R range, H handling (swap and ADS) ticks, T stamina cost, O poise damage (impact), U durability, W mass, A AR, X precision multiplier, C aether cost (`cost_bp`), V value. A tendency on a stat the item lacks is ignored. Mass changes then feed doc 05 §3.3 timing.
-- **Gimmick.** The signature gimmick is one component (Canon §5.3) of the item, with the dependency listed, the item's `origin_genre` and its own Contradiction potency. "+N Bp" gimmick numbers enter the additive bucket (Canon §10.5 step 1). A gimmick stated as "× N" multiplies the hit's `B` once after the Canon §10.4 chain and before step 1 (Canon gaps 3).
-- **Classes** (§3.2, §3.3): ML light melee (dagger, blade_short, fist, whip), MM medium melee (blade_long, axe, mace, spear, quarterstaff, chain), MH heavy melee (blade_great, axe_great, warhammer, halberd), RD draw, bolt and thrown (charge_rifle, crossbow, thrown), RG guns (pistol, pistol_heavy, smg, rifle_marksman, shotgun, sniper), RH heavy ranged and vehicle mount tokens (rifle_auto, launcher, beam), CA casting (staff, wand, focus, tome, lantern), AR armor, SH shields, WG ward generators.
+- A manufacturer stamps weapons, off-hands, armor, ward generators and loose parts. Accessories, implants and consumables have none.
+- **Tendencies** multiply doc 05 base stats once at generation: `stat = mul_bp(stat, 10000 + delta)`, with tick and count results rounded by `round_half_even` and kept at least 1. Legend: D damage `base_mhp`, S attack speed, P spread, M magazine, L reload ticks, R range, H handling (swap and ADS) ticks, T stamina cost, O poise damage (impact), W mass, A AR, X precision multiplier, C aether cost (`cost_bp`), V value. A tendency on a stat the item lacks is ignored. Mass changes then feed doc 05 §3.3 timing.
+- **Gimmick.** The signature gimmick is one component (Canon §5.3) of the item, with the dependency listed, the item's `origin_genre` and its own Contradiction potency. "+N Bp" gimmick numbers enter the additive bucket (Canon §10.5 step 1). A gimmick stated as "× N" multiplies the hit's `B` once after the Canon §10.4 chain and before step 1 (Canon §10.4).
+- **Classes** (§3.2, §3.3): ML light melee (dagger, blade_short, fist, whip), MM medium melee (blade_long, axe, mace, spear, quarterstaff, chain), MH heavy melee (blade_great, axe_great, warhammer, halberd), RD draw, bolt and thrown (charge_rifle, crossbow, thrown), RG guns (pistol, pistol_heavy, smg, rifle_marksman, shotgun, sniper), RH heavy ranged (rifle_auto, launcher, beam), CA casting (staff, wand, focus, tome, lantern), AR armor, SH shields, WG ward generators.
 - The first two rows of each core genre are the Canon §5.9 manufacturers with their canon traits; the third row and `mfr.errata.marginal_press` are added by this chapter. Display names avoid real-world brands and third-party titles (doc 18 runs the name review).
 
 ### 5.2 Manufacturer table
 
 | ID | Name | Makes | Tendencies | Parts (§5.4) | Signature gimmick | Dep |
 |---|---|---|---|---|---|---|
-| `mfr.mythic_fantasy.deepanvil` | Deepanvil Forge | MM MH RG RH AR SH | D+800 U+3000 W+1500 | eh hl gg bh pr | weapons: poise damage × 15000 and attack speed × 9000; armor and shields: +4 poise per piece | none |
+| `mfr.mythic_fantasy.deepanvil` | Deepanvil Forge | MM MH RG RH AR SH | D+800 W+1500 | eh hl gg bh pr | weapons: poise damage × 15000 and attack speed × 9000; armor and shields: +4 poise per piece | none |
 | `mfr.mythic_fantasy.silverbough` | Silverbough Fletchery | ML RD AR WG | S+500 W−2000 D−300 | ek hg bl os | attack noise −20 dB; armor: footstep noise −6 dB | none |
-| `mfr.mythic_fantasy.runecourt` | The Runecourt | CA WG ML MM | C−800 U−1000 | fc fn ek cc | Spellsink: every kill made with or cast through the item restores 3 aether; ward generators: ward break restores 10 aether | arcana |
-| `mfr.gothic_horror.vesper_sons` | Vesper & Sons | ML MM RD CA | D+300 U+1000 | ek es br fc | 2000 Bp of each hit moves from its largest physical share to `dmg.radiant` | mythos |
+| `mfr.mythic_fantasy.runecourt` | The Runecourt | CA WG ML MM | C−800 | fc fn ek cc | Spellsink: every kill made with or cast through the item restores 3 aether; ward generators: ward break restores 10 aether | arcana |
+| `mfr.gothic_horror.vesper_sons` | Vesper & Sons | ML MM RD CA | D+300 | ek es br fc | 2000 Bp of each hit moves from its largest physical share to `dmg.radiant` | mythos |
 | `mfr.gothic_horror.grimhallow` | Grimhallow Gunsmiths | RG RH ML | D+600 M−2000 | bs fq oi gw | a reload completes in 1 tick and removes `mul_bp(max_hp_mhp, 300)` mHP directly (not damage; refused if HP would fall below 1,000 mHP); melee: heavy attacks cost that HP instead of stamina | mythos |
 | `mfr.gothic_horror.ashgrave` | Ashgrave Ironworks | MH MM AR SH WG | A+1000 W+2000 S−300 | eh gg pr lp cc | Grave Iron: while HP ≤ 3000 Bp of Max HP, Ashgrave armor and shield AR × 13000 and Ashgrave weapons +2000 Bp | none |
 | `mfr.cosmic_horror.hollow_lantern` | Hollow Lantern Optics | RG RD CA ML | R+1500 D−300 | os br fc ek | hits apply `st.marked` directly for 240 ticks | mythos |
-| `mfr.cosmic_horror.outer_choir` | The Outer Choir | CA RH MM | D+500 U−2000 | fn bh eh fd | 2500 Bp of each hit moves from its largest share to `dmg.psychic`; +1500 Bp; each attack costs 1 composure, and at 0 composure the item cannot attack | mythos |
-| `mfr.cosmic_horror.dunwold` | Dunwold Expedition Supply | RG MM MH AR SH WG | U+5000 S−300 | br fe hl pr lp | Field-Tested: durability loss × 5000; weapons reload while sprinting; armor: +300 Bp resist acid and toxin | none |
+| `mfr.cosmic_horror.outer_choir` | The Outer Choir | CA RH MM | D+500 | fn bh eh fd | 2500 Bp of each hit moves from its largest share to `dmg.psychic`; +1500 Bp; each attack costs 1 composure, and at 0 composure the item cannot attack | mythos |
+| `mfr.cosmic_horror.dunwold` | Dunwold Expedition Supply | RG MM MH AR SH WG | T−1000 S−300 | br fe hl pr lp | Field-Tested: weapons reload while sprinting; armor: +300 Bp resist acid and toxin | none |
 | `mfr.space_opera.perihelion` | Perihelion Arms | RG RD RH | D+500 S−800 | bl os fe | holding fire 30 ticks charges the next shot: × 15000 | techne |
 | `mfr.space_opera.umbra` | Umbra Heavy Industries | RG RH WG | S+800 D−300 | bh or cc | no magazine and no ammo; each shot adds `floor_div(10000, base_magazine)` heat; heat decays 2500 per second from 30 ticks after the last shot; at 10000 the weapon locks for 90 ticks, then heat is 0; ward generators: capacity × 11000 | techne |
 | `mfr.space_opera.starwright` | Starwright Psionics | CA ML MM MH AR SH | D+200 W−1500 | fc ek hg pr | Kinetic Echo: every 5th hit repeats 20 ticks later as a `dmg.psychic` hit entering Canon §10.6 at step 3 with `D2` = 5000 Bp of the original `D2`; armor: every 5th melee hit taken pushes the attacker 1500 mm | arcana |
 | `mfr.cyberpunk.ghostline` | Ghostline Systems | RG RD ML | P−1500 D−500 | or br fq ek | projectiles home on `st.marked` targets at 16384 Bam/s, turned per tick through the Canon §2.3 accumulator (`k = 60`: 273 or 274 Bam per tick); melee: +1500 Bp vs `st.marked` | techne |
-| `mfr.cyberpunk.neon_saint` | Neon Saint Customs | RG RD RH WG | D+700 L+1500 | bl os fd cc | charged shots pierce 1000 mm of blocks; a shot is charged at full draw or charge (families D), else when it is the first shot after aiming 45 ticks | techne |
-| `mfr.cyberpunk.chromaw` | Chromaw Biotech | ML MM MH AR SH CA | S+600 U−2000 | es hg gw lp fn | Neurotoxin Coat: +40 `st.poisoned` power per hit; armor: +500 Bp resist toxin | techne |
-| `mfr.post_apocalypse.rustmaw` | Rustmaw Scrapworks | RG RH MH | P+1500 | fd bh eh | magazine × 20000, durability × 5000 | none |
-| `mfr.post_apocalypse.lastditch` | Lastditch Outfitters | RG RD ML MM | D−200 U+2000 | bs fq gw hl | 2000 Bp chance per shot to spend no ammo, or per swing to spend no stamina (keyed `rng.combat`, 1 `roll_bp` per shot or swing) | none |
+| `mfr.cyberpunk.neon_saint` | Neon Saint Customs | RG RD RH WG | D+700 L+1500 | bl os fd cc | charged shots pierce 1000 mm of destructible or non-opaque blocks (Canon §4.3); a shot is charged at full draw or charge (families D), else when it is the first shot after aiming 45 ticks | techne |
+| `mfr.cyberpunk.chromaw` | Chromaw Biotech | ML MM MH AR SH CA | S+600 | es hg gw lp fn | Neurotoxin Coat: +40 `st.poisoned` power per hit; armor: +500 Bp resist toxin | techne |
+| `mfr.post_apocalypse.rustmaw` | Rustmaw Scrapworks | RG RH MH | P+1500 | fd bh eh | magazine × 20000, reload time × 13000 | none |
+| `mfr.post_apocalypse.lastditch` | Lastditch Outfitters | RG RD ML MM | D−200 W−1000 | bs fq gw hl | 2000 Bp chance per shot to spend no ammo, or per swing to spend no stamina (keyed `rng.combat`, 1 `roll_bp` per shot or swing) | none |
 | `mfr.post_apocalypse.geigerhaus` | Geiger & Daughters | RH CA AR SH WG MM | D+400 W+1500 | bh fn pr cc | Hot Load: 1500 Bp of each hit moves to `dmg.radiation` and +25 `st.irradiated` power; armor: +600 Bp resist radiation | techne |
 | `mfr.weird_west.coffin_creek` | Coffin Creek Revolver Co. | RG RD | D+500 M−2000 L+1000 | br oi fq | crits ricochet 5000 Bp of their `D2` to the nearest other hostile within 8000 mm (Canon §10.6 step 3, no crit, no further ricochet) | verve |
 | `mfr.weird_west.seven_seals` | Seven Seals Armory | RG MM CA ML | D+300 P+500 | bs es fc gw | 2000 Bp of each hit moves from its largest share to `dmg.umbral` | mythos |
@@ -847,16 +850,16 @@ Beast mounts are untagged (Canon §5.3). A mount token with a vehicle skin (any 
 | `mfr.wuxia.jade_lotus` | Jade Lotus Pavilion | ML MM | S+800 D−400 W−2000 | ek hg gw | the weapon gains the doc 05 throw action (normal hit damage) and returns to the hand exactly 30 ticks after it leaves the hand, wherever it is | verve |
 | `mfr.wuxia.iron_crane` | Iron Crane School | MM MH SH AR | T−1500 D+200 | gg hl eh pr | a block started within 6 ticks before impact reflects 5000 Bp of the hit's `D2` (Canon §10.6 reflected) | verve |
 | `mfr.wuxia.cloudpiercer` | Cloudpiercer Hall | RD RG RH CA WG | X+1000 R+1500 D−300 | bl os fc cc | Acupoint: precision-part hits add 40 `st.stunned` power | none |
-| `mfr.steampunk.brassworth` | Brassworth & Cog | RG MM ML | S+300 U+1500 | br fq ek gw | +200 Bp per consecutive hit, max +3000; a hit is consecutive within 120 ticks of the previous hit; a miss or 120 ticks resets | techne |
+| `mfr.steampunk.brassworth` | Brassworth & Cog | RG MM ML | S+300 | br fq ek gw | +200 Bp per consecutive hit, max +3000; a hit is consecutive within 120 ticks of the previous hit; a miss or 120 ticks resets | techne |
 | `mfr.steampunk.aetherline` | Aetherline Galvanic | RG RH CA WG | D−300 M+2000 | bl fe fn cc | every 4th hit chains 3000 Bp of its `D2` as `dmg.shock` to the 2 nearest other hostiles within 5000 mm (Canon §10.6 step 3, `no_chain`); ward generators: ward break emits the chain from the bearer for 3000 Bp of capacity | techne |
 | `mfr.steampunk.boilerheart` | Boilerheart Works | MH RH AR SH RD | D+900 S−800 W+2500 | bh eh pr fd | Pressure Valve: 3 steam charges, +1 per 120 ticks; a heavy attack or alt-fire spends 1 for +5000 Bp and places one `gas.steam` cell at impact; armor: +2 poise | techne |
 | `mfr.fairy_tale.thimbleweald` | Thimbleweald Tailors | ML MM RD MH | W−2500 D−400 | ek hg bs | × 13000 against targets with a larger capsule radius than the wielder | none |
-| `mfr.fairy_tale.thornwood` | Thornwood Coven | MM RD CA WG | U+2000 S−200 | hl bl fc cc | 1000 Bp chance per hit to apply `st.rooted` (keyed `rng.status`); ward generators: ward break roots non-boss hostiles within 3000 mm | arcana |
-| `mfr.fairy_tale.glass_cobbler` | The Glass Cobbler | ML AR SH RG RH | V+2000 | ek es br pr | Glass Edge: +2500 Bp; max durability × 5000; at durability 0 the item shatters into a 2000 mm `dmg.slash` burst for 5000 Bp of the last hit's `D2` (Canon §10.6 environmental entry, no crit) and drops its §16.4 salvage; armor: AR × 12000 | arcana |
-| `mfr.mythic_antiquity.hephaesteum` | Hephaesteum | MH MM AR SH RH | D+300 W+1000 | eh hl pr bh | no durability loss; the bearer is immune to `st.disarmed` | mythos |
+| `mfr.fairy_tale.thornwood` | Thornwood Coven | MM RD CA WG | O+1000 S−200 | hl bl fc cc | 1000 Bp chance per hit to apply `st.rooted` (keyed `rng.status`); ward generators: ward break roots non-boss hostiles within 3000 mm | arcana |
+| `mfr.fairy_tale.glass_cobbler` | The Glass Cobbler | ML AR SH RG RH | V+2000 | ek es br pr | Glass Edge: +2500 Bp while the bearer's HP is at least 5000 Bp of Max HP, else nothing; armor: AR × 12000 under the same condition | arcana |
+| `mfr.mythic_antiquity.hephaesteum` | Hephaesteum | MH MM AR SH RH | D+300 W+1000 | eh hl pr bh | the bearer is immune to `st.disarmed` and `st.corroded` | mythos |
 | `mfr.mythic_antiquity.argive` | Argive Arms | MM SH RD AR ML | D+200 T−1000 | hl gg bl pr | +1500 Bp while another allied Erratum's origin is within 3000 mm; armor and shields: +1000 Bp resist slash, pierce and blunt under the same condition | none |
 | `mfr.mythic_antiquity.delphic` | Delphic Workshops | CA RD WG RG | X+1500 S−300 | fc os br cc | Foresight: the first hit on each target in a Folio uses crit chance 10000 (the crit draw is still made); ward generators: the first hit taken each Folio is fully absorbed | mythos |
-| `mfr.oneiric.somnambule` | Somnambule | RD RG RH CA AR SH WG | R+2000 D−300 | bl fc or | projectiles, spell projectiles included, pass through blocks after 10000 mm of flight | arcana |
+| `mfr.oneiric.somnambule` | Somnambule | RD RG RH CA AR SH WG | R+2000 D−300 | bl fc or | after 10000 mm of flight, projectiles (spell projectiles included) pass through destructible and non-opaque blocks without spending penetration; fixed terrain still stops them (Canon §4.3) | arcana |
 | `mfr.redacted.bureau` | The Bureau | all classes | P−1000 D−300 | br fe os ek gg | the base component never rolls Contradiction failure; potency loss still applies | techne |
 | `mfr.ur_text.first_press` | The First Press | Palimpsestic only | none | none | none beyond Canon §13.3 Palimpsestic rules | none |
 | `mfr.errata.marginal_press` | The Marginal Press | all classes | none | all | Stubborn Margin: while the base component has `C` in `1..=5`, +800 × `C` Bp; the gimmick has dependency none, so it never loses potency | none |
@@ -865,7 +868,7 @@ Beast mounts are untagged (Canon §5.3). A mount token with a vehicle skin (any 
 
 | ID | Identity |
 |---|---|
-| `mfr.mythic_fantasy.deepanvil` | under-mountain clan forge; heavy, slow, unbreakable steel |
+| `mfr.mythic_fantasy.deepanvil` | under-mountain clan forge; heavy, slow, hard-hitting steel |
 | `mfr.mythic_fantasy.silverbough` | elven fletchers and leatherworkers; light, silent, quick |
 | `mfr.mythic_fantasy.runecourt` | wizard guild that rune-etches blades and staves to drink aether back |
 | `mfr.gothic_horror.vesper_sons` | church armorers who silver every edge |
@@ -873,14 +876,14 @@ Beast mounts are untagged (Canon §5.3). A mount token with a vehicle skin (any 
 | `mfr.gothic_horror.ashgrave` | cemetery ironworks; plate that hardens as its wearer nears the grave |
 | `mfr.cosmic_horror.hollow_lantern` | lighthouse lens-grinders whose optics mark what they see |
 | `mfr.cosmic_horror.outer_choir` | cult workshop of instruments that sing in the mind |
-| `mfr.cosmic_horror.dunwold` | polar expedition outfitters; gear built to outlast its owners |
+| `mfr.cosmic_horror.dunwold` | polar expedition outfitters; gear built for long marches in bad weather |
 | `mfr.space_opera.perihelion` | fleet armory of charged-shot energy rifles |
 | `mfr.space_opera.umbra` | heavy-industry conglomerate of heat-cycled, magazine-free guns |
 | `mfr.space_opera.starwright` | psionic academy that forges thought-echoing blades |
 | `mfr.cyberpunk.ghostline` | security contractor of smart, homing ordnance |
-| `mfr.cyberpunk.neon_saint` | street customizers of overclocked, wall-piercing guns |
+| `mfr.cyberpunk.neon_saint` | street customizers of overclocked, cover-piercing guns |
 | `mfr.cyberpunk.chromaw` | biotech clinic that coats its edges in engineered venom |
-| `mfr.post_apocalypse.rustmaw` | scrap-yard gunsmiths: huge magazines, brittle builds |
+| `mfr.post_apocalypse.rustmaw` | scrap-yard gunsmiths: huge magazines, slow reloads |
 | `mfr.post_apocalypse.lastditch` | survivalist outfitters who waste nothing |
 | `mfr.post_apocalypse.geigerhaus` | reactor salvagers who load irradiated slugs |
 | `mfr.weird_west.coffin_creek` | frontier revolver works with trick-shot ricochets |
@@ -897,11 +900,11 @@ Beast mounts are untagged (Canon §5.3). A mount token with a vehicle skin (any 
 | `mfr.steampunk.boilerheart` | boiler-driven heavy plant with steam-charged strikes |
 | `mfr.fairy_tale.thimbleweald` | tiny tailors whose needles slay giants |
 | `mfr.fairy_tale.thornwood` | hedge-witch coven of rooting thorns |
-| `mfr.fairy_tale.glass_cobbler` | enchanted glasswork: sharp, beautiful, fragile |
-| `mfr.mythic_antiquity.hephaesteum` | the divine forge; nothing it makes ever wears |
+| `mfr.fairy_tale.glass_cobbler` | enchanted glasswork: sharp and beautiful while its bearer is whole |
+| `mfr.mythic_antiquity.hephaesteum` | the divine forge; its bearers are never disarmed or corroded |
 | `mfr.mythic_antiquity.argive` | phalanx armorers who fight shoulder to shoulder |
 | `mfr.mythic_antiquity.delphic` | oracle workshops whose weapons foresee the first blow |
-| `mfr.oneiric.somnambule` | dream-makers whose shots ignore the walls of sleep |
+| `mfr.oneiric.somnambule` | dream-makers whose long shots drift through doors, glass and flimsy cover |
 | `mfr.redacted.bureau` | the Editors' quartermasters; equipment that never misfires |
 | `mfr.ur_text.first_press` | the first printing; stamps only Palimpsestic items |
 | `mfr.errata.marginal_press` | Errata who print their own gear in the margins; it fights harder where it does not belong |
@@ -919,7 +922,6 @@ Candidates enter `weighted` in ascending content-ID order, so `mfr.errata.margin
 | `genre.unwritten` | none (no draw) |
 | Any Palimpsestic item | `mfr.ur_text.first_press` (no draw) |
 | Exotic | the Exotic template's fixed manufacturer (no draw), whatever the genre of the source |
-| Beast-skinned mount token | none (no draw) |
 
 Example: a Weird West SMG (class RG) has candidates Marginal Press 1000, Coffin Creek 3000, Seven Seals 3000, Sundown Rail 3000, total 10000 (§20).
 
@@ -950,8 +952,8 @@ A loose part instance has `category = cat.part`, a `manufacturer`, `rarity = rar
 ### 6.1 Eligibility, tiers and values
 
 - **Count** per rarity: Canon §13.3 (0, 1, 2, 3, 3, 2, 4). Exotic and Palimpsestic affixes roll like any other.
-- **Eligible** for an item when all hold: the item's category letter is in Cats (W melee, R ranged weapon including staff and thrown, N wand, A armor, O off-hand, C accessory and implant, G ward generator, M mount token); no affix of the same Group is already on the item; every Requires tag is on the item (§3.2 tags; `pool:<x>` = the run content set holds `loot.pool.<x>`; `min Tn` = ilvl ≥ the gate of tier n); and the dependency class is legal in `origin_genre`.
-- **Dependency class** → component dependency (Canon §5.3): mundane → none; infused → `{origin.aether_axiom}`, or arcana when none; tech → techne; sacred → mythos; cine → verve; base → the item's base-function dependency; gloss → the gimmick's own dependency, with requirement computed from the gloss manufacturer's genre. A class whose axis has axiom 0 in `origin_genre` is illegal there (Canon §5.3).
+- **Eligible** for an item when all hold: the item's category letter is in Cats (W melee, R ranged weapon including staff and thrown, N wand, A armor, O off-hand, C accessory and implant, G ward generator); no affix of the same Group is already on the item; every Requires tag is on the item (§3.2 tags; `pool:<x>` = the run content set holds `loot.pool.<x>`; `min Tn` = ilvl ≥ the gate of tier n); and the dependency class is legal in `origin_genre`.
+- **Dependency class** → component dependency (Canon §5.3): mundane → none; infused → `{origin_genre.aether_axiom}`, or arcana when none; tech → techne; sacred → mythos; cine → verve; base → the item's base-function dependency; gloss → the gimmick's own dependency, with requirement computed from the gloss manufacturer's genre. A class whose axis has axiom 0 in `origin_genre` is illegal there (Canon §5.3).
 - **Tier gates** by `ilvl`: T1 1, T2 4, T3 9, T4 15, T5 21. Marginalia items reach T5 like ilvl-21 items. **Tier weights** over unlocked tiers: `[10000, 6000, 3500, 1800, 800]`; for Epic or better, the T1 weight is `mul_bp(10000, 5000)`.
 - **Draw order** inside `loot.affix`, per affix: `weighted` over eligible affixes sorted by ID (weights = Wt), `weighted` over tiers, `range(10001)` for `roll_bp`.
 - **Value**: `X = lo + floor_div((hi - lo) × roll_bp, 10000)`. Each affix contributes `mul_bp(X, its potency)` where a Bp contribution is scaled (Canon §5.5); flat counts (sub-attributes, dB, mm, ticks, charges, tolerance) are 0 when the affix is Disconnected and unscaled otherwise.
@@ -959,9 +961,9 @@ A loose part instance has `category = cat.part`, a `manufacturer`, `rarity = rar
 - **Curse affixes** (`curse.*`) belong to doc 10 and are outside the count.
 - **Chance affixes** (`affix.arc_proc`, `affix.frugal`) roll keyed `rng.combat` once per hit or shot, always (Canon §3.4), in the doc 05 §1.4 proc slot (ascending affix and perk ID order after the crit roll).
 
-Worked examples: `affix.dmg_vs_beast` tier 2, `roll_bp = 1146`: `X = 1800 + floor_div(700 × 1146, 10000) = 1880` Bp. The descending `affix.self_repair` tier 2, `roll_bp = 4095`: `X = 900 + floor_div(-200 × 4095, 10000) = 900 - 82 = 818` ticks.
+Worked examples: `affix.dmg_vs_beast` tier 2, `roll_bp = 1146`: `X = 1800 + floor_div(700 × 1146, 10000) = 1880` Bp. The descending `affix.self_injector` tier 2, `roll_bp = 4095`: `X = 900 + floor_div(-200 × 4095, 10000) = 900 - 82 = 818` ticks.
 
-### 6.2 Affix table (116 affixes)
+### 6.2 Affix table (113 affixes)
 
 | ID | Group | Cats | Class | Effect (X = rolled value) | T1 | T2 | T3 | T4 | T5 | Wt | Requires |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -1016,9 +1018,9 @@ Worked examples: `affix.dmg_vs_beast` tier 2, `roll_bp = 1146`: `X = 1800 + floo
 | `affix.resist_elements` | resist_elements | AOC | mundane | +X Bp resist fire, frost and shock each | 150–250 | 250–400 | 400–550 | 550–700 | 700–900 | 30 | — |
 | `affix.resist_all` | resist_all | AC | mundane | +X Bp resist every type except true | 100–150 | 150–220 | 220–300 | 300–380 | 380–450 | 15 | min T2 |
 | `affix.thorns` | thorns | AO | mundane | reflect X Bp of melee D2 taken (Canon §10.6) | 500–800 | 800–1200 | 1200–1700 | 1700–2400 | 2400–3200 | 40 | — |
-| `affix.durability` | durability | WRAOG | mundane | max durability ×(10000 + X) | 2000–3000 | 3000–4500 | 4500–6000 | 6000–8000 | 8000–10000 | 60 | — |
+| `affix.engineered` | engineered | WRAOG | mundane | salvaging this item (§16.4) yields each component material ×(10000 + X) | 2000–3000 | 3000–4500 | 4500–6000 | 6000–8000 | 8000–10000 | 60 | — |
 | `affix.featherweight` | mass | WRAOCG | mundane | item mass ×(10000 − X) | 1000–1500 | 1500–2200 | 2200–2800 | 2800–3500 | 3500–4500 | 50 | — |
-| `affix.self_repair` | repair | WRAOG | tech | restore 1 durability every X ticks | 1200–900 | 900–700 | 700–500 | 500–380 | 380–300 | 20 | — |
+| `affix.self_injector` | injector | WRAOG | tech | every X ticks the bearer heals `mul_bp(max_hp_mhp, mul_bp(100, pot))` mHP (Canon §10.9; `pot` = this affix's potency, nothing while Disconnected); injectors do not add: only the smallest X among the bearer's equipped items applies, counted from the last injector heal | 1200–900 | 900–700 | 700–500 | 500–380 | 380–300 | 20 | — |
 | `affix.ward_capacity` | ward_capacity | G | base | ward capacity ×(10000 + X) | 1000–1500 | 1500–2200 | 2200–3000 | 3000–4000 | 4000–5500 | 120 | — |
 | `affix.ward_siphon` | ward_siphon | G | base | on kill restore X Bp of ward capacity | 500–800 | 800–1200 | 1200–1700 | 1700–2400 | 2400–3200 | 60 | — |
 | `affix.ward_nova` | ward_nova | G | base | on ward break stagger non-boss hostiles within X mm | 2000–2200 | 2200–2500 | 2500–2900 | 2900–3400 | 3400–4000 | 40 | — |
@@ -1028,9 +1030,6 @@ Worked examples: `affix.dmg_vs_beast` tier 2, `roll_bp = 1146`: `X = 1800 + floo
 | `affix.lucre_find` | lucre | AC | mundane | +X Bp in the bearer's Lucre-find sum (§9.1, capped) | 300–500 | 500–800 | 800–1100 | 1100–1500 | 1500–2000 | 30 | — |
 | `affix.soft_step` | soft_step | A | mundane | footstep noise −X dB | 3–4 | 4–6 | 6–8 | 8–10 | 10–12 | 40 | legs_feet |
 | `affix.radiance` | radiance | OC | mundane | emits light_block X | 4 | 5 | 6 | 7 | 8 | 20 | — |
-| `affix.mount_vitality` | mount_vitality | M | mundane | mount Max HP ×(10000 + X) | 1000–1500 | 1500–2200 | 2200–3000 | 3000–4000 | 4000–5000 | 100 | — |
-| `affix.mount_endurance` | mount_endurance | M | mundane | mount stamina ×(10000 + X) | 1000–1500 | 1500–2200 | 2200–3000 | 3000–4000 | 4000–5000 | 80 | — |
-| `affix.mount_barding` | mount_barding | M | mundane | +X AR per mount part, × T(ilvl) | 5–8 | 8–12 | 12–17 | 17–24 | 24–32 | 60 | — |
 | `affix.gloss` | gloss | WR | gloss | another core genre manufacturer gimmick as a component | 1 | 1 | 1 | 1 | 1 | 20 | pool:cross_glosses min T3 |
 
 ### 6.3 Glosses
@@ -1043,7 +1042,7 @@ Worked examples: `affix.dmg_vs_beast` tier 2, `roll_bp = 1146`: `X = 1800 + floo
 
 ### 7.1 Columns
 
-Every weapon and wand (families of §3.2) has up to five columns: 1 Frame (barrel, edge or conduit), 2 Feed (magazine, balance or reservoir), 3 Trait I, 4 Trait II, 5 Genre trait.
+Perk columns are Destiny-style and switchable, with options set by gear tier (DECISIONS 68). Every weapon and wand (families of §3.2) has up to five columns: 1 Frame (barrel, edge or conduit), 2 Feed (magazine, balance or reservoir), 3 Trait I, 4 Trait II, 5 Genre trait.
 
 | Rarity | Columns rolled | Notes |
 |---|---|---|
@@ -1080,11 +1079,11 @@ Every weapon and wand (families of §3.2) has up to five columns: 1 Frame (barre
 | `perk.guarded_hilt` | 2 | EB | — | none | 100 | +[1000] Bp shield stability while blocking with this weapon |
 | `perk.quick_draw` | 2 | EBDGH | — | none | 100 | swap and draw ticks ×(10000 − [3500]) |
 | `perk.counterweight` | 2 | EB | — | none | 100 | heavy-attack stamina cost ×(10000 − [2000]) |
-| `perk.tempered` | 2 | EBDGH | — | none | 80 | max durability ×(10000 + [5000]) |
+| `perk.tempered` | 2 | EBDGH | — | none | 80 | +[4] armor poise while this is the active weapon |
 | `perk.extended_mag` | 2 | DGH | magazine | none | 100 | magazine ×(10000 + [3000]), at least +1 |
 | `perk.quick_feed` | 2 | DGH | magazine | none | 100 | reload ticks ×(10000 − [1500]) |
 | `perk.drum_feed` | 2 | GH | magazine | none | 80 | magazine ×(10000 + [5000]); handling ticks ×12000 |
-| `perk.hot_loads` | 2 | DGH | — | none | 80 | +[500] Bp damage; durability loss ×15000 |
+| `perk.hot_loads` | 2 | DGH | — | none | 80 | +[500] Bp damage; attack noise +6 dB |
 | `perk.steady_feed` | 2 | DGH | magazine | none | 80 | reloading does not slow movement; reload ticks ×(10000 − [500]) |
 | `perk.deep_reservoir` | 2 | C | — | aether | 100 | wand: +[1] max charge; staff: aether cost ×9000 |
 | `perk.quick_siphon` | 2 | C | — | aether | 100 | wand: recharge ticks ×(10000 − [1500]); staff: spell kills restore 2 aether |
@@ -1160,13 +1159,13 @@ The pools below (IDs without the `perk.` prefix) follow from §7.2 before the de
 
 ### 8.1 Legendary perks (26)
 
-A Legendary item draws one perk (`loot.legendary`, 1 `weighted`, equal weights 100, ascending ID) from the pool of its category group whose pool tag is owned and whose dependency is legal in `origin_genre`. Group W covers both weapon categories and wands; A armor; X accessories, implants, off-hands, mount tokens and ward generators (ward-only perks marked). Pool sizes match doc 14 §5.3: 6 base, 10 in `legendary_perks_1`, 10 in `legendary_perks_2`.
+A Legendary item draws one perk (`loot.legendary`, 1 `weighted`, equal weights 100, ascending ID) from the pool of its category group whose pool tag is owned and whose dependency is legal in `origin_genre`. Group W covers both weapon categories and wands; A armor; X accessories, implants, off-hands and ward generators (ward-only perks marked). Pool sizes match doc 14 §5.3: 6 base, 10 in `legendary_perks_1`, 10 in `legendary_perks_2`.
 
 | ID | Group | Pool | Dep | Effect |
 |---|---|---|---|---|
 | `perk.leg.echoing_strike` | W | base | none | every 4th hit repeats 20 ticks later as a Canon §10.6 step-3 hit with `D2` = 5000 Bp of the original, no crit |
 | `perk.leg.bloodsong` | W | base | mythos | each kill applies `st.empowered` directly |
-| `perk.leg.worldbreaker` | W | legendary_perks_1 | none | block damage × 30000 (doc 03) against blocks tagged destructible; such blocks of hardness ≤ 3 break on hit |
+| `perk.leg.worldbreaker` | W | legendary_perks_1 | none | block damage × 30000 (doc 03) against blocks tagged `block.tag.destructible`; such blocks of hardness ≤ 3 break on hit |
 | `perk.leg.inkdrinker` | W | legendary_perks_1 | mythos | hits on `fac.editors` heal 500 Bp of damage dealt; each such kill removes 1 `st.erasure` stack from the wielder |
 | `perk.leg.overture` | W | legendary_perks_1 | verve | the first hit after `in_combat` turns true +10000 Bp |
 | `perk.leg.recursion` | W | legendary_perks_1 | none | kills reset the attack interval and restore 5000 Bp of the magazine |
@@ -1254,11 +1253,11 @@ line_chance = base_bp
             → min(10000, ·)
 ```
 
-Example: an elite's item line (3000) in a party of 2 is `mul_bp(3000, 8000) = 2400` Bp per player. The party meets 12500 Bp as many enemies, so each player's expected yield per Folio equals the solo yield (`12500 × 8000 = 10000 × 10000`). Novella, Daily and Endless use Standard depth and Standard quantities.
+Example: an elite's item line (3000) in a party of 2 is `mul_bp(3000, 8000) = 2400` Bp per player. The party meets 12500 Bp as many enemies, so each player's expected yield per Folio equals the solo yield (`12500 × 8000 = 10000 × 10000`). Novella, Daily and Endless use Standard depth and Standard quantities. Abridged scales these kill-drop lines as well as the worldgen chests and floor-loot spots that Canon §17.1 names (Canon gaps 1); Reliquaries, Fortune Engines and vendor stock stay unscaled.
 
 **Lucre lines** draw `amount = range_incl(mul_bp(4, P(d)), mul_bp(10, P(d)))` in `sub(seed, "loot.lucre")` (1 draw), then `→ × rank_mult_bp → × gp.lucre_bp → max(1, ·)`, each one `mul_bp`, creating one `item.lucre` pile with `fresh = true`. `genre.unwritten` has no Lucre lines (Canon §5.2). `d` is the Folio depth `d(f)` (doc 14 §3.1).
 
-**Lucre find.** The first pickup of a fresh pile multiplies its amount by `10000 + min(LUCRE_FIND_CAP, Σ find)` and then by 12500 if the picker holds `run.boon.deep_pockets` (doc 14 §3.9), each one `mul_bp`, and clears `fresh`. `Σ find` adds every equipped `affix.lucre_find`, `item.ring.wealth` (+1500, +150 per `eff_enh`) and `item.palimpsestic.colophon_mark` (+2500). `LUCRE_FIND_CAP = 5000`. Piles dropped from a purse (§17) are created with `fresh = false`. Sales never receive Lucre find or the boon, which keeps the buy floor above the sell cap (§12.2). Example: a 27-Lucre pile picked up with one tier-3 `affix.lucre_find` of 900 becomes `mul_bp(27, 10900) = 29`.
+**Lucre find.** The first pickup of a fresh pile multiplies its amount by `10000 + min(LUCRE_FIND_CAP, Σ find)`, then by 12500 if the picker holds `run.boon.deep_pockets` (doc 14 §3.9), then by `10000 + m` for each `curse.pact.miser` the picker has equipped (doc 10 §7.8; ascending item uid), each one `mul_bp`, and clears `fresh`. `Σ find` adds every equipped `affix.lucre_find`, `item.ring.wealth` (+1500, +150 per `eff_enh`) and `item.palimpsestic.colophon_mark` (+2500). `LUCRE_FIND_CAP = 5000`. Piles dropped from a purse (§17) are created with `fresh = false`. Sales never receive Lucre find, the boon or the pact, which keeps the buy floor above the sell cap (§12.2). Example: a 27-Lucre pile picked up with one tier-3 `affix.lucre_find` of 900 becomes `mul_bp(27, 10900) = 29`.
 
 ### 9.2 Category deck
 
@@ -1303,14 +1302,14 @@ The HUD ledger shows both counters and both guarantees. Example: `blp_rare = 10`
 
 ### 9.5 Rank tables
 
-"Scaled" lines follow §9.1. Shift and floor feed §2.3 step 3. Lines resolve in table order: Palimpsestic line (Editors only), Lucre, item lines, key lines, other lines, ammunition line. A line whose condition fails (Marginalia only, beast role only, Lucre in `genre.unwritten` or for a beast) stays in the table with chance 0, so a table's draw count never changes.
+"Scaled" lines follow §9.1. Shift and floor feed §2.3 step 3. Lines resolve in table order: Palimpsestic line (Editors only), Lucre, item lines, key lines, other lines, ammunition line. A line whose condition fails (Marginalia only, Lucre in `genre.unwritten` or for a beast) stays in the table with chance 0, so a table's draw count never changes.
 
 | Table (rank) | Item lines | Lucre line | Key lines | Other lines | Ammunition line |
 |---|---|---|---|---|---|
 | `loot.drop.minion` | 250 scaled | 3000 scaled, × 3000 | — | — | 750 scaled |
 | `loot.drop.standard` | 700 scaled | 5000 scaled, × 10000 | — | — | 2500 scaled |
 | `loot.drop.elite` | 3000 scaled, shift 2000 | 10000, × 30000 | `item.key.bound` 1500 scaled | `item.bag.lucky` 300, Marginalia only | 7500 scaled |
-| `loot.drop.champion` | 10000 and 5000 scaled, shift 4000, floor Uncommon | 10000, × 60000 | bound 4000, gilded 1000, both scaled | lucky bag 1000 (2500 in Marginalia); beast role: mount token 1500 | 10000 scaled |
+| `loot.drop.champion` | 10000 and 5000 scaled, shift 4000, floor Uncommon | 10000, × 60000 | bound 4000, gilded 1000, both scaled | lucky bag 1000 (2500 in Marginalia) | 10000 scaled |
 | `loot.boss.mini` (`rank.boss`) | 10000 and 10000, shift 6000, floor Rare | 10000, × 200000 | one line 10000: gilded 3000 / bound 7000 (`weighted` in `loot.key`) | `item.bag.boss` 10000 (two lines in Marginalia) | 10000 |
 | `loot.boss.editor` (`rank.editor`) | Palimpsestic line `palimpsestic_bp[v]` → `loot.boss.palimpsestic`; item 10000 shift 6000 floor Legendary; items 10000 and 10000 shift 6000 floor Rare | 10000, × 400000 | `item.key.illumined` 10000 | `item.bag.editor` 10000; Marginalia: `item.bag.elite` 10000 | 10000 |
 | `loot.drop.hunter` (`rank.hunter`) | 10000, shift 5000, floor Rare | 10000, × 50000 | — | — | 10000 |
@@ -1336,7 +1335,7 @@ Doc 12 places container spots. A chest is `loot.chest.locked` when doc 12 places
 
 | Table | Lines (in order) |
 |---|---|
-| `loot.chest.plain` | item 10000; item 3000; Lucre 7000 at `range_incl(mul_bp(15, P), mul_bp(23, P))`; consumable 5000 (`Fixed` potion, text, throwable); `item.food.ration` 3000; bound key 600; gilded key 100; mount token 150 |
+| `loot.chest.plain` | item 10000; item 3000; Lucre 7000 at `range_incl(mul_bp(15, P), mul_bp(23, P))`; consumable 5000 (`Fixed` potion, text, throwable); `item.food.ration` 3000; bound key 600; gilded key 100 |
 | `loot.chest.locked` (doc 09 lock) | item 10000 shift 2000 floor Uncommon; item 6000; Lucre 10000 at the plain range × 15000; bound key 1500 |
 | `loot.floor` | Placed: per slot 0 to 3 whatever the party size, `place_rng(f, "floor", slot)` draws 3 item seeds (`Fixed` all deck cards) then 6 Lucre amounts `range_incl(mul_bp(18, P), mul_bp(27, P))`, each × `gp.lucre_bp` into a fresh pile (9 draws); Abridged: 5 items and 10 piles (15 draws); none in `genre.unwritten` |
 | `loot.trophy` | beast-role item line: one item from the killed template's doc 13 `trophy` list (materials and ingredients), weights from that list; templates without a list use the local genre's doc 08 ingredient list |
@@ -1386,10 +1385,9 @@ Rewrite Quill at pos q + 1; bound key caches at pos b1 + 1 and b2 + 1 (only the 
 
 This places 3 Emendations among the 5 positions uniformly without replacement, so every position expects 0.6 and every Volume holds exactly 3 (Canon §13.7). Every Active Erratum gets an instanced copy at the same placement (a guarded spot, doc 12). **Abridged** (3 Folios per Volume, `f1 = (v - 1) × 3 + 1`): one Emendation at position 1, one at position 2 and one in the Editor bag, no `u` draws; `q`, `b1`, `b2`, `g` are `range(2)` (4 draws). **Marginalia** Volumes draw the same 8 values and ignore `u1..u4` (§16.2).
 
-### 9.10 Champion counters, mounts, ward generators and parts
+### 9.10 Champion counters, ward generators and parts
 
-- **Counters** (Canon §17.3a, doc 05 §15.3). Every Colophon shop and general store stocks every counter charge and counter grenade and `alch.bomb.salt` (§12.1) and restocks them (§12.3). The throwable card (4000 of its 10000 weight is counter grenades) and the ammo card (always a counter charge) put every counter in every genre's loot pool. When the exit preview shows a champion aspect, the next Folio places one cache per aspect near the Incipit holding 2 matching counter grenades and 2 matching counter charges per player (`place_rng(f, "cache", aspect_index)`, 16 item seeds). This holds in all 16 genres, including `genre.unwritten`, which has no shops (Canon gaps 7).
-- **Mount tokens**: champion beast role 1500, plain chests 150, Reliquary bundles 500, `shop.stablemaster` and `shop.wanderer`. Template weights runner 1000, hover 600, glider 600.
+- **Counters** (Canon §17.3a, doc 05 §15.3). Every shop stocks every counter charge and counter grenade, `alch.bomb.salt` and `alch.bomb.smoke` (the Colophon and general-store lines and the counter shelf of every other shop, §12.1) and restocks them (§12.3). The throwable card (4000 of its 10000 weight is counter grenades) and the ammo card (always a counter charge) put every counter in every genre's loot pool. When the exit preview shows a champion aspect, the next Folio places one cache per aspect near the Incipit holding 2 matching counter grenades and 2 matching counter charges per player (`place_rng(f, "cache", aspect_index)`, 16 item seeds). This holds in all 16 genres, including `genre.unwritten`, which has no shops (Canon §17.3a).
 - **Ward generators and parts** come from deck cards; constructs bias parts; salvage yields parts (§16.4).
 
 ### 9.11 Placement generators
@@ -1431,7 +1429,7 @@ Canon §17.9 (killing an invader) and doc 12 §6.3 (challenge success) grant "on
 | `reliq.illumined` | `item.key.illumined` | L1 to L3: equipment floor Rare; L4: equipment floor Legendary | 4000 | 0 | every boss Folio's Colophon, available from the Editor's death; `loot.secret.vault` |
 
 - **Equipment lines** use `Fixed` equipment cards (§3.1). Every Reliquary line is Keyed and generic, so it uses and updates the opener's bad-luck counters (§9.4). Contents call `roll_curse` with source factor 0 (doc 10 §7.1) and are sealed (§2.4).
-- **Consumable bundle.** In `sub(seed, "loot.bundle")`: `roll_bp(500)` gives one mount token; otherwise three `next_u64` seeds give 3 consumables with `Fixed` potion, text and throwable cards. A bundle potion draws `roll_bp(2500)` in `loot.arch` and then one `weighted` over the Reliquary-only list on success or the found list on failure (§3.5). The bundle always draws 4 values.
+- **Consumable bundle.** In `sub(seed, "loot.bundle")`: `roll_bp(500)` adds one `item.tool.rewrite_quill`; then three `next_u64` seeds give 3 consumables with `Fixed` potion, text and throwable cards. A bundle potion draws `roll_bp(2500)` in `loot.arch` and then one `weighted` over the Reliquary-only list on success or the found list on failure (§3.5). The bundle always draws 4 values.
 - **Placement** (`place_rng(f, "reliq", 0)`, always 9 draws): `n_plain = 1 + range(2)`; then for each candidate in the order plain 0, plain 1, bound, gilded, one existence `roll_bp(chance)` and one `roll_bp(mimic)`, made even when the chance is 0. Chances: plain 0 10000; plain 1 10000 when `n_plain = 2`, else 0; bound 6000 from Folio 2; gilded 2500 from Folio 6. Rest Folios set plain 1, bound and gilded to 0. Boss Folios skip the generator; their illumined Reliquary is fixed and never a mimic. A higher key opens a lower tier. Keys sit on the keyring (§14.1).
 - **Instancing.** Each Active Erratum has its own instance and its own contents, rolled on opening with `drop_rng(folio, reliquary uid, tick, slot)`. The mimic flag is shared.
 - **Bad-luck protection** per player and run: `rq5` = Reliquaries opened since one held Epic or better, `rq20` = since Legendary or better. When `rq5 = 4`, the equipment line with the highest floor uses floor Epic; when `rq20 = 19`, it uses floor Legendary (both may apply; Legendary wins). The tooltip shows "Epic or better within `5 - rq5`" and "Legendary or better within `20 - rq20`".
@@ -1471,6 +1469,7 @@ Placement draws `place_rng(f, "engine", 0)`, always 4: `roll_bp(brass chance)`, 
 ```rust
 const ENGINE_PITY_NEED: u32 = 9;          // non-top capsules before the top face is guaranteed
 const ENGINE_PITY_NEED_WISHBONE: u32 = 7;
+const CURSED_FACE: usize = 4;             // the cursed capsule (Canon §13.6, DECISIONS 60)
 fn offer_rng(slot: u8, context_uid: u64, purpose: &str) -> Rng {
     // peek_u64 returns the next output of rng.offer.p<slot> without advancing it (Canon §3.5)
     Rng::from_seed64(mix64(peek_u64(OFFER[slot]) ^ mix64(context_uid ^ fnv1a64(purpose))))
@@ -1479,7 +1478,7 @@ fn engine_interact(p: &mut Player, e: &mut Engine) {
     if e.faces[p.slot].is_none() {                        // generated once, stored, re-shown on reopen
         let mut o = offer_rng(p.slot, e.uid, "engine_faces");
         e.faces[p.slot] = Some((0..6).map(|i| generate_item(o.next_u64(),
-            &GenRequest::engine_face(e.tier.face_rarity[i], e.category_rule, d_current))).collect());
+            &GenRequest::engine_face(e.tier.face_rarity[i], e.category_rule, d_current, i == CURSED_FACE))).collect());
     }
 }
 fn engine_buy(p: &mut Player, e: &mut Engine, tick: u64) -> Result<ItemInstance, Refusal> {
@@ -1492,7 +1491,7 @@ fn engine_buy(p: &mut Player, e: &mut Engine, tick: u64) -> Result<ItemInstance,
     let item = e.faces[p.slot].as_mut().unwrap()[i].take_dispensed();
     advance(OFFER[p.slot]);                                 // commit: exactly 1 next_u64
     e.faces[p.slot].as_mut().unwrap()[i] = generate_item(offer_rng(p.slot, e.uid, "engine_refill").next_u64(),
-        &GenRequest::engine_face(e.tier.face_rarity[i], e.category_rule, d_current));
+        &GenRequest::engine_face(e.tier.face_rarity[i], e.category_rule, d_current, i == CURSED_FACE));
     e.spins[p.slot] = k + 1;
     p.engine_pity[e.tier.idx] = if i == 5 { 0 } else { p.engine_pity[e.tier.idx] + 1 };
     emit(Ev::EngineSpun { engine: e.uid, slot: p.slot, face: i, item: item.uid, price });
@@ -1508,10 +1507,11 @@ fn displayed_weights(p: &Player, e: &Engine) -> [u32; 6] {
 }
 ```
 
-- Faces are Offer items: forced rarity, `ilvl = d_current`, `buc.uncursed` (no curse draw), sealed with RARITY set (doc 10 §11), no bad-luck counters, `illum_pending` for Legendary-or-better faces. The panel shows each face's sealed card, its weight and its probability to 4 decimals, the price, the capsules left (5 − `spins`) and the pity line "top capsule guaranteed after `need − pity` more". An Exotic on a face counts as acquired only when dispensed.
+- Faces are Offer items: forced rarity, `ilvl = d_current`, `buc.uncursed` (no curse draw) except the cursed capsule, sealed with RARITY set (doc 10 §11), no bad-luck counters, `illum_pending` for Legendary-or-better faces. The panel shows each face's sealed card, its weight and its probability to 4 decimals, the price, the capsules left (5 − `spins`) and the pity line "top capsule guaranteed after `need − pity` more". An Exotic on a face counts as acquired only when dispensed.
+- **Cursed capsule** (Canon §13.6, DECISIONS 60). Face 4 of every Engine, the Rare face of brass, the Epic face of silver and its variants and the Legendary face of gilt, is its cursed capsule. Its item is generated like any face, except that §2.3 step 12 calls doc 10's `roll_curse` with source `CursedCapsule` (3 draws in `loot.buc`): it is always `buc.cursed` and always carries a pact, a curse affix welded to its boon (doc 10 §7.8). Every Engine face category is an equipment card (§9.2), and doc 10 §7.8 gives each of them pacts, so the cursed capsule always has one. It is created sealed with `RARITY` and `OMEN` set, so the panel marks it Ominous before purchase; which pact it carries stays hidden until appraised (doc 10 §7.8). The panel also shows the cursed share, `w[4] / Σ w` of the displayed weights: 900 Bp at brass and 1000 Bp at silver, its variants and gilt (the SER shift moves weight only between faces 0 and 5), and 0 while the pity guarantee is armed. A cursed capsule is a non-top capsule for pity. Buying is never a wager on the curse: the curse is shown, and the item may be carried, sold (doc 10 `value_vendor`) or left unequipped.
 - `engine_pity` has one counter per tier (brass, silver with its variants, gilt) per player and run; it carries across engines and Folios.
-- Example: SER 70 at a brass engine gives `s = 300`, weights `[2300, 2600, 1800, 1800, 900, 600]`. Brass prices at Folio 7 are 100, 125, 150, 175 and 200 Lucre (750 for all five, one Folio's target income, §13.2). From fresh pity the expected number of capsules to the top face is 8.75 at SER 40 and 7.69 at SER 70, so a guaranteed Epic costs about two brass engines. The old design's 4-capsule pity let every fully bought brass engine pay an Epic, ten times the drop supply; 9 keeps Engines a sink rather than the main Epic source.
-- **Compliance.** One fixed price per capsule, no stake choice, no multiplier, no repeat-wager, no empty outcome: every payment yields exactly one item from the displayed faces. Presentation is a crank and a capsule chute: no reels, no symbols, no flashing jackpot lights, no near-miss animation, no win or lose wording, no coin-shower audio.
+- Example: SER 70 at a brass engine gives `s = 300`, weights `[2300, 2600, 1800, 1800, 900, 600]`; the cursed share stays 900 Bp (9.0000 %). Brass prices at Folio 7 are 100, 125, 150, 175 and 200 Lucre (750 for all five, one Folio's target income, §13.2). From fresh pity the expected number of capsules to the top face is 8.75 at SER 40 and 7.69 at SER 70, so a guaranteed Epic costs about two brass engines. The old design's 4-capsule pity let every fully bought brass engine pay an Epic, ten times the drop supply; 9 keeps Engines a sink rather than the main Epic source.
+- **Compliance.** One fixed price per capsule, no stake choice, no multiplier, no repeat-wager, no empty outcome: every payment yields exactly one item from the displayed faces, and the cursed capsule is shown as cursed before payment, never a hidden outcome (Canon §13.6). Presentation is a crank and a capsule chute: no reels, no symbols, no flashing jackpot lights, no near-miss animation, no win or lose wording, no coin-shower audio.
 
 | State (per player and engine) | Event | Next |
 |---|---|---|
@@ -1529,7 +1529,7 @@ fn displayed_weights(p: &Player, e: &Engine) -> [u32; 6] {
 
 ### 12.1 Shop types, placement and stock
 
-Doc 13 §13.2 vendor types map one to one to shops; the Colophon shop and the wandering vendor are added here. Shops exist in every genre except `genre.unwritten` (Canon §5.2).
+Doc 13 §13.2 defines one vendor NPC `npc.vendor.<type>` for each shop below, the Colophon's and the wanderer's included. Shops exist in every genre except `genre.unwritten` (Canon §5.2).
 
 | Folio | Shops (ordinal in brackets) |
 |---|---|
@@ -1537,7 +1537,7 @@ Doc 13 §13.2 vendor types map one to one to shops; the Colophon shop and the wa
 | rest | `shop.colophon` [0]; one vendor [1] (doc 12's rest shop) |
 | boss | `shop.colophon` [0] only |
 
-Vendor draw (`place_rng(f, "shop", 0)`, always 3 draws): `roll_bp(4000)`, then two `weighted` calls over the vendor types in ascending ID with weights apothecary 3, arcanist 2, armorer 2, fence 1, general 3, gunsmith 2, scribe 1, stablemaster 1, tinker 2, wanderer 1 (Σ 18); the wanderer weighs 0 unless doc 14's `unlock.room.wandering_scribe` is in the content set. The first is vendor [1]; the second is vendor [2] when the roll succeeds and is ignored otherwise. A rest Folio uses only the first.
+Vendor draw (`place_rng(f, "shop", 0)`, always 3 draws): `roll_bp(4000)`, then two `weighted` calls over the vendor types in ascending ID with weights apothecary 3, arcanist 2, armorer 2, fence 1, general 3, gunsmith 2, scribe 1, tinker 2, wanderer 1 (Σ 17); the wanderer weighs 0 unless doc 14's `unlock.room.wandering_scribe` is in the content set. The first is vendor [1]; the second is vendor [2] when the roll succeeds and is ignored otherwise. A rest Folio uses only the first.
 
 Stock, per player, per line, in table order (Placed source: `place_rng(f, "stock", ordinal)`, one `next_u64` per line per slot 0 to 3, fixed-template lines included; SER 40; no Exotic; knowledge per §2.4):
 
@@ -1552,29 +1552,30 @@ Stock, per player, per line, in table order (Placed source: `place_rng(f, "stock
 | `shop.tinker` | 3 gadget lines; 3 part lines; 1 implant line (accessory where local TEC < 5); `item.tool.lockpicks` × 5; `item.tool.toolkit` × 1; `item.tool.hacking_deck` × 1 | 16000 |
 | `shop.fence` | 3 equipment lines (`Fixed` equipment cards) shift 3000 floor Rare; buys at sell trade × 11000 (§12.2) | 22000 |
 | `shop.scribe` | 4 text lines; 1 schematic line (§3.5 Books); `item.tool.blank_text` × 5; `item.tool.rewrite_quill` × 1; every Scriptorium service (§12.3) | 15000 |
-| `shop.stablemaster` | 2 mount-token lines floor Uncommon; mount mending service | 17500 |
-| `shop.wanderer` (`fac.neutral`) | 4 lines (`Fixed` every deck card) floor Uncommon; 1 mount-token line | 16000 |
+| `shop.wanderer` (`fac.neutral`) | 4 lines (`Fixed` every deck card) floor Uncommon | 16000 |
+
+**Counter shelf** (Canon §17.3a: every counter in every shop; doc 05 §15, doc 08 §13.2). Every shop above except `shop.colophon` and `shop.general`, which list these lines already, appends after its own lines 5 counter-charge lines × 1, 5 counter-grenade lines × 1, `alch.bomb.salt` × 1 and `alch.bomb.smoke` × 1, in that order, as fixed-template lines of its stock generator.
 
 Vendor names by genre (doc 18 localizes; `—` = no shops):
 
-| Genre | Colophon | General | Armorer | Gunsmith | Apothecary | Arcanist | Tinker | Fence | Scribe | Stablemaster | Wanderer |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| mythic_fantasy | Wayside Peddler | Provisioner | Armorer | Smithy | Herbalist | Enchanter | Gnome Tinker | Thieves' Guild Factor | Scribe | Stablemaster | Pilgrim Trader |
-| gothic_horror | Sexton | Chandler | Silversmith | Gunsmith | Apothecary | Curio Cabinet | Clockmaker | Grave-Robber | Parish Clerk | Coachman | Travelling Show |
-| cosmic_horror | Antiquarian | Dockside Grocer | Outfitter | Gun Dealer | Dispensary | Occult Bookshop | Radio Repairman | Dockside Smuggler | Archivist | Motor Garage | Expedition Survivor |
-| space_opera | Station Quartermaster | Commissary | Armor Fabricator | Armory Kiosk | Medbay | Relic Trader | Droid Shop | Smuggler | Data Clerk | Hangar Deck | Free Trader |
-| cyberpunk | Vending Node | Corner Stall | Armor Boutique | Gun Shop | Street Doc | Ripper Clinic | Chop Shop | Fixer | Data Broker | Garage | Nomad Trader |
-| post_apocalypse | Scrap Trader | Trading Post | Plate-Welder | Gun Runner | Rad-Doc | Junk Shaman | Gearhead | Raider Fence | Keeper of Books | Wrangler | Caravan Trader |
-| weird_west | Traveling Salesman | General Store | Saddler | Gunsmith | Snake-Oil Wagon | Medicine Lodge | Blacksmith-Mechanic | Bandit Fence | Land Office Clerk | Livery Stable | Drifter |
-| hardboiled_noir | Newsstand | Five-and-Dime | Tailor | Pawn Gun Counter | Drugstore | Antique Dealer | Repair Shop | Fence | Records Clerk | Used-Car Lot | Street Hustler |
-| wuxia | Wandering Merchant | Teahouse Market | Armorsmith | Weaponsmith | Herb Hall | Talisman Stall | Mechanism Master | Black Market | Calligrapher | Horse Market | Itinerant Monk |
-| steampunk | Automaton Clerk | Emporium | Plate Foundry | Ordnance Works | Chemist | Curiosity Emporium | Tinkerer's Workshop | Underworks Fence | Patent Office | Velocipede Depot | Airship Purser |
-| fairy_tale | Old Peddler | Village Market | Armorer | Blacksmith | Hedge Witch | Wishing Stall | Cobbler's Elves | Goblin Market | Storyteller | Royal Stables | Wandering Fool |
-| mythic_antiquity | Agora Merchant | Agora Stall | Bronze Armorer | Bronzesmith | Healer | Oracle's Stall | Automaton Maker | Pirate Trader | Temple Scribe | Horse Breeder | Wandering Rhapsode |
-| oneiric | Dream Merchant | Toy Shop | Pillow Armorer | Toy Armory | Sleep Chemist | Memory Stall | Music-Box Repairer | Shadow Self | Librarian of Dreams | Carousel Keeper | Sandman's Apprentice |
-| redacted | Requisitions Desk | Commissary | Armory Cage | Weapons Locker | Infirmary | Evidence Locker | Maintenance Bay | Leak | Records Office | Motor Pool | Contractor |
-| unwritten | — | — | — | — | — | — | — | — | — | — | — |
-| ur_text | The Last Stationer | — | — | — | — | — | — | — | — | — | — |
+| Genre | Colophon | General | Armorer | Gunsmith | Apothecary | Arcanist | Tinker | Fence | Scribe | Wanderer |
+|---|---|---|---|---|---|---|---|---|---|---|
+| mythic_fantasy | Wayside Peddler | Provisioner | Armorer | Smithy | Herbalist | Enchanter | Gnome Tinker | Thieves' Guild Factor | Scribe | Pilgrim Trader |
+| gothic_horror | Sexton | Chandler | Silversmith | Gunsmith | Apothecary | Curio Cabinet | Clockmaker | Grave-Robber | Parish Clerk | Travelling Show |
+| cosmic_horror | Antiquarian | Dockside Grocer | Outfitter | Gun Dealer | Dispensary | Occult Bookshop | Instrument Maker | Dockside Smuggler | Archivist | Expedition Survivor |
+| space_opera | Station Quartermaster | Commissary | Armor Fabricator | Armory Kiosk | Medbay | Relic Trader | Droid Shop | Smuggler | Data Clerk | Free Trader |
+| cyberpunk | Vending Node | Corner Stall | Armor Boutique | Gun Shop | Street Doc | Ripper Clinic | Chop Shop | Fixer | Data Broker | Nomad Trader |
+| post_apocalypse | Scrap Trader | Trading Post | Plate-Welder | Gun Runner | Rad-Doc | Junk Shaman | Gearhead | Raider Fence | Keeper of Books | Caravan Trader |
+| weird_west | Traveling Salesman | General Store | Tanner | Gunsmith | Snake-Oil Wagon | Medicine Lodge | Blacksmith-Mechanic | Bandit Fence | Land Office Clerk | Drifter |
+| hardboiled_noir | Newsstand | Five-and-Dime | Tailor | Pawn Gun Counter | Drugstore | Antique Dealer | Hardware Store | Fence | Records Clerk | Street Hustler |
+| wuxia | Wandering Merchant | Teahouse Market | Armorsmith | Weaponsmith | Herb Hall | Talisman Stall | Mechanism Master | Black Market | Calligrapher | Itinerant Monk |
+| steampunk | Automaton Clerk | Emporium | Plate Foundry | Ordnance Works | Chemist | Curiosity Emporium | Tinkerer's Workshop | Underworks Fence | Patent Office | Airship Purser |
+| fairy_tale | Old Peddler | Village Market | Armorer | Blacksmith | Hedge Witch | Wishing Stall | Cobbler's Elves | Goblin Market | Storyteller | Wandering Fool |
+| mythic_antiquity | Agora Merchant | Agora Stall | Bronze Armorer | Bronzesmith | Healer | Oracle's Stall | Automaton Maker | Pirate Trader | Temple Scribe | Wandering Rhapsode |
+| oneiric | Dream Merchant | Toy Shop | Pillow Armorer | Toy Armory | Sleep Chemist | Memory Stall | Music-Box Maker | Shadow Self | Librarian of Dreams | Sandman's Apprentice |
+| redacted | Requisitions Desk | Commissary | Armory Cage | Weapons Locker | Infirmary | Evidence Locker | Maintenance Bay | Leak | Records Office | Contractor |
+| unwritten | — | — | — | — | — | — | — | — | — | — |
+| ur_text | The Last Stationer | — | — | — | — | — | — | — | — | — |
 
 ### 12.2 Prices
 
@@ -1591,7 +1592,7 @@ sell_trade = min(SELL_TRADE_CAP, sell_trade)                       // 5500
 sell       = max(1, mul_bp(value_vendor, sell_trade))              // per unit
 ```
 
-Each arrow is one `mul_bp`. `value_vendor` is doc 10 §6.2: unknown rarity counts as Common, unknown enhancement as 0, an `OMEN` item as cursed with penalty 1. Bearer modifiers are `item.trinket.merchants_scale` (9500) and `item.palimpsestic.colophon_mark` (9000). `reputation_bp` is 9000 allied, 9500 friendly, 10000 neutral, 11500 unfriendly; a hostile faction's vendor refuses trade. `BUY_TRADE_FLOOR = 7500 > SELL_TRADE_CAP = 5500`, so no combination of Charm, reputation, haggling, trinkets, Grade or boons makes buying and reselling profitable.
+Each arrow is one `mul_bp`. `value_vendor` is doc 10 §6.2: unknown rarity counts as Common, the hidden part of `eff_enh` (blessing or curse penalty) as 0 because stored enhancement is public (doc 10 §2.1), an `OMEN` item as cursed with penalty 1. Bearer modifiers are `item.trinket.merchants_scale` (9500) and `item.palimpsestic.colophon_mark` (9000). `reputation_bp` is 9000 allied, 9500 friendly, 10000 neutral, 11500 unfriendly, and always 10000 at the Colophon vendor (doc 13 §13.2); a hostile faction's vendor refuses trade. `BUY_TRADE_FLOOR = 7500 > SELL_TRADE_CAP = 5500`, so no combination of Charm, reputation, haggling, trinkets, Grade or boons makes buying and reselling profitable.
 
 Vendors refuse bound items (doc 10 §7.2), `cat.quest` items, `item.remains`, `item.tool.emendation` and Palimpsestic items. Example (the §20 SMG, value 1382, Grade 0): sell at CHM 40 is `mul_bp(1382, 3000) = 414`; unappraised, `value_vendor = 172` (Common) and it sells for 51; a gunsmith sells it at `mul_bp(1382, 17500) = 2418`.
 
@@ -1607,13 +1608,11 @@ Vendors refuse bound items (doc 10 §7.2), `cat.quest` items, `item.remains`, `i
 |---|---|---|---|
 | `appr.svc.appraise` | every vendor, Scriptorium | `mul_bp(20, P(d))` | doc 10 §5.9 |
 | `appr.svc.classify`, `appr.svc.identify`, `appr.svc.unbind` | Scriptorium | `mul_bp(40, P(d))`, `mul_bp(60, P(d))`, `mul_bp(150, P(d))` | doc 10 §5.9 |
-| Repair to max durability | Scriptorium, armorer, gunsmith, tinker | `mul_bp(value_true, floor_div(3000 × missing, max))` | here |
 | Recharge a wand | Scriptorium, arcanist | `mul_bp(30, P(d))`; charges to max, max − 1, never below 1 | doc 06 §8.4 |
 | Cure an affliction | Scriptorium | `mul_bp(500, P(d))` | Canon §16.4 |
 | Reattach a severed part | Scriptorium | `mul_bp(200, P(d))` | Canon §9.1 |
 | Emend the Flesh (remove a mutation) | Scriptorium | `mul_bp(400, P(d))` | doc 04 §9.3 |
 | Trainer: one glyph | arcanist | `mul_bp(100 × tier, P(d))` | doc 06 §8.1 |
-| Mount mending (the token's mount to full HP) | stablemaster | `mul_bp(40, P(d))` | doc 05 §17 |
 | Rewrite, reforge | Scriptorium | §15, §16.3 | here |
 | Perk choice, tuning | Scriptorium | free | here |
 
@@ -1655,7 +1654,7 @@ Kills are `40 × 5000 Bp × mean(range_incl(mul_bp(4, P), mul_bp(10, P)))`; pile
 
 ### 13.3 Power budget against the canon anchors
 
-- The §18 chain is the Canon §10.4 source chain without `base_mhp`, so its maximum at ilvl 25 is `ITEM_MULT_MAX` times `P(25)`: 410,341 stepwise (the one-step product `mul_bp(79110, 51870)` is 410,343), the IP 4103 of §18. Nothing in this chapter multiplies `B` outside that chain except the three Canon §5.9 "× N" gimmicks (Canon gaps 3), which are situational.
+- The §18 chain is the Canon §10.4 source chain without `base_mhp`, so its maximum at ilvl 25 is `ITEM_MULT_MAX` times `P(25)`: 410,341 stepwise (the one-step product `mul_bp(79110, 51870)` is 410,343), the IP 4103 of §18. Nothing in this chapter multiplies `B` outside that chain except the three Canon §5.9 "× N" gimmicks (Canon §10.4), which are situational.
 - At Folio 1 a Common Normal +0 weapon meets the Canon §17.4 anchors (30 DPS, 2.0 s TTK). An Epic Excellent ilvl-1 drop multiplies `B` by `mul_bp(11500, 12000) = 13800`, and its best unconditional affix (`affix.dmg_pct` T1, at most +600 Bp) gives `mul_bp(13800, 10600) = 14628`, a TTK of `2000 × 10000 / 14628 = 1367` ms. An Epic is 150 of 10010 weight (1.5 %) per generic Folio-1 line, so the anchor holds for the typical run.
 - Situational affixes stack additively in step 1, one per exclusivity group. The largest single-target bonus on a 4-affix Palimpsestic weapon is +17300 Bp (`dmg_vs_tag` 5500, `dmg_vs_state` 5000, `dmg_vs_rank` 3800, `dmg_vs_origin` 3000), each gated by a target condition.
 - Degenerate loops closed here: Engine pity 9 (§11.2), `LUCRE_FIND_CAP` (§9.1), the buy floor above the sell cap (§12.2), no restock of potions, texts or equipment (§12.3), `GEAR_TOL_CAP` (§3.4), and stack merges that never raise value (§14.2).
@@ -1666,9 +1665,9 @@ Kills are `40 × 5000 Bp × mean(range_incl(mul_bp(4, P), mul_bp(10, P)))`; pile
 
 ### 14.1 Model
 
-- **Backpack**: 20 slots (`INV_SLOTS_BASE`), +6, +10 or +14 from the `slot.back` pack (§3.4). One slot holds one item or one stack; size and shape never matter.
+- **Backpack** (DECISIONS 66: 20 base slots plus bags, a weight limit and encumbrance): 20 slots (`INV_SLOTS_BASE`), +6, +10 or +14 from the `slot.back` pack (§3.4). One slot holds one item or one stack; size and shape never matter.
 - **Equipment slots**: Canon §13.2. Equipped items use no backpack slot. The quickbar (4, or the belt's 5 to 8) references backpack stacks.
-- **Keyring**: keys, up to 20, no slot. **Ammunition reserve**: per doc 05 family, no slot, carry caps from doc 05 §8.1 (counter charges 5 each). **Purse**: Lucre `i64`, per player, no mass.
+- **Keyring**: keys, up to 20, no slot. **Ammunition reserve**: per doc 05 family, no slot, carry caps from doc 05 §8.1 (counter charges 5 each). **Purse**: Lucre `i64`, per Erratum (Canon §14), no mass.
 - **Mass**: `carried_g` = Σ `mass_g × stack` over backpack, equipment, keyring and ammunition reserve (doc 05 §8.1 masses). Capacity is Canon §6.4 row 10 × 1000 g; `load_bp` drives `st.encumbered` and `st.overburdened` (Canon §11.1). Doc 03 maintains `carried_g` from these rules.
 
 ### 14.2 Stacking
@@ -1681,7 +1680,7 @@ Kills are `40 × 5000 Bp × mean(range_incl(mul_bp(4, P), mul_bp(10, P)))`; pile
 
 ### 14.3 Pickup
 
-- Lucre and keys within 1500 mm auto-pickup. Ammunition auto-pickup follows doc 05 §8.2 (1000 mm, partial take up to the carry cap). `item.trinket.lodestone` doubles both radii.
+- Lucre and keys within 1500 mm auto-pickup, except a pile for its own dropper (`dropped_by`, §17). Ammunition auto-pickup follows doc 05 §8.2 (1000 mm, partial take up to the carry cap). `item.trinket.lodestone` doubles both radii.
 - Other items need a 10-tick interact. A pickup that does not fit leaves the item on the ground.
 - A granted item (Emendation, Keepsake, Volume reward, Engine capsule) that does not fit drops at the receiver's feet as `Instanced(slot)`.
 - Pickups that collide in one tick resolve in ascending picker EntityId (doc 16 §9.6).
@@ -1727,8 +1726,8 @@ The Lost Satchel shows each player only their own and Public contents, has no ca
 
 - **Where**: a Scriptorium (doc 12 room, the Colophon's station or a `shop.scribe`), or anywhere with `item.tool.rewrite_quill` (60-tick channel, consumed). The target genre is the local genre at the user (the Folio's genre in a seam zone).
 - **Refused** for Palimpsestic, quest and mundane items (mundane categories have no skin to change), when the target equals `origin_genre`, when the target has no skin for the archetype (`—`), and when a Legendary perk, Exotic intrinsic, Gloss, bound glyph or a wand's spell would have an illegal dependency in the target.
-- **Cost** at a Scriptorium: `max(mul_bp(20, P(d)), mul_bp(value, 3500))`, then × `gp.shop_price_bp`. Example: value 1382 at Folio 9: `max(39, 483) = 483`. The Quill costs nothing more.
-- **Offers**: the Scriptorium shows one variant per candidate manufacturer (below), all sharing the replacement draws of `offer_rng(slot, item uid, "rewrite")`; committing pays and advances `rng.offer.p<slot>` once. The Quill applies the default variant, with replacement draws from keyed `rng.loot` (actor = item uid, tick = use tick, seq = slot).
+- **Cost** at a Scriptorium scales with item power (DECISIONS 67): `max(mul_bp(20, P(d)), mul_bp(value_vendor, 3500))`, then × `gp.shop_price_bp`, where `value_vendor` is doc 10 §6.2's value of the item as its owner knows it (§12.2). Example: an identified item of value 1382 at Folio 9: `max(39, 483) = 483`. The Quill costs nothing more.
+- **Offers** (DECISIONS 67: a choice of 3). The Scriptorium shows exactly 3 offers, generated once and stored (Canon §3.5). With `o = offer_rng(slot, item uid, "rewrite")`, offer `k` (0, 1, 2) takes manufacturer `cand[k % n]` and runs `rewrite` with `Rng::from_seed64(o.next_u64())` as its replacement generator: 3 draws in all, one per offer in offer order. `cand` lists the candidates of the table below with the default first and the others in ascending ID, and `n = |cand|`; an "unchanged" or "none" row gives the one-entry list of the item's current manufacturer or of none. Offers that share a manufacturer differ only in their replacement draws, and are identical when nothing is replaced. Committing one offer pays the cost and advances `rng.offer.p<slot>` once; declining advances nothing. The Quill applies offer 0's manufacturer, with replacement draws from keyed `rng.loot` (actor = item uid, tick = use tick, seq = slot).
 
 | Item's manufacturer | Candidates in target genre `g` | Default |
 |---|---|---|
@@ -1765,7 +1764,7 @@ fn rewrite(it: &mut ItemInstance, target: GenreId, mfr_choice: Option<MfrId>, rn
 
 | Persists | Changes |
 |---|---|
-| uid, template, rarity, quality, ilvl, enhancement, buc, curse penalty and curse affix, durability ratio, charges, gear tier, chosen indices, Legendary perk, Exotic intrinsic and name, Gloss, bound glyph, wand spell (its glyph origins follow `origin_genre`, doc 06 §8.4), tuning, illuminated, finder slot, reforge count | origin genre, skin, dependencies and `Req`, manufacturer and tendencies (non-Exotic), material, illegal affixes and perk options, column 5, value, `rewrite_count` |
+| uid, template, rarity, quality, ilvl, enhancement, buc, curse penalty and curse affix, charges, gear tier, chosen indices, Legendary perk, Exotic intrinsic and name, Gloss, bound glyph, wand spell (its glyph origins follow `origin_genre`, doc 06 §8.4), tuning, illuminated, finder slot, reforge count | origin genre, skin, dependencies and `Req`, manufacturer and tendencies (non-Exotic), material, illegal affixes and perk options, column 5, value, `rewrite_count` |
 
 Every committed Scriptorium Rewrite counts for doc 14 `run.note.scribe`.
 
@@ -1775,7 +1774,7 @@ Every committed Scriptorium Rewrite counts for doc 14 `run.note.scribe`.
 
 ### 16.1 Emendation
 
-`item.tool.emendation` (`cat.tool`, mundane, unsellable). Use on an equipment item: 30-tick channel. Canon §13.7: if `buc = cursed` it uncurses instead; otherwise `ilvl = max(ilvl, current Folio)`, then `enhancement += 1`. Refused at the cap: 15 before Folio 26, `15 + floor_div(d_current - 25, 5)` in Marginalia (Canon gaps 2). Placement: §9.9.
+`item.tool.emendation` (`cat.tool`, mundane, unsellable). Use on an equipment item: 30-tick channel. Canon §13.7: if `buc = cursed` it uncurses instead; otherwise `ilvl = max(ilvl, current Folio)`, then `enhancement += 1`. Refused at the cap: 15 before Folio 26, `15 + floor_div(d_current - 25, 5)` in Marginalia (Canon §13.7 `ENH_CAP`). Placement: §9.9.
 
 ### 16.2 Marginalia Emendation flow
 
@@ -1793,7 +1792,7 @@ cost = mul_bp(mul_bp(30, P(d)), rarity_value_bp) × (2^(c+1) - 1) → × gp.shop
 
 ### 16.4 Salvage
 
-60-tick channel anywhere, or 0 ticks at a crafting station (doc 07). Yields `mul_bp(component mass, 6000)` of each component material as `cat.material` units (doc 07 rounds to its unit), and one loose part of the item's manufacturer pool with chance Common 0, Uncommon 1000, Rare 2500, Epic 5000, Legendary or better 10000 (keyed `rng.loot`, actor = item uid, tick, seq = slot: 1 `roll_bp` and 1 `weighted`, always both). An item without a manufacturer yields no part. Palimpsestic, quest and bound items cannot be salvaged.
+60-tick channel anywhere, or 0 ticks at a crafting station (doc 07). Yields `mul_bp(mul_bp(component mass, 6000), 10000 + X)` of each component material as `cat.material` units (doc 07 rounds to its unit), where `X` is the item's `affix.engineered` value after potency (§6.1; 0 without one), and one loose part of the item's manufacturer pool with chance Common 0, Uncommon 1000, Rare 2500, Epic 5000, Legendary or better 10000 (keyed `rng.loot`, actor = item uid, tick, seq = slot: 1 `roll_bp` and 1 `weighted`, always both). An item without a manufacturer yields no part. Palimpsestic, quest and bound items cannot be salvaged.
 
 ### 16.5 Free Scriptorium actions
 
@@ -1803,8 +1802,9 @@ Perk choice per column, Tier-5 tuning, and viewing every displayed odd. Doc 02 `
 
 ## 17. Co-op loot
 
-- **Instanced (default).** Every kill, container, Reliquary, bag, Engine and shop shelf is rolled per Active, non-ghost player with `seq = slot` (doc 16 §9.6); `finder_slot` records the roller. Lucre piles and purses are per player.
-- **Transfers.** `DropItem` makes an item Public; `DropItemFor` makes it `Instanced(to_slot)` (doc 16 §9.6). Dropping Lucre from the purse creates a pile with `fresh = false` (§9.1).
+- **Instanced (default).** Every kill, container, Reliquary, bag, Engine and shop shelf is rolled per Active, non-ghost player with `seq = slot` (doc 16 §9.6); `finder_slot` records the roller. Rolled Lucre piles are instanced like any drop, and purses are per Erratum (Canon §14).
+- **Transfers.** `DropItem` makes an item Public; `DropItemFor` makes it `Instanced(to_slot)` (doc 16 §9.6).
+- **Lucre between players** (Canon §14, DECISIONS 83). Lucre passes between party members only as dropped piles inside one run. The intent `DropLucre { amount }` (doc 02) removes `amount` from the dropper's purse and creates one `item.lucre` pile of that amount at the dropper's feet, `Public`, with `fresh = false` (§9.1) and `dropped_by` = the dropper's slot. It is refused unless `1 <= amount <= purse`, and refused for a ghost, a downed Erratum and an invader. Auto-pickup (§14.3) never takes a pile for its own dropper, who takes it back only with the 10-tick interact; any other party member that can pick up items takes it normally. Trades and `DropItemFor` never carry Lucre (doc 16 §9.6), and no Lucre leaves the run or reaches another account.
 - **Invaders** (Canon §17.9). An invader is not a party member: it receives no loot rolls and cannot pick up, buy or open anything. If the party kills the invader, every Active Erratum receives one in-run Reliquary roll (§9.12) with `actor` = the invader's EntityId. If the party is Redacted, every Erratum's purse is set to 0 (no pile drops) and one equipped non-weapon item is destroyed: one keyed `rng.loot` draw (actor = that Erratum's EntityId, tick = the Redaction tick, seq 0), `range(n)` over eligible items sorted by uid, no draw when `n = 0`.
 - **Ghost loss** (Canon §17.6, doc 16 §9.5): one keyed `rng.loot` draw (folio = the new Folio, actor = the ghost's EntityId, tick = its `folio_entry_tick`, seq 0), `range(n)` over equipped non-weapon items sorted by uid, no draw when `n = 0`.
 - **`mode.loot_shared`** (Canon §17.5). Each kill or container rolls once with `seq = 0`, effective SER = `floor_div(Σ effective SER of Active Errata, n)`, and drops Public items. Scaled lines use `shared_drop_bp[n] = [10000, 12800, 16000, 18286]` instead of `party_drop_bp`, so each player receives 8000 Bp of the solo yield; a line chance above 10000 rolls twice (a 10000 line, then a line of the excess), with 4 draws always. Reliquaries use the draft of §10; shops keep one shelf (slot 0's stock); deck and bad-luck counters belong to slot 0. Engines and Volume rewards stay per player.
@@ -1815,12 +1815,12 @@ Perk choice per column, Tier-5 tuning, and viewing every displayed odd. Doc 02 `
 
 ```
 chain = 10000 → × P(eff_ilvl) (T for armor and ward generators) → × rarity power → × quality_bp
-              → × (10000 + 600 × eff_enh) → × material dmg_bp or ar_bp (accessories and implants: 10000)
+              → × (10000 + 600 × eff_enh) → × material dmg_bp or ar_bp (ward generators, accessories and implants: 10000)
 IP    = floor_div(chain, 100) + Σ affix tier + 5 × [legendary perk] + 10 × [exotic or palimpsestic intrinsic]
 ```
 
 - `IP_true` uses every field; it feeds telemetry and the bots of doc 02.
-- `IP_shown` uses only what the viewing player knows (doc 10 §2.4): unknown rarity counts as Common with no affixes and no perk or intrinsic, unknown enhancement as 0, an unknown affix name or roll as tier 1. Quality, material and `ilvl` are never hidden (doc 10 §2.1).
+- `IP_shown` uses only what the viewing player knows (doc 10 §2.4): unknown rarity counts as Common with no affixes and no perk or intrinsic, the hidden part of `eff_enh` as 0 (doc 10 §2.1), an unknown affix name or roll as tier 1. Quality, material and `ilvl` are never hidden (doc 10 §2.1).
 - Character Power = `floor_div(Σ IP_shown over the best weapon slot, five armor slots and the ward slot, 7)`, empty slots 0.
 - Examples: a Common Normal +0 iron ilvl-1 weapon has IP 100. The §20 SMG has `IP_true` 237 (chain 23143, 3 affixes of tier 2) and `IP_shown` 201 while `know.classified` (chain 20125). A Palimpsestic Peerless +15 material-14000 weapon at ilvl 25 has chain IP 4103 before affixes. IP is UI and telemetry only.
 
@@ -1828,7 +1828,7 @@ IP    = floor_div(chain, 100) + Σ affix tier + 5 × [legendary perk] + 10 × [e
 
 ## 19. Saved loot state
 
-`PlayerLootState` per slot (saved, Canon §2.5): deck counts, `blp_rare`, `blp_leg`, `rq5`, `rq20`, `engine_pity[3]`, Exotics acquired this run, haggle and buyback records of the current Folio, purse. Per Folio: Engine faces and spins per slot, Reliquary shared states and `opened` flags, shop shelves and restock ticks, Lost Satchel, pending Volume-reward offers. Per run: Palimpsestic uniques acquired by the party. `rng.offer.p<slot>` states are saved by the canon contract.
+`PlayerLootState` per slot (saved, Canon §2.5): deck counts, `blp_rare`, `blp_leg`, `rq5`, `rq20`, `engine_pity[3]`, Exotics acquired this run, haggle and buyback records of the current Folio, purse. Per Folio: Engine faces and spins per slot, Reliquary shared states and `opened` flags, shop shelves and restock ticks, Lost Satchel, pending Volume-reward offers, and the stored Rewrite and reforge offers per slot and item (Canon §3.5: an offer is generated once and stored). Per run: Palimpsestic uniques acquired by the party. `rng.offer.p<slot>` states are saved by the canon contract.
 
 ---
 
@@ -1858,7 +1858,7 @@ Run seed `0x0123456789ABCDEF`, Standard mode, Grade 10 (`gear_tier = min(5, 1 + 
 
 | # | Eligible (count, Σ Wt) | Affix draw | Affix | Tier draw | Tier | `roll_bp` | Value |
 |---|---|---|---|---|---|---|---|
-| 1 | 46, 1895 | 1830 | `affix.self_repair` (tech, `Req[techne] = 2`) | 10629 | 2 | 4095 | 1 durability per 818 ticks |
+| 1 | 46, 1895 | 1830 | `affix.self_injector` (tech, `Req[techne] = 2`) | 10629 | 2 | 4095 | heals 100 Bp of Max HP every 818 ticks |
 | 2 | 45, 1875 | 926 | `affix.infuse_fire` (infused → mythos, `Req[mythos] = 4`) | 10429 | 2 | 4630 | 1731 Bp to `dmg.fire`, +24 `st.burning` power |
 | 3 | 34, 1600 (infusion group removed) | 397 | `affix.dmg_vs_beast` (mundane) | 5274 | 2 | 1146 | +1880 Bp vs `fac.wild.*` |
 
@@ -1879,78 +1879,56 @@ All IDs below are in namespaces Canon §19 assigns to doc 11, pass the Canon §1
 | `item.` bags, keys, currency, quest and corpse (14, §3.5, §9.7) | `item.bag.boss`, `item.bag.burnt`, `item.bag.editor`, `item.bag.elite`, `item.bag.lucky`, `item.bag.refined`, `item.key.bound`, `item.key.gilded`, `item.key.illumined`, `item.lucre`, `item.quest.catchword`, `item.quest.folio_leaf`, `item.quest.parcel`, `item.remains` |
 | `item.` Exotics and Palimpsestic uniques (34, §8.2, §8.3) | `item.exotic.black_bar`, `item.exotic.brass_lungs`, `item.exotic.briar_rose`, `item.exotic.cloud_step`, `item.exotic.cogheart`, `item.exotic.dead_drop`, `item.exotic.dragonsong`, `item.exotic.drifters_duster`, `item.exotic.gallows_oath`, `item.exotic.ghost_protocol`, `item.exotic.hydra_bow`, `item.exotic.ironhide_greaves`, `item.exotic.lullaby`, `item.exotic.paper_moon`, `item.exotic.quietus`, `item.exotic.redline_sutra`, `item.exotic.rust_psalm`, `item.exotic.stampede_sabatons`, `item.exotic.starfall`, `item.exotic.stormcrown`, `item.exotic.thunderwright`, `item.exotic.tidecaller_wraps`, `item.exotic.veil_of_vespers`, `item.exotic.widowmaker`, `item.palimpsestic.authors_quill`, `item.palimpsestic.blank_page`, `item.palimpsestic.colophon_mark`, `item.palimpsestic.dog_ear`, `item.palimpsestic.endpaper_band`, `item.palimpsestic.errata_sheet`, `item.palimpsestic.first_word`, `item.palimpsestic.marginal_gloss`, `item.palimpsestic.omnibus`, `item.palimpsestic.running_head` |
 | `rar.` (7, §3.8) | `rar.common`, `rar.epic`, `rar.exotic`, `rar.legendary`, `rar.palimpsestic`, `rar.rare`, `rar.uncommon` |
-| `cat.` (28, §3.1) | `cat.accessory`, `cat.ammo`, `cat.armor`, `cat.body_part`, `cat.book`, `cat.container`, `cat.corpse`, `cat.currency`, `cat.food`, `cat.gadget`, `cat.implant`, `cat.ingredient`, `cat.key`, `cat.material`, `cat.mount`, `cat.offhand`, `cat.part`, `cat.placeable`, `cat.potion`, `cat.quest`, `cat.seed`, `cat.text`, `cat.throwable`, `cat.tool`, `cat.wand`, `cat.ward_gen`, `cat.weapon_melee`, `cat.weapon_ranged` |
-| `slot.` (24, §3.9) | `slot.back`, `slot.belt`, `slot.body`, `slot.face`, `slot.feet`, `slot.hand_extra_1`, `slot.hand_extra_2`, `slot.hands`, `slot.head`, `slot.implant_arms`, `slot.implant_head`, `slot.implant_legs`, `slot.implant_torso`, `slot.legs`, `slot.mount`, `slot.neck`, `slot.offhand`, `slot.ring_l`, `slot.ring_r`, `slot.trinket`, `slot.ward`, `slot.weapon_1`, `slot.weapon_2`, `slot.weapon_3` |
-| `affix.` (116, §6.2) | `affix.aether_cost`, `affix.ambusher`, `affix.arc_proc`, `affix.armor_pct`, `affix.bleed_power`, `affix.buildup`, `affix.cast_speed`, `affix.charges`, `affix.crit_chance`, `affix.crit_mult`, `affix.dmg_pct`, `affix.dmg_vs_beast`, `affix.dmg_vs_construct`, `affix.dmg_vs_editor`, `affix.dmg_vs_elite`, `affix.dmg_vs_undead`, `affix.durability`, `affix.executioner`, `affix.expose_power`, `affix.featherweight`, `affix.first_strike`, `affix.frugal`, `affix.gloss`, `affix.handling`, `affix.infuse_acid`, `affix.infuse_arcane`, `affix.infuse_fire`, `affix.infuse_frost`, `affix.infuse_psychic`, `affix.infuse_radiant`, `affix.infuse_radiation`, `affix.infuse_shock`, `affix.infuse_sonic`, `affix.infuse_toxin`, `affix.infuse_umbral`, `affix.interloper`, `affix.kill_aether`, `affix.kill_haste`, `affix.kill_heal`, `affix.kill_stamina`, `affix.leech`, `affix.lucre_find`, `affix.magazine`, `affix.mount_barding`, `affix.mount_endurance`, `affix.mount_vitality`, `affix.penetration`, `affix.poise`, `affix.poise_dmg`, `affix.precision`, `affix.quiet`, `affix.radiance`, `affix.range`, `affix.rate`, `affix.reach`, `affix.recharge`, `affix.recoil`, `affix.reload`, `affix.resist_acid`, `affix.resist_all`, `affix.resist_arcane`, `affix.resist_blunt`, `affix.resist_elements`, `affix.resist_fire`, `affix.resist_frost`, `affix.resist_pierce`, `affix.resist_psychic`, `affix.resist_radiant`, `affix.resist_radiation`, `affix.resist_shock`, `affix.resist_slash`, `affix.resist_sonic`, `affix.resist_toxin`, `affix.resist_umbral`, `affix.ricochet`, `affix.self_repair`, `affix.soft_step`, `affix.spell_dmg`, `affix.spread`, `affix.stability`, `affix.stamina`, `affix.stun_power`, `affix.sub_agility`, `affix.sub_analysis`, `affix.sub_attunement`, `affix.sub_brawn`, `affix.sub_charm`, `affix.sub_endurance`, `affix.sub_fate`, `affix.sub_focus`, `affix.sub_grip`, `affix.sub_guile`, `affix.sub_hearing`, `affix.sub_intuition`, `affix.sub_logic`, `affix.sub_memory`, `affix.sub_menace`, `affix.sub_power`, `affix.sub_precision`, `affix.sub_providence`, `affix.sub_resilience`, `affix.sub_resolve`, `affix.sub_serendipity`, `affix.sub_sight`, `affix.sub_sleight`, `affix.sub_toughness`, `affix.summon_vigor`, `affix.thorns`, `affix.tol_arcana`, `affix.tol_mythos`, `affix.tol_techne`, `affix.tol_verve`, `affix.ward_capacity`, `affix.ward_full`, `affix.ward_nova`, `affix.ward_siphon` |
+| `cat.` (27, §3.1) | `cat.accessory`, `cat.ammo`, `cat.armor`, `cat.body_part`, `cat.book`, `cat.container`, `cat.corpse`, `cat.currency`, `cat.food`, `cat.gadget`, `cat.implant`, `cat.ingredient`, `cat.key`, `cat.material`, `cat.offhand`, `cat.part`, `cat.placeable`, `cat.potion`, `cat.quest`, `cat.seed`, `cat.text`, `cat.throwable`, `cat.tool`, `cat.wand`, `cat.ward_gen`, `cat.weapon_melee`, `cat.weapon_ranged` |
+| `slot.` (23, §3.9) | `slot.back`, `slot.belt`, `slot.body`, `slot.face`, `slot.feet`, `slot.hand_extra_1`, `slot.hand_extra_2`, `slot.hands`, `slot.head`, `slot.implant_arms`, `slot.implant_head`, `slot.implant_legs`, `slot.implant_torso`, `slot.legs`, `slot.neck`, `slot.offhand`, `slot.ring_l`, `slot.ring_r`, `slot.trinket`, `slot.ward`, `slot.weapon_1`, `slot.weapon_2`, `slot.weapon_3` |
+| `affix.` (113, §6.2) | `affix.aether_cost`, `affix.ambusher`, `affix.arc_proc`, `affix.armor_pct`, `affix.bleed_power`, `affix.buildup`, `affix.cast_speed`, `affix.charges`, `affix.crit_chance`, `affix.crit_mult`, `affix.dmg_pct`, `affix.dmg_vs_beast`, `affix.dmg_vs_construct`, `affix.dmg_vs_editor`, `affix.dmg_vs_elite`, `affix.dmg_vs_undead`, `affix.engineered`, `affix.executioner`, `affix.expose_power`, `affix.featherweight`, `affix.first_strike`, `affix.frugal`, `affix.gloss`, `affix.handling`, `affix.infuse_acid`, `affix.infuse_arcane`, `affix.infuse_fire`, `affix.infuse_frost`, `affix.infuse_psychic`, `affix.infuse_radiant`, `affix.infuse_radiation`, `affix.infuse_shock`, `affix.infuse_sonic`, `affix.infuse_toxin`, `affix.infuse_umbral`, `affix.interloper`, `affix.kill_aether`, `affix.kill_haste`, `affix.kill_heal`, `affix.kill_stamina`, `affix.leech`, `affix.lucre_find`, `affix.magazine`, `affix.penetration`, `affix.poise`, `affix.poise_dmg`, `affix.precision`, `affix.quiet`, `affix.radiance`, `affix.range`, `affix.rate`, `affix.reach`, `affix.recharge`, `affix.recoil`, `affix.reload`, `affix.resist_acid`, `affix.resist_all`, `affix.resist_arcane`, `affix.resist_blunt`, `affix.resist_elements`, `affix.resist_fire`, `affix.resist_frost`, `affix.resist_pierce`, `affix.resist_psychic`, `affix.resist_radiant`, `affix.resist_radiation`, `affix.resist_shock`, `affix.resist_slash`, `affix.resist_sonic`, `affix.resist_toxin`, `affix.resist_umbral`, `affix.ricochet`, `affix.self_injector`, `affix.soft_step`, `affix.spell_dmg`, `affix.spread`, `affix.stability`, `affix.stamina`, `affix.stun_power`, `affix.sub_agility`, `affix.sub_analysis`, `affix.sub_attunement`, `affix.sub_brawn`, `affix.sub_charm`, `affix.sub_endurance`, `affix.sub_fate`, `affix.sub_focus`, `affix.sub_grip`, `affix.sub_guile`, `affix.sub_hearing`, `affix.sub_intuition`, `affix.sub_logic`, `affix.sub_memory`, `affix.sub_menace`, `affix.sub_power`, `affix.sub_precision`, `affix.sub_providence`, `affix.sub_resilience`, `affix.sub_resolve`, `affix.sub_serendipity`, `affix.sub_sight`, `affix.sub_sleight`, `affix.sub_toughness`, `affix.summon_vigor`, `affix.thorns`, `affix.tol_arcana`, `affix.tol_mythos`, `affix.tol_techne`, `affix.tol_verve`, `affix.ward_capacity`, `affix.ward_full`, `affix.ward_nova`, `affix.ward_siphon` |
 | `perk.` column perks (51, §7.2) | `perk.adrenaline`, `perk.arcane_surge`, `perk.balanced_tang`, `perk.bloodletting`, `perk.cadence`, `perk.chain_reaction`, `perk.choke`, `perk.close_quarters`, `perk.counterweight`, `perk.coup_de_grace`, `perk.deep_reservoir`, `perk.dragonfly`, `perk.drum_feed`, `perk.extended_mag`, `perk.feeding_frenzy`, `perk.focused_conduit`, `perk.frenzy`, `perk.guarded_hilt`, `perk.headhunter`, `perk.heavy_bore`, `perk.honed_edge`, `perk.hot_loads`, `perk.kill_clip`, `perk.light_grip`, `perk.long_barrel`, `perk.long_haft`, `perk.momentum`, `perk.opening_shot`, `perk.outlaw`, `perk.overflow`, `perk.ported_barrel`, `perk.quick_draw`, `perk.quick_feed`, `perk.quick_siphon`, `perk.rampage`, `perk.ricochet_rounds`, `perk.rifled_bore`, `perk.serrated`, `perk.sharpshooter`, `perk.slipstream`, `perk.stable_reservoir`, `perk.steady_feed`, `perk.stillness`, `perk.sunder`, `perk.swift_conduit`, `perk.tempered`, `perk.trench_barrel`, `perk.unrelenting`, `perk.vorpal`, `perk.weighted_head`, `perk.wide_conduit` |
 | `perk.` genre traits (16, §7.2) | `perk.genre.cosmic_horror`, `perk.genre.cyberpunk`, `perk.genre.fairy_tale`, `perk.genre.gothic_horror`, `perk.genre.hardboiled_noir`, `perk.genre.mythic_antiquity`, `perk.genre.mythic_fantasy`, `perk.genre.oneiric`, `perk.genre.post_apocalypse`, `perk.genre.redacted`, `perk.genre.space_opera`, `perk.genre.steampunk`, `perk.genre.unwritten`, `perk.genre.ur_text`, `perk.genre.weird_west`, `perk.genre.wuxia` |
 | `perk.` Legendary perks (26, §8.1) | `perk.leg.adamant`, `perk.leg.bloodsong`, `perk.leg.bulwark`, `perk.leg.cartographer`, `perk.leg.cold_blood`, `perk.leg.echoing_strike`, `perk.leg.fortunes_favor`, `perk.leg.grounded`, `perk.leg.hunters_mark`, `perk.leg.inkdrinker`, `perk.leg.last_stand`, `perk.leg.lifeline`, `perk.leg.mirror_edge`, `perk.leg.mirror_plate`, `perk.leg.overcapacitor`, `perk.leg.overture`, `perk.leg.phoenix_lining`, `perk.leg.recursion`, `perk.leg.redoubt`, `perk.leg.second_skin`, `perk.leg.shadowweave`, `perk.leg.spellweaver`, `perk.leg.stormcall`, `perk.leg.thornmail`, `perk.leg.windrunner`, `perk.leg.worldbreaker` |
 | `mfr.` (40, §5.2) | `mfr.cosmic_horror.dunwold`, `mfr.cosmic_horror.hollow_lantern`, `mfr.cosmic_horror.outer_choir`, `mfr.cyberpunk.chromaw`, `mfr.cyberpunk.ghostline`, `mfr.cyberpunk.neon_saint`, `mfr.errata.marginal_press`, `mfr.fairy_tale.glass_cobbler`, `mfr.fairy_tale.thimbleweald`, `mfr.fairy_tale.thornwood`, `mfr.gothic_horror.ashgrave`, `mfr.gothic_horror.grimhallow`, `mfr.gothic_horror.vesper_sons`, `mfr.hardboiled_noir.halloran`, `mfr.hardboiled_noir.midnight_avenue`, `mfr.hardboiled_noir.rainslick`, `mfr.mythic_antiquity.argive`, `mfr.mythic_antiquity.delphic`, `mfr.mythic_antiquity.hephaesteum`, `mfr.mythic_fantasy.deepanvil`, `mfr.mythic_fantasy.runecourt`, `mfr.mythic_fantasy.silverbough`, `mfr.oneiric.somnambule`, `mfr.post_apocalypse.geigerhaus`, `mfr.post_apocalypse.lastditch`, `mfr.post_apocalypse.rustmaw`, `mfr.redacted.bureau`, `mfr.space_opera.perihelion`, `mfr.space_opera.starwright`, `mfr.space_opera.umbra`, `mfr.steampunk.aetherline`, `mfr.steampunk.boilerheart`, `mfr.steampunk.brassworth`, `mfr.ur_text.first_press`, `mfr.weird_west.coffin_creek`, `mfr.weird_west.seven_seals`, `mfr.weird_west.sundown_rail`, `mfr.wuxia.cloudpiercer`, `mfr.wuxia.iron_crane`, `mfr.wuxia.jade_lotus` |
-| `loot.` tables (75: §9.5 to §9.8; §9.7 bag contents as `loot.bag.*`; §10 Reliquary contents as `loot.reliq.*`; §11 Engine faces as `loot.engine.*`; §12.1 shop stock as `loot.shop.*`; §2.3 Keepsakes) | `loot.bag.boss`, `loot.bag.burnt`, `loot.bag.editor`, `loot.bag.elite`, `loot.bag.lucky`, `loot.bag.refined`, `loot.boss.editor`, `loot.boss.mini`, `loot.boss.palimpsestic`, `loot.chest.locked`, `loot.chest.plain`, `loot.companion.bramble`, `loot.companion.deputy_cole`, `loot.companion.dr_halloway`, `loot.companion.ensign_okafor`, `loot.companion.gearwright`, `loot.companion.glitch`, `loot.companion.iris_kane`, `loot.companion.kallias`, `loot.companion.lan_feiyu`, `loot.companion.mother_vesper`, `loot.companion.rust_mae`, `loot.companion.sir_brannoc`, `loot.drop.champion`, `loot.drop.elite`, `loot.drop.hunter`, `loot.drop.minion`, `loot.drop.standard`, `loot.engine.armory`, `loot.engine.brass`, `loot.engine.curio`, `loot.engine.gilt`, `loot.engine.silver`, `loot.engine.wardrobe`, `loot.floor`, `loot.keepsake.cosmic_horror`, `loot.keepsake.cyberpunk`, `loot.keepsake.fairy_tale`, `loot.keepsake.gothic_horror`, `loot.keepsake.hardboiled_noir`, `loot.keepsake.mythic_antiquity`, `loot.keepsake.mythic_fantasy`, `loot.keepsake.oneiric`, `loot.keepsake.post_apocalypse`, `loot.keepsake.redacted`, `loot.keepsake.space_opera`, `loot.keepsake.steampunk`, `loot.keepsake.unwritten`, `loot.keepsake.ur_text`, `loot.keepsake.weird_west`, `loot.keepsake.wuxia`, `loot.quest.t1`, `loot.quest.t2`, `loot.quest.t3`, `loot.reliq.bound`, `loot.reliq.gilded`, `loot.reliq.illumined`, `loot.reliq.plain`, `loot.secret.cache`, `loot.secret.palimpsest`, `loot.secret.vault`, `loot.shop.apothecary`, `loot.shop.arcanist`, `loot.shop.armorer`, `loot.shop.colophon`, `loot.shop.fence`, `loot.shop.general`, `loot.shop.gunsmith`, `loot.shop.scribe`, `loot.shop.stablemaster`, `loot.shop.tinker`, `loot.shop.wanderer`, `loot.trophy`, `loot.volume_reward`, `loot.war_spoils` |
+| `loot.` tables (74: §9.5 to §9.8; §9.7 bag contents as `loot.bag.*`; §10 Reliquary contents as `loot.reliq.*`; §11 Engine faces as `loot.engine.*`; §12.1 shop stock as `loot.shop.*`; §2.3 Keepsakes) | `loot.bag.boss`, `loot.bag.burnt`, `loot.bag.editor`, `loot.bag.elite`, `loot.bag.lucky`, `loot.bag.refined`, `loot.boss.editor`, `loot.boss.mini`, `loot.boss.palimpsestic`, `loot.chest.locked`, `loot.chest.plain`, `loot.companion.bramble`, `loot.companion.deputy_cole`, `loot.companion.dr_halloway`, `loot.companion.ensign_okafor`, `loot.companion.gearwright`, `loot.companion.glitch`, `loot.companion.iris_kane`, `loot.companion.kallias`, `loot.companion.lan_feiyu`, `loot.companion.mother_vesper`, `loot.companion.rust_mae`, `loot.companion.sir_brannoc`, `loot.drop.champion`, `loot.drop.elite`, `loot.drop.hunter`, `loot.drop.minion`, `loot.drop.standard`, `loot.engine.armory`, `loot.engine.brass`, `loot.engine.curio`, `loot.engine.gilt`, `loot.engine.silver`, `loot.engine.wardrobe`, `loot.floor`, `loot.keepsake.cosmic_horror`, `loot.keepsake.cyberpunk`, `loot.keepsake.fairy_tale`, `loot.keepsake.gothic_horror`, `loot.keepsake.hardboiled_noir`, `loot.keepsake.mythic_antiquity`, `loot.keepsake.mythic_fantasy`, `loot.keepsake.oneiric`, `loot.keepsake.post_apocalypse`, `loot.keepsake.redacted`, `loot.keepsake.space_opera`, `loot.keepsake.steampunk`, `loot.keepsake.unwritten`, `loot.keepsake.ur_text`, `loot.keepsake.weird_west`, `loot.keepsake.wuxia`, `loot.quest.t1`, `loot.quest.t2`, `loot.quest.t3`, `loot.reliq.bound`, `loot.reliq.gilded`, `loot.reliq.illumined`, `loot.reliq.plain`, `loot.secret.cache`, `loot.secret.palimpsest`, `loot.secret.vault`, `loot.shop.apothecary`, `loot.shop.arcanist`, `loot.shop.armorer`, `loot.shop.colophon`, `loot.shop.fence`, `loot.shop.general`, `loot.shop.gunsmith`, `loot.shop.scribe`, `loot.shop.tinker`, `loot.shop.wanderer`, `loot.trophy`, `loot.volume_reward`, `loot.war_spoils` |
 | `loot.` pool tags (12, §2.5) | `loot.pool.brews_2`, `loot.pool.cross_glosses`, `loot.pool.exotic_armor`, `loot.pool.exotic_arms`, `loot.pool.gadgets_2`, `loot.pool.glyphs_2`, `loot.pool.implants_2`, `loot.pool.legendary_perks_1`, `loot.pool.legendary_perks_2`, `loot.pool.recipes_2`, `loot.pool.relics_2`, `loot.pool.throwables_2` |
 | `loot.` reserved sub-generator tags (19, §2.3) | `loot.affix`, `loot.ammo`, `loot.arch`, `loot.book`, `loot.buc`, `loot.bundle`, `loot.cat`, `loot.exotic`, `loot.glyph`, `loot.illum`, `loot.key`, `loot.legendary`, `loot.lucre`, `loot.material`, `loot.mfr`, `loot.perk`, `loot.quality`, `loot.rarity`, `loot.spell` |
 | `reliq.` (4) | `reliq.bound`, `reliq.gilded`, `reliq.illumined`, `reliq.plain` |
 | `engine.` (6) | `engine.armory`, `engine.brass`, `engine.curio`, `engine.gilt`, `engine.silver`, `engine.wardrobe` |
-| `shop.` (11) | `shop.apothecary`, `shop.arcanist`, `shop.armorer`, `shop.colophon`, `shop.fence`, `shop.general`, `shop.gunsmith`, `shop.scribe`, `shop.stablemaster`, `shop.tinker`, `shop.wanderer` |
+| `shop.` (10) | `shop.apothecary`, `shop.arcanist`, `shop.armorer`, `shop.colophon`, `shop.fence`, `shop.general`, `shop.gunsmith`, `shop.scribe`, `shop.tinker`, `shop.wanderer` |
 
-Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier gates and weights, Engine face tables, `ENGINE_PITY_NEED = 9`, `ENGINE_PITY_NEED_WISHBONE = 7`, `palimpsestic_bp`, `LUCRE_TARGET(d)`, `LUCRE_FIND_CAP = 5000`, `BUY_TRADE_FLOOR = 7500`, `SELL_TRADE_CAP = 5500`, `GEAR_TOL_CAP = 3`, `INV_SLOTS_BASE = 20`, base values and template weights of §3. Functions: `generate_item`, `generate_keepsake`, `drop_rng`, `place_rng`, `offer_rng`, `value` (§13.1). Intent request: `ShopHaggle { shop }`.
+Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier gates and weights, Engine face tables, `ENGINE_PITY_NEED = 9`, `ENGINE_PITY_NEED_WISHBONE = 7`, `CURSED_FACE = 4`, `palimpsestic_bp`, `LUCRE_TARGET(d)`, `LUCRE_FIND_CAP = 5000`, `BUY_TRADE_FLOOR = 7500`, `SELL_TRADE_CAP = 5500`, `GEAR_TOL_CAP = 3`, `INV_SLOTS_BASE = 20`, base values and template weights of §3. Functions: `generate_item`, `generate_keepsake`, `drop_rng`, `place_rng`, `offer_rng`, `value` (§13.1). Intents validated here (doc 02 §5.5): `ShopHaggle { shop }` (§12.2) and `DropLucre { amount: i64 }` (§17).
 
 ## Interface assumptions
 
 | Doc | This chapter assumes it provides |
 |---|---|
-| 02 | intents `ShopBuy`, `ShopSell`, `CommitOffer`, `DropItem`, `UseItemOn`, `EquipItem`, `MoveItem`, plus `ShopHaggle { shop }` (Canon gaps 14); bots that assert the §13.2 income band; mod content IDs with second segment `x_<mod_id>` (§1 principle 8), and a mod loot patch that targets a doc 11 table such as `loot.chest.plain` and edits its `lines` |
-| 03 | ground-item entities; block damage for `perk.leg.worldbreaker` on `destructible` blocks only (Canon §4.3); `carried_g` from §14.1; torch light |
+| 02 | intents `ShopBuy`, `ShopSell`, `CommitOffer`, `DropItem`, `UseItemOn`, `EquipItem`, `MoveItem`, plus `ShopHaggle { shop }` (triage C-15) and `DropLucre { amount: i64 }` (§17); bots that assert the §13.2 income band; mod content IDs with second segment `x_<mod_id>` (Canon §1.1, §1 principle 8), and a mod loot patch that targets a doc 11 table such as `loot.chest.plain` and appends to its `lines` |
+| 03 | ground-item entities; block damage for `perk.leg.worldbreaker` on blocks tagged `block.tag.destructible` only (Canon §4.3); `carried_g` from §14.1; torch light |
 | 04 | gear sub-attribute modifiers; food satiation, rot and eat ticks (copied in §3.5); `bp.arm_extra_1` and `bp.arm_extra_2` granting `slot.hand_extra_1` and `slot.hand_extra_2` (§3.9); treatments; implant-form `aug.*` with region points, 8 of them tagged `implants_2`; "Emend the Flesh"; the composure-loss hook; Speech XP for haggling; kit roles |
-| 05 | the `arch.*` IDs of §3 with their stats; tendency letters mapped to its fields; overridable fields (`fire_mode`, `sig`, `innate_counter`, `max_ricochets`); ammunition families, values, carry caps and pickup sizes; counter charges and `grenade_counter` bits; the ward capacity chain; mount stats; and that it lists `arch.ranged.wand`, `arch.ranged.staff` and `arch.offhand.tome` in its namespace (Canon gaps 12) |
+| 05 | the `arch.*` IDs of §3 with their stats; tendency letters mapped to its fields; overridable fields (`fire_mode`, `sig`, `innate_counter`, `max_ricochets`); ammunition families, values, carry caps and pickup sizes; counter charges and `grenade_counter` bits; the ward capacity chain; `arch.ranged.wand`, `arch.ranged.staff` and `arch.offhand.tome` in its export list |
 | 06 | staff, focus and tome casting fields; wand charges by rarity; the bound-glyph list; spell texts; inscription consuming `item.tool.blank_text` and creating `item.text.inscribed`; trainer glyphs; the eight schools, whose `item.book.primer_<school>` glyph tomes this chapter fills with `glyph_tome` and doc 06 §8.1 reads (§3.5 Books) |
-| 07 | material pools per (genre, material role) with `value_bp`, `dmg_bp`, `ar_bp`; `equivalent(material, genre)`; mass and durability; the 22 `part.*` IDs of §5.4; the 6 base gadgets and 6 `gadgets_2`; salvage units; resource nodes for `item.tool.pick`; the `learn: 1` and `r2` recipe flags and the read rule of `item.book.schematic` (§3.5 Books); `gadgets_2` and `r2` membership, whose tags `loot.pool.gadgets_2` and `loot.pool.recipes_2` this chapter owns (§2.5) |
-| 08 | potion and bomb effects and values, Reliquary-only potion values, vessels, ingredient lists for apothecaries and `loot.trophy` |
+| 07 | material pools per (genre, material role) with `value_bp`, `dmg_bp`, `ar_bp`; `equivalent(material, genre)`; mass (items have no durability, Canon §4.3); the 22 `part.*` IDs of §5.4; the 6 base gadgets and 6 `gadgets_2`; salvage units; resource nodes for `item.tool.pick`; the `learn: 1` and `r2` recipe flags and the read rule of `item.book.schematic` (§3.5 Books); `gadgets_2` and `r2` membership, whose tags `loot.pool.gadgets_2` and `loot.pool.recipes_2` this chapter owns (§2.5) |
+| 08 | potion and bomb effects and values, Reliquary-only potion values, vessels, ingredient lists for apothecaries and `loot.trophy`; the mechanics of `apparatus.respirator.cloth`, `.mask` and `.rebreather` (doc 08 §4.3), whose loot records live in §3.4 |
 | 09 | noise in dB; locks for `loot.chest.locked`; mimic as a hidden object; `aware.suspicious`; lockpick and hacking-deck rules |
-| 10 | `roll_curse(rng, draft, local_myt, source)` with exactly 3 draws; `value_true` identical to §13.1; `value_vendor`; knowledge flags and sealing; `wand_pool`; `appr.svc.*`; and that `PriceObs.trade_bp` records the composite buy or sell trade of §12.2 |
+| 10 | `roll_curse(rng, draft, local_myt, source)` with exactly 3 draws; `value_true` identical to §13.1; `value_vendor`; knowledge flags and sealing; `wand_pool`; `appr.svc.*`; pacts, `eligible_pacts` and the `CursedCapsule` source of `roll_curse` for the Fortune Engine cursed capsule (§11.2); `curse.pact.miser`'s unit `m` (§9.1); the 3000 Bp potion and 1000 Bp text malign shares that §3.5 meets; and that `PriceObs.trade_bp` records the composite buy or sell trade of §12.2 |
 | 12 | spots for chests, Reliquaries, Engines, shops, Scriptoria, Volume-plan and counter caches; `room.treasury` and Locked edges for locked chests; the rest Folio's shop and Engine hall; secret kinds; at most one Palimpsest vault per Volume; Colophon and Interleaf rooms; challenge success judged at exit commit; placement of `item.quest.folio_leaf` and its story record (§3.5) |
-| 13 | `loot_role`, `no_loot` and `trophy` template fields; `enemy.mimic`; tags undead and fiend; vendor NPCs `npc.vendor.<type>` for each `shop.<type>`; the reputation price factor; quest tiers 1 to 3; companion personal quests; carried items through §3.7. Its assumed `loot.drop.{armed, beast, caster, construct, undead, eldritch, swarm, editor, mount}` are replaced by the rank tables plus role bias (§9.3, §9.5) |
-| 14 | `RunState.grade`, `GradeParams`, Folio positions and `d(f)`, the Volume reward phase, Bindery pool tags and `unlock.room.fortune_engines_2`, `unlock.room.wandering_scribe`, `run.boon.deep_pockets`; `run.rubric.catchwords` placing `item.quest.catchword`; and that its kits use the owner IDs of the former-name table below and of doc 05 §5.6 |
+| 13 | `loot_role`, `no_loot` and `trophy` template fields; `enemy.mimic`; tags undead and fiend; vendor NPCs `npc.vendor.<type>` for each `shop.<type>`; the reputation price factor; quest tiers 1 to 3; companion personal quests; carried items through §3.7 |
+| 14 | `RunState.grade`, `GradeParams`, Folio positions and `d(f)`, the Volume reward phase, Bindery pool tags and `unlock.room.fortune_engines_2`, `unlock.room.wandering_scribe`, `run.boon.deep_pockets`; `run.rubric.catchwords` placing `item.quest.catchword`; and that its kits name only owner IDs (doc 05 §5.6 for weapons) |
 | 15 | the `generate_keepsake` caller and the Satchel |
-| 16 | slot states, `DropItemFor`, the instanced replication rule, pickup collision order |
-| 17, 18 | odds panels, the ledger, the Engine UI, sealed cards, vendor screens; skin, vendor and manufacturer localization and the name review |
+| 16 | slot states, `DropItemFor`, the instanced replication rule, pickup collision order; trades and `DropItemFor` refusing `cat.currency`, so Lucre passes only through §17's dropped piles |
+| 17, 18 | odds panels, the ledger, the Engine UI with the cursed capsule's Ominous mark and share (§11.2), sealed cards, vendor screens, the three Rewrite offers (§15); skin, vendor and manufacturer localization and the name review |
 
-**Former names.** Earlier drafts of docs 02, 04, 13 and 14 used names in this chapter's namespaces that no owner exports. They are written unmarked here because they are not content IDs; every chapter uses the owner ID on the right. Doc 05 §5.6 resolves the former `arch.` and `ammo.` kit role names.
+**Former names.** Earlier drafts of docs 02, 04 and 13 used names in this chapter's namespaces that no owner exports. They are written unmarked here because they are not content IDs; every chapter uses the owner ID on the right. Doc 05 §5.6 resolves the former `arch.` and `ammo.` kit role names.
 
 | Former name (doc) | Owner ID |
 |---|---|
-| item.potion.{healing, haste, aether, invisibility, shielding} (14) | `alch.potion.healing`, `alch.potion.haste`, `alch.potion.aether`, `alch.potion.invisibility`, `alch.potion.shielding` |
-| item.potion.{fortify, antidote, clarity, focus, regeneration} (14) | `alch.potion.fortitude`, `alch.potion.cure`, `alch.potion.purity`, `alch.potion.calm`, `alch.potion.honeyed_healing` |
-| item.throwable.{knife, javelin} (14) | `arch.ranged.thrown` (knife and javelin skins) |
-| item.throwable.{frag, smoke, fire_flask, poison_flask, disruptor_flask} (14) | `arch.ranged.grenade_frag`, `arch.ranged.grenade_smoke`, `alch.bomb.firebomb`, `alch.potion.toxic_gas`, `item.throwable.counter_disruptor` |
-| item.container.flask (14) | `apparatus.vessel.flask` |
 | item.food.snack (04) | `item.food.bread` |
 | loot.drop.boss, loot.drop.editor (13) | `loot.boss.mini`, `loot.boss.editor` |
 | loot.mythic_fantasy.chest_common (02, mod patch example) | `loot.chest.plain` |
 
 ## Canon gaps
 
-1. **Resolved since canon-1.2.** The §5.9 manufacturer table, invasions (§17.9) and limited building (§4.3) are now canon and used here; the invader-kill reward is canon's "one guaranteed in-run Reliquary roll", defined in §9.12.
-2. **Marginalia enhancement.** Canon §13.9 types `enhancement` as `0..=15` and §13.7 clamps `eff_enh` at 15, yet the Marginalia cap exceeds 15. Assumed: the field range and the upper clamp both equal the current cap `15 + floor_div(d_current - 25, 5)`.
-3. **Multiplicative traits.** Canon §5.9 states some manufacturer traits as "× N" (Perihelion, Rainslick, Thimbleweald) but §10.5 has no slot. Assumed: one `mul_bp` on the hit's `B` after the §10.4 chain, before step 1, matching doc 05's attack-factor reading.
-4. **Stream uses.** Keyed `rng.loot` also draws for bag contents and burning, Reliquary bundles, salvage parts, Quill replacements, mimic loot, quest and companion rewards, Redaction and ghost item loss, and acquisition-time illumination; per-shot ammo and stamina savings (Lastditch, `affix.frugal`) use keyed `rng.combat`, which Canon §3.3 lists for on-hit procs. Proposed: add these uses to the §3.3 table.
-5. **Offer contexts.** Canon §3.5 has one offer stream per slot. Assumed: `offer_rng` mixes a non-advancing peek with the context uid and purpose, and each commit advances the stream by exactly one `next_u64` (doc 14 uses the same rule for boons).
-6. **"Reels".** Canon §3.3 says "Fortune Engine reels". Engines have no reels; the term means the face pick. Proposed wording: "Fortune Engine dispensing".
-7. **Unwritten shops and counters.** The Colophon holds a shop (Canon §17.1), but `genre.unwritten` has none (§5.2), and Canon §17.3a requires counter sources in every genre's shop. Assumed: no shop there; the Scriptorium station stays; Unwritten's counter source is the §9.10 cache and its loot pool.
-8. **Emendation category.** `cat.text` is type-hidden (Canon §13.6), so `item.tool.emendation` is `cat.tool`.
-9. **Unmoored Serendipity.** "Serendipity procs" (Canon §5.11) is read as effective SER 40 in §13.4 and an Engine SER shift of 0.
-10. **Purses.** The canon does not say whether Lucre is per player; this chapter makes it per player.
-11. **Placement generators.** Canon §3.2 describes `rng.loot_place` as one sequential stream. This chapter derives labeled generators from its Folio seed (`place_rng`, §9.11), as doc 12 does for `rng.worldgen`, so placement decisions never shift each other.
-12. **Namespaces.** `arch.ranged.wand` (doc 10), `arch.ranged.staff` and `arch.offhand.tome` (doc 06) live in doc 05's `arch.` namespace but are not in doc 05's export list; doc 05 must list them. Doc 14's provisional kit names (the former-name table above) are not exported by any owner.
-13. **Item value ownership.** Canon §13.9 gives `value` to doc 11; doc 10 §6.1 restates it as `value_true`. This chapter adopts doc 10's formula verbatim (enhancement 1000 Bp per step, curse and charge factors), so the two cannot diverge; Item Power keeps the canon 600 Bp enhancement step (§18).
-14. **Haggle intent.** Doc 02's intent list has no haggle action; this chapter requests `ShopHaggle { shop }`.
-15. **Illuminated for Placed and Offer items.** Canon §13.9 rolls it "per Legendary-or-better drop" with keyed `rng.loot`. Shop stock, floor loot, Engine faces and Volume rewards are not keyed drops, so they roll at first acquisition (§2.3 step 13).
-16. **Gear tolerance cap.** Canon §5.4 caps total tolerance at 6 but not the gear term. `GEAR_TOL_CAP = 3` (§3.4) is this chapter's balance rule for item-granted tolerance.
-17. **Deep pockets.** Doc 14 says the boon multiplies "every Lucre gain". This chapter applies it to Lucre piles only, not sales, so the buy floor stays above the sell cap (§12.2).
-18. **Five counters.** Canon §17.3a names three counter types; doc 05 adds `counter.sunder` and `counter.anchor`. This chapter stocks all five with dependency-none sources in every genre.
-19. **Extra hands.** Canon §13.2 writes `slot.hand_extra_N` without a bound, and Canon §13.3's Exotic limit names only `slot.weapon_1..3` and `slot.offhand` as the weapon group. Doc 04 defines two extra-arm parts, so this chapter defines `slot.hand_extra_1` and `slot.hand_extra_2` and counts them in the weapon group, since they hold the same items (§3.9). Proposed: canon lists both slots in §13.2 and in the weapon group.
-20. **Book sources.** Canon §13.1 gives `cat.book` content to docs 06 and 07 but names no loot source. Books come from kits and from the arcanist's glyph-tome line and the scribe's schematic line (§3.5, §12.1). They never enter the deck, so the 40-card deck and the §20 example are unchanged.
-21. **Retired IDs.** Canon §1.1 requires an alias only for a shipped ID. `cat.block` (retired in canon-1.4) and `item.relic.lattice_lens` never shipped; §3.10 keeps them as aliases so their historical mentions resolve and their `id32` stays reserved.
+Canon-1.11 closes every gap this chapter listed at canon-1.4 (audit/canon_gaps_triage.md). The canon adopted the Marginalia enhancement cap, the "× N" traits, the extra stream uses, offer contexts, "dispensing" for reels, Unwritten shops and counter caches, per-Erratum Lucre, labeled placement sub-streams, acquisition-time illumination and the two extra-hand slots (G-131, G-084, G-025, G-030, G-026, G-161, G-148, G-027, G-134, G-130). The five counters were already canon (G-171), and the staff, wand and tome namespace gap was stale (doc 05 exports them). The rest are this chapter's rules, stated in the body: Unmoored SER (G-058, §2.3 and §11.2), `GEAR_TOL_CAP` (G-062, §3.4), the Emendation's category (G-136, §16.1), value ownership (G-138, §12.2 and §13.1), book sources (G-146, §3.5), retired aliases (G-147, §3.10), the haggle intent (G-223, Interface assumptions) and deep pockets on fresh piles only (G-224, §9.1).
+
+1. **Abridged kill drops.** Canon §17.1 defines Abridged "loot quantity" as worldgen chests and floor-loot spots, leaves Reliquaries, Fortune Engines and vendor stock unchanged, and does not mention kill drops. This chapter also multiplies scaled kill-drop lines by 16667 Bp (§9.1), matching Abridged's × 16667 kill XP so that a 15-Folio run yields the kill loot of a 25-Folio one; §13.2's Abridged Lucre target assumes it. Proposed: §17.1 adds "and scaled kill-drop lines (doc 11 §9.1)".
+2. **Later product-owner items.** DECISIONS 95 (a genre-skinned grappling tool that is an item, never part of the base kit) and 102 (the Errata continue into Second Edition with their gear and levels; DECISIONS 106 sets Second Edition depth to `25 + 2n`) name this chapter, but canon-1.11 carries neither, and doc 03 has no grapple mode yet (doc 03 G31). Until the canon adds them, this chapter defines no grappling-tool template and no Second Edition loot rule. Proposed: the grappling tool becomes an `item.tool.` template of `cat.tool` with a genre skin and doc 03's mechanics, and Canon §13.7 states `ENH_CAP` for Second Edition Folios, which neither its main-run nor its Marginalia value covers.
 
 ## Acceptance tests
 
@@ -1965,7 +1943,7 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 9. **Deck.** 40 cards; 40 `Decrement` draws with no role bias empty the deck exactly once; the 41st draw follows a refill; a category with no eligible template (the part card in `genre.unwritten`) is skipped by redrawing with its weight 0.
 10. **Volume plan.** For run seed `0x0123456789ABCDEF`: `place_rng(1, "vplan", 0)` is seeded with `0x98dd1f20ed8bb553` and gives `u = [1, 3, 0, 0]`, `q = 0`, `b1 = b2 = 0`, `g = 2`: Emendations at Folios 1, 3 and 4 and none in the Editor bag, the Quill at Folio 1, both bound key caches at Folio 1, the gilded key cache at Folio 3. Volume 2 gives `u = [2, 2, 2, 0]`: Emendations at Folios 6 and 9 and one in the Folio-10 Editor bag, Quill at 8, bound keys at 6 and 9, gilded at 8. At Grade 12 only the first bound key cache is placed.
 11. **Emendation spread.** Exhaustive enumeration of the 120 `(u1..u4)` tuples gives 0.6 expected Emendations at each of the 5 positions and exactly 3 per Volume.
-12. **Affix values.** Tier 2 `affix.dmg_vs_beast` at 1146 → 1880; tier 2 `affix.self_repair` at 4095 → 818; tier 2 `affix.infuse_fire` at 4630 → 1731 and 24 status power.
+12. **Affix values.** Tier 2 `affix.dmg_vs_beast` at 1146 → 1880; tier 2 `affix.self_injector` at 4095 → 818; tier 2 `affix.infuse_fire` at 4630 → 1731 and 24 status power.
 13. **Affix legality.** No generated item in `genre.post_apocalypse` or `genre.hardboiled_noir` carries an arcana component; none in `genre.redacted` a verve component; every `genre.unwritten` item has only dependency-none components.
 14. **Skins.** The four §4.2 tables have 448 cells; validation rejects any tagged axis whose axiom is 0; staves and wands depend exactly on their genre's aether axis; `arch.ranged.staff` and `arch.ranged.wand` are never generated in `genre.unwritten`.
 15. **Manufacturers.** Each core genre's three manufacturers together make all ten classes; a Weird West SMG's candidates total 10000 with the Marginal Press first; no display name matches the doc 18 brand list.
@@ -1973,20 +1951,20 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 17. **Reliquary odds.** A plain Reliquary's equipment line at Folio 7, SER 40 shows 68.2854 %, 22.2278 %, 6.4581 %, 2.2028 %, 0.8260 %; a gilded Reliquary's Rare-floor line at Folio 7 has weights `[0, 0, 1420, 490, 193, 82, 0]`.
 18. **Reliquary pity.** With `rq5 = 4` the next Reliquary's best line cannot roll below Epic; with `rq20 = 19` not below Legendary.
 19. **Mimic.** Opening a mimic keeps the key and spawns `enemy.mimic`; after its death every player opens their instance without a key and gets the extra line; an interrupted channel spends nothing and draws nothing.
-20. **Engine odds and prices.** Brass at SER 70: `[2300, 2600, 1800, 1800, 900, 600]`; pity 9 (7 with `item.trinket.wishbone`): `[0, 0, 0, 0, 0, 10000]`. Folio 7 prices at Grade 0: brass 100, 125, 150, 175, 200; silver 268, 335, 402, 469, 536; a sixth purchase is refused. A Monte Carlo of 10^6 fresh brass sequences at SER 40 averages 8.75 ± 0.02 capsules to the top face.
+20. **Engine odds and prices.** Brass at SER 70: `[2300, 2600, 1800, 1800, 900, 600]`, cursed share 900 Bp; pity 9 (7 with `item.trinket.wishbone`): `[0, 0, 0, 0, 0, 10000]`, cursed share 0. Folio 7 prices at Grade 0: brass 100, 125, 150, 175, 200; silver 268, 335, 402, 469, 536; a sixth purchase is refused. A Monte Carlo of 10^6 fresh brass sequences at SER 40 averages 8.75 ± 0.02 capsules to the top face.
 21. **Engine commitment.** Reopening shows identical faces; an open advances `rng.offer.p<slot>` by 0 and a purchase by exactly 1; every accepted payment yields exactly one item; the Engine schema has no stake, multiplier or empty-outcome field.
 22. **Shop prices.** Value 1382 at Grade 0: sell 414 (CHM 40), 51 unappraised, gunsmith price 2418; Speech 40, CHM 70, Folio 7 gives `haggle_bp = 1900`, `buy_trade = 12899` and price 1782; at Grade 10 the gunsmith charges 2781 and pays 373. For every combination of the §12.2 modifiers, `buy_trade >= 7500 > 5500 >= sell_trade`.
-23. **Reforge and Rewrite.** Epic at Folio 9: reforges cost 472, 1416, 3304, 7080 and a fifth is refused; Rewrite costs 483 for value 1382 at Folio 9; a Rewrite keeps every "Persists" field of §15.
+23. **Reforge and Rewrite.** Epic at Folio 9: reforges cost 472, 1416, 3304, 7080 and a fifth is refused; Rewrite costs 483 for an identified item of value 1382 at Folio 9; a Rewrite keeps every "Persists" field of §15.
 24. **Lucre.** `LUCRE_TARGET` rows of §13.2 match; Σ over Folios 1 to 25 is 38,102. A fresh 27-Lucre pile picked up with `Σ find` 900 gives 29; `Σ find` above 5000 counts as 5000; a pile dropped from a purse never gains find.
 25. **IP.** Common Normal +0 iron ilvl 1: 100; §20 SMG: `IP_true` 237, `IP_shown` 201 at `know.classified`; maximum ilvl-25 chain: 4103.
 26. **Lost Satchel.** With 2048 ground items, inserting one more moves items in ascending uid (skipping quest items and corpses, and in the first pass items within 8000 mm of an Erratum) until the count is at most 1984.
 27. **Stacking.** Two `alch.potion.healing` with different `buc` never merge; healing potions of ilvl 3 and 5 merge at ilvl 3; two `arch.ranged.grenade_frag` of different ilvl never merge.
 28. **Marginalia Emendations.** Exiting Folio 26 grants 1 Emendation to each Active and Ghost slot; the cap at Folio 30 is 16.
-29. **Counters.** In each of the 15 genres with shops, the Colophon shop stocks all five counter charges, all five counter grenades and `alch.bomb.salt`; in all 16 genres a 4-player Folio whose exit preview shows `elite.warded` places a cache holding 2 `item.throwable.counter_breaker` and 2 `ammo.charge_breaker` per player in the next Folio.
+29. **Counters.** In each of the 15 genres with shops, every shop stocks all five counter charges, all five counter grenades, `alch.bomb.salt` and `alch.bomb.smoke`; in all 16 genres a 4-player Folio whose exit preview shows `elite.warded` places a cache holding 2 `item.throwable.counter_breaker` and 2 `ammo.charge_breaker` per player in the next Folio.
 30. **IDs.** Every exported ID, sub-generator tag included, passes the grammar with distinct `fnv1a32`, including against canon IDs and the §3.10 retired IDs.
 31. **Folio isolation.** Shop shelves, floor loot, caches, Reliquary and Engine placements of Folio 7 are byte-identical, uids included, for party sizes 1 to 4 and whether Folios 1 to 6 were played.
 32. **Uniques.** No party holds two copies of a Palimpsestic unique; a player receives no Exotic twice before that category's Exotics are exhausted; an undispensed Engine face does not count as acquired.
-33. **Malign share.** Harmful weight is exactly 3000 of 10000 for found potions, 2700 of 9000 for Reliquary-only potions and 3000 of 10000 for texts.
+33. **Malign share.** Harmful weight is exactly 3000 of 10000 for found potions, 2700 of 9000 for Reliquary-only potions and 1000 of 10000 for texts (doc 10 §8).
 34. **Perk pools.** For every weapon archetype and every genre where it has a skin, columns 1 and 2 hold at least 3 legal perks and columns 3 and 4 at least 6.
 35. **Fixed draw counts.** `place_rng` labels draw exactly: `reliq` 9, `engine` 4, `shop` 3, `vplan` 8 (Abridged 4), `floor` 9 (Abridged 15), `cache` 16; `roll_curse` 3; every loot line 2.
 36. **Invasions.** Killing an invader at Folio 4 gives each Active Erratum the contents of one `reliq.bound` without a key; a Redaction empties every purse and destroys one equipped non-weapon item per Erratum with one keyed draw, none when there is no eligible item.
@@ -1994,6 +1972,10 @@ Data constants: `party_drop_bp`, `shared_drop_bp`, deck counts, role bias, tier 
 38. **Gear tolerance.** Two `item.ring.machine_tongue` at `eff_enh` 8 plus an `affix.tol_techne` give `gear_tol[techne] = 3`.
 39. **Books.** An arcanist glyph-tome line at Folio 7 draws 1 value in `loot.arch` and at most 2 in `loot.book`, and teaches only glyphs of the drawn primer's school of tier 2 or lower from the run's glyph loot pool. A schematic line draws 1 value in `loot.book` and teaches a `learn: 1` recipe of the content set, never an `r2` recipe without `loot.pool.recipes_2`. Neither line changes with what any player knows.
 40. **Restated tables.** The §3.8 rarity rows equal Canon §13.3 and the §3.9 slot rows equal Canon §13.2 field for field. Exports lists every ID exactly once and no §3.10 retired ID.
+41. **Cursed capsule.** Face 4 of every Engine is generated with `roll_curse` source `CursedCapsule` (exactly 3 draws in `loot.buc`) and is a `buc.cursed` pact item, sealed with `RARITY` and `OMEN` set; faces 0 to 3 and 5 are always `buc.uncursed` with no curse draw. The panel shows the cursed share: 900 Bp at brass, 1000 Bp at silver, its variants and gilt, 0 with the pity guarantee armed. Dispensing face 4 adds 1 to the tier's pity counter.
+42. **Lucre between players.** `DropLucre { amount: 50 }` from a purse of 120 leaves 70 and creates one Public 50-Lucre pile with `fresh = false`; the dropper's auto-pickup skips it; another party member picking it up gains exactly 50 (no Lucre find, boon or pact). Amounts 0 and 121 are refused, as is a drop by a ghost, a downed Erratum or an invader. No trade or `DropItemFor` carries Lucre.
+43. **Rewrite offers.** A Weird West `mfr.weird_west.sundown_rail` SMG Rewritten in `genre.cyberpunk` shows exactly 3 stored offers, with manufacturers `mfr.cyberpunk.ghostline` (the default: Chromaw, Cyberpunk's third row, does not make RG), `mfr.cyberpunk.neon_saint` and `mfr.errata.marginal_press`, in that order; generating them draws 3 values from the offer generator and advances `rng.offer.p<slot>` by 0; committing one advances it by exactly 1. A Marginal Press item shows 3 offers that keep the Marginal Press.
+44. **No wear, no mounts.** No instance field, affix, perk, manufacturer tendency or gimmick, part, service, shop or loot line of this chapter reads or writes durability, and none names a mount; the §3.10 table holds no retired mount ID. `affix.engineered` changes only salvage yields, and `affix.self_injector` heals at most once per smallest X ticks per bearer.
 
 ## Invariants annex
 
@@ -2007,15 +1989,17 @@ W! weighted lists ∈ ascending content ID ∨ fixed table order       N! HashMa
 W! rarity := Canon §13.4 → shift → pity → floor                   N! rarity share changed by pool unlocks
 W! template ID ∈ own namespaces ∪ owners' exports                  N! ID minted in another owner's namespace
 W! component dep ∉ {axis | origin axiom = 0}                       W! staff, wand, focus, tome dep := aether axis
-W! harmful share = 3000 Bp per consumable class                    W! gear_tol[a] ≤ 3
+W! harmful share = 3000 Bp potions, 1000 Bp texts                  W! gear_tol[a] ≤ 3
 W! Fortune Engine: pay Lucre → exactly 1 item from shown faces     N! wager | multiplier | empty outcome | reels
+W! cursed capsule := face 4 ∧ pact ∧ OMEN before payment          N! hidden curse on any other face
 W! displayed odds == rolled weights                                N! paid currency → any random container
 W! offer generated once, advanced only on commit                   N! reroll on reopen
 W! Palimpsestic ∈ {Editor table, Volume reward, palimpsest vault}  N! Palimpsestic sold | salvaged | on faces
 W! Exotic ≤ 1 per canon group                                      N! duplicate Exotic before category exhausted
-W! enhancement ≤ cap(d)                                            W! Emendation re-levels ilvl first
+W! enhancement ≤ ENH_CAP                                           W! Emendation re-levels ilvl first
 W! value == doc 10 value_true                                      W! buy_trade ≥ 7500 > 5500 ≥ sell_trade
-W! Lucre per player, i64                                           N! Lucre → account currency
+W! Lucre per Erratum, i64; between players only as dropped piles N! Lucre → account currency
+N! durability | wear | repair on any item                         N! mount ID or mechanic
 W! party loot scaled by party_drop_bp on scaled lines only         N! boss guarantee scaled by party size
 W! ground count ≤ GROUND_ITEM_CAP via Lost Satchel (quests, corpses exempt)
 W! Fortune|Serendipity → in-run loot only                          N! SER effect while st.unmoored

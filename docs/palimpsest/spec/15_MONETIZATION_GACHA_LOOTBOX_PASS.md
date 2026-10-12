@@ -1,6 +1,6 @@
 # 15 — Monetization: Inkwell Gacha, Reliquaries, Codex Pass, Store and Compliance
 
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.4 (checked against every section of `spec/00_CANON.md` canon-1.4, including §17.8 Margin trophies and §17.9 invasions, and against the on-disk docs 02, 03 and 14).
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.11 (checked against every section of `spec/00_CANON.md` canon-1.11, including §2.4 `presentation_hash`, §3.6 account draws, §14 welcome Ink, §17.8 Margin trophies and §17.9 invasions, against DECISIONS.md through row 125, and against the on-disk docs 01 to 04, 06, 10 to 14, 16 to 18 and 21).
 
 This chapter specifies account currencies, randomized account rewards, the battle pass, the store, and the legal and ratings layer. The governing decision is DESIGN_BRIEF §8, **Earned Randomness, Paid Certainty**. Account economy state lives on the economy service (§10) and, offline, in the local client. The simulation only reports facts it already emits and receives only Keepsake item records (§5.5).
 
@@ -8,32 +8,34 @@ This chapter specifies account currencies, randomized account rewards, the battl
 
 | Source | Section | What this chapter consumes |
 |---|---|---|
-| DESIGN_BRIEF | §1, §4, §8 | Co-op with opt-in PvP invasions, Margin hub, horizontal meta progression, the monetization stance, prices, end-of-service guarantee |
-| DECISIONS.md | 2026-10-11 rows 1, 2, 13, 15, 16 | Monetization kept; Standard plus 15-Folio mode; 16+ rating targets with severing and blood; opt-in PvP invasions; Margin plot as decoration slots |
+| DESIGN_BRIEF | §1, §4, §8 | Co-op with opt-in PvP invasions, Margin hub, horizontal meta progression, the monetization stance, the USD 19.99 base price, end-of-service guarantee |
+| DECISIONS.md | 2026-10-11 rows 1, 2, 13, 15, 16, 26, 28, 32, 42, 53, 57 to 60, 74, 75, 79, 80, 86, 87, 91, 94, 98, 108, 111 to 114, 119, 122 | Monetization kept (1); Standard plus Abridged (2); 16+ rating targets (13) with ink gore and a red-blood toggle (94); opt-in PvP invasions (15) with cosmetic-only invader rewards (32, 86); Margin decoration slots (16); the Erasure hunter's `rank.elite` multipliers (26, 91; §6.2 kill XP); the Echo cast (28); base game USD 19.99 at Early Access and 1.0 (42); the first two Folio Expansions (53); Inkwell rates (57); Codex premium (58); account Reliquaries (59); pact curses (60); lobby and chat safety (74, 75); the 80-hour unlock pace (79); a Recollection trial for every Echo (80); presentation-only mods (87); PC only (98); Second Edition stakes and the Ironman cosmetic (108); no hard release dates, so `T0` is set at launch (111); Steam as the only storefront (112); no demo and no public playtest build (113); all 12 core genres at Early Access (114, which supersedes the 6 genres of 41) with all 24 Echoes (119); Folio Expansions at USD 9.99 (122) |
 | Canon | §1.1–§1.6, §2.1, §2.3 | ID grammar and `fnv1a32`; `Bp`, `Ticks`, money as `i64`; `floor_div`, `round_half_even`, `mul_bp`; integer-only content; `TICK_HZ = 60` |
-| Canon | §2.4 | Session header (`sim_version`, `content_hash`, `run_seed`) carried by run reports |
+| Canon | §2.4 | Session header (`sim_version`, `content_hash`, `run_seed`) carried by run reports; `content_hash` covers simulation-affecting mods only, and presentation-only mods enter `presentation_hash` (§2.2 Apocrypha rule) |
 | Canon | §3.1 | `Rng`, `Rng::from_seed64`, `mix64` (Keepsake item generation seeds) |
-| Canon | §3.6 | Delegation: "Doc 15 specifies a server-side ChaCha20 generator with commit-reveal" |
-| Canon | §17.1, §17.2, §17.3, §17.4 | Run constants, boss Folios 5/10/15/20/25, Abridged `d_eff`, `enemy_count_bp`, rank IDs and `rank_xp_bp`, `REF_KILLS_PER_FOLIO = 40` (reference hour, §6.2) |
+| Canon | §3.6 | Account draws (Inkwell pulls and account Reliquaries) use doc 15's HMAC-SHA256-keyed ChaCha20 generator with commit-reveal (§4); doc 15 §5.4 alone seeds `Rng::from_seed64` outside the simulation, for Keepsake item generation |
+| Canon | §11.6, §17.1, §17.2, §17.3, §17.4 | Run constants, boss Folios 5/10/15/20/25, Abridged `d_eff`, `enemy_count_bp`, rank IDs and `rank_xp_bp`, the Erasure hunter's `rank.elite` kill XP (§11.6), `REF_KILLS_PER_FOLIO = 40` (reference hour, §6.2) |
 | Canon | §17.8, §17.9 | Margin trophy and decoration slots (`cosm.margin.*`); invasions: `mode.invasion_open`, invader rewards "Quires and cosmetic Red Ink marks only", chat controls with invaders (§2.2, §8.5) |
 | Canon | §13.3, §13.4 | Rarity IDs and order `rar.common` … `rar.palimpsestic`; the Serendipity term of the rarity roll (never applied to account draws) |
-| Canon | §13.6 | Knowledge states, unknown-appearance classes, `unlock.daily_baseline` |
+| Canon | §13.6 | Knowledge states, unknown-appearance classes, `unlock.daily_baseline`, pact curses (§5.4) |
 | Canon | §13.7, §13.8, §13.9 | Emendation re-level rule, `ilvl`, item instance contract |
-| Canon | §14 | `cur.quire`, `cur.ink`, `cur.vellum`, `ent.quill`, the no-purchase and no-conversion rules |
+| Canon | §14 | `cur.quire`, `cur.ink` (its sources include the one-time welcome grant), `cur.vellum`, `ent.quill`; nothing purchasable converts into Ink, Quires or Vellum; no currency is bought, or traded or gifted between accounts |
 | Canon | §16.2 | Echo definition, 24 launch Echoes (2 per core genre), acquisition through the Inkwell or Recollection |
 | Canon | §18 | `ev.folio_entered`, `ev.folio_exited`, `ev.entity_killed`, `ev.item_identified`, `ev.item_crafted`, `ev.potion_brewed`, `ev.player_revived`, `ev.run_ended` |
-| Canon | §19 | This chapter owns `banner.`, `pass.`, `store.`, `juris.`, `bundle.`, `cosm.`, and the account economy rules for `cur.` and `ent.` |
+| Canon | §19 | This chapter owns `banner.`, `pass.`, `store.`, `juris.`, `bundle.`, `cosm.`, Echo acquisition, and the account economy rules for `cur.` and `ent.`; `echo.` and `mode.` IDs are doc 14's and are only referenced here |
 | Canon | §22 | no premium currency; no real money to any randomized reward; `juris.paid_random_items_enabled = false`; Fortune and Serendipity never touch gacha odds or account currencies |
-| Doc 02 | §3.2 crate table (`crate.services` = `palimpsest_services`, `crate.platform`), §11.2 `content_hash` (REC, UNL, MOD, FLG sections), §12.4 signed meta profile, §13.4 `modset_hash`, §17.3 flag records | Economy service host crate, Apocrypha detection (§2.2), receipt cache, `juris.` flag loader (§8.2) |
+| Doc 01 | §10.3 | `kpi.econ.*` IDs for the §12 KPIs |
+| Doc 02 | §3.2 crate table (`crate.econ` = `palimpsest_econ`, `crate.services` = `palimpsest_services`, `crate.platform`), §11.2 `content_hash` (REC, UNL, MOD, FLG sections), §12.4 signed meta profile, §13.1 mod classes (presentation-only or simulation-affecting), §13.4 `modset_hash`, §17.3 flag records | Shared fairness and receipt library (§4.2), economy service host crate, Apocrypha detection (§2.2), receipt cache, `juris.` flag loader (§8.2) |
 | Doc 03 | §2.2 system order (`sys.tick_begin` emits `ev.folio_entered` on the entry tick), §2.4 event visibility | Satchel materialization tick (§5.5), dwell measurement (§2.2) |
-| Doc 10 | knowledge flags, curse roll | Sealed Keepsakes (§5.5) |
-| Doc 11 | loot tables, item generator | Keepsake contents (§5.4) |
-| Doc 14 | §1.2 `RunState`, `SlotState`, `final_folio`; §3.1 `d(f)`; §3.9 Endpaper step 4; §4.2 score; §4.5 what is kept; §4.6 `run_score(slot)` (with `mode_quire_bp`, presence and `RUN_SCORE_BP = 1460`) and `RunSummary` (slot `active_ticks`, `folio_exits_qualified`, `editor_kills_present`, `run_score`, `quires_paid`, `apocrypha`); §5.1 Margin facilities and milestones (`first_run_end`, `first_reliquary`, `first_vellum`); §6.1 to §6.3 the 24 Echo IDs, Tier 1 and Tier 2 trials, `est_ch`, owned-Echo Recollection granting only `cosm.echo.<suffix>.recollected`; §8.1 mode table (Standard, Abridged, Novella, Daily, Weekly Gauntlet, Seeded, Endless, Custom, Prologue); §8.7 easing mutators; §10 achievement grades 1 to 4; reserved Script unlock patterns | Grant targets, `run_score`, Echo binding (§3.1), mode rules (§2.2), Script grants (§3.1.2) |
-| Doc 16 | `svc.` services, run report transport | Economy service hosting (§10) |
-| Doc 17 | UI framework, accessibility | Store, odds and parental screens |
+| Doc 10 | §7.1 `roll_curse`, §7.8 pacts (`PACT_SHARE_BP = 2000`), §11 sealing, §12 the Index and the Bestiary | Keepsake curse and pact rolls (§5.4), sealed Keepsakes (§5.5), first Index and Bestiary entries (§6.2) |
+| Doc 11 | §2.3 `generate_keepsake` entry point, `loot.keepsake.<genre_suffix>` tables | Keepsake contents (§5.4) |
+| Doc 14 | §1.2 `RunState`, `SlotState`, `final_folio`; §3.1 `d(f)`; §3.9 Endpaper step 4; §4.2 score; §4.5 what is kept; §4.6 `run_score(slot)` (with `mode_quire_bp`, presence, `RUN_SCORE_BP = 1460` and the per-Folio cap `RUN_SCORE_FOLIO_CAP = 800`) and `RunSummary` (slot `active_ticks`, `folio_exits_qualified`, `editor_kills_present`, `run_score`, `quires_paid`, `apocrypha`, `ironman`); §2.3 content sets; §5.1 Margin facilities and milestones (`first_run_end`, `first_reliquary`, `first_vellum`); §5.4a unlock pace (`UNLOCK_PACE_HOURS = 80`, pace contract at most 85.0 hours); §6.1 to §6.3 the 24 Echo IDs, a bounded Recollection trial for every Echo, Tier 1 and Tier 2 trials, `est_ch`, owned-Echo Recollection granting only `cosm.echo.<suffix>.recollected`; §8.1 mode table (Standard, Abridged, Novella, Daily, Weekly Gauntlet, Seeded, Second Edition, Endless, Custom, Prologue); §8.7 easing mutators; §8.9 Second Edition (`mode.second_edition`, its forfeit rule, the Ironman clear); §10 the 59 achievements and their grades 1 to 4; reserved Script unlock patterns | Grant targets, `run_score`, Echo binding (§3.1), mode rules (§2.2), Script grants (§3.1.2) |
+| Doc 16 | `svc.` services, run report transport, §9.2 kick votes, §9.12 chat and voice, §9.13 invasion outcome reports | Economy service hosting (§10), chat safety (§8.5), invader Quires (§2.4) |
+| Doc 17 | UI framework, accessibility, `access.gore` | Store, odds and parental screens; the gore setting rated in §8.6 |
 | R3 | B1–B6, C1–C4, D1–D6 | Hazard parameters (D2), guarantees, law and ratings table, avoid list |
 | R4 | §13, §16.1 | Steam Inventory facts, backend crates (`axum` 0.8.9, `sqlx` 0.9.0, `tokio` 1.53.2, `sha2` 0.11.0, `hmac` 0.13.0, `ed25519-dalek` 3.0.0) |
 | R7 | §1.4 C5 | The gacha is named Inkwell; R3's "Scriptorium" numbers carry over unchanged |
+| Doc 21 | §2.5 | Folio Expansions 01 and 02 |
 
 ---
 
@@ -41,18 +43,17 @@ This chapter specifies account currencies, randomized account rewards, the battl
 
 ### 1.1 Revenue lines
 
-Every purchase is a fiat SKU sold through the platform's payment rail. There is no premium currency.
+Every purchase is a fiat SKU sold through the platform's payment rail. Steam is the only storefront (DECISIONS 112) and the game ships on PC only (DECISIONS 98). There is no premium currency.
 
 | Line | SKU ID pattern | USD price | What the buyer receives | Random? |
 |---|---|---|---|---|
-| Base game, Early Access | `store.sku.base_game` | 24.99 | the game | no |
-| Base game, 1.0 | `store.sku.base_game` | 29.99 | the game (EA owners keep it at no charge) | no |
-| Folio Expansion | `store.sku.folio_exp_<nn>` | 12.99 | one new genre (doc 12) with its Folios, enemies and items; access to its expansion banner and Archive shelves, which hold its 2 Echoes and 3 Scripts (§3.2.6) | no |
+| Base game | `store.sku.base_game` | 19.99 at Early Access and at 1.0 (DECISIONS 42) | the game; Early Access owners keep it at 1.0 at no charge | no |
+| Folio Expansion | `store.sku.folio_exp_<nn>` | 9.99 (DECISIONS 122, which replaces DECISIONS 42's band of 9.99 to 14.99) | one new genre (doc 12) with its Folios, enemies and items; access to its expansion banner and Archive shelves, which hold its 2 Echoes and 3 Scripts (§3.2.6) | no |
 | Codex premium track | `store.sku.codex_<nnn>_premium` | 9.99 | the premium track of one named Codex (§6) | no |
 | Direct cosmetic | `store.sku.cosm_<name>` | 1.99 to 9.99 | named cosmetics listed in full before purchase (§7.1) | no |
 | Supporter pack | `store.sku.supporter_pack` | 4.99 | cosmetics, digital soundtrack, digital art book (§7.1) | no |
 
-Cadence: one Folio Expansion every 9 to 12 months; one Codex every 12 weeks (§6.6).
+Cadence: one Folio Expansion every 9 to 12 months after 1.0; one Codex every 12 weeks (§6.6). The first two Folio Expansions are fixed (DECISIONS 53): `store.sku.folio_exp_01` adds Age of Sail and Pirates and `store.sku.folio_exp_02` adds Kaiju and Mecha (doc 21 §2.5). There is no demo and no public playtest build (DECISIONS 113).
 
 ### 1.2 The separation wall
 
@@ -63,7 +64,7 @@ The wall is the rule that no money, and nothing bought with money, ever reaches 
 | SEP-1 | `cur.ink`, `cur.quire` and `cur.vellum` are `purchasable = false`. Unopened account Reliquaries are a `purchasable = false` ledger asset. | Ledger type check (§10.2) |
 | SEP-2 | No ledger posting moves value from a `purchasable = true` asset (any fiat SKU, `ent.quill`) into a `purchasable = false` asset. | Ledger type check |
 | SEP-3 | Codex **premium** tiers grant only deterministic cosmetics and, at tier 100, one `ent.quill`. Ink, Quires, Reliquaries and Vellum appear only on the **free** track, which every player progresses identically whether or not they bought the premium track. | Content validator on `pass.` records |
-| SEP-4 | No SKU grants Codex XP, Ink, Quires, Vellum, Reliquaries, pity progress, spark, tier skips or XP multipliers. | Content validator on `store.` and `bundle.` records |
+| SEP-4 | No SKU grants Codex XP, Ink, Quires, Vellum, Reliquaries, pity progress, spark, Transcription (§3.9.1), tier skips or XP multipliers. | Content validator on `store.` and `bundle.` records |
 | SEP-5 | `juris.paid_random_items_enabled = false` is a compile-time constant in the economy service and the client. A configuration that sets it true makes the service refuse to start. | Build constant plus startup assert |
 | SEP-6 | Odds are identical for every account that can open a given banner. The only per-account inputs are the published pity counters. Fortune, Serendipity, spend history, play time and platform never change odds. | Pull algorithm (§3.4) reads no other account data |
 | SEP-7 | No account currency, Echo, Script, cosmetic, Keepsake or Reliquary can be traded, gifted, sold or transferred between accounts. Fiat SKUs can be gifted only through the platform's own gift feature before redemption. | No transfer endpoint exists |
@@ -85,6 +86,10 @@ Canon §14 defines the currencies. This section fixes their economy rules. Every
 | `cur.vellum` | false | false | Inkwell duplicates (§3.8), unused spark at banner end (§3.6) | Vellum Archive (§3.9) |
 | `ent.quill` | true (entitlement) | false | Codex premium purchase, tier 100 of an owned premium track | redeemed for one Codex premium track (§6.5) |
 
+Canon §14's source words map onto these rows exactly: "a one-time welcome grant" is `WELCOME_INK` (§2.2); "play time" is active-minute Ink; "run completion" is Folio-exit, Editor-kill, run-end and Ur-Text victory Ink; "Codex tiers" are free-track tiers only, because SEP-3 keeps every purchasable track free of currencies and Canon §14 forbids anything purchasable converting into Ink, Quires or Vellum. Canon §19 gives this chapter the account economy rules, so the Vellum sink list is §3.9's: its Illuminated shelves are Canon §14's "past featured Echoes, Scripts", and it adds the Rubricated shelves (from launch), the Plain shelf and Fold steps.
+
+**Ownership.** Premium tracks, Folio Expansions, cosmetics, Echoes, Folds and Scripts are entitlement rows keyed by content ID and source (a SKU, banner, `pass.` record or the Archive), each backed by `grant` and `revoke` receipts (§4.6); none is an `ent.` ID. `ent.quill` is the only countable entitlement (Canon §14: entitlements are not currencies).
+
 ### 2.2 Ink earn rates
 
 All in-run quantities are measured by the simulation and reported in the run report (§10.4). The economy service computes grants; the client never grants Ink.
@@ -97,23 +102,25 @@ All in-run quantities are measured by the simulation and reported in the run rep
 | Folio exit | the Folio's `exit_tick` is set (doc 14 §1.2 `FolioRecord`) | 10 per Folio | the player is present at `exit_tick`, and `exit_tick − entry_tick ≥ 5,400` (90 s) |
 | Editor kill | `ev.entity_killed` of a `rank.editor` entity, Marginalia Editors included | 40 per Editor | the player is present at the kill tick |
 | run end | `ev.run_ended` of a run that paid no Ur-Text victory Ink | 20 | the run had ≥ 3 qualified Folio exits for this player; Novella, Daily, Weekly Gauntlet and `run.mut.short_book` victories are run ends here |
-| Ur-Text victory | `boss.ur_editor` dies with the player present (the final Folio of the Standard and Abridged structures, Seeded and Custom runs of those structures included) | `VICTORY_INK_PER_FOLIO × final_folio` = 12 × 25 = 300 for the Standard structure, 12 × 15 = 180 for Abridged | `final_folio` (doc 14 §1.2) is read at the kill tick, before doc 14 §9.1 switches a run to Endless; paid once per run; it replaces run-end Ink, and an Endless continuation after it pays no run-end Ink |
-| achievement | first unlock of an `ach.` entry | 40 / 80 / 160 / 320 for doc 14 grade 1 / 2 / 3 / 4 | once per achievement per account; doc 14 §10's 58 achievements pay 6,360 Ink in total |
+| Ur-Text victory | `boss.ur_editor` dies with the player present (the final Folio of the Standard and Abridged structures, Seeded and Custom runs of those structures included), and the run keeps its clear (a Second Edition continuation must end `run.end.victory`, below) | `VICTORY_INK_PER_FOLIO × final_folio` = 12 × 25 = 300 for the Standard structure, 12 × 15 = 180 for Abridged | `final_folio` (doc 14 §1.2) is read at the kill tick, before doc 14 §9.1 switches a run to Endless or §8.9 to Second Edition; paid once per run; it replaces run-end Ink, and an Endless or Second Edition continuation after it pays no run-end Ink |
+| achievement | first unlock of an `ach.` entry | 40 / 80 / 160 / 320 for doc 14 grade 1 / 2 / 3 / 4 | once per achievement per account; doc 14 §10's 59 achievements pay 6,440 Ink in total |
 | Codex free track | tiers `10j + 2` and `10j + 8`, `j ∈ 0..=9` | 80 each | 1,600 per Codex (§6.4) |
 | welcome | the ledger transaction that sets `margin.milestone.first_run_end` (doc 14 §5.1), which also opens `margin.inkwell` | `WELCOME_INK = 1,200` | once per account; exactly 10 Beginner pulls (§3.2.5) |
 
 **Mode rules.** Every run report carries `mode` and the easing flag (doc 14 §8.7).
 
-| Run kind | Active-minute Ink | Folio, Editor, run-end and victory Ink | Codex XP (§6.2) | Account Reliquaries (§5.1) | Satchel (§5.5) |
-|---|---|---|---|---|---|
-| `mode.standard`, `mode.abridged`, `mode.novella`, `mode.endless`, `mode.custom` without an easing mutator | yes | yes | all sources | yes | yes |
-| `mode.daily` (ranked or practice), `mode.weekly_gauntlet`, `mode.seeded` | yes | yes | all sources | yes | no |
-| `mode.custom` with an easing mutator | yes | no | `pass.xp.active_minute` only | no | yes |
-| `mode.prologue` (first play and replays) | no | no | none | no | no |
-| Apocrypha (any loaded mod) | no | no | none | no | no |
-| Invasion, invader side (Canon §17.9) | no | no | none | no | no |
+| Row | Run kind (doc 14 §8.1 mode IDs) | Active-minute Ink | Folio, Editor, run-end and victory Ink | Codex XP (§6.2) | Account Reliquaries (§5.1) | Satchel (§5.5) |
+|---|---|---|---|---|---|---|
+| 1 | `mode.standard`, `mode.abridged`, `mode.novella`, `mode.second_edition`, `mode.endless`, `mode.custom` without an easing mutator | yes | yes | all sources | yes | yes |
+| 2 | `mode.daily` (ranked or practice), `mode.weekly_gauntlet`, `mode.seeded` | yes | yes | all sources | yes | no |
+| 3 | `mode.custom` with an easing mutator | yes | no | `pass.xp.active_minute` only | no | yes |
+| 4 | `mode.prologue` (first play and replays) | no | no | none | no | no |
+| 5 | Apocrypha (a simulation-affecting mod loaded) | no | no | none | no | no |
+| 6 | Invasion, invader side (Canon §17.9) | no | no | none | no | no |
 
 Canon §17.9 limits invader rewards to Quires and cosmetic Red Ink marks (§2.4); a party that opens its run to invasions (`mode.invasion_open`) is paid by its own mode row, and a Redaction (Canon §17.9) removes nothing account-level.
+
+**Second Edition** (doc 14 §8.9, DECISIONS 108). A run that takes the "Second Edition" door reports once, at its end, as `mode.second_edition` under mode row 1. Its Second Edition Folios pay active-minute, Folio-exit and Editor-kill Ink and Codex XP like any other Folio, under the same per-run caps. Its Ur-Text victory stays paid only when the run ends `run.end.victory` (the Author's death): every other end forfeits the clear (DECISIONS 108), so each report carries `victory_present = 0` and pays the run-end Ink and XP instead. A victory whose `RunSummary.ironman` is true (no `ev.player_died` in any Second Edition Folio) also grants the Ironman cosmetic `cosm.frame.ironman` to each player with `victory_present = 1`, in the run-report transaction, once per account; a later Ironman clear grants nothing more. The board's Ironman mark is doc 14's (§9.4).
 
 Only Ur-Text victories pay the victory bonus, and it scales with the Folios played. A flat 300 for every victory would let repeated 5-Folio Daily practice victories (4 exits, 1 Editor, 25 active minutes) earn `3 × 25 + 4 × 10 + 40 + 300 = 455` Ink per 25 minutes (1,092 per hour, 2.73 times the reference); as a run end the same Daily pays `75 + 40 + 40 + 20 = 175` (420 per hour). A Standard victory pays 535 per hour (below). An Abridged victory (67 active minutes, 14 exits, 5 Editors) pays `201 + 140 + 200 + 180 = 721` Ink, `floor_div(721 × 60, 67) = 645` per hour; at a flat 300 it would pay 841 (753 per hour). The Abridged premium over Standard comes from its denser Editors (5 in 15 Folios) and is accepted because the 24-hour cap (§2.3) bounds both at 10 reference hours. Easing mutators keep only time-based income, so faster Folios cannot raise income per hour.
 
@@ -136,7 +143,7 @@ grant   = min(ink_run, max(0, INK_PLAY_ROLLING_24H − play_ink_granted_in_windo
 
 **Co-op.** Each player earns Ink separately and in full; nothing is split. (Codex kill XP divides by `enemy_count_bp` only to offset the larger enemy counts of Canon §17.2, §6.2.)
 
-**Apocrypha runs.** A run is Apocrypha when the `MOD` section of its `content_hash` (doc 02 §11.2) lists at least one mod; the run report carries that count as `mod_count`, and the §10.4 content-hash check, which assumes an empty `MOD` section, rejects a modded run that reports `mod_count = 0`. Doc 02 puts every loaded mod into that section, so every modded run is Apocrypha. An Apocrypha run earns 0 Ink, 0 Quires, 0 Codex XP and 0 Reliquaries, and the lobby shows "Apocrypha: account rewards off" before the run starts. Achievements are evaluated by doc 14 and are also off in Apocrypha runs.
+**Apocrypha runs.** A run is Apocrypha when a simulation-affecting mod (doc 02 §13.1) is loaded. Canon §2.4 hashes exactly those mods into the `MOD` section of `content_hash` (doc 02 §11.2); presentation-only mods (records only in `art.`, `aud.`, `vfx.`, `nar.` and `ui.`, plus Fluent files and assets) enter `presentation_hash` instead and never make a run Apocrypha (DECISIONS 87). The run report carries the number of simulation-affecting mods as `mod_count`, and the §10.4 content-hash check, which assumes an empty `MOD` section, rejects a simulation-modded run that reports `mod_count = 0`. An Apocrypha run earns 0 Ink, 0 Quires, 0 Codex XP and 0 Reliquaries, and the lobby shows "Apocrypha: account rewards off" before the run starts. Achievements are evaluated by doc 14 and are also off in Apocrypha runs.
 
 ### 2.3 Caps
 
@@ -157,12 +164,14 @@ This chapter owns the Quire earn rate (Canon §19); doc 14 §4.6 supplies one `r
 
 | Source | Quires | Notes |
 |---|---|---|
-| run | `q(slot) = min(QUIRES_PER_RUN_CAP, floor_div(run_score(slot), 50))`, then `grant = max(0, q − slot.quires_paid)` | `run_score(slot)` is doc 14 §4.6's (score × `mode_quire_bp` × presence × `RUN_SCORE_BP`), calibrated so the reference failed run gives 3,000 and a reference victory 15,000; `quires_paid` is doc 14 §8.8's departed payout; Apocrypha and Prologue runs pay 0; easing runs pay 0 through `mode_quire_bp = 0` |
-| achievement | 10 / 25 / 50 / 100 for doc 14 grade 1 / 2 / 3 / 4 | once per achievement; doc 14 §10's 58 achievements pay 1,935 Quires in total |
+| run | `q(slot) = min(QUIRES_PER_RUN_CAP, floor_div(run_score(slot), 50))`, then `grant = max(0, q − slot.quires_paid)` | `run_score(slot)` is doc 14 §4.6's (score × `mode_quire_bp` × presence × `RUN_SCORE_BP`, capped at `RUN_SCORE_FOLIO_CAP × cleared_present`), calibrated so the reference failed run gives 3,000 and a reference victory 15,000; `quires_paid` is doc 14 §8.8's departed payout; Apocrypha and Prologue runs pay 0; easing runs pay 0 through `mode_quire_bp = 0` |
+| achievement | 10 / 25 / 50 / 100 for doc 14 grade 1 / 2 / 3 / 4 | once per achievement; doc 14 §10's 59 achievements pay 1,960 Quires in total |
 | Codex free track | 25 at tiers `10j + 4` | 250 per Codex |
 | invasion, invader side (Canon §17.9) | `INVASION_QUIRES = 5` for an invasion that lasts at least `INVASION_MIN_TICKS = 3,600` ticks or ends with the party Redacted; `INVASION_REDACT_QUIRES = 5` more when the party is Redacted | `INVASION_QUIRES_ROLLING_24H = 60`; an invasion shorter than 3,600 ticks that does not end in a Redaction pays 0, whatever ended it; an invasion of an Apocrypha session pays 0 |
 
-Worked examples (doc 14 §4.2 and §4.6): the reference failed run R has `run_score = 3,033` and grants `floor_div(3033, 50) = 60` Quires, which is doc 14's `Q_REF = 60` per hour. Solo victory B has `run_score = 14,991` and grants 299. Trio victory C has `run_score = 28,641` at full presence and grants `min(400, 572) = 400`. An invader who Redacts a party after 200 s earns `5 + 5 = 10` Quires.
+Worked examples (doc 14 §4.2 and §4.6): the reference failed run R has `run_score = 3,033` and grants `floor_div(3033, 50) = 60` Quires, which is doc 14's `Q_REF = 60` per hour. Solo victory B has `run_score = 14,991` and grants 299. Trio victory C at full presence has a raw score of 28,641, which doc 14's per-Folio cap limits to `run_score = 800 × 25 = 20,000`, and grants `floor_div(20000, 50) = 400`. An invader who Redacts a party after 200 s earns `5 + 5 = 10` Quires.
+
+The invader's account reads the invasion's length and outcome from `ev.invasion_ended` (`duration`, `redacted`; doc 03 §14.2), which doc 16 §9.13 reports to it: the host and the invader each post the outcome, the shorter reported length counts, and the party counts as Redacted only when both reports say so.
 
 **Red Ink marks.** The invader's only other reward (Canon §17.9) is a cosmetic mark per lifetime count of Redactions: `cosm.redink.mark_001` at 1, `cosm.redink.mark_005` at 5, `cosm.redink.mark_025` at 25 and `cosm.redink.mark_100` at 100. Marks are deterministic counters, never random, and grant nothing else.
 
@@ -207,36 +216,46 @@ All hours use play Ink only, `REF_INK_PER_HOUR = 400`, `INK_PULL_COST = 160` (Be
 
 **2.8.2 Every Echo.** §3.1.1 binds each of the 24 launch Echoes of doc 14 §6.3 to an Inkwell tier: doc 14's Tier 2 Echo of each genre (the longer trial) is Illuminated and its Tier 1 Echo is Rubricated, so rarity tracks Recollection cost. Genre codes follow doc 14 §6.3: MF, GH, CH, SO, CP, PA, WW, HN, WX, SP, FT, MA. "First feature" is the launch rotation of §3.2.2.
 
-| Echo | Genre | Inkwell tier | First feature | Featured banner: E h / p90 h / ceiling h | Standard banner E h | Vellum Archive | Recollection h |
+| Genre | Echo | Inkwell tier | First feature | Featured banner: E h / p90 h / ceiling h | Standard banner E h | Vellum Archive | Recollection h |
 |---|---|---|---|---|---|---|---|
-| `echo.wren_long_index` | MF | Illuminated | `banner.echo.p001` featured | 19.58 / 37.6 / 40.0 | 38.55 | 100 Vellum = 40.0 h, after p001 ends | 9.15 |
-| `echo.mother_ilse` | GH | Illuminated | p002 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p002 | 9.20 |
-| `echo.drowned_clerk` | CH | Illuminated | p003 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p003 | 9.05 |
-| `echo.kestrel_unit` | SO | Illuminated | p004 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p004 | 9.10 |
-| `echo.ronin_valdez` | CP | Illuminated | p005 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p005 | 9.20 |
-| `echo.tallow` | PA | Illuminated | p006 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p006 | 9.10 |
-| `echo.preacher_amos` | WW | Illuminated | p007 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p007 | 9.10 |
-| `echo.vera_lux` | HN | Illuminated | p008 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p008 | 9.10 |
-| `echo.sun_wukong` | WX | Illuminated | p009 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p009 | 9.10 |
-| `echo.colonel_wexley` | SP | Illuminated | p010 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p010 | 9.10 |
-| `echo.wolf_in_wool` | FT | Illuminated | p011 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p011 | 9.10 |
-| `echo.loki` | MA | Illuminated | p012 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p012 | 9.25 |
-| `echo.fenrir` | MF | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 20 Vellum = 8.0 h, from launch | 4.70 |
-| `echo.lilith` | GH | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.20 |
-| `echo.jormungandr` | CH | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
-| `echo.ostra_vey` | SO | Rubricated | p004 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.20 |
-| `echo.nix_seventeen` | CP | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
-| `echo.ma_rust` | PA | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
-| `echo.josephine_crowe` | WW | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
-| `echo.dex_halloran` | HN | Rubricated | p004 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
-| `echo.lan_ninth_peak` | WX | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.14 |
-| `echo.ada_brassvane` | SP | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
-| `echo.briar_thornwood` | FT | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
-| `echo.kallias_twice_drowned` | MA | Rubricated | p004 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
+| MF | `echo.wren_long_index` | Illuminated | `banner.echo.p001` featured | 19.58 / 37.6 / 40.0 | 38.55 | 100 Vellum = 40.0 h, after p001 ends | 9.15 |
+| GH | `echo.mother_ilse` | Illuminated | p002 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p002 | 9.20 |
+| CH | `echo.drowned_clerk` | Illuminated | p003 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p003 | 9.05 |
+| SO | `echo.kestrel_unit` | Illuminated | p004 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p004 | 9.10 |
+| CP | `echo.ronin_valdez` | Illuminated | p005 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p005 | 9.20 |
+| PA | `echo.tallow` | Illuminated | p006 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p006 | 9.10 |
+| WW | `echo.preacher_amos` | Illuminated | p007 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p007 | 9.10 |
+| HN | `echo.vera_lux` | Illuminated | p008 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p008 | 9.10 |
+| WX | `echo.sun_wukong` | Illuminated | p009 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p009 | 9.10 |
+| SP | `echo.colonel_wexley` | Illuminated | p010 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p010 | 9.10 |
+| FT | `echo.wolf_in_wool` | Illuminated | p011 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p011 | 9.10 |
+| MA | `echo.loki` | Illuminated | p012 featured | 19.58 / 37.6 / 40.0 | 38.55 | 40.0 h, after p012 | 9.25 |
+| MF | `echo.fenrir` | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 20 Vellum = 8.0 h, from launch | 4.70 |
+| GH | `echo.lilith` | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.20 |
+| CH | `echo.jormungandr` | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
+| SO | `echo.ostra_vey` | Rubricated | p004 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.20 |
+| CP | `echo.nix_seventeen` | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
+| PA | `echo.ma_rust` | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
+| WW | `echo.josephine_crowe` | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
+| HN | `echo.dex_halloran` | Rubricated | p004 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.70 |
+| WX | `echo.lan_ninth_peak` | Rubricated | p001 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 5.14 |
+| SP | `echo.ada_brassvane` | Rubricated | p002 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
+| FT | `echo.briar_thornwood` | Rubricated | p003 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
+| MA | `echo.kallias_twice_drowned` | Rubricated | p004 rate-up | 13.87 / 30.0 / Archive | 113.98 | 8.0 h | 4.90 |
 
-Every Illuminated Echo is also the Beginner banner's target option (6.34 h expected, 9.0 h ceiling, once per account). The Standard banner column for Illuminated Echoes is `E[min(T, 100)] = 96.375` pulls, because the Standard spark at 100 pulls lets the player select any Standard Illuminated entry. For Rubricated Echoes it is the expected 284.946 pulls to one specific entry of the 36-entry Rubricated pool, which has no spark; the Archive is the deterministic route. **Every Script** has the hours of the Echo row of its tier: Illuminated Scripts 19.58 / 37.6 / 40.0 h on their Featured Script banner, 38.55 h on the Standard banner, 40.0 h in the Archive; Rubricated Scripts 13.87 / 30.0 h as a rate-up, 113.98 h on the Standard banner, 8.0 h in the Archive. Scripts have no Recollection route.
+Every Illuminated Echo is also the Beginner banner's target option (6.34 h expected, 9.0 h ceiling, once per account). The Standard banner column for Illuminated Echoes is `E[min(T, 100)] = 96.375` pulls, because the Standard spark at 100 pulls lets the player select any Standard Illuminated entry. For Rubricated Echoes it is the expected 284.946 pulls to one specific entry of the 36-entry Rubricated pool, which has no spark; the Archive is the deterministic route. **Every Script** has the hours of the Echo row of its tier: Illuminated Scripts 19.58 / 37.6 / 40.0 h on their Featured Script banner, 38.55 h on the Standard banner, 40.0 h in the Archive; Rubricated Scripts 13.87 / 30.0 h as a rate-up, 113.98 h on the Standard banner, 8.0 h in the Archive. Scripts have no Recollection route; each has the Transcription route of §3.9.1 instead: 16 qualified Folio exits (1.33 reference hours) for a Rubricated Script and 32 (2.67 hours) for an Illuminated one.
 
-**Design contract.** The median hours to a chosen featured Illuminated unit stay at or below 25 reference hours (now `49 × 160 / 400 = 19.6`), and its deterministic ceiling stays at or below 40 reference hours. Every Recollection trial stays below the 19.58-hour Inkwell expectation (doc 14 §6.2), so the Inkwell is a lucky shortcut and the source of Folds, never the only path. Any change to Ink rates, pull cost or hazards must re-run §3.10 and keep all three.
+**Design contract.** The median hours to a chosen featured Illuminated unit stay at or below 25 reference hours (now `49 × 160 / 400 = 19.6`, the "about 20 hours per featured Echo" of DECISIONS 57), and its deterministic ceiling stays at or below 40 reference hours. Every Echo has a Recollection trial (DECISIONS 80), and every trial stays below the 19.58-hour Inkwell expectation (doc 14 §6.2), so the Inkwell is a lucky shortcut and the source of Folds, never the only path. Any change to Ink rates, pull cost or hazards must re-run §3.10 and keep all three.
+
+**2.8.3 Unlock pace (DECISIONS 79).** About 80 hours of play unlock every non-cosmetic option without spending money. The three routes run in parallel from the same play:
+
+| Non-cosmetic options | Route without money | Reference hours | Source |
+|---|---|---|---|
+| 73 non-cosmetic Bindery nodes | Quires from runs (§2.4) | 70.0 | doc 14 §5.4a |
+| 24 launch Echoes | Recollection trials alone, 2 active at a time | 84.2 | doc 14 §5.4a, §6 |
+| 36 launch Scripts | Transcription alone (§3.9.1): 768 qualified Folio exits | 64.0 at 12 exits per reference hour (§2.2); 76.8 at doc 14's 10 Folios per hour | this chapter |
+
+Earned Ink and Vellum only shorten these totals. Any change to this chapter's Ink, Quire or Transcription rates keeps every row at or below doc 14 §5.4a's 85.0-hour pace contract, with the Script row measured at doc 14's 10 Folios per hour.
 
 ---
 
@@ -279,7 +298,7 @@ Echo acquisition belongs to this chapter (Canon §19). Each core genre's doc 14 
 | 11 | FT | `echo.wolf_in_wool` | `echo.briar_thornwood` |
 | 12 | MA | `echo.loki` | `echo.kallias_twice_drowned` |
 
-Each Folio Expansion adds one Illuminated and one Rubricated Echo for its genre on the same rule.
+Each Folio Expansion adds one Illuminated and one Rubricated Echo for its genre on the same rule. Every Echo, expansion Echoes included, also unlocks through its bounded Recollection trial (doc 14 §6, DECISIONS 80), so the Inkwell and the Archive are never the only paths to an Echo.
 
 #### 3.1.2 Script catalog
 
@@ -315,7 +334,7 @@ Pools (the launch catalog):
 | Beginner | `banner.beginner` | per account until closed | the Echo the player selected, 10000 Bp | none | none | all 36 Rubricated entries | `banner.family.beginner` | none |
 | Expansion | `banner.exp<nn>.p<nnn>` | one 28-day period, for owners of `store.sku.folio_exp_<nn>` | the expansion's Illuminated Echo (odd periods) or Illuminated Script (even periods), 7500 Bp | the expansion's Rubricated Echo and 2 base Rubricated Echoes (§3.2.6), 5000 Bp | 12 base Illuminated entries of the featured unit's kind plus the expansion's other Illuminated entry (13) | the base Rubricated pool plus the expansion's 2 Rubricated Scripts, minus the rate-ups (36) | `banner.family.exp<nn>` | 100 → featured unit; leftover → Vellum at end |
 
-All five types share the Plain pool and the Rubricated hazard. Featured, Expansion, Standard and Script banners share the Illuminated hazard `banner.hazard.illuminated_std`. The Beginner banner uses `banner.hazard.illuminated_beginner`. Exactly one banner of each family is `Live` in any period, so a family's counters change only through that banner (§4.1 relies on this).
+All five types share the Plain pool and the Rubricated hazard. Featured, Expansion, Standard and Script banners share the Illuminated hazard `banner.hazard.illuminated_std`. The Beginner banner uses `banner.hazard.illuminated_beginner`. At most one banner of each family is `Live` in any period (a period can have no Featured Script banner, §3.2.7), so a family's counters change only through that banner (§4.1 relies on this).
 
 #### 3.2.2 Featured Echo launch rotation
 
@@ -336,15 +355,15 @@ Genres are indexed 1 to 12 in Canon §5.2 order (§3.1.1). Period `k` (1-based) 
 | p011 | FT-A `echo.wolf_in_wool` | FT-B, CH-B, WW-B |
 | p012 | MA-A `echo.loki` | MA-B, SO-B, HN-B |
 
-Featured Script banners use the same `g`: period `k` features the Illuminated Script with index `g` of §3.1.2 and rates up the Rubricated Scripts with indices `2g − 1`, `2g` and `((2g + 11) mod 24) + 1`. The third index is `2g + 12` for `g ≤ 6` and `2g − 12` for `g ≥ 7`, so the three indices of one period are always distinct. Over 12 periods every Rubricated Script is rated up at least once, and the 12 even-indexed ones twice. Example: p001 features `bundle.script.lost_chapter_cosmic_horror` and rates up `bundle.script.glyphs_ember` (1), `bundle.script.glyphs_hollow` (2) and `bundle.script.kit_beastbinder` (14).
+Featured Script banners use the same `g`: period `k` features the Illuminated Script with index `g` of §3.1.2 and rates up the Rubricated Scripts with indices `2g − 1`, `2g` and `((2g + 11) mod 24) + 1`. The third index is `2g + 12` for `g ≤ 6` and `2g − 12` for `g ≥ 7`, so the three indices of one period are always distinct. Over 12 periods every Rubricated Script is rated up at least once, and the 12 even-indexed ones twice. Example: a period with `g = 1` (p001, p013, …) features `bundle.script.lost_chapter_cosmic_horror` and rates up `bundle.script.glyphs_ember` (1), `bundle.script.glyphs_hollow` (2) and `bundle.script.kit_beastbinder` (14). Early Access ships all 12 core genres (DECISIONS 114), so p001 runs this banner.
 
 The base catalog is the launch catalog and never grows: Canon §16.2 fixes 24 base Echoes. New Echoes and Scripts ship only inside Folio Expansions (§3.2.6), so the base rotation never changes.
 
 #### 3.2.3 Schedule
 
-- `T0` is the Early Access launch day at 00:00:00 UTC, a configuration value in the economy service. The examples in this chapter use `T0 = 1792886400` (2026-10-25 00:00:00 UTC).
+- `T0` is the Early Access launch day at 00:00:00 UTC, a configuration value of the economy service set at launch; the release plan has no hard dates (DECISIONS 111). Every example in this chapter uses the illustrative value `T0 = 1820448000` (2027-09-09 00:00:00 UTC), which is not a release date.
 - Period `k` covers `[T0 + 28 × (k − 1) days, T0 + 28 × k days)`. Featured Echo and Featured Script banners both use period boundaries. Banner IDs carry `k` as three digits.
-- The banner UI shows the end as a calendar date, for example "Ends 22 Nov 2026, 00:00 UTC" for p001 with the example `T0`, then "Afterwards: in the Standard banner and the Vellum Archive; unused spark becomes Vellum". It never shows a countdown, a "last chance" label or a pulsing timer.
+- The banner UI shows the end as a calendar date, for example "Ends 7 Oct 2027, 00:00 UTC" for p001, then "Afterwards: in the Standard banner and the Vellum Archive; unused spark becomes Vellum". It never shows a countdown, a "last chance" label or a pulsing timer.
 
 #### 3.2.4 Banner lifecycle
 
@@ -370,11 +389,21 @@ A pull request received at or after `end_utc` is rejected and no Ink is debited.
 
 Each Folio Expansion `nn` ships 1 Illuminated Echo, 1 Rubricated Echo, 1 Illuminated Script and 2 Rubricated Scripts (§3.1.1, §3.1.2). They appear only on that expansion's banners and on Archive shelves flagged `requires_sku = store.sku.folio_exp_<nn>`, visible only to owners of that SKU, and never join `banner.standard` or any base pool.
 
-- From the expansion's release period onward, every period `k` runs `banner.exp<nn>.p<nnn>` alongside the base banners, for owners only. Its family `banner.family.exp<nn>` has its own pity, guarantees and seed epochs, so base Echo-family counters never mix with it.
+- From the first period that starts at or after the expansion's release, every period `k` runs `banner.exp<nn>.p<nnn>` alongside the base banners, for owners only (a banner always spans a whole period, §3.13). Its family `banner.family.exp<nn>` has its own pity, guarantees and seed epochs, so base Echo-family counters never mix with it.
 - In odd periods its featured Illuminated unit is the expansion's Illuminated Echo and its off-featured top pool is the 12 base Illuminated Echoes plus the expansion's Illuminated Script. In even periods the featured unit is the expansion's Illuminated Script and the off-featured top pool is the 12 base Illuminated Scripts plus the expansion's Illuminated Echo. Either way the off-featured pool has 13 entries.
 - Its rate-ups are the expansion's Rubricated Echo and the base Rubricated Echoes of genres `((g + 3) mod 12) + 1` and `((g + 7) mod 12) + 1` for the period's base `g` (§3.2.2). Its off-rate pool is the 36-entry base Rubricated pool plus the expansion's 2 Rubricated Scripts, minus the 2 base rate-ups: 36 entries.
 - The expansion's Rubricated entries enter the Archive at release; its Illuminated entries enter it after the first expansion banner that features them reaches `Ended`.
 - Every banner therefore offers identical odds to every account that can open it (SEP-6). Per-entry rows for an expansion banner: featured 0.7500% base and 2.0392% consolidated; each of 13 off-featured 0.0192% and 0.0392%; each of 3 rate-ups 1.0000% and 2.7945%; each of 36 off-rate 0.0833% and 0.1164%; each Plain 1.5500% and 1.4146%.
+
+#### 3.2.7 Entries outside the build's content set
+
+Every build from Early Access on ships all 12 core genres (DECISIONS 114, which supersedes the 6-genre Early Access of DECISIONS 41), so every launch Echo and Script is in every shipped content set, and the launch pools, rotation and odds of this chapter hold from p001. The rules below cover any Inkwell entry that a build still leaves out of its content set (for example a test build). Such an entry:
+
+- is absent from every pool, every featured and rate-up list, every Archive shelf, the Transcription shelf (§3.9.1) and the Standard spark choice;
+- is never featured: a period whose §3.2.2 featured entry is outside the content set at the period's `start_utc` runs no banner of that family, and the family's counters wait unchanged; a rate-up entry leaves its rate-up list, and the remaining rate-up entries share `mid_featured_bp` equally;
+- joins every pool from the first period that starts at or after it enters the content set. Each affected banner record, `banner.standard` included, then gets a new `config_hash` for that period, published at `/odds/<banner_id>` 7 days before the period starts (§3.2.4, §3.11.3).
+
+Every number and test vector in this chapter is the full catalog's; `pal odds` (§3.10) computes each build's disclosed values from that build's pools. Example (acceptance test 37): a test build whose content set leaves out only the 6 Lost Chapter Scripts of Cosmic Horror, Fairy Tale, Hardboiled Noir, Mythic Antiquity, Post-Apocalypse and Space Opera runs no `banner.script.p001` (the Cosmic Horror period); on its Featured Script banners each of the 5 off-featured Illuminated Scripts has 0.0500% base and 0.1020% consolidated (the featured unit keeps 0.7500% and 2.0392%); on its `banner.standard` each of the 18 Illuminated entries (12 Echoes, 6 Scripts) has 0.0556% base and 0.1416% consolidated.
 
 ### 3.3 The hazard function
 
@@ -487,7 +516,7 @@ fn pull(acct: &mut Account, b: &Banner, epoch: &mut SeedEpoch) -> PullResult {
 - Each Featured banner instance keeps a per-account spark counter `spark[banner_id]`, +1 per pull on that banner.
 - **Claim.** At `spark ≥ 100` the banner shows "Claim featured: 100 spark". Claiming subtracts 100 and grants one copy of the featured Illuminated unit through §3.8. Claiming never changes pity counters or guarantee flags.
 - **End conversion.** When a Featured banner enters `Ended`, each account's remaining `spark[banner_id]` becomes the same amount of Vellum in one ledger transaction (`mint/vellum/spark`), and the counter is deleted.
-- **Standard spark** counts Standard pulls. At 100, the player claims any one entry of the 24-entry Standard Illuminated pool. Standard spark never expires and never converts.
+- **Standard spark** counts Standard pulls. At 100, the player claims any one entry of the Standard Illuminated pool (24 entries). Standard spark never expires and never converts.
 - Beginner pulls give no spark. Worst cases: a chosen featured Illuminated unit costs at most 100 pulls on its banner; a chosen Standard Illuminated entry costs at most 100 Standard pulls.
 
 ### 3.7 Pity carry-over rules
@@ -562,6 +591,17 @@ An Echo's tier is fixed at release and never changes, so its duplicate value nev
 | Fold step | 40 for an Illuminated Echo, 8 for a Rubricated Echo | the next Fold of an owned Echo below Fold 6 |
 
 Buying an entry the account already owns is never offered; for an owned Echo the Fold step shelf is the route. An Archive purchase of an unowned Echo grants it at Fold 0. Expansion entries carry `requires_sku`. Nothing ever leaves the Archive.
+
+#### 3.9.1 Transcription shelf
+
+Every Script also unlocks without the Inkwell, so no non-cosmetic option is reachable only by luck (DECISIONS 79; DECISIONS 80 does the same for Echoes through Recollection).
+
+- **Counter.** Each account keeps `transcription: u64`, starting at 0. Every qualified Folio exit (§2.2) of a run whose §2.2 mode row grants account Reliquaries adds 1, in the run-report transaction that advances the §5.1 lifetime Folio-exit counter. Nothing else changes it: no SKU, Ink, Vellum, Codex tier, achievement or invasion adds to it (SEP-4).
+- **Claim.** On the Archive's Transcription shelf the player picks one Script the account does not own and can open (in the build's content set, §3.2.7, and for an expansion Script with its `requires_sku` owned). A Rubricated Script costs `TRANSCRIBE_RUBRICATED = 16` and an Illuminated Script `TRANSCRIBE_ILLUMINATED = 32`. The claim subtracts the cost and grants the Script as a new entry (§3.8 `Grant::New`). With `transcription` below the cost the claim is refused with `insufficient_transcription` and nothing changes.
+- **Rules.** The counter never expires, decays, converts into anything else or transfers between accounts, and has no cap. It is a counter like spark, not a currency (Canon §14). Claims never touch pity, spark, Folds or Vellum. Every Script is on the shelf from launch; the shelf does not wait for a banner to end.
+- **Pace.** The 36 launch Scripts cost `24 × 16 + 12 × 32 = 768` qualified exits: 64.0 reference hours at the §2.2 reference hour's 12 qualified exits, 76.8 hours at doc 14 §5.4a's 10 Folios per hour (§2.8.3). Each Folio Expansion adds `2 × 16 + 32 = 64` exits for its owners. A Script that arrives first from the Inkwell or the Archive is never claimed, so those routes only shorten the total.
+
+Worked example: an account with `transcription = 40` claims `bundle.script.lost_chapter_wuxia` (Illuminated, 32), leaving 8; a claim of `bundle.script.kit_monk` (Rubricated, 16) is then refused with `insufficient_transcription` until 8 more qualified exits are credited. A later Inkwell copy of `bundle.script.lost_chapter_wuxia` is a duplicate worth 40 Vellum (§3.8).
 
 ### 3.10 Expected cost and percentile tables
 
@@ -672,8 +712,8 @@ Banner record (content, validated by JSON Schema; integers only):
   "kind": "featured_echo",
   "family": "banner.family.echo",
   "period": 1,
-  "start_utc": 1792886400,
-  "end_utc": 1795305600,
+  "start_utc": 1820448000,
+  "end_utc": 1822867200,
   "cost_ink": 160,
   "hazard_top": "banner.hazard.illuminated_std",
   "hazard_mid": "banner.hazard.rubricated_std",
@@ -719,7 +759,7 @@ Plain cosmetic record:
 { "id": "cosm.ink.inkwell_01", "kind": "cosmetic", "cat": "cosm.cat.ink", "source": "banner.pool.plain", "tier": "banner.tier.plain", "requires_sku": null }
 ```
 
-Validator rules: every `featured_top` and `rate_up_mid` entry exists and has the matching tier; `top_featured_bp` and `mid_featured_bp` are in `1..=10000`; pools are non-empty after exclusion; `end_utc − start_utc = 2,419,200` and `start_utc = T0 + 2,419,200 × (period − 1)` for Featured, Script and Expansion banners; at most one banner per family has any given `period`; a banner with `requires_sku ≠ null` references only base entries and that SKU's entries; Script `grants` never reference `cur.`, `ent.`, stats, Emendations or Keepsake capacity; Script `index` values are 1 to 12 (Illuminated) and 1 to 24 (Rubricated) in ascending ID order.
+Validator rules: every `featured_top` and `rate_up_mid` entry exists and has the matching tier; `top_featured_bp` and `mid_featured_bp` are in `1..=10000`; pools are non-empty after exclusion; `end_utc − start_utc = 2,419,200` and `start_utc = T0 + 2,419,200 × (period − 1)` for Featured, Script and Expansion banners; at most one banner per family has any given `period`; a banner with `requires_sku ≠ null` references only base entries and that SKU's entries; Script `grants` never reference `cur.`, `ent.`, stats, Emendations or Keepsake capacity; Script `index` values are 1 to 12 (Illuminated) and 1 to 24 (Rubricated) in ascending ID order; every featured, rate-up and pooled entry is in the build's content set (§3.2.7).
 
 ### 3.14 Worked examples of pity
 
@@ -739,13 +779,13 @@ Validator rules: every `featured_top` and `rate_up_mid` entry exists and has the
 
 ## 4. Provable fairness
 
-Inkwell pulls and account Reliquary opens are rolled on the economy service when online and are verifiable by the player afterwards. This meets Canon §3.6's delegation ("a server-side ChaCha20 generator with commit-reveal"): HMAC-SHA256 binds the secret server seed to the public inputs, and ChaCha20 (RFC 8439) expands the result into an unbounded word stream.
+Inkwell pulls and account Reliquary opens are rolled on the economy service when online and are verifiable by the player afterwards. This is the generator Canon §3.6 names for account draws ("an HMAC-SHA256-keyed ChaCha20 generator with commit-reveal"): HMAC-SHA256 binds the secret server seed to the public inputs, and ChaCha20 (RFC 8439) expands the result into an unbounded word stream.
 
 ### 4.1 Seed epochs
 
 | Field | Definition |
 |---|---|
-| Epoch scope | `(account_id, banner_id, period)`: one server seed per player per banner per period. `period` is the 28-day index of §3.2.3 for Featured, Script, Expansion and Standard banners and for `banner.reliquary.account`, and 1 for `banner.beginner`. Exactly one banner per family is `Live` per period (§3.2.1), so within an epoch the family's counters change only through that epoch's draws |
+| Epoch scope | `(account_id, banner_id, period)`: one server seed per player per banner per period. `period` is the 28-day index of §3.2.3 for Featured, Script, Expansion and Standard banners and for `banner.reliquary.account`, and 1 for `banner.beginner`. At most one banner per family is `Live` per period (§3.2.1), so within an epoch the family's counters change only through that epoch's draws |
 | `server_seed` | 32 bytes from the service's OS CSPRNG, generated when the epoch opens; stored encrypted (AES-256-GCM under a KMS key) until reveal |
 | `commitment` | `SHA-256(server_seed)`, sent to the client when the epoch opens and written to the audit log before the first draw |
 | `client_seed` | 1 to 64 bytes, bound to the epoch by the first draw request, which the client sends only after it has received and stored the commitment. Default (`fresh` mode): the client draws 16 new bytes from its OS RNG for every epoch after receiving its commitment, so the server cannot know the client seed when it picks `server_seed`. `pinned` mode: the player types a seed in the Fairness panel and it is reused for every epoch until changed; the panel states that only `fresh` mode rules out server seed grinding |
@@ -782,9 +822,9 @@ uniform(n):                                   // n in 1..=2^63
 roll_bp = uniform(10000)                      // 0..=9999, compared with "< chance_bp"
 ```
 
-- ChaCha20 is implemented in-house in the library crate `palimpsest_econ` (requested as `crate.econ`, Canon gaps 10) and tested against RFC 8439 §2.3.2. HMAC-SHA256 uses `hmac` 0.13.0 with `sha2` 0.11.0 (R4 §16.1). The same crate is linked by the service (`crate.services`), the client (Fairness panel, offline and end-of-service draws) and `palimpsest-verify`.
+- ChaCha20 is implemented in-house in the library crate `palimpsest_econ` (doc 02 `crate.econ`) and tested against RFC 8439 §2.3.2. HMAC-SHA256 uses `hmac` 0.13.0 with `sha2` 0.11.0 (R4 §16.1). The same crate is linked by the service (`crate.services`), the client (Fairness panel, offline and end-of-service draws) and `palimpsest-verify`.
 - `be32` and `be64` are big-endian. `fnv1a32` is Canon §1.1.
-- The xoshiro256++ generator of Canon §3 is never used for an account draw, except inside the doc 11 item generator, which receives a `u64` seed taken from this stream (§5.4).
+- The xoshiro256++ generator of Canon §3 is never used for an account draw, except inside the doc 11 item generator, which receives a `u64` seed taken from this stream (§5.4). Canon §3.6 names this as the one use of `Rng::from_seed64` outside the simulation; the Keepsake enters the simulation only as a recorded item record (§5.5), so no simulation stream is read or advanced.
 
 ### 4.3 Verification tool
 
@@ -810,7 +850,7 @@ Output: one `PASS` or `FAIL <reason>` line per record; exit code 0 when all pass
 
 ### 4.4 Audit log
 
-- One append-only table holds every pull, spark event, Archive purchase, Reliquary open, Keepsake carry, Codex or store grant, refund, revocation and ledger transaction.
+- One append-only table holds every pull, spark event, Archive purchase, Transcription claim, Reliquary open, Keepsake carry, Codex or store grant, refund, revocation and ledger transaction.
 - Each record is canonical JSON. `h_i = SHA-256(h_{i−1} ‖ canonical(record_i))` with `h_0 = 32 zero bytes` per shard; shard = `account_id mod 256`.
 - At 00:05 UTC daily, the service computes a Merkle root (SHA-256, binary, odd leaves promoted) over the previous UTC day's record hashes, signs it with the receipt key (§4.6) and publishes it at `/audit/<YYYY-MM-DD>`.
 - Retention: 1,826 days (5 years, R3 C4 LOG-1, exceeding China's 90-day minimum and supporting Korea's reversed burden of proof). Daily roots are kept forever.
@@ -832,7 +872,7 @@ Receipts let the client prove ownership and balances without the service.
 
 - Signature: Ed25519 (`ed25519-dalek` 3.0.0) over `"PALIMPSEST/RECEIPT/v1" ‖ 0x00 ‖ canonical_json(receipt)`.
 - Canonical JSON: keys sorted by byte order, no whitespace, ASCII strings, integers only, `u64` as `"0x"` + 16 lowercase hex digits.
-- Kinds: `grant`, `revoke`, `wallet` (all balances), `pity` (all families, spark, Reliquary counters), `codex` (all Codex progress), `eos_final` (§11).
+- Kinds: `grant`, `revoke`, `wallet` (all balances), `pity` (all families, spark, Reliquary counters, the lifetime Folio-exit counter, `transcription`), `codex` (all Codex progress), `eos_final` (§11).
 
 | Field | Type | Meaning |
 |---|---|---|
@@ -850,10 +890,10 @@ Receipts let the client prove ownership and balances without the service.
 Example receipt (signed with the RFC 8032 test key 1, secret `9d61b19d…7f60`, public `d75a9801…511a`):
 
 ```json
-{"acct":"0x0123456789abcdef","iat":1793491200,"item":"cosm.outfit.codex_001_t005","kid":"rk_2026a","kind":"grant","qty":1,"rid":"0x00000000000003e9","seq":7,"src":"pass.codex_001","v":1}
+{"acct":"0x0123456789abcdef","iat":1821052800,"item":"cosm.outfit.codex_001_t005","kid":"rk_2027a","kind":"grant","qty":1,"rid":"0x00000000000003e9","seq":7,"src":"pass.codex_001","v":1}
 ```
 
-`iat` 1793491200 is 2026-11-01 00:00:00 UTC, one week after the example `T0`, when `pass.codex_001` is live. The signed message is 208 bytes (21-byte prefix, 1 separator byte, 186-byte JSON). Signature: `36123f908d69fe54db410b9c20dc2f1029c11ab2e6c400fd7754e5ae2378f05235aaa422ea6a9ad7f84875025f312d484f01504faf2e2d0200bbd85bffd64607`.
+`iat` 1821052800 is 2027-09-16 00:00:00 UTC, one week after `T0`, when `pass.codex_001` is live; `rk_2027a` is the first signing key of 2027. The signed message is 208 bytes (21-byte prefix, 1 separator byte, 186-byte JSON). Signature: `f3510f1f088b6a600b24e74cad059d8cabf15ff4515ff7e0a53b5f158e4e879e7f3be819de2ee723385d6257d05a487bd42c8e959cb8249463866e4ece944b0b`.
 
 Key management: signing keys live in a KMS; one key per calendar year; the client embeds every public key ever used with `valid_from` and `valid_to`, plus a revocation list `(kid, revoked_at)`. A receipt is valid when its signature verifies, its `iat` lies in the key's validity window, and the key was not revoked before `iat`. The owned set is the fold of all valid `grant` and `revoke` receipts in `seq` order.
 
@@ -863,12 +903,14 @@ Key management: signing keys live in a KMS; one key per calendar year; the clien
 
 An **account Reliquary** (`banner.reliquary.account`) is an earned loot box held unopened as the ledger asset `RELIQUARY` (`purchasable = false`). Opening one in the Margin yields exactly one **Keepsake**: a Sealed item instance rolled from a Folio loot table. Keepsakes enter runs through the Satchel (§5.5). In-run Reliquaries and their keys belong to doc 11 and are separate.
 
+An account Reliquary holds a Keepsake and, through the Keepsake's `illuminated` roll (§5.4), sometimes a cosmetic skin; it never holds raw power (DECISIONS 59): a Keepsake has the power of a found item of its Folio, and the Satchel limits of §5.5 bound how many enter a run.
+
 ### 5.1 Sources
 
 | Source | Reliquaries | Source genre recorded |
 |---|---|---|
-| Editor kill | 1 per `rank.editor` killed while the player is present (§2.2), recorded on the run at the Endpaper (doc 14 §3.9 step 4) and credited at run end whatever the end state (doc 14 §4.5) | the genre of that Folio (`genre.ur_text` for Folio 25) |
-| Folio completion | 1 each time the account's lifetime count of qualified Folio exits (§2.2 definition, from runs whose mode row in §2.2 grants Reliquaries) reaches a multiple of 30 | the genre of the 30th Folio |
+| Editor kill | 1 per `rank.editor` killed while the player is present (§2.2), recorded on the run at the Endpaper (doc 14 §3.9 step 4) and credited at run end whatever the end state (doc 14 §4.5) | the genre of that Folio: `genre.ur_text` for the Ur-Text Folio (25 in Standard, 15 in Abridged); for a fused Second Edition Folio (doc 14 §8.9), the genre of its pair with the lower Canon §5.2 row number |
+| Folio completion | 1 each time the account's lifetime count of qualified Folio exits (§2.2 definition, from runs whose mode row in §2.2 grants Reliquaries) reaches a multiple of 30 | the genre of the 30th Folio, by the same rule |
 | Codex free track | 1 at tiers `10j + 6` | the Codex's theme genre |
 | Codex Coda | 1 per 24,000 overflow XP (§6.5) | the Codex's theme genre |
 
@@ -940,27 +982,29 @@ Consolidated figures (exact Markov chain over the 90 reachable `(c5, c20)` state
 | `ilvl` | 1 (re-levelled on carry-in, §5.5) |
 | `origin_genre` | the Reliquary's source genre |
 | Eligible templates | base content plus the opener's account content set at open time (doc 14 §2.3) |
-| Quality, affixes, enhancement, curse state, `illuminated` | rolled by doc 11 and doc 10 rules from `rng`; the `illuminated` roll is the Canon §13.9 5 Bp roll, drawn from `rng` instead of keyed `rng.loot` |
+| Quality, affixes, curse state, `illuminated` | rolled by doc 11 (§2.3, Keepsake entry point) and doc 10 rules from `rng`. The curse roll is doc 10 §7.1's `roll_curse` with the source genre's MYTHOS, so on a pact-bearing category a cursed Keepsake carries a pact (Canon §13.6, DECISIONS 60) with doc 10 §7.8's share `PACT_SHARE_BP = 2000` of its curse chance. The `illuminated` roll is doc 11 §2.3 step 13's 5 Bp roll for Legendary or better, drawn from `rng`, never from `rng.loot` |
+| `enhancement` | stored 0 (doc 10 §2.1: no generator sets it) |
 | `gear_tier`, `perk_columns` | `gear_tier = 1` permanently; perk columns are generated for tier 1 (1 option per column) |
 | `manufacturer` | rolled by doc 11 from `rng` |
-| Serendipity | not applied (Canon §6.4 row 42 is in-run only) |
+| Serendipity | fixed at the neutral `SER = 40` (doc 11 §2.3, Keepsake entry point), so the opener's Serendipity never shifts a Keepsake (Canon §6.4 row 42 is in-run only; Canon §22) |
 
 The full item instance (Canon §13.9) is stored in the vault at open time with `uid = 0` and `finder_slot = 0`. Its identity (template, rarity, quality, affixes and their rolls, enhancement, curse state, perk options, manufacturer, `illuminated`) never changes afterwards; only `uid`, `ilvl`, `value` and `finder_slot` are set at materialization (§5.5).
 
 ### 5.5 Sealed contents, identification and the Satchel
 
 - **Sealed.** A Keepsake shows its silhouette, its source-genre tag and its rarity frame. Its knowledge state follows Canon §13.6: unknown-appearance classes start at `know.unknown`, everything else at `know.classified`; the rarity knowledge flag alone is set. Affixes, enhancement, curse state and charges stay hidden.
-- **Satchel.** In the lobby of a run whose mode row in §2.2 allows the Satchel (Standard, Novella, Endless, Custom), each player orders up to `SATCHEL_SIZE = 5` Keepsakes into a Satchel, with at most `SATCHEL_MAX_LEGENDARY_PLUS = 1` of rarity Legendary or Exotic (Keepsakes are never Palimpsestic). A Keepsake whose template is outside the run's content set (doc 14 §2.3; the host's set in co-op) cannot be placed and shows "Not in this run's pages". The host records each player's Satchel (full item records) in `RunState` at run start, so saves and replays carry it.
+- **Satchel.** In the lobby of a run whose mode row in §2.2 allows the Satchel (Standard, Abridged, Novella, Endless, Custom), each player orders up to `SATCHEL_SIZE = 5` Keepsakes into a Satchel, with at most `SATCHEL_MAX_LEGENDARY_PLUS = 1` of rarity Legendary or Exotic (Keepsakes are never Palimpsestic). A Keepsake whose template is outside the run's content set (doc 14 §2.3; the host's set in co-op) cannot be placed and shows "Not in this run's pages". The host records each player's Satchel (full item records) in `RunState` at run start, so saves and replays carry it.
 - **Materialization.** At the tick of `ev.folio_entered` for the first Folio of each Volume, after Ghost restoration (doc 14 §3.10), the next Keepsake of each present player's Satchel materializes in that player's inventory, in ascending party-slot order. The first Folios of the Volumes are Folio indices 1, 6, 11, 16 and 21 in the Standard structure (Novella stops at 11, a 10-Folio Custom run at 6) and 1, 4, 7, 10 and 13 in Abridged, whose depths `d(f)` (doc 14 §3.1, Canon §17.1) are 1, 6, 11, 16 and 21. The Keepsake receives a new `uid` from that Folio's item counter (Canon §1.11), `ilvl = d(f)`, `value` recomputed by doc 11 from `P(ilvl)`, and `finder_slot` = the player's slot. If the inventory is full, it is placed on the ground at the player's position. A Dormant or Departed slot materializes nothing at that Folio; its Keepsake stays queued for the next listed Folio.
 - **Mid-run joiners** (doc 14 §2.5) submit their Satchel when they join; it materializes at the listed indices greater than or equal to the join Folio.
 - A materialized Keepsake leaves the vault permanently, whatever happens to the item later. Unmaterialized Satchel Keepsakes return to the vault at run end; if the vault is then over its cap, the return still succeeds and opening is blocked until the count falls to 29 or fewer.
 - **Balance.** A Keepsake adds one item per 5 Folios to a run whose reference supply is 40 standard-kill equivalents per Folio (Canon §17.4). Its `ilvl` tracks the Folio exactly like found loot, so its damage scales with `P(ilvl)` (Canon §13.8; for example `P(21) = 56044` at Folio 21) and it stays inside `ITEM_MULT_MAX = 51870` like any doc 11 item; it can never outscale the run. The cap of one Legendary-or-better item bounds the Folio-1 spike: a Legendary weapon at ilvl 1 has rarity power 12500 against 10000 for the Common reference weapon (Canon §13.3), cutting the 2.0 s reference time-to-kill (Canon §17.4) to `floor_div(2000 × 10000, 12500) = 1600` ms before affixes. Without the cap, a full vault would let five chosen Legendary or Exotic items enter every run, a raw-power meta gain that DESIGN_BRIEF §4 forbids. `gear_tier = 1` (§5.4) also keeps Keepsakes below found gear at Grade 5 and above.
-- Identification happens in the run through doc 10 (appraisal, use, scrolls). A cursed Keepsake behaves exactly like any cursed item. When a Keepsake becomes `know.identified`, its template is recorded in the account's Item Codex.
+- Identification happens in the run through doc 10 (appraisal, use, scrolls). A cursed Keepsake behaves exactly like any cursed item. When a Keepsake becomes `know.identified`, its template is recorded in the account's Index (doc 10 §12.1; `margin.index`, doc 14 §5.1). "Codex" in this chapter always means the battle pass of §6.
 
 ### 5.6 Disclosure
 
 - The Reliquary tooltip shows: base and consolidated rarity rates, "Epic or better guaranteed within `5 − c5` openings", "Legendary or better guaranteed within `20 − c20` openings", and a link to `/odds/reliquary/<genre_suffix>`.
 - Per-template probability on the public page: `P(rarity r) × w_template / Σ w(r)` from the `loot.keepsake.<genre_suffix>` weights, shown with `pct4`. Example: a template with weight 5,000 out of 10,000 in the Epic band of the Wuxia table has base probability `450/10000 × 1/2`, displayed `2.2500%`.
+- Curse and pact odds on the same page: per category and rarity, the curse chance `curse_bp` and the pact chance `pact_bp = mul_bp(curse_bp, 2000)` that doc 10 §7.1 and §7.8 compute for the genre's MYTHOS (Keepsakes use `source_curse_factor = 10000`), shown with `pct4`. Example: an Uncommon to Epic Gothic Horror weapon Keepsake has `curse_bp = 2400` and `pact_bp = 480`, displayed `24.0000%` cursed and `4.8000%` pact; a Legendary or Exotic one has 1200 and 240 (`rarity_factor` 5000). A pact is always shown openly with its odds (DECISIONS 60).
 - No achievement, title or reward ever references owning a set of Keepsakes or Inkwell entries (R3 C4 SET-1 hygiene, Japanese kompu gacha rule).
 
 ### 5.7 Record and worked example
@@ -1004,7 +1048,7 @@ Worked example: counters `c5 = 4`, `c20 = 11`. Draw 1 is `u = 4774`, below 7400:
 
 ### 6.2 XP sources
 
-All play earns Codex XP. No source is a challenge, quest or daily task. The §2.2 mode rules decide which sources a run pays; "present" and "qualified Folio exit" have their §2.2 meanings.
+All play earns Codex XP, except invading another party, which Canon §17.9 and DECISIONS 86 limit to Quires and Red Ink marks (§2.4). No source is a challenge, quest or daily task. The §2.2 mode rules decide which sources a run pays; "present" and "qualified Folio exit" have their §2.2 meanings.
 
 | Source ID | Trigger | XP |
 |---|---|---|
@@ -1013,14 +1057,14 @@ All play earns Codex XP. No source is a challenge, quest or daily task. The §2.
 | `pass.xp.editor_kill` | `rank.editor` killed with the player present | 1,000 |
 | `pass.xp.kill` | `ev.entity_killed` of a hostile of any rank except `rank.editor`, counted for every party member present at the kill tick | per run, `Σ over party sizes n of floor_div(10000 × K[n], enemy_count_bp[n])`, where `K[n]` is the sum of `floor_div(5 × rank_xp_bp, 10000)` over counted kills made while the Folio's party size (doc 14 §8.8) was `n` |
 | `pass.xp.run_end` | `ev.run_ended` of a run that paid no Ur-Text victory XP, after ≥ 3 qualified Folio exits for this player (Novella, Daily, Weekly Gauntlet and `run.mut.short_book` victories included) | 800 |
-| `pass.xp.run_victory` | `boss.ur_editor` dies with the player present (`final_folio` read before any Endless switch, as in §2.2) | `VICTORY_XP_PER_FOLIO × final_folio` = 160 × 25 = 4,000 for the Standard structure, 160 × 15 = 2,400 for Abridged |
+| `pass.xp.run_victory` | `boss.ur_editor` dies with the player present and the run keeps its clear (§2.2 Second Edition rule; `final_folio` read before any Endless or Second Edition switch, as in §2.2) | `VICTORY_XP_PER_FOLIO × final_folio` = 160 × 25 = 4,000 for the Standard structure, 160 × 15 = 2,400 for Abridged |
 | `pass.xp.type_identified` | `ev.item_identified` that makes an item type known for the first time in the run, to the identifying player | 25 |
 | `pass.xp.craft` | `ev.item_crafted` or `ev.potion_brewed`, to the crafter | 25 |
 | `pass.xp.revive` | `ev.player_revived`, to the reviver | 100 |
-| `pass.xp.codex_entry` | first account-wide Item Codex or Bestiary entry | 200 |
+| `pass.xp.codex_entry` | each Index template page or Bestiary page that opens for the first time on the account (doc 10 §12.1: a template's first `know.identified` instance; §12.4: `know.bestiary.sighted`), to each player whose account it opens; listed in the run report as `codex_entries_new`; Index skin entries and curse pages pay nothing. The ID names the pass XP source; the page itself is an Index or Bestiary page | 200 |
 | `pass.xp.achievement` | any achievement unlock | 2,000 |
 
-Kill XP before the split, from `rank_xp_bp` (Canon §17.3): minion 1, standard 5, elite 15, champion 30, boss 100, hunter 25. The split divides once per run and party size, not once per kill, so co-op loses nothing to flooring: Canon §17.2 raises enemy counts by the same `enemy_count_bp`, and a Folio of 40 standard-kill equivalents solo becomes `floor_div(40 × 17500, 10000) = 70` kills in a party of 4, giving each player `floor_div(10000 × 350, 17500) = 200` XP, exactly the solo 200. A per-kill split would give `70 × floor_div(50000, 17500) = 140`, a 30% co-op penalty; this rule removes it. A run with a single standard kill in a party of 4 gives `floor_div(50000, 17500) = 2`.
+Kill XP before the split, from the killed entity's kill XP multiplier `rank_xp_bp` (Canon §17.3): minion 1, standard 5, elite 15, champion 30, boss 100, an invader (`rank.hunter`) 25. The Erasure hunter carries `rank.hunter` but uses `rank.elite`'s kill XP (Canon §11.6, DECISIONS 91), so it gives 15. The split divides once per run and party size, not once per kill, so co-op loses nothing to flooring: Canon §17.2 raises enemy counts by the same `enemy_count_bp`, and a Folio of 40 standard-kill equivalents solo becomes `floor_div(40 × 17500, 10000) = 70` kills in a party of 4, giving each player `floor_div(10000 × 350, 17500) = 200` XP, exactly the solo 200. A per-kill split would give `70 × floor_div(50000, 17500) = 140`, a 30% co-op penalty; this rule removes it. A run with a single standard kill in a party of 4 gives `floor_div(50000, 17500) = 2`.
 
 **Reference hour.** The §2.2 reference failed run plus 480 standard kills (12 Folios × 40), 20 identifications and 20 crafts: `60 × 150 + 12 × 400 + 2 × 1000 + 480 × 5 + 800 + 20 × 25 + 20 × 25 = 9,000 + 4,800 + 2,000 + 2,400 + 800 + 500 + 500 = 20,000`. `REF_CODEX_XP_PER_HOUR = 20,000`, so tier 100 takes 60 reference hours without catch-up.
 
@@ -1065,7 +1109,7 @@ Totals per Codex: free track 1,600 Ink, 250 Quires, 10 Reliquaries, 10 cosmetics
 
 ### 6.6 Cadence
 
-Codex `N` releases at `T0 + 84 × (N − 1)` days, 00:00 UTC, themed on the newest Folio Expansion genre if one shipped since the previous Codex, otherwise on the next core genre in Canon §5.2 order, cycling. Release never ends or changes any earlier Codex.
+Codex `N` releases at `T0 + 84 × (N − 1)` days, 00:00 UTC, themed on the newest Folio Expansion genre if one shipped since the previous Codex, otherwise on the next core genre in Canon §5.2 order, cycling (every build ships all 12, DECISIONS 114). Release never ends or changes any earlier Codex.
 
 ### 6.7 Expected completion
 
@@ -1093,7 +1137,7 @@ A player at 3 hours per week completes each Codex inside its 12-week cadence. Wo
 {
   "id": "pass.codex_001",
   "theme_genre": "genre.mythic_fantasy",
-  "release_utc": 1792886400,
+  "release_utc": 1820448000,
   "xp_per_tier": 12000,
   "tiers": 100,
   "premium_sku": "store.sku.codex_001_premium",
@@ -1122,8 +1166,8 @@ A full record lists 50 free and 101 premium rows (tier 100 has two). Validator r
 
 | SKU | USD | Contents (all deterministic, all listed before purchase) | Limit |
 |---|---|---|---|
-| `store.sku.base_game` | 24.99 EA, 29.99 at 1.0 | the game | 1 |
-| `store.sku.folio_exp_<nn>` | 12.99 | one expansion genre and its banners and Archive shelves (§3.2.6) | 1 each |
+| `store.sku.base_game` | 19.99 at Early Access and 1.0 | the game | 1 |
+| `store.sku.folio_exp_<nn>` | 9.99 | one expansion genre and its banners and Archive shelves (§3.2.6) | 1 each |
 | `store.sku.codex_<nnn>_premium` | 9.99 | premium track of that Codex | 1 each |
 | `store.sku.supporter_pack` | 4.99 | weapon ink set (5 `cosm.ink.*`), 1 sigil, title "Patron of the Margin", digital soundtrack (FLAC and MP3), digital art book (PDF) | 1 |
 | `store.sku.cosm_<name>` tier S | 1.99 | 1 emote, or 1 sigil plus 1 title | 1 each |
@@ -1133,7 +1177,7 @@ A full record lists 50 free and 101 premium rows (tier 100 has two). Validator r
 | tier Folio set | 9.99 | 1 outfit, 1 ink set, 1 VFX palette and 1 trail sharing a theme | 1 each |
 
 - Every cosmetic SKU grants a `bundle.sku.<name>` whose grant list is fixed at release and never edited.
-- **One source per cosmetic.** Every `cosm.` item has exactly one source: one cosmetic SKU, the supporter pack, one Codex premium tier, one Codex free tier, the Inkwell Plain pool, an Echo Fold, a Recollection, an achievement, a Bindery node or a Red Ink mark count. The content validator rejects a second source. Grant lists of different SKUs therefore never overlap, a SKU is either wholly owned (shown "Owned", not purchasable) or wholly unowned, and no purchase ever pays for something already owned.
+- **One source per cosmetic.** Every `cosm.` item has exactly one source: one cosmetic SKU, the supporter pack, one Codex premium tier, one Codex free tier, the Inkwell Plain pool, an Echo Fold, a Recollection, an achievement, a Bindery node, a Red Ink mark count or the Second Edition Ironman clear (§2.2). The content validator rejects a second source. Grant lists of different SKUs therefore never overlap, a SKU is either wholly owned (shown "Owned", not purchasable) or wholly unowned, and no purchase ever pays for something already owned.
 - **Complete-the-set bundles** (`store.sku.set_<name>`) list component SKUs. Price in each currency: `raw = mul_bp(Σ local prices of component SKUs not owned, 9000)` in minor units, then `price = round_down_ending(raw, currency)`. The bundle is hidden when fewer than 2 components are unowned. Ownership lowers the price; it never raises it.
 
 ```
@@ -1152,7 +1196,7 @@ Worked example: a USD set of four unowned SKUs at 5.99, 3.99, 7.99 and 1.99 has 
 ### 7.2 Regional pricing method
 
 1. Each SKU has a USD anchor tier.
-2. The local price in each platform currency is the platform's recommended regional price for that anchor at the SKU's release date (Steam's pricing tool and the console equivalents), rounded to the nearest price satisfying the local ending convention (`.99` for USD, EUR and BRL; last digit 9 for GBP and CAD; `.95` or `.45` for AUD; multiples of 50 for JPY; multiples of 100 for KRW; whole yuan for CNY), ties to the lower price. Currencies outside the matrix use the platform's own recommendation unrounded.
+2. The local price in each platform currency is the storefront's recommended regional price for that anchor at the SKU's release date (Steam's pricing tool: Steam is the only storefront and the game ships on PC only, DECISIONS 98 and 112), rounded to the nearest price satisfying the local ending convention (`.99` for USD, EUR and BRL; last digit 9 for GBP and CAD; `.95` or `.45` for AUD; multiples of 50 for JPY; multiples of 100 for KRW; whole yuan for CNY), ties to the lower price. Currencies outside the matrix use the platform's own recommendation unrounded.
 3. Prices are stored as integer minor units per currency in `store.price_matrix`.
 4. A SKU's price never rises within 12 months of its release. Any later increase is announced in-game 30 days ahead. Decreases apply immediately. Price changes never affect past purchases.
 5. The matrix is reviewed every 6 months.
@@ -1167,11 +1211,9 @@ Launch matrix (authored values, binding until the first review):
 | 5.99 | 5.99 | 5.19 | 22.99 | 900 | 7,400 | 8.95 | 7.79 | 28 |
 | 7.99 | 7.99 | 6.89 | 29.99 | 1,200 | 9,800 | 11.95 | 10.49 | 36 |
 | 9.99 | 9.99 | 8.59 | 37.99 | 1,500 | 12,300 | 14.95 | 12.99 | 46 |
-| 12.99 | 12.99 | 10.99 | 48.99 | 1,900 | 15,800 | 19.45 | 16.99 | 58 |
-| 24.99 | 24.99 | 20.99 | 92.99 | 3,600 | 30,500 | 37.45 | 32.49 | 112 |
-| 29.99 | 29.99 | 25.49 | 109.99 | 4,300 | 36,500 | 44.95 | 38.99 | 136 |
+| 19.99 | 19.99 | 16.99 | 74.99 | 2,900 | 24,400 | 29.95 | 25.99 | 90 |
 
-The 29.99 row is the **conversion anchor**: an amount `a` in currency `X` converts to currency `Y` as `floor_div(a × anchor_Y, anchor_X)` in minor units (used only for minor caps, §8.3). Example: JPY 5,000 into EUR is `floor_div(5000 × 2999, 4300) = 3487`, EUR 34.87.
+The 19.99 row, the base game's price, is the **conversion anchor**: an amount `a` in currency `X` converts to currency `Y` as `floor_div(a × anchor_Y, anchor_X)` in minor units (used only for minor caps, §8.3). Example: JPY 5,000 into EUR is `floor_div(5000 × 1999, 2900) = 3446`, EUR 34.46.
 
 ### 7.3 Real-price display
 
@@ -1302,7 +1344,7 @@ Flags are records in doc 02's flag file (doc 02 §17.3) with `kind` `bool` or `i
 | `juris.region.cn` | `vat_inclusive_display = true`; `minor_caps`: under 8 `store_blocked`; 8 to 15 CNY 50 per transaction and 200 per month; 16 and 17 CNY 100 and 400 | 2016 notice (row 13): odds pages and published results are global. `real_name_required` and `minor_playtime_window` are set true only in a licensed mainland edition build; no such edition ships at launch. |
 | `juris.region.ca` | `fr_store_text = true` | ESRB as US; store, odds pages and purchase dialogs in English and French. |
 
-Minor-cap example: a 15-year-old minor-flagged account with a CNY store currency merges `default` and `cn`: per-transaction cap CNY 50.00 (5,000 minor units), monthly cap CNY 200.00. A CNY 58 Folio Expansion is refused with `minor_cap_tx` before platform checkout.
+Minor-cap example: a 15-year-old minor-flagged account with a CNY store currency, whose guardian has raised the guardian cap to CNY 200 (§8.4), merges `default` and `cn`: per-transaction cap CNY 50.00 (5,000 minor units), monthly cap CNY 200.00. A CNY 46 Folio Expansion passes the per-transaction cap, but with CNY 160 already spent this month it is refused with `minor_cap_month` (`160 + 46 = 206 > 200`) before platform checkout. The CNY set of the §7.1 example (components CNY 28, 18, 36 and 9: `round_down_ending(mul_bp(9100, 9000), CNY) = 8100`, CNY 81) is refused with `minor_cap_tx`.
 
 ### 8.4 Parental controls and purchase defaults
 
@@ -1320,14 +1362,15 @@ Minor-cap example: a 15-year-old minor-flagged account with a CNY store currency
 | Block | hides the blocked player's text, voice and emotes everywhere and prevents them joining the blocker's lobbies |
 | Report | categories harassment, hate, sexual content, cheating, other; attaches the last 100 text lines held locally, session ID and party IDs; voice is never recorded |
 | Filters | profanity and slur filter on by default for text and player names |
-| Adult defaults | text on with filter; voice push-to-talk, party only |
+| Adult defaults | text on with filter; voice push-to-talk, party only; voice with strangers off (DECISIONS 75): a party member who is not on the player's platform friends list starts voice-muted for that player until the player unmutes them |
+| Lobbies (DECISIONS 74) | friends join through platform invites; anyone joins a public lobby from doc 16's lobby browser. Every lobby gives each member mute, block and report on every other member, and a public lobby runs kick votes by doc 16 §9.2's rule: the starter's vote counts as yes, and with `m` Active members other than the target the vote passes on at least `max(2, m − 1)` yes votes within 1,800 ticks |
 | Minor defaults | `friends_only`: free text and voice with friends only, quick chat with others; `quick_ping_only`: pings only |
 | Invaders (Canon §17.9) | text and voice with an invader carry the same mute, block and report controls as every channel; voice with an invader is off by default for every account; a minor-flagged account gets pings and emotes only with an invader; blocking an invader from the scoreboard ends that invasion and bars that account from invading the blocker for 30 days |
 | Enforcement | reports triaged within 72 hours; chat bans of 24 hours, then 7 days, then permanent |
 
 ### 8.6 Rating targets
 
-PALIMPSEST contains strong fantasy and firearm violence, blood, body-part wounds and severing (Canon §9.1), cosmic and gothic horror, and mild language. The product owner fixed 16+ rating targets with severing and blood kept (DECISIONS #13). Each board's target is the lowest band its published guidelines assign to severing with blood: boards with a 16 band use it; GRAC has no 16 band and assigns its adult band to dismemberment with blood; ESRB and CERO have 17+ bands. The monetization design adds no rating trigger: no paid random items, no paid time-limited offers, no daily-login rewards, no unblockable communication (R3 C3).
+PALIMPSEST contains strong fantasy and firearm violence, blood, body-part wounds and severing (Canon §9.1), cosmic and gothic horror, and mild language. By default wounds bleed ink and severed parts unravel into script; doc 17's `access.gore` setting switches to red blood (`ink`, the default; `full`, red blood; `minimal`; DECISIONS 94). The product owner fixed 16+ rating targets with severing and blood kept (DECISIONS 13), PEGI 16 and ESRB M (DECISIONS 94). Every board rates the red-blood setting, because the shipped game reaches it. Each board's target is the lowest band its published guidelines assign to severing with blood: boards with a 16 band use it; GRAC has no 16 band and assigns its adult band to dismemberment with blood; ESRB and CERO have 17+ bands. The monetization design adds no rating trigger: no paid random items, no paid time-limited offers, no daily-login rewards, no unblockable communication (R3 C3).
 
 | Board | Target | Descriptors |
 |---|---|---|
@@ -1339,7 +1382,7 @@ PALIMPSEST contains strong fantasy and firearm violence, blood, body-part wounds
 | GRAC | 청소년이용불가 (18) | violence, fear |
 | CERO | D | 暴力, 恐怖 |
 
-No content is cut to chase a lower rating. When a board assigns a higher band than its target, the game ships at that band in that territory and nothing else changes. Gore intensity has a player option (doc 17) that does not change the rated content.
+No content is cut to chase a lower rating. When a board assigns a higher band than its target, the game ships at that band in that territory and nothing else changes. No `access.gore` value changes the rated content, which is the red-blood `full` setting.
 
 ---
 
@@ -1356,7 +1399,7 @@ These rules restate R3 D6 as binding requirements.
 | AP-5 | No zero-probability windows (`base_bp ≥ 1`), no personalized odds, no odds changes by A/B test. |
 | AP-6 | No trading, gifting or cash-out of any account currency or randomized reward. No NFTs or blockchain. |
 | AP-7 | No casino presentation: no reels, near-miss animations, wagering, payout multipliers or coin sounds. A pull reveal lasts at most 180 ticks and is skippable after 30; a ten-pull summary is skippable at once. |
-| AP-8 | No challenge-only pass XP; all play earns Codex XP. |
+| AP-8 | No challenge-only pass XP; all play earns Codex XP, except invading (Canon §17.9, DECISIONS 86: Quires and Red Ink marks only). |
 | AP-9 | No offer prompts outside the store, no personalized offers, no "whale" segmentation. |
 | AP-10 | No set-completion rewards for Inkwell entries or Keepsakes. |
 | AP-11 | Every random system shows exact odds, pity counters and history and is verifiable (§3.11, §4). |
@@ -1371,7 +1414,7 @@ These rules restate R3 D6 as binding requirements.
 - `econ-api`: Rust, `axum` 0.8.9, `tokio` 1.53.2; authenticated HTTPS API for pulls, opens, Archive, Codex, store and receipts.
 - `econ-db`: Postgres via `sqlx` 0.9.0 at serializable isolation; ledger, entitlements, pity, epochs, audit log.
 - `econ-verify`: headless `palimpsest_sim` re-simulating sampled run reports (§10.4).
-- `econ-platform`: per-platform purchase verification and refund and chargeback webhooks. Steam uses the Steam Inventory purchase flow (`StartPurchase`, `SteamInventoryResultReady_t`) with item definitions `tradable: false`, `marketable: false` (R4 §13).
+- `econ-platform`: purchase verification and refund and chargeback webhooks for Steam, the only storefront (DECISIONS 112), through the Steam Inventory purchase flow (`StartPurchase`, `SteamInventoryResultReady_t`) with item definitions `tradable: false`, `marketable: false` (R4 §13).
 - `econ-signer`: KMS-backed Ed25519 for receipts and daily audit roots.
 
 ### 10.2 Double-entry ledger
@@ -1433,6 +1476,7 @@ Balances are `SUM(amount)` per wallet, cached in a balance table updated in the 
 | achievement | `ach` | the `ach.` ID | 0 |
 | spark end conversion | `spark_end` | the banner ID | 0 |
 | Archive purchase | `archive` | client request UUID | 0 |
+| Transcription claim | `transcribe` | client request UUID | 0 |
 
 Example: `{"a":"0x0123456789abcdef","i":0,"k":"run","s":"0x00000000075bcd15"}` hashes to `909de25b25a2d70ca98a91f48c4098ee338ccb3dd518356c1d5db5519b06a4b6`. A request whose key exists returns the stored result and posts nothing. Clients retry with the same request body until they receive a response.
 
@@ -1440,7 +1484,7 @@ Example: `{"a":"0x0123456789abcdef","i":0,"k":"run","s":"0x00000000075bcd15"}` h
 
 **`run_id`** is a `u64` the host draws from its OS CSPRNG at run start, stores in `RunState` (doc 14, Interface assumptions) and sends to every joiner. It never feeds simulation randomness.
 
-At `ev.run_ended` (and at a `run.end.departed` for that slot), each player's client submits one run report. Example (a solo Standard death in Folio 4; hashes are illustrative):
+At `ev.run_ended` (and at a `run.end.departed` for that slot), each player's client submits one run report as doc 16's run-report message; Canon §18 has no account events, so this report is the whole contract between a run and the account economy. Example (a solo Standard death in Folio 4; hashes are illustrative):
 
 ```json
 {
@@ -1458,8 +1502,8 @@ At `ev.run_ended` (and at a `run.end.departed` for that slot), each player's cli
   "easing": 0,
   "final_folio": 25,
   "end": "run.end.erased",
-  "started_utc": 1793491200,
-  "ended_utc": 1793492400,
+  "started_utc": 1821052800,
+  "ended_utc": 1821054000,
   "active_ticks": 54000,
   "folio_exits": [
     { "folio": 1, "genre": "genre.cyberpunk", "entry_tick": 0, "exit_tick": 16200, "present": 1 },
@@ -1468,6 +1512,7 @@ At `ev.run_ended` (and at a `run.end.departed` for that slot), each player's cli
   ],
   "editor_kills_present": [],
   "victory_present": 0,
+  "ironman": 0,
   "kills_present": [ { "party_size": 1, "k_sum": 600 } ],
   "types_identified": 5,
   "crafts": 2,
@@ -1481,14 +1526,14 @@ At `ev.run_ended` (and at a `run.end.departed` for that slot), each player's cli
 }
 ```
 
-`k_sum` is §6.2's `K[n]`. `run_score` is doc 14 §4.6's value for this slot. Grants for this report: Ink `3 × 15 + 10 × 3 + 20 = 95`; Codex XP `15 × 150 + 3 × 400 + floor_div(10000 × 600, 10000) + 800 + 5 × 25 + 2 × 25 = 2,250 + 1,200 + 600 + 800 + 125 + 50 = 5,025`; Quires `floor_div(710, 50) = 14`; Reliquaries 0; the lifetime Folio-exit counter rises by 3.
+`k_sum` is §6.2's `K[n]`. `run_score` is doc 14 §4.6's value for this slot. `victory_present` follows §2.2 (a forfeited Second Edition reports 0), and `ironman` is doc 14's `RunSummary.ironman` as 0 or 1. Grants for this report: Ink `3 × 15 + 10 × 3 + 20 = 95`; Codex XP `15 × 150 + 3 × 400 + floor_div(10000 × 600, 10000) + 800 + 5 × 25 + 2 × 25 = 2,250 + 1,200 + 600 + 800 + 125 + 50 = 5,025`; Quires `floor_div(710, 50) = 14`; Reliquaries 0; the lifetime Folio-exit counter rises by 3.
 
 **Acceptance procedure,** in order; the first failure rejects the report with the named code and grants nothing:
 
 1. `report_malformed`: schema validation (integers only, hex formats, sorted `content_set`).
 2. `sim_version_unknown`: `sim_version` is a released version.
 3. Apocrypha: if `mod_count > 0`, the report is accepted with zero grants (§2.2) and the remaining checks are skipped.
-4. `content_mismatch`: every ID in `content_set` was owned by `host_acct` at `started_utc`, and `content_hash` equals doc 02 §11.2's hash recomputed from that release's base records, `content_set`, an empty `MOD` section and that release's sim-affecting flags.
+4. `content_mismatch`: every ID in `content_set` was owned by `host_acct` at `started_utc`, and `content_hash` equals doc 02 §11.2's hash recomputed from that release's base records outside the presentation namespaces (Canon §2.4), `content_set`, an empty `MOD` section and that release's sim-affecting flags.
 5. `host_mismatch`: in co-op, `run_seed`, `content_hash`, `mode` and the final `state_hash` equal the host's report for the same `run_id`; a non-host report waits up to 7 days for the host's report and is then accepted on its own.
 6. Grants are computed by §2.2, §2.4, §5.1, §6.2 and the §2.3 caps, and posted in one journal transaction keyed per §10.3.
 
@@ -1514,7 +1559,7 @@ At `ev.run_ended` (and at a `run.end.departed` for that slot), each player's cli
 |---|---|---|
 | `Live` | launch | normal operation |
 | `SunsetAnnounced` | announcement, at least 180 days before shutdown | Codex and cosmetic sales stop at once; purchases from the prior 30 days are refundable on request; Folio Expansions stay on sale on the platform storefront because they keep working offline; banners, Archive and free tracks continue |
-| `FinalSync` | 30 days before shutdown | every client prompts a full sync; the service issues an `eos_final` receipt per account: all entitlements, balances, Folds, pity and guarantee flags of every family, spark, Standard spark, Reliquary counters, unopened Reliquaries with their source genres, the Keepsake vault, Codex progress, catch-up reserve and Coda XP |
+| `FinalSync` | 30 days before shutdown | every client prompts a full sync; the service issues an `eos_final` receipt per account: all entitlements, balances, Folds, pity and guarantee flags of every family, spark, Standard spark, Reliquary counters, the lifetime Folio-exit counter, `transcription`, unopened Reliquaries with their source genres, the Keepsake vault, Codex progress, catch-up reserve and Coda XP |
 | `Shutdown` | shutdown day | every unrevealed `server_seed` is revealed and published; the full audit log for the last 5 years and every daily root are published as a download; servers stop |
 | `EndOfService` | permanent | the client runs §11.3 forever |
 
@@ -1528,7 +1573,7 @@ Owned Echoes, Folds, Scripts, cosmetics, Keepsakes, balances, pity and Codex pro
 
 - Ink, Quires, Codex XP and Reliquaries are earned locally at §2 and §6 rates, without the rolling 24-hour caps.
 - The Inkwell offers a **Retrospective** Featured banner: the player chooses any Illuminated Echo or Script ever featured (expansion units only with platform ownership of that expansion) as the featured unit; the rate-ups are those of the banner that first featured it, and the banner belongs to that unit's family (`echo`, `script` or `exp<nn>`). The choice can change only between periods of the local calendar, which continues `T0 + 28 × (k − 1)` days. Hazards, guarantees, spark and pity carry over unchanged; the Standard and Beginner banners continue locally as before. Draws use §4.2 with a `server_seed` from the local OS RNG, committed before use, and `config_hash` of the local banner record; the player can verify locally.
-- The Vellum Archive stocks every entry ever released.
+- The Vellum Archive stocks every entry ever released, and the Transcription shelf (§3.9.1) continues locally at the same costs.
 - Every Codex premium track ever released unlocks for every account, because it can no longer be bought.
 - The store screen is removed. Platform-owned expansions keep working through platform ownership.
 
@@ -1536,18 +1581,19 @@ Owned Echoes, Folds, Scripts, cosmetics, Keepsakes, balances, pity and Codex pro
 
 ## 12. KPIs and ethical guardrails
 
-KPI IDs belong to doc 01 (`kpi.`); this chapter defines the economy KPIs and their guardrails and requests the IDs in §Canon gaps.
+KPI IDs belong to doc 01 (`kpi.`), whose §10.3 lists the `kpi.econ.*` rows below with their targets and alert bands; this chapter defines their meaning and the action when one is breached (doc 01 §10.2 defers `kpi.econ.*` breach actions here).
 
-| KPI | Definition | Target or guardrail | Action when breached |
-|---|---|---|---|
-| Featured hours, median | median reference hours from banner start to a player's first featured Illuminated, among players who pull on that banner | ≤ 25 | raise Ink rates in the next update |
-| Ink per active hour, p50 | Ink from play ÷ active hours, last 28 days | ≥ 350 | audit run-report grants |
-| Codex completion | share of premium owners reaching tier 100 within 24 weeks of purchase | ≥ 60% | lower `CODEX_XP_PER_TIER` for future Codexes only |
-| Refund rate | refunded ÷ purchased SKUs, 28 days | ≤ 3%; alert at 5% | review store copy and previews |
-| Unauthorized-minor refunds | count per 28 days | alert on any period-over-period rise | review guardian flow |
-| Spend concentration | share of revenue from the top 1% of spenders | informational; no target | none (a finite catalog bounds spend) |
-| Spend wellbeing check | any account above USD 300 in 30 days | the client shows the Spend summary once, with no offer | none |
-| Chat report rate | reports per 1,000 sessions | trend only | moderation staffing |
+| KPI | Doc 01 ID | Definition | Target or guardrail | Action when breached |
+|---|---|---|---|---|
+| Featured hours, median | `kpi.econ.featured_hours_p50` | median reference hours from banner start to a player's first featured Illuminated, among players who pull on that banner | ≤ 25 | raise Ink rates in the next update |
+| Ink per active hour, p50 | `kpi.econ.ink_per_hour_p50` | Ink from play ÷ active hours, last 28 days | ≥ 350 | audit run-report grants |
+| Quires per run hour, p50 | `kpi.econ.quires_per_hour_p50` | Quires from runs per active run hour, median over accounts | 50 to 160 | re-check the §2.4 rate against doc 14 §4.6's `run_score` calibration |
+| Codex completion | `kpi.econ.codex_completion` | share of premium owners reaching tier 100 within 24 weeks of purchase | ≥ 60% (6000 Bp) | lower `CODEX_XP_PER_TIER` for future Codexes only |
+| Refund rate | `kpi.econ.refund_rate` | refunded ÷ purchased SKUs, 28 days | ≤ 3%; alert at 5% | review store copy and previews |
+| Unauthorized-minor refunds | `kpi.econ.minor_refunds` | count per 28 days | alert on any period-over-period rise | review guardian flow |
+| Spend concentration | `kpi.econ.spend_top1_share` | share of revenue from the top 1% of spenders | informational; no target | none (a finite catalog bounds spend) |
+| Spend wellbeing check | none (a client rule, not a KPI) | any account above USD 300 in 30 days | the client shows the Spend summary once, with no offer | none |
+| Chat report rate | `kpi.econ.chat_report_rate` | chat and voice reports per 1,000 sessions | alert on any rise over the previous window | moderation staffing |
 
 **Forbidden practices.** No KPI target on daily streaks, sessions per day, or conversion of players under 18. No A/B test changes odds, pity, prices, Ink rates or Codex XP; A/B tests cover layout and copy only. No behavioural model scores players for monetization. Inkwell, Reliquary and Codex tuning uses only §2.8 hours and §6.7 completion, never revenue.
 
@@ -1559,52 +1605,36 @@ Every ID below is in a namespace Canon §19 assigns to this chapter, passes the 
 
 | Namespace | IDs |
 |---|---|
-| `banner.` | `banner.standard`, `banner.beginner`, `banner.echo.p<nnn>`, `banner.script.p<nnn>`, `banner.exp<nn>.p<nnn>`, `banner.archive`, `banner.reliquary.account`; `banner.tier.illuminated`, `banner.tier.rubricated`, `banner.tier.plain`; `banner.family.echo`, `banner.family.script`, `banner.family.standard`, `banner.family.beginner`, `banner.family.exp<nn>`; `banner.hazard.illuminated_std`, `banner.hazard.rubricated_std`, `banner.hazard.illuminated_beginner`; `banner.pool.illuminated_echo`, `banner.pool.illuminated_script`, `banner.pool.rubricated`, `banner.pool.plain` |
-| `pass.` | `pass.codex_<nnn>`; `pass.xp.active_minute`, `pass.xp.folio_exit`, `pass.xp.editor_kill`, `pass.xp.kill`, `pass.xp.run_end`, `pass.xp.run_victory`, `pass.xp.type_identified`, `pass.xp.craft`, `pass.xp.revive`, `pass.xp.codex_entry`, `pass.xp.achievement` |
-| `store.` | `store.sku.base_game`, `store.sku.folio_exp_<nn>`, `store.sku.codex_<nnn>_premium`, `store.sku.supporter_pack`, `store.sku.cosm_<name>`, `store.sku.set_<name>`, `store.price_matrix` |
-| `bundle.` | the 36 launch Scripts of §3.1.2 (`bundle.script.lost_chapter_<genre_suffix>` ×12, `bundle.script.glyphs_<family>` ×6, `bundle.script.hireling_<type>` ×5, `bundle.script.kit_<calling_suffix>` ×13) and 3 per Folio Expansion; `bundle.sku.<name>` (SKU grant lists), example `bundle.sku.supporter_pack` |
-| `cosm.` | categories `cosm.cat.outfit`, `cosm.cat.palette`, `cosm.cat.ink`, `cosm.cat.vfx`, `cosm.cat.emote`, `cosm.cat.sigil`, `cosm.cat.title`, `cosm.cat.frame`, `cosm.cat.margin`, `cosm.cat.trail`, `cosm.cat.binding`, `cosm.cat.recollected`, `cosm.cat.redink`; the record's `cat` field carries the category. Item patterns: `cosm.<category>.<name>` for catalog items; `cosm.echo.<echo_suffix>.<part>` with parts `palette`, `outfit`, `frame`, `title`, `trail` (Folds, §3.8) and `recollected` (owned-Echo Recollection, doc 14 §6.1); doc 14's `cosm.binding.<b>` for `vellum`, `lapis`, `verdigris`, `oxblood`, `gilt`, `soot` and `cosm.palette.<g>` (Bindery nodes); `cosm.redink.mark_001`, `_005`, `_025`, `_100` (§2.4). The 60 Plain cosmetics `cosm.ink.inkwell_01` to `_20`, `cosm.sigil.inkwell_01` to `_15`, `cosm.title.inkwell_01` to `_15`, `cosm.emote.inkwell_01` to `_10`. Codex examples `cosm.outfit.codex_001_t005`, `cosm.emote.codex_001_bow`, `cosm.sigil.codex_001_quill_rampant` |
-| `juris.` | `juris.paid_random_items_enabled` (Canon §22); the 20 `juris.flag.*` IDs of §8.2; `juris.region.default`, `juris.region.be`, `juris.region.nl`, `juris.region.br`, `juris.region.au`, `juris.region.uk`, `juris.region.eu`, `juris.region.us`, `juris.region.kr`, `juris.region.jp`, `juris.region.cn`, `juris.region.ca` |
+| `banner.` | `banner.standard`, `banner.beginner`, `banner.archive`, `banner.reliquary.account`; the first launch rotation cycle (§3.2.2) `banner.echo.p001`, `banner.echo.p002`, `banner.echo.p003`, `banner.echo.p004`, `banner.echo.p005`, `banner.echo.p006`, `banner.echo.p007`, `banner.echo.p008`, `banner.echo.p009`, `banner.echo.p010`, `banner.echo.p011`, `banner.echo.p012` and `banner.script.p001`, `banner.script.p002`, `banner.script.p003`, `banner.script.p004`, `banner.script.p005`, `banner.script.p006`, `banner.script.p007`, `banner.script.p008`, `banner.script.p009`, `banner.script.p010`, `banner.script.p011`, `banner.script.p012`, then `banner.echo.p<nnn>` and `banner.script.p<nnn>` for every later period; `banner.exp<nn>.p<nnn>` for Folio Expansion `nn` (§3.2.6); `banner.tier.illuminated`, `banner.tier.rubricated`, `banner.tier.plain`; `banner.family.echo`, `banner.family.script`, `banner.family.standard`, `banner.family.beginner`, `banner.family.exp01`, `banner.family.exp02`, and `banner.family.exp<nn>` for later expansions; `banner.hazard.illuminated_std`, `banner.hazard.rubricated_std`, `banner.hazard.illuminated_beginner`; `banner.pool.illuminated_echo`, `banner.pool.illuminated_script`, `banner.pool.rubricated`, `banner.pool.plain` |
+| `pass.` | `pass.codex_<nnn>`, starting with `pass.codex_001` (§6.8); `pass.xp.active_minute`, `pass.xp.folio_exit`, `pass.xp.editor_kill`, `pass.xp.kill`, `pass.xp.run_end`, `pass.xp.run_victory`, `pass.xp.type_identified`, `pass.xp.craft`, `pass.xp.revive`, `pass.xp.codex_entry`, `pass.xp.achievement` |
+| `store.` | `store.sku.base_game`, `store.sku.folio_exp_01` (Age of Sail and Pirates), `store.sku.folio_exp_02` (Kaiju and Mecha), `store.sku.folio_exp_<nn>` for later expansions, `store.sku.codex_<nnn>_premium` (first `store.sku.codex_001_premium`), `store.sku.supporter_pack`, `store.sku.cosm_<name>`, `store.sku.set_<name>`, `store.price_matrix` |
+| `bundle.` | the 36 launch Scripts of §3.1.2 in index order: Illuminated `bundle.script.lost_chapter_cosmic_horror`, `bundle.script.lost_chapter_cyberpunk`, `bundle.script.lost_chapter_fairy_tale`, `bundle.script.lost_chapter_gothic_horror`, `bundle.script.lost_chapter_hardboiled_noir`, `bundle.script.lost_chapter_mythic_antiquity`, `bundle.script.lost_chapter_mythic_fantasy`, `bundle.script.lost_chapter_post_apocalypse`, `bundle.script.lost_chapter_space_opera`, `bundle.script.lost_chapter_steampunk`, `bundle.script.lost_chapter_weird_west`, `bundle.script.lost_chapter_wuxia`; Rubricated `bundle.script.glyphs_ember`, `bundle.script.glyphs_hollow`, `bundle.script.glyphs_mirror`, `bundle.script.glyphs_storm`, `bundle.script.glyphs_thorn`, `bundle.script.glyphs_tide`, `bundle.script.hireling_apothecary`, `bundle.script.hireling_cartographer`, `bundle.script.hireling_lamplighter`, `bundle.script.hireling_porter`, `bundle.script.hireling_sellsword`, `bundle.script.kit_alchemist`, `bundle.script.kit_artificer`, `bundle.script.kit_beastbinder`, `bundle.script.kit_duelist`, `bundle.script.kit_grenadier`, `bundle.script.kit_gunslinger`, `bundle.script.kit_monk`, `bundle.script.kit_netrunner`, `bundle.script.kit_oracle`, `bundle.script.kit_shade`, `bundle.script.kit_spellwright`, `bundle.script.kit_vanguard`, `bundle.script.kit_warden`; 3 more per Folio Expansion (§3.1.2); `bundle.sku.<name>` (SKU grant lists), for example `bundle.sku.supporter_pack` |
+| `cosm.` | categories `cosm.cat.outfit`, `cosm.cat.palette`, `cosm.cat.ink`, `cosm.cat.vfx`, `cosm.cat.emote`, `cosm.cat.sigil`, `cosm.cat.title`, `cosm.cat.frame`, `cosm.cat.margin`, `cosm.cat.trail`, `cosm.cat.binding`, `cosm.cat.recollected`, `cosm.cat.redink`; the record's `cat` field carries the category. Item patterns: `cosm.<category>.<name>` for catalog items; `cosm.echo.<echo_suffix>.<part>` with parts `palette`, `outfit`, `frame`, `title`, `trail` (Folds, §3.8) and `recollected` (owned-Echo Recollection, doc 14 §6.1). The 60 Plain cosmetics in pool order (§3.4): `cosm.emote.inkwell_01`, `cosm.emote.inkwell_02`, `cosm.emote.inkwell_03`, `cosm.emote.inkwell_04`, `cosm.emote.inkwell_05`, `cosm.emote.inkwell_06`, `cosm.emote.inkwell_07`, `cosm.emote.inkwell_08`, `cosm.emote.inkwell_09`, `cosm.emote.inkwell_10`, `cosm.ink.inkwell_01`, `cosm.ink.inkwell_02`, `cosm.ink.inkwell_03`, `cosm.ink.inkwell_04`, `cosm.ink.inkwell_05`, `cosm.ink.inkwell_06`, `cosm.ink.inkwell_07`, `cosm.ink.inkwell_08`, `cosm.ink.inkwell_09`, `cosm.ink.inkwell_10`, `cosm.ink.inkwell_11`, `cosm.ink.inkwell_12`, `cosm.ink.inkwell_13`, `cosm.ink.inkwell_14`, `cosm.ink.inkwell_15`, `cosm.ink.inkwell_16`, `cosm.ink.inkwell_17`, `cosm.ink.inkwell_18`, `cosm.ink.inkwell_19`, `cosm.ink.inkwell_20`, `cosm.sigil.inkwell_01`, `cosm.sigil.inkwell_02`, `cosm.sigil.inkwell_03`, `cosm.sigil.inkwell_04`, `cosm.sigil.inkwell_05`, `cosm.sigil.inkwell_06`, `cosm.sigil.inkwell_07`, `cosm.sigil.inkwell_08`, `cosm.sigil.inkwell_09`, `cosm.sigil.inkwell_10`, `cosm.sigil.inkwell_11`, `cosm.sigil.inkwell_12`, `cosm.sigil.inkwell_13`, `cosm.sigil.inkwell_14`, `cosm.sigil.inkwell_15`, `cosm.title.inkwell_01`, `cosm.title.inkwell_02`, `cosm.title.inkwell_03`, `cosm.title.inkwell_04`, `cosm.title.inkwell_05`, `cosm.title.inkwell_06`, `cosm.title.inkwell_07`, `cosm.title.inkwell_08`, `cosm.title.inkwell_09`, `cosm.title.inkwell_10`, `cosm.title.inkwell_11`, `cosm.title.inkwell_12`, `cosm.title.inkwell_13`, `cosm.title.inkwell_14`, `cosm.title.inkwell_15`. Red Ink marks (§2.4): `cosm.redink.mark_001`, `cosm.redink.mark_005`, `cosm.redink.mark_025`, `cosm.redink.mark_100`. Second Edition Ironman cosmetic (§2.2, DECISIONS 108): `cosm.frame.ironman` (category `cosm.cat.frame`). Bindery finishes named by doc 14 §5.3: `cosm.binding.vellum`, `cosm.binding.lapis`, `cosm.binding.verdigris`, `cosm.binding.oxblood`, `cosm.binding.gilt`, `cosm.binding.soot` (category `cosm.cat.binding`) and `cosm.palette.mythic_fantasy`, `cosm.palette.gothic_horror`, `cosm.palette.cosmic_horror`, `cosm.palette.space_opera`, `cosm.palette.cyberpunk`, `cosm.palette.post_apocalypse`, `cosm.palette.weird_west`, `cosm.palette.hardboiled_noir`, `cosm.palette.wuxia`, `cosm.palette.steampunk`, `cosm.palette.fairy_tale`, `cosm.palette.mythic_antiquity` (category `cosm.cat.palette`). Codex examples `cosm.outfit.codex_001_t005`, `cosm.emote.codex_001_bow`, `cosm.sigil.codex_001_quill_rampant` |
+| `juris.` | `juris.paid_random_items_enabled` (Canon §22); the 20 flags of §8.2: `juris.flag.store_enabled`, `juris.flag.purchases_default_on`, `juris.flag.minor_age`, `juris.flag.vat_inclusive_display`, `juris.flag.withdrawal_waiver_consent`, `juris.flag.refund_window_days`, `juris.flag.minor_refund_window_days`, `juris.flag.odds_public_pages`, `juris.flag.draw_log_retention_days`, `juris.flag.minor_chat_default`, `juris.flag.child_data_consent_age`, `juris.flag.minor_playtime_window`, `juris.flag.real_name_required`, `juris.flag.minor_store_block`, `juris.flag.minor_inkwell_block`, `juris.flag.no_random_trading`, `juris.flag.dfa_watch`, `juris.flag.kr_domestic_representative`, `juris.flag.fr_store_text`, `juris.flag.invasion_minor_default`; `juris.region.default`, `juris.region.be`, `juris.region.nl`, `juris.region.br`, `juris.region.au`, `juris.region.uk`, `juris.region.eu`, `juris.region.us`, `juris.region.kr`, `juris.region.jp`, `juris.region.cn`, `juris.region.ca` |
 
-Constants (not content IDs): `INK_PULL_COST = 160`, `INK_PULL_COST_BEGINNER = 120`, `REF_INK_PER_HOUR = 400`, `WELCOME_INK = 1200`, `VICTORY_INK_PER_FOLIO = 12`, `INK_PER_RUN_CAP = 2500`, `INK_PLAY_ROLLING_24H = 4000`, `QUIRES_PER_RUN_CAP = 400`, `INVASION_QUIRES_ROLLING_24H = 60`, `INVASION_QUIRES = 5`, `INVASION_REDACT_QUIRES = 5`, `INVASION_MIN_TICKS = 3600`, `INK_ACTIVE_MINUTES_PER_RUN = 240`, `CODEX_XP_PER_TIER = 12000`, `REF_CODEX_XP_PER_HOUR = 20000`, `VICTORY_XP_PER_FOLIO = 160`, `CODEX_XP_PLAY_ROLLING_24H = 200000`, `CATCHUP_WEEKLY = 40000`, `CATCHUP_CAP = 160000`, `CODA_XP_PER_RELIQUARY = 24000`, `SPARK_CLAIM = 100`, `BANNER_PERIOD_DAYS = 28`, `KEEPSAKE_VAULT_CAP = 30`, `SATCHEL_SIZE = 5`, `SATCHEL_MAX_LEGENDARY_PLUS = 1`, `RELIQUARY_FOLIO_EXITS = 30`, `FOLIO_DWELL_MIN_TICKS = 5400`, `ACTIVE_WINDOW_TICKS = 3600`, `AUDIT_RETENTION_DAYS = 1826`, `REPLAY_KEEP_DAYS = 30`, `VERIFY_SAMPLE_PERCENT = 5`.
+Constants (not content IDs): `INK_PULL_COST = 160`, `INK_PULL_COST_BEGINNER = 120`, `REF_INK_PER_HOUR = 400`, `WELCOME_INK = 1200`, `VICTORY_INK_PER_FOLIO = 12`, `INK_PER_RUN_CAP = 2500`, `INK_PLAY_ROLLING_24H = 4000`, `QUIRES_PER_RUN_CAP = 400`, `INVASION_QUIRES_ROLLING_24H = 60`, `INVASION_QUIRES = 5`, `INVASION_REDACT_QUIRES = 5`, `INVASION_MIN_TICKS = 3600`, `INK_ACTIVE_MINUTES_PER_RUN = 240`, `CODEX_XP_PER_TIER = 12000`, `REF_CODEX_XP_PER_HOUR = 20000`, `VICTORY_XP_PER_FOLIO = 160`, `CODEX_XP_PLAY_ROLLING_24H = 200000`, `CATCHUP_WEEKLY = 40000`, `CATCHUP_CAP = 160000`, `CODA_XP_PER_RELIQUARY = 24000`, `SPARK_CLAIM = 100`, `BANNER_PERIOD_DAYS = 28`, `KEEPSAKE_VAULT_CAP = 30`, `SATCHEL_SIZE = 5`, `SATCHEL_MAX_LEGENDARY_PLUS = 1`, `RELIQUARY_FOLIO_EXITS = 30`, `FOLIO_DWELL_MIN_TICKS = 5400`, `ACTIVE_WINDOW_TICKS = 3600`, `AUDIT_RETENTION_DAYS = 1826`, `REPLAY_KEEP_DAYS = 30`, `VERIFY_SAMPLE_PERCENT = 5`, `TRANSCRIBE_RUBRICATED = 16`, `TRANSCRIBE_ILLUMINATED = 32`. Configuration: `T0` (§3.2.3), set at launch; the examples use 1820448000.
 
-Error codes: `insufficient_ink`, `banner_ended`, `requires_sku`, `beginner_target_required`, `beginner_closed`, `epoch_mismatch`, `minor_cap_tx`, `minor_cap_month`, `minor_store_blocked`, `report_malformed`, `sim_version_unknown`, `content_mismatch`, `host_mismatch`.
+Error codes: `insufficient_ink`, `insufficient_transcription`, `banner_ended`, `requires_sku`, `beginner_target_required`, `beginner_closed`, `epoch_mismatch`, `minor_cap_tx`, `minor_cap_month`, `minor_store_blocked`, `report_malformed`, `sim_version_unknown`, `content_mismatch`, `host_mismatch`.
 
 ## Interface assumptions
 
+Only open items are listed; everything else this chapter reads from other documents is on disk and cited under Imports.
+
 | Doc | Assumed to provide |
 |---|---|
-| 14 | Already on disk and consumed as Imports: the 24 Echo IDs and tiers, `est_ch`, the score, `run_score(slot)`, `RunSummary` with slot `active_ticks`, `folio_exits_qualified` and `editor_kills_present`, achievement grades, mode table, easing mutators, Margin milestones, kit A and kit B per Echo, reserved Script unlock patterns. Requested additions: `SlotState.active_ticks` maintained exactly per §2.2's active-tick rule, with `last_input_tick: u64`; `RunState.run_id: u64` (§10.4); `RunState.satchels` holding each slot's Satchel item records and a per-slot materialization cursor (§5.5), materialized at the first Folio of each Volume after Ghost restoration; `run.kit.<calling>_script` for the 13 Callings and the `unlock.` IDs of §3.1.2; `RunSummary` slot fields `kills_present` (per party size `K[n]`), `types_identified`, `crafts`, `revives`, `codex_entries_new` and `victory_present` for §6.2; `unlock.daily_baseline` excludes Echoes, Scripts and Keepsakes |
-| 11 | `loot.keepsake.<genre_suffix>` tables for all 16 genres; `generate_keepsake(genre, rarity, Rng)` with forced rarity, `ilvl = 1`, `gear_tier = 1`, Serendipity off, template eligibility from a supplied content set; `value` recomputation from `P(ilvl)` at materialization; template weights renormalized inside a rarity band when a Script adds templates |
-| 10 | Knowledge flags allow the rarity flag set while the base state is `know.unknown` or `know.classified`; the curse roll runs inside item generation |
-| 04 | A trait power-budget validator usable on Echo trait variants |
-| 02 | A library crate `crate.econ` = `palimpsest_econ` (layer 1; workspace deps `math`, `data`; external `sha2` 0.11.0, `hmac` 0.13.0, `ed25519-dalek` 3.0.0; no `bevy*`), linked by `crate.services`, `crate.client`, `crate.platform` and `crate.tools`, holding ChaCha20, `FairStream`, the pull and open algorithms, receipt verification and `palimpsest-verify`; the `strict` field on `juris.` flag records; `pal odds` in `crate.tools`; replay logs kept 30 days for reported runs |
-| 03 | `ev.folio_entered` and `ev.folio_exited` on the entry and exit ticks so dwell is computable; `ev.item_identified` distinguishes type-level identification |
-| 06, 12, 13 | The content behind the §3.1.2 unlocks: 4 glyphs per `unlock.glyph.<family>` (06); 3 room variants per `unlock.room.lost_chapter_<genre_suffix>` for each core genre (12); 1 hireling type per `unlock.hireling.chapter_<genre_suffix>` and per `unlock.hireling.<type>` (13) |
-| 13 | The invasion outcome events `ev.invasion_started` and `ev.invasion_ended` with the Redacted flag (Canon §17.9, §18) |
-| 16 | Hosting of the economy service under `svc.`; the run-report message of §10.4; the host's final `state_hash` per `run_id`; invasion sessions (Canon §17.9) reporting to the invader's account the invasion length in ticks and whether the party was Redacted, for §2.4; the §8.5 invader chat rules |
-| 17 | Inkwell, odds panel, history, Fairness panel (fresh and pinned client seed modes, "Reveal now"), store, Spend summary, guardian settings and chat controls; reveal animation limits of AP-7 |
-| 18 | Art, display names and `loc.` keys for every `cosm.`, `banner.`, `pass.`, `store.` and `bundle.` ID, including the 60 Plain cosmetic names |
-| 01 | KPI IDs for §12 |
+| 14 | §2.3 Early Access scope per DECISIONS 114: all 12 core genres, so no launch Echo, Script, Origin node or palette is absent at Early Access (it still cites the 6 genres of DECISIONS 41) |
+| 11 | For a Keepsake, §2.3 step 2's eligible templates come from the opener's account content set at open time (§5.4) |
+| 02 | `palimpsest-verify` built from `palimpsest_econ` with the pull, open and Transcription algorithms; `pal odds` computing each build's odds records from that build's pools (§3.2.7); clients keeping the replay log of every reported run for 30 days (§10.4) |
+| 16 | The run-report message carrying every §10.4 field, `ironman` included (doc 14 §8.9) |
+| 17 | The Fairness panel (fresh and pinned client-seed modes, "Reveal now", §4.1); the Vellum Archive screen with its Transcription shelf (counter, costs 16 and 32, refusal `insufficient_transcription`, §3.9.1) |
+| 18 | Display names and `loc.` keys for every `cosm.`, `banner.`, `pass.`, `store.` and `bundle.` ID, including the 60 Plain cosmetics and `cosm.frame.ironman` |
+| 21 | The release plan of DECISIONS 111 to 114 and 122: no hard dates (`T0` is set at launch, §3.2.3), Steam only, no demo or public playtest build, all 12 core genres at Early Access (§3.2.7), and Folio Expansions at USD 9.99 |
 
 ## Canon gaps
 
-1. **Canon §3.6 says "Paid gacha".** There is no paid gacha; the Inkwell is funded only by earned Ink. Assumed: §3.6 means the Inkwell and account Reliquaries. The generator is HMAC-SHA256 key derivation feeding a ChaCha20 keystream (§4.2), which satisfies the §3.6 ChaCha20 delegation. Requested wording: "Account draws (Inkwell, account Reliquaries) never use this generator, except that doc 15 §5.4 seeds `Rng::from_seed64` for Keepsake item generation."
-2. **No namespace for Scripts.** Assumed `bundle.script.<name>` inside this chapter's `bundle.` namespace (§3.1.2). Requested: confirm, or add `script.` to §19 with an alias.
-3. **`reliq.` belongs to doc 11.** The account Reliquary uses `banner.reliquary.account`. Requested: confirm.
-4. **`kpi.` belongs to doc 01.** Requested IDs: `kpi.econ.featured_hours_p50`, `kpi.econ.ink_per_hour_p50`, `kpi.econ.codex_completion`, `kpi.econ.refund_rate`, `kpi.econ.minor_refunds`, `kpi.econ.spend_top1_share`, `kpi.econ.chat_report_rate`.
-5. **Canon §14 lists "Codex tiers" as an Ink and Quire source.** Applied to the free track only (SEP-3), so no purchase reaches Ink or Quires. Requested clarification in §14.
-6. **Canon §14 lists Vellum sinks as "past featured Echoes, Scripts and cosmetic tiers".** Extended to Rubricated entries from launch, Plain cosmetics and Fold steps (§3.9); "cosmetic tiers" read as Fold steps.
-7. **Canon §18 has no account-level events and no run-report contract.** Defined the run report in §10.4 as a doc 16 message.
-8. **Canon §14 has only `ent.quill`.** Premium-track, expansion and cosmetic ownership are entitlement rows keyed by SKU and content ID, not `ent.` IDs.
-9. **Codex kill XP uses `rank_xp_bp` of `rank.boss` and `rank.hunter`** (Canon §17.3) outside character XP; no conflict, recorded for traceability.
-10. **`crate.econ` is missing.** Doc 02 owns `crate.` and its crate table has no library for the fairness and receipt code that the service, the client and the verifier must share. Requested record: `crate.econ` = `palimpsest_econ`, layer 1, lib, workspace deps `math` and `data`, external `sha2` 0.11.0, `hmac` 0.13.0, `ed25519-dalek` 3.0.0, forbidden `bevy*`, `wgpu*`, `palimpsest_sim`.
-11. **Keepsake generation draws outside the named streams.** Canon §3.2 and §3.3 list every simulation stream; a Keepsake is generated in the Margin, outside the simulation, from `Rng::from_seed64(item_seed)` with `item_seed` taken from the fair stream (§5.3). Requested: add this use to Canon §3 as a non-simulation account draw. The item enters the simulation only as a recorded item record (§5.5), so no simulation stream is touched.
-12. **Quire run payout.** Canon §19 gives the account economy rules for `cur.` to this chapter. Doc 14 §4.6 now supplies `run_score` (calibrated to 3,000 for the reference failed run and 15,000 for a reference victory) and defers the rate to §2.4, so no conflict remains. Recorded because an earlier doc 14 draft paid Quires with its own `score / 100` rule.
-13. **Canon §14 Ink sources** list play time, run completion, Codex tiers and achievements. This chapter also grants the one-time welcome Ink and counts Folio exits and Editor kills as run completion. Requested: add "welcome" to §14.
-14. **Echo tier binding.** Canon §16.2 fixes 2 Echoes per core genre without saying which is rarer. §3.1.1 binds doc 14's Tier 2 Echo to Illuminated and its Tier 1 Echo to Rubricated, which doc 14 §6.2 already assumes. Requested: confirm in Canon §16.2.
-15. **Invaders earn no Codex XP.** Canon §17.9 limits invader rewards to "Quires and cosmetic Red Ink marks only", while DESIGN_BRIEF §8 and AP-8 say all play earns Codex XP. The canon wins: invading pays Quires and marks (§2.4) and no Ink, Codex XP or Reliquaries. Requested: either confirm the exception or add Codex active-minute XP to the invader rewards of §17.9. Canon §17.9 also leaves the Quire amounts to the docs; §2.4 fixes them.
-16. **Victory definition.** Canon §17.1 does not say which victories pay a run bonus. Applied at doc 14's request (its Canon gap 15): only `boss.ur_editor` deaths (Standard and Abridged structures) pay the victory Ink and XP, scaled by `final_folio`; Novella, Daily, Weekly Gauntlet and `run.mut.short_book` victories pay as run ends.
+1. **Keepsake `illuminated` roll.** Canon §13.9 defines `illuminated` as "one `rng.loot` roll", but Canon §3.6 seeds Keepsake generation from `Rng::from_seed64` outside the simulation, and §5.4 here and doc 11 §2.3 draw a Keepsake's roll from that generator, never from `rng.loot`. Proposed §13.9 text: after "Engine faces and rewards (doc 11 §2.3)" add "; for a Keepsake, one roll of its Keepsake generator (§3.6, doc 15 §5.4)".
+
+The 16 gaps of the previous revision are closed by canon-1.11 and the canon gap triage (G-031, G-149 to G-154, G-160, G-174, G-179, G-186, G-188 to G-190, G-227); `audit/fix_15.md` maps each one to the section that applies it.
 
 ## Acceptance tests
 
@@ -1617,32 +1647,39 @@ Error codes: `insufficient_ink`, `banner_ended`, `requires_sku`, `beginner_targe
 7. **ChaCha20.** The in-house block function reproduces the RFC 8439 §2.3.2 block beginning `10f1e7e4d13b5915500fdd1fa32071c4`.
 8. **Inkwell vector.** `server_seed` = bytes `00..1f`; commitment `630dcd2966c4336691125448bbb25b4ff412a49c732db2c8abc1b8581bd710dd`; `config_hash = SHA-256("PALIMPSEST test banner config")` = `51d121c58a6957cd0ec9d418ee68c1a00fc163416ec79029b098dd2b296d7ce8`; banner `banner.echo.p001` (`fnv1a32` = `0xc450327f`), period 1, client seed ASCII `errata`. Nonce 0: `msg` is 77 bytes; `pull_key` = `385ee0bc919e734ccfe7c404f6844566d95b9ecf511e2c0fc6615dc3715f4adf`; first `u64` = `0x3945acb817ca9698`; `u_tier` = 344, `u_feat` = 3861. From a fresh Echo family this is a rate-up Rubricated result with index `uniform(3)` = 1, `echo.lan_ninth_peak`. Nonce 1: `pull_key` = `3990b490ecde62d3f1fdc0f41024c7ac53ce99a791957fe8cf7e0777f518720f`, `u_tier` = 5654, Plain, index 5, `cosm.emote.inkwell_06`. Nonce 2: `u_tier` = 7578, Plain, index 24, `cosm.ink.inkwell_15`.
 9. **Reliquary vector.** Same seed, config hash and client seed; domain `PALIMPSEST/RELIQUARY/v1`; banner `banner.reliquary.account`, period 1, nonce 0: `msg` is 79 bytes; `pull_key` = `d79dad425520b04844bdbd0e0a91a6b63de6788993755f3a041664180da5237a`; draw 1 = 4774 (Uncommon). With counters (4, 11), draw 2 = `uniform(600)` = 87 (Epic); `item_seed` = `0x80ce3324d7120951`; counters become (0, 12).
-10. **Receipt.** The §4.6 receipt (`iat` 1793491200) signed with RFC 8032 test key 1 yields the signature in §4.6 and verifies against public key `d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a`. Changing `qty` to 2 fails verification.
+10. **Receipt.** The §4.6 receipt (`iat` 1821052800, `kid` `rk_2027a`) signed with RFC 8032 test key 1 yields the signature in §4.6 and verifies against public key `d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a`. Changing `qty` to 2 fails verification.
 11. **Ink.** The reference failed run grants 400 Ink; the §2.2 victory run grants 1,115. A Daily victory with 25 active minutes, 4 exits and 1 Editor grants `75 + 40 + 40 + 20 = 175` (run end, no victory bonus); an Abridged victory with 67 active minutes, 14 exits and 5 Editors grants `201 + 140 + 200 + 180 = 721`; a Novella victory pays the 20-Ink run end. A run computing 2,800 grants 2,500. With 3,900 play Ink in the last 24 hours, a 400-Ink run grants 100.
-12. **Mode rules.** An easing Custom run with 30 active minutes, 6 exits and 1 Editor grants 90 Ink, 4,500 Codex XP, 0 Reliquaries and 0 Quires. A Prologue grants 0 run Ink and 0 Codex XP and only `ach.first_page` (grade 1: 40 Ink, 10 Quires, 2,000 Codex XP). A run with `mod_count = 1` grants 0 of everything. An invader who Redacts a party after 200 s gets 10 Quires, 0 Ink and 0 Codex XP; one who leaves after 30 s without a Redaction gets 0; with 55 invader Quires already in the 24-hour window, a 10-Quire invasion grants 5.
-13. **Quires.** `run_score` 3,033 grants 60 Quires; 14,991 grants 299; 28,641 grants 400 (cap); a departed player with `quires_paid = 100` and a final `run_score` of 14,991 receives 199 more; an Apocrypha run grants 0. Achievements of grades 1, 2, 3 and 4 pay 10, 25, 50 and 100 Quires and 40, 80, 160 and 320 Ink.
+12. **Mode rules.** An easing Custom run with 30 active minutes, 6 exits and 1 Editor grants 90 Ink, 4,500 Codex XP, 0 Reliquaries and 0 Quires. A Prologue grants 0 run Ink and 0 Codex XP and only `ach.first_page` (grade 1: 40 Ink, 10 Quires, 2,000 Codex XP). A run with `mod_count = 1` grants 0 of everything; a run with only a presentation-only mod loaded reports `mod_count = 0` and earns as its mode row says. An invader who Redacts a party after 200 s gets 10 Quires, 0 Ink and 0 Codex XP; one who leaves after 30 s without a Redaction gets 0; with 55 invader Quires already in the 24-hour window, a 10-Quire invasion grants 5.
+13. **Quires.** `run_score` 3,033 grants 60 Quires; 14,991 grants 299; victory C's 20,000 (doc 14's per-Folio cap on a raw 28,641) grants 400; a departed player with `quires_paid = 100` and a final `run_score` of 14,991 receives 199 more; an Apocrypha run grants 0. Achievements of grades 1, 2, 3 and 4 pay 10, 25, 50 and 100 Quires and 40, 80, 160 and 320 Ink.
 14. **Codex XP.** The reference hour sums to 20,000; the §6.2 victory run to 43,900. A single standard kill in a 4-player party gives each player 2; 70 standard kills in a 4-player Folio give each player 200, equal to 40 solo kills. `tier(1,199,999)` = 99, `tier(1,200,000)` = 100. A Daily victory grants the 800 run-end XP; an Abridged victory grants 2,400 victory XP.
 15. **Catch-up.** Reserve 40,000 and a 1,000 XP grant: the Codex gains 2,000 and the reserve becomes 39,000. With 199,500 base play XP already in the rolling window and a reserve of 40,000, a 1,000 XP grant is clipped to 500 and then doubled to 1,000, leaving the reserve at 39,500. Pacing: 5 hours per week reaches tier 100 after 42 hours; 3 hours per week in exactly 12 weeks; every row of §6.7 matches a week-by-week simulation.
 16. **Folds and Vellum.** An Illuminated Echo at Fold 5 plus a duplicate gives Fold 6 and 10 Vellum; a further duplicate gives 40 Vellum. A Plain duplicate gives 1.
 17. **Spark.** A Featured banner reaching `Ended` with 49 spark mints exactly 49 Vellum and deletes the counter. A claim at 100 spark grants the featured unit and leaves pity unchanged. Expected pulls for 2, 3 and 7 copies with spark claimed at every 100 are 85.906, 109.832 and 245.348.
-18. **Pity isolation.** 30 pulls on a Featured Script banner leave the Echo family's `PityState` byte-identical. Echo-family counters carry from `banner.echo.p001` to `banner.echo.p002` unchanged. Pulls on `banner.exp01.p001` leave the Echo family untouched.
+18. **Pity isolation.** 30 pulls on a Featured Script banner leave the Echo family's `PityState` byte-identical. Echo-family counters carry from `banner.echo.p001` to `banner.echo.p002` unchanged. Pulls on any banner of family `banner.family.exp01` leave the Echo family untouched.
 19. **Banner end.** A pull received at `end_utc` is rejected with `banner_ended` and its Ink is not debited. A Sealed Draft for an ended banner is cancelled and its Ink restored.
 20. **Standard banner.** A specific Standard Illuminated entry costs 941.527 expected pulls without spark and 96.375 with the spark selector; a specific Rubricated entry costs 284.946.
 21. **Reliquary rates.** Exact Markov evaluation over the 90 reachable states gives Epic-or-better 23.2266% and Legendary-or-better 7.8074%; from fresh counters the first Epic-or-better takes 4.435 openings and the first Legendary-or-better 12.808, and P(first Legendary-or-better by the 10th) = 45.0242%. With counters (4, 4), P(Epic) = 75%, P(Legendary) = 20%, P(Exotic) = 5%. With `c20 = 19`, P(Legendary or Exotic) = 100%.
 22. **Satchel.** A Standard-mode run with a 3-Keepsake Satchel materializes them on entering Folios 1, 6 and 11 with `ilvl` 1, 6 and 11 and `finder_slot` = the owner's slot; dying in Folio 8 returns the third Keepsake to the vault. A Novella run with 5 Keepsakes materializes 3. An Abridged run materializes at Folios 1, 4, 7, 10 and 13 with `ilvl` 1, 6, 11, 16 and 21. A Daily run materializes none. A Satchel with two Legendary Keepsakes is refused. A Keepsake whose template is outside the host's content set cannot be placed. A Dormant slot at Folio 6 receives its second Keepsake at Folio 11.
-23. **Separation.** A ledger transaction posting `QUILL` and `INK` together is rejected. A `pass.` record with `cur.ink` on the premium track, and a `bundle.sku.*` granting `cur.ink`, fail validation. A configuration with `juris.paid_random_items_enabled = true` prevents service start. A `cosm.` item listed as the grant of two sources fails validation.
+23. **Separation.** A ledger transaction posting `QUILL` and `INK` together is rejected. A `pass.` record with `cur.ink` on the premium track, and a `bundle.sku.*` granting `cur.ink`, fail validation. A configuration with `juris.paid_random_items_enabled = true` prevents service start. A `cosm.` item listed as the grant of two sources fails validation. A `bundle.sku.*` that grants Transcription fails validation.
 24. **Idempotency.** Submitting the same run report twice creates one journal transaction; the second call returns the first result. The key of `{"a":"0x0123456789abcdef","i":0,"k":"run","s":"0x00000000075bcd15"}` is `909de25b25a2d70ca98a91f48c4098ee338ccb3dd518356c1d5db5519b06a4b6`.
 25. **Run report.** The §10.4 example report grants 95 Ink, 5,025 Codex XP, 14 Quires and 0 Reliquaries. The same report with a `content_set` ID the host did not own at `started_utc` is rejected with `content_mismatch`. A report replayed by `econ-verify` with a different `active_ticks` is reversed: a wallet holding 40 of the report's 95 Ink ends at 0 with `econ_debt[INK] = 55`, and the next 100-Ink grant credits 45.
 26. **Jurisdiction merge.** `default + eu + be + uk` gives `child_data_consent_age = 16`, `withdrawal_waiver_consent = true` and `vat_inclusive_display = true`. A KR account with platform age 18 is minor-flagged. A CA account gets `fr_store_text = true`. A US account on a BR IP gets `minor_chat_default = 1`.
-27. **Minor caps.** A 15-year-old CNY account has a CNY 50 per-transaction and CNY 200 monthly cap, and a CNY 58 purchase is refused with `minor_cap_tx`. A 7-year-old CNY account is refused with `minor_store_blocked`. A 15-year-old account with an EUR store currency logging in from a JP IP has a monthly cap of `floor_div(5000 × 2999, 4300) = 3487` minor units (EUR 34.87).
+27. **Minor caps.** A 15-year-old CNY account has a CNY 50 per-transaction and CNY 200 monthly cap: a CNY 81 set bundle is refused with `minor_cap_tx`, and a CNY 46 Folio Expansion after CNY 160 spent this month is refused with `minor_cap_month`. A 7-year-old CNY account is refused with `minor_store_blocked`. A 15-year-old account with an EUR store currency logging in from a JP IP has a monthly cap of `floor_div(5000 × 1999, 2900) = 3446` minor units (EUR 34.46).
 28. **Purchases.** A new account's Buy button enters `Locked`. A minor-flagged account with a guardian monthly cap of 0 cannot complete any purchase.
 29. **Set bundle.** Four unowned USD components at 5.99, 3.99, 7.99 and 1.99 price the set at 16.99; owning the 7.99 component prices it at `round_down_ending(mul_bp(1197, 9000), USD) = round_down_ending(1077, USD) = 999`, USD 9.99.
 30. **Verifier.** Altering the tier of one record in an exported history makes `palimpsest-verify epoch` print `FAIL` for that row and exit with code 1. Altering the starting pity snapshot of epoch 2 so it differs from the pity-after of epoch 1 makes `palimpsest-verify chain` fail. Altering any audit record changes its chain hash and the day's Merkle root.
 31. **Commit before seed.** A draw request whose epoch is still `Committed` and that carries no client seed, or carries a commitment different from the stored one, is refused with `epoch_mismatch` and posts nothing. In `fresh` mode two consecutive epochs bind different client seeds.
-32. **Echo binding and rotation.** §3.1.1 binds 12 Illuminated and 12 Rubricated Echoes, each doc 14 Tier 2 Echo Illuminated. Period 13 features `echo.wren_long_index` again. p001's Featured Script banner features `bundle.script.lost_chapter_cosmic_horror` and rates up `bundle.script.glyphs_ember`, `bundle.script.glyphs_hollow` and `bundle.script.kit_beastbinder`; over p001 to p012 every Rubricated Script is rated up at least once and each even index exactly twice.
+32. **Echo binding and rotation.** §3.1.1 binds 12 Illuminated and 12 Rubricated Echoes, each doc 14 Tier 2 Echo Illuminated. Period 13 features `echo.wren_long_index` again. A Featured Script banner of a period with `g = 1` (p001 included, DECISIONS 114) features `bundle.script.lost_chapter_cosmic_horror` and rates up `bundle.script.glyphs_ember`, `bundle.script.glyphs_hollow` and `bundle.script.kit_beastbinder`; over any 12 consecutive periods every Rubricated Script is rated up at least once and each even index exactly twice.
 33. **Beginner target.** An account owning `echo.wren_long_index` cannot select it. If the selected target is obtained by Recollection, the next Beginner pull is refused with `beginner_target_required`. The welcome grant of 1,200 Ink is credited in the transaction that sets `margin.milestone.first_run_end`.
 34. **Offline-only profile.** Before end of service, an offline-only profile shows every Codex premium track locked and no store; after the service reaches `EndOfService`, every released premium track is unlocked.
 35. **End of service.** In end-of-service mode every released Codex premium track is unlocked, the Retrospective banner uses `banner.hazard.illuminated_std`, and carried pity from `eos_final` is applied on the first local pull.
+36. **Transcription.** An account with `transcription = 40` claims `bundle.script.lost_chapter_wuxia` and keeps 8; a claim of `bundle.script.kit_monk` is then refused with `insufficient_transcription` and changes nothing. 768 qualified exits claim all 36 launch Scripts. A run report with 3 qualified exits in `mode.standard` adds 3; the same exits in an easing Custom run, a Prologue or an Apocrypha run add 0, and an invasion adds 0. A claim leaves every `PityState`, spark counter, Fold and Vellum balance unchanged, and an owned Script is never offered. Replaying the same claim request UUID posts nothing.
+37. **Content-set gating.** At Early Access (all 12 core genres) p001 runs `banner.script.p001` featuring `bundle.script.lost_chapter_cosmic_horror`, and `banner.standard` lists 24 Illuminated entries. A test build whose content set leaves out only the 6 Lost Chapter Scripts of Cosmic Horror, Fairy Tale, Hardboiled Noir, Mythic Antiquity, Post-Apocalypse and Space Opera runs no `banner.script.p001`; its `banner.standard` has 18 Illuminated entries at 0.0556% base and 0.1416% consolidated each; its Featured Script banners show 0.0500% and 0.1020% for each of their 5 off-featured entries; `bundle.script.lost_chapter_cosmic_horror` is in no pool, Archive shelf or Transcription shelf. An entry that enters the content set inside period `k` joins every pool from period `k + 1`, with a new `config_hash` published 7 days before that period starts.
+38. **Price and storefronts.** `store.sku.base_game` costs USD 19.99 before and after 1.0 and every `store.sku.folio_exp_<nn>` USD 9.99; the base game's matrix row is EUR 19.99, GBP 16.99, BRL 74.99, JPY 2,900, KRW 24,400, AUD 29.95, CAD 25.99, CNY 90, and every value satisfies its §7.2 ending rule.
+39. **Chat defaults.** For an adult account in a public lobby, a party member who is not a platform friend starts voice-muted and a friend does not; a kick vote in a full party passes with 2 yes votes of the 3 other members and fails with 1.
+40. **Keepsake curse odds.** A Keepsake opened from a Gothic Horror Reliquary as an Epic weapon is cursed with probability 2400 Bp and carries a pact with probability 480 Bp, and the public odds page shows `24.0000%` and `4.8000%`.
+41. **Second Edition.** A Standard run whose player is present at `boss.ur_editor`'s death, takes the Second Edition door and ends `run.end.victory` with no `ev.player_died` in its Second Edition Folios reports `victory_present = 1` and `ironman = 1`: it pays the 300-Ink and 4,000-XP Ur-Text victory and grants `cosm.frame.ironman`; a second such run pays the victory again and grants no second cosmetic. The same run ending in a Second Edition party wipe or an Abandon reports `victory_present = 0`, pays the 20-Ink and 800-XP run end instead and grants no cosmetic. An Editor killed in a fused Second Edition Folio of Gothic Horror and Wuxia credits an account Reliquary with source genre `genre.gothic_horror`.
+42. **Codex kill XP by rank.** A solo kill of the Erasure hunter adds 15 to `K[1]` (`rank.elite` kill XP, Canon §11.6); a solo kill of an invader adds 25.
 
 ## Invariants annex
 
@@ -1652,7 +1689,7 @@ W! juris.paid_random_items_enabled = false (compile-time)        N! premium curr
 N! purchasable → {cur.ink, cur.quire, cur.vellum, RELIQUARY}      N! SKU → {XP, tier skip, pity, spark, currency}
 W! premium track ⊆ cosm.* ∪ {ent.quill@tier100}                  W! free track identical ∀ accounts
 W! odds(banner) identical ∀ accounts with access                 N! odds ← {Fortune, Serendipity, spend, playtime}
-W! hazard.base_bp ≥ 1 ∧ p_bp(hard) = 10000                       N! zero-probability window
+W! base_bp ≥ 1 ∧ p_bp(hard) = 10000                              N! zero-probability window
 W! pull draws = 3 (tier, featured, index)                        W! reliquary draws = 2 + 1 raw u64
 W! pity per family, never decays                                 N! pity reset on inactivity | rotation | update
 W! spark leftover → vellum 1:1 at Ended                          W! featured unit → Archive after Ended ∧ expansion unit ∉ banner.standard
@@ -1662,15 +1699,20 @@ W! audit log hash-chained ∧ retained ≥ 1826 days                 W! odds sho
 W! purchases off by default                                      N! countdown | limited stock | rotating shop | daily login reward
 N! trade | gift | cash-out of earned or random rewards            N! set-completion reward from random sources
 W! refunds never revoke earned content                           W! end of service ⇒ all owned content usable offline
-W! victory bonus ⇔ boss.ur_editor dies ∧ ink = 12 × final_folio ∧ xp = 160 × final_folio
+W! victory bonus ⇔ boss.ur_editor dies ∧ clear kept ∧ ink = 12 × final_folio ∧ xp = 160 × final_folio
 W! easing run → active-minute income only                        W! mod_count ≥ 1 ⇒ apocrypha ⇒ ink = quires = xp = reliquaries = 0
 W! quires(run) = min(400, run_score / 50) ∧ run_score := doc14 §4.6   W! achievement pay := grade table 40/80/160/320 ink, 10/25/50/100 quires
 W! codex kill xp split once per (run, party size)                N! per-kill flooring penalty in co-op
-W! satchel ≤ 5 ∧ |legendary+| ≤ 1 ∧ ilvl := folio index           N! keepsake identity change after open
+W! satchel ≤ 5 ∧ |legendary+| ≤ 1 ∧ ilvl := d(f)                  N! keepsake identity change after open
 W! client_seed bound after commitment received                   W! epoch start snapshot == previous epoch pity-after
-W! one live banner per family per period                         W! draw-3 pools sorted by id bytes
+W! ≤ 1 live banner per family per period                         W! draw-3 pools sorted by id bytes
+W! entry ∉ build content set ⇒ ∉ every pool | featured | shelf     W! pools change only at a period boundary
 W! ∀ cosm item: exactly one source                               N! purchase of an already owned item
 W! juris merge only tightens ∧ guardian cap ≤ regional minor cap  N! VPN | wallet country loosens a rule
 W! clawback stops at wallet 0, remainder → econ_debt              N! negative wallet balance
 W! invader rewards := quires ≤ 60 per 24 h ∧ red ink marks       N! ink | codex xp | reliquary for invading
+W! ∀ script: transcription route ∧ launch scripts = 768 exits    N! sku | ink | vellum → transcription
+W! base game = USD 19.99 at EA and 1.0 ∧ folio expansion = USD 9.99   W! presentation-only mod ⇒ not apocrypha
+W! second edition end ≠ victory ⇒ victory_present = 0            W! cosm.frame.ironman ≤ 1 per account ∧ only from an ironman clear
+W! storefront = Steam only ∧ T0 := launch configuration           N! demo | public playtest build
 ```

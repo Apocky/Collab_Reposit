@@ -138,6 +138,10 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 123 | Networking stack | **Changed: Steam plus our own verifier.** Steamworks lobbies and Steam Networking Sockets with Datagram Relay for play; our own headless service re-simulates ranked, daily and weekly replays to verify scores; the EOS SDK is dropped | Docs 02, 16, 21 |
 | 124 | Secret-genre mini-bosses | Kept (roadmap default): the Ur-Text and the Unwritten use doc 13's champion substitution, no bespoke mini-bosses | Doc 13 |
 | 125 | Invasions timing | Kept: PvP invasions ship in an update before 1.0, opt-in | Doc 21 |
+| 126 | Mod distribution | **New: Steam Workshop** for data packs and sandboxed WASM mods; co-op peers auto-sync the host's required mod set | Docs 02, 16, 17 |
+| 127 | Margin relationships | **New: no relationships.** Residents are vendors and quest-givers whose fixed story arcs advance across runs (item 78); no friendship meters, gifts or romance | Docs 14, 18 |
+| 128 | Seeds | **Changed: cut.** `cat.seed` is retired; no planting in runs or in the Margin | Canon §13.1, §17.7; docs 07, 08, 11 |
+| 129 | Photo mode | **New: none.** Replays stay, without a photo mode | Docs 16, 17 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 

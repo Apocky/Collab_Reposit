@@ -1,5 +1,5 @@
 # 08 — Alchemy and Liquids
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.4 (checked against canon-1.3 and canon-1.4; Canon gaps 1).
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
 
 Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs, transmutations, the liquid and gas automata transfer rules, the full Canon §12.1 table, the liquid and gas API other chapters call (§2.7), `res.toxicity`, and the behavior of `st.poisoned`, `st.irradiated`, `st.soaked`, `st.oiled` and `st.focused`.
 
@@ -9,15 +9,15 @@ Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs,
 |---|---|---|
 |Canon|§1.1–§1.11|ID grammar, `id32`, text keys; numeric types (`Milli`, `Bp`, `Ticks`, `Ml`, `DeciC`, `Grams`); `floor_div`, `mul_bp` chains; display-unit rule; integer content; block coordinates; ascending-ID iteration; no `HashMap`|
 |Canon|§2.2, §2.3|tick schedule (liquids, gases, fire, status pulse, temperature, needs); status active interval; rate accumulator|
-|Canon|§3.3, §3.4|keyed `rng.alchemy` and `rng.combat`; draw-count rule|
+|Canon|§3.2, §3.3, §3.4|keyed `rng.alchemy` (this chapter's fixed `seq` allocation, §1.3) and `rng.combat` (doc 05 §1.4 slots); `rng.physics` and `rng.fire` for the explosions this chapter queues; draw-count rule|
 |Canon|§4.1, §4.2|eye height, swim speed, `SAFE_FALL`|
-|Canon|§4.3, §17.3a|fixed terrain: reactions, detonations and bombs break only blocks tagged `destructible`; Errata place only `cat.placeable` items; `counter.disruptor` needs a dependency-none source in every genre|
-|Canon|§5.3–§5.11|dependencies (mundane vs supernatural alchemy), `Req`, tolerance, Contradiction, Anachronism Edge, local genre; World Laws and Unmoored (canon-1.3, Canon gaps 1)|
+|Canon|§4.3, §4.4, §17.3a|fixed terrain: reactions, detonations and bombs break only blocks tagged `block.tag.destructible`; Errata place only `cat.placeable` items; liquid units of 1 litre and gas concentration `0..=10000` per cell (§4.4); `counter.disruptor` needs a dependency-none source in every genre|
+|Canon|§5.3–§5.11|dependencies (mundane alchemical effects none; supernatural ones `{origin_genre.aether_axiom}`; holy, unholy and curse ones `mythos`), `Req`, tolerance, Contradiction and the failed potion (§5.5), Anachronism Edge, local genre; World Laws, and Unmoored counting failed potions (§5.10, §5.11)|
 |Canon|§6.4, §7|rows 1–3, 10, 12, 17, 20, 22–25, 28, 41; `skill.alchemy` (ANL), tiers 25/50/75/100, magnitude-based non-combat XP|
-|Canon|§10, §11|damage types, resistance, item source chain (§10.4), environmental entry (§10.6), healing in Bp of Max HP (§10.9); status list, buildup, DoT, direct durations, Erasure|
-|Canon|§12, §12.1, §12.2|`res.toxicity` (owner 08), `res.breath`, respirators, surfaces and reactions, concealment|
-|Canon|§13, §16, §17.5, §18, §19|item categories, quality, `idc.potion`, knowledge, `buc`, `P`/`T`/`S`, source level, item contract; kin, afflictions, blessed cure; `FF_AREA_BP`; events; namespaces `liq.`, `gas.`, `ing.`, `alch.`, `apparatus.`|
-|Docs 03–18|see Interface assumptions|grids, tick order, explosions, `erase_placed` and event payloads (03 §2.2, §6, §7, §12, §13.8, §14.2), skills, perks, talents and afflictions (04 §5.2, §5.3, §7, §10), throwing, area hits and crits (05 §9), holy water and spell calls (06), materials, blocks, stations and craft channels (07), noise IDs and stealth light (09 §4, §7), identification (10 §5, §7.5, §8), loot (11), worldgen (12 §2.3, §11.2), enemies and Editor erasure (13 §10.6)|
+|Canon|§10, §11|damage types, resistance, item source chain (§10.4), environmental entry and the consumable self-damage entry (§10.6), healing in Bp of Max HP (§10.9); status list, buildup, DoT, direct durations, Erasure|
+|Canon|§12, §12.1, §12.2|`res.toxicity` (owner 08), `res.breath` and the working respirator in `slot.face`, surfaces and reactions with the 100 ml liquid and 500 gas contact thresholds, concealment|
+|Canon|§13, §16, §17.5, §18, §19|item categories `cat.potion`, `cat.throwable`, `cat.tool`, `cat.container`, `cat.ingredient`, `cat.seed`, `cat.accessory` and the slot `slot.face` (canon and doc 11 IDs, which this chapter references and never declares), quality, `idc.potion`, knowledge, `buc`, `P`/`T`/`S`, source level, item contract; kin, afflictions, blessed cure; `FF_AREA_BP`; the events `ev.potion_brewed` and `ev.liquid_reaction` (payloads in doc 03 §14.2); namespaces `liq.`, `gas.`, `ing.`, `alch.`, `apparatus.`|
+|Docs 03–18|see Interface assumptions|grids, tick order, explosions, `erase_placed` and event payloads (03 §2.2, §6, §7, §12, §13.8, §14.2), skills, perks, talents and afflictions (04 §5.2, §5.3, §7, §10), throwing, area hits and crits (05 §9), holy water, spell calls and the shared `note_contradiction_failure(t)` (06 §3.9), materials, blocks, stations and craft channels (07), noise IDs and stealth light (09 §4, §7), identification (10 §5, §7.5, §8), loot (11), worldgen (12 §2.3, §11.2), enemies and Editor erasure (13 §10.6)|
 
 ---
 
@@ -35,9 +35,9 @@ Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs,
 
 |Constant|Value|Meaning|
 |---|---|---|
-|`LIQ_UNIT_ML`|1,000|doc 03 §6.1 grid unit; a full cell holds 1,000 units|
-|`GAS_FULL_CONC`|10,000|doc 03 §7.1 concentration of a saturated cell (1,000,000 ml of gas)|
-|`GAS_CONTACT_CONC`|500|doc 03 §5.20: an eye cell holds a gas at this concentration or more|
+|`LIQ_UNIT_ML`|1,000|Canon §4.4 grid unit of 1 litre; a cell with an empty mask holds at most 1,000 units (doc 03 §6.1)|
+|`GAS_FULL_CONC`|10,000|Canon §4.4 concentration of a saturated cell, 1,000,000 ml of gas (doc 03 §7.1)|
+|`GAS_CONTACT_CONC`|500|Canon §12.1: an eye cell is in contact with a gas at this concentration or more (doc 03 §5.20)|
 |`DOSE_ML`|250|volume of one standard dose (flask)|
 |`PAYLOAD_MAX_ACTIVE`|512|payload records alive per Folio (§2.5)|
 |`LINGER_RADIUS_MM`, `LINGER_TICKS`|1,500; 1,200|Linger surface patch (§10.6)|
@@ -51,9 +51,18 @@ Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs,
 
 ### 1.3 Determinism
 
-- Liquid and gas behavior, reactions, triggers and contact are integer rules that draw **no** random numbers (doc 03 runs them; fire spread alone uses `rng.fire`, doc 03 §8.3).
-- Random draws in this chapter come only from keyed `rng.alchemy` (brewing variance §9.5: 1 per brew or bomb; seed brewing §15.2: 3 to 5; wellspring drinks §12.5: 1; doc 04 `transmuter` §15.4: 1) and keyed `rng.combat` (Contradiction failure of potions, §9.9: 1 per activation when the failure chance is above 0; the crit roll of each thrown alchemical area hit, doc 05 §9.4: 1 per target hit). Each draw site states its draw count. Every other rule in this chapter draws nothing.
-- A keyed draw made when a channel completes uses the `tick` and `seq` recorded when the channel started (Canon §3.3), so the result never depends on when the channel ends.
+- Liquid and gas behavior, reactions, triggers and contact are integer rules that draw **no** random numbers (doc 03 runs them; fire spread uses `rng.fire`, doc 03 §8.3, and the explosions they queue draw as the next bullet says).
+- Random draws in this chapter come only from keyed `rng.alchemy` (table below) and keyed `rng.combat`. On `rng.combat` a potion use action makes its Contradiction failure roll (§9.9), 1 per use action when the failure chance is above 0, as doc 05 §1.4's `seq` 0 action-start draw (actor = the user, tick = the action's start tick); each thrown alchemical area hit makes 1 crit roll per target at doc 05 §1.4's `16 + i` slot of its source, which is drawn and ignored because these hits are `NO_CRIT` (Canon §3.4, doc 05 §9.4). Each draw site states its draw count. Every other rule in this chapter draws nothing, except that the doc 03 explosions it queues (§5.2, §5.6, §13.2) draw their block-break variation and block drops from `rng.physics` and their incendiary ignition from `rng.fire`, with doc 03's counts (Canon §3.3).
+- **`rng.alchemy` allocation** (Canon §3.3: a fixed `seq` per draw site, never a running counter). `actor` is the acting entity's `EntityId` and `tick` is the start tick of its action or channel:
+
+|`seq`|Draw site|Draws|
+|---|---|---|
+|0|brewing variance `v` of a brew or bomb channel (§9.5, §13.2)|1|
+|1|seed brewing (§15.2)|3 to 5|
+|2|doc 04 `transmuter` (§15.4)|1|
+|3|wellspring drink at a font (§12.5)|1|
+
+- A keyed draw made when a channel completes uses the channel's start tick and its allocated `seq` (Canon §3.3), so the result never depends on when the channel ends.
 - Mutating iterations run in ascending `EntityId`, `uid` or payload ID.
 
 ### 1.4 Where each rule runs (doc 03 §2.2)
@@ -101,7 +110,7 @@ Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs,
 ### 2.3 Units, vessels and the grid
 
 - Quantities in this chapter are authored in ml (Canon §1.6). Vessels hold exact ml as item state (§6). The grid holds whole units of `LIQ_UNIT_ML` (doc 03 §6.1).
-- **Spill** (a glass or ceramic vessel shatters, §6.3): each component calls `spill(c, liq, ml, slot)` (§2.7), which deposits `ceil_div(ml, LIQ_UNIT_ML)` units into the spill cell with doc 03 `deposit`, so every shattered dose leaves contact-level liquid (Canon §12.1's 100 ml). The spill cell is the cell holding the vessel's position on the impact tick, which is the projectile's last free position (doc 03 §5.19) and is never solid; a vessel shattered on the ground uses the cell of its drop position. Doc 03 `splash` is never used for spills.
+- **Spill** (a glass or ceramic vessel shatters, §6.3): each component calls `spill(c, liq, ml, slot)` (§2.7), which deposits `ceil_div(ml, LIQ_UNIT_ML)` units into the spill cell with doc 03 `deposit`, so every shattered dose leaves contact-level liquid (Canon §4.4: any non-zero unit meets §12.1's 100 ml). The spill cell is the cell holding the vessel's position on the impact tick, which is the projectile's last free position (doc 03 §5.19) and is never solid; a vessel shattered on the ground uses the cell of its drop position. Doc 03 `splash` is never used for spills.
 - **Pour** (intact vessel, §6.2): each component deposits `floor_div(ml, LIQ_UNIT_ML)` units and keeps the sub-litre remainder in the vessel. **Dump** (bucket and cask, §6.2): `splash` with `floor_div(ml, LIQ_UNIT_ML)` units per component, which never creates liquid because `n × max(1, floor_div(units, n)) <= units` whenever `units >= n`, and a dump with fewer units than its `n` cells deposits them with `deposit` in the front cell instead.
 - **Fill**: drains `ceil_div(room_ml, LIQ_UNIT_ML)` units (doc 03 `drain`, proportional; fewer when the cell holds fewer). The vessel keeps `kept = min(room_ml, drained × 1000)` ml, split by component as `floor_div(units_k × kept, drained)` with the remainder to the component with the most drained units (ties to the lower `id32`). Filling a flask from a puddle therefore costs a whole unit. A cell holding `liq.wellspring` fills vessels with `liq.water` instead (§12.5).
 - **No duplication loop.** Fill rounds up and pour rounds down, so fill-then-pour never returns more than it took, and a vessel holding under 1,000 ml of a component cannot pour it at all. The only rounding gain is a shattered vessel, which yields at most 1,000 ml per component and is destroyed. Example: 1 unit of holy water fills a bottle with 750 ml; drinking 250 ml leaves 500 ml, which cannot be poured; shattering the bottle deposits 1 unit; refilling a bottle from it gives 750 ml again. Liquid only grows by brewing, which consumes ingredients and vessels (§9.3).
@@ -132,7 +141,7 @@ pub struct Payload {
 
 - Stored in `BTreeMap<u16, Payload>` per Folio. `next_payload_id` is 1 at Folio entry; a creation takes the first ID at or after it that is not in use, wrapping from 65,535 to 1, and sets `next_payload_id` to the ID after it. Creating one while `PAYLOAD_MAX_ACTIVE` are active first removes the payload with the smallest `(expires_tick, id)`.
 - **Surface exposure**: the entity has contact with the patch's `liq` (doc 03 §5.20) and its feet cell center lies within `radius_mm` of the center of `origin` (`dist2` in raw `Fx` against `(radius_mm)²` converted with `fx_from_milli`). **Vapor exposure**: the eye cell holds `gas.alch_vapor` at `GAS_CONTACT_CONC` or more and its center lies within `radius_mm` of the center of `origin`. When several patches qualify, the one with the nearest origin applies (`dist2`, ties to lower ID).
-- `potency_bp` is the Contradiction potency snapshot at creation (§9.9), like Canon §11.3's applier snapshot. `buildup_bp` is the creator's Canon §6.4 row 41 value (10000 for a creator that is not an Erratum) and `edge_bp` the primary effect's Canon §5.6 `edge_bp`, both at creation; harmful exposure uses them in place of live values, so a payload keeps working after its creator dies. `slot` makes friendly fire use `FF_AREA_BP` (Canon §17.5).
+- `potency_bp` is the Contradiction potency of the use action that created the payload (§9.9), like Canon §11.3's applier snapshot. `buildup_bp` is the creator's Canon §6.4 row 41 value (10000 for a creator that is not an Erratum) and `edge_bp` the primary effect's Canon §5.6 `edge_bp`, both at creation; harmful exposure uses them in place of live values, so a payload keeps working after its creator dies. `slot` makes friendly fire use `FF_AREA_BP` (Canon §17.5).
 - A payload never carries `alch.eff.red_dose`: red-ink doses come only from drinking or injection (§7).
 
 ### 2.6 Worked example: a thrown liquid-flame flask
@@ -140,7 +149,7 @@ pub struct Payload {
 An `alch.potion.liquid_flame` flask (250 ml oil base, `burn` 10 HP with `st.burning` p 50, `ilvl` 5, Normal) thrown by an Erratum shatters on open floor on Folio 5.
 
 1. **Spill** (§6.3): `spill(c, liq.oil, 250, slot)` deposits `ceil_div(250, 1000) = 1` unit of oil in the spill cell `c`.
-2. **Splash** (§10.2): the burn effect is an area fire hit centered on the impact point with the flask's 2000 mm radius; its source magnitude is `B = mul_bp(10000, P(5) = 14115) = 14,115` mHP (Common 10000, Normal 10000, +0, material 10000; Canon §10.4) for every target with exposure.
+2. **Splash** (§10.2): the burn effect is an area fire hit centered on the impact point with the flask's 2000 mm radius; its source magnitude is `B = mul_bp(10000, P(5) = 14115) = 14,115` mHP (Common 10000, Normal 10000, +0, material 10000; Canon §10.4) for every target with exposure, and each target's crit roll is drawn and ignored (`NO_CRIT`, §7).
 3. **Trigger** (§5.2): the area hit makes `c` and its `N6` neighbors trigger cells. `c` holds oil, so it ignites as a liquid fire and makes one blast at the impact cell: a doc 03 §12 explosion with radius 2000 mm, inner 500 mm, edge 2500 Bp, no block power, environmental base `10,000 × min(1, 5) = 10,000` mHP of `dmg.fire`. The blast consumes the unit, so the liquid fire has no fuel left and ends on the next fire run.
 4. **Blast damage** (Canon §10.6, step 3): an NPC whose largest part is within 500 mm with all 5 samples exposed takes `D2 = mul_bp(10000, P(5)) = 14,115` mHP; one at 1250 mm has falloff `10000 − floor_div(7500 × 750, 1500) = 6250`, `B_eff = 6,250` and `D2 = mul_bp(6250, 14115) = 8,821` mHP. An Erratum within 500 mm takes `mul_bp(10000, T(5) = 12388) = 12,388` mHP, scaled by `FF_AREA_BP` (the oil carries the thrower's slot).
 
@@ -152,9 +161,9 @@ Every function is deterministic, draws nothing and runs inside the caller's syst
 |---|---|---|
 |`add_liquid(c, liq, ml, slot)`|`deposit(c, liq, floor_div(ml, 1000), slot)`, doc 03 §6.1's world-quantity rule|doc 06 (`glyph.ess.tide`, acid `linger`), doc 12, doc 13 (`elite.redlined`, `blot`)|
 |`spill(c, liq, ml, slot)`|`deposit(c, liq, ceil_div(ml, 1000), slot)`; used only for shattered vessels (§6.3)|this chapter|
-|`place_gas(c, gas, conc, slot)`|`emit_gas(c, gas, conc, slot)` (doc 03 §7.4)|docs 06, 13|
-|`place_gas_ml(c, gas, ml, slot)`|`emit_gas(c, gas, floor_div(ml, 100), slot)`: 100 ml of gas is concentration 1, so a saturated cell is 1,000,000 ml|docs 06, 12, 13|
-|`gas_emitter(c, gas, k, runs, slot)`|registers an emitter that calls `emit_gas_volume(c, gas, k, slot)` at the start of each of the next `runs` gas runs, before doc 03 §7.3, in ascending creation order; at most 256 emitters per Folio, and creating one at the cap first removes the oldest|this chapter (vaporizer, §10.4), doc 05 (`grenade_smoke`: `k = 27`, `runs = 100`, which is 600 ticks)|
+|`place_gas(c, gas, conc, slot)`|`emit_gas(c, gas, conc, slot)` (doc 03 §7.4)|doc 06|
+|`place_gas_ml(c, gas, ml, slot)`|`emit_gas(c, gas, floor_div(ml, 100), slot)`: 100 ml of gas is concentration 1, so a saturated cell is 1,000,000 ml|any gas amount authored in ml; docs 06, 12 and 13 state theirs in cells or concentration instead (doc 13 `elite.miasmic`: `emit_gas_volume(cell, gas.miasma, 1)`)|
+|`gas_emitter(c, gas, k, runs, slot)`|registers an emitter that calls `emit_gas_volume(c, gas, k, slot)` at the start of each of the next `runs` gas runs, before doc 03 §7.3, in ascending creation order; at most 256 emitters per Folio, and creating one at the cap first removes the oldest|this chapter (vaporizer, §10.4)|
 |`move_gas(c, dir, n)`|`dir` is an `Fx3`; its axis is the component with the largest absolute raw value (ties: x, then z, then y) and its sign gives the unit step `s`. The destination is the farthest cell `c + k × s`, `k` in `1..=n`, such that every cell from `c + s` to it is gas-open and in bounds; with none, nothing moves. Each component of `c` moves with `emit_gas(dest, gas, conc, owner_slot)`, and what `emit_gas` cannot take stays in `c`. A caller moving an area processes its cells in descending coordinate along `s`, ties ascending `Gidx`, so no gas moves twice in one call.|doc 06 `gale` (`n = 3`)|
 |`alch_react(a, b, temp)`|§5.3|doc 03 §6.8|
 |`apply_alch_effect(e, recipient, route)`|§10|docs 04, 06, 13 (potion use by NPCs)|
@@ -256,7 +265,7 @@ Rows of liquids with a dependency in §3.1 are environmental, like every surface
 
 ### 3.3 `liq.blood` and bleeding
 
-- **Blood liquid by body.** Each creature template may set `blood_liq`; otherwise the first match in this order applies: member of `fac.editors` → `liq.red_ink`; `body.swarm` → none; tag spirit → `liq.ectoplasm`; tag undead → `liq.bile`; tag divine → `liq.ichor`; tag eldritch → `liq.ectoplasm`; `body.construct` → `liq.oil`; `body.insectoid` → `liq.hemolymph`; `body.amorphous` → `liq.slime`; tag plant → `liq.sap`; tag cephalopod → `liq.sepia`; tag irradiated → `liq.rad_sludge`; tag earthen → `liq.mud`; otherwise `liq.blood`. Errata use their kin: human, beastkin and mutant → `liq.blood`; fae → `liq.nectar`; construct → `liq.oil`; undead → `liq.bile`.
+- **Blood liquid by body.** Each creature template may set `blood_liq`; otherwise the first match in this order applies: member of `fac.editors` other than an invader → `liq.red_ink` (an invader skips this row, because invaders never erase placeables, Canon §11.6, §17.9); `body.swarm` → none; tag spirit → `liq.ectoplasm`; tag undead → `liq.bile`; tag divine → `liq.ichor`; tag eldritch → `liq.ectoplasm`; `body.construct` → `liq.oil`; `body.insectoid` → `liq.hemolymph`; `body.amorphous` → `liq.slime`; tag plant → `liq.sap`; tag cephalopod → `liq.sepia`; tag irradiated → `liq.rad_sludge`; tag earthen → `liq.mud`; otherwise `liq.blood`. Errata use their kin: human, beastkin and mutant → `liq.blood`; fae → `liq.nectar`; construct → `liq.oil`; undead → `liq.bile`.
 - **Bleeding drip.** On each status pulse an entity with `st.bleeding` adds `25 × stacks` ml to its `blood_acc_ml`; each time that reaches 1,000 it deposits 1 unit of its `blood_liq` in its feet cell (doc 03 `deposit`) and subtracts 1,000.
 - **Death spill.** On `ev.entity_killed`, the corpse deposits `min(20, max(1, floor_div(body_mass_g, 25000)))` units of `blood_liq` in its feet cell: 3 units for a 75,000 g humanoid.
 - **Severing** (Canon §9.1) deposits 1 unit at the part's position.
@@ -265,7 +274,7 @@ Rows of liquids with a dependency in §3.1 are environmental, like every surface
 
 ### 3.4 `liq.red_ink`
 
-- **Sources.** Every `fac.editors` member bleeds red ink. Hunters (`rank.hunter`) deposit 5 units on death; Editor bosses 50. Doc 12 places red-ink pools in `genre.redacted` and in Editor arenas.
+- **Sources.** Every `fac.editors` member except an invader bleeds red ink (§3.3). Hunters (`rank.hunter`) other than an invader deposit 5 units on death; Editor bosses 50. Doc 12 places red-ink pools in `genre.redacted` and in Editor arenas.
 - **Erasure contact.** Doc 03 §6.10 counts `red_ink_ticks` (+15 per pulse in contact; each 300 grants one `st.erasure` stack and `ev.erasure_stack`). This chapter adds: the counter resets to 0 after 600 ticks without contact, and `fac.editors` members are immune. Doc 04 §10.1 adds 5 `afflict.red_ink` power per pulse in contact.
 - **Unwriting.** On liquids runs whose index `r` satisfies `r % 20 == 0` (every 120 ticks), each cell holding at least 1 unit of red ink, in ascending `Gidx`, calls doc 03 §13.8 `erase_placed` with eraser `EntityId` 0 on the lowest-`Gidx` cell among its `N6` neighbors for which `is_errata_placed` holds. The block becomes air and drops nothing (doc 13 §10.6). Only Errata placeables are affected, so fixed terrain is untouched (Canon §4.3).
 - **Cleansing.** `dmg.radiant` on red ink turns it to water (Canon §12.1). Holy water reacts with it 1:1 into water (§5.3).
@@ -323,7 +332,7 @@ Doc 03 §7 owns the gas grid: at most 2 gases per cell, concentration `0..=10000
 
 ### 4.2 Gas catalog
 
-`rise_bp` is positive for rising and negative for sinking gases (doc 03 §7.2); `diffuse_bp` and `dissip_bp` are per run. Route: `inhaled` rows are blocked by a working respirator (§4.3) or purify immunity; `skin` rows are not; `sight` only conceals. Doc 12's `gas_dissipation_bp` (default 10000) multiplies `dissip_bp`.
+`rise_bp` is positive for rising and negative for sinking gases (doc 03 §7.2); `diffuse_bp` and `dissip_bp` are per run. Route: a working respirator blocks every `inhaled` and `skin` row (Canon §12.1; §4.3); purify immunity blocks `inhaled` rows only; `sight` only conceals, and nothing blocks it. Doc 12's `gas_dissipation_bp` (default 10000) multiplies `dissip_bp`.
 
 |ID|Route|conceal_full|diffuse_bp|rise_bp|dissip_bp|unbreathable|condense|Contact (per status pulse while held)|Fire trigger|Color|
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -347,8 +356,8 @@ Gas rows are environmental and never Contradict. A fire trigger on a gas acts on
 
 ### 4.3 Breathing and respirators
 
-- `res.breath` (owner 04) drains while `eye_submerged` or while the eye cell holds a gas flagged `unbreathable` (only `gas.miasma`).
-- **Respirators** are `cat.accessory` items for `slot.face` (doc 11 §3 files face items there), IDs `apparatus.respirator.*`. Values at `P(1)`: cloth 15, mask 40, rebreather 90 Lucre. Doc 11's `item.face.respirator` is the loot record of `apparatus.respirator.mask` (Canon gaps 8). Each instance stores `filter` in ticks, starting at the table maximum:
+- `res.breath` (owner 04) drains while `eye_submerged` or while the eye cell holds a gas flagged `unbreathable` (only `gas.miasma`) at `GAS_CONTACT_CONC` or more (Canon §12, §12.1).
+- **Respirators** are `cat.accessory` items for `slot.face`, IDs `apparatus.respirator.*`; `apparatus.respirator.mask` is the standard respirator. Values at `P(1)`: cloth 15, mask 40, rebreather 90 Lucre. Doc 11 §3.4 keeps their loot records on these three IDs (template weights 40, 40 and 20); no `item.` respirator ID exists (triage C-26). Each instance stores `filter` in ticks, starting at the table maximum:
 
 |ID|Filter (ticks)|Mass g|Hearing|Dep|Skins|
 |---|---|---|---|---|---|
@@ -356,10 +365,10 @@ Gas rows are environmental and never Contradict. A fire trigger on a gas acts on
 |`apparatus.respirator.mask`|3600|600|−3 dB|none|gas mask (steampunk, weird_west, hardboiled_noir), filter hood (cosmic_horror)|
 |`apparatus.respirator.rebreather`|7200|900|−5 dB|techne|rebreather (cyberpunk, space_opera), breath-gill (redacted)|
 
-- A respirator with `filter > 0` makes every gas breathable (Canon §12) and blocks every `inhaled` contact row and vapor exposure. It does not block `skin` rows, concealment or liquid contact.
-- The filter loses 1 per tick while the eye cell holds any `inhaled` gas at `GAS_CONTACT_CONC` or more, and a rebreather loses 2 per tick while `eye_submerged`. At 0 the respirator stops working. `ing.charcoal` (1 unit, 2 for a rebreather; 60 ticks) refills it to its maximum.
+- A respirator is **working** while its `filter > 0`. A working respirator in `slot.face` makes every gas breathable (Canon §12) and blocks every gas contact row, `inhaled` and `skin` alike, and vapor exposure (Canon §12.1). It does not block concealment or liquid contact.
+- The filter loses 1 per tick while the eye cell holds any gas whose route (§4.2) is `inhaled` or `skin` at `GAS_CONTACT_CONC` or more, and a rebreather loses 2 per tick while `eye_submerged`. At 0 the respirator stops working. `ing.charcoal` (1 unit, 2 for a rebreather; 60 ticks) refills it to its maximum. The filter is a refillable charge, not durability: respirators, like every vessel and apparatus in this chapter, never wear (Canon §13.9, DECISIONS 65).
 - A working rebreather also stops `res.breath` draining while `eye_submerged`.
-- Respirators are not disguise masks (doc 09). `alch.eff.purify` grants the same inhaled immunity without one.
+- Respirators are not disguise masks (doc 09). `alch.eff.purify` grants immunity to `inhaled` rows and vapor exposure without one, and does not block `skin` rows.
 
 
 ---
@@ -400,7 +409,7 @@ Doc 03 §6.10 runs contact on status-pulse ticks in ascending `EntityId`: liquid
 - **Direct statuses** (`st.soaked`, `st.oiled`, `st.slowed`, `st.chilled`, `st.regenerating`): Canon §11.4 direct application with the status's base duration (scaled statuses scale by the bearer's threshold, unscaled ones do not), refreshed each pulse.
 - **Buildup**: environmental, `p × S(d_current) × (10000 − r)` (doc 03 §6.10), where `r` is the bearer's clamped resistance (Canon §10.5 step 4) to the carrier type, the damage type whose Canon §10.1 row builds the status (slash bleeding, pierce exposed, blunt stunned, fire burning, frost frozen, shock shocked, acid corroded, radiation irradiated, sonic deafened, toxin poisoned, radiant blinded, umbral withering, psychic dread, arcane unraveled); a status no type builds (diseased, sleeping, confused, feared, charmed, silenced) uses `r = 0`.
 - **DoT**: Canon §11.3 with potency 10000 and the bearer's `rank_dot_bp`, entering at step 4 with flag `dot`.
-- **Inhaled** gas rows skip bearers with a working respirator or purify immunity (§4.3).
+- **Gas** contact rows skip bearers with a working respirator (Canon §12.1); `inhaled` rows also skip bearers with purify immunity (§4.3).
 - **Payload exposure** (§10.4, §10.6) after the rows above.
 - Cells with `owner_slot` carry that slot as instigator, so friendly fire uses `FF_AREA_BP` (doc 03 §6.10, Canon §17.5).
 
@@ -502,7 +511,7 @@ Doc 03 §6.4 step 2 calls `alch_react(a, b, temp)` for each component pair and f
 |`alch.rx.honey_alcohol`|44|honey 1|alcohol 1|1000|consume 1 and 1; produce wine 2|
 |`alch.rx.mana_water`|45|mana 1|water 1|1000|consume 1 and 1; produce water 2|
 |`alch.rx.nanite_rad`|46|nanite_slurry 1 (kept)|rad_sludge 1|1000|consume b 1; produce water 1|
-|`alch.rx.acid_block`|50|acid 5|block tagged `destructible` (Canon §4.3) whose material has tag `acid_soluble` (doc 07)|1|consume a 5; the partner block becomes air (cause `grid.cause.reaction`, no drops)|
+|`alch.rx.acid_block`|50|acid 5|block tagged `block.tag.destructible` (Canon §4.3) whose material has `mat.tag.acid_soluble` (doc 07)|1|consume a 5; the partner block becomes air (cause `grid.cause.reaction`, no drops)|
 |`alch.rx.flammable_lava`|51|lava or molten_metal 1 (kept)|any `fire_fuel` liquid 1 (kept)|1|`ignite = true` (the cell starts a liquid fire)|
 |`alch.rx.lava_ice`|52|lava or molten_metal 1 (kept)|block `block.ice` (the cell's own block or the block below)|1|the partner block becomes air (cause `grid.cause.reaction`, its `timed_revert` entry removed); gas `(gas.steam, 10000)` once|
 
@@ -535,7 +544,7 @@ ExplosionSpec {                              // doc 03 §12.1; u = min(units, 5)
 }
 ```
 
-Source is `Env`, `due_tick = t`, and the instigator slot is the cell's `owner_slot` (or the thrower's slot for a shattered vessel). Damage follows the environmental scaling of §5.2 and never crits; blocks break only when `destructible` (doc 03 §12.2). **Chains:** when the explosion resolves, every other cell holding nitro whose center lies within 3000 mm of its center queues its own detonation with `due_tick = t + 6`, in ascending `Gidx`. Doc 03's limit of 4 explosions per tick and its 256-entry queue bound a chain.
+Source is `Env`, `due_tick = t`, and the instigator slot is the cell's `owner_slot` (or the thrower's slot for a shattered vessel). Damage follows the environmental scaling of §5.2 and never crits; blocks break only when tagged `block.tag.destructible` (doc 03 §12.2), and the block-break variation and drops draw from `rng.physics` and the ignition from `rng.fire` (Canon §3.3). **Chains:** when the explosion resolves, every other cell holding nitro whose center lies within 3000 mm of its center queues its own detonation with `due_tick = t + 6`, in ascending `Gidx`. Doc 03's limit of 4 explosions per tick and its 256-entry queue bound a chain.
 
 **Example.** A 100 ml nitro vial shatters on Folio 1: `units = 1`, environmental base 40,000 mHP, block power 1500. An NPC within 750 mm with all 5 samples exposed takes `D2 = mul_bp(40000, P(1)) = 40,000` mHP split 28,000 blunt and 12,000 fire at step 3, two thirds of `REF_STD_ENEMY_HP_D1` (Canon §17.4), comparable to doc 05's 48,000-mHP frag grenade.
 
@@ -584,21 +593,21 @@ Mass of a filled vessel: `empty_mass + Σ floor_div(c.ml × density_g_per_l, 100
 
 ## 7. Alchemical effects (`alch.eff.*`)
 
-59 effects. **Pol**: B beneficial, H harmful. **Dep** (Canon §5.3): `none` for mundane effects; `aether` for supernatural effects, whose dependency is `{origin_genre.aether_axiom}` (arcana when that is none), mirroring the spell-glyph rule, so an invisibility dan pill brewed in Wuxia depends on VERVE and an invisibility stim brewed in Cyberpunk on TECHNE; `mythos` and `verve` are fixed. **Kind** and **Unit**:
+59 effects. **Pol**: B beneficial, H harmful. **Dep** (Canon §5.3): `none` for mundane alchemical effects; `aether` for supernatural alchemical effects, whose dependency is `{origin_genre.aether_axiom}`, or `{arcana}` when the origin's aether axiom is none (Canon §5.3's row for spell glyphs and supernatural alchemical effects), so an invisibility dan pill brewed in Wuxia depends on VERVE and an invisibility stim brewed in Cyberpunk on TECHNE; `mythos` for the holy, unholy and curse effects (Canon §5.3); `verve` for `inspire` alone, a cinematic effect whose status raises personal VERVE (Canon §5.3's cinematic row, §5.8). `mythos` and `verve` never change with the skin. **Kind** and **Unit**:
 
 - `instant`: applied once. `bp_maxhp` is Bp of the recipient's Max HP (Canon §10.9); `bp_pool` is Bp of that pool's max; `milli_tox` is `Milli` toxicity; `points` are whole satiation or sub-attribute points.
 - `status`: applies the named Canon status directly with the brewed duration as its `base` (Canon §11.4 scaling applies only to scaled statuses). `ward` sets the `st.shielded` pool to `max(current pool, mul_bp(max_hp_mhp, mag))` and refreshes its expiry (Canon §2.3).
 - `timed`: a modifier held for the duration (mm of dark-vision, mind-vision radius, `SAFE_FALL` bonus; Bp of resistance, added before the resistance cap; sub-attribute points, within the buffed cap 150). Reapplying the same effect sets magnitude to `max(old, new)` and expiry to `max(old_expiry, t + dur)`; timed modifiers of the same effect never add.
 - `buildup`: status power `p` in threshold points, entering Canon §11.2 (× `S(src_lvl)` and the rest of that chain).
 - `direct`: a `direct` Canon status applied with the brewed duration as `base`.
-- `damage`: `base_mhp` of a hit. At use its source magnitude follows Canon §10.4: `B = base_mhp → × P(src_lvl) → × rarity power (Common 10000) → × quality → × 10000 (eff_enh 0) → × 10000 (no material)`. A thrown, splashed or bomb hit is a doc 05 §9.4 area hit: it counts as a weapon attack under `skill.throwing` for Canon §6.4 row 12 with doc 05 §9.3's throwable scaling (SLT 5000, PRC 4000, PWR 3000), draws one keyed `rng.combat` crit roll per target (Canon §3.4), and takes the rest of Canon §10.5. A drunk or injected damage effect enters Canon §10.5 at step 3 with `D2 = B`: no additive bucket, no crit and no friendly-fire scaling, like an environmental hazard (Canon gaps 13). Its status power (listed in Mechanic) is scaled by the same per-effect chain as `buildup` effects.
+- `damage`: `base_mhp` of a hit. At use its source magnitude follows Canon §10.4: `B = base_mhp → × P(src_lvl) → × rarity power (Common 10000) → × quality → × 10000 (eff_enh 0) → × 10000 (no material)`. A thrown, splashed or bomb hit is a doc 05 §9.4 area hit flagged `NO_CRIT`: it counts as a weapon attack under `skill.throwing` for Canon §6.4 row 12 with doc 05 §9.3's throwable scaling (SLT 5000, PRC 4000, PWR 3000), draws one keyed `rng.combat` crit roll per target and ignores it (Canon §3.4, doc 05 §1.4), and takes the rest of Canon §10.5. A drunk or injected damage effect enters Canon §10.5 at step 3 with `D2 = B` and skips steps 1 and 2 (no additive bucket, no crit, no friendly-fire scaling): Canon §10.6's row for a consumable's damage to its own drinker or injected target. Its status power (listed in Mechanic) is scaled by the same per-effect chain as `buildup` effects.
 - `special`: `red_dose` adds one `afflict.red_ink` dose through doc 04 §10.1's `add_affliction_dose`, on drinking or injection only; it exists only on forbidden draughts (§9.2). `mutate` grants one doc 04 mutation point; a brew whose primary effect is `mutate` is the mutagen potion doc 04 names, and one whose primary is `satiate` is its nourishment potion.
 
 **Base dur** and **Dur cap** are in ticks. **Twin** is the effect that the Invert modifier substitutes (§9.4); pairs are symmetric. **Tox** is the toxicity this effect adds per dose (§11). **Value** is Lucre at `P(1)` per effect (§12.1). Caps bound the final magnitude and duration after every multiplier, before Contradiction potency and blessing.
 
 |Effect|Pol|Dep|Kind|Unit|Base mag|Base dur|Mag cap|Dur cap|Tox milli|Value|Twin|Mechanic|
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-|`alch.eff.heal`|B|none|instant|bp_maxhp|3000|—|9000|—|12000|30|`harm`|res.hp +mag (§10.9 healing rules)|
+|`alch.eff.heal`|B|none|instant|bp_maxhp|3000|—|9000|—|12000|30|`harm`|res.hp +mag (Canon §10.9 healing rules)|
 |`alch.eff.restore_stamina`|B|none|instant|bp_pool|5000|—|10000|—|5000|12|`drain_stamina`|res.stamina +mag of max|
 |`alch.eff.restore_aether`|B|aether|instant|bp_pool|4000|—|10000|—|9000|25|`unravel`|res.aether +mag of max|
 |`alch.eff.restore_composure`|B|none|instant|bp_pool|3000|—|9000|—|7000|20|`dread`|res.composure +mag of max|
@@ -661,7 +670,7 @@ Mass of a filled vessel: `empty_mass + Σ floor_div(c.ml × density_g_per_l, 100
 Effect application notes:
 
 - `cure` ends `st.poisoned` (all stacks), `st.diseased`, `st.bleeding` and `st.incubating`, and clears their buildup meters. A blessed `cure` also cures one affliction (§12.6).
-- `purify` removes every gas component in cells whose centers lie within its magnitude of the drinker's eye, then grants inhaled immunity (as a working respirator, §4.3) for its duration.
+- `purify` removes every gas component in cells whose centers lie within its magnitude of the drinker's eye, then grants immunity to `inhaled` gas rows and vapor exposure for its duration (§4.3); `skin` rows still apply.
 - `mind_vision` reveals every creature within its radius through walls to the bearer (doc 09 renders it).
 - `berserk` uses the Canon §11.8 player-controlled rules.
 - Drinking a harmful potion applies its harmful effects to the drinker. A thrown or coated harmful effect applies to targets (§10).
@@ -819,7 +828,7 @@ Knowledge is per run and shared by the party: `ing_known: BTreeMap<u32 /* ing id
 - **By skill tier** (personal, not written to the record): a player sees effect `k` (0-based) of every ingredient when `skill.alchemy >= [0, 25, 50, 75][k]`. Skill 0 sees the first effect, 25 the first two, 50 three, 75 all four (Oblivion ranks).
 - **By tasting** (`input` Taste, 45 ticks, Canon §6.4 row 17 applies): consumes one unit; sets the lowest unknown bit (the two lowest at Alchemy ≥ 50); applies that ingredient's first effect to the taster at potency 10000 with base magnitude, duration and status power each × `TASTE_BP` (1000), through §10's application chain with route `taste` (diminishing returns apply, §11.3); adds 2,000 toxicity. Example: tasting `ing.bloodmoss` heals `mul_bp(3000, 1000) = 300` Bp of Max HP. At the earlier × 2500, tasting healed 750 Bp per 2,000 toxicity, more per toxicity than a healing potion (3000 Bp per 12,000), so herbs beat brewing. With all bits known, tasting applies the first effect and reveals nothing.
 - **By brewing**: on completion, every effect shared by at least two contributing ingredients (including effects beyond the 4-effect cap) becomes known on each ingredient that carries it (Morrowind: hidden effects still combine). Before brewing, the preview shows known shared effects by name and the count of unknown shared effects as "N unknown".
-- Newly set bits are saved run state that doc 16 replicates and doc 17 displays; they emit no `ev.item_identified`, whose doc 03 §14.2 payload doc 10 reserves for item types and instances. The Margin codex records discovered pairs account-wide for reading in the hub only; it never sets in-run bits.
+- Newly set bits are saved run state that doc 16 replicates and doc 17 displays; they emit no `ev.item_identified`, whose doc 03 §14.2 payload doc 10 reserves for item types and instances. Nothing records ingredient effects across runs (DECISIONS 34): every run starts with an empty `ing_known`, and the Index (doc 10 §12, doc 14 §5.5) holds item templates only.
 
 ### 8.6 Body parts and affliction carriers
 
@@ -899,7 +908,7 @@ fn select_effects(ings: &[Ingredient], invert: bool) -> Vec<Selected> {
 ```
 f        = skill.alchemy + floor_div(ANL_base, 5) + floor_div(FAT_base, 10)    // base sub-attributes; fortify effects never count
 skill_bp = 8000 + 50 × f                                                       // f in 0..=130
-v        = keyed rng.alchemy (actor = brewer, tick = start tick, seq = start seq).range_incl(-500, 500)   // exactly 1 draw per brew
+v        = keyed rng.alchemy (actor = brewer, tick = start tick, seq = 0).range_incl(-500, 500)   // exactly 1 draw per brew (§1.3)
 q_score  = mul_bp(skill_bp, mortar_bp) + v
 ```
 
@@ -956,7 +965,7 @@ brew_ticks = 150 (field) or 120 (station), then Canon §6.4 row 17
 
 |State|Event|Next state|Effect|
 |---|---|---|---|
-|Idle|`input` Brew with a valid request (§9.3)|Brewing|store the request, `start_tick` and the brewer's action `seq` on that tick; draw nothing yet|
+|Idle|doc 02's `Brew` intent with a valid request (§9.3), applied on its logged tick (Canon §2.4)|Brewing|store the request and `start_tick`; draw nothing yet|
 |Brewing|`t = start_tick + brew_ticks`, inputs still valid|Complete|draw `v` (§9.5); consume inputs; create `doses` items in ascending `uid`; reveal effects (§8.5); emit one `ev.potion_brewed { brewer, uid, recipe, apparatus }` per created item (doc 03 §14.2), with `recipe` the item's `alch.potion.*` or `alch.bomb.*` type or the `alch.tx.*` ID and `apparatus` `station.alchemy` at a station, else `apparatus.mortar`|
 |Brewing|`t = start_tick + brew_ticks`, an input no longer valid (§9.3: a held item gone, the base cell drained, the station removed)|Idle|nothing consumed, nothing drawn|
 |Brewing|non-DoT damage taken; a Canon §11.1 `control` status applied; `st.downed`, `st.ghost` or death; moving more than 1000 mm from the start position; cancel input; an input item leaves the inventory; Folio exit; the station's block is removed|Idle|nothing consumed, nothing drawn|
@@ -974,10 +983,10 @@ Channels run in doc 03's `sys.crafting` (#17a), ascending `EntityId`. At most on
 
 Each selected effect with a non-empty dependency is a component (Canon §5.3) with `Req[a] = max(1, origin_genre.axiom[a] − 2)`. The primary effect is the base-function component.
 
-- On every activation (drink, throw, inject, coat, vapor release, payload creation), Contradiction is evaluated at the user's position (Canon §5.5). Each component's potency multiplies its magnitude, duration and status power; Disconnected components do nothing.
-- If the primary effect's failure chance is above 0, roll it once with keyed `rng.combat` (Canon §5.5). On failure the potion is consumed and nothing applies except its toxicity (drink) or its plain base-liquid spill (throw).
+- On every use action (drink, throw, inject, coat, loading a vaporizer), Contradiction is evaluated once, at the user's position on the action's start tick (Canon §5.5). Each component's potency multiplies its magnitude, duration and status power; Disconnected components do nothing. The splash, spill, payload or vapor that the action creates later uses that evaluation. Potions are ordinary components for World Laws (none is `law_bound`, Canon §5.10), and seam zones change `local_axiom` for them as for any component (Canon §5.8).
+- If the primary effect's failure chance is above 0, roll it once per use action with keyed `rng.combat`, as doc 05 §1.4's `seq` 0 action-start draw (§1.3). **Failed potion** (Canon §5.5): the potion is consumed, and only its toxicity (drunk or injected, §11.1) or its plain base-liquid spill (thrown, §6.3) applies; a failed coat or vaporizer load consumes the dose and applies nothing. No splash, payload, vapor, coat, `afflict` power or `red_dose` follows a failure.
 - A harmful component hitting a native target gets Anachronism Edge on its damage and buildup (Canon §5.6).
-- A potion's failure counts toward `st.unmoored` like a jam or fizzle (Canon §5.11). Coats, payloads and bombs keep the potency and edge snapshots taken at their creation.
+- Each failed potion calls doc 06 §3.9's `note_contradiction_failure(t)` for the user once: the one per-character counter toward `st.unmoored`, which counts failed potions with jams, fizzles and sparks (Canon §5.11; doc 12 owns the status). Coats, payloads and bombs keep the potency and edge snapshots taken at their creation.
 
 **Worked example.** An invisibility potion brewed in Mythic Fantasy (aether axiom arcana, ARC 8) has `dep = {arcana}`, `Req = 6`. Drunk in Hardboiled Noir (ARC 0) by a Fantasy-origin Erratum with ATN 40: `raw_gap = 6`, `Tol = 2`, `C = 4`: potency 6000, failure 1000 Bp. A 900-tick brew lasts `mul_bp(900, 6000) = 540` ticks if the 10% failure roll misses.
 
@@ -1037,7 +1046,7 @@ then by kind: heal → × 5000 for kin.construct, then Canon §10.9 (× row 3, �
 
 - Doc 05 owns the throw (range × Canon §6.4 row 20) and the impact. On shatter the contents spill into the grid first (§6.3), so the splash's own damage triggers the puddle (a liquid-flame potion's oil catches fire, §2.6). Then the vessel applies a **splash** centered on the impact point, radius by vessel (§6.1; doc 04 `splash_master` +1000 mm), to every target doc 03 §12.4 would select for an explosion of that radius with `inner_mm = radius_mm` (no falloff) and exposure above 0:
   - beneficial effects apply at full effect to every `fac.errata` member and minion in the area (Canon §10.9), and to nobody else;
-  - harmful effects apply to every target in the area. Each damage effect is one doc 03 §12 explosion record at the impact point (source `Item` with its §7 `B`, `block_power_milli` 0, `inner_mm = radius_mm`, `edge_bp` 10000, the effect's damage type as its only share), resolved by doc 05 §9.4 as an area hit (§7: row 12, one crit draw, `FF_AREA_BP` between Errata, Canon §17.5). Its status power and every harmful buildup effect scale by doc 03's `f = mul_bp(falloff, exposure)`, and buildup on `fac.errata` targets is × `FF_AREA_BP` as well.
+  - harmful effects apply to every target in the area. Each damage effect is one doc 03 §12 explosion record at the impact point (source `Item` with its §7 `B`, `block_power_milli` 0, `inner_mm = radius_mm`, `edge_bp` 10000, the effect's damage type as its only share), resolved by doc 05 §9.4 as a `NO_CRIT` area hit (§7: row 12, one crit draw that is ignored, `FF_AREA_BP` between Errata, Canon §17.5). Its status power and every harmful buildup effect scale by doc 03's `f = mul_bp(falloff, exposure)`, and buildup on `fac.errata` targets is × `FF_AREA_BP` as well.
 - An Aerosol potion emits gas instead of spilling (§10.4); a Linger potion also creates a surface patch (§10.6).
 - Unknown potions identify by throwing only as §12.4 says.
 
@@ -1045,8 +1054,8 @@ then by kind: heal → × 5000 for kin.construct, then Canon §10.9 (× row 3, �
 
 - Apply one dose of a potion whose effects include at least one harmful effect to the active melee weapon, or to up to `10 + floor_div(skill.alchemy, 10)` units of the loaded ammunition stack (doc 05 splits the stack). 90 ticks. A coated round carries the coat and applies it once on its landed hit; rounds spend no charges.
 - **Raw venom.** One dose of raw `liq.venom` coats as a potion with the single effect `alch.eff.poison` at base power 60, quality Normal, potency 10000 and `src_lvl` equal to the Folio index where the vessel was filled.
-- The coat stores the harmful effects only, with their status powers, the potion's `src_lvl`, quality, potency snapshot and `charges = 5 + floor_div(skill.alchemy, 20)` (× `coat_charges_bp` 15000 for oil bases), and `expires = t + 3600`.
-- Each landed hit (Canon §10.5 step 8 reached with any HP or ward loss) spends one charge and adds, for each coated effect, buildup `mul_bp(p(e), 5000)` of its status through Canon §11.2 (× `S(src_lvl)`, potency, edge, attacker buildup multiplier, resistance, block). A damage effect uses its status power as `p`; `harm` counts as `st.poisoned` power `floor_div(base_mhp, 250)` (60 at base). Coats never add damage.
+- The coat stores the harmful effects only, with their status powers, the potion's `src_lvl`, quality, potency snapshot, `charges = mul_bp(5 + floor_div(skill.alchemy, 20) + 5 × [envenom], coat_charges_bp)` (`coat_charges_bp` 15000 for oil bases, else 10000), `coat_bp` (5000, or 10000 with envenom) and `expires = t + 3600`. `[envenom]` is 1 when the coater has doc 04's `talent.shade.envenom` (triage C-19).
+- Each landed hit (Canon §10.5 step 8 reached with any HP or ward loss) spends one charge and adds, for each coated effect, buildup `mul_bp(p(e), coat_bp)` of its status through Canon §11.2 (× `S(src_lvl)`, potency, edge, attacker buildup multiplier, resistance, block). A damage effect uses its status power as `p`; `harm` counts as `st.poisoned` power `floor_div(base_mhp, 250)` (60 at base). Coats never add damage.
 - A coat ends when charges reach 0, at `expires`, when the bearer's body cell holds at least 1 unit of an `aq` liquid, or when a new coat is applied.
 - **Flaming dip.** Dipping a melee weapon (30 ticks) into a burning liquid cell gives it a `flaming` coat for 600 ticks: each landed hit adds 40 `st.burning` buildup.
 
@@ -1065,7 +1074,7 @@ then by kind: heal → × 5000 for kin.construct, then Canon §10.9 (× row 3, �
 
 - A Linger potion's shatter creates a surface payload (§2.5) whose `liq` is the potion's base liquid and whose origin is the impact cell, for `LINGER_TICKS`.
 - Surface exposure: the first exposure per (entity, payload) applies beneficial effects at × 5000 to `fac.errata` members and minions; each status pulse of exposure applies harmful buildup at `mul_bp(p, 2500)` and each harmful damage effect as the vapor DoT of §10.4.
-- Dipping a weapon (30 ticks) into a cell inside a surface patch that holds its `liq` coats it as §10.3 with the payload's harmful effects and 3 charges.
+- Dipping a weapon (30 ticks) into a cell inside a surface patch that holds its `liq` coats it as §10.3 with the payload's harmful effects and `3 + 5 × [envenom]` charges.
 
 ---
 
@@ -1098,7 +1107,7 @@ Each arrow is one `mul_bp`. `kin_bp`: construct 5000, undead 5000, others 10000.
 |100,000|overdosed|as sickened, plus Canon §12's 3 stacks of `st.poisoned` every 5 s, by the overdose counter below|
 
 - **Needs step** (doc 03 `sys.needs`, inside doc 04's toxicity step, once per second): first, if `res.toxicity == TOX_CAP`, then `od_count += 1` and, when `od_count % 5 == 1`, the bearer gains 3 stacks of `st.poisoned` by direct application (Canon §11.4); otherwise `od_count = 0`. Then decay: `res.toxicity −= min(res.toxicity, 500 + Σ toxicity_decay modifiers)` with accumulator `k = 1` (Canon §12; doc 04's narrow key `toxicity_decay`: `aug.toxin_filter` +500, `echo.mother_ilse` −200). Because decay follows the check, one overdose gives one set of 3 stacks unless further doses hold the meter at the cap.
-- **Overdose damage**: if `res.toxicity + applied > TOX_CAP`, the excess `x` deals `mul_bp(max_hp_mhp, floor_div(x, 10))` mHP of `dmg.toxin` entering Canon §10.6 at step 4 (resistance applies; constructs take it as `dmg.shock`). It counts toward the §7 self-harm cap of the dose that caused it. Example: an 85 HP Erratum at 95,000 drinks a healing potion that applies 12,000: excess 7,000 deals `mul_bp(85000, 700) = 5,950` mHP, under the cap of 25,500, and toxicity sits at 100,000.
+- **Overdose damage**: if `res.toxicity + applied > TOX_CAP`, the excess `x` deals `mul_bp(max_hp_mhp, floor_div(x, 10))` mHP of `dmg.toxin` entering Canon §10.6 at step 4 (resistance applies; constructs take it as `dmg.shock`); it has no hit part, so it reduces HP only (triage G-083). It counts toward the §7 self-harm cap of the dose that caused it. Example: an 85 HP Erratum at 95,000 drinks a healing potion that applies 12,000: excess 7,000 deals `mul_bp(85000, 700) = 5,950` mHP, under the cap of 25,500, and toxicity sits at 100,000.
 - Only `alch.eff.detox`, raw water (−2,000, §3.2), the wellspring outcome (−20,000, §12.5) and decay lower toxicity.
 
 ### 11.3 Diminishing returns
@@ -1181,7 +1190,7 @@ Brewed items start at `know.identified`. Brewing a canonical type identifies tha
 
 ### 12.5 Wellsprings: unknown liquid effects
 
-Doc 12 §11.2 places font basins: a cell holding `liq.wellspring` with a record in the per-Folio `fonts: BTreeMap<Gidx, u8 /* uses, 1..=3 at placement */>`. Kneeling to drink from a font cell whose uses are above 0 (60 ticks, §10.1) draws exactly 1 value, keyed `rng.alchemy` (actor = drinker, tick = the drink's start tick, seq = its start seq) `.weighted(w)`, applies the outcome and decrements the uses. Wellspring anywhere else (a vessel, a cell without a font record, a font at 0 uses) drinks as `liq.water`, and filling a vessel from a cell holding wellspring yields `liq.water` (§2.3), so a font cannot be carried off and rolled again.
+Doc 12 §11.2 places font basins: a cell holding `liq.wellspring` with a record in the per-Folio `fonts: BTreeMap<Gidx, u8 /* uses, 1..=3 at placement */>`. Kneeling to drink from a font cell whose uses are above 0 (60 ticks, §10.1) draws exactly 1 value, keyed `rng.alchemy` (actor = drinker, tick = the drink's start tick, seq = 3; §1.3) `.weighted(w)`, applies the outcome and decrements the uses. Wellspring anywhere else (a vessel, a cell without a font record, a font at 0 uses) drinks as `liq.water`, and filling a vessel from a cell holding wellspring yields `liq.water` (§2.3), so a font cannot be carried off and rolled again.
 
 |Weight|Outcome|
 |---|---|
@@ -1227,7 +1236,7 @@ A poison is any brew whose effects are all harmful. Poisons are thrown (§10.2),
 
 ### 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)
 
-Crafted with the §9.7 state machine: brew ticks, one quality draw `v` (§9.5), `ilvl` = the Folio where made, 1 bomb per channel. Bombs are `cat.throwable` items that fly with doc 05 §9.3's throwable constants and detonate on first contact (§6.3). A bomb with a damage radius is one doc 03 §12 explosion at the impact point with source `Item` and `B = base_mhp → × P(src_lvl) → × 10000 (Common) → × quality → × 10000 (eff_enh 0) → × 10000 (no material)` (Canon §10.4), resolved by doc 05 §9.4 as an area hit: Canon §6.4 row 12 under `skill.throwing`, one keyed `rng.combat` crit draw per target, `FF_AREA_BP` between Errata. Status powers follow Canon §11.2 scaled by doc 03's `f = mul_bp(falloff, exposure)`. Doc 04's `volatile_mix` (+1500 Bp in the additive bucket) and `catalyst` (status power × 13000) apply in that resolution. A status-only bomb (flash, salt) selects targets as doc 03 §12.4 does and deals no damage. Gases and spills happen at the impact cell after the explosion is queued. Mass is 200 g of shell plus contents (§6.1 density rule; ingredients at their own mass). Values are Lucre at `P(1)` and match doc 11 §3.
+Crafted with the §9.7 state machine: brew ticks, one quality draw `v` (§9.5), `ilvl` = the Folio where made, 1 bomb per channel. Bombs are `cat.throwable` items that fly with doc 05 §9.3's throwable constants and detonate on first contact (§6.3). A bomb with a damage radius is one doc 03 §12 explosion at the impact point with source `Item` and `B = base_mhp → × P(src_lvl) → × 10000 (Common) → × quality → × 10000 (eff_enh 0) → × 10000 (no material)` (Canon §10.4), resolved by doc 05 §9.4 as a `NO_CRIT` area hit: Canon §6.4 row 12 under `skill.throwing`, one keyed `rng.combat` crit draw per target that is ignored, `FF_AREA_BP` between Errata. Status powers follow Canon §11.2 scaled by doc 03's `f = mul_bp(falloff, exposure)`. Doc 04's `volatile_mix` (+1500 Bp in the additive bucket) and `catalyst` (status power × 13000) apply in that resolution. A status-only bomb (flash, salt) selects targets as doc 03 §12.4 does and deals no damage. Gases and spills happen at the impact cell after the explosion is queued. Mass is 200 g of shell plus contents (§6.1 density rule; ingredients at their own mass). Values are Lucre at `P(1)` and match doc 11 §3.
 
 |ID|Recipe (shell = `apparatus.vessel.grenade_shell`)|Radius / inner (mm) / edge Bp|Base damage, shares|Status power|`block_power_milli`|Noise (doc 09)|Value|Release|
 |---|---|---|---|---|---|---|---|---|
@@ -1241,14 +1250,14 @@ Crafted with the §9.7 state machine: brew ticks, one quality draw `v` (§9.5), 
 |`alch.bomb.sleep`|shell + `ing.dreamfoil` + `ing.poppy_tear`|none|none|none|0|`noise.item.shatter_ceramic`|14|4 cells of `gas.soporific`|
 |`alch.bomb.flash`|shell + 100 ml phosphor + `ing.black_powder`|8000, status only|none|blinded 80 to targets whose facing is within 16384 Bam of the burst|0|`noise.explosion.flash`|12|`light_block` 15 at the impact cell for 30 ticks (doc 03 timed light)|
 |`alch.bomb.tar`|shell + 300 ml tar + `ing.puffball`|none|none|none|0|`noise.item.shatter_ceramic`|14|the tar foams to 9,000 ml: `splash(impact cell, liq.tar, 9, slot)`, 1 unit in each of up to 9 cells|
-|`alch.bomb.salt`|shell + 2 × `ing.blessed_salt`|2500, status only|none|`st.unraveled` and `st.silenced` directly for 180 ticks; carries `counter.disruptor`|0|`noise.item.shatter_ceramic`|14|none: the dependency-none `counter.disruptor` source of Canon §17.3a|
+|`alch.bomb.salt`|shell + 2 × `ing.blessed_salt`|2500, status only|none|`st.unraveled` and `st.silenced` directly for exactly 180 ticks, unscaled by Canon §11.4; carries `counter.disruptor`|0|`noise.item.shatter_ceramic`|14|none: the dependency-none `counter.disruptor` source of Canon §17.3a|
 |`alch.bomb.incense`|shell + `ing.gum_resin` + `ing.blessed_salt`|none|none|none|0|`noise.item.shatter_ceramic`|14|4 cells of `gas.incense`|
 |`alch.bomb.infernal`|§15 recipe|3000 / 1000 / 5000|8 HP fire|burning 60|0|`noise.explosion.incendiary`|14|4 cells of `gas.miasma`, then a fire trigger on them (the Canon 3 m miasma blast, §5.2)|
 |`alch.bomb.grenade`|shell + any potion (30 ticks)|3000 / 3000 / 10000|the potion's damage effects as a splash (§10.2)|per potion|0|`noise.item.shatter_ceramic`|2 + the potion's value|spills the potion's base, `ceil_div(dose_ml, 1000)` units|
 
-**Worked example.** A Good firebomb made on Folio 5: `B = 6000 → mul_bp(6000, 14115) = 8469 → 8469 → mul_bp(8469, 11000) = 9315` mHP of fire at step 0 for a target within the 1000 mm inner radius; doc 05 §9.4 then adds row 12 and the crit roll. Its spill deposits `ceil_div(300, 1000) = 1` unit of oil, which the explosion's fire ignites: a separate environmental blast of base 10,000 mHP (§5.2), `D2 = 14,115` mHP against an NPC within 500 mm on Folio 5. At Folio 1 the pair deals 6,000 + 10,000 mHP at the center, against `REF_STD_ENEMY_HP_D1` 60 HP and doc 05's incendiary grenade at 20,000 mHP (Canon §17.4).
+**Worked example.** A Good firebomb made on Folio 5: `B = 6000 → mul_bp(6000, 14115) = 8469 → 8469 → mul_bp(8469, 11000) = 9315` mHP of fire at step 0 for a target within the 1000 mm inner radius; doc 05 §9.4 then adds row 12 and draws the ignored crit roll. Its spill deposits `ceil_div(300, 1000) = 1` unit of oil, which the explosion's fire ignites: a separate environmental blast of base 10,000 mHP (§5.2), `D2 = 14,115` mHP against an NPC within 500 mm on Folio 5. At Folio 1 a Normal firebomb and its blast deal 6,000 + 10,000 mHP at the center, against `REF_STD_ENEMY_HP_D1` 60 HP and doc 05's incendiary grenade at 20,000 mHP (Canon §17.4).
 
-Doc 11 stocks `alch.bomb.salt` and `alch.bomb.smoke` in every genre's shops and loot (Canon §17.3a requires a dependency-none disruptor source everywhere).
+Doc 11 stocks `alch.bomb.salt` and `alch.bomb.smoke` in every shop and in every genre's loot pool; `genre.unwritten`, which has no shops, gets doc 11's counter caches (Canon §17.1, §17.3a: a dependency-none disruptor source everywhere).
 
 ---
 
@@ -1289,7 +1298,7 @@ At a station, 30 ticks per item: `cat.potion` → 6 `ing.essence`; `cat.text` �
 
 ### 15.2 Seed brewing (`alch.tx.seed_brew`)
 
-Three `cat.seed` items, 0 essence, keyed `rng.alchemy` (actor = brewer, tick = start tick, seq = start seq). `canon` is the 16 §12.1 IDs sorted by ID byte order: aether, calm, cure, fortitude, frost, haste, healing, invisibility, levitation, liquid_flame, mind_vision, night_eye, purity, slumber, stamina, toxic_gas (indices 0 to 15).
+Three `cat.seed` items, 0 essence, keyed `rng.alchemy` (actor = brewer, tick = start tick, seq = 1; §1.3). `canon` is the 16 §12.1 IDs sorted by ID byte order: aether, calm, cure, fortitude, frost, haste, healing, invisibility, levitation, liquid_flame, mind_vision, night_eye, purity, slumber, stamina, toxic_gas (indices 0 to 15).
 
 ```rust
 let k = distinct seed types among the 3;
@@ -1333,7 +1342,7 @@ Draw count: 3, 4 or 5. `seed_heal_count` is per run and per party (SPD's healing
 |`alch.tx.nitro`|250 ml acid + 250 ml oil + `ing.saltpeter`|3|100 ml `liq.nitro` in a vial|
 |`alch.tx.mana`|250 ml water + `ing.aether_crystal`|3|250 ml `liq.mana`|
 |`alch.tx.coolant`|500 ml water + `ing.frost_salt`; a dewar is required|2|500 ml `liq.coolant` in the dewar|
-|`alch.tx.lamp_oil`|1 `cat.ingredient` or `cat.material` unit tagged `fat` (`ing.troll_fat`, doc 07 `mat.flesh`)|1|250 ml `liq.oil`|
+|`alch.tx.lamp_oil`|1 `cat.ingredient` unit tagged fat (`ing.troll_fat`) or 1 `cat.material` unit with `mat.tag.fat` (doc 07 `mat.flesh`)|1|250 ml `liq.oil`|
 |`alch.tx.brine`|750 ml water + `ing.saltpeter`|0|750 ml `liq.brine`|
 |`alch.tx.vitriol`|250 ml water + `ing.vitriol`|1|250 ml `liq.acid`|
 |`alch.tx.unholy_water`|250 ml water + `ing.lich_dust` or `ing.vampire_dust`|1|250 ml `liq.unholy_water`|
@@ -1351,7 +1360,7 @@ Draw count: 3, 4 or 5. `seed_heal_count` is per run and per party (SPD's healing
 
 ### 15.4 Doc 04 `transmuter` hook
 
-Doc 04's `talent.alchemist.transmuter` turns 3 potions of one identified type at an alembic into 1 potion of another type. Pool: the 16 §12.1 types when the inputs are canonical, the 12 §12.2 exotics when they are exotic (`alch.potion.draught` is refused), excluding the input type, sorted by ID, weight 1 each. Draw: exactly 1 `weighted` from keyed `rng.alchemy` (actor = the user, tick = start tick, seq = start seq). The output has that type's §12.1 or §12.2 values, the lowest input quality, `buc.uncursed` and `ilvl = max(input ilvl, current Folio index)`, is identified, and reports `recipe = talent.alchemist.transmuter` on `ev.potion_brewed`. It takes 60 ticks under the §9.7 state machine.
+Doc 04's `talent.alchemist.transmuter` turns 3 potions of one identified type at an alembic into 1 potion of another type. Pool: the 16 §12.1 types when the inputs are canonical, the 12 §12.2 exotics when they are exotic (`alch.potion.draught` is refused), excluding the input type, sorted by ID, weight 1 each. Draw: exactly 1 `weighted` from keyed `rng.alchemy` (actor = the user, tick = start tick, seq = 2; §1.3). The output has that type's §12.1 or §12.2 values, the lowest input quality, `buc.uncursed` and `ilvl = max(input ilvl, current Folio index)`, is identified, and reports `recipe = talent.alchemist.transmuter` on `ev.potion_brewed`. It takes 60 ticks under the §9.7 state machine.
 
 ---
 
@@ -1386,60 +1395,43 @@ Content IDs, all in namespaces Canon §19 assigns to doc 08 (`liq.`, `gas.`, `in
 Sub-namespace prefixes. These are not content IDs and are not counted among the 316 above. Other chapters may name a prefix bare, as doc 10 names `alch.tx`; each content ID is a prefix, a `.` and one suffix:
 
 - `alch.eff`: effects (§7).
-- `alch.potion`: potion item templates (`cat.potion`, §12.1, §12.2).
-- `alch.bomb`: bomb item templates (`cat.throwable`, §13.2).
+- `alch.potion`: potion item templates (§12.1, §12.2).
+- `alch.bomb`: bomb item templates (§13.2).
 - `alch.rx`: reactions (§5.3).
 - `alch.tx`: transmutations (§15).
-- `apparatus.` with one suffix: tools (`cat.tool`, §9.1).
-- `apparatus.vessel`: vessels (`cat.container`, §6.1).
-- `apparatus.respirator`: respirators (`slot.face`, §4.3).
+- `apparatus.` with one suffix: brewing tools (§9.1).
+- `apparatus.vessel`: vessels (§6.1).
+- `apparatus.respirator`: respirators (§4.3).
+
+The item categories and the equipment slot of these templates (§4.3, §6.1, §9.1, §12.1, §13.2) are canon and doc 11 IDs, listed under Imports; this chapter references them and declares none.
 
 Rules, data and interfaces:
 
 - Constants of §1.2. Liquid records (§2.2, §3.1) with the fields doc 03 §6.5 consumes plus `flammability_bp`, `ignite_blast_mhp_per_unit`, `explosive`, `evap_gas`, `triggers`, contact and drink rows; liquid sources (§3.5); the trigger matrix (§5.2a); gas records (§4.2) with the fields doc 03 §7.2 consumes plus route and contact rows; the payload record (§2.5).
 - Functions of §2.7: `add_liquid`, `spill`, `place_gas`, `place_gas_ml`, `gas_emitter`, `move_gas`, `alch_react`, `apply_alch_effect`, `toxicity_gain`.
 - `alch_react(a, b, temp) -> Option<Reaction>` (§5.3), implementing doc 03 §6.8; the extended trigger kinds of §5.2 for doc 03 §6.9; the contact rows of §3.2 and §4.2 and status triggers of §5.4 for doc 03 §6.10.
-- `ev.potion_brewed` uses doc 03 §14.2's payload `{ brewer, uid, recipe, apparatus }`, one event per created item (§9.7). `ev.liquid_reaction` carries the `alch.rx` ID, or the triggering `dmg.` type, as `rule` (doc 03 owns its schema). XP inputs `brew_basis` and `new_reveals` go to doc 04's `grant_skill_xp`, not into events (§9.11).
-- Item instance extension (doc 19 schema): `alch: { base: u32, effects: [{eff, mag, dur, n}], tox_milli: i64, mods: u8 bitset (extend, amplify, invert, aerosol, linger), afflict: [(u32, i32)], forbidden: bool }` on `cat.potion` and `alch.bomb.*`; `coat: {effects, charges, expires, src_lvl, quality_bp, potency}` on weapons and ammo; `filter: u32` on respirators; `tier: u8` on apparatus (§9.1); doses as `charges` on multi-dose vessels.
+- Event emission: one brew event per created item with doc 03 §14.2's payload `{ brewer, uid, recipe, apparatus }` (§9.7), and one liquid-reaction event per changed cell whose `rule` is the `alch.rx` ID or the triggering damage type (§5). Both event IDs and their schemas belong to the canon and doc 03 (Imports). XP inputs `brew_basis` and `new_reveals` go to doc 04's `grant_skill_xp`, not into events (§9.11).
+- Item instance extension (doc 19 schema): `alch: { base: u32, effects: [{eff, mag, dur, n}], tox_milli: i64, mods: u8 bitset (extend, amplify, invert, aerosol, linger), afflict: [(u32, i32)], forbidden: bool }` on potions (§12) and `alch.bomb.*`; `coat: {effects, charges, coat_bp, expires, src_lvl, quality_bp, potency}` on weapons and ammo (§10.3); `filter: u32` on respirators; `tier: u8` on apparatus (§9.1); doses as `charges` on multi-dose vessels.
 - Per-entity state: `blood_acc_ml`, the red-ink counter reset (§3.4), `dr: BTreeMap<u32, (u8, u64)>`, `raw_cd: BTreeMap<u32, u64>` (§3.2), `od_count: u8` (§11.2), the phosphor mark expiry (§3.2), the active brew channel (§9.7); per-party run state: `ing_known`, `seed_heal_count`; per-Folio state: `BTreeMap<u16, Payload>` with `next_payload_id`, `fonts: BTreeMap<Gidx, u8>` (§12.5), gas emitters (§2.7) and the payload exposure set `BTreeSet<(EntityId, u16)>`. Every item is saved state (Canon §2.5).
 - Behavior of `res.toxicity`, `st.poisoned`, `st.irradiated`, `st.soaked`, `st.oiled`, `st.focused` (§16).
 
 ## Interface assumptions
 
-- **Doc 03** (exists; this chapter conforms to its canon-1.4 text): runs the liquid grid (§6) with the §3.1 fields and `flow_eff` from doc 12's `liquid_viscosity_bp`; extends its §6.9 table by each liquid's `triggers` and each gas's fire column (§5.2, including the fuel and mana blasts in the oil row's form, the lava and molten-metal frost conversions, and the multi-liquid order of §5.2); applies every §3.2 and §4.2 contact row and the §5.4 status triggers in §6.10; emits `evap_gas` when step 7 evaporates a unit; reads `flammability_bp` for liquid fire spread (§8.3); resolves nitro, blast and bomb explosions through §12 with the specs of §5.2, §5.6 and §13.2; exposes `deposit`, `splash`, `drain`, `emit_gas`, `emit_gas_volume`, `surface_trigger` and §13.8 `erase_placed`, which accepts eraser `EntityId` 0 for red ink; runs gas emitters (§2.7) at the start of each gas run; owns the `ev.potion_brewed` and `ev.liquid_reaction` payloads (§14.2).
-- **Doc 04** (exists): grants the Alchemy mastery perks as its §5.3 states (25: see effect 2; 50: see effect 3, a taste reveals two, batch +1; 75: see all four; 100: batch +1, single-ingredient brewing) and the toxicity factor `10000 − 25 × skill.alchemy` (§11.1); applies its Alchemist talents at the points §9.6, §9.7, §10, §11 and §15.4 mark (`potent_brews`, `iron_stomach`, `quick_quaff`, `splash_master`, `double_batch`, `field_medic`, `transmuter`, `volatile_mix`, `catalyst`, `philosophers_vial`, `antivenom`, `magnum_opus`); owns affliction meters, `add_affliction_dose` and `cure_affliction` (§10.1), mutation points, body parts (§8), the XP table (§5.2) fed by §9.11's `brew_basis` and `new_reveals`, breath, the `toxicity_decay` key, and the toxicity step inside `sys.needs` that calls §11.2.
-- **Doc 05** (exists): throw physics and impact for vessels and bombs (`skill.throwing`, the §9.3 throwable constants and scaling, first-contact detonation); §9.4 area-hit resolution with one crit draw per target, Canon §6.4 row 12 and `FF_AREA_BP` for alchemical splashes and bombs (§7, §10.2, §13.2), where `volatile_mix` and `catalyst` apply; the on-hit hook for coats; ammo stack splitting; spread and aim sway for `st.focused` and the sickened band; `counter.disruptor` for `alch.bomb.salt`; `grenade_smoke` through `gas_emitter` (§2.7).
-- **Doc 06**: holy water from altars and prayers; behavior of the buff statuses potions apply; calls `add_liquid`, `place_gas`, `place_gas_ml` and `move_gas` (§2.7) for `tide`, `acid`, `venom` and `gale`.
-- **Doc 07**: material tags `acid_soluble` and `fat`; the `destructible` block tag; blocks `block.ice`, `block.web`, `block.obsidian`, `block.basalt`, `block.slag`; `station.alchemy` with apparatus slots; `sys.crafting` runs the §9.7 channels; recipe books teaching §13.1 poisons; seed planting; `mat.coal` from `recipe.kiln.charcoal`; forge smelts that fill a crucible with `liq.molten_metal`.
+- **Doc 03** (exists; checked against its current text under canon-1.11): runs the liquid grid (§6) with the §3.1 fields and `flow_eff` from doc 12's `liquid_viscosity_bp`; extends its §6.9 table by each liquid's `triggers` and each gas's fire column (§5.2, including the fuel and mana blasts in the oil row's form, the lava and molten-metal frost conversions, and the multi-liquid order of §5.2); applies every §3.2 and §4.2 contact row and the §5.4 status triggers in §6.10, skipping every gas row for a bearer with a working respirator (Canon §12.1) and every `inhaled` gas row for a bearer with purify immunity (§4.3, §5.1); emits `evap_gas` when step 7 evaporates a unit; reads `flammability_bp` for liquid fire spread (§8.3); resolves nitro, blast and bomb explosions through §12 with the specs of §5.2, §5.6 and §13.2, drawing their block-break variation and drops from `rng.physics` and their ignition from `rng.fire` (Canon §3.3); exposes `deposit`, `splash`, `drain`, `emit_gas`, `emit_gas_volume`, `surface_trigger`, `is_errata_placed` and §13.8 `erase_placed`, which accepts eraser `EntityId` 0 for red ink; runs gas emitters (§2.7) at the start of each gas run; owns the `ev.potion_brewed` and `ev.liquid_reaction` payloads (§14.2).
+- **Doc 04** (exists): grants the Alchemy mastery perks as its §5.3 states (25: see effect 2; 50: see effect 3, a taste reveals two, batch +1; 75: see all four; 100: batch +1, single-ingredient brewing) and the toxicity factor `10000 − 25 × skill.alchemy` (§11.1); applies its Alchemist talents at the points §9.6, §9.7, §10, §11 and §15.4 mark (`potent_brews`, `iron_stomach`, `quick_quaff`, `splash_master`, `double_batch`, `field_medic`, `transmuter`, `volatile_mix`, `catalyst`, `philosophers_vial`, `antivenom`, `magnum_opus`); owns affliction meters, `add_affliction_dose` and `cure_affliction` (§10.1), mutation points, body parts (§8), the XP table (§5.2) fed by §9.11's `brew_basis` and `new_reveals`, breath, the `toxicity_decay` key, and the toxicity step inside `sys.needs` that calls §11.2; `talent.shade.envenom` as triage C-19 rules and doc 04 now states it: "your coats get +5 charges, and the coat's buildup factor 5000 becomes 10000" (§10.3).
+- **Doc 05** (exists): throw physics and impact for vessels and bombs (`skill.throwing`, the §9.3 throwable constants and scaling, first-contact detonation); §9.4 `NO_CRIT` area-hit resolution with one crit draw per target that is ignored, Canon §6.4 row 12 and `FF_AREA_BP` for alchemical splashes and bombs (§7, §10.2, §13.2), where `volatile_mix` and `catalyst` apply; the §1.4 `seq` 0 action-start slot for a potion use action's Contradiction failure roll (§9.9); the on-hit hook for coats; ammo stack splitting; spread and aim sway for `st.focused` and the sickened band; `counter.disruptor` for `alch.bomb.salt`. Doc 05's `grenade_smoke` releases its 27 smoke cells once through doc 03 (doc 05 §9.3) and uses no §2.7 emitter.
+- **Doc 06**: holy water from altars and prayers; behavior of the buff statuses potions apply; the shared `note_contradiction_failure(t)` (§3.9), which every failed potion calls (§9.9); calls `add_liquid`, `place_gas` and `move_gas` (§2.7) for `tide`, `acid`, `venom` and `gale`.
+- **Doc 07**: material tags `mat.tag.acid_soluble` and `mat.tag.fat`; the block tag `block.tag.destructible`; blocks `block.ice`, `block.web`, `block.obsidian`, `block.basalt`, `block.slag`; `station.alchemy` with apparatus slots; `sys.crafting` runs the §9.7 channels; recipe books teaching §13.1 poisons; seed planting; `mat.coal` from `recipe.kiln.charcoal`; forge smelts that fill a crucible with `liq.molten_metal`.
 - **Doc 09**: liquid and gas conceal; the phosphor mark as its stealth-light term `ph = 9`; mind-vision reveal; noise IDs `noise.item.shatter_glass`, `noise.item.shatter_ceramic`, `noise.explosion`, `noise.explosion.grenade`, `.incendiary`, `.smoke`, `.flash` and `.surface`; respirator hearing penalty.
 - **Doc 10** (exists): at least 32 `idc.potion` appearance descriptors (29 types); `appr.use.always` for drinking and `appr.use.on_effect` with this chapter's `observable` for throwing (§12.4); cursed and blessed consumables and `curse.spoiled` (its §7.5); the self-harm cap (its §8); price identification from §12.1 and §12.2 values; BUC rates for found potions. Doc 10's rows that name `alch.potion.*` and `alch.tx.*` IDs (its §6.1 stored-value example, §7.6 curse-removal table and §8 dangerous-consumables table) refer to this chapter's records and mint no IDs (Canon §19).
-- **Doc 11**: loot and shop tables for every exported item, with `alch.bomb.salt` and `alch.bomb.smoke` in every genre; found raw-liquid bottles (§3.5) in `loot.chest.plain` consumable draws and `shop.apothecary` lines; `item.face.respirator` aliased to `apparatus.respirator.mask` (Canon gaps 8); potion stacking by §16. Doc 11's found-potion weight rows and bomb value rows are loot records attached to this chapter's `alch.potion.*` and `alch.bomb.*` IDs, with the same spelling. The bomb values there equal §13.2, and those rows mint no IDs.
-- **Doc 12**: GPV `liquid_viscosity_bp` and `gas_dissipation_bp`; genre liquid lists, red-ink pools, `secret.room.ink_well`, font basins with their `fonts` records (§12.5), labs and H, F and M nodes.
-- **Doc 13**: creature `blood_liq` and the tags §3.3 reads (spirit, cephalopod, irradiated, earthen); ingredient drops; NPC potion use through `apply_alch_effect`; `request_spawn` for the wellspring outcome; Editor erasure (§10.6) matching red-ink unwriting. `elite.miasmic`'s "1000 ml of `gas.miasma`" is concentration 10 by `place_gas_ml`, below `GAS_CONTACT_CONC`; this chapter reads it as one saturated cell, `emit_gas_volume(cell, gas.miasma, 1)` (Canon gaps 18).
-- **Docs 14, 16, 17, 18**: doc 14's provisional kit IDs, which doc 11's kit rebinding table maps onto this chapter's (the fire flask to `alch.bomb.firebomb`, the poison flask to `alch.potion.toxic_gas`, the empty flask to `apparatus.vessel.flask`); replication of payload patches and emitters; brewing preview, toxicity meter and filter gauge; text keys, adjectives and §14 skin names.
+- **Doc 11**: loot and shop tables for every exported item, with `alch.bomb.salt` and `alch.bomb.smoke` in every shop and every genre's loot pool (§13.2); found raw-liquid bottles (§3.5) in `loot.chest.plain` consumable draws and `shop.apothecary` lines; the loot records of the three respirators on their own `apparatus.respirator.*` IDs as face accessories, values 15, 40 and 90 (doc 11 §3.4; triage C-26: no alias and no `item.` respirator ID); potion stacking by §16. Doc 11's found-potion weight rows and bomb value rows are loot records attached to this chapter's `alch.potion.*` and `alch.bomb.*` IDs, with the same spelling. The bomb values there equal §13.2, and those rows mint no IDs.
+- **Doc 12**: GPV `liquid_viscosity_bp` and `gas_dissipation_bp`; genre liquid lists, red-ink pools, `secret.room.ink_well`, font basins with their `fonts` records (§12.5), labs and H, F and M nodes; `st.unmoored`, which counts failed potions through doc 06's counter (§9.9).
+- **Doc 13**: creature `blood_liq` and the tags §3.3 reads (spirit, cephalopod, irradiated, earthen); ingredient drops; NPC potion use through `apply_alch_effect`; `request_spawn` for the wellspring outcome; Editor erasure (§10.6) matching red-ink unwriting; gas amounts stated in saturated cells through `emit_gas_volume`, such as `elite.miasmic`'s `emit_gas_volume(cell, gas.miasma, 1)` (triage C-22).
+- **Docs 14, 16, 17, 18**: doc 14's kits, which name this chapter's IDs directly (`alch.potion.*`, `alch.bomb.firebomb`, `apparatus.vessel.flask`, `apparatus.mortar`, `apparatus.alembic`; triage C-02); replication of payload patches and emitters; brewing preview (doc 17 §6.3), toxicity meter and respirator filter gauge; text keys, adjectives and §14 skin names.
 
 ## Canon gaps
 
-1. **Canon version.** The header conforms to canon-1.4. Checked against 1.3: potions are ordinary components for World Laws (none is `law_bound`), seam zones change `local_axiom` for §9.9 as for any component, and a potion's Contradiction failure counts toward `st.unmoored` (Canon §5.11). Checked against 1.4: reactions, detonations and bombs break only `destructible` blocks; red-ink unwriting erases only Errata placeables, through doc 03 §13.8; vaporizers and casks are carried items, never placed blocks; ingredient M sources are resource nodes.
-2. **Contact volume.** Canon §12.1 says at least 100 ml; doc 03 stores whole 1000 ml units, so any non-zero unit meets it (doc 03 gaps G2). Shattered vessels round up (§2.3), so every shattered dose makes contact. No canon change is needed.
-3. **Gas contact and respirators.** Canon gives no concentration for "the eye cell holds the gas". Adopted doc 03's 500 (5%), and linear concealment for every gas (Canon §12.2 states it for smoke). Canon §12 says a respirator makes gases breathable; this chapter also lets a working respirator block every inhaled contact row, including miasma's 20 `st.poisoned` buildup, and gives respirators a filter (§4.3). Requested: Canon §12 names the filter and the inhaled-row block.
-4. **Frost on small puddles.** Canon §12.1 turns frosted water into `block.ice`; doc 03 requires 100 units, so smaller puddles do not freeze. Adopted for every ice-freezing liquid; lava and molten metal turn to basalt or slag only at 50 units or fewer (§5.2).
-5. **Supernatural alchemy dependency.** Canon §5.3's default table lists supernatural alchemical effects as `arcana` and says dependencies come from the skin. Decided: the skin of a supernatural effect depends on its origin genre's aether axiom, the spell-glyph rule, so dan pills depend on VERVE and stims on TECHNE; `mythos` and `verve` effects stay fixed. Requested: Canon §5.3's row says so.
-6. **Uncursed cure and incubation.** Canon §16.4 names a blessed cure potion for afflictions. Decided: an uncursed `cure` ends `st.incubating`; only a blessed cure removes an affliction that has taken hold.
-7. **Item template namespaces.** `item.` belongs to doc 11. Potions use `alch.potion.`, bombs `alch.bomb.`, apparatus, vessels and respirators `apparatus.`, since `cat.potion`, `cat.ingredient` and `cat.container` are doc 08's.
-8. **Respirator archetype.** No doc owns `slot.face` respirator archetypes, and doc 11 lists `item.face.respirator` as a `cat.accessory` loot record with "gases breathable" and no filter. Decided: the mechanics live in `apparatus.respirator.*`, and doc 11's record is a Canon §1.1 alias of `apparatus.respirator.mask`.
-9. **Blood contact.** Canon §12.1 names blood in triggers but gives no contact row. Decided: none.
-10. **Potions and Contradiction.** Canon §5.5 lists failures for docs 05, 06 and 07. Decided: potion use is an activation of the same kind, rolled with keyed `rng.combat` for the primary effect only.
-11. **Doc 04 Alchemy perks.** The earlier draft gave the mastery perks potency, dose and toxicity effects that doc 04 §5.3 does not grant. Conformed to doc 04: perks change reveals, taste reveals, batch size and single-ingredient brewing; potency comes only from `potent_brews`; toxicity falls by the skill factor `10000 − 25 × skill`; mixed seed brews never identify.
-12. **Splash inflation.** Doc 03 `splash` puts at least 1 unit in each of up to 9 cells, so using it for a 250 ml flask made 9 litres and let reusable bottles multiply holy water, mana or red ink without limit. Decided: shattered vessels `deposit` into one cell (§2.3); `splash` serves only dumps of at least 9 units, which never create liquid, and the tar bomb's foam (§13.2), whose tar has no other use.
-13. **Drunk and injected damage.** Canon §10.6 lists no entry point for a damage effect a consumable deals to its drinker or injected target. Decided: step 3 with `D2 = B`, no crit, no additive bucket, no friendly-fire scaling (§7). Requested: Canon §10.6 adds the row.
-14. **Alchemical area hits and crits.** Canon §3.4 gives every hit one crit roll and doc 05 §9.4 rolls one per area target, while the earlier draft made alchemical hits never crit. Decided: thrown splashes and bombs are doc 05 area hits with one crit roll and Canon §6.4 row 12 under `skill.throwing`; environmental blasts (§5.2, §5.6) and DoTs never crit (Canon §10.6).
-15. **Lava thermal freezing.** Doc 03 §6.4 freezes any component of at least 500 units at or below its freeze point, and thermal cells start at ambient (doc 03 §9.1). With lava at 7000 DeciC, every lava pool would solidify on its first liquids run. Decided: lava and molten metal have no thermal freeze point (§3.1).
-16. **`ev.potion_brewed` payload.** Doc 03 §14.2 owns the payload `{ brewer, uid, recipe, apparatus }`; the earlier draft defined a batch payload and also emitted `ev.item_crafted`. Conformed: one event per created item and no `ev.item_crafted` (§9.7).
-17. **Doc 04 `envenom`.** The Shade talent "coat a blade with a potion so the next 5 hits apply it at potency × 5000" restates the coat of §10.3, which every character has. Requested: doc 04 makes `envenom` add 5 coat charges and replace the coat's 5000 buildup factor with 10000.
-18. **Gas quantities in ml.** Doc 13 `elite.miasmic` emits "1000 ml of `gas.miasma`", which `place_gas_ml` converts to concentration 10, below contact. Read as one saturated cell; requested: doc 13 restates it in cells.
-19. **Red ink by mouth.** Doc 12's `secret.room.ink_well` grants one dose as a secret reward. If every red-ink pool granted a dose per drink, the secret would be moot and four sips would give four Marginalia powers. Decided: a raw drink adds 40 meter power (§3.2); full doses come only from `alch.eff.red_dose` and the ink well.
-20. **Overdose cadence.** Canon §12's "3 stacks of `st.poisoned` every 5 s" at 100,000 meets canon decay of 500 per second, so the meter leaves the cap one needs tick later. Read literally: 3 stacks on the first needs tick at the cap and on every fifth consecutive needs tick at the cap (§11.2).
+None open. Canon-1.11 adopted the amendments this chapter requested (liquid units and gas concentration, gas contact at 500 and the working respirator, which blocks every gas contact row, `skin` rows included; the supernatural alchemy dependency; the failed potion and Unmoored; the consumable self-damage entry), and `audit/canon_gaps_triage.md` confirmed this chapter's own rulings (G-118 and G-120 to G-123 for the overdose cadence, triggers, blood, spills and lava; G-142 and G-143 for namespaces and respirators; G-205 for the uncursed cure, Alchemy perks, `ev.potion_brewed` and red ink by mouth; C-19, C-22 and C-26). The rules stand in the body of this chapter.
 
 ## Acceptance tests
 
@@ -1457,10 +1449,10 @@ Rules, data and interfaces:
 12. **Lava and water.** `alch_react((liq.water, 6), Liquid(liq.lava, 120), 150)` returns rule `alch.rx.water_lava`, `consume_a 6`, `consume_b 120`, `set_block block.obsidian`, gas `[(gas.steam, 10000)]`.
 13. **Holy water and red ink.** `alch_react((liq.holy_water, 3), Liquid(liq.red_ink, 1), 150)` consumes 1 and 1 and produces 2 units of water. Radiant damage on a trigger cell with 1 unit of red ink leaves 1 unit of water.
 14. **Red ink erasure.** An Erratum standing in red ink for 600 consecutive ticks gains exactly 2 `st.erasure` stacks; one that stands in it for 285 ticks, leaves for 600 and returns needs 300 more ticks for its first stack; a `fac.editors` member gains none.
-15. **Gas contact and respirator.** Eye cell with `gas.miasma` at 499: no buildup, no breath drain. At 500: `mul_bp(20, S(d))` `st.poisoned` buildup per pulse at 0 toxin resistance, and breath drains. With a cloth respirator at filter 1,800: neither, until the filter reaches 0 after 1,800 ticks.
+15. **Gas contact and respirator.** Eye cell with `gas.miasma` at 499: no buildup, no breath drain. At 500: `mul_bp(20, S(d))` `st.poisoned` buildup per pulse at 0 toxin resistance, and breath drains. With a cloth respirator at filter 1,800: neither, until the filter reaches 0 after 1,800 ticks. With a working mask, `gas.steam` at 10000 in the eye cell applies no DoT and drains the filter by 1 per tick; purify immunity alone does not stop that DoT.
 16. **Steam DoT.** An 85 HP Erratum at 0 fire resistance whose eye cell holds steam at 10000 for 60 ticks loses exactly 425 mHP over 4 pulses.
 17. **Mana surge.** An arcane hit on a trigger cell with 2 units of mana makes a 2 m `dmg.arcane` blast of base 16,000 mHP and consumes both units.
-18. **Quality boundary.** Alchemy 20, ANL 46, FAT 40, T1 mortar: `q_score = 8685 + v`; `v = 317` gives 9002 (`q.normal`), `v = 314` gives 8999 (`q.poor`). The brew draws exactly one `rng.alchemy` value.
+18. **Quality boundary.** Alchemy 20, ANL 46, FAT 40, T1 mortar: `q_score = 8685 + v`; `v = 317` gives 9002 (`q.normal`), `v = 314` gives 8999 (`q.poor`). The brew draws exactly one `rng.alchemy` value, at `seq` 0.
 19. **Apprentice healing.** §9.10's brew yields 1 `alch.potion.healing` with heal 3563 Bp, regenerate 630 ticks, toxicity 22,000, and the party gains type knowledge of `alch.potion.healing`.
 20. **Master haste.** §9.10's brew yields 4 doses: haste 3600 ticks (capped from 3798), shock `base_mhp` 3162 and shocked power 23, restore stamina 10000 Bp (capped from 10436), stored toxicity 13,260 (9,945 applied to this brewer at Alchemy 100), value 93; the effect order is haste, shock, restore stamina.
 21. **Murky draught.** `ing.mint_leaf` + `ing.hemlock` share nothing: the brew yields `alch.potion.draught` with no effects, toxicity 3,000, value 0, and reveals nothing.
@@ -1471,7 +1463,7 @@ Rules, data and interfaces:
 26. **Diminishing returns.** Four Normal healing potions drunk 600 ticks apart heal 3000, 2250, 1500 and 900 Bp of Max HP.
 27. **Contradiction.** The §9.9 invisibility potion drunk in Hardboiled Noir by a Fantasy-origin Erratum with ATN 40 has C = 4, rolls one keyed `rng.combat` failure value at 1000 Bp, and on success lasts 540 ticks.
 28. **Coat.** Viper's Kiss on oil (§13.1) gives 10 charges; each landed hit at `ilvl 5` adds 32 poison buildup against 0 resistance, so the 4th hit applies one `st.poisoned` stack at threshold 100.
-29. **Firebomb.** A Good firebomb made on Folio 5 has `B = 9,315` mHP of fire at step 0 and draws one crit value per target; its spill deposits 1 unit of oil whose blast has environmental base 10,000 mHP.
+29. **Firebomb.** A Good firebomb made on Folio 5 has `B = 9,315` mHP of fire at step 0 and draws one crit value per target, which it ignores (`NO_CRIT`); its spill deposits 1 unit of oil whose blast has environmental base 10,000 mHP.
 30. **Seed brew.** Three `ing.seed_sungrass` with `seed_heal_count = 0` yield an identified `alch.potion.healing` after exactly 4 draws and set the count to 1; the same brew with count 1 rerolls when the 4th draw is below 1000 (5 draws).
 31. **Seed index.** `canon[5]` is `alch.potion.haste`.
 32. **Wellspring.** The §12.5 weights sum to 10,000 and each qualifying drink draws exactly one value.
@@ -1492,12 +1484,16 @@ Rules, data and interfaces:
 47. **Batch.** Alchemy 100 at a station gives batch 4; with `double_batch`, 5; with `double_batch` and `echo.mother_ilse`, 6; field brewing at Alchemy 49 gives 1, and `echo.mother_ilse` alone adds nothing there.
 48. **Liquid transmutation.** `alch.tx.vitriol` with 250 ml water, `ing.vitriol` and 1 essence fills an empty flask with 250 ml of `liq.acid`; it is refused when the only empty vessel is a waterskin (leather conflicts with `corrosive`).
 49. **Payload IDs.** With `next_payload_id = 65535` and ID 1 in use, the next two payloads get 65535 and 2; with 512 active, a new payload first removes the one with the smallest `(expires_tick, id)`.
-50. **Throw crits.** A thrown `alch.potion.liquid_flame` whose splash hits 3 NPCs draws exactly 3 keyed `rng.combat` crit values; the spilled oil's blast draws none.
+50. **Throw crits.** A thrown `alch.potion.liquid_flame` whose splash hits 3 NPCs draws exactly 3 keyed `rng.combat` crit values and applies none of them (`NO_CRIT`); the spilled oil's blast draws none.
 51. **Trigger matrix.** For every liquid, the §5.2a row equals the result of applying §5.2's rules to its §3.1 record (a generated-table test).
 52. **Brew events.** A 3-dose brew emits exactly 3 `ev.potion_brewed` events in ascending `uid` and no `ev.item_crafted`.
 53. **Tasting.** Tasting `ing.bloodmoss` heals 300 Bp of Max HP and adds 2,000 toxicity; a second taste 600 ticks later heals 225 Bp.
 54. **Reaction once-outputs.** `alch_react((liq.water, 6), Liquid(liq.lava, 120), 150)` returns one gas entry `(gas.steam, 10000)`, not 6; with the cell's block a slab, the same reaction consumes the units and emits the gas but sets no block.
 55. **Fortify cap.** A Peerless, Amplified `fortify_might` brew with a tier-5 calcinator stores at most 20 points, and a Peerless Extended one at most 7200 ticks.
+56. **Envenom.** A Shade with `talent.shade.envenom` coating the §13.1 Viper's Kiss (oil base, Alchemy 40) gets `mul_bp(5 + 2 + 5, 15000) = 18` charges and `coat_bp` 10000, so each landed hit adds poison buildup `mul_bp(59, 10000) = 59` before Canon §11.2; without the talent the coat has 10 charges and adds 29.
+57. **Failed potion.** An `alch.potion.invisibility` whose failure roll fails is consumed: drunk at Alchemy 0, it applies no `st.invisible` and adds 10,000 toxicity; thrown, it deposits 1 unit of water and applies no splash. Each failure calls `note_contradiction_failure(t)` once, and three failed potions by one Erratum within 600 ticks apply `st.unmoored` for 300 ticks (doc 12). A healing potion (dependency none) never draws a failure value.
+58. **Keyed `seq`.** A brew started on tick `t` draws `v` from `keyed_rng("rng.alchemy", folio, brewer, t, 0)`; a seed brew uses `seq` 1, the `transmuter` `seq` 2 and a font drink `seq` 3, so a brew and a font drink that one Erratum starts on the same tick draw independent values.
+59. **One evaluation per use.** A thrown Aerosol potion whose failure chance is above 0 makes exactly one `rng.combat` failure draw, at its throw's doc 05 §1.4 `seq` 0 slot; the payload it creates on impact draws nothing and carries the throw's potency.
 
 ## Invariants annex
 
@@ -1515,22 +1511,27 @@ W! shared effect ⇔ n(e) ≥ 2 (n = 1 only at skill 100)               W! ≤ 4
 W! quality uses base ANL, FAT                                       N! fortify effects feed brewing power
 N! random failure destroys ingredients                             W! interrupted brew consumes nothing
 W! healing ∧ ward ∈ Bp of recipient Max HP                         W! damage effects follow Canon §10.4 chain
-W! supernatural effect dep := {origin.aether_axiom} | mythos | verve  W! mundane effect dep = ∅
+W! supernatural effect dep := {origin.aether_axiom} ∨ {arcana}       W! mundane effect dep = ∅
+W! holy|unholy|curse effect dep := mythos ∧ inspire dep := verve      W! dep of mythos|verve effects never changes with the skin
 W! beneficial splash → fac.errata only                              W! harmful area effects × FF_AREA_BP on Errata
 W! res.toxicity ∈ 0..=100,000 ∧ decay (500 + toxicity_decay)/s       W! excess over cap → toxin damage
 W! DR per (recipient, effect) within 1800 ticks                     N! thrown|coated|vapor effects add toxicity
 W! brewed items know.identified ∧ brewing canonical type ⇒ type identified
 W! doc 04 perks and talents apply only at the marked hook points       W! cursed potions := doc 10 §7.5
-W! seed brew identifies ⇔ 1 seed type                                W! respirator blocks inhaled rows only
+W! seed brew identifies ⇔ 1 seed type                                W! working respirator blocks every gas row ∧ vapor; purify: inhaled only
 N! carried vessels shatter from hits                                N! red ink appears in generated loot
 W! iteration order := ascending EntityId | uid | cell order         N! HashMap|HashSet in 08 state
 N! splash for shattered vessels                                     N! liquid gain from fill|pour|dump|empty
 W! raw-drink beneficial parts ≤ 1 per 600 ticks per (drinker, liquid) W! wellspring roll ⇔ font cell ∧ uses > 0
 N! thermal freeze of lava | molten metal                            W! frost on lava|metal ⇒ basalt|slag only at ≤ 50 units
-W! thrown splash|bomb := doc 05 area hit, 1 crit draw per target    N! crit on environmental blast | DoT
+W! thrown splash|bomb := doc 05 NO_CRIT area hit, 1 ignored crit draw per target    N! crit on environmental blast | DoT
 W! drunk|injected damage enters step 3 with D2 = B                 W! self-harm per dose ≤ 3000 Bp of Max HP; self control ≤ 300 ticks
 W! dose toxicity := tox × (10000 − 25 × skill) × iron_stomach × kin  W! brew_bonus ∈ {10000, 11000}
 W! batch ≤ 4 before double_batch and mother_ilse                    W! ev.potion_brewed once per created item ∧ N! ev.item_crafted
 W! red ink by mouth := 40 meter power                               W! red_dose ⇒ add_affliction_dose; N! red_dose in payloads
-W! reactions|detonations break only destructible blocks              W! red-ink unwriting := erase_placed only
+W! reactions|detonations break only block.tag.destructible blocks    W! red-ink unwriting := erase_placed only
+W! rng.alchemy seq := 0 brew|bomb, 1 seed brew, 2 transmuter, 3 font   W! ≤ 1 Contradiction evaluation ∧ ≤ 1 failure draw per use action
+W! failed potion := consumed; toxicity (drunk|injected) | base spill (thrown); note_contradiction_failure once
+W! envenom ⇒ coat charges + 5 ∧ coat_bp 10000                       N! item wear | durability in 08 (filters are refillable charges)
+N! invader blood_liq = liq.red_ink ∧ N! invader red-ink death spill
 ```
