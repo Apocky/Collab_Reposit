@@ -3,8 +3,8 @@
 import re, json, sys, itertools, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from wps import WPS
-HEAD = json.load(open(pathlib.Path(__file__).parent / 'headings.json'))
-doc = open(sys.argv[1]).read()
+HEAD = json.load(open(pathlib.Path(__file__).parent / 'headings.json', encoding='utf-8'))
+doc = open(sys.argv[1], encoding='utf-8').read()
 errs = 0
 # 1. citations "doc NN §x (Title)" / "doc NN §x, Title" / "Canon §x (Title)"
 norm = lambda s: re.sub(r'[`]', '', s).strip().lower()
@@ -63,7 +63,7 @@ print('cascade: min eligible', worst, 'stage counts', stages)
 if worst < 3: errs += 1
 e, st = elig(5, [None, 'MF', 'GH', 'CP', 'WW'], 'N'); print('example', e, st)
 # 3. Folio-1 map from doc 12 §5.2
-t12 = open(__import__('pathlib').Path(__file__).resolve().parents[2] / 'spec' / '12_WORLD_GENERATION_GENRES.md').read()
+t12 = open(__import__('pathlib').Path(__file__).resolve().parents[2] / 'spec' / '12_WORLD_GENERATION_GENRES.md', encoding='utf-8').read()
 sec = t12.split('### 5.2 Core edge weights', 1)[1].split('###', 1)[0]
 rows = [l for l in sec.splitlines() if re.match(r'^\| [A-Z]{2} \|', l)]
 order = ['MF', 'GH', 'CH', 'SO', 'CP', 'PA', 'WW', 'HN', 'WX', 'SP', 'FT', 'MA']

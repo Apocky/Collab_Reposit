@@ -103,10 +103,10 @@ def has_float(v):
 def main():
     as_json = "--json" in sys.argv
     only = sys.argv[sys.argv.index("--chapter") + 1] if "--chapter" in sys.argv else None
-    canon = (SPEC / "00_CANON.md").read_text()
+    canon = (SPEC / "00_CANON.md").read_text(encoding="utf-8")
     own = load_ownership(canon)
     known_ns = set(p.split(".")[0] for p in own)
-    docs = {chapter_num(p): p.read_text() for p in chapters()}
+    docs = {chapter_num(p): p.read_text(encoding="utf-8") for p in chapters()}
     defs = collections.defaultdict(set)  # id -> chapters
     for n, t in docs.items():
         for i in defined_ids(t, n, own) if n != "00" else ids_in(t):

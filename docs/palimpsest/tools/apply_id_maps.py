@@ -10,7 +10,7 @@ import json, re, sys, pathlib
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 maps = {}
 for p in sorted((ROOT / "audit").glob("map_*.json")):
-    for old, new in json.loads(p.read_text()).items():
+    for old, new in json.loads(p.read_text(encoding="utf-8")).items():
         if old == new:
             continue
         if old in maps and maps[old] != new:
@@ -26,7 +26,7 @@ final = {o: resolve(o) for o in maps}
 dry = "--dry-run" in sys.argv
 total = 0
 for p in sorted((ROOT / "spec").glob("[0-9][0-9]_*.md")):
-    t = p.read_text()
+    t = p.read_text(encoding="utf-8")
     n = 0
     def tick(m):
         global n
@@ -48,5 +48,5 @@ for p in sorted((ROOT / "spec").glob("[0-9][0-9]_*.md")):
         print(f"{p.name}: {n} replacements")
         total += n
         if not dry:
-            p.write_text(t2)
+            p.write_text(t2, encoding="utf-8")
 print(f"mappings={len(final)} replacements={total} dry_run={dry}")

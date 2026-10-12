@@ -9,7 +9,7 @@ sys.path.insert(0, str(HERE))
 from wps import WPS, MILESTONES, RETIRED
 
 SPEC = HERE.parents[1] / 'spec'
-HEAD = json.load(open(HERE / 'headings.json'))
+HEAD = json.load(open(HERE / 'headings.json', encoding='utf-8'))
 BYID = {w['id']: w for w in WPS}
 EA_GATE = 102
 MS_ORDER = [m for m, _, _ in MILESTONES]
@@ -126,7 +126,7 @@ def lane_schedule(ids):
 
 def main():
     tpl, out = sys.argv[1], sys.argv[2]
-    text = open(tpl).read()
+    text = open(tpl, encoding='utf-8').read()
     ea = [w for w in WPS if w['tier'] == 'EA']
     alls = WPS
     later = [w for w in WPS if w['tier'] != 'EA']
@@ -182,12 +182,12 @@ def main():
     for f in sorted(SPEC.glob('[0-1][0-9]_*.md')):
         n = f.name[:2]
         if f.name.startswith('16_NETCODE') or n == '00' or int(n) > 18: continue
-        sec = f.read_text().split('## Acceptance tests', 1)[1].split('\n## ', 1)[0]
+        sec = f.read_text(encoding='utf-8').split('## Acceptance tests', 1)[1].split('\n## ', 1)[0]
         nums = [int(m.group(1)) for m in re.finditer(r'^(\d+)\.\s', sec, re.M)]
         missing = sorted(set(nums) - cov[n] - set(RETIRED.get(n, [])))
         extra = sorted(cov[n] - set(nums))
         report.append((n, len(nums), missing, extra))
-    canon = (SPEC / '00_CANON.md').read_text().split('## 21. Acceptance tests', 1)[1].split('\n## ', 1)[0]
+    canon = (SPEC / '00_CANON.md').read_text(encoding='utf-8').split('## 21. Acceptance tests', 1)[1].split('\n## ', 1)[0]
     cn = [int(m.group(1)) for m in re.finditer(r'^(\d+)\.\s', canon, re.M)]
     report.append(('00', len(cn), sorted(set(cn) - cov['C']), sorted(cov['C'] - set(cn))))
     cov_rows = ["| Chapter | Tests on disk | Covered by WPs | Retired |", "|---|---|---|---|"]
@@ -225,7 +225,7 @@ def main():
     lines.append("```")
     text = text.replace('{{MERMAID}}', "\n".join(lines))
     text = text.replace('{{N_EDGES}}', str(len(edges)))
-    open(out, 'w').write(text)
+    open(out, 'w', encoding='utf-8').write(text)
     print("crit", L, [wid(p) for p in path], "ends", add_wd(START, L), file=sys.stderr)
     print("EA days", tot_ea, "all", tot_all, "WPs", len(WPS), file=sys.stderr)
 
