@@ -1,0 +1,460 @@
+{
+ "chapter": "14",
+ "status": "partial",
+ "canon_requests": [
+  {
+   "section": "Canon §3.5 (offer context_uid)",
+   "old": "`context_uid` is the uid or `EntityId` of the offering object",
+   "new": "`context_uid` is the uid or `EntityId` of the offering object, or the Folio index for a room fixture that has neither (the Colophon boon altar, doc 14 §3.9)",
+   "why": "The Colophon boon altar is a room fixture with neither a uid nor an EntityId; doc 14 §3.9 keys its offers on the Folio index f (Canon gaps item 1)."
+  },
+  {
+   "section": "Canon §17.1, `GLYPH_LIBRARY_START` row",
+   "old": "(row end)",
+   "new": "append: \"; runs on `unlock.daily_baseline` (§13.6) offer the 52 glyphs of doc 06's `base` pool in place of the account library (doc 14 §5.7)\"",
+   "why": "Canon §13.6 runs Daily and Weekly runs on unlock.daily_baseline, which holds no account unlocks, while §17.1 has each Erratum pre-learn 2 glyphs from the account library; doc 14 §5.7 offers the base pool so every player of a shared seed has the same choice (Canon gaps item 2)."
+  },
+  {
+   "section": "Canon §17.1, `ERASURE_STEP` row",
+   "old": "on tick `folio_entry_tick + 43200 + 1800 × (k - 1)`, so the tenth stack lands 990 s after entry",
+   "new": "on tick `clock_start + 43200 + 1800 × (k - 1)`, where `clock_start` is the Folio entry tick, or the Editor's death tick in a boss Folio (doc 14 §3.8), so the tenth stack lands 990 s after `clock_start`",
+   "why": "§11.6 pauses accrual in boss Folios while the boss lives without saying whether the pause shifts the schedule; doc 14 §3.8 (and docs 13 and 17, doc 17 G29) start the clock at the Editor's death (Canon gaps item 3)."
+  },
+  {
+   "section": "Canon §17.1, new paragraph after **Abridged mode**",
+   "new": "**Second Edition** (`mode.second_edition`, owner 14; DECISIONS 100 to 108, 117). An Ur-Text victory of a Standard or Abridged run may continue into 15 Second Edition Folios (doc 14 §8.9). Second Edition Folio `n = 1..=15` is run Folio `f = f_ur + n`, where `f_ur` is the Ur-Text Folio's index; `EntityId`s, uids and per-Folio streams use `f`. Folio `n` is in Volume `6 + floor_div(n - 1, 5)`, its boss Folios are `n = 5, 10, 15`, each ending on a revised Editor, with the Author after the revised Editor of `n = 15`, and its depth `d = 25 + 2n` feeds `P`, `T`, `H`, `S`, `ilvl` and `enemy_level`. Each Folio is written in two fused genres (doc 12). Second Edition Folios are not Marginalia Folios.",
+   "why": "DECISIONS 105, 106 and 117 set the Second Edition structure, depth and lattice rule, but Canon §13.7, §13.8 and §17.1 define depth, item level, FINAL_FOLIO, BOSS_FOLIOS, GENRE_REPEAT_RULE and ENH_CAP only for the main run, Abridged and Marginalia (Canon gaps item 4; doc 11 Canon gaps item 2)."
+  },
+  {
+   "section": "Canon §17.1 rows `FINAL_FOLIO`, `BOSS_FOLIOS`, `GENRE_REPEAT_RULE`",
+   "old": "FINAL_FOLIO: 25 (15 in Abridged), always `genre.ur_text`; BOSS_FOLIOS: (current row); GENRE_REPEAT_RULE: no genre twice in the same Volume; at most 3 appearances per run before Marginalia",
+   "new": "`FINAL_FOLIO` becomes \"25 (15 in Abridged), always `genre.ur_text`; a run continued into Second Edition ends at Folio `f_ur + 15` (doc 14 §8.9)\"; `BOSS_FOLIOS` appends \", and Second Edition Folios `n = 5, 10, 15`\"; `GENRE_REPEAT_RULE` becomes \"no genre twice in the same Volume (in Second Edition, no fused pair twice in the same Volume); at most 3 appearances per run before Marginalia or Second Edition\"",
+   "why": "Same as the Second Edition paragraph: the run constants must admit the 15 Second Edition Folios, their boss Folios and the per-pair no-repeat rule of DECISIONS 117 (Canon gaps item 4)."
+  },
+  {
+   "section": "Canon §13.7 (`ENH_CAP` and Emendation `ilvl`)",
+   "old": "`ENH_CAP = 15` in the main run and `15 + floor_div(d_current - 25, 5)` in Marginalia; sets `ilvl = max(ilvl, current Folio index)`",
+   "new": "`ENH_CAP = 15` while `d_current <= 25` and `15 + floor_div(d_current - 25, 5)` above it (Marginalia and Second Edition); sets `ilvl = max(ilvl, d_current)`",
+   "why": "Second Edition Folios run at depth 27 to 55 while their Folio index is f_ur + n, so the cap and the Emendation ilvl must follow the depth, not the index (Canon gaps item 4; doc 14 §8.9 Folios)."
+  },
+  {
+   "section": "Canon §13.8, first bullet (item level)",
+   "old": "Item level `ilvl` is the Folio index where the item was generated: 1 to 25 for the main run, 26 or more in Marginalia",
+   "new": "Item level `ilvl` is the depth `d(f)` (doc 14 §3.1) of the Folio where the item was generated: 1 to 25 in the main run and Abridged, `f` in Marginalia, 27 to 55 in Second Edition",
+   "why": "Abridged and Second Edition decouple depth from the Folio index; §13.8.2's gear_hp then applies to Second Edition armor through its ilvl unchanged (Canon gaps item 4)."
+  },
+  {
+   "section": "Canon §17.10 (new) \"Asynchronous traces\"",
+   "new": "Opt-in marginal notes and ink-stain death echoes that other players left in Folios of the same seed or genre (DECISIONS 96; docs 14, 16, 17) are presentation data. Like §3.8's generators, they never read or advance a simulation stream, and they never enter simulation state, saves, `state_hash`, score or any account counter. A ranked run shows no trace stored under its own seed (doc 14 §8.1).",
+   "why": "DECISIONS 96 names Canon §3 and §17, which say nothing of traces; doc 14 §8.1 applies the presentation-only rule (Canon gaps item 5)."
+  },
+  {
+   "section": "Canon §5.8 (Law discovery bullet)",
+   "old": "the Codex then remembers it",
+   "new": "the account's Index (doc 14 §5.5) then remembers it",
+   "why": "Canon §20 defines the Codex as the battle pass and triage G-197 names the account encyclopedia the Index; doc 14 §5.5 keeps discovered Laws with the Index (Canon gaps item 6; doc 17 G28 proposes the same)."
+  },
+  {
+   "section": "Canon §17.9, Outcome (Redaction respawn)",
+   "old": "then respawns at the Folio entrance with 50% Max HP",
+   "new": "then every Erratum that is not a ghost respawns at the Folio entrance with 50% Max HP; a ghost stays a ghost and resurrects at the next `ev.folio_entered` (§17.6)",
+   "why": "§17.9 says every Erratum respawns while §17.6 resurrects a ghost only at the next ev.folio_entered; doc 14 §3.10 Redaction keeps a Ghost slot a Ghost (Canon gaps item 7)."
+  },
+  {
+   "section": "Canon §17.6, third bullet (ghost resurrection)",
+   "old": "(bullet end)",
+   "new": "append: \"At the entry of Second Edition Folio 1 every ghost resurrects as if its Remains were carried (doc 14 §8.9, DECISIONS 107).\"",
+   "why": "DECISIONS 107 returns every ghost with its character as it was at death, while §17.6 costs a ghost whose Remains were left behind 25% Max HP and one equipped item (Canon gaps item 8)."
+  },
+  {
+   "section": "Canon §3.2, stream table, `rng.run` \"Draws for\"",
+   "old": "Daily setup and Weekly mutators (`folio_index = 0`), marginal notes and Marginal mutations",
+   "new": "Daily setup and Weekly mutators (`folio_index = 0`), marginal notes, Marginal mutations, and the audience Chaos options on its labeled sub-stream `chaos` (doc 14 §8.1)",
+   "why": "Doc 14 §8.1 draws the audience Chaos options on rng.run's labeled sub-stream chaos, which never advances the parent (Canon gaps item 9)."
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "04",
+   "request": "§2.5 shade role list: replace \"short blade, 5 lockpicks, light armor set, smoke bomb\" with \"short blade, lockpicks, light armor set, smoke bomb\". Doc 14 §2.4.2 binds the Shade role \"lockpicks\" to one `item.tool.lockpicks` (a carried tool that no attempt consumes, doc 09 §13.2); doc 04 line 226 still says 5 (doc 14 Interface row 04; log line 19)."
+  },
+  {
+   "to": "04",
+   "request": "§2.1 (creation output): state that the Custom path's output is doc 14 §1.2's `ErratumChoice::Custom { kin, origin, calling, subs: [u8; 24] (doc 04 §2.2 final sub-attribute values in Canon §6.1 table order), human_skill: Option<Id32> (kin.human's +5 skill, None otherwise) }`, validated by doc 04 before Commit or SlotJoin, and that the chosen appearance preset, base and marking swatch and the display name are presentation data outside it (doc 14 §1.3, DECISIONS 97). Doc 04 has no `ErratumChoice` text today (grep)."
+  },
+  {
+   "to": "12",
+   "request": "§5.4 Volume and run rules: adopt DECISIONS 115 as doc 14 §3.6 item 2 states it: the exit draw just before the forced Ur-Text Folio (the next Folio has depth 25: Standard Folio 24, Abridged Folio 14) still happens for stream consistency, is exempt from the Volume no-repeat rule and the per-run cap, so it always has 3 eligible candidates, and its doors are replaced by one `genre.ur_text` door that no player sees past (doc 14 test 58). Doc 12 has no 'exempt' or DECISIONS 115 text (grep)."
+  },
+  {
+   "to": "12",
+   "request": "§5.6 Folio 1 candidates / Rule F1: adopt DECISIONS 116 as doc 14 §2.2 Rule F1 states it: when the host Origin's genre (or the core genre a secret Origin maps to) is not one the build ships, Folio 1 uses the shipped core genre with the greatest §5.2 edge weight from it, ties to the first in ascending genre ID order (Canon §1.11); doc 14 test 58 asserts it. Doc 12 has no DECISIONS 116 text (grep)."
+  },
+  {
+   "to": "12",
+   "request": "Second Edition fused Folios (DECISIONS 101, 117; doc 12 G19 open): supply each Second Edition Folio's fused genre pair, Folio 1's included, and its exits; apply the Volume no-repeat rule per fused pair (a Volume never repeats a pair, a genre may appear in two different pairs); apply no run-wide 3-appearance cap after the Ur-Text Folio; report the pair to doc 14 as `genre` = the pair's genre with the lower Canon §5.2 row and `fused` = the other (stored in `FolioRecord.genre` and `FolioRecord.fused`, doc 14 §1.2, §8.9 Fused Folios); and let the pos-4 Binding-door exit preview name the revised Editor that doc 13 §9.4 maps from the pair's dominant axiom (doc 14 §8.9 Revised Editors; Interface row 12). Doc 14 §3.1 gives d = 25 + 2n for these Folios so doc 12 §2.2's scaling works unchanged."
+  },
+  {
+   "to": "12",
+   "request": "§23 Prologue: doc 14 §11 passes the chosen Origin's genre as `GenInput.prev_genre` so §23 builds the authored L1-L2 bleed zone of the chosen Origin; doc 12 line 1458 still says the Prologue has 'no bleed plan'. Either state the authored bleed zone from `prev_genre` or, if DECISIONS 132 (no Prologue) lands first, retire the Prologue chain with doc 14 (doc 14 Interface row 12, test 37)."
+  },
+  {
+   "to": "13",
+   "request": "§9.4 verify the three doc 14 §8.9 readings and state them where missing: (1) the Author's death is the Final Folio's Editor death for doc 14 §3.2, §3.8 and §4.2 (the Erasure clock stays paused until the Author dies; the Folio pays two Editor kills to doc 15 `editor_kills_present` and counts once for `S_editor`); (2) `gp.final_hp_bp` and `final_phase_extra` apply to the Author only, not to `boss.ur_editor_rev` (doc 13 line 1326 applies final_phase_extra to the Author; the exclusion of ur_editor_rev is not stated); (3) each boss Folio's first Editor is recorded in `FolioRecord.editor` at entry, so doc 13 names it to doc 14 at Folio entry (doc 14 §1.2, test 53)."
+  },
+  {
+   "to": "15",
+   "request": "§2.2: read a fused Second Edition Folio's genre from `FolioRecord.genre` (the pair's genre with the lower Canon §5.2 row) with `FolioRecord.fused` the other genre (doc 14 §8.9 Fused Folios; doc 15 has no 'fused' text today). §2.2 / §6.2: grant `cosm.frame.ironman` once per account to each player with `victory_present = 1` on an Ironman clear (doc 14 §8.9 Victory), and count the Second Edition Final Folio's two Editor kills (boss.ur_editor_rev and boss.author) in `editor_kills_present` (doc 14 §8.9 Revised Editors)."
+  },
+  {
+   "to": "16",
+   "request": "§5.7 session intents: add `AudienceResult { kind: u8, choice: u8 }` (kind 0 door, 1 boon, 2 Chaos; doc 14 §8.1 Audience votes), logged by the host's client, applied with the other session intents before player intents on the tick it is logged and stored in the replay log (Canon §2.4); specify the vote service that collects Twitch and YouTube votes for slot 0's doors, boons and Chaos options and closes each vote, closing an open boon vote without a result on a reroll (doc 14 §3.9). §11.6: refuse the ranked token for a run with `mode.audience_votes` (as for `mode.invasion_open`; doc 14 §8.1, §9.4). This closes doc 16 O2's vote path; doc 14 Interface row 16."
+  },
+  {
+   "to": "16",
+   "request": "§6.14 `LobbyPick` (line 418) and §9.1 `JoinCharacter` (line 891): add `appearance: Option<Appearance>` (doc 18 §5.6 `Appearance { preset, base, marking }`; `None` for an Echo) and the display name beside `erratum: ErratumChoice`; relay both in `PartyState` and store them in the replay file for the viewer, never in simulation state or `state_hash` (doc 14 §1.3, test 56; DECISIONS 97)."
+  },
+  {
+   "to": "16",
+   "request": "Trace service (DECISIONS 96; doc 16 O2): store opt-in grammar-built marginal notes and ink-stain death echoes under the run seed and the Folio genre; show them in other players' Folios of the same seed or genre; never send a trace stored under a ranked run's own seed to that run (genre traces from other seeds still show); send none to the Prologue; traces are presentation only and never enter simulation state, saves, `state_hash`, score or account counters (doc 14 §8.1 Asynchronous traces, test 57; Canon gap 5)."
+  },
+  {
+   "to": "17",
+   "request": "Replace the 'Later screens' placeholder (line 786) with the screens doc 14 §8.1 now defines: the `mode.audience_votes` toggle in RunSetup (hidden in Daily, Weekly Gauntlet and the Prologue; a run with it is unranked); the vote panels of the three kinds (0 door: the lit doors; 1 boon: the stored offer's boons 0..=2, reopened after each reroll; 2 Chaos: the 3 drawn mutators in draw order, at every Folio entry except final_folio); the streamer-safe mode hiding player names and marginal notes; the trace opt-in (leave and see, separately, off by default), note writing from doc 18's grammar and trace display. Doc 16 must specify the services first (doc 14 Interface row 17)."
+  },
+  {
+   "to": "18",
+   "request": "Add the grammar record for trace marginal notes (DECISIONS 96): a Tracery-style grammar like §8.7's, producing the fixed-phrase notes players leave at a position; presentation only, never read from or written to simulation state (doc 14 §8.1 Asynchronous traces; Interface row 18). Doc 18 has no trace text today (grep). Also confirm §5.6 `Appearance { preset, base, marking }` is read from doc 16's LobbyPick/JoinCharacter and doc 14 `RunSummary.appearance`, never from `ErratumChoice` or `SlotState` (doc 14 §1.3)."
+  },
+  {
+   "to": "21",
+   "request": "Achievements and Early Access scope: doc 14 §10 has 59 achievements paying 1,960 Quires and 6,440 Ink (test 17; `ach.pacifist` added), not 58; under DECISIONS 114, 118 and 119 doc 14 §2.3 ships every base mode of §8.1 (Standard, Endless, Novella, Abridged, Daily, Weekly, Seeded, Custom) and Second Edition at Early Access, so every achievement registers at Early Access (none reads invasions or audience votes) and tests 2, 7, 8, 27, 28, 44 are Early Access tests. Update line 102 '(f) Achievements' (46 of 58, the 12 listed 1.0-only IDs), line 131 (doc 14 row: move Standard, Endless, Second Edition and the achievements to the EA column; keep only streaming votes, traces and invasions post-EA), line 184 ('All 58 achievements register'), line 484 and line 519. Note DECISIONS 141 (about 40 curated achievements) will change these totals again once doc 14 applies it."
+  },
+  {
+   "to": "01",
+   "request": "Canon gaps G2 (line 897) and Interface rows 12 and 13 (lines 885-886): doc 14 §8.9 now also defines the revised-Editor placement (via doc 13 §9.4), the fused-pair reporting (`FolioRecord.genre` lower Canon §5.2 row, `fused` the other), the Ironman rule (no `ev.player_died` in Second Edition Folios only) and `victory_present = 0` on a forfeit; record that doc 14's offer decision (every Ur-Text victory, the first included) is a product question pending the owner's confirmation (doc 14 harvest pq_se_offer)."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "pq_se_offer",
+   "question": "Is the \"Second Edition\" door offered at every Ur-Text victory of a Standard or Abridged run, the account's first included, or only once the account already holds an Ur-Text clear? DECISIONS 100 ('after the first Ur-Text clear') and 108 ('offered at the Ur-Text clear') read both ways; doc 01 G2 asked doc 14 to decide.",
+   "default_applied": "Every Ur-Text victory of mode.standard or mode.abridged offers the door, the account's first included (doc 14 §8.9 Offer, test 53), because DECISIONS 102 continues the same Errata straight into it.",
+   "options": [
+    "Every Ur-Text victory, the first included (applied)",
+    "Only when the account already holds first_ur_text_victory (the first clear ends at Close the Book)",
+    "Every victory, but the first shows the door locked with its stakes as a preview"
+   ]
+  },
+  {
+   "id": "pq_se_abandon",
+   "question": "Does an Abandon or a run.end.abandoned_version during Second Edition forfeit the Ur-Text clear like a party wipe (DECISIONS 108 names only the wipe)?",
+   "default_applied": "Yes: every non-victory end of a Second Edition run forfeits the clear (score_at_victory discarded, victory_bp = 10000, victory_present = 0, no Grade, milestone or achievement that needs a victory), so the stake cannot be dodged (doc 14 §8.9 Stakes).",
+   "options": [
+    "Every non-victory end forfeits (applied)",
+    "Only a party wipe forfeits; Abandon and version mismatch keep the Ur-Text clear and score_at_victory",
+    "Abandon forfeits; a version mismatch keeps the clear"
+   ]
+  },
+  {
+   "id": "pq_ironman_scope",
+   "question": "Does the Ironman clear require no ev.player_died in the Second Edition Folios only, or across the whole run including the 25 main Folios?",
+   "default_applied": "Second Edition Folios only: RunSummary.ironman is true for a Second Edition victory with no ev.player_died in any Second Edition Folio (doc 14 §8.9 Victory, §4.6, test 53).",
+   "options": [
+    "Second Edition Folios only (applied)",
+    "The whole run, main Folios included",
+    "Second Edition Folios only and no Ghost at entry"
+   ]
+  },
+  {
+   "id": "pq_abridged_victorychoice",
+   "question": "Should an Abridged Ur-Text victory's Endpaper open the Colophon and the VictoryChoice (\"Second Edition\" and \"Close the Book\" doors) instead of ending the run at once, as before DECISIONS 100?",
+   "default_applied": "Yes, from Early Access: the Abridged Final Folio's Endpaper opens the Colophon, whose lectern opens VictoryChoice; \"Close the Book\" ends the run run.end.victory with victory_bp = 17500 (doc 14 §3.2, §8.2a).",
+   "options": [
+    "Open the Colophon and VictoryChoice (applied)",
+    "End at once and offer Second Edition on the run-end screen",
+    "End at once; Second Edition from Standard only"
+   ]
+  },
+  {
+   "id": "pq_pacifist_achievement",
+   "question": "Keep ach.pacifist (grade 2: 5 pacifications and 0 credited kills in one standard or challenge Folio) as the DECISIONS 62 reward, raising the catalog to 59 achievements (1,960 Quires, 6,440 Ink), or fold pacifism into the Codex marks that DECISIONS 141 introduces?",
+   "default_applied": "ach.pacifist is in §10 with test 52; §10 totals read 59 / 1,960 / 6,440; docs 01 and 15 updated, doc 21 not yet.",
+   "options": [
+    "Keep ach.pacifist in the 59 (applied)",
+    "Fold it into DECISIONS 141's curated ~40 list when that pass lands",
+    "Make it a Codex mark, not a Steam achievement",
+    "Change the threshold (e.g. 10 pacifications)"
+   ]
+  },
+  {
+   "id": "pq_audience_design",
+   "question": "The audience-vote design calls made without a ledger row: only slot 0 (the host at Commit) is the streamer whose doors and boons are voted; the Chaos vote offers 3 Gauntlet-pool mutators (bare_kit excluded) drawn on rng.run's labeled sub-stream chaos; a Chaos mutator applies for the next Folio only and never enters mutator_bp or RunState.mutators; no vote opens in VictoryChoice.",
+   "default_applied": "As stated (doc 14 §8.1 Audience votes, RunState.audience/chaos/chaos_next, test 55).",
+   "options": [
+    "Keep as applied",
+    "Any slot may be the streamer (per-slot opt-in)",
+    "Chaos lasts the rest of the run",
+    "Chaos drawn from the hard mutators too, with the mutator_bp cap"
+   ]
+  }
+ ],
+ "unresolved": [
+  "DECISIONS 130 (resident arcs via Folio quests), 132 (no Prologue), 136 (contextual tips), 137 (first-run achievement) and 141 (about 40 curated Steam achievements) land in doc 14 but were not applied (log: noted, not applied; rows appeared mid-pass, now committed in 2d83dda). On disk §5.6, §11, mode.prologue, PROLOGUE_SEED, room.prologue_l1..l7, enemy.prologue_hunter, margin.first_page, prologue_done, ach.first_page, unlock.set.starter, the 'hidden in the Prologue' clauses, the bleed_on 'outside mode.prologue' clause, the 59-achievement catalog and tests 13, 17, 37, 40, 47, 57 all stand. Needs one coordinated pass across docs 12, 13, 14, 15, 17, 18 (Prologue IDs are consumed by docs 12 §23, 13, 15, 17).",
+  "Canon gaps 1 to 9 hold exact canon-1.12 text; the chapter is written to it but still declares 'Conforms to canon-1.11'. Open until canon-1.12 adopts items 1-9 (Canon §3.2, §3.5, §5.8, §13.7, §13.8, §17.1, §17.6, §17.9, new §17.10).",
+  "Doc 12 has not adopted DECISIONS 115 (forced Ur-Text draw exempt), 116 (Origin fallback) or 117 (per-pair no-repeat), and supplies no Second Edition fused pairs yet (doc 12 G19 open); doc 14 §2.2, §3.6, §8.9 and Interface row 12 assume them (tests 53, 58).",
+  "Doc 16 O2 is open: no AudienceResult session intent, no vote service, no trace service, no appearance/display-name field on LobbyPick (line 418) or JoinCharacter (line 891), and the ranked-token refusal for mode.audience_votes is not stated; doc 17's 'Later screens' (line 786) waits on it; doc 18 has no trace-note grammar.",
+  "Doc 21 cites 58 achievements (46 at EA, 12 at 1.0) at lines 102, 131, 184, 484 and 519 and places Standard, Endless and Second Edition in the 1.0 column; doc 14 §2.3 (DECISIONS 114, 118, 119) and §10 (59 achievements) disagree. DECISIONS 141 will move the total again.",
+  "Doc 04 §2.5 shade kit still reads '5 lockpicks'; doc 14 binds one item.tool.lockpicks (never consumed).",
+  "Doc 12 §23 says the Prologue has 'no bleed plan' while doc 14 §11 and Interface row 12 expect an authored L1-L2 bleed zone from GenInput.prev_genre = the chosen Origin's genre; moot once DECISIONS 132 retires the Prologue.",
+  "Kit values and tests 9 and 38 depend on doc 11 §3 (thrown 6 per unit, grenade_smoke 10, counter_disruptor 14, lockpicks 40) and doc 08 (healing 30, toxic gas 15, purity 20, mortar 10, alembic 15, firebomb 12) base values; a change there forces a recompute.",
+  "No ID was retired by chapter 14 in wave 2 (backticked dotted IDs: 0 removed, 10 added: mode.audience_votes exported; boss.author, boss.editor_v1_rev, boss.editor_v4_rev, boss.ur_editor_rev, cosm.frame.ironman, gp.final_hp_bp, gp.hunter_hp_bp, nar.ending.second_edition, art.preset.<kin_suffix>.<nn> cited from other owners), so no retired-ID consumer requests arise; the Exports count moved 443 to 444 (test 19)."
+ ],
+ "remaining_work": [
+  {
+   "item": "fix:13 §3.8 must follow canon §17.1 and §11.6: stack k at c = 43200 + 1800 × (k − 1), w",
+   "status": "done",
+   "note": "§3.8 on disk: stack k at c = 43200 + 1800 × (k - 1), tenth stack at 59,400 (990 s), exactly one hunter (no 5,400-tick repeat), timeline table 720..990 s, Colophon example at c = 48000; every hunter-scoped rule tests rank.hunter; test 4 extended."
+  },
+  {
+   "item": "fix:16 RunState holds the set of room indices the party has visited in the current Foli",
+   "status": "done",
+   "note": "FolioRun (RunState.cur) holds rooms_visited: BTreeSet<u16> and map_revealed: bool (lines 182-183); §1.2 says doc 16 RunView replicates both; doc 16 §6.10 lines 734-735 carry rooms_visited: Vec<u16> and map_revealed: bool."
+  },
+  {
+   "item": "fix:01 Specify Second Edition (DECISIONS 100-108) for 1.0. This includes whether the ch",
+   "status": "done",
+   "note": "§8.9 Offer: the door is offered at every Ur-Text victory of mode.standard or mode.abridged, the account's first included (DECISIONS 102, 108); Seeded and Custom never. Doc 01 G2 line 897 already records this. The 'every clear vs after a previous clear' question stays a product question (pq_se_offer)."
+  },
+  {
+   "item": "verify:13 Specify the Second Edition flow and d(f) for Second Edition Folios (25 + 2n). Do",
+   "status": "done",
+   "note": "§3.1 Second Edition row: v = 6 + floor_div(n - 1, 5), pos = n - 5 × floor_div(n - 1, 5), d = 25 + 2 × n (DECISIONS 106); §8.9 Entry, Revised Editors, Fused Folios; doc 13 §9.4 now places the revised Editors and the Author (chapter follows it, log [revised])."
+  },
+  {
+   "item": "verify:16 Confirm whether a Custom Erratum's appearance (doc 04 §2: kin preset, palette an",
+   "status": "done",
+   "note": "New §1.3: Appearance { preset, base, marking } and display name are presentation data, outside ErratumChoice and SlotState; peers learn them via doc 16 LobbyPick/JoinCharacter appearance: Option<Appearance>, PartyState, replay file, RunSummary.appearance; test 56. Doc 16 §6.14 LobbyPick (line 418) does not yet carry the field: cross-chapter request."
+  },
+  {
+   "item": "verify:01 §2.3 Early Access scope per DECISIONS 114: all 12 core genres at Early Access (i",
+   "status": "done",
+   "note": "§2.3 rewritten to DECISIONS 114/118/119 (12 core genres, 24 Echoes, range(12) Daily Origins); §8.1 mode.second_edition row has no 'from 1.0'; §8.9 heading is 'Second Edition'; §9.1 reads 'the \"Second Edition\" door'; no 'from 1.0' or 'at 1.0' qualifier remains in the chapter; test 54."
+  },
+  {
+   "item": "fix:11 C-02: the Interface row for doc 11 still lists former names in brace form. Repla",
+   "status": "done",
+   "note": "Interface row 11 lists item.throwable.counter_disruptor and tool/text IDs only; row 08 lists alch.potion.healing, .toxic_gas, .purity, .fortitude, .haste, .calm, .aether, .cure, .honeyed_healing, .invisibility, .shielding and alch.bomb.firebomb; row 05 lists arch.ranged.thrown, grenade_smoke, grenade_frag; §2.4 intro no longer names doc 11's former-name table."
+  },
+  {
+   "item": "fix:04 Close Canon gap 22's requests to doc 04. Doc 04 §13 now names Fenrir (body.quadr",
+   "status": "done",
+   "note": "Monk row reads 'hand wraps (unarmed archetype), light armor set'; the cloth-set sentence is gone; Interface row 04 carries Fenrir body.quadruped, Jörmungandr body.serpentine, the 2/1/1, 3/1/2, 2/1/1 trait scores and field alembic = apparatus.mortar + apparatus.alembic."
+  },
+  {
+   "item": "fix:09 Pacifist tracking (DECISIONS 62): count non-lethal defeats from ev.entity_pacifi",
+   "status": "done",
+   "note": "§10 intro: pacification = ev.entity_pacified by a party slot with doc 03 §14.3 method 0 spared surrender, 1 dialogue, 2 tamed, 3 Hacking-100 seize (doc 09 §13.5), 4 subdue takedown (doc 09 §9.4, first subdue only); a lethal takedown that kills is a kill; ach.pacifist and test 52 present."
+  },
+  {
+   "item": "fix:15 §5.4a: count the 36 launch Scripts among DECISIONS 79's non-cosmetic options. Ad",
+   "status": "done",
+   "note": "§5.4a row '36 launch Scripts by Transcription alone | 76.8 | 768 qualified Folio exits (doc 15 §3.9.1...)' present; §5.1 margin.vellum_archive row names the Transcription shelf; §2.3 ships all 24 Echoes at Early Access (aligned with doc 21 §2.3 (c))."
+  },
+  {
+   "item": "fix:18 For DECISIONS 100, define the Second Edition ending-layer IDs and inputs, as §4.",
+   "status": "done",
+   "note": "§4.7 table gains the 'Second Edition layer' row (mode, SE FolioRecords f_ur+1..f_ur+15, fused pair, editor, Author as the Final Folio's editor_killed, RunSummary.ironman) and 'the party's looks' row; the paragraph names doc 18 §8.5 ur_clear_ending then nar.ending.second_edition with the Ironman line; FolioRecord.fused and .editor added in §1.2."
+  },
+  {
+   "item": "verify:11 §2.4 (line ~258) still says it binds roles 'through doc 05 §5.6's role names and",
+   "status": "done",
+   "note": "§2.4 intro reads '...through doc 05 §5.6's role names, and adds the run-layer rules...'; the former-name-table clause is gone."
+  },
+  {
+   "item": "verify:07 Optional: the Shade kit gives item.tool.lockpicks × 1 instead of × 5, since lock",
+   "status": "done",
+   "note": "Shade row: item.tool.lockpicks ×1 (a carried tool that no attempt consumes, doc 09 §13.2); Calling-part value 182, spread 209 to 414; alt kit +219 Bp; script kit 182; test 9 updated; Interface rows 04 and 11 updated."
+  },
+  {
+   "item": "verify:04 §2.4.2 Monk row, 'doc 04 §2.5 role list' column: write 'hand wraps (unarmed arch",
+   "status": "done",
+   "note": "Monk row and sentence deletion verified on disk (same edit as fix:04)."
+  },
+  {
+   "item": "verify:09 §2.4 kit table: the Shade's `item.tool.lockpicks` ×5 can be ×1 (no consumption).",
+   "status": "done",
+   "note": "Lockpicks ×1 and the ev.entity_pacified method codes are both on disk (same edits as verify:07 and fix:09)."
+  },
+  {
+   "item": "verify:18 Apply DECISIONS 114 to the §2.3 Early Access scope (still 6 genres, range(6) Dai",
+   "status": "done",
+   "note": "§2.3 per DECISIONS 114 (range(12)); §4.7 and §8.9 Ending cite doc 18 §8.5: ur_clear_ending then nar.ending.second_edition with the Ironman line when RunSummary.ironman is true; Interface row 18 updated."
+  },
+  {
+   "item": "verify:15 §2.3 'Early Access scope' still cites DECISIONS 41 (6 genres); update it to DECI",
+   "status": "done",
+   "note": "§2.3 cites DECISIONS 114 (supersedes 41); §8.9 has no '(1.0)'; §8.9 Boards and payout says doc 15 pays it as mode.second_edition under its mode row 1; Stakes report victory_present = 0 for every slot; Imports doc 15 row names the Second Edition payout and cosm.frame.ironman."
+  },
+  {
+   "item": "fix:17 Apply C-04: remove every † mark and its sentence in §10, and 'access.scribes_mer",
+   "status": "done",
+   "note": "No '†' remains in §10 and no 'scribes_mercy active' in §7.4; Prologue L3 rewritten (far door scripted shut until harvest + ladder + plank, test 37); §3.8 onset 43,200, 10-stack cap, one hunter; RunSummary carries mercy_ever_on and min_game_speed_bp and §9.4 excludes runs with access.game_speed_bp below 10000; §5.5 keeps discovered World Laws with the Index."
+  },
+  {
+   "item": "fix:12 (a) Set `bleed_on` at Commit, store it in the run header and pass it in doc 12's",
+   "status": "done",
+   "note": "(a) §2.1 Commit row states the bleed_on rule exactly, stored in the run header, passed in every GenInput; (b) RunState.laws_triggered: BTreeMap<Id32, u8> merged into §5.5 at run end and run.end.departed; (c) FolioRecord.story, story_solved: Option<u64>, leaf_carried: bool (lines 170-172); (d) §5.5 Stories and World Laws bullets; (e) no 'canon-1.2' note remains; doc 12 citations read §4.1, §5.5, §5.6, §6.1-§6.3, §14.1."
+  },
+  {
+   "item": "verify:17 Specify the Second Edition flow (DECISIONS 100–108): the choice offered at the U",
+   "status": "done",
+   "note": "§8.9 Offer, Entry, Stakes (party wipe, Abandon and abandoned_version forfeit the clear, victory_bp = 10000, victory_present = 0), Victory (Ironman: RunSummary.ironman, cosm.frame.ironman once per account, board mark §9.4); doc 17 §11.10 already carries its screens."
+  },
+  {
+   "item": "verify:12 In mode.prologue, pass the chosen Origin's genre as GenInput.prev_genre so doc 1",
+   "status": "done",
+   "note": "§11 says this chapter passes the chosen Origin's genre as GenInput.prev_genre for the L1 and L2 bleed zone (doc 12 §23); Interface row 12 and test 37 updated. Doc 12 §23 line 1458 still says the Prologue has 'no bleed plan': cross-chapter request (moot if DECISIONS 132 lands)."
+  },
+  {
+   "item": "fix:14 DECISIONS 62 (pacifist play rewarded through achievements): doc 14 has stealth a",
+   "status": "done",
+   "note": "ach.pacifist is on disk in §10 (grade 2), §10 totals read 59 achievements, 1,960 Quires, 6,440 Ink (line 1755, test 17); test 52 covers it. Docs 01 (1,960 Quires) and 15 (59 / 1,960 / 6,440) are updated; doc 21 still cites 58 / 46 at EA (lines 102, 131, 184, 484, 519): cross-chapter request. DECISIONS 141 (about 40 achievements) will change the totals again."
+  },
+  {
+   "item": "fix:14 Three canon wording requests stay open as doc 14 Canon gaps 1 to 3: context_uid ",
+   "status": "partial",
+   "note": "Canon gaps 1 to 3 are rewritten with the exact canon-1.12 text (Canon §3.5 context_uid, §17.1 GLYPH_LIBRARY_START row, §17.1 ERASURE_STEP with clock_start) but remain open until canon-1.12 adopts them; the chapter header still conforms to canon-1.11."
+  },
+  {
+   "item": "fix:14 Recomputed kit values depend on the current doc 11 section 3 base values (thrown",
+   "status": "done",
+   "note": "Chapter values match the current doc 11 §3 (thrown 6, grenade_smoke 10, counter_disruptor 14, lockpicks 40) and doc 08 (healing 30, toxic gas 15, purity 20, mortar 10, alembic 15, firebomb 12) base values; Interface rows 08 and 11 now state them. The dependency note stays: tests 9 and 38 must be recomputed if docs 08 or 11 change those values."
+  },
+  {
+   "item": "verify:14 DECISIONS 103 vs 105: 5 revised Editors return but Second Edition has only 3 Vol",
+   "status": "done",
+   "note": "Settled by doc 13 §9.4: n = 5 and n = 10 hold a revised Volume Editor by the fused pair's dominant axiom with a cycle rule, n = 15 holds boss.ur_editor_rev then boss.author; §8.9 Revised Editors, §3.2 row, Interface row 13, test 53 and the invariant follow it; the chapter's 3-of-5 draw and RunState.se_editors were removed."
+  },
+  {
+   "item": "verify:14 Second Edition design calls made here that the product owner may want to overrul",
+   "status": "partial",
+   "note": "The four design calls are applied on disk ((a) §8.9 Offer, (b) Stakes, (c) Victory, (d) §8.2a) and listed as product questions pq_se_offer, pq_se_abandon, pq_ironman_scope, pq_abridged_victorychoice; they stay open until the product owner confirms or overrules them."
+  },
+  {
+   "item": "verify:14 ach.pacifist was added for DECISIONS 62 with a threshold of 5 pacifications and ",
+   "status": "done",
+   "note": "ach.pacifist (5 pacifications, 0 credited kills, one standard or challenge Folio) is on disk with test 52; the totals 59 / 1,960 / 6,440 are on disk; docs 01 and 15 updated; doc 21 still cites 58 / 46 at EA (cross-chapter request)."
+  },
+  {
+   "item": "verify:14 §3.10 Redaction leaves a Ghost slot a Ghost (Canon §17.6 resurrection timing), w",
+   "status": "partial",
+   "note": "§3.10 Redaction keeps a Ghost slot a Ghost; the ambiguity is now Canon gap 7 with exact Canon §17.9 wording; open until canon-1.12."
+  },
+  {
+   "item": "verify:14 Canon gaps items 1 to 6 remain open pending canon wording.",
+   "status": "partial",
+   "note": "Canon gaps 1 to 6 remain open; they are now exact canon-1.12 text (items 1 to 9), the chapter is written to them, and the header still says canon-1.11."
+  },
+  {
+   "item": "DECISIONS 93",
+   "status": "done",
+   "note": "§8.8 Host migration: hot and warm migrations continue the Folio; only a cold migration restores the Folio-entry save and counts as a restore (§12.3, test 24)."
+  },
+  {
+   "item": "DECISIONS 96",
+   "status": "done",
+   "note": "§8.1 Asynchronous traces paragraph (opt-in, presentation only, no same-seed trace in a ranked run, none in the Prologue); Canon gap 5; test 57. Doc 16 trace service and doc 18 note grammar still open on their side."
+  },
+  {
+   "item": "DECISIONS 100",
+   "status": "done",
+   "note": "§8.9 Second Edition with the doc 18 second ending layer (§4.7, §8.9 Ending)."
+  },
+  {
+   "item": "DECISIONS 102",
+   "status": "done",
+   "note": "§8.9 Party: every Active and Ghost slot continues with character, gear, level, skills and Lucre against d = 25 + 2n enemies."
+  },
+  {
+   "item": "DECISIONS 104",
+   "status": "done",
+   "note": "§8.1 mode.audience_votes overlay row, Audience votes rules (AudienceResult kinds 0 door, 1 boon, 2 Chaos; slot 0 only; never Daily, Weekly, Prologue or ranked), §2.1 lobby row, RunState.audience/chaos/chaos_next, §3.3 chaos take, §9.4 ineligibility, Exports (444 IDs), test 55. Streamer-safe mode delegated to doc 17."
+  },
+  {
+   "item": "DECISIONS 105",
+   "status": "done",
+   "note": "§3.1 row and §8.9: 15 Folios in Volumes 6 to 8, boss Folios n = 5, 10, 15 each ending on a revised Editor, the Author after boss.ur_editor_rev in n = 15."
+  },
+  {
+   "item": "DECISIONS 106",
+   "status": "done",
+   "note": "§3.1 d = 25 + 2 × n (DECISIONS 106 cited) feeding P, T, H, S, ilvl and enemy_level; Canon gap 4 asks Canon §13.7/§13.8/§17.1 to state it."
+  },
+  {
+   "item": "DECISIONS 107",
+   "status": "done",
+   "note": "§8.9 Party: every slot enters; a Ghost resurrects with its Remains counted as carried (Canon gap 8); joiners by §2.5."
+  },
+  {
+   "item": "DECISIONS 108",
+   "status": "done",
+   "note": "§8.9 Offer at the Ur-Text clear, Stakes (wipe, Abandon, abandoned_version forfeit; victory_bp = 10000; victory_present = 0), Victory with Ironman (RunSummary.ironman, cosm.frame.ironman, board mark); test 53."
+  },
+  {
+   "item": "DECISIONS 114",
+   "status": "done",
+   "note": "§2.3 Early Access scope: all 12 core genres, Origins and Echoes; range(12) Daily draws; ach.atlas over 12; test 54; Imports cite 114 (supersedes 41)."
+  },
+  {
+   "item": "DECISIONS 116",
+   "status": "done",
+   "note": "§2.2 Rule F1 fallback: when the resulting genre is not shipped, Folio 1 uses the shipped core genre with the greatest doc 12 §5.2 edge weight, ties by ascending genre ID; test 58. Doc 12 has not adopted it yet (cross-chapter request)."
+  },
+  {
+   "item": "DECISIONS 117",
+   "status": "done",
+   "note": "§8.9 Fused Folios: no-repeat per fused pair within a Volume, a genre may appear in two pairs, run cap ends at the Ur-Text; Canon gap 4 GENRE_REPEAT_RULE text; Interface row 12. Doc 12 has not adopted it yet."
+  },
+  {
+   "item": "DECISIONS 119",
+   "status": "done",
+   "note": "§2.3: all 12 Origins and 24 Echoes at Early Access; §6.3 roster unchanged (Sun Wukong, Loki, Lilith, Fenrir, Jörmungandr)."
+  },
+  {
+   "item": "DECISIONS 127",
+   "status": "done",
+   "note": "§5.6: residents have no relationship state (no friendship meter, gifts or romance), DECISIONS 127 cited."
+  },
+  {
+   "item": "DECISIONS 130",
+   "status": "not_started",
+   "note": "§5.6 arcs still advance by run milestones and meta counters, with no optional Folio quests or quest-unlocked text scenes; no 'quest' in §5.6 and no doc 12 quest hook. Log: noted, not applied (outside the rows 1-129 scope); needs a coordinated pass with docs 12 and 18."
+  },
+  {
+   "item": "DECISIONS 132",
+   "status": "not_started",
+   "note": "mode.prologue, PROLOGUE_SEED, §11 Prologue Folio, room.prologue_l1..l7, enemy.prologue_hunter, margin.first_page, prologue_done, the 'hidden in the Prologue' lobby clauses, the bleed_on 'outside mode.prologue' clause and tests 13, 37, 40, 47, 57 all remain (45 Prologue mentions). Log: noted, not applied; needs a coordinated pass with docs 12, 13, 15, 17."
+  },
+  {
+   "item": "DECISIONS 133",
+   "status": "done",
+   "note": "The chapter's difficulty range is exactly Scribe's Mercy (doc 17 access.scribes_mercy) plus Grades 0 to 20 (§7); no Story preset or extra slider appears anywhere. DECISIONS 133 is not cited in Imports (a citation-only gap)."
+  },
+  {
+   "item": "DECISIONS 136",
+   "status": "not_started",
+   "note": "No contextual first-encounter tips in the chapter; onboarding is still §11's Prologue Folio. Depends on DECISIONS 132's retirement pass; the tips themselves land in doc 17."
+  },
+  {
+   "item": "DECISIONS 137",
+   "status": "not_started",
+   "note": "ach.first_page ('complete the Prologue', grade 1) still exists and no first-run achievement for finishing Folio 1 of the account's first run exists; unlock.set.starter / prologue_done gating still present. Log: noted, not applied."
+  },
+  {
+   "item": "DECISIONS 141",
+   "status": "not_started",
+   "note": "§10 still lists 59 achievements (1,960 Quires, 6,440 Ink; test 17), not about 40 curated Steam achievements with the long tail as Codex marks; doc 15 reads these totals. Log: noted, not applied; needs a coordinated pass with doc 15."
+  }
+ ]
+}

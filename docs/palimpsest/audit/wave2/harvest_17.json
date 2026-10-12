@@ -1,0 +1,359 @@
+{
+  "chapter": "17",
+  "status": "partial",
+  "canon_requests": [
+    {
+      "section": "Canon §5.8, Law discovery bullet (doc 17 Canon gaps G28; same request as doc 14 Canon gap 6)",
+      "old": "the Codex then remembers it",
+      "new": "the account's Index (doc 14 §5.5) then remembers it",
+      "why": "Canon §20 and triage G-197 reserve 'Codex' for the battle pass; doc 14 §5.5 keeps discovered World Laws with the account's Index and doc 17 §7 reads that set. 00_CANON.md line 666 still carries the old text on disk; doc 17's own G28 wording omits '§5.5', so adopt doc 14's."
+    },
+    {
+      "section": "Canon §17.1, `ERASURE_STEP` row (doc 17 Canon gaps G29; same request as doc 14 Canon gap 3)",
+      "old": "on tick `folio_entry_tick + 43200 + 1800 × (k - 1)`, so the tenth stack lands 990 s after entry",
+      "new": "on tick `clock_start + 43200 + 1800 × (k - 1)`, where `clock_start` is the Folio entry tick, or the Editor's death tick in a boss Folio (doc 14 §3.8), so the tenth stack lands 990 s after `clock_start`",
+      "why": "Canon §11.6 pauses Erasure accrual in boss Folios while the boss lives without saying whether the pause shifts the schedule; doc 14 §3.8 starts the boss Folio's clock at the Editor's death and docs 13, 14 and 17 (§3.2 Erasure timeline, §7 Current Folio page) read `clock_start`. 00_CANON.md line 1657 still carries the old text on disk."
+    }
+  ],
+  "cross_chapter_requests": [
+    {
+      "to": "02",
+      "request": "§8.4 World camera (line 1022): replace 'doc 17 §8.4 owns the setting' with 'doc 17 §13.5 `access.fov_deg` owns the setting'. Doc 17 §8 is the Folio map; the FOV row (60..=120, default 90, DECISIONS 92) is §13.5. Motivated by doc 17 Interface row 02 and §13.5."
+    },
+    {
+      "to": "03",
+      "request": "Reconcile §5.9 with Canon gaps G31. §5.9 (line 833) says mantling reaches 'at most 2000 mm ... as the Canon §4.2 text requested for canon-1.12 states it', while G31 (line 2071) says 'Until the canon adds them, §5.9 keeps the 1,600 mm mantle, §5 has no slide or grapple mode'. State one height in both places, and specify the sprint-slide motion under G31 (doc 17 §12.1 binds it as an `input.crouch` press while sprinting and treats the press as an ordinary crouch until doc 03 specifies the slide). Doc 17 §12.1 and Interface row 03 currently read '1,600 mm until doc 03 G31 closes, then 2,000 mm' and will follow whichever text doc 03 settles on. Motivated by doc 17 §12.1 Movement kit and Interface row 03."
+    },
+    {
+      "to": "06",
+      "request": "§16.4 (line 1765) and acceptance test 22 (line 1938): the example 'Devotion 50 pays floor_div(60 × 100, 150) = 40 favor for prayer.benediction' contradicts §16.4's own rule (cost × 8000 from Devotion 25, then `floor_div(c × 100, 100 + devotion)`), which gives `c = mul_bp(60, 8000) = 48` and `floor_div(48 × 100, 150) = 32`. Change both examples to 32, or change the rule and tell doc 17, whose §10.7 Petitions line shows 32 at Devotion 50 and 50 at Devotion 20. Motivated by doc 17 §10.7."
+    },
+    {
+      "to": "09",
+      "request": "§8.3 `StealthHud.marks` (line 931): the tuple carries `u8 /* flags */` but no bit is defined anywhere in the chapter (all 'flags' hits are the perception-pair flags of line 100 or profile flags). Define the mark flag bits; doc 17 §10.10 reads bit 0 as 'the pair's meter rose in the last 20 ticks' (the arc criterion §8.3's Baseline text already states) and draws an arc only for marks with bit 0 set, and doc 16 §6.8 serializes `flags: u8` per mark. Motivated by doc 17 §10.10 Crosshair rings and Interface row 09."
+    },
+    {
+      "to": "12",
+      "request": "Second Edition fused Folios (DECISIONS 101; today only Canon gaps G19 names DECISIONS 100, 101 and 105): specify how `local_genre` reads inside a fused Folio and the order of the genre pair (`genre`, `fused` in doc 14 §4.7's FolioRecord). Doc 17 §11.10 draws both sigils split diagonally in the Folio header, follows `local_genre` for the skin zone by zone and uses the pair's first genre where §2.1 falls back to the Folio genre (Q54). Motivated by doc 17 §11.10 HUD and Interface row 12."
+    },
+    {
+      "to": "14",
+      "request": "When DECISIONS 132, 136 and 137 retire `mode.prologue` and §11 (both still on disk: line 1469 mode table, line 1766 '## 11. Onboarding: the Prologue Folio', `margin.dramatis` unlock `prologue_done` at line 995), name the first-encounter tip triggers that replace Prologue room L3's node-harvest and placeable lesson and the Prologue first-death Mercy hook, and the new unlock condition for facilities gated on `prologue_done`. Doc 17 §13.1 death counting (line 1089), §15 (lines 1259 and 1286), Interface rows 04 and 14 and the G21 note cite the Prologue and must be rewritten to the replacement. Motivated by doc 17 §15 and DECISIONS 132."
+    },
+    {
+      "to": "16",
+      "request": "`RunView` (line 731) and the join/reconnect path: carry the Folio quest state (`story_events_read`, `story_solved`, the slot holding `item.quest.folio_leaf`, doc 12 §20.4-§20.6) and the run's `laws_triggered` slot masks (doc 12 §4.1), and deliver `ev.law_discovered` (doc 03; payload `{ law: Id32, slots: u8 }`) to the clients of the slots it names. Doc 16 has 0 hits for `laws_triggered`, `story_solved` and `law_discovered` today, so a joining or reconnecting client cannot rebuild doc 17 §7's Current Folio page and World Law visibility. Motivated by doc 17 §7 and Interface row 16."
+    },
+    {
+      "to": "16",
+      "request": "Open item O2 (line 1417): specify the asynchronous trace service (DECISIONS 96) and the audience vote path (DECISIONS 104), which ship in updates before 1.0 (DECISIONS 118). Until then doc 17 §11.6 'Later screens' defines no `ui.`, `input.` or `access.` ID for traces or votes and keeps only the ledger rules (opt-in, off by default, never in ranked or Daily runs, streamer-safe mode hides names and marginal notes). Carry-over from wave 1; motivated by doc 17 §11.6."
+    },
+    {
+      "to": "18",
+      "request": "§9 `loc.ui.*` strings: add one text key per `net.reject.*` reason doc 16 defines (auth_failed, banned, content_mismatch, host_left, invasion_closed, kicked, party_full, proto_mismatch, protocol_violation, run_locked, session_ended, sim_version_mismatch, timeout, wrong_password). Doc 17 §11.9 Lobby browser says 'A refused join shows its `net.reject.*` reason text (doc 18 keys)' and doc 18 has 0 hits for net.reject today. Motivated by doc 17 §11.9."
+    },
+    {
+      "to": "21",
+      "request": "Doc 17 §7 is now 'Journal and Index knowledge (`ui.menu.journal`)' (G-197). Update WP-055's section list (line 285 still reads '§7 Journal and Codex knowledge') and regenerate tools/roadmap/headings.json (doc 17 '7' still quotes the old title; its doc 17 block ends at '11.6'). Add the new subsections to headings.json: '11.7': 'Vellum Archive (`ui.menu.vellum_archive`)', '11.8': 'Fairness panel (`ui.menu.fairness`)', '11.9': 'Online sessions', '11.10': 'Second Edition (DECISIONS 100 to 108, 118)'. Extend WP-059's deliverables (line 289: 'Inkwell, Vault, Codex and Store screens') with the Dramatis page, the Vellum Archive and Transcription shelf, the Fairness panel, the lobby browser, the mod sync page, the host-migration panel `ui.hud.net_status` and the Second Edition door, HUD and summary screens, and WP-055's with the Folio quest lines of §7; the new IDs are `ui.hud.net_status`, `ui.menu.dramatis`, `ui.menu.vellum_archive`, `ui.menu.fairness`, `ui.menu.lobby_browser`, `ui.menu.mod_sync`, `ui.icon.ironman`. Motivated by doc 17 §7, §11.7-§11.10 and Exports."
+    }
+  ],
+  "product_questions": [
+    {
+      "id": "Q54",
+      "question": "Fused Folio skin. In a fused Second Edition Folio, should the UI skin follow the local genre zone by zone, as bleed zones do, or stay on one genre of the pair?",
+      "default_applied": "Zone by zone through doc 12's `local_genre`, with the pair's first genre where §2.1 falls back to the Folio genre (§11.10).",
+      "options": [
+        "Zone by zone through local_genre, first genre of the pair as the fallback (applied)",
+        "One fixed genre of the pair for the whole Folio (the first)",
+        "The host chooses the skin genre at the Second Edition door"
+      ]
+    },
+    {
+      "id": "Q55",
+      "question": "Mod sync. DECISIONS 126 auto-syncs the host's required mods. Should joining a modded lobby still ask before downloading?",
+      "default_applied": "No question; the Mod sync page lists every mod with its progress and a Cancel button (§11.9).",
+      "options": [
+        "No prompt; progress list with Cancel (applied)",
+        "One confirmation naming the mods and total size before any download",
+        "Confirm only for data-only packs from the host, never for Workshop items"
+      ]
+    },
+    {
+      "id": "Q56",
+      "question": "Kick vote visibility. Should the member under a kick vote see the running vote?",
+      "default_applied": "Yes, the same pinned line as everyone else, without a vote of their own (§11.9).",
+      "options": [
+        "Visible to the target, no vote of their own (applied)",
+        "Hidden from the target until the result",
+        "Visible to the target with a one-line reply field"
+      ]
+    },
+    {
+      "id": "Q57",
+      "question": "Second Edition commit. Should the Second Edition door need a unanimous vote because of its stakes, instead of doc 14 §3.6's normal exit rule?",
+      "default_applied": "The normal rule, with the four stakes lines on the panel before it can commit (§11.10).",
+      "options": [
+        "Normal doc 14 §3.6 exit vote with the stakes shown first (applied)",
+        "Unanimous vote of living members",
+        "Host-only commit after each member confirms the stakes"
+      ]
+    },
+    {
+      "id": "Q58",
+      "question": "Ironman frame. Where should the Ironman portrait frame show?",
+      "default_applied": "Lobby slots and scoreboard rows, plus `ui.icon.ironman` on leaderboard entries (§11.10).",
+      "options": [
+        "Lobby slots, scoreboard rows and leaderboard mark (applied)",
+        "Leaderboard mark only",
+        "Also on `ui.hud.party` frames in a run"
+      ]
+    }
+  ],
+  "unresolved": [
+    "G28 and G29 remain open in canon on disk: 00_CANON.md line 666 still says 'the Codex then remembers it' and line 1657 still uses `folio_entry_tick`. Doc 17's proposed wording differs slightly from doc 14 Canon gaps 6 and 3 (doc 14 cites §5.5 and §3.8 and keeps the '990 s' clause); the log's 'wording identical' claim is not exact. The canon_requests above use doc 14's fuller text.",
+    "Doc 03 is internally inconsistent on the mantle: §5.9 (line 833) reaches 2000 mm, G31 (line 2071) says §5.9 keeps 1,600 mm. Doc 17 §12.1 and Interface row 03 read '1,600 mm until doc 03 G31 closes' and may be stale depending on which text doc 03 keeps.",
+    "Doc 17 Interface row 14 says Second Edition is 'offered from Early Access (DECISIONS 118), where §8.9 still writes 1.0'. On disk doc 14 §8.9 has no '1.0' and doc 14 line 289 already ships Second Edition at Early Access; the parenthetical should be dropped in the next doc 17 pass.",
+    "Doc 06 §16.4 line 1765 and test 22 line 1938 still give 40 favor for Benediction at Devotion 50; doc 17 §10.7 shows 32 from doc 06's own rule.",
+    "DECISIONS rows 130-145 postdate the fixer's pass (the log covered 89-129). Rows 131, 132, 133, 135, 136, 138, 142 and 143 name doc 17 and are unhandled; 132 contradicts chapter text (Prologue at lines 1089, 1259, 1286, 1344, 1353, 1363), 142 conflicts with §12.7's 'slowdown at most standard' against human targets, and 131/135 have no HUD prompt or `access.*` setting. This is why status is 'partial' although every requests_17.json item has a confirmed disposition.",
+    "Doc 16 `RunView` carries neither `laws_triggered` nor Folio quest state and does not say which clients receive `ev.law_discovered`; doc 17 §7 depends on it across joins and reconnects.",
+    "Doc 18 has no `loc.ui.*` keys for the 14 `net.reject.*` reasons that doc 17 §11.9 shows.",
+    "Doc 12 has not specified `local_genre` or the pair order inside a fused Second Edition Folio (only Canon gaps G19 names DECISIONS 100, 101, 105); doc 17 §11.10's skin fallback and header sigils rest on Q54's default.",
+    "Doc 09 §8.3 never defines the `flags: u8` bits of `StealthHud.marks`; doc 17 §10.10 reads bit 0 as 'meter rose in the last 20 ticks'.",
+    "Doc 21 WP-055 (line 285) and tools/roadmap/headings.json still quote 'Journal and Codex knowledge'; headings.json's doc 17 block stops at 11.6 and WP-059 lists none of the new §11.7-§11.10 screens.",
+    "Doc 17 §11.9's '50 per page' and the ping-sorted order of the lobby browser are doc 17's own UI rules; doc 16 §3.3 states no page size (0 hits for 'per page').",
+    "Retired IDs: doc 17 retired no ID in wave 2 (Exports grew: ui.hud 34 to 35, ui.menu 31 to 36, ui.icon 61 to 62; input. 70, input.ctx 9, access. 51 unchanged). The earlier-retired `input.mount` has 0 consumers left in spec/. The only quoted-string dependency created this pass is the §7 heading rename (doc 21, headings.json).",
+    "The log counts 27 request items; requests_17.json holds 20 request items and 9 unresolved carry-overs (29 entries). Every entry has a disposition below."
+  ],
+  "remaining_work": [
+    {
+      "item": "fix:14: Close G2 (margin.plot is the trophy alcove), G4 (Mercy no longer blocks achievem",
+      "status": "done",
+      "note": "Canon gaps: G2 (doc 14 §5.1a slots), G4 (DECISIONS 82, C-04) and G21 (L3 rewrite, C-03) listed as closed at the end of ## Canon gaps. §11.1 ErratumSelect uses `ui.menu.dramatis` and the Dramatis paragraph lists the Glyph Library grouped by class with tier and refusal reasons; the Margin dialogue box plays a resident's doc 14 §5.6 arc beat first. G29 matches doc 14 Canon gap 3 in substance; wording differs slightly (doc 14 cites §3.8 and keeps the '990 s after clock_start' clause)."
+    },
+    {
+      "item": "fix:16: Draw the stealth meter from doc 16 §6.8's STEALTH section: at most 4 rings (newe",
+      "status": "done",
+      "note": "§10.10 'Caps' paragraph: at most 4 rings (newest), 8 marks (highest meter, ties to lower EntityId), 4 steps (newest); 'Crosshair rings' centers each arc on `bearing.wrapping_sub(camera_yaw)` from the mark's own `bearing`, never the observer's position (handle 8191). `ping_danger_ticks` (15) in §12.3, §12.4 and §12.9."
+    },
+    {
+      "item": "fix:02: §13.6 says '(doc 02 picks the crate)' for access.narrator. Doc 02 §2.2 now names",
+      "status": "done",
+      "note": "§13.6 cites `tts` 0.26.3 over the Windows speech API and AccessKit through `bevy_a11y` provided by `bevy_winit` (doc 02 §2.2); Windows screen readers only (DECISIONS 98). Doc 02 has 1 hit for 0.26.3."
+    },
+    {
+      "item": "fix:01: Add a binding (and an input. action if needed) for the DECISIONS 95 sprint-slide",
+      "status": "done",
+      "note": "§12.1 'Movement kit' paragraph defines the sprint-slide as an `input.crouch` press (bit 4) on a command holding `input.sprint` (bit 5) while sprinting, no new action or bit; §12.3 row 'sprint-slide | Left Ctrl pressed while sprinting'; §12.4 R3 'pressed while sprinting: sprint-slide'; §12.9 toggle note; test 70. Doc 01 §7 row 570 and Q-25 copy it."
+    },
+    {
+      "item": "verify:14: §11.6 later screens: doc 14 §8.9 now specifies the Second Edition door (in Victo",
+      "status": "done",
+      "note": "New §11.10: door order (Margins doors, Second Edition, Close the Book; Abridged two doors; Seeded and Custom none), four stakes lines on the door panel, 'Abandon run (forfeits the clear)' in §11.6, Ironman mark `ui.icon.ironman` and `cosm.frame.ironman`. Interface row 14 marks §8.9 '(present)'. Its parenthetical 'where §8.9 still writes 1.0' is stale: doc 14 §8.9 has no '1.0' and doc 14 line 289 already ships Second Edition at Early Access."
+    },
+    {
+      "item": "verify:16: Draw the stalled and migration overlays, stale entities, the kick vote, the lobb",
+      "status": "done",
+      "note": "§11.9 draws the lobby browser, mod sync, cosmetic-difference notice, voice (non-friends muted, Unmute voice), kick vote (need = max(2, m - 1), 1,800 ticks), Connection problem (NET_STALL_MS, PRED_STALL_TICKS) and host migration (`ui.hud.net_status`, hot/warm/cold); §16.1 keeps stale remote entities (6 ticks, 3000 Bp saturation, dotted outline); §10.10 caps 4/8/4. 'crossplay' and 'friend code' appear only as absences (§11.6, §11.9, test 80, invariant)."
+    },
+    {
+      "item": "verify:01: State the DECISIONS 95 sprint-slide (input.crouch pressed while sprinting) in §1",
+      "status": "done",
+      "note": "Stated in §12.1 Movement kit (action rule), §12.3 (KBM row) and §12.4 (R3), not only in the Interface row for doc 03."
+    },
+    {
+      "item": "fix:07: The Disassembly row cites 'doc 07 §8.3' (formerly §8.5). No durability display a",
+      "status": "done",
+      "note": "§6.1 Disassembly row cites doc 07 §8.3 (doc 07 §8.3 is 'Salvage and disassembly'). 'durability' appears 4 times, all retirement statements (header, Imports, §4.3 note, invariant 'N! mount ∨ durability UI'); no durability display."
+    },
+    {
+      "item": "fix:09: §10.11: access.lock_mode / SetLockMode also governs hacks, Seize included (doc 0",
+      "status": "done",
+      "note": "§10.11 rewritten: `access.lock_mode` governs picks and every hack, Seize included; Auto shows 'Success x.x%' and 'Slip x.x%' from slip_bp 2500 or 1250; Manual has 2 + tier pins on `rng.stealth` seq 1004, W formula, cracks, pin restart at now + 1 + SLIP_TICKS (30 ticks), third crack = failed hack (hack_fails + 1) or doc 09 §13.5 Seize failure; Deck spark bullet. Interface row 09 reads 'the slip roll of doc 09 §13.2 (no break, no wear)'."
+    },
+    {
+      "item": "fix:15: Vellum Archive screen: add the Transcription shelf (doc 15 §3.9.1) showing the t",
+      "status": "done",
+      "note": "New §11.7 Vellum Archive with the Transcription shelf: counter, TRANSCRIBE_RUBRICATED 16 and TRANSCRIBE_ILLUMINATED 32, 'Needs K more Folio exits', `insufficient_transcription`, example at transcription 40. §11.9 Voice mutes non-friends by default (doc 15 §8.5 line 1365 agrees). §13.5 `access.gore` default `ink`."
+    },
+    {
+      "item": "fix:18: `access.gore`: set the default to `ink` (DECISIONS 94). `full` is the red-blood ",
+      "status": "done",
+      "note": "§13.5 `access.gore` row: values described as 'ink wounds and unravelling script on severed parts (the default), red blood, or no decals'; default `ink` (DECISIONS 94); `full` is the red-blood toggle; doc 18 §5.4 cited (doc 18 line 492, inside §5.4)."
+    },
+    {
+      "item": "verify:07: §6 Disassembly row: cite doc 07 §8.3 (it still says §8.5).",
+      "status": "done",
+      "note": "§6.1 Disassembly row cites doc 07 §8.3."
+    },
+    {
+      "item": "verify:09: Interface row 09: replace \"no lockpick break roll (C-31)\" with \"the slip roll of",
+      "status": "done",
+      "note": "Interface row 09 slip wording replaced. The optional items are also in: §10.11 shows the 30-tick pin restart as a draining arc, and the Deck spark bullet ends the attempt with no crack, no failure count and no pity change (doc 09 §13.4, doc 07 §11.1 rule 4); test 72."
+    },
+    {
+      "item": "verify:15: Add the Fairness panel (fresh and pinned client-seed modes, 'Reveal now'). Add a",
+      "status": "done",
+      "note": "§11.8 Fairness panel (fresh and pinned client-seed modes, 'Reveal now', Verify, Export) opened from §11.2 and §11.3; §11.7 Vellum Archive with the Transcription shelf; §11.10 displays `cosm.frame.ironman` on lobby slots and scoreboard rows and `ui.icon.ironman` on board entries; tests 76 and 77."
+    },
+    {
+      "item": "fix:12: The door panel and HUD Law list/Folio header show only the viewer's discovered L",
+      "status": "done",
+      "note": "§3.2 Folio header shows one glyph per active Law the viewer has discovered, nothing otherwise; §3.4 Large omits them; §7 'World Law discovery' uses the run-start set or the `laws_triggered` slot mask, no placeholder, toast on `ev.law_discovered` with the local slot; §9.1 door panel unchanged rule; §7 'Folio quest' lists Solve the story read/need and Carry the Folio Leaf out states under the Rubric; test 73 and 74."
+    },
+    {
+      "item": "fix:06: §6.5 cast wheel: open the lore target list only for an entry whose spell has gly",
+      "status": "done",
+      "note": "§6.5 Cast wheel opens the target list only for `glyph.ess.appraise` or `glyph.ess.psychometry` with the `self` form; `touch` takes the nearest ground item and `glyph.ess.omen` has no item target."
+    },
+    {
+      "item": "fix:10: §4.3 item card row 13: change \"≈ 160–340 Nobles\" to \"≈ 160–340 Crowns\" (DECISION",
+      "status": "done",
+      "note": "§4.3 item card row 13 reads '≈ 160–340 Crowns' in Mythic Fantasy (DECISIONS 90); 'Nobles' has 0 hits."
+    },
+    {
+      "item": "verify:12: Still open: list the optional Folio quest (solve the story, carry the Leaf) unde",
+      "status": "done",
+      "note": "§7 'Folio quest' paragraph under the Current Folio page's Rubric with each step's state; the Run log records complete, story solved only, Leaf carried only, or lapsed."
+    },
+    {
+      "item": "verify:06: §6.5 (still open): open the lore target list only for glyph.ess.appraise or glyp",
+      "status": "done",
+      "note": "§6.5 appraise/psychometry rule present; §10.7 petitions line reads 'the fourth waits 3480 ticks (58 s), doc 06 §16.4' (doc 06 has 1 hit for 3480)."
+    },
+    {
+      "item": "verify:03: The interface row for doc 03 assumes a ledge mantle 'up to 2,000 mm'. Doc 03 §5.",
+      "status": "done",
+      "note": "Interface row 03 and §12.1 read '§5.9 reaches 1,600 mm until doc 03 G31 closes, then DECISIONS 95's 2,000 mm'. Caution: doc 03 §5.9 line 833 now says 'at most 2000 mm' while doc 03 G31 line 2071 says '§5.9 keeps the 1,600 mm mantle'; doc 03 is inconsistent and doc 17's wording tracks G31."
+    },
+    {
+      "item": "fix:17: G28 (open canon gap): canon §5.8 says 'the Codex' remembers discovered World Law",
+      "status": "partial",
+      "note": "Chapter side done: G28 stays in ## Canon gaps with its proposed text and §7 reads the Index. Canon side not applied: 00_CANON.md line 666 still reads 'the Codex then remembers it'. Raised again in canon_requests with doc 14 Canon gap 6's wording."
+    },
+    {
+      "item": "fix:17: G29 (open canon gap): canon §17.1's Erasure schedule counts from folio_entry_tic",
+      "status": "partial",
+      "note": "Chapter side done: G29 in ## Canon gaps, §3.2 and §7 use `clock_start`. Canon side not applied: 00_CANON.md line 1657 still reads `folio_entry_tick + 43200 + 1800 × (k - 1)`. Raised again in canon_requests with doc 14 Canon gap 3's wording."
+    },
+    {
+      "item": "fix:17: World Law discovery depends on doc 12 defining each Law's trigger and a first-fi",
+      "status": "done",
+      "note": "Inputs now on disk: doc 12 §4.1 'Discovery in play' (6 hits for laws_triggered; payload `{ law: Id32, slots: u8 }`, Active slots only), doc 03 `ev.law_discovered` (3 hits), doc 14 §5.5 stores discovered Laws from `RunState.laws_triggered` at run end and departure (line 1199). §7 rewritten to them. Open transport item moved to cross_chapter_requests: doc 16 `RunView` carries neither `laws_triggered` nor quest state (0 hits)."
+    },
+    {
+      "item": "fix:17: Doc 06's petition-cost example (40 at Devotion 50) conflicts with its own m25 ru",
+      "status": "partial",
+      "note": "Doc 17 §10.7 shows 32 at Devotion 50. Doc 06 §16.4 line 1765 and test 22 (line 1938) still say 40 while its rule (× 8000 from Devotion 25, then floor_div(c × 100, 100 + devotion)) gives 32. Request to doc 06 carried in cross_chapter_requests."
+    },
+    {
+      "item": "fix:17: Docs 01 and 05 still name input.mount, which is now undefined, until their fixer",
+      "status": "done",
+      "note": "`input.mount` has 0 hits in every spec/*.md. Docs 01, 02, 05, 09, 11, 16 mention mounts and durability only as retirement statements (doc 01 line 599, doc 02 line 715 bit 25 always 0, doc 05 §17 'Mounts (retired)', doc 09 line 161 seq 1005 unused, doc 11 lines 51 and 687). No '25,200' Erasure text remains (doc 14's one '25,200' is inside the Endless max score example, line 1903)."
+    },
+    {
+      "item": "fix:17: New in this pass and not yet reviewed by the owners of the other chapters: §9.8 ",
+      "status": "done",
+      "note": "Reviewed by owners since: `SetLockMode` in docs 02 and 09; `ui.hud.hack` and `ui.hud.pickpocket` in doc 09; `access.mark_hallucinations` in docs 04 and 18; the `pencil` token in docs 12, 13, 14, 18. `ui.hud.killcam` is cited by no other chapter, which is correct for a presentation-only buffer that is never sent."
+    },
+    {
+      "item": "verify:17: The §7 heading still reads 'Journal and Codex knowledge', which conflicts with G",
+      "status": "partial",
+      "note": "§7 heading renamed on disk to 'Journal and Index knowledge (`ui.menu.journal`)' (0 hits for 'Codex knowledge' in chapter 17). Consumers not yet updated: doc 21 WP-055 line 285 and tools/roadmap/headings.json doc 17 '7' still quote 'Journal and Codex knowledge'. requests_21.json already carries the rename item; listed again in cross_chapter_requests with the new §11.7-§11.10 headings."
+    },
+    {
+      "item": "verify:17: DECISIONS 95, 96, 104 and 108 name doc 17, but the owning chapters have not spec",
+      "status": "partial",
+      "note": "95: bound in §12.1, §12.3, §12.4; doc 03 §5.9 and G31 now carry the mantle and sprint-slide (with the 1,600/2,000 mm inconsistency noted). 108: §11.10 with doc 14 §8.9 present. 96 and 104: still only the 'Later screens' rules in §11.6; doc 16 O2 (line 1417) remains open, so no screens or IDs exist."
+    },
+    {
+      "item": "verify:17: The fixer's petition-cost example (Benediction at Devotion 50 = 32, applying the",
+      "status": "partial",
+      "note": "Same item as the fix:17 petition entry: doc 06 still shows 40 at lines 1765 and 1938; doc 17 shows 32."
+    },
+    {
+      "item": "DECISIONS 92",
+      "status": "done",
+      "note": "§13.5 `access.fov_deg` 60..=120, default 90, horizontal at 16:10, Hor+ wider, cites DECISIONS 92; Imports row lists 92."
+    },
+    {
+      "item": "DECISIONS 94",
+      "status": "done",
+      "note": "§13.5 `access.gore` default `ink`, `full` red blood, `minimal` no decals; test 55 asserts the fresh-profile default; doc 18 §5.4 cited."
+    },
+    {
+      "item": "DECISIONS 95",
+      "status": "done",
+      "note": "§12.1 Movement kit: mantle on `input.jump`, sprint-slide as crouch press while sprinting (no new bit, bit 25 stays 0), grappling tool as a quickbar item; §12.3 and §12.4 rows; §12.9 toggle note; test 70; invariant. Mantle height follows doc 03 G31 (1,600 mm until it closes) and must be re-read once doc 03 settles its 1,600 vs 2,000 mm text."
+    },
+    {
+      "item": "DECISIONS 96",
+      "status": "partial",
+      "note": "§11.6 'Later screens' keeps only the ledger rules (opt-in, off by default, streamer-safe mode) and places traces in an update before 1.0 per DECISIONS 118; no `ui.`, `input.` or `access.` ID exists until doc 16 O2 specifies the trace service. Imports row lists 96 as an open dependency."
+    },
+    {
+      "item": "DECISIONS 97",
+      "status": "done",
+      "note": "§5.7 Cosmetics row: one of the kin's 12 presets with palette and marking colors, no slider editor (DECISIONS 97; docs 04 and 18 define the presets)."
+    },
+    {
+      "item": "DECISIONS 104",
+      "status": "partial",
+      "note": "§11.6 'Later screens': votes opt-in, off by default, never in ranked or Daily runs, streamer-safe mode; no screen or ID until doc 16 O2 specifies the vote path."
+    },
+    {
+      "item": "DECISIONS 108",
+      "status": "done",
+      "note": "§11.10: door offered at the Ur-Text clear with four stakes lines, every non-victory end forfeits the clear (Abandon included, §11.6), Ironman clear adds the summary line, `ui.icon.ironman` on board rows and `cosm.frame.ironman` as the portrait frame; §9.7 outcome line; tests 75; invariant 'Second Edition door => stakes shown before commit'."
+    },
+    {
+      "item": "DECISIONS 126",
+      "status": "done",
+      "note": "§11.9 Mod sync page (`ui.menu.mod_sync`): Workshop items through Steam, data-only packs up to 64 MiB from the host, join continues when content_hash matches, presentation-only mods never synced; Interface row 02; Q55; test 79."
+    },
+    {
+      "item": "DECISIONS 129",
+      "status": "done",
+      "note": "§9.8 'No photo mode' bullet: replays and killcam stay, no pose/HUD-hide/capture screen; test 80; invariant 'N! photo mode'."
+    },
+    {
+      "item": "DECISIONS 131",
+      "status": "not_started",
+      "note": "0 hits for 'last stand'. The row lands in docs 04, 05, 17: no HUD prompt for the 300-tick timed input, no death-screen ordering after Death's Door, no §13.1 note on how Scribe's Mercy step 6c interacts with it. Row postdates the fixer's pass (log covered 89-129)."
+    },
+    {
+      "item": "DECISIONS 132",
+      "status": "not_started",
+      "note": "Chapter still teaches through the Prologue: §13.1 death counting names 'a Prologue death that reloads a checkpoint' (line 1089); §15 says 'The Prologue (doc 14 §11) teaches the core verbs' (line 1259) and keeps the L3 node-harvest and placeable lesson (line 1286); Interface rows 04 ('Prologue death hook') and 14 ('Prologue room L3 rewrite (C-03)'); Canon gaps note G21. `mode.prologue` is retired by the row; doc 14 on disk still carries §11 and `mode.prologue`, so the rewrite needs doc 14's replacement (DECISIONS 136, 137)."
+    },
+    {
+      "item": "DECISIONS 133",
+      "status": "partial",
+      "note": "Content complies: Scribe's Mercy toggle (§11.6, §13.1) and Grade in RunSetup (§11.1) are the difficulty surface; no Story preset or extra difficulty slider exists (0 hits). The row is not cited in Imports and no acceptance test asserts the absence."
+    },
+    {
+      "item": "DECISIONS 135",
+      "status": "not_started",
+      "note": "0 hits for 'QTE' or 'ink-strike'. Needs the three-prompt sequence on the HUD (binding glyphs, 300-tick timer) and an `access.*` setting switching it to a single hold or automatic success, listed in §13 and Exports."
+    },
+    {
+      "item": "DECISIONS 136",
+      "status": "partial",
+      "note": "§15 tips are `ui.tip.*` records with `max_shows` 1 per account and a 'Show again' reset, triggered on first occurrence (matches 'shown once per account'). Missing: §15 still says the Prologue teaches the core verbs; 'dismissible, in the margins' placement and 'no special first-run seed' are not stated; row not cited."
+    },
+    {
+      "item": "DECISIONS 138",
+      "status": "partial",
+      "note": "§14 'Keys' states Fluent files (doc 02 §10) and Fluent selectors for pluralization and gender, never concatenation. Missing: per-locale case selectors and the rule that generated names inflect in all 15 locales; row not cited."
+    },
+    {
+      "item": "DECISIONS 142",
+      "status": "partial",
+      "note": "§12.7: slowdown and tracking on sticks, 'Mouse input never receives aim assist' (test 27), gyro through Steam Input on Deck and supported pads. Conflict: §12.7 says against a human-controlled target 'tracking share and snap are 0 and the slowdown is at most the `standard` value', while the row says assist off in PvP invasions; the slowdown must also drop to 0 against invaders and Errata seen by an invader."
+    },
+    {
+      "item": "DECISIONS 143",
+      "status": "partial",
+      "note": "First person by default with `input.camera` toggling third person (§12.1 line 850), `access.third_person_distance_mm` (§13.5), Q10 default 'full alternative, aiming from the leaned eye (doc 05)'. Missing: 'over-the-shoulder' framing and 'hit detection identical in both' are not stated; row not cited."
+    }
+  ]
+}

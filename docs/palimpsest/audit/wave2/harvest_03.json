@@ -1,0 +1,419 @@
+{
+ "chapter": "03",
+ "status": "partial",
+ "canon_requests": [
+  {
+   "section": "Canon §4.4 (doc 03 Canon gaps G29, door and trapdoor panels)",
+   "old": "Opacity and sound attenuation of a cell scale with its fill fraction below 48 micro-voxels (literal fill rule, no door exception).",
+   "new": "A closed door or closed trapdoor applies its block's full `light_filter`, concealment and sound attenuation.",
+   "why": "A closed panel fills 16 micro-voxels, so under the literal fill rule a closed oak door filters 3 light levels and attenuates 43 of its 175 ddB; light and sound would leak through shut doors. Chapter 03 §4.4 adopted this wording ahead of canon in wave 2 (closed panels read registry `light_filter`, `conceal`, `sound_atten_ddb` unscaled; §11.2, §11.5 and acceptance 25, 53 updated), so the canon must carry it or the chapter must revert."
+  },
+  {
+   "section": "Canon §4.4 (doc 03 Canon gaps G30, shapes without micro-voxels)",
+   "old": "Fill scaling applies to every shape, so cross, ladder and fixture cells (empty predefined mask) would read concealment 0.",
+   "new": "Shapes with no micro-voxels (cross, ladder, fixture) keep their block's light filter, concealment and sound attenuation unscaled.",
+   "why": "Canon §12.2 gives tall grass concealment 2 and leaves 3; a literal fill rule would zero them. Chapter 03 §4.4 keeps registry values for the four empty-mask shapes (none, ladder, cross, fixture)."
+  },
+  {
+   "section": "Canon §4.2 Movement (doc 03 Canon gaps G31 part 1; DECISIONS 95 ledge mantle)",
+   "old": "canon-1.11 §4.2 has no mantle line; the chapter used h in (550, 1600] mm measured from the feet at the press.",
+   "new": "Ledge mantle: a JUMP press with forward input, or a grappling arrival with forward input, mantles onto a ledge whose top lies more than 550 mm and at most 2,000 mm above the feet and at most 2,000 mm above the feet's height at the end of the body's last grounded, swimming, climbing or grappling tick (`ledge_base_y`). A jump adds no reach: from a floor the highest mantle is 2,000 mm (two blocks) at every VERVE. Fences and panes are never mantle targets. The crouched capsule needs free space to `land_y + 1,201 mm`.",
+   "why": "DECISIONS 95 names doc 03 for a 2,000 mm mantle; the chapter adopted this rule in §5.9 (ledges 750..2000 mm take 16..28 ticks; 2,250 mm fails with or without a jump) and §5.1 (`ledge_base_y`). The product question whether 2,000 mm includes the jump was settled by default as measured from `ledge_base_y`; the canon must state it, since the alternative (3,100 mm with a jump) changes doc 12's 2-block climb rule (doc 12 §1, §15.1, §18.1)."
+  },
+  {
+   "section": "Canon §4.2 Movement (doc 03 Canon gaps G31 part 1; DECISIONS 95 sprint-slide)",
+   "new": "Sprint-slide (base kit, no new input): a CROUCH press while sprinting on the ground with forward input at a horizontal speed of at least 5,000 mm/s, at most once per 60 ticks, starts a slide at max(current speed, 8,000 mm/s) along the current horizontal direction. The body holds crouch height, ignores the input axes and status multipliers, and decelerates by 8,000 mm/s² × ground `friction_bp`. The slide ends after 45 ticks, when its speed along the slide direction drops to 2,000 mm/s or below, when the body leaves the ground, on a movement gate or downed, or on a JUMP press (which keeps the horizontal velocity for a ground jump or a mantle). A slide costs no stamina and emits sprint-gait footsteps. On friction 10,000 a slide from 6,500 mm/s covers 3,799 mm in 45 ticks; on ice (1,500) 5,669 mm.",
+   "why": "DECISIONS 95 names a sprint-slide with no numbers in any chapter; doc 03 §5.23 defined the motion, doc 17 binds it to `input.crouch` while sprinting and doc 09 rates its noise. The canon should carry the numbers so that docs 04, 05, 09, 16 and 17 bind to one source."
+  },
+  {
+   "section": "Canon §4.2 Movement and §13.1 Item categories (doc 03 Canon gaps G31 part 1; DECISIONS 95 grappling tool)",
+   "new": "Grappling tool: an item (`cat.tool`, genre-skinned, with a cooldown owned by doc 11), never part of the base kit, used from the quickbar as an item-use action. A use casts a 20,000 mm ray from the eye along the aim; it anchors on any block face (fixed terrain included) at least 1,000 mm away, else the use is refused and spends nothing. A pull moves the body at 12,000 mm/s toward the anchor with no gravity for at most 120 ticks; it releases on a JUMP press (velocity kept; the mantle test runs), on arrival within 1,000 mm, when the body stops gaining on the anchor, on a movement gate or downed, or when the anchor block is gone (velocity × 0.25 in these cases). An arrival with forward input or a JUMP press may mantle onto a ledge within 2,000 mm of the body's feet height during the pull. A body is never an anchor.",
+   "why": "DECISIONS 95 puts the grappling tool in the game as an item and names docs 03, 05, 11 and 17; doc 03 §5.24 defined `start_grapple` and the pull, doc 11 must define the item, doc 05 its action slot. Canon §13.1 should list the tool so the item is content, not a base verb."
+  },
+  {
+   "section": "Canon new §5.12 Folio climate (doc 03 Canon gaps G31 part 2; DECISIONS 99; the same table that doc 09 G26 requests as a new Canon §12.4 and doc 12 G19 proposes under Canon §5.9 and §12)",
+   "new": "Each Folio has one time of day and one weather state, drawn by worldgen from its genre's tables and fixed for the Folio. Time of day: `tod.dawn` sky_delta −1, `tod.day` 0, `tod.dusk` −1, `tod.night` −3. Weather: `wx.clear` (sky_delta 0, sound_ddb 0, precip none, fire_bp 10000), `wx.rain` (−1, 2, water, 5000), `wx.storm` (−2, 4, water, 2500), `wx.fog` (−1, 0, none, 10000), `wx.snow` (−1, 2, none, 5000), `wx.dust` (−1, 3, none, 12500). Terms: a sky-lit sky source adds sky_delta(tod) + sky_delta(wx) to its level, clamped to 0..15; a sound propagation step into a sky-open cell costs sound_ddb(wx) more; under precipitation every body whose body-contact cell is sky-open gains `st.soaked` on each status pulse; fire spread into a sky-open cell is multiplied by fire_bp(wx). Weather deposits no liquid or gas and changes no temperature; any cell under a micro-voxel is sheltered from every term except light. The table also carries the stealth columns doc 09 §15.3 reads (fog points, sound_bp, ambient_db, precip, snow) and the presentation columns doc 18 reads (fog, ambient sound).",
+   "why": "DECISIONS 99 names doc 03 and canon-1.11 carries nothing; doc 03 §4.8 adopted these IDs and terms ahead of canon and wired them into §6.10, §8.3, §10.2, §11.2, §11.4, §16.1 and the Exports. Three chapters (03, 09, 12) request the same table under three different canon section numbers with different columns; one canon section must merge them."
+  },
+  {
+   "section": "Canon §17.6 Ghosts (doc 03 Canon gaps G6, never triaged)",
+   "old": "\"a ghost has no collision\"",
+   "new": "A ghost has no body collision and is excluded from hit, push and perception queries; voxel collision stays, so a ghost cannot leave the Folio. Ghosts toggle doors and never place or break blocks.",
+   "why": "G6 is the chapter's reading since the first draft and was never triaged; without it a literal reading lets ghosts fall through the floor or leave the Folio box."
+  },
+  {
+   "section": "Canon §4.4 Destruction (doc 03 verify:03 reading, no gap filed)",
+   "old": "\"Destruction removes micro-voxels, not whole cells.\"",
+   "new": "Destruction removes micro-voxels, not whole cells, from shapes that chip (full, pillar, slab, stairs, layer). Door, trapdoor, ladder, fence, pane, cross and fixture cells and resource nodes break whole, and a cell an explosion's rays mark breaks whole.",
+   "why": "Docs 03 §13.2 and 07 §10.8 break the listed shapes whole and explosions break marked cells whole; the wave-2 verifier judged this an acceptable reading and filed nothing, so the canon's absolute sentence still contradicts both chapters on its face."
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "05",
+   "request": "Canon gaps item 3 (\"doc 03 has no slide or grapple mode yet\") is out of date: doc 03 §5.23 defines the sprint-slide and §5.24 the grappling tool. Add the slide to §1.6 (stance base unchanged during a slide; a slide starts only with `stance_base = i32::MAX`), §4.8a and Table 6.3 (which actions run during a slide and during a grapple pull), and give the grappling tool's use the `seq` 0 action start of §1.4 as a quickbar item use. Doc 03 §2.2 row 7 runs the use inside `sys.actions` through `start_grapple`."
+  },
+  {
+   "to": "05",
+   "request": "§7.1 projectile spawn (and §10.5): set `Projectile.home_bam_s` at spawn from the source item's manufacturer trait (16384 for `mfr.cyberpunk.ghostline`, doc 11 §5.2; 0 for every other projectile) and `home_acc = 0`; doc 03 §5.19's homing step owns the turn (target choice among `st.marked` hostiles within 30,000 mm and 60°, Canon §2.3 accumulator with k = 60, normal steps only), and the former `doc05::steer` hook no longer exists, so doc 05 must not describe a steer call."
+  },
+  {
+   "to": "05",
+   "request": "§9.4 and Tables 9.3/9.3b: doc 03 §12.1 now takes `block_power_milli` straight from Table 9.3b (frag 3000, concussion 1000, launcher blast 4000, incendiary/flash/smoke/counter 0) and stores min(8000, mul_bp(base, sapper) + 750 × demolition + 750 × fieldcraft_100); §12.4 queues item hits for `sys.damage` with `base_mhp = mul_bp(mul_bp(b_mhp, falloff), exposure)` where `b_mhp` = base_mhp × attack factors 1 and 2 before Canon §10.4, scales impact and status powers by falloff then exposure (one mul_bp each) and knockback by `f = mul_bp(falloff, exposure)`. Confirm §9.4 states the same and that invader (slot 4) explosions carry block power 0."
+  },
+  {
+   "to": "06",
+   "request": "§5.4 `glyph.mod.homing` (lock at launch on the hostile with the smallest angle inside an 8192 Bam cone within 15,000 mm; turn at most 136 Bam per tick in yaw and pitch) has no route into doc 03 §5.19: the homing step there runs only for `home_bam_s > 0`, re-chooses its target every normal step among `st.marked` hostiles within 30,000 mm and 60°, and the old `doc05::steer` hook is gone. Either request from doc 03 a lock variant (`Projectile.home_target: Option<EntityId>` set at launch, with `home_bam_s = 8160` Bam/s = 136 × 60 through the same accumulator) and state it in doc 06's Interface row 03, or state that doc 06 turns the velocity inside the `after_step` hook. Motivated by doc 03 §5.19 Homing."
+  },
+  {
+   "to": "04",
+   "request": "§13 body plans: set `BodyState` flag 8 `CLIMB_ANY` (doc 03 §3.4) on Errata whose plan is `body.amorphous` or `body.insectoid` (\"climbs any solid face\"); doc 03 §5.11 then treats every collision box overlapping the capsule AABB expanded by 100 mm as climbable (between `p.y + STEP_UP` and `p.y + h` to enter, `p.y` to `p.y + h` to stay). Also state that the sprint-slide (doc 03 §5.23) costs no stamina and is gated by `can_sprint`, and that a grapple pull (§5.24) resets `peak_y`, so no fall damage accrues during it. Motivated by doc 03 §5.11, §5.23, Interface row 04."
+  },
+  {
+   "to": "07",
+   "request": "§10.1 door and trapdoor records and §10.8: state that a closed door or closed trapdoor applies its registry `light_filter`, `conceal` and `sound_atten_ddb` unscaled while the open panel scales by its 16 micro-voxels (doc 03 §4.4, Canon gaps G29: oak door 15/175 closed, 3/43 open), and keep the list of shapes that break whole (door, trapdoor, ladder, fence, pane, cross, fixture, resource nodes) aligned with doc 03 §13.2. The crop map removal (DECISIONS 128) is already met (doc 07 acceptance 25)."
+  },
+  {
+   "to": "09",
+   "request": "§15.3 Time of day and weather: key `W` on doc 03 §4.8's `Climate { tod, wx }` instead of \"until doc 12 stores a weather state\": IDs `tod.dawn`, `tod.day`, `tod.dusk`, `tod.night` and `wx.clear`, `wx.rain`, `wx.storm`, `wx.fog`, `wx.snow`, `wx.dust`; give the five stealth columns (fog, sound_bp, ambient_db, precip, snow) per `wx.*` row; use doc 03 §4.8's `sky_open(c)` as `outdoor(c)` (or `sky_lit(c)` for light), not the §10.2 `sky_src` bit. Align G26's requested canon section with doc 03's Canon §5.12 request so one table carries both chapters' columns. Motivated by doc 03 §4.8 (\"docs 09 and 18 read that table's fog and ambient-sound columns\")."
+  },
+  {
+   "to": "09",
+   "request": "§7 movement noises for the kit (G27): emit `noise.move.slide` on the tick `MoveState.mode` becomes `grid.move.slide` (`last_slide_start == t`), `noise.move.reel` every 30 ticks while `MoveState.grapple.is_some()`, and `noise.impact.grapple` at `Grapple.anchor` on the tick a `start_grapple` succeeds (`grapple.t == 0`); stance 5500 while `mode == slide`, 12000 while a grapple is active. These fields are doc 03 §3.4 `MoveState`. The shadow-area term stays dropped: doc 03 §10.6 lowers `light_at` by 8 inside `in_shadow_area`, which doc 09 §2.1 and Interface row 06 already state (verified on disk; no further change). Sight rays test `boxes(mask_at(c))` through `raycast_blocks` and `conceal_at` through the §4.4 fill rule, closed doors unscaled (G29)."
+  },
+  {
+   "to": "11",
+   "request": "Define the grappling tool template (`cat.tool`, one genre skin per genre, a cooldown doc 11 owns) whose quickbar use calls doc 03 `start_grapple(e) -> bool` (20,000 mm ray from the eye, anchor on any block face at least 1,000 mm away, 12,000 mm/s pull for at most 120 ticks, arrival within 1,000 mm; a refused use spends nothing). State in §5.2 that doc 05 copies `mfr.cyberpunk.ghostline`'s 16384 Bam/s into `Projectile.home_bam_s` and that the Canon §2.3 accumulator lives in `Projectile.home_acc` (273 or 274 Bam per normal step). Canon gaps item 2 can now cite doc 03 §5.24 instead of waiting. Motivated by doc 03 §5.24, Interface row 11."
+  },
+  {
+   "to": "12",
+   "request": "§18.1 Pit depth (\"VERVE-0 apex 1100 mm plus doc 03 §5.9's 1600 mm mantle reach is 2700 mm\") and §15.1 Climb up (\"2 blocks (jump and mantle ... 1100 + 1600)\"): doc 03 §5.9 now mantles up to 2,000 mm above `ledge_base_y` (the feet height at the last grounded tick) and a jump adds no reach, so a 2-block pit or climb is left by a mantle alone (the source column needs 4 air cells, since the crouched capsule rises to `land_y + 1201` mm) and a 3-block wall cannot be climbed by jump-and-mantle. Reword both and acceptance tests that cite 2700 mm."
+  },
+  {
+   "to": "12",
+   "request": "Climate (DECISIONS 99, G19): at generation roll `tod` and `wx` from per-genre weight tables over doc 03 §4.8's IDs (`tod.dawn|day|dusk|night`, `wx.clear|rain|storm|fog|snow|dust`), pass them to doc 03 `set_climate(tod, wx)` before the light bake (doc 03 §10.5), and record them in the Folio plan; author the per-genre tables (which states each genre allows). Align G19's canon proposal with doc 03's Canon §5.12 request. §10.4 custom masks need no change (doc 03 §4.3 stores them per chunk; `set_block_mask` only on chipping shapes)."
+  },
+  {
+   "to": "13",
+   "request": "§9.2 chrome king `strobe_overload` and Interface row 03: request the flashes as doc 03 §10.6 box `LightOverride`s over the dance floor, every 30 ticks for the 600 ticks, alternating `min_level = max_level = 15` and `min_level = max_level = 0`, each with `until = t + 30` (doc 03 added `LightOverride.min_level` for this). Creature templates: set `CLIMB_ANY` only where §4.13 navigation uses wall climbing (doc 03 §5.11). The §4.13 mantle link at 2,000 mm is measured from the floor; a jump adds no reach (doc 03 §5.9)."
+  },
+  {
+   "to": "16",
+   "request": "§7.2 `MoverSnap`/`MoverDelta`: `mv` now carries `ledge_base_y: Fx`, `slide_t: u8`, `slide_dir: Fx3`, `last_slide_start: Tick` and `grapple: Option<Grapple { anchor: Fx3, cell: Gidx, t: u8, blocked: bool }>` (doc 03 §3.4), and `MoveMode` has codes 8 `slide` and 9 `grapple`; extend the delta field list. §7.3 predictor: `start_grapple` is a host step outside `step_mover`, so a grapple start reaches the client as a correction; the client `BlockQuery::mask(c)` must return the replicated custom mask (pending overlay) else the predefined mask, `u64::MAX` outside the Folio (doc 03 §5, §5.24). Replicate section 0's `Climate { tod, wx }` to joiners and in the full snapshot (doc 03 §4.8, §16.1), since it changes light, sound, fire and surfaces. The §8 catch-up for the slot-4 invader's projectiles is already on disk."
+  },
+  {
+   "to": "17",
+   "request": "§12.1 Ledge mantle bullet (\"reaches 1,600 mm until doc 03 G31 brings DECISIONS 95's 2,000 mm\") and Interface row 03 (\"§5.9 reaches 1,600 mm until doc 03 G31 closes ... doc 03 G31 specifies the motion\"): doc 03 §5.9 now reaches 2,000 mm measured from the floor (`ledge_base_y`, a jump adds nothing), §5.23 defines the sprint-slide (CROUCH press while SPRINT is held and the Erratum sprints on the ground at ≥ 5,000 mm/s; 60-tick cooldown) and §5.24 the grappling tool as a quickbar item use; no new button bit. `access.gore` is presentation only as doc 03 §4.6 states."
+  },
+  {
+   "to": "18",
+   "request": "Pose tables: add `art.anim.*` slide and grapple-pull tables for every playable body plan under doc 03 §5.16's schema, keyed by `anim` (doc 03 Interface row 18). DECISIONS 99 presentation: doc 03 §4.8 now defines `tod.*` and `wx.*`; define their presentation (sky tint per `tod`, precipitation VFX and ambient sound per `wx`, the fog column doc 03 says docs 09 and 18 read) keyed on those IDs, and let the §3 haze/`fog_pts` rule read the Folio `wx` beside `gpv.evt.weather_front`. Debris and rims from `ev.block_chipped` and `ChunkView` masks are unchanged."
+  },
+  {
+   "to": "01",
+   "request": "§7 verbs table row \"Jump, air jump, ledge mantle\" (\"doc 03 §5.9 still stops at 1,600 mm, Canon gaps G1\"), Interface row 03 and G1: doc 03 §5.9 now mantles 2,000 mm, §5.23 defines the sprint-slide motion and §5.24 the grappling tool; the block-trap identification is on disk (doc 03 §14.2: a trap hit carries `source` 0, `item_uid` = `placed_meta.uid`, `ability` = the trap block's content ID). Update the row, the Interface row and G1 to cite them as present; the canon text itself is still requested (doc 03 G31)."
+  },
+  {
+   "to": "02",
+   "request": "`ViewFrame`: publish doc 03 §4.8's `Climate { tod: Id32, wx: Id32 }` beside `light_overrides` and `shadow_cells`, so the renderer and audio key weather presentation (doc 18) on it; light levels already carry the sky delta. §15 perf table: doc 03 Interface row 02 assumes budget rows for `sys.crafting`, `sys.resources`, `sys.coop` and `sys.run_layer`; the `SCHEDULE` comment says 39 systems, so confirm the four rows exist in the `perf.deck.sim.*` table. `ChunkView.masks` and `dda(max_steps)` are already on disk (no change)."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "PQ-03-01",
+   "question": "DECISIONS 95's \"ledge mantle up to 2,000 mm\": is the 2,000 mm measured from the feet at the moment of the press (so a jump first adds its apex, up to 3,100 mm, three blocks) or from the floor the body last stood on?",
+   "default_applied": "From the floor: §5.9 mantles a ledge at most 2,000 mm above `ledge_base_y` (feet height at the end of the last grounded, swimming, climbing or grappling tick) and at most 2,000 mm above the current feet; a jump adds no reach, so two blocks is the ceiling at every VERVE and doc 12's 2-block pit and climb rules hold without a jump.",
+   "options": [
+    "From the floor via `ledge_base_y` (applied; two blocks max, doc 12 unchanged)",
+    "From the feet at the press (jump adds reach; three-block walls climbable; doc 12 §1, §15.1, §18.1 and worldgen reachability change)",
+    "A per-genre or per-VERVE mantle height"
+   ]
+  },
+  {
+   "id": "PQ-03-02",
+   "question": "Sprint-slide numbers (no chapter had any): entry speed, start speed, deceleration, cap, cooldown, stamina cost?",
+   "default_applied": "Entry at ≥ 5,000 mm/s horizontal while sprinting on the ground with forward input and `stance_base = i32::MAX`; start speed max(current, 8,000 mm/s); deceleration 8,000 mm/s² × ground `friction_bp`; ends after 45 ticks, below 2,000 mm/s along the slide direction, when airborne, on a gate or downed, or on a JUMP press; 60-tick cooldown; no stamina cost; crouch height held; sprint-gait footsteps. 3,799 mm on friction 10000 from a 6,500 mm/s sprint, 5,669 mm on ice.",
+   "options": [
+    "Keep the §5.23 numbers (applied)",
+    "Shorter, cheaper slide (e.g. 30-tick cap, start at current speed) for stealth genres",
+    "Stamina cost on start (doc 04 owns it)"
+   ]
+  },
+  {
+   "id": "PQ-03-03",
+   "question": "Grappling tool numbers and anchoring: ray length, pull speed, duration cap, arrival radius, release velocity, and may it anchor on fixed terrain and ceilings?",
+   "default_applied": "20,000 mm ray from the eye; anchors on any block face (fixed terrain included) at least 1,000 mm away; 12,000 mm/s pull with no gravity for at most 120 ticks; release on JUMP (velocity kept, mantle test runs), on arrival within 1,000 mm, when blocked, gated, downed or when the anchor block is gone (velocity × 0.25); a body is never an anchor; the pull resets `peak_y`, so no fall damage accrues during it; doc 11 owns cooldown and skins.",
+   "options": [
+    "Keep the §5.24 numbers (applied)",
+    "Shorter line (e.g. 12 m) and slower pull to keep doc 12's vertical gating meaningful",
+    "Allow entity anchors (pull enemies or be pulled), which doc 05 §19.3 grapple rules would then share"
+   ]
+  },
+  {
+   "id": "PQ-03-04",
+   "question": "DECISIONS 99 climate: which time-of-day and weather states exist, and which simulation terms do they feed?",
+   "default_applied": "Four times of day (`tod.dawn|day|dusk|night`, sky deltas −1/0/−1/−3) and six weathers (`wx.clear|rain|storm|fog|snow|dust`) with sky_delta, sound_ddb, precip and fire_bp columns (§4.8); light, sound, surfaces (`st.soaked` under rain or storm when sky-open) and fire spread are affected; weather deposits no liquid or gas and changes no temperature; roofed cells see only the light term. Doc 12 rolls both per Folio and calls `set_climate` before the light bake.",
+   "options": [
+    "Keep §4.8's six weathers and four times of day as the canon-1.12 table (applied), merged with doc 09's stealth columns and doc 18's presentation columns",
+    "Weather also deposits water (puddles) and lowers temperature under snow, which touches §6, §9 and doc 08",
+    "Weather changes over the Folio's life (fronts), which doc 12's `gpv.evt.weather_front` already covers as an event"
+   ]
+  },
+  {
+   "id": "PQ-03-05",
+   "question": "G29: should closed doors and trapdoors block light and sound fully, against Canon §4.4's literal fill rule?",
+   "default_applied": "Yes, adopted ahead of canon in §4.4: a closed panel applies registry `light_filter`, `conceal` and `sound_atten_ddb` unscaled (oak door 15 and 175 ddB closed, 3 and 43 open); the Canon gaps G29 entry still describes the pre-adoption leak and needs rewording.",
+   "options": [
+    "Adopt (applied); canon wording requested",
+    "Follow the literal fill rule (doors leak light and sound; stealth and sound examples revert)"
+   ]
+  },
+  {
+   "id": "PQ-03-06",
+   "question": "G30: do cross, ladder and fixture cells keep their registry concealment, light filter and sound attenuation although they have no micro-voxels?",
+   "default_applied": "Yes (§4.4): the four empty-mask shapes are not geometry and keep registry values, so tall grass 2 and leaves 3 hold.",
+   "options": [
+    "Keep registry values (applied)",
+    "Scale to 0 per the literal fill rule and move foliage concealment to doc 09"
+   ]
+  },
+  {
+   "id": "PQ-03-07",
+   "question": "Doc 04 §13 says `body.amorphous` and `body.insectoid` climb any solid face; how does the controller do it?",
+   "default_applied": "`BodyState` flag 8 `CLIMB_ANY` (§3.4): every collision box overlapping the capsule AABB expanded by 100 mm counts as climbable (enter between `p.y + STEP_UP` and `p.y + h`, stay between `p.y` and `p.y + h`), at the plan's climb speed; doc 04 sets it on those Errata, doc 13 only on creatures whose navigation uses wall climbing.",
+   "options": [
+    "`CLIMB_ANY` as applied",
+    "No wall climbing at launch (treat the doc 04 text as flavor)",
+    "A separate wall-climb speed or stamina drain owned by doc 04"
+   ]
+  },
+  {
+   "id": "PQ-03-08",
+   "question": "Canon §4.4 says destruction removes micro-voxels, not whole cells; do panel shapes and explosion-marked cells break whole?",
+   "default_applied": "Yes: door, trapdoor, ladder, fence, pane, cross and fixture cells and resource nodes never chip and break whole; explosions break the cells their rays mark whole (§12.2, §13.2); judged a compatible reading, canon clarification proposed.",
+   "options": [
+    "Keep whole-cell breaks for panels and marked cells (applied)",
+    "Chip panels too (16-voxel masks) and let explosions chip marked cells by their ray power"
+   ]
+  },
+  {
+   "id": "PQ-03-09",
+   "question": "Homing (ghostline) target rule: which targets qualify and how often is the target re-chosen?",
+   "default_applied": "Live non-ghost bodies carrying `st.marked`, of a faction other than the owner's, within 30,000 mm and 60° of the velocity, best alignment wins (ties to lower EntityId), re-chosen every normal step; the turn budget is the Canon §2.3 accumulator at `home_bam_s` with k = 60 (273 or 274 Bam at 16384); catch-up steps never turn; pitch clamped to ±16000.",
+   "options": [
+    "Keep the §5.19 rule (applied)",
+    "Lock at launch (doc 06's glyph.mod.homing model), which doc 06 needs anyway",
+    "Home on any hostile, not only `st.marked` (changes ghostline's identity in doc 11)"
+   ]
+  },
+  {
+   "id": "PQ-03-10",
+   "question": "DECISIONS 94 ink gore: does the gore toggle change any simulated state?",
+   "default_applied": "No (§4.6): `liq.blood` and every bleed liquid keep their IDs, records and grid behaviour; each viewer's renderer draws them as ink (default), red blood or nothing, so peers with different settings simulate identically.",
+   "options": [
+    "Presentation only (applied)",
+    "A distinct `liq.ink` with its own surface rows, which would make the toggle affect simulation and break lockstep"
+   ]
+  }
+ ],
+ "unresolved": [
+  "Canon gaps G31 entry is stale and contradicts the body: it says \"§5.9 keeps the 1,600 mm mantle, §5 has no slide or grapple mode, and no weather term enters §6 to §11\", while §5.9 mantles 2,000 mm, §5.23/§5.24 define slide and grapple, and §4.8's climate terms enter §6.10, §8.3, §10.2, §11.2 and §11.4. The entry must be rewritten to record the adoption ahead of canon and to quote the requested Canon §4.2, §5.12 and §13.1 text (the body cites \"as requested for canon-1.12\" but no section quotes the words).",
+  "Canon gaps G29 entry is stale: it still says light and sound leak through closed doors and that only gas tightness is kept, while §4.4 now applies unscaled registry values to closed panels (G29 adopted) and §11.5 and acceptance 25/53 follow. The entry must say the chapter adopted the requested wording ahead of canon.",
+  "G6 (ghost collision reading) was never triaged and stays open; a canon wording is proposed in canon_requests.",
+  "Doc 06 §5.4 `glyph.mod.homing` (lock at launch, 8192 Bam cone, 15,000 mm, 136 Bam per tick) has no implementation path after wave 2: §5.19's homing step turns only projectiles with `home_bam_s > 0` toward `st.marked` hostiles, and the `doc05::steer` hook it could have used is gone. Doc 03 probably needs a `home_target: Option<EntityId>` lock variant (8160 Bam/s) or doc 06 must turn in `after_step`.",
+  "The wave-2 log stops at Batch 2 (DECISIONS 95) and never records the climate batch (DECISIONS 99, §4.8 and its hooks) that the same commit range carries, nor does it say the pass is complete; status is therefore partial.",
+  "No acceptance test covers §4.8 (sky_level under `tod`/`wx`, `st.soaked` under rain on a sky-open cell, `fire_bp(wx)`, `sound_ddb(wx)`), §5.23 (3,799 mm slide on friction 10000, 5,669 mm on ice) or §5.24 (90-tick arrival example); only the §10.2 and §8.3 worked examples and acceptance 11 (mantle) and 52 (`MoveMode` 10 variants) touch the new rules.",
+  "§17 performance budgets were not revisited: the homing candidate scan (every projectile with `home_bam_s > 0` scans every `st.marked` body each tick), the derived column tops `opaque_top`/`solid_top` (§4.8) maintained on every edit, chip and refill, and the slide/grapple steps have no stated per-unit cost or worst-case row.",
+  "Three chapters request the same climate table under different canon sections and columns: doc 03 Canon §5.12 (sky_delta, sound_ddb, precip, fire_bp), doc 09 G26 new Canon §12.4 (fog, sound_bp, ambient_db, precip, snow), doc 12 G19 (per-genre weights under Canon §5.9/§12). One merged canon request is needed.",
+  "Consumers of the retired 1,600 mm mantle still cite it: doc 01 §7 and Interface row 03, doc 12 §15.1 and §18.1 (\"1100 + 1600 = 2700 mm\"), doc 17 §12.1 and Interface row 03; doc 05 Canon gaps item 3 still says doc 03 has no slide or grapple mode.",
+  "Retired IDs: none. The only backticked tokens chapter 03 dropped in wave 2 are `crops` (doc 07's saved crop map, DECISIONS 128; doc 07 acceptance 25 already states no crop map), the bare `grew` mention (the ID `grid.cause.grew` stays) and `steer` (the never-defined doc 05 hook; no chapter defines it). New IDs introduced: `grid.move.slide`, `grid.move.grapple`, the `tod.*` and `wx.*` climate IDs (§4.8), and references to `cat.tool` and `st.marked`; the `tod.`/`wx.` namespaces have no Canon §19 owner yet.",
+  "fix:09's \"replace 'doc 09 G16' with 'doc 09 §7.2'\" was met by dropping the citation (no G16 remains) rather than replacing it; §5.15 now says only \"Doc 09 converts footsteps and landings into `ev.noise`\". fix:17's \"cite Canon §2.4's intent replay log\" likewise: no G22 remains, the `comp.player` row cites doc 17 §12.1 and `sys.input_apply`, and Canon §2.4 is cited for logged intents in §2.2 row 4, not in that row."
+ ],
+ "remaining_work": [
+  {
+   "item": "fix:05: §12.4: an item explosion's damage must be B_eff = mul_bp(mul_bp(b_mhp, falloff), exposure), one mul_bp per att",
+   "status": "done",
+   "note": "§12.4 computes B_eff with one mul_bp each and f for knockback only; Interface row 05 reworded as requested; the G19 wording part is moot because G19 is closed and no longer in Canon gaps."
+  },
+  {
+   "item": "fix:05: Canon §10.8 two hit batches: in §12.4, queue environmental-explosion hits (source Env) for sys.damage_late an",
+   "status": "done",
+   "note": "§12.4 queues Item hits for sys.damage and Env hits for sys.damage_late; §2.2 row 17 names the actor batch and row 26 the second batch (environmental, contact, surface, DoT, plus #17's shock chains and thorns)."
+  },
+  {
+   "item": "fix:16: §5 SPEC comment for MoverSnap: list 'status_speed_bp, n_status' instead of 'speed_bp' (doc 16 §7.2 carries the p",
+   "status": "done",
+   "note": "§5 SPEC comment lists status_speed_bp, n_status; §5.19 sets catchup for the slot-4 invader's projectiles as for an Erratum's (was already on disk before wave 2)."
+  },
+  {
+   "item": "fix:02: For Canon §4.4 rendering and collision (doc 02 §4.6, §6.5, §7.2, §8.2), provide: a predefined u64 micro-voxel ma",
+   "status": "done",
+   "note": "mask_at(c), shape_mask[state], per-chunk masks/mask_of tables (§4.3, §4.4), section 4 serializes ascending (Local, u64) custom masks (§16.1), block_gen bumps on mask changes, raycast_blocks passes max_steps = 3 × ceil_div(t_max.raw, 2^32) + 3 (§5.18, acceptance 55); BlockQuery::mask added in wave 2."
+  },
+  {
+   "item": "fix:01: §5.9: raise the mantle bound from h ∈ (550, 1600] mm to 2,000 mm (DECISIONS 95). Define the sprint-slide motion",
+   "status": "done",
+   "note": "§5.9 h ∈ (550, 2000] from ledge_base_y; §5.23 sprint-slide; §14.2 block-trap hits carry source 0, item_uid = placed_meta.uid, ability = trap block ID. Canon gaps G31 text still says 1,600 mm (see unresolved)."
+  },
+  {
+   "item": "verify:05: §5.8 lean: replace the eye point test ('If the eye point would lie inside a box, lean steps back toward 0 that",
+   "status": "done",
+   "note": "§5.8 uses sign(lean) × floor_div(350 × |lean|, 9) and the 100 mm box clamp lowering the offset by 50 mm while lean keeps moving (already on disk before wave 2)."
+  },
+  {
+   "item": "verify:05: §12.1 and §12.4 (extends fixer request 1): Source::Item.b_mhp is doc 05 base_mhp × attack factors 1 and 2, be",
+   "status": "done",
+   "note": "Source::Item.b_mhp comment states 'base_mhp × attack factors 1 and 2, before Canon §10.4'; §12.4 item hit carries base_mhp = B_eff and Canon §10.4 applies at resolution; §12.1 block power from Tables 9.3/9.3b (frag 3000, concussion 1000, launcher 4000, others 0); the mul_bp(4000, block_bp) derivation and its examples are gone."
+  },
+  {
+   "item": "verify:05: §5.19: add the homing step that mfr.cyberpunk.ghostline needs, turning the projectile's velocity before the mo",
+   "status": "done",
+   "note": "§5.19 Homing: home_bam_s/home_acc on Projectile, Canon §2.3 accumulator (273/274 Bam at 16384), target choice, turn geometry; Imports row for doc 11 added."
+  },
+  {
+   "item": "verify:02: No change needed. Doc 03's Interface row for doc 02 is now fully met: shadow areas and the override sphere are",
+   "status": "done",
+   "note": "No change requested; Interface row 02 unchanged and consistent."
+  },
+  {
+   "item": "verify:01: Unchanged from the fixer: mantle up to 2,000 mm and sprint-slide motion (doc 03 G31). Also, with doc 07, an ev",
+   "status": "done",
+   "note": "Same disposition as fix:01: §5.9, §5.23 and §14.2 on disk."
+  },
+  {
+   "item": "fix:07: §13.3: drop 'and `item.tool.torch`' (triage C-25); a held torch becomes block.torch via doc 07 recipe.hand.wall_t",
+   "status": "done",
+   "note": "§13.3: 'A held torch never places a block: a wall torch is the placeable block.torch that doc 07's recipe.hand.wall_torch makes from it (triage C-25)'."
+  },
+  {
+   "item": "fix:07: §13.8 sys.erasure: erasers are hunters and every fac.editors member EXCEPT the invader (canon §11.6 as amended by",
+   "status": "done",
+   "note": "§13.8: 'each fac.editors member except the invader (Canon §17.9), hunters included'; header and Imports agree."
+  },
+  {
+   "item": "fix:07: §4.5 illustrative JSON records: stop declaring block.air, block.masonry.marble, block.door.wood, block.cover.sandb",
+   "status": "done",
+   "note": "§4.5 carries no block JSON with an \"id\" key; the only JSON \"id\" keys left are the §14 event examples (ev.block_changed, ev.damage_dealt); baseline lint clean per the log."
+  },
+  {
+   "item": "fix:07: Implement doc 07 §10.8 micro-voxel chipping. Give every §4.4 shape a predefined mask. After each damage event, re",
+   "status": "done",
+   "note": "§13.2 Chipping: fill(c) <= doc07::voxels_left(c), nearest ip first (damage volume then cell), chipped masks survive decayed block_damage drops, refill_mask in ascending bit index, §4.4 fill rule scales conceal/light_filter/sound_atten, listed shapes and nodes break whole; acceptance 53/54."
+  },
+  {
+   "item": "fix:09: §14.3: change ev.device_hacked to `device: u64 /* EntityId, or Gidx for a block device (fuse box, laser emitter)",
+   "status": "done",
+   "note": "ev.device_hacked device: u64 (EntityId or Gidx); ev.alarm_raised kind comment '0 creature (hound, civilian, bell or klaxon), 1 every other alarm device, 2 camera; a callout raises none'; sight rays hit boxes(mask_at) via raycast_blocks and conceal_at follows the fill rule; no 'G16' left (citation dropped, not replaced with §7.2)."
+  },
+  {
+   "item": "fix:18: Triage C-16: write \"the Censor's `blackout`\" instead of \"Redactor `blackout`\" (Imports row for doc 13 and §li",
+   "status": "done",
+   "note": "Imports row 13 and §10.6 say 'the Censor's blackout'; no 'Redactor' remains."
+  },
+  {
+   "item": "verify:07: §13.2 damage_block: the amount is 0 when the actor is the invader (slot 4), so the invader's hits never lower a",
+   "status": "done",
+   "note": "§13.2: amount 0 when the actor is the invader (slot 4) or a ghost; §12.1 adds 750 × fieldcraft_100 beside sapper (× 15000) and demolition (+750) before the 8000 cap (example 6750, matching doc 07 acceptance 44)."
+  },
+  {
+   "item": "fix:17: Line 272 cites 'doc 17 G22', which is now closed. Cite Canon §2.4's intent replay log instead.",
+   "status": "done",
+   "note": "No 'G22' remains; the comp.player row cites doc 17 §12.1 and the SetBreathHold intent in sys.input_apply; Canon §2.4 is cited for logged intents in §2.2 row 4 rather than in that row."
+  },
+  {
+   "item": "fix:12: Register a law-discovery event (suggested `ev.law_discovered`, payload `{ law: Id32, slots: u8 }`, producer 12, c",
+   "status": "done",
+   "note": "§14.3 row ev.law_discovered { law: Id32, slots: u8 }, producer 12, consumers 14, 17, once per Law per run; §4.4 shape_mask per shape; §4.3 per-chunk masks/mask_of tables hold doc 12 §10.4's authored masks."
+  },
+  {
+   "item": "fix:08: §6.10 Surface contact: add the sentence 'A body whose slot.face holds a working doc 08 respirator (filter > 0, do",
+   "status": "done",
+   "note": "§6.10 carries the sentence (with 'which still takes skin rows' appended)."
+  },
+  {
+   "item": "fix:06: §10.6 light reads and the Interface row for doc 06: every light read inside a doc 06 shadow area (in_shadow_area",
+   "status": "done",
+   "note": "§10.6 dim(c) = 8 inside in_shadow_area(c), floor 0, applied at read time; Interface row 06 and acceptance 48 state it."
+  },
+  {
+   "item": "verify:17: §5.9: raise the mantle height to 2,000 mm per DECISIONS 95 (it currently allows h in (550, 1600]). Define the",
+   "status": "done",
+   "note": "§5.9 at 2,000 mm; §5.23 slide on a CROUCH press while sprinting, no new button bit; Interface row 17 updated."
+  },
+  {
+   "item": "verify:08: §6.10 should also skip `inhaled` gas rows and doc 08 vapor exposure for a bearer with doc 08 purify immunity (",
+   "status": "done",
+   "note": "§6.10 purify immunity skips inhaled rows; §7.3 and §2.2 row 21 run doc 08 §2.7 gas emitters first each gas run."
+  },
+  {
+   "item": "verify:12: Still open: register a law-discovery event (suggested ev.law_discovered { law: Id32, slots: u8 }, producer 12,",
+   "status": "done",
+   "note": "Same row as fix:12, on disk in §14.3."
+  },
+  {
+   "item": "verify:06: §13.2 damage_block: name doc 06 §13.1 as the block factor for spells, block_bp = 1000 × the largest block powe",
+   "status": "done",
+   "note": "§13.2 names doc 06 §13.1's spell block factor (force 6; acid 3 or 6 on metal; thunder 4 or 12 on glass and ice) with mhp = step-0 B and ip = impact point or area center."
+  },
+  {
+   "item": "fix:03 (unresolved): G29: under Canon §4.4's literal fill rule a closed door or trapdoor (16 micro-voxels) filters only 3",
+   "status": "partial",
+   "note": "§4.4 adopted the requested rule (closed panels unscaled) and §11.2, §11.5, acceptance 25/53 follow, but the Canon gaps G29 entry still describes the leak and the canon wording is still absent from canon-1.11."
+  },
+  {
+   "item": "fix:03 (unresolved): G30: shapes with no micro-voxels (cross, ladder, fixture) keep their registry concealment so that Ca",
+   "status": "partial",
+   "note": "§4.4 keeps registry values for the four empty-mask shapes (chapter side done); the canon wording change remains an open request."
+  },
+  {
+   "item": "fix:03 (unresolved): G31: DECISIONS 95 (mantle to 2,000 mm, sprint-slide, grappling tool) and 99 (time of day and weathe",
+   "status": "partial",
+   "note": "Body implements both decisions ahead of canon (§5.9, §5.23, §5.24, §4.8 and hooks), but the Canon gaps G31 entry still says the chapter waits (1,600 mm, no slide or grapple, no weather term) and quotes no requested canon text; canon-1.11 still carries neither."
+  },
+  {
+   "item": "fix:03 (unresolved): G6 (ghost collision reading) was never triaged and stays open.",
+   "status": "not_started",
+   "note": "G6 entry unchanged; no triage, no proposed canon wording in the chapter (one is proposed in this harvest's canon_requests)."
+  },
+  {
+   "item": "fix:03 (unresolved): Doc 09 must drop its own shadow-area term, or shadow areas will dim stealth light twice (cross-chapt",
+   "status": "done",
+   "note": "Doc 09 §2.1 (line 198) and its Interface row 06 already state 'doc 03 §10.6 shadow areas and light overrides already applied, so no second shadow term'; doc 03 Interface row 09 records it."
+  },
+  {
+   "item": "verify:03 (unresolved): G31 (DECISIONS 95 and 99) stays open. The canon carries neither the movement kit nor weather. The",
+   "status": "partial",
+   "note": "The ambiguity was settled by default (2,000 mm from ledge_base_y, jump adds nothing) and slide/grapple numbers defined in §5.23/§5.24; §5.9 no longer keeps 1,600 mm and doc 17's row agrees; the canon text and a corrected G31 entry are still missing."
+  },
+  {
+   "item": "verify:03 (unresolved): The math of the homing turn is not defined anywhere (target selection, turn geometry, where the a",
+   "status": "done",
+   "note": "§5.19 Homing defines target selection, turn geometry and the accumulator in Projectile.home_acc; doc05::steer is gone. Doc 06's glyph.mod.homing still has no route (see unresolved)."
+  },
+  {
+   "item": "verify:03 (unresolved): Doc 04 §13 says body.amorphous and body.insectoid 'climb any solid face'. Doc 03's climb mode onl",
+   "status": "done",
+   "note": "BodyState flag 8 CLIMB_ANY and the §5.11 rule are on disk; doc 04 must set the flag (cross-chapter request)."
+  },
+  {
+   "item": "verify:03 (unresolved): Canon §4.4 says 'Destruction removes micro-voxels, not whole cells'. Docs 03 and 07 still break d",
+   "status": "not_started",
+   "note": "Chapter unchanged on this point (panels and explosion-marked cells break whole) and no canon gap was filed; a clarifying canon wording is proposed in this harvest."
+  },
+  {
+   "item": "verify:03 (unresolved): G6, G29 and G30 remain open canon requests, as the fixer recorded.",
+   "status": "partial",
+   "note": "G29 and G30 rules adopted locally in §4.4; all three remain open canon requests; G29's entry text is stale."
+  },
+  {
+   "item": "DECISIONS 95",
+   "status": "partial",
+   "note": "Movement kit fully specified on disk: §3.4 MoveMode Slide (8)/Grapple (9), MoveState fields, §5.1 selection order, §5.9 2,000 mm mantle from ledge_base_y, §5.23 sprint-slide, §5.24 grappling tool, §5.15, §5.21, §2.2 row 7, §16.1, Exports, Interface rows 04/05/11/16/17/18, acceptance 11 and 52. Missing: the Canon gaps G31 entry still says §5.9 keeps 1,600 mm and §5 has no slide or grapple mode; no acceptance test for the slide (3,799 mm) or grapple (90-tick arrival) examples; §17 budget unchanged; consumers 01, 05, 12, 17 still cite 1,600 mm or 'no slide mode'."
+  },
+  {
+   "item": "DECISIONS 99",
+   "status": "partial",
+   "note": "§4.8 defines Climate { tod, wx }, the tod.*/wx.* tables, sky_lit/sky_open column tops and the light (§10.2 sky_level), sound (§11.2, §11.4), surface (§6.10 st.soaked) and fire (§8.3 fire_bp) terms; saved in section 0 (§16.1), rebuilt tops in §16.2, Exports set_climate/Climate/sky_lit/sky_open. Missing: the Canon gaps G31 entry still says no weather term enters §6 to §11; the log never records this batch; no acceptance test; §17 has no cost row for column-top maintenance; no consumer calls set_climate yet (doc 12), and docs 09 and 18 do not read the tod.*/wx.* IDs; the tod./wx. namespaces have no Canon §19 owner."
+  }
+ ]
+}

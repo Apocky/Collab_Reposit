@@ -1,0 +1,220 @@
+{
+  "chapter": "07",
+  "status": "complete",
+  "canon_requests": [
+    {
+      "section": "Canon §4.3 Terrain is fixed (destructible list)",
+      "old": "Destructible blocks are doors, crates, barrels, cracked walls that hide secrets, wooden structures, glass, ice, webs, light fixtures, rubble, pit lids, hull panels and every Errata placeable; no structural wall or floor is destructible.",
+      "new": "Destructible blocks are doors, crates, barrels and powder kegs, furniture, cracked walls that hide secrets, wooden structures, glass, ice, webs, plants, light fixtures, light switches and fuse boxes, rubble, pit lids, hull panels, doc 08 reaction products, resource nodes, conjured walls, gadget barriers and every Errata placeable; no structural wall or floor is destructible.",
+      "why": "Doc 07 §10.1 tags block.leaves, block.tall_grass, block.vine, block.obsidian, block.basalt, block.slag, block.wardrobe, block.bed, block.table, block.light_switch, block.fuse_box, the 23 block.node.*, block.conjured, block.cover.barrier and block.powder_keg destructible because clearing, harvesting, burning or breaking them is their purpose; Canon §4.3 does not list them (doc 07 Canon gaps item 1; block.crop dropped from the plant list by DECISIONS 128)."
+    },
+    {
+      "section": "Canon §4.4 Micro-voxels, Destruction bullet",
+      "old": "Destruction removes micro-voxels, not whole cells. Damage to a destructible cell (block.tag.destructible, §4.3) removes micro-voxels inside the damage volume, nearest the impact first, at 250 mm granularity. A cell whose mask reaches 0 becomes air.",
+      "new": "Append: \"A destructible cell whose shape occupies no micro-voxels or whose mask follows its props breaks whole at 0 block HP (doc 07 §10.8).\"",
+      "why": "Ladder, cross and fixture shapes occupy no micro-voxels, and door, trapdoor, fence and pane masks change with their props, so doc 07 §10.8 (with doc 03 §13.2) lets these shapes and resource nodes keep their mask and break whole when block HP reaches 0 (doc 07 Canon gaps item 2)."
+    },
+    {
+      "section": "Canon §5.8 Local genre and personal VERVE",
+      "old": "local_genre(pos) is the genre of the bleed zone containing block fx_floor_block(pos), or the Folio's genre outside bleed zones. Doc 12 defines bleed zones. … Inside a seam zone, local_genre(pos) is the Folio's genre …",
+      "new": "Add a bullet: \"**Fused Folios.** In a Second Edition Folio written in two fused genres (DECISIONS.md item 101), doc 12 assigns each zone one genre of the pair; `local_genre(pos)` is the genre of the zone containing `fx_floor_block(pos)`, and `local_axiom(pos, a)` is `floor_div(x + y, 2)` of the pair's two values of `a`.\"",
+      "why": "A Second Edition Folio has two genres, so 'the Folio's genre' names two; doc 07 §1.5 reads one genre per position for origin_genre, station skins, vein weights, the genre stone/wood/salvage pair, butchery salvage and genre legality (doc 07 Canon gaps item 3; DECISIONS 101 says axioms are averaged)."
+    },
+    {
+      "section": "Canon §13.1 Categories (cat.seed row) and §17.7 retired-ID list",
+      "old": "| `cat.seed` | plantable seeds | 07, 08 |",
+      "new": "Delete the cat.seed row from §13.1 (26 categories remain). In §17.7's retired-ID sentence add cat.seed, block.crop and mat.tag.tillable to the IDs that 'are retired IDs and must not appear in content' (DECISIONS.md item 128).",
+      "why": "DECISIONS 128 retires cat.seed and all planting; doc 07 §9.7 follows it and defines no crop block, state, cap or draw (doc 07 Canon gaps item 4). Docs 10 and 11 count '27 Canon §13.1 categories' and will need 26."
+    },
+    {
+      "section": "Canon §13.8 Item level, depth and power tables (first bullet)",
+      "old": "Item level ilvl is the Folio index where the item was generated: 1 to 25 for the main run, 26 or more in Marginalia. Rewriting keeps ilvl.",
+      "new": "Proposed, joining doc 14 Canon gaps item 4: \"Item level `ilvl` is the depth `d(f)` of the Folio where the item was generated (doc 14 §3.1): the Folio index 1 to 25 in the main run, the Abridged depth in `mode.abridged`, 26 or more in Marginalia and `25 + 2n` in Second Edition Folio `n` (DECISIONS.md item 106). Rewriting keeps `ilvl`.\" Doc 07 Canon gaps item 5 defers the exact wording to doc 14's request for Canon §13.8 and §17.1.",
+      "why": "Canon §13.8 defines depth for the main run, Abridged and Marginalia only; doc 07 §1.5 uses doc 14 §3.1's d(f) for every P, T, S, ilvl and src_lvl read, so crafted items, placed-block hp_max and station tiers in Second Edition need the canon to name 25 + 2n (doc 07 Canon gaps item 5; DECISIONS 106)."
+    }
+  ],
+  "cross_chapter_requests": [
+    {
+      "to": "08",
+      "request": "DECISIONS 128 (seeds cut; doc 07 §9.7 and Interface row 08 now assume 'no cat.seed items and no planting'). Doc 08 still carries: §8.4 'Seeds (cat.seed)' with 'Seeds are planted (doc 07) to grow their plant' and the 16 ing.seed_* rows (lines 801-822); Imports Canon row listing cat.seed (line 19); the §15 alchemize row 'cat.seed → 2' (line 1297); §15.2 'Seed brewing (alch.tx.seed_brew)' with its per-party seed_heal_count state (lines 1299-1317, 1415) and test 30 'Seed brew' (line 1467); Exports '16 seeds' (line 1387); Interface row Doc 07 'seed planting' (line 1424). Adopt: delete §8.4 and the 16 ing.seed_* IDs, drop cat.seed from Imports and the alchemize row, change the Doc 07 Interface entry to 'no planting (DECISIONS.md item 128)', and either retire alch.tx.seed_brew with seed_heal_count and test 30 or re-key the brew to a non-seed input (product-owner call; doc 07 has no stake in which)."
+    },
+    {
+      "to": "11",
+      "request": "DECISIONS 128 (doc 07 Interface row 11 assumes 'cat.seed dropped from its category tables'). Doc 11 §3.1 category row '| cat.material, cat.ingredient, cat.seed, cat.body_part, cat.placeable | owners 07, 08, 04 | …' (line 319) and the Exports row '`cat.` (27, §3.1)' listing cat.seed (line 1882): remove cat.seed and change the count to 26. No loot line, deck card or shop line names seeds, so nothing else moves."
+    },
+    {
+      "to": "10",
+      "request": "DECISIONS 128 (doc 07 §9.7). Doc 10's mundane-category list (line 61) names cat.seed and ends 'The table covers all 27 Canon §13.1 categories.' Adopt: drop cat.seed from the list and write 26 once Canon §13.1 deletes the row (canon_requests item 4)."
+    },
+    {
+      "to": "21",
+      "request": "DECISIONS 128 and doc 07's new acceptance tests. WP-032 (line 262) scope cell reads 'salvage and reforging, mining and nodes, farming, placeables only (DECISIONS 16), gadgets and deployables, cooking, Fieldcraft' and its test cell '07: 14–28, 32–45, 47–50, 52'. Adopt: delete 'farming' (doc 07 §9.7 is now 'Seeds and planting (cut)'; test 25 is 'Seeds cut', a content-set check) and extend the test cell with 53 (trap-hit identity), 54 (Second Edition depth) and 55 (engineered salvage)."
+    },
+    {
+      "to": "02",
+      "request": "Rust slice palimpsest/crates/palimpsest_sim/src/loot.rs (doc 02 §3.2 crates, doc 21 WP-031): the Category enum still holds Seed (line 610), the ALL list Category::Seed (line 647) and the content-ID match arm 'Category::Seed => \"cat.seed\"' (line 680). DECISIONS 128 retires cat.seed and doc 07 Canon gaps item 4 asks Canon §17.7 to list it as an ID that must not appear in content; remove the variant and its two uses, and adjust any count asserted as 27 categories (doc 07 §9.7, test 25)."
+    },
+    {
+      "to": "03",
+      "request": "§14.2 and Interface row 07 (line 2052) already state the block-trap hit is 'queued with source 0, item_uid its placed_meta.uid and ability its block's content ID'. Doc 07 §10.4 also sets instigator_slot = placed_meta.owner_slot on that hit, so the kill credits the placer's slot (doc 01 §10.3 KPI, doc 04 XP). Adopt in row 07 and §14.2: 'and instigator_slot = placed_meta.owner_slot' (doc 07 §10.4, test 53, invariant 'block-trap hit ⇒ source 0 ∧ item_uid = placed_meta.uid ∧ ability = trap block ID')."
+    },
+    {
+      "to": "01",
+      "request": "§10.3 'Systemic kills' says a kill is systemic 'when h comes from an Errata-placed block trap (cat.placeable, such as block.trap.spikes, doc 07 §10.4)' without a payload test. Doc 07 §10.4 now fixes the payload: such a hit has source 0, item_uid = the cell's placed_meta.uid, ability = the trap block's content ID and instigator_slot = placed_meta.owner_slot. Adopt as the test: 'h.source == 0 and h.ability is a block.* content ID carrying block.tag.errata_placeable (doc 07 §10.4; doc 07 test 53)'."
+    },
+    {
+      "to": "12",
+      "request": "DECISIONS 101 (doc 12 Canon gaps G19 lists it open). Doc 07 §1.5 reads Canon §5.8's local_genre(pos) once per position (crafter, station, node socket, corpse) and Interface row 12 assumes 'in a Second Edition fused Folio, one genre of the pair per zone for local_genre'. Adopt: at generation of a Second Edition Folio assign every zone (and the seam) exactly one genre of the fused pair, recorded where bleed zones are, so local_genre(pos) returns one genre at every position; doc 07 §1.5's origin_genre, station skins (§5.2), vein weights (§9.4), genre stone/wood/salvage pair (§9.3) and genre legality then read that genre. The canon-side wording is canon_requests item 3."
+    },
+    {
+      "to": "12",
+      "request": "Confirmed satisfied, no edit needed: §10.1 defines the node socket as 'the strip of 4 floor-level cells from block along axis inside its tile, standing against a wall and never in a wall cell', §11.2 fills 'the first size cells of the room's lowest-index free node socket in ascending block index', and the room.shrine row places block.altar; doc 07 §9.4 and Interface row 12 now quote exactly this."
+    }
+  ],
+  "product_questions": [
+    {
+      "id": "Q4-mat.role.block",
+      "question": "mat.role.block has no consumer: no rule, recipe or validator reads it, and eight masonry materials (titanium, coral, dreamstuff, paper, vellum, birch, thornwood, blackwood) lack it although they form block.masonry.* blocks. Should the role gate which materials may form blocks, be dropped, or stay informational?",
+      "default_applied": "Informational (doc 07 §2.4 sentence: 'mat.role.block is informational: no rule, recipe or validator reads it, and a block record may name any §2.2 material whether or not it carries bk').",
+      "options": [
+        "Keep it informational (applied): no gate, no content change.",
+        "Make it a gate: a block record may name only materials carrying bk; add bk to the eight masonry materials in §2.2.",
+        "Drop the role: 9 roles become 8; §2.2 roles column, Exports and test 51 change."
+      ]
+    },
+    {
+      "id": "Q6-sandbag-blast",
+      "question": "The §2.5 formula gives block.cover.sandbag blast_res_milli 1000 (block.cover.plate 5500), while doc 03's former sample record said 3500. Should sandbags be explosion cover with an override in §10.1?",
+      "default_applied": "No override: §10.1 states 'blast_res_milli 1000 and 5500, the §2.5 defaults (no override)'; doc 03's sample record is gone, so no second value exists in the spec.",
+      "options": [
+        "Keep 1000 (applied): sandbags stop bullets (cover) and chip under blasts like any sand block.",
+        "Override to 3500 in §10.1 so sandbags are explosion cover, matching doc 03's old sample.",
+        "Override to another value the product owner names."
+      ]
+    },
+    {
+      "id": "V07-lockpick-yield",
+      "question": "recipe.bench.lockpicks yields 1 item.tool.lockpicks per craft because lockpicks are never consumed (doc 09, no durability). Confirm the yield of 1?",
+      "default_applied": "Yield 1 (doc 07 §6.6 row 'recipe.bench.lockpicks | workbench 1 | tinkering 0 | shapeless 1 M → 1 item.tool.lockpicks | 120'; Interface row 09: one crafted lockpick set suffices).",
+      "options": [
+        "Keep yield 1 (applied).",
+        "Yield more than 1 so spares can be traded or sold."
+      ]
+    },
+    {
+      "id": "V07-staff-skill",
+      "question": "Staves (recipe.bench.staff, arch.ranged.staff) are governed by Inscription 10, following the recipe's placement with the scriptorium-side implements. Confirm Inscription rather than Smithing or Enchanting?",
+      "default_applied": "Inscription 10 (doc 07 §6.6 row 'recipe.bench.staff | workbench 1 | inscription 10 | H2 O1 → arch.ranged.staff | 300').",
+      "options": [
+        "Keep Inscription 10 (applied).",
+        "Smithing 0 like recipe.bench.quarterstaff (a wooden weapon).",
+        "Enchanting, as an arcane implement."
+      ]
+    }
+  ],
+  "unresolved": [
+    "Canon gaps 1-5 (destructible list, whole-break of thin shapes, local_genre in fused Folios, cat.seed row and retired IDs, Second Edition depth) await the canon owner; doc 07's rules stand meanwhile.",
+    "Doc 07 §2.4 and Interface row 03 phrase weather as 'canon-1.11 has no weather states yet' / 'once the canon adds it'. True of the canon (no 'weather' in 00_CANON.md), but doc 03 §4.8 already defines wx.clear, wx.rain, wx.storm, wx.fog, wx.snow and wx.dust with fire_bp(wx) on spread into sky_open cells, and doc 09 §7.2 and §15.3 read noise.surface.snow as a wx_snow feet-cell override with no snow block. No doc 07 rule changes; the next doc 07 pass should cite doc 03 §4.8 and doc 09 §15.3 by section and mark G-203 closed.",
+    "Retired IDs still live in consumers until their passes land: cat.seed in Canon §13.1 (line 1324), doc 08 (lines 19, 801-822, 1297, 1299-1317, 1387, 1424, 1467), doc 10 (line 61), doc 11 (lines 319, 1882); 'farming' in doc 21 WP-032 (line 262); Category::Seed in palimpsest_sim/src/loot.rs (lines 610, 647, 680). Doc 03 has already removed its crop map and planting text.",
+    "DECISIONS 101: doc 07 §1.5's one-genre-per-position read in Second Edition is a stated need on doc 12 and Canon §5.8, not yet a rule either of them carries (doc 12 G19 lists DECISIONS 101 open).",
+    "Product questions Q4 (mat.role.block), Q6 (sandbag blast resistance), lockpick yield and staff skill carry applied defaults and await a product-owner ruling.",
+    "Doc 03 Interface row 07 names source 0, item_uid and ability for block-trap hits but not instigator_slot = placed_meta.owner_slot, which doc 07 §10.4 sets (cross_chapter_requests to doc 03)."
+  ],
+  "remaining_work": [
+    {
+      "item": "fix:01: With doc 03, make hits from cat.placeable block traps (block.trap.spikes, doc 07",
+      "status": "done",
+      "note": "§10.4 queues every block-trap hit with source 0, item_uid = placed_meta.uid, ability = the trap block's content ID and instigator_slot = placed_meta.owner_slot; test 53 and the invariant annex carry it; doc 03 Interface row 07 already mirrors source, item_uid and ability (instigator_slot still to add there, see cross_chapter_requests)."
+    },
+    {
+      "item": "verify:01: Block-trap hits identifiable as their trap's source (with doc 03), for doc 01 §1",
+      "status": "done",
+      "note": "Same edit as fix:01; Interface row 03 names the four fields and doc 03 §14.2."
+    },
+    {
+      "item": "fix:11: Informational: doc 11 §16.4 salvage yields are now `mul_bp(mul_bp(component mass",
+      "status": "done",
+      "note": "§8.3 salvage row is m = mul_bp(mul_bp(mass_g, 6000), 10000 + X) with X = affix.engineered after potency; worked example extended; test 55; Imports Doc 11 §6.1; Interface row 11."
+    },
+    {
+      "item": "fix:04: §10.4 placeable repair formula: after the Fieldcraft 75 factor, apply one more m",
+      "status": "done",
+      "note": "§10.4 repair formula ends with mul_bp(..., if field_repair { 15000 } else { 10000 }) after the Fieldcraft 75 factor; Interface row 04 lists field_repair and writes the Tinkering gadget-hit XP as min(750, floor_div(750 × dmg, norm)) with norm = Canon §7.1's norm_mhp."
+    },
+    {
+      "item": "verify:11: Salvage (doc 07 §8): doc 11 §16.4 multiplies yields by `10000 + X` of `affix.eng",
+      "status": "done",
+      "note": "Same edit as fix:11."
+    },
+    {
+      "item": "verify:09: Optional: §11.1 rule 4 can cite \"doc 09 §13.4 ends the attempt\" in place of \"doc",
+      "status": "done",
+      "note": "§11.1 rule 4 now reads 'doc 09 §13.4 ends the attempt on that tick with no other effect'; Interface row 09 matches; doc 09 test 31 confirms the behaviour on disk."
+    },
+    {
+      "item": "verify:18: Block records' skins (doc 03 §4.5) should name doc 18 §3.8's art.block.* records",
+      "status": "done",
+      "note": "New §10.1 Skins paragraph: every block record's skins field names doc 18 §3.8's art.block.* records, presentation only; Imports Doc 18 §3.8 row and Interface row 16-18 added; doc 18 Interface row 07 already names block skins."
+    },
+    {
+      "item": "fix:12: Define the worldgen patron-altar block that doc 12 places in `room.shrine` and `",
+      "status": "done",
+      "note": "block.altar is the worldgen patron altar (§10.1 table, Interface rows 06, 10, 12 name it in room.shrine and secret.room.shrine; doc 12 §16.1's room.shrine row places block.altar); §9.4 now defines the node socket as doc 12 §10.1's strip of 4 floor-level cells against a wall, filled from the room's lowest-index free socket in ascending block index."
+    },
+    {
+      "item": "fix:03: §10.8: chipping is done by doc 03 §13.2. It removes micro-voxels in ascending sq",
+      "status": "done",
+      "note": "§10.8 chipping: ascending squared distance from the impact point, ties to the lower bit index, until fill(c) <= voxels_left(c); repair calls refill_mask(c, voxels_left(c)); layer level L fills ceil_div(L + 1, 2) rows (spikes 16); §9.3: doc 03 §12.2 never marks a block.tag.node cell and every node record sets break_result = block.node_spent; §10.1 cites only the powder keg ExplosionSpec doc 03 §4.5 prints; Interface row 03 updated."
+    },
+    {
+      "item": "verify:03: Queue each block-trap hit (§10.4 block.trap.spikes and the other block traps) wi",
+      "status": "done",
+      "note": "Same edit as fix:01 (source 0, item_uid, ability, plus instigator_slot)."
+    },
+    {
+      "item": "fix:07: Canon gap 1 (torch placement) stays open until doc 03 §13.3 drops item.tool.torc",
+      "status": "done",
+      "note": "Resolved: doc 03 §13.3 (line 'Errata place only cat.placeable items … A held torch never places a block', triage C-25) is on disk; Canon gaps item 1 no longer carries the torch gap."
+    },
+    {
+      "item": "fix:07: Canon gaps 2 and 3 are requests to canon: plants and reaction products in §4.3's",
+      "status": "done",
+      "note": "Restated as Canon gaps 1 and 2 with exact replacement text (block.crop dropped from the plant list by DECISIONS 128); doc 07's rules stand until the canon owner rules. Carried in canon_requests."
+    },
+    {
+      "item": "fix:07: multiply_defined still lists block.air, block.cover.sandbag, block.door.wood, bl",
+      "status": "done",
+      "note": "Doc 03 §4.5 no longer prints JSON \"id\" sample records; spec_lint.py --chapter 07 run read-only on 2026-10-12: 0 findings, 'IDs defined in more than one chapter: 0' (MEASURED)."
+    },
+    {
+      "item": "fix:07: Open product questions from notes_materials.md left unchanged: mat.role.block ha",
+      "status": "done",
+      "note": "Defaults written into the chapter: §2.4 states mat.role.block is informational (no rule, recipe or validator reads it); §10.1 states block.cover.sandbag blast_res_milli 1000 and block.cover.plate 5500 as the §2.5 defaults with no override. Product-owner ruling still open; see product_questions."
+    },
+    {
+      "item": "verify:07: What a hack attempt does after a hacking-deck spark is left to doc 09. Doc 07 no",
+      "status": "done",
+      "note": "§11.1 rule 4 cites doc 09 §13.4, which ends the attempt on the spark tick with no other effect."
+    },
+    {
+      "item": "verify:07: A crop has hp_max 0 in placed_meta. Doc 03's crack-stage formula for placed cell",
+      "status": "done",
+      "note": "Moot: DECISIONS 128 cuts crops; §9.7 is 'Seeds and planting (cut)', block.crop is retired, and no placed cell has hp_max 0 (every placeable has hardness_milli > 0; block.cover.barrier takes §11.2's hp_max), so doc 03's crack-stage divide over hp_max − hp never sees 0."
+    },
+    {
+      "item": "verify:07: Two design calls are the verifier's own rather than spelled out by a source: loc",
+      "status": "done",
+      "note": "Unchanged by design: recipe.bench.lockpicks yields 1 (Interface row 09: one crafted lockpick set suffices, no durability); recipe.bench.staff is 'inscription 10'. Recorded as product_questions with these defaults."
+    },
+    {
+      "item": "verify:07: DECISIONS 99 (weather) and 106 (Second Edition depth) have not landed in canon o",
+      "status": "done",
+      "note": "DECISIONS 106 landed as §1.5 d_eff = doc 14 §3.1's d(f), 25 + 2n in Second Edition Folio n, with §2.7, §4.4, §5.1, §10.4, Interface row 14, test 54 and an invariant; DECISIONS 99 noted in §2.4 and Interface row 03 (weather reaches blocks only through doc 03; no rule change). G-203 needs no revisit: doc 09 §7.2 and §15.3 read noise.surface.snow as a wx_snow feet-cell override with no snow block. Note: §2.4 says 'canon-1.11 has no weather states yet', true of the canon, but doc 03 §4.8 already defines wx.* with fire_bp(wx); the citation can point there next pass (see unresolved)."
+    },
+    {
+      "item": "DECISIONS 128",
+      "status": "done",
+      "note": "Seeds cut: header sentence, §9.7 'Seeds and planting (cut)', block.crop row, crop state, CROP_STAGE_TICKS and CROP_CAP_PER_PLAYER, the crop rng row, the crops map, the crop flag in placed_meta, mat.tag.tillable (soil row and tag table), test 25 (now 'Seeds cut'), test 33's crop sentence, test 51 counts (19 tags, 132 blocks), Exports lists and two invariants are all changed on disk; grep finds cat.seed, block.crop and tillable only in retirement sentences (lines 4, 246, 1068, 1462, 1465, 1476, 1505, 1566). Canon §13.1 row and §17.7 retired list are requested in canon_requests; docs 08, 10, 11, 21 and the Rust slice still carry the IDs (cross_chapter_requests)."
+    }
+  ]
+}

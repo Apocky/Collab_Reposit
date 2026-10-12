@@ -1,0 +1,219 @@
+{
+  "chapter": "09",
+  "status": "partial",
+  "canon_requests": [
+    {
+      "section": "Canon §4.4 Micro-voxels (doc 09 Canon gaps G23)",
+      "old": "",
+      "new": "A cell blocks light when `popcount(mask) >= 48`. A sight ray (doc 09) is blocked by a cell's occupied micro-voxel boxes; a crossed cell whose boxes it misses scales its concealment by the fill fraction.",
+      "why": "Doc 09 §3.2 keeps doc 03 §5.18's geometric raycast against each cell's micro-voxel boxes and a fill-scaled `cell_conceal` for crossed cells, so a closed door panel blocks sight. Caution for the canon editor: G23's stated premise (canon §4.4 says a cell blocks sight at 48 or more micro-voxels) is not in canon-1.11 on disk; a grep of 00_CANON.md finds only the fill fraction `popcount(mask) / 64` (§4.4) and the conceal-sum sight rule (§12.2). The request is therefore an addition, not a correction, and the 'blocks light at 48' clause should be checked against doc 03 §10 before it is added."
+    },
+    {
+      "section": "Canon §10.6 damage entry points, lethal-takedown row, Notes cell (doc 09 G24)",
+      "old": "step 7 as `dmg.true` equal to the target's HP plus ward",
+      "new": "Append to the row's Notes: \"against `rank.elite`, `mul_bp(max HP, 5000)` plus ward instead (doc 09 §9.4)\"",
+      "why": "Doc 09 §9.4 keeps elites alive: a lethal takedown on a `rank.elite` target deals half its max HP plus ward through the same entry point and staggers it; the canon row's amount must allow it."
+    },
+    {
+      "section": "Canon §2.3 `in_combat` (doc 09 G25)",
+      "old": "or any hostile AI held awareness `alerted` toward `e` within that window",
+      "new": "or any hostile AI held awareness `aware.alert` (doc 09) toward `e` within that window",
+      "why": "Triage G-196 made doc 09 §6.1's six states the only awareness IDs; `alerted` is an interim name. Doc 09 reads it as `aware.alert`: a subject is in combat while some hostile pair toward it is at `aware.alert` or was within the last 300 ticks."
+    },
+    {
+      "section": "Canon §12, new §12.4 Time of day and weather (DECISIONS 99; doc 09 G26). MUST BE MERGED with doc 03 Canon gaps G31, which proposes the same record as a canon §5.12 table",
+      "old": "",
+      "new": "**Time of day and weather.** Each Folio rolls one time of day from its genre's table and one weather state (doc 12). Time of day sets the sky channel's source level (doc 03 §10.2). A weather state's terms apply only at cells whose doc 03 `sky_src` bit is set. Its stealth fields are `fog` (whole fog points added to the genre fog, §12.2), `sound_bp` (multiplies sound path attenuation), `ambient_db` (added to the ambient mask), `precip` (0 or 1: scent lasts 1800 ticks) and `snow` (0 or 1: footsteps read `noise.surface.snow`); doc 09 §15.3 applies them. Core states: clear 0, 10000, 0, 0, 0; rain 0, 11000, 5, 1, 0; storm 1, 12000, 10, 1, 0; mist 1, 10000, 0, 0, 0; snow 1, 11000, 0, 1, 1; dust 1, 11000, 5, 0, 0.",
+      "why": "DECISIONS 99 lands in doc 09; §15.3 reads five stealth fields of the Folio weather state on sky cells and a §8.2 ring shows them. CONFLICT: doc 03 §4.8 already carries its own proposed canon table (IDs `tod.dawn/day/dusk/night` with `sky_delta`; `wx.clear/rain/storm/fog/snow/dust` with `sky_delta`, `sound_ddb`, `precip`, `fire_bp`) and applies `sound_ddb(wx)` per propagation step into `sky_open` cells. The two proposals disagree on section (§12.4 vs §5.12), state names (doc 09 'mist' vs `wx.fog`), the sound model (doc 09 Bp multiplier `sound_bp` at the emitter vs doc 03 per-step `sound_ddb`), the cell predicate (`sky_src` vs `sky_open`) and snow's precip (doc 09 1, doc 03 none). One table must carry both chapters' columns. Harvest recommendation: keep doc 03's IDs, section and columns `sky_delta`, `sound_ddb`, `precip`, `fire_bp`; add doc 09's `fog`, `ambient_db` and `snow`; drop doc 09's `sound_bp` column and its `wx_sound` term; doc 09 reads its terms on `sky_open` cells."
+    },
+    {
+      "section": "Canon §4.2 movement (DECISIONS 95; doc 09 G27; doc 03 G31)",
+      "old": "",
+      "new": "A sprint-slide holds the capsule at crouch height for its duration, and reeling on a grappling line counts as airborne; their noises are doc 09's `noise.move.slide`, `noise.move.reel` and `noise.impact.grapple`.",
+      "why": "Doc 09 §3.1 rates a slide as stance 5500 at gait sprint and reeling as stance 12000, and §7.2/§7.3 define the three noises (45 dB + surface once; 30 dB every 30 ticks; 50 dB at the anchor). Doc 03 §5.23 and §5.24 define the moves (MoveMode Slide, Grapple) but emit no noise yet."
+    },
+    {
+      "section": "Canon §5.8 Local genre and personal VERVE, new bullet Fused Folios (DECISIONS 101; doc 09 G28; doc 12 G19)",
+      "old": "",
+      "new": "**Fused Folios.** A Second Edition Folio is written in an ordered genre pair (A, B) that doc 12 records. Outside bleed and seam zones `local_axiom(pos, a) = floor_div(axiom_A + axiom_B, 2)`, both genres' rosters, World Laws and skins are active, and entities of either genre count as native; each chapter's per-genre table reads the pair as that chapter states (doc 09 §15.1).",
+      "why": "Canon §5.8 gives every position one `local_genre`; a Second Edition Folio has two. Doc 09 §15.1 averages `AMBIENT_DB` and `SOUND_BP` with `floor_div(a + b, 2)` and builds the camouflage background from A's and B's primaries in doc 12's recorded order (test 64)."
+    },
+    {
+      "section": "Canon §17.7 Mounts, retired-ID list",
+      "old": "`ai.set.cavalry` and `enemy.role.cavalry` are retired IDs and must not appear in content",
+      "new": "Add \"`noise.mount.` (doc 09)\" to the retired list (walk, gallop, hover, glide, summon). Also add `noise.mount.` to RETIRED_PREFIX in tools/spec_lint.py (HANDOVER leftover 3).",
+      "why": "Doc 09 §7.6 retired the five mount noises of earlier drafts (test 58, invariant N! no noise.mount id), but canon §17.7's list does not name the family, so no lint can catch a stray use."
+    }
+  ],
+  "cross_chapter_requests": [
+    {
+      "to": "16",
+      "request": "Canon gaps O1 and Imports row 'Doc 09': close O1. In wave 2 doc 09 §14.5 retired its invader interest filter and the `aware.profile.invader` profile (removed from §4.1 and Exports); doc 16 §6.6 rule 2 alone decides which Errata an invader's client receives, and doc 09's Canon gaps P1 records the alternatives for the owner. Delete the backticked `aware.profile.invader` from O1 (the full spec lint now reports it as the only undefined ID in the spec set) and change the Imports row text 'the invader interest filter (Canon gaps, open item O1)' to 'no doc 09 interest filter: §6.6 rule 2 alone (doc 09 §14.5, P1)'. Motivation: doc 09 §14.5, Interface row 16, Canon gaps P1, test 41."
+    },
+    {
+      "to": "16",
+      "request": "Interface row 09: replace '(doc 09 §8.3 gives the footstep indicator no lifetime)' with 'doc 09 §8.3 gives each footstep indicator a 30-tick lifetime from the tick the step was heard, newest first (present), so §6.8's cap keeps the 4 newest'. Doc 09 §8.3, the `StealthHud` struct in §8 and test 68 now state it."
+    },
+    {
+      "to": "16",
+      "request": "§6.8 snapshot section 0x06 `STEALTH` (`StealthWire`): carry doc 09 §8.4's `panel: Option<StealthPanel>` for the receiver's Erratum: `Lock { target: u64, tier: u8, your_tier: u8, chance: u16, slip_bp: u16, ticks: u32, progress: i32, lock_hp: i32 }`, `Hack { target: u64, tier: u8, your_tier: u8, hack_fails: u8, lines: Vec<HackLine { verb: u8, chance: u16, ticks: u32 }> }` (at most 6 lines, ascending verb) or `Steal { target: EntityId, lines: Vec<StealLine { uid: u64, plant: bool, chance: u16, ticks: u32 }> }`. Doc 09 sets no cap on `Steal` lines; doc 16 should set one (for example 16, highest `chance` first, ties lower `uid`) and doc 09 will adopt it. Write the panel only when it differs from the baseline view's, as the rest of the section does, and extend test 59. Motivation: doc 09 §8 struct, §8.4, Interface row 16 ('extended with the §8.4 panel')."
+    },
+    {
+      "to": "17",
+      "request": "§10.11, §10.12 and Interface row 09: state that `ui.hud.lockpick`, `ui.hud.hack` and `ui.hud.pickpocket` read every number they show (`chance`, `slip_bp`, `ticks`, `progress`, `lock_hp`, `tier`, `your_tier`, `hack_fails`, the per-verb `HackLine`s and the per-item `StealLine`s with `plant`) from `StealthHud.panel` (doc 09 §8.4 `StealthPanel`) in the doc 16 snapshot, which the host fills for the Erratum's stealth target (the running action's target, else the first eligible lock, device, Seize target or pickpocket target on the §10.3 crosshair ray), and that the client never computes a chance or channel time itself; the 'Needs Hacking N' greying reads the panel's `tier` and `your_tier`; the Plant tab lists the `StealLine`s with `plant = true`. Add that the hack panel opens on `input.interact` only within the device's hack `range` (doc 09 §13.2 'Starting and cancelling'). Motivation: doc 09 §8.4, §13.2, Interface row 17."
+    },
+    {
+      "to": "03",
+      "request": "§5.23 Sprint-slide and §5.24 Grappling tool: emit doc 09's movement-kit noises through `noise_level`. On the slide's first tick emit `noise.move.slide` (doc 09 §7.2: base 45 dB plus the feet cell's surface class; `armor_db` applies), attributed to the slider. When the grappling line attaches emit `noise.impact.grapple` (doc 09 §7.3: 50 dB, unattributed) at the anchor cell, and while the body reels (`MoveMode::Grapple`) emit `noise.move.reel` (doc 09 §7.2: 30 dB plus `armor_db`) every 30 ticks, attributed. Expose `MoveMode::Slide` and `MoveMode::Grapple` to `sys.perception` for doc 09 §3.1's stance rows (the §5.1 enum already holds them). Add these to doc 03's Interface row 09. Motivation: doc 09 §3.1, §7.2, §7.3, Canon gaps G27, Interface row 03, test 65."
+    },
+    {
+      "to": "03",
+      "request": "§4.8 Folio climate versus doc 09 §15.3: the two chapters now carry two weather models for DECISIONS 99 and must be reconciled (doc 09 harvest, unresolved item 1). Doc 03 adds `sound_ddb(wx)` per propagation step into a `sky_open` cell (§11.2) and doc 09 multiplies `sound_bp_eff` by `wx_sound` at the noise position (§4.4), so rain, storm, snow and dust would muffle sound twice; doc 03 scopes weather by `sky_open(c)` (no micro-voxel above) while doc 09 uses the `sky_src` light bit (§10.2), so a glass-roofed hall is weathered in doc 09 and sheltered in doc 03; doc 03 names `wx.fog` where doc 09's canon text names 'mist'; doc 03's snow has `precip` none where doc 09's has 1. Recommended split (harvest default, for the orchestrator to confirm): doc 03 owns light (`sky_delta`), surfaces (`precip`), fire (`fire_bp`) and the per-step sound term `sound_ddb`; doc 09 drops `wx_sound` and keeps `wx_fog`, `wx_amb`, `wx_wash` and `wx_snow`, read on `sky_open` cells; doc 03's sentence 'docs 09 and 18 read that table's fog and ambient-sound columns' then names columns the proposed table must gain (`fog`, `ambient_db`, `snow`). Doc 03 should expose `sky_open(c)` to `sys.perception`, `sys.sound` and `sys.hearing`, and its G31 canon text should merge with doc 09's G26 into one table in one section. Motivation: doc 09 §3.2, §4.4, §4.5, §7.2, §15.3, Canon gaps G26."
+    },
+    {
+      "to": "12",
+      "request": "Canon gaps G19, plan stage 0 and `FolioPlan`: store each Folio's `Climate { tod, wx }` (doc 03 §4.8 IDs `tod.*`, `wx.*`) in `FolioPlan` and doc 02's `FolioView`, drawn on their own `stage_rng` sub-streams at attempt 0 from per-genre time-of-day and weather tables (the genre event skins already name the fronts: downpour, dust storm, graveyard fog, mountain mist, acid rain, ink weather), and pass them to doc 03's `set_climate(tod, wx)` before the light bake. Doc 09 §15.3 reads the state's stealth terms (fog, ambient dB, precipitation wash, snow) on sky cells; until the state exists every doc 09 term is neutral. For Second Edition Folios (DECISIONS 101) also record the fused genre pair (A, B) in a fixed order and the fused GPV fog `floor_div(fog_A + fog_B, 2)`, which doc 09 §15.1 reads (A's primary and B's primary as the camouflage background; averaged `AMBIENT_DB` and `SOUND_BP`). Add both to Interface row I7 (doc 09). Motivation: doc 09 §15.1, §15.3, Imports row Doc 12, Interface row 12, Canon gaps G26 and G28, tests 63 and 64."
+    },
+    {
+      "to": "12",
+      "request": "§6.3 heist row (`lattice.challenge.heist`), optional wording: the Treasury door condition 'while no hostile has ever held `aware.alert` toward any Erratum in the Folio' may name doc 09 §1.4's flag ('while `StealthWorld.folio_alerted` is false') so both chapters read one flag. Doc 09 §1.4 and Interface row 12 already cite it as present; no behavior change."
+    },
+    {
+      "to": "07",
+      "request": "Interface row 09: replace '`noise.surface.snow` unused because no snow block exists (§2.4)' with 'no doc 07 material carries `noise.surface.snow` (§2.4); doc 09 §15.3's snowy-weather override on sky-open feet cells yields it'. Motivation: doc 09 §7.2 fourth feet-cell override, §15.3 `wx_snow`, tests 55 and 63."
+    },
+    {
+      "to": "18",
+      "request": "Audio records and caption keys for the three noise IDs doc 09 §7.2 and §7.3 added in wave 2: `noise.move.slide` (sprint-slide, 45 dB plus surface, once per slide), `noise.move.reel` (grappling line, 30 dB every 30 ticks) and `noise.impact.grapple` (line attach at the anchor, 50 dB, unattributed), under doc 18's rule that every `noise.*` ID in doc 09 has at least one audio record; the `foot` join must also accept `noise.surface.snow`, which doc 09 §15.3's weather override now makes reachable in the base game. Motivation: doc 09 §7.2, §7.3, §15.3, Exports, Interface row 18."
+    },
+    {
+      "to": "02",
+      "request": "Save section 12 `stealth` description and Interface row 09: `StealthWorld` lost its `run_alerted` field in wave 2 (doc 09 §1.4: only `folio_alerted` remains and every field resets on `ev.folio_entered`), so 'alert flags' reads 'the `folio_alerted` flag' and the declared field order changes accordingly. `SetLockMode { manual }` stays a per-slot intent in the replay log (present, test 48). If doc 02 mirrors doc 16's snapshot schema, add `StealthHud.panel` (doc 09 §8.4). Motivation: doc 09 §1.4, §8.4, Interface row 02."
+    },
+    {
+      "to": "13",
+      "request": "Test 60 and §2 Outfits: no edit required; verification result. The doc 09 harvest scanned doc 13's §8 roster tables: every one of the 43 `fac.native.*` factions has at least one row with Body humanoid and tag sapient (the Redaction's whistleblowers through `leaker`), which §2's rule maps to `outfit` 1, so doc 09 §11.1 coverage (DECISIONS 64) and doc 09 test 60 hold. Keep the rule and test; re-run the scan if a roster row loses its humanoid or sapient marking."
+    }
+  ],
+  "product_questions": [
+    {
+      "id": "P1",
+      "question": "Invader replication: which rule decides the Errata an invader's client receives? Earlier doc 09 §14.5 filtered by the invader's own perception (`V >= 300` with an invader profile, a heard noise within 60 ticks quantized to 4000 mm, or a `fac.editors` mark); doc 16 §6.6 rule 2 tests mutual visibility with four rays, a 16000 mm near radius and a 30-tick grace, and doc 16 O1 says doc 09's filter is not applied. No triage ruling covers the difference.",
+      "default_applied": "(a) doc 16 §6.6 rule 2 alone: doc 16 owns interest management and its rule is symmetric, tested and standard practice; doc 09's filter and `aware.profile.invader` are retired (§14.5, §4.1, Exports, test 41). Cost: within 16000 mm a modified invader client receives Errata hidden behind walls or in closets.",
+      "options": [
+        "(a) doc 16's rule alone (applied)",
+        "(b) doc 09's perception filter for the Errata-to-invader direction and doc 16's rule for the other",
+        "(c) both tests required for the Errata-to-invader direction",
+        "(d) doc 16's rule plus one exception: an Erratum inside an occupied enclosed hiding spot (doc 09 §10.2) is never sent"
+      ]
+    }
+  ],
+  "unresolved": [
+    "Weather double model (new, not seen by the pass): doc 03 §4.8 already defines `Climate { tod: Id32, wx: Id32 }` with IDs `tod.dawn/day/dusk/night` and `wx.clear/rain/storm/fog/snow/dust`, columns `sky_delta`, `sound_ddb`, `precip`, `fire_bp`, saved in section 0, applied on `sky_open(c)` cells, with `sound_ddb(wx)` added per propagation step (§11.2, clear 0, rain 2, storm 4, snow 2, dust 3). Doc 09 §15.3 defines a second vocabulary: five fields (`fog`, `sound_bp`, `ambient_db`, `precip`, `snow`), a state named 'mist', `wx_sound` as a Bp multiplier on `sound_bp_eff` at the noise position, and `outdoor(c)` from the `sky_src` light bit. If both stand, weather muffles sound twice and a glass roof counts as outdoors in doc 09 only. Doc 09 edits that follow from the recommended split: drop `wx_sound` (and its `sound_bp` column from G26), define `outdoor(c) = sky_open(c)` (doc 03 §4.8), name the states by doc 03's `wx.*` IDs ('mist' becomes `wx.fog`), decide snow's `wx_wash`, read `Climate.wx` from doc 03 instead of 'until doc 12 stores a weather state', and rework test 63's rain example.",
+    "Two canon proposals for one record: doc 09 G26 asks for a new canon §12.4; doc 03 G31 asks for a canon §5.12 table with different columns and IDs. The orchestrator must merge them before canon-1.12, or the two chapters will cite different sections for the same state.",
+    "G23's premise is not on disk: canon-1.11 §4.4 contains no 48-micro-voxel sight rule (only `popcount(mask) / 64` as fill fraction) and §12.2 defines sight as a conceal sum, so the canon request should be re-framed as adding the micro-voxel-box sight sentence, and its 'blocks light at 48' clause re-checked against doc 03 §10.",
+    "Doc 16's `STEALTH` wire (0x06) has no `panel`, so doc 09 §8.4's `StealthPanel` cannot reach the client yet; `StealthPanel::Steal` lines have no cap in doc 09 (doc 16 should set one and doc 09 adopt it).",
+    "Doc 17 §10.11 and §10.12 show `chance`, `ticks`, `hack_fails`, `tier` without naming `StealthHud.panel` as their source; doc 09 Interface row 17 assumes they read it.",
+    "Doc 03 §5.23 and §5.24 define the sprint-slide and grappling tool but emit none of `noise.move.slide`, `noise.move.reel`, `noise.impact.grapple`; doc 09 exports three noise IDs with no producer yet, and doc 18 has no audio records for them (its rule requires one per ID).",
+    "Spec lint over all chapters: exactly one undefined ID, `aware.profile.invader`, cited by doc 16 Canon gaps O1 after doc 09 retired it; chapter 09 alone lints at 0 findings (31,748 words).",
+    "P1 (invader replication) awaits an owner decision; doc 16 O1 must be closed in step with it.",
+    "Log completeness: log_09.md records batches 1 to 8 as applied but has no 'complete' line and no post-edit lint entry (its 'Next ... then lint' box is unchecked); HANDOVER.md still lists chapter 09 as partial. The harvester's lint run of chapter 09 reports 0 findings, so the missing step is the log entry, not an edit."
+  ],
+  "remaining_work": [
+    {
+      "item": "verify:14 — §1.4: change 'doc 14's run.note.silent reads !run_alerted' to 'reads !folio_aler",
+      "status": "done",
+      "note": "On disk: `run_alerted` has 0 occurrences; §1.4 reads '`run.note.silent` reads `!folio_alerted` on the tick the Rubric completes (doc 14 §3.5)'; Interface row 14 names doc 14 §3.5 and §10 with `party_kills`, `party_pacified`, `ach.pacifist`; T3 sets only `folio_alerted`; test 62 covers it. Doc 14 §3.5 and its Interface row 09 agree."
+    },
+    {
+      "item": "verify:16 — §8.3: give StealthHud.steps (footstep indicators) a 30-tick lifetime like rings,",
+      "status": "done",
+      "note": "On disk §8.3: 'Each indicator is live for 30 ticks from the tick the step was heard, as rings are, and `steps` lists the live ones newest first'; `StealthHud` struct in §8 and test 68. Doc 16's Interface row 09 still says doc 09 gives no lifetime (cross-chapter request to 16)."
+    },
+    {
+      "item": "fix:07 — Imports row for doc 07: 'lockpick, toolkit and hacking-deck durability and quali",
+      "status": "done",
+      "note": "Imports row Doc 07 ends 'lockpick, toolkit and hacking-deck quality' ('with no durability' 0 occurrences). G21 closed in Canon gaps (G-203: doc 07 adds no snow block); `noise.surface.snow` now has a base-game producer, §15.3's `wx_snow` feet-cell override (§7.2 fourth override, test 55 and 63)."
+    },
+    {
+      "item": "fix:04 — §13.3 lockpicking: replace 'lockpicks durability −1 (doc 07)' with 'one item.too",
+      "status": "done",
+      "note": "First half declined and documented: no 'durability −1' or `break_bp` remains; §13.2 keeps `slip_bp` 2500 (× 5000 at Security 25) and says 'the slip replaces the pick break of earlier drafts ... never the tool (Canon §4.3)', because DECISIONS 65, Canon §4.3 and triage C-31 forbid consumption and doc 04 §5.3 (Security 25) already reads `slip_bp`. Second half done: §11.4 reads 'Canon §3.3: a disguise challenge is an AI detection roll and never draws on `rng.check`' (the 'lists no rng.check' sentence is gone) and G9 is closed (G-023, C-20)."
+    },
+    {
+      "item": "verify:07 — §13.4: say what a hack attempt does after its hacking deck sparks. Doc 07 §11.1 ",
+      "status": "done",
+      "note": "§13.4: 'doc 07 rolls its failure once as an attempt starts (doc 07 §11.1 rule 4, keyed `rng.combat`); a failure sparks the hacker and ends the attempt on that tick with no other effect: no `rng.stealth` draw at seq 1001 or 1004, no `noise.hack.beep` or `noise.hack.fail`, and `hack_fails` and pity progress unchanged'; test 31. Docs 07 and 17 Interface rows state the same resolution. Differs from the request's example (auto-failure costs) by design; the documented draw count per completed attempt is unchanged."
+    },
+    {
+      "item": "fix:17 — §13.2 and §13.3: remove the lockpick break roll, durability −1 and seq 1005 pick",
+      "status": "done",
+      "note": "§13.2 and §13.3 carry no break roll or durability; §1.5 row 1005 reads 'unused: the manual minigame's pick-break roll was retired'; `noise.mount` appears only in the retirement note (§7.6), Canon gaps, test 58 and the invariant. §13.3 reads each slot's `lock_mode` from its latest `SetLockMode { manual }` intent (doc 17 §10.11) and `StealthAction.manual` keeps the starting mode. §8.4 `StealthPanel` exposes verbs, chance, ticks, `hack_fails`, and stealable items with chance and ticks; panels named `ui.hud.lockpick`, `ui.hud.hack`, `ui.hud.pickpocket` (doc 17 §10.11, §10.12); tests 66 and 67. Doc 16's wire does not carry the panel yet (cross-chapter request)."
+    },
+    {
+      "item": "fix:12 — Change the citation 'doc 12 §10.2' for the light bands (dark ≤ 4, dim 5..=9, bri",
+      "status": "done",
+      "note": "'doc 12 §10.2' has 0 occurrences; §2.2 reads 'Bands follow doc 12 §11.3: dark `L ≤ 4`, dim `5..=9`, bright `≥ 10`' and the Imports row Doc 12 lists §11.3."
+    },
+    {
+      "item": "fix:08 — §11.1 Outfits and masks: 'respirators are not masks (doc 08 §4.5)' should cite d",
+      "status": "done",
+      "note": "§11.1 reads 'respirators are not masks (doc 08 §4.3)'; 'doc 08 §4.5' has 0 occurrences."
+    },
+    {
+      "item": "fix:03 — §2.1 stealth_light: delete the line 'dark = 8 if e's light cell lies in a doc 06",
+      "status": "done",
+      "note": "§2.1 pseudocode has no `dark` term: `env = light_at(e)` with the comment 'doc 03 §10.6 shadow areas and light overrides already applied, so no second shadow term'; the invariant reads 'W! stealth_light = max(env, own, flash, phosphor, spot) ≤ 15'; Interface row 06 states doc 09 adds no shadow term."
+    },
+    {
+      "item": "verify:08 — §11 (line 1046): 'respirators are not masks (doc 08 §4.5)' should cite doc 08 §4",
+      "status": "done",
+      "note": "Same edit as fix:08; the only mask sentence in §11.1 cites doc 08 §4.3."
+    },
+    {
+      "item": "fix:09 — G23 (open canon gap): Canon §4.4 says a cell blocks sight only at 48 or more mic",
+      "status": "partial",
+      "note": "Chapter side done: G23 stands in Canon gaps with the requested §4.4 wording and Interface row 03 cites the micro-voxel raycast. Canon edit pending. Premise caveat: canon-1.11 on disk has no 48-micro-voxel sight sentence (see unresolved), so the canon request is an addition."
+    },
+    {
+      "item": "fix:09 — G24 (open canon gap): Canon §10.6's lethal-takedown row says 'HP plus ward', but",
+      "status": "partial",
+      "note": "Chapter side done: G24 stands in Canon gaps with the requested Notes text and §9.4 keeps the elite half-max-HP rule. Canon §10.6 edit pending."
+    },
+    {
+      "item": "fix:09 — DECISIONS 99 (time of day and weather feeding sound and light) is outside rows 1",
+      "status": "partial",
+      "note": "Chapter side applied: new §15.3 with `wx_fog`, `wx_sound`, `wx_amb`, `wx_wash`, `wx_snow` on `sky_src` cells, hooks in §3.2, §4.4, §4.5, §7.2, Imports and Interface row 12, G26, tests 63, invariant 'weather term at c ⇒ sky_src(c)'. Not coherent across chapters: doc 03 §4.8 already defines the climate record with a per-step `sound_ddb` on `sky_open` cells, so the sound term is doubled and the predicate differs (unresolved 1); doc 12 G19 still stores no state. Doc 09 will need the follow-up edits listed in unresolved 1."
+    },
+    {
+      "item": "fix:09 — noise.surface.snow stays defined but no base-game material emits it (doc 07 deci",
+      "status": "done",
+      "note": "`noise.surface.snow` keeps its −8 dB row and now has a base-game producer: §7.2's fourth feet-cell override where `wx_snow` holds (§15.3), test 63 (32 dB on outdoor soil under snow). Doc 07's Interface row 09 wording is stale (cross-chapter request)."
+    },
+    {
+      "item": "fix:09 — Doc 04's Security 25 perk text and its doc 09 Interface row (C-20, C-31) still s",
+      "status": "done",
+      "note": "Resolved on disk by doc 04's own pass: doc 04 §5.3 Security 25 reads 'lockpick slip chance (doc 09 §13.2 `slip_bp`) × 5000', its Deceive row reads 'doc 09 makes its one success draw on keyed `rng.stealth` seq 1006, never on `rng.check`', and its Interface row 09 names the slip roll and seq 1006. Doc 09 Interface row 04 matches."
+    },
+    {
+      "item": "verify:09 — Invader interest filter: doc 09 §14.5 sends the invader an Erratum's transform w",
+      "status": "partial",
+      "note": "Chapter side done: §14.5 defers to doc 16 §6.6 rule 2 alone, the invader profile is removed from §4.1 and Exports, Interface row 16 and test 41 rewritten, P1 recorded with default (a) and options (a) to (d). Pending: the owner's decision on P1 and doc 16 closing O1 (it still cites `aware.profile.invader`, the lint's one undefined ID)."
+    },
+    {
+      "item": "verify:09 — Doc 09 keeps three open canon gaps that need canon edits: G23 (sight through par",
+      "status": "partial",
+      "note": "Chapter side done: G23, G24 and G25 stand in Canon gaps with exact requested wording (plus G26 to G28 and the `noise.mount.` retirement). Canon-1.12 edits pending; G23's premise needs re-verification (unresolved 3)."
+    },
+    {
+      "item": "verify:09 — Not checked: whether doc 13 actually sets `outfit` on a template of every `fac.n",
+      "status": "done",
+      "note": "Verified by the harvester, not by the pass: a scan of doc 13's §8 roster tables finds a humanoid, sapient row for every one of the 43 `fac.native.*` factions (whistleblowers through `leaker`), which doc 13 §2's rule ('`outfit` is 1 exactly on the templates of a `fac.native.*` faction that have `body.humanoid` and the `sapient` tag') maps to `outfit` 1; doc 13 test 60 asserts the same. Doc 09 §11.1 coverage and test 60 hold; no doc 09 edit needed."
+    },
+    {
+      "item": "DECISIONS 99",
+      "status": "partial",
+      "note": "Doc 09's share is on disk: header sentence, §15.3 'Time of day and weather' with the five `wx_*` terms, hooks in §3.2 (fog), §4.4 (ambient and attenuation), §4.5 (scent wash), §7.2 (snow surface), §8.2 ring, Imports (doc 03 `sky_src`, doc 12 weather state), Interface rows 03 and 12, Canon gaps G26, test 63 and an invariant. Partial because doc 03 §4.8 models the same weather with different IDs, a per-step sound term and `sky_open` scoping (double attenuation if both stand), the two canon proposals (09 G26, 03 G31) are not merged, and doc 12 (G19) stores no state yet, so every doc 09 term is neutral in play. Rows 89 to 145 name doc 09 in 'Lands in' only here."
+    }
+  ]
+}

@@ -1,0 +1,279 @@
+{
+ "chapter": "13",
+ "status": "complete",
+ "canon_requests": [
+  {
+   "section": "Canon §5 (new fused-Folio rule; canon-1.12)",
+   "old": "",
+   "new": "A Second Edition Folio (doc 14 §8.9) is written in a fused pair of genres {A, B}: both genres' rosters, native and wild factions, World Laws and skins are present; a native of either genre is native in that Folio; the Folio's local axioms are the pair's averaged axioms, floor_div(a + b, 2) per axis (ARC, TEC, MYT, VRV); the pair's first genre is the one with the lower §5.2 row. Seams and bleed zones inside the Folio keep §5.8's rules.",
+   "why": "Doc 13 §9.4, §10.8, §7.3 (aspect_set with averaged axioms), §9.1 (Editor verse by the pair's dominant axiom) and §2.6 apply this reading now; canon-1.11 has only the seam merge by maximum. Doc 12 G19 asks for the same rule. Canon gaps item 3(a)."
+  },
+  {
+   "section": "Canon §11.6 (Erasure accrual pause in boss Folios)",
+   "old": "accrual pauses in Editor Folios while the Editor lives",
+   "new": "Accrual pauses in Editor Folios while the Editor lives. In the Final Second Edition Folio two Editors fight in sequence (the revised Last Word, then the Author, doc 13 §9.4); the pause lasts until the Author dies, and the Author's death is that Folio's Editor death for every rule keyed to it.",
+   "why": "Doc 13 §9.1 Erasure bullet, §9.4 'Entry' and §10.4 phase machine rest on it; doc 14 §8.9 already applies it. Canon gaps item 3(b)."
+  },
+  {
+   "section": "Canon §20 glossary (Patron row; new row for the Author)",
+   "old": "| Patron | the Author of a genre, who answers prayers |",
+   "new": "| Patron | the author of its genre, who answers prayers | and a new row: | the Author | the author of the whole Palimpsest; appears only as the Second Edition's final boss `boss.author` (doc 13 §9.4), never as a genre's patron |",
+   "why": "DECISIONS 103 names the new final boss 'the Author'; the glossary currently gives that title to every patron. Doc 13 §9.4 and the Imports row for Canon §20 flag the collision. Consumers of the old wording: doc 06 line 1678 ('the Author of its genre') and doc 12 line 1300 ('the Authors' regard'). Canon gaps item 3(c)."
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "03",
+   "request": "§3.4 / §5.8 / §5.9 (motivated by doc 13 §2.1 size rules, §4.13 mantle link and Low cells, Interface row 03): (1) a creature BodyState takes `crouch_h` from the template's `body_state.crouch_mm` and its crouched eye height is `eye_mm - (stand_mm - crouch_mm)`; (2) NPC AI writes CROUCH into `comp.control` for the doc 13 §4.13 low-cell rule, and doc 03 stands the body only when the full `stand_h` capsule fits (the existing §5.8 rule, confirmed for creatures); (3) the §5.9 ledge mantle (2,000 mm, DECISIONS 95) applies to creatures whose `body_state.flags` set CAN_MANTLE, started by a JUMP press at a doc 13 §4.13 mantle link, whose origin column holds `ceil_div(2000 + crouch_mm, 1000)` passable cells above its floor (doc 03's 'room to rise'). Doc 03 today has `crouch_h` and the Errata mantle but no text binding them to `body_state.crouch_mm` or to creatures. (4) Confirm §5.13 `apply_knockback(target, dir, speed_mm_s)` is the only knockback entry point: every doc 13 attack now carries `knockback_mm_s` (a speed, never a distance) with `dir` the unit horizontal vector from the attacker's origin to the target's origin unless the attack names another (doc 13 §2.1, test 62)."
+  },
+  {
+   "to": "05",
+   "request": "NPC action state machines (Interface row 05; motivated by doc 13 §2.1 attack fields): when an NPC attack profile hits, pass its `knockback_mm_s` to doc 03 §5.13 `apply_knockback` (0 means none), including the brute `enemy.ab.charge` (6000), `iron_palm` (9000), `huff_and_puff` (8000), the ember wyrm's `tail_sweep` (6000) and the cloud giant's `fee_fi_stomp` (8000); the charger `lance_charge` trample and the War Boss `rig_ram` stay at 6000."
+  },
+  {
+   "to": "09",
+   "request": "§13.4 / §13.5 hacking (motivated by doc 13 §13.5 `npc.companion.glitch`): doc 13 now gives Glitch's loyalty perk as '+10 to its owner's doc 09 §13.4 and §13.5 hacking rating while within 12000 mm of its owner' (the old 'hacking buildup x 12500' is gone because doc 09 hacks have no buildup). Doc 09's hacking rating formula needs an additive companion term that doc 13 can set (as its `rating = ...` line at 1193 does for lockpicks), or doc 13 reroutes the perk. Already satisfied on disk and needing no change: subdue read from `ev.takedown` with `lethal` false emitting `ev.entity_pacified` method 4 on the first subdue (doc 09 §9.4, Interface row 13), Hacking-100 Seize as method 3, and `outfit`/`outfit_mass_g` on at least one template of every `fac.native.*` faction (DECISIONS 64)."
+  },
+  {
+   "to": "12",
+   "request": "G19 / §5.7 / §14 / §21.2 (motivated by doc 13 §9.4, §10.8, §7.3, Interface row 12): (1) fused Second Edition Folios (DECISIONS 101, 117) carry both genres' rosters, native and wild factions and World Laws, the pair as the zone genre of every non-bleed room, and a fused GPV `density_bp`; GPV field 52 `roster` must name both §8 rosters (or doc 12 defines how a fused Folio names two rosters); averaged axioms `floor_div(a + b, 2)` per axis, as doc 12's own G19 proposal says; the pair's first genre is the lower Canon §5.2 row. (2) The revised Editors' arenas are built from §9.2's prefabs: `boss.editor_vN_rev` uses `boss.editor_vN`'s arena, and the Final Folio uses the Last Word's arena for both `boss.ur_editor_rev` and `boss.author` (the Author spawns at the arena center 300 ticks after the revised Last Word dies; removed Abridger-quadrant segments return at that death). (3) The exit preview names the §9.4 revised Editor behind each pos-4 Binding door with no draw: the door pair's dominant averaged axiom maps ARC to `boss.editor_v1_rev`, TEC to `boss.editor_v2_rev`, MYT to `boss.editor_v3_rev`, VRV to `boss.editor_v4_rev` (ties ARC, TEC, MYT, VRV), and when that Editor already ended Volume 6 of this run Volume 7 takes the next in the cycle ARC -> TEC -> MYT -> VRV -> ARC; the preview calls `aspect_set()` with the pair, `genre_axioms` returning the averaged axioms. (4) A fused Folio's `room.arena` draws over both genres' mini-bosses (four) in ascending ID byte order. (5) When Canon §20 is split, doc 12 line 1300 ('the Authors' regard') should read the patrons, not the Author."
+  },
+  {
+   "to": "14",
+   "request": "§11 Prologue / Interface row 13 (motivated by doc 13 §8.17 and DECISIONS 132): DECISIONS 132 retires `mode.prologue`. Doc 14 still carries 47 Prologue references and its Interface row 13 lists `enemy.prologue_hunter` as a doc 13 template. Doc 13 will retire `enemy.prologue_hunter` (§8.17), its `net_always` and size-rule mentions (§2.1), the Prologue exceptions in §1 rule 4, §10.2 step 1, §10.4 and §11.1, the Exports row and acceptance test 48 once doc 14 removes the Prologue script that spawns it and the three inklings; doc 14 should name the replacement (contextual tips, DECISIONS 136 and 137) and drop `enemy.prologue_hunter` from its Interface row 13. Already satisfied on disk and needing no change: §1.2 `party_kills` and `party_pacified` read from doc 13 §11.1's kill credit and `ev.entity_pacified`; §5.3a `unlock.invader.annotator`, `.censor`, `.footnoter`; §8.9 Second Edition flow with the Author's death as the Final Folio's Editor death and two Editor kills in that Folio; §3.8 Erasure stack 1 at c = 43200."
+  },
+  {
+   "to": "15",
+   "request": "§3 Editor-kill Ink (Interface row 15; motivated by doc 13 §9.4): confirm that the Editor-kill row (`ev.entity_killed` of a `rank.editor` entity, 40 Ink, Codex XP, account Reliquaries) applies to all six Second Edition bosses, `boss.editor_v1_rev` to `boss.editor_v4_rev`, `boss.ur_editor_rev` and `boss.author`, and that the Final Second Edition Folio pays two Editor kills (80 Ink) because the revised Last Word and the Author die in sequence. Doc 15 line 103 already pays per `rank.editor` kill with no exclusion, so this is a confirmation, not a change."
+  },
+  {
+   "to": "16",
+   "request": "§6.6 rule 3 / §9.3 (Interface row 16; motivated by doc 13 §2.1 `net_always` and §4.1 Host migration): already satisfied on disk, no change needed. `net_always` is 1 on every `rank.editor` template of §9.2 and §9.4 (held only while doc 14's Folio phase is `BossFight`) and on the NPC `rank.hunter` templates `enemy.editors.revisor` and `enemy.prologue_hunter`; 0 on `enemy.editors.invader`, which PvP culling governs. Hot and warm migrations continue every AI structure from the live state; only a cold migration restarts agents from the Folio-entry save."
+  },
+  {
+   "to": "18",
+   "request": "§3.6 / §3.8 / §8.1 / §8.5a / Canon gaps item 2 (motivated by doc 13 §2.1 `visual` field and §9.4; Interface row 18): (1) an `art.visual.<template id>` record for every doc 13 template (192 roster entries, §8.17 cross-genre templates, 28 mini-bosses, 5 Editors and the 6 Second Edition bosses), as `art.visual.enemy.gothic_horror.ghoul` already does; (2) display names, skins, music cues and voiced lines for `boss.editor_v1_rev` (the Proofreader, revised), `boss.editor_v2_rev` (the Censor, revised), `boss.editor_v3_rev` (the Continuity Editor, revised), `boss.editor_v4_rev` (the Abridger, revised), `boss.ur_editor_rev` (the Last Word, revised) and `boss.author` (the Author); (3) the Author is shown only as a vast writing hand holding a quill above the page and as the handwriting it leaves, never a face, head or full figure (doc 13 §9.4 adopts doc 18's proposal), so §8.1's 'Authors never appear in person' rule gets its Second-Edition-only exception; its body is `body.amorphous` (bp.core the nib, bp.mass the hand), radius 1500 mm, stand 4000 mm, a flier hovering with the nib 500 mm above the floor, and the §3.6 silhouette lint needs a boss/editor row or exemption for it; (4) in a fused Second Edition Folio the boss skin comes from the pair, and §8.5a's manuscript sections for Volumes 6 to 8 can now be written; (5) doc 18's Canon gaps item 2 says doc 13 has not defined the revised Editors or the Author; that sentence is stale."
+  },
+  {
+   "to": "19",
+   "request": "Record schemas `13.enemy_template` and `13.ability` (new Interface row 19; motivated by doc 13 §2.1): add the template field `visual` (content ID, an `art.visual.*` record, `art.visual.` plus the template ID), `body_state.crouch_mm` (u32 mm, equal to `stand_mm` for a body that never crouches), the flag `net_always` (0 or 1) in `flags`, and the attack-profile field `knockback_mm_s` (u32, speed in mm/s, 0 for none) in `13.ability`; and the §2.1 validation rules: `outfit` is 1 exactly on `fac.native.*` templates with `body.humanoid` and the `sapient` tag, `outfit_mass_g` 9000 for brute, guardian and charger roles and 6000 otherwise; every `body.humanoid` template of role brute has `stand_mm` >= 2200; `crouch_mm` <= nav-class headroom less 50 mm (950 small, 1950 humanoid and burrower, 2950 large); no knockback stated as a distance; `net_always` 1 only on `rank.editor` and NPC `rank.hunter` templates. Doc 19 lines 559 to 564 list the doc 13 schemas without these fields."
+  },
+  {
+   "to": "06",
+   "request": "Patron wording (motivated by doc 13 §9.4 and Canon gaps item 3(c)): doc 06 line 1678 calls a patron 'the Author of its genre'. When Canon §20 keeps 'the Author' for `boss.author` and calls a patron the author of its genre, doc 06 follows the glossary (lower-case 'author of its genre' or 'patron'); until then no change."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "Q4",
+   "question": "Is the Colophon vendor `npc.vendor.colophon` invulnerable and non-combat (a sanctuary vendor with no kill drop, XP or reputation cost), or an ordinary killable elite vendor? (audit/notes_enemies.md Q4; Canon gaps item 2)",
+   "default_applied": "Invulnerable, non-combat, `fac.neutral`, never hostile, no kill drop, not an XP or reputation target (§13.2, test 55).",
+   "options": [
+    "Keep the invulnerable sanctuary vendor (recommended)",
+    "Ordinary killable elite vendor with the reputation price factor and kill drop"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Confirm the §13.4 chapter-hireling base entries: the genre's soldier-role roster entry when it is `sapient` and its signature calls no allies, otherwise the listed sapient entry. (audit/notes_enemies.md Q5; Canon gaps item 2)",
+   "default_applied": "The rule above, one `npc.hireling.chapter_<genre_suffix>` per core genre; no core genre has a second soldier-role entry, so the rule is unambiguous.",
+   "options": [
+    "Confirm the rule (recommended)",
+    "Hand-pick a base entry per genre",
+    "Author bespoke hireling templates instead of roster bases"
+   ]
+  },
+  {
+   "id": "author_presentation",
+   "question": "The Author (`boss.author`) is shown only as a vast writing hand with a quill and its handwriting, never a face, head or full figure (doc 18's proposal, adopted in §9.4). Confirm.",
+   "default_applied": "Writing hand, quill and handwriting only; `body.amorphous` with the nib as `bp.core` and the hand as `bp.mass`, so there is no head to sever.",
+   "options": [
+    "Adopt the writing hand (recommended)",
+    "Give the Author a full figure or face",
+    "Keep the Author unseen (voice and handwriting only, with a proxy body)"
+   ]
+  },
+  {
+   "id": "knockback_speeds",
+   "question": "Knockbacks written as distances were converted to doc 03 §5.13 speeds: 3000 mm -> 6000 mm/s (brute charge, ember wyrm tail_sweep), 4000 mm -> 8000 mm/s (huff_and_puff, fee_fi_stomp), 5000 mm -> 9000 mm/s (iron_palm). Accept these values?",
+   "default_applied": "The conversions above, with a new `knockback_mm_s` attack field and the rule that no knockback is ever a distance (§2.1, test 62).",
+   "options": [
+    "Accept and retune in playtest (recommended)",
+    "Retune now to a different distance-to-speed map",
+    "Have doc 03 add a distance-based knockback entry point (rejected by the fixer: one entry point keeps the pipeline deterministic)"
+   ]
+  },
+  {
+   "id": "final_folio_two_editors",
+   "question": "The Final Second Edition Folio holds two bosses in sequence: the revised Last Word at HP 100 (not the Last Word's 120) and then the Author at HP 120; the Folio pays two `rank.editor` kills (doc 15 Ink 80) and one Volume reward after the Author. Accept?",
+   "default_applied": "As stated in §9.4 and §9.1; doc 14 §8.9 already counts two Editor kills in that Folio.",
+   "options": [
+    "Accept (recommended)",
+    "Revised Last Word at HP 120 and one Editor-kill payment for the pair",
+    "Pay the Volume reward after each boss"
+   ]
+  },
+  {
+   "id": "revised_editor_choice",
+   "question": "Which revised Volume Editor ends Volumes 6 and 7 is chosen with no draw from the fused pair's dominant averaged axiom (ARC v1, TEC v2, MYT v3, VRV v4, cycle rule when repeated), so a run meets exactly two of the four. Accept, or draw it?",
+   "default_applied": "Deterministic mapping by dominant axiom with the cycle rule (§9.4, test 66), so doc 12's exit preview can name the Editor behind each Binding door.",
+   "options": [
+    "Accept the axiom mapping (recommended)",
+    "One `weighted` draw on `rng.spawn` per boss Folio",
+    "Let the party choose at the Binding door"
+   ]
+  }
+ ],
+ "unresolved": [
+  "DECISIONS 132 (no Prologue; `mode.prologue` retired) names doc 13 and is not applied: the chapter still defines `enemy.prologue_hunter` (§8.17, lines 1152 to 1156), names it in §2.1 (`net_always` and size rules), §1 rule 4, §10.2 step 1 ('the Prologue excepted'), §10.4 initial phase, §11.1 Hunters, Interface row 14 ('the Prologue script'), the Exports cross-genre row and acceptance test 48. The fixer's input range was DECISIONS 89 to 129.",
+  "Canon-1.12 text for the three Second Edition rules of Canon gaps item 3 (fused-Folio rule in §5, the §11.6 pause until the Author dies, the §20 glossary split) is not written; §9.4 and §10.8 apply the readings as written until it lands.",
+  "Product-owner confirmation of Q4 (invulnerable Colophon vendor) and Q5 (chapter-hireling base entries) is still pending (Canon gaps item 2).",
+  "Interface rows not yet met on disk, verified by grep: doc 03 has no `crouch_mm` or creature mantle text; doc 12 has only its G19 gap note and no revised-Editor preview, fused-roster or fused-arena rule; doc 18 has no `art.visual` records, names, cues or lines for the six §9.4 bosses and its Canon gaps item 2 still says doc 13 has not defined them; doc 19's `13.enemy_template` and `13.ability` rows list none of `visual`, `crouch_mm`, `knockback_mm_s`, `net_always`.",
+  "Doc 09's hacking rating has no companion bonus term for the rewritten `npc.companion.glitch` perk (+10 rating within 12000 mm); unverified whether §13.4 accepts one.",
+  "requests_13.json fix:13 'cavalry rename audit map file': no spec chapter contains the old or the renamed cavalry IDs any more (grep over spec/*.md is clean; Canon §17.7 keeps `enemy.role.cavalry` only as its retirement record at 00_CANON.md lines 1739 and 1974), so no map file is needed; disposition obsolete.",
+  "No IDs were retired by this chapter's wave-2 pass (the diff adds 6 `boss.*` IDs and 36 boss attack IDs and removes none), so there are no retired-ID consumers to route.",
+  "DECISIONS rows 130 to 145 were not triaged by the fixer; of them only row 132 names doc 13 (see the first item)."
+ ],
+ "remaining_work": [
+  {
+   "item": "fix:14 | Delete Canon gap 2 (doc 14 §3.8 now follows canon-1.11: 720 s onset, 10-stack cap, one hun",
+   "status": "done",
+   "note": "Canon gaps now holds only items 2 (unconfirmed defaults) and 3 (Second Edition on canon); the Erasure-onset gap is gone and the Imports row cites 43200 in doc 14 §3.8. §10.7 names `unlock.invader.annotator` (gate first_editor_v1), `.censor` (first_editor_v2) and `.footnoter` (first_victory), revisor for every account."
+  },
+  {
+   "item": "verify:14 | Canon gap 3: doc 14 §8.9 now specifies the Second Edition run flow. Define the revised Edi",
+   "status": "done",
+   "note": "§9.4 defines `boss.editor_v1_rev` to `boss.editor_v4_rev`, `boss.ur_editor_rev`, `boss.author`, the no-draw choice per boss Folio (n = 5, 10, 15) and the Author's entry and death as the Final Folio's Editor death; the name collision is handled by stating the Author is distinct from patrons and requesting the Canon §20 split (gap 3c, canon text pending); §11.1 Kill credit feeds doc 14's `party_kills` and `party_pacified`."
+  },
+  {
+   "item": "verify:16 | Set net_always on Editor bosses during BossFight and on hunters (doc 16 §6.6 rule 3).",
+   "status": "done",
+   "note": "§2.1 `flags.net_always` with the BossFight-only rule for `rank.editor` and the NPC `rank.hunter` templates; Interface row 16; test 63; invariant."
+  },
+  {
+   "item": "verify:01 | The revised Editors and the Author (DECISIONS 103, 118; doc 13 Canon gaps item 3).",
+   "status": "done",
+   "note": "§9.4 written; Canon gaps item 3 rewritten as canon-only."
+  },
+  {
+   "item": "fix:09 | Set the `outfit` flag (and outfit_mass_g) on at least one template of every fac.native.* fa",
+   "status": "done",
+   "note": "§2.1 Outfits rule (outfit iff fac.native and body.humanoid and sapient; 43 factions covered; mass 9000/6000), §11.1 method 4 from `ev.takedown` lethal false on the first subdue, Interface row 09 reads 'hacking (doc 09 §13.4, §13.5; no buildup)'; tests 60 and 65."
+  },
+  {
+   "item": "fix:18 | Add a `visual` field (an `art.visual.*` ID) to every enemy template. Author humanoid brutes",
+   "status": "done",
+   "note": "§2.1 `visual` field and JSON example; size rules put `leg_breaker` at stand_mm 2200 and every humanoid brute at >= 2200; `boss.author` defined as a writing hand, quill and handwriting, never a face (§9.4)."
+  },
+  {
+   "item": "verify:09 | Still open from the fixer: set `outfit` and `outfit_mass_g` on at least one template of e",
+   "status": "done",
+   "note": "Same as fix:09; `npc.companion.glitch` now reads '+10 to its owner's doc 09 §13.4 and §13.5 hacking rating ... (doc 09 hacks have no buildup)'; no 'hacking buildup' string remains in the chapter."
+  },
+  {
+   "item": "verify:18 | Add a visual: art.visual.* field on every template. Author leg_breaker and other humanoid b",
+   "status": "done",
+   "note": "`visual` field, brute sizes and §9.4 done; the second mini-boss per genre is on disk (28 `boss.*` rows in §9.3, two per genre except the Unwritten and the Ur-Text per DECISIONS 124)."
+  },
+  {
+   "item": "verify:15 | Confirm that the revised Second Edition Editors carry rank.editor, so that doc 15's Editor-k",
+   "status": "done",
+   "note": "§9.4: 'All six are `rank.editor`', the Author included; Interface row 15 names the six; test 67."
+  },
+  {
+   "item": "fix:13 | DECISIONS item 69 roster expansion (12+ enemy types and 2+ mini-bosses per genre) is not don",
+   "status": "done",
+   "note": "Every §8 genre table has 12 rows and §9.3 has 28 mini-bosses; Canon gaps header records item 1 closed by §8, §9.3 and §10.2 step 4."
+  },
+  {
+   "item": "fix:13 | Doc 14 §3.8 still uses the 25200-tick onset and the 5400-tick hunter repeat. Doc 13 follows ",
+   "status": "done",
+   "note": "Doc 14 §3.8 line 665 now has stack 1 at c = 43200; doc 13's Interface row 14 and invariant cite it; the gap is deleted."
+  },
+  {
+   "item": "fix:13 | The Colophon vendor's invulnerability (§13.2) and the chapter-hireling base entries (§13.4) a",
+   "status": "not_started",
+   "note": "Still Canon gaps item 2; needs the product owner's answer to Q4 and Q5 (audit/notes_enemies.md lines 123 to 124). Defaults stand in §13.2 and §13.4."
+  },
+  {
+   "item": "fix:13 | Six cavalry roster IDs were renamed (hover_lancer, war_rig_rider, posse_rider, getaway_driver",
+   "status": "done",
+   "note": "Obsolete: no spec chapter contains any of the six names or `enemy.role.cavalry` outside Canon §17.7's own retirement record; no map file is needed."
+  },
+  {
+   "item": "verify:13 | Knockback units (existed before the fixer's batches, not in the brief): the §2.1 attack-pro",
+   "status": "done",
+   "note": "§2.1 adds `knockback_mm_s`; brute charge 6000, iron_palm 9000, huff_and_puff 8000, tail_sweep 6000, fee_fi_stomp 8000; ram_raider and War Boss reworded to the field; test 62 and invariant 'N! knockback stated as a distance'."
+  },
+  {
+   "item": "verify:13 | Roster size (DECISIONS 69): §8 still lists 6 to 8 templates per genre and §9.3 one mini-bos",
+   "status": "done",
+   "note": "12 templates per genre and 2 mini-bosses; §10.2 step 4 picks one with a `weighted([1000, 1000])` call in ascending ID byte order (test 57); fused Folios draw over four (§10.8)."
+  },
+  {
+   "item": "verify:13 | Second Edition (DECISIONS 100, 101, 103, 105, 106) is recorded as open Canon gaps item 3. I",
+   "status": "done",
+   "note": "§9.4 and §10.8 define it; §2.2 reads d = 25 + 2n; what remains is canon-1.12 text (three rules in Canon gaps item 3), listed under canon_requests."
+  },
+  {
+   "item": "verify:13 | Product-owner confirmation still pending for the invulnerable Colophon vendor and the chapte",
+   "status": "not_started",
+   "note": "Same as the fix:13 Q4/Q5 item; waits on the product owner."
+  },
+  {
+   "item": "extend:13-roster | The task asked for 2 mini-bosses in every genre, but product-owner DECISIONS item 124 kee",
+   "status": "done",
+   "note": "28 mini-bosses on disk; the Unwritten and the Ur-Text use champion substitution (§9.3, §10.2 step 4, test 57)."
+  },
+  {
+   "item": "extend:13-roster | The roster tables keep their existing columns. HP base, damage profile, resistances and",
+   "status": "done",
+   "note": "Columns unchanged; the new per-template `visual` field links each row to its doc 18 `art.visual.*` record, and Interface row 18 asks doc 18 for skins and cues."
+  },
+  {
+   "item": "extend:13-roster | Canon gaps item 2 (Colophon vendor and chapter-hireling base entries) is still waiting o",
+   "status": "not_started",
+   "note": "Product-owner confirmation of Q4 and Q5 still pending; the §13.4 base-entry rule stays unambiguous (no core genre has two soldier-role entries)."
+  },
+  {
+   "item": "DECISIONS 89",
+   "status": "done",
+   "note": "§3 `enemy.role.charger` (run 7000 mm/s, `lance_charge`), §5.6 mounts retired; no cavalry IDs remain."
+  },
+  {
+   "item": "DECISIONS 91",
+   "status": "done",
+   "note": "§10.5: the Erasure hunter keeps `rank.hunter` identity, music cue and Canon §11.6 immunities with `rank.elite`'s multipliers; Imports row cites it."
+  },
+  {
+   "item": "DECISIONS 100",
+   "status": "done",
+   "note": "§9.4 (new bosses) and §10.8 (remixed fused pairings) cover doc 13's share; the second ending layer is doc 18's."
+  },
+  {
+   "item": "DECISIONS 101",
+   "status": "done",
+   "note": "§10.8 fused Folios: both rosters, factions and Laws, averaged axioms; §7.3 and §9.1 read the pair; worked faction-draw example and test 70."
+  },
+  {
+   "item": "DECISIONS 103",
+   "status": "done",
+   "note": "§9.4: five revised Editors with a fourth phase and revision rule each, and the Author with six attacks and an HP table; Exports boss.* 39 and boss attacks 155."
+  },
+  {
+   "item": "DECISIONS 106",
+   "status": "done",
+   "note": "§2.2: d = 25 + 2n in Second Edition Folio n through doc 14 §3.1; §9.4 HP table computes H(35), H(45), H(55) with the Canon §13.8 recurrence."
+  },
+  {
+   "item": "DECISIONS 124",
+   "status": "done",
+   "note": "§9.3 and §10.2 step 4: the Unwritten and the Ur-Text place the substitute arena champion and no `boss.` template; test 57."
+  },
+  {
+   "item": "DECISIONS 132",
+   "status": "not_started",
+   "note": "`mode.prologue` and `enemy.prologue_hunter` still live in §8.17 (lines 1152 to 1156), §1 rule 4, §2.1 (`net_always`, size rules), §10.2 step 1, §10.4, §11.1 Hunters, Interface row 14, the Exports cross-genre row and test 48; Imports still cite 'the Prologue's `enemy.prologue_hunter`'. Needs the hunter retired, the Prologue exceptions removed and doc 14's Prologue script reference dropped, in step with doc 14."
+  }
+ ]
+}
