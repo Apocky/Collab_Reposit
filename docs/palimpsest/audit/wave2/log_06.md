@@ -31,3 +31,8 @@ Batch 2: Canon gaps G17 exact text and new G18, tests 57 and 58, invariants line
 Arithmetic: mul_bp(60, 8000) = 48; floor_div(48 x 100, 150) = 32; floor_div(60 x 100, 120) = 50; 136 x 60 = 8160.
 
 Final lint: `spec_lint.py --chapter 06` -> "== 06 words=37765", "IDs defined in more than one chapter: 0", no findings. Full run: only baseline findings (00 hedges optionally 1; 16 undefined aware.profile.invader); IDs defined in more than one chapter: 0.
+
+## Round 1 re-check, 2026-10-12
+
+Re-dispatch found every triaged item already applied on disk (commit e18d2f2): header through row 145, petition 32 (48 x 100 / 150; section 16.4, test 22), homing lock route (section 5.4, Interface row 03, test 57), patron lower case (section 16.1, G18), G17 daily baseline and DECISIONS 33 (section 8.1, Canon gaps G17), Blood Price last stand (section 10, test 58). Inbound wave2:17, wave2:03, wave2:13 already satisfied. Leftover sweep re-run: hits are run seeds, the Fern-Seed Cloak skin name and no-durability rules; no fix needed. Edits this re-check: 0.
+Lint: --chapter 06 "== 06 words=37765", no findings; full run "IDs defined in more than one chapter: 0", baseline findings only.

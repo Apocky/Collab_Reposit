@@ -67,3 +67,6 @@ Resume pass. Every "done" claim of batches 1a, 1b/1c and 2 and of the harvest wa
 `spec_lint.py --chapter 03`: "== 03 words=41867", no findings; "IDs defined in more than one chapter: 0".
 Full run: 00 hedges {'optionally': 1} (baseline); 14 undefined_ids enemy.prologue_hunter and 16 undefined_ids aware.profile.invader, net.msg.scribe_text come from other chapters' concurrent passes, not from chapter 03 (chapter 03 defines and references none of them); IDs defined in more than one chapter: 0.
 Status: complete.
+
+## Round 1 resume verification, 2026-10-12
+Verified on disk: §4.8, §5.9, §5.23-§5.25, §14.2 instigator_slot (3 hits), G6/G29-G33, tests 58-66. No chapter edits needed. Outbox written (it was missing). Lint --chapter 03: clean; full run: IDs defined in more than one chapter: 0.

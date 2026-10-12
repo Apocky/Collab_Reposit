@@ -1,0 +1,139 @@
+{
+ "chapter": "03",
+ "status": "complete",
+ "requests_handled": 40,
+ "edits": 36,
+ "canon_requests": [
+  {
+   "section": "§17.6",
+   "old": "a ghost has no collision",
+   "new": "A ghost collides with voxels only: it has no body collision and appears in no hit, push or perception query.",
+   "why": "Canon gaps G6 (requests 28, 34)"
+  },
+  {
+   "section": "§4.4",
+   "old": "",
+   "new": "A closed door or closed trapdoor applies its block's full `light_filter`, concealment and sound attenuation.",
+   "why": "Canon gaps G29 (request 25)"
+  },
+  {
+   "section": "§4.4",
+   "old": "",
+   "new": "Shapes with no micro-voxels (cross, ladder, fixture) keep their block's light filter, concealment and sound attenuation unscaled.",
+   "why": "Canon gaps G30 (request 26)"
+  },
+  {
+   "section": "§4.4",
+   "old": "",
+   "new": "Panel, ladder, fence, pane, cross and fixture cells, resource nodes and cells marked by an explosion's rays break whole.",
+   "why": "Canon gaps G32 (request 33)"
+  },
+  {
+   "section": "§6.4",
+   "old": "",
+   "new": "**Last stand.** In solo play only, a lethal hit that Death's Door does not prevent opens a 300-tick window, once per Folio; a successful timed input in that window leaves the Erratum at 1 HP, and on failure the hit kills. The world keeps running and further hits on the Erratum are negated during the window.",
+   "why": "DECISIONS 131, 134"
+  },
+  {
+   "section": "§4.2",
+   "old": "the 1,600 mm mantle text",
+   "new": "**Ledge mantle.** A JUMP press with forward input climbs a ledge whose top lies more than 550 mm and at most 2,000 mm above the floor the body last stood on; a jump adds no reach. **Sprint-slide.** A crouch press while sprinting forward on the ground at 5,000 mm/s or more starts a slide at the greater of the current speed and 8,000 mm/s, losing 8,000 mm/s² × the ground's friction, for at most 45 ticks, ending below 2,000 mm/s, when airborne or on a jump; 60-tick cooldown; no stamina cost.",
+   "why": "DECISIONS 95, 99; Canon gaps G31; merged with doc 09 G26 and doc 12 G19"
+  },
+  {
+   "section": "§13.1",
+   "old": "",
+   "new": "**Grappling tool.** A `cat.tool` item, never base kit: a 20,000 mm ray from the eye anchors on any block face at least 1,000 mm away and pulls the body at 12,000 mm/s without gravity for at most 120 ticks; it releases on a jump (velocity kept), on arrival within 1,000 mm, when blocked, gated or downed, or when the anchor block is gone (velocity × 0.25 on every release but a jump). A body is never an anchor.",
+   "why": "DECISIONS 95, 99; Canon gaps G31; merged with doc 09 G26 and doc 12 G19"
+  },
+  {
+   "section": "§5.12",
+   "old": "",
+   "new": "**Time of day and weather.** Each Folio rolls one time of day from its genre's table and one weather state (doc 12), fixed for the Folio. Time of day: dawn −1, day 0, dusk −1, night −3 sky levels. Weather terms apply only at cells with no micro-voxel above them (`sky_open`), except the sky-level term, which applies to every sky-lit source. Columns `sky_delta`, `sound_ddb` (added per sound step), `wet` (soaks bodies), `fire_bp` (multiplies fire spread), `fog`, `ambient_db`, `scent`, `snow`: clear 0, 0, 0, 10000, 0, 0, 0, 0; rain −1, 2, 1, 5000, 0, 5, 1, 0; storm −2, 4, 1, 2500, 1, 10, 1, 0; fog −1, 0, 0, 10000, 1, 0, 0, 0; snow −1, 2, 0, 5000, 1, 0, 1, 1; dust −1, 3, 0, 12500, 1, 5, 0, 0. Weather deposits no liquid or gas and changes no temperature.",
+   "why": "DECISIONS 95, 99; Canon gaps G31; merged with doc 09 G26 and doc 12 G19"
+  },
+  {
+   "section": "§19",
+   "old": "",
+   "new": "the `tod.` and `wx.` namespaces owned by doc 03.",
+   "why": "DECISIONS 95, 99; Canon gaps G31; merged with doc 09 G26 and doc 12 G19"
+  }
+ ],
+ "cross_chapter_requests": [
+  {
+   "to": "01",
+   "request": "§7 and Interface row 03: replace the 1,600 mm mantle with 'ledge mantle up to 2,000 mm above the floor last stood on; a jump adds no reach' (doc 03 §5.9, DECISIONS 95)."
+  },
+  {
+   "to": "12",
+   "request": "§15.1 and §18.1: replace '1100 + 1600 = 2700 mm' and every 1,600 mm mantle reach with doc 03 §5.9's 2,000 mm from ledge_base_y (a jump adds no reach; 2-block pits and climbs hold). Call doc 03 set_climate(tod, wx) before the light bake (doc 03 §4.8)."
+  },
+  {
+   "to": "17",
+   "request": "§12.1 and Interface row 03: state the mantle as 2,000 mm (doc 03 §5.9 and G31 now agree) and the sprint-slide as specified by doc 03 §5.23 (input.crouch press while sprinting); drop 'until doc 03 G31 closes'. Last stand: the timed input is an intent whose window is comp.player.last_stand_until (doc 03 §5.25, 300 ticks); the Erasure scene follows a failed window."
+  },
+  {
+   "to": "05",
+   "request": "Canon gaps item 3: doc 03 now has MoveMode::Slide (8) and MoveMode::Grapple (9) (doc 03 §5.23, §5.24); drop 'no slide or grapple mode'. Last stand: negate every hit (flag negated) against a body while comp.player.last_stand_until >= tick (doc 03 §5.25)."
+  },
+  {
+   "to": "09",
+   "request": "Weather split (doc 03 §4.8): drop wx_sound (doc 03 adds sound_ddb per step into sky_open cells); keep wx_fog, wx_amb, wx_wash and wx_snow and read them on doc 03's sky_open(c), not the sky_src light bit; use 'wx.fog' as the ID; doc 03's precip column is now 'wet' (snow 0), doc 09's 'scent' column carries rain/storm/snow 1. Fold G26 into doc 03 G31's merged Canon §5.12 request."
+  },
+  {
+   "to": "04",
+   "request": "Set BodyState flag CLIMB_ANY on body.amorphous and body.insectoid (doc 03 §3.4, §5.11). Last stand: in solo play a lethal hit Death's Door does not prevent opens doc 03 §5.25's 300-tick window once per Folio (comp.player.last_stand_used)."
+  },
+  {
+   "to": "16",
+   "request": "Replicate comp.player last_stand_until and last_stand_used (doc 03 §3.4 comp.player row, §5.25); no last stand opens with two or more Errata or with the invader present."
+  },
+  {
+   "to": "02",
+   "request": "Rust slice: add comp.player last_stand_until: Tick and last_stand_used: bool, MoveMode Slide=8 and Grapple=9, Climate { tod, wx } in save section 0, and sky_lit/sky_open column tops (doc 03 §3.4, §4.8, §5.23-§5.25, §16.1)."
+  }
+ ],
+ "product_questions": [
+  {
+   "id": "03-Q1",
+   "question": "Mantle 2,000 mm measured from the floor or from the feet at the press?",
+   "default_applied": "From the floor via ledge_base_y; a jump adds no reach (§5.9).",
+   "options": [
+    "From the floor (applied)",
+    "From the feet at the press (jump adds reach)"
+   ]
+  },
+  {
+   "id": "03-Q2",
+   "question": "Sprint-slide and grappling numbers.",
+   "default_applied": "§5.23: 5,000 mm/s entry, 8,000 mm/s start, 45-tick cap, 60-tick cooldown, no stamina; §5.24: 20,000 mm ray, 12,000 mm/s pull, 120-tick cap, block anchors only.",
+   "options": [
+    "Keep §5.23/§5.24 (applied)",
+    "Shorter slide and line for stealth genres",
+    "Stamina cost and entity anchors"
+   ]
+  },
+  {
+   "id": "03-Q3",
+   "question": "Does the world keep running during the last stand window?",
+   "default_applied": "Yes: the world simulates, the body is frozen and further hits are negated (§5.25).",
+   "options": [
+    "World runs, hits negated (applied)",
+    "World pauses for the window"
+   ]
+  },
+  {
+   "id": "03-Q4",
+   "question": "Do panels and explosion-marked cells break whole against Canon §4.4?",
+   "default_applied": "Yes, whole (G32).",
+   "options": [
+    "Whole-cell breaks (applied)",
+    "Chip panels and marked cells"
+   ]
+  }
+ ],
+ "unresolved": [
+  "Doc 06 glyph.mod.homing (lock at launch) has no doc 03 lock variant; §5.19 homes only on st.marked targets. Doc 06 turns in after_step until a request names a lock field."
+ ],
+ "summary": "Resume pass verified the earlier Round 1 work on disk: header (2026-10-12, through row 145), §4.8 climate (wet column, sky_open as the one weather scope, sound owned here), §5.9 2,000 mm mantle consistent with G31, §5.23/§5.24 slide and grapple with doc 09 noises, §5.25 last stand timing (DECISIONS 131, 134), §3.4/§5.8/§5.9/§5.13 creature crouch, mantle and knockback (doc 13), §14.2 trap instigator_slot (doc 07), §17 cost rows.\nCanon gaps G6, G29, G30, G31 (merged with doc 09 G26 and doc 12 G19), G32 and G33 carry exact requested canon text; acceptance tests 58-66 and invariants added.\nLeftover sweep hits are permitted text only. Lint --chapter 03 clean; full run 'IDs defined in more than one chapter: 0'.\nThis round only wrote the missing outbox and a verification line in the log; consumers of the old 1,600 mm mantle, doc 09's weather split and last-stand plumbing moved to cross_chapter_requests."
+}

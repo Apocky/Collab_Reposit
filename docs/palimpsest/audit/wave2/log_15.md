@@ -46,3 +46,4 @@ Batch 1: header, Imports, §1.1 doc 12 §25 pointer, §2.2 achievement row and m
 Batch 2: §2.2 Second Edition Editors and fused genre, §5.1 FolioRecord.genre, tests 12 and 36 rewritten, tests 43-45 added, 3 invariants. 8 edits. Lint clean.
 Batch 3: Interface assumptions rows for docs 14 and 13. 1 edit.
 Final lint: `--chapter 15`: "== 15 words=28260", "IDs defined in more than one chapter: 0", no findings. Full run: only baseline findings (00 hedges optionally 1; 16 undefined aware.profile.invader); 08 hedges no longer reported; IDs defined in more than one chapter: 0.
+Re-run 2026-10-12: round 1 already on disk (commit e18d2f2); lint --chapter 15 clean, full run IDs defined in more than one chapter: 0. No further edits.

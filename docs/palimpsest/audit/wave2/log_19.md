@@ -33,3 +33,7 @@
 
 `spec_lint.py --chapter 19`: `== 19 words=12575` with no findings; `== IDs defined in more than one chapter: 0`.
 Full run: IDs defined in more than one chapter: 0. Findings outside 19 (00 hedges optionally 1; 14 enemy.prologue_hunter; 16 aware.profile.invader, net.msg.scribe_text) come from those chapters' own concurrent edits; doc 19 introduces none.
+
+### Round 1 re-run, 2026-10-12
+
+Re-dispatched with the same task. Chapter 19 already carries every triage disposition above (commit e18d2f2); header names row 145; 19 SCHEMA-FRAGMENT placeholders present; leftover sweep re-grepped with no new hits. 0 edits. Lint --chapter 19: clean (words=12575). Full run: IDs defined in more than one chapter: 0; only finding outside 19 is the chapter 00 baseline hedge. Outbox unchanged.

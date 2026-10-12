@@ -26,3 +26,6 @@
 == 08  words=22270
 == IDs defined in more than one chapter: 0
 ```
+
+### Round 1 re-run, 2026-10-12
+- Re-dispatch found every item already applied on disk (commit e18d2f2); leftover sweep re-run: only retirement/rule sentences match; 0 edits; lint 08 clean, full run duplicates 0; outbox unchanged.

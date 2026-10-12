@@ -20,3 +20,5 @@
 - Batch 2: invariant alignment, Imports DECISIONS row. 2 edits. lint clean.
 
 Final lint: `== 10 words=21248`, no findings; full run `IDs defined in more than one chapter: 0`, only baseline finding (16 aware.profile.invader).
+
+- Round 1 re-check, 2026-10-12: chapter, log and outbox already on disk from this round; lint --chapter 10 clean; full run "IDs defined in more than one chapter: 0"; sweep re-grep 0 hits. No new edits.

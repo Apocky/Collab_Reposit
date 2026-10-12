@@ -46,3 +46,4 @@ Verified on disk: batches 1-14 claims hold (visual, crouch_mm, net_always, knock
 
 - Batch 15: 22 edits (header, 132 retirement, strobe, CLIMB_ANY, Author readings, tests 72-73, invariant). Lint ch13 clean.
 - Batch 16: 2 edits (test 48 wording, mantle reach from floor). Full lint: IDs in more than one chapter 0; ch13 clean; ch14 now undefined enemy.prologue_hunter (expected, routed to doc 14).
+- Final verification (resume): ch13 lint clean; full lint 'IDs defined in more than one chapter: 0'; only ch00 hedges {'optionally': 1} (baseline); doc 14 no longer flags enemy.prologue_hunter. Outbox finalized.

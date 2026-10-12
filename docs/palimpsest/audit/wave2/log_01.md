@@ -41,3 +41,7 @@
 
 - `spec_lint.py --chapter 01`: `== 01 words=20913`, no findings; `IDs defined in more than one chapter: 0`.
 - Full run: chapter 01 clean; remaining findings belong to other lanes' in-flight edits (00 hedges optionally 1 baseline; 14 undefined enemy.prologue_hunter; 16 undefined aware.profile.invader (baseline) and net.msg.scribe_text); none references chapter 01 text. `IDs defined in more than one chapter: 0`.
+
+### Re-run check, 2026-10-12
+
+- Re-dispatched with the same request set; chapter, log and outbox already committed (e18d2f2). Leftover sweep re-grepped: remaining hits are retirement sentences, invariants, third-party peer prices and the doc 21 staleness note. Lint --chapter 01 clean; full run IDs defined in more than one chapter: 0. 0 new edits; outbox unchanged.

@@ -47,3 +47,4 @@ Resume pass. Verified batches 1-8 on disk (run_alerted 0 hits; steps 30-tick lif
 - Batch 9: header row 145, §4.4, §15.3, Imports 03/12, Interface 03/12/13/16/17, §7 noise rows, §8/§8.3 flags, §13.4, G26, tests 63 and 71-73, invariants, Exports. 25 edits. Recompute: rain example L_eff = floor_div(450 - mul_bp(200,10000),10) = 25 < gate 28; fog conceal floor_div(1*16000,8000) = 2.
 - Final lint --chapter 09: "== 09 words=32150 / IDs defined in more than one chapter: 0" (no findings). Full run: no new finding outside 09 (14 enemy.prologue_hunter and 16 net.msg.scribe_text belong to other lanes; 16 aware.profile.invader is baseline).
 - Status: complete.
+- Resume check 2026-10-12: Round 1 edits, outbox_09.json and lint re-verified on disk (09: 0 findings; full run: duplicates 0). No further edits.
