@@ -316,6 +316,15 @@ pub const fn isqrt_u128(n: u128) -> u128 {
     }
 }
 
+/// SPEC: doc 02 §4.2 `isqrt_u64(n) = isqrt_u128(n as u128) as u64`: floor
+/// square root of a `u64`. The root of a `u64` is below `2^32`, so the
+/// narrowing is exact. Example: `isqrt_u64(2^64 - 1) = 2^32 - 1`.
+#[inline]
+#[must_use]
+pub const fn isqrt_u64(n: u64) -> u64 {
+    isqrt_u128(n as u128) as u64
+}
+
 /// SPEC: canon §1.4 `sqrt_fx(x) = Fx(isqrt_u128((x.raw as u128) << 32) as i64)`,
 /// floor. Panics if `x.raw < 0`. The result always fits (it is below `2^48`).
 #[inline]
@@ -442,6 +451,34 @@ mod tests {
         let want = [0u128, 1, 1, 1, 2, 9, 10, 1 << 32, (1 << 64) - 1];
         for (n, w) in inputs.iter().zip(want) {
             assert_eq!(isqrt_u128(*n), w, "n = {n}");
+        }
+    }
+
+    #[test]
+    fn doc02_isqrt_u64_examples() {
+        // Doc 02 §4.2: isqrt_u64(2^64 - 1) = 2^32 - 1; the narrowing is exact.
+        assert_eq!(isqrt_u64(u64::MAX), (1u64 << 32) - 1);
+        assert_eq!(isqrt_u64(0), 0);
+        assert_eq!(isqrt_u64(1), 1);
+        assert_eq!(isqrt_u64(2), 1);
+        assert_eq!(isqrt_u64(3), 1);
+        assert_eq!(isqrt_u64(4), 2);
+        assert_eq!(isqrt_u64(99), 9);
+        assert_eq!(isqrt_u64(100), 10);
+        assert_eq!(isqrt_u64(1u64 << 62), 1u64 << 31);
+        assert_eq!(isqrt_u64((1u64 << 62) - 1), (1u64 << 31) - 1);
+        assert_eq!(isqrt_u64(u64::MAX - 1), (1u64 << 32) - 1);
+        // (2^32 - 1)^2 is the largest square in u64.
+        let big = (1u64 << 32) - 1;
+        assert_eq!(isqrt_u64(big * big), big);
+        assert_eq!(isqrt_u64(big * big - 1), big - 1);
+        for n in 0u64..=4096 {
+            assert_eq!(isqrt_u64(n), n.isqrt(), "n = {n}");
+            assert_eq!(
+                u128::from(isqrt_u64(n)),
+                isqrt_u128(u128::from(n)),
+                "n = {n}"
+            );
         }
     }
 
@@ -654,6 +691,15 @@ mod tests {
         fn isqrt_matches_core_by_bit_length(bits in 2u32..=128, v in any::<u128>()) {
             let n = if bits == 128 { v | (1u128 << 127) } else { (v & ((1u128 << bits) - 1)) | (1u128 << (bits - 1)) };
             prop_assert_eq!(isqrt_u128(n), n.isqrt());
+        }
+
+        #[test]
+        fn isqrt_u64_matches_core_and_u128(n in any::<u64>()) {
+            let r = isqrt_u64(n);
+            prop_assert_eq!(r, n.isqrt());
+            prop_assert_eq!(u128::from(r), isqrt_u128(u128::from(n)));
+            prop_assert!(u128::from(r) * u128::from(r) <= u128::from(n));
+            prop_assert!((u128::from(r) + 1) * (u128::from(r) + 1) > u128::from(n));
         }
 
         #[test]

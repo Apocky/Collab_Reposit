@@ -21,7 +21,9 @@ mod cordic_table;
 mod trig_table;
 
 pub use cordic::atan2_bam;
-pub use fx::{Fx, div_fx, fx_floor_block, fx_from_milli, isqrt_u128, mul_bp_fx, mul_fx, sqrt_fx};
+pub use fx::{
+    Fx, div_fx, fx_floor_block, fx_from_milli, isqrt_u64, isqrt_u128, mul_bp_fx, mul_fx, sqrt_fx,
+};
 pub use geom::{Fx3, IVec3, dist2};
 pub use hash::{blake3_256, blake3_fields, fnv1a32, fnv1a64};
 pub use int::{ceil_div, floor_div, mul_bp, round_half_even};

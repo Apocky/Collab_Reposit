@@ -27,7 +27,10 @@
 //! Gameplay numbers marked "skeleton" below are placeholders that exercise
 //! determinism; the owning documents (03, 04, 05) define the real systems.
 
-use std::collections::{BTreeMap, BTreeSet};
+use alloc::collections::{BTreeMap, BTreeSet};
+use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
 
 use crate::entity::{EntityAllocator, EntityId, IdCounter, ItemUid, MAX_FOLIO_INDEX, UidAllocator};
 use crate::time::{

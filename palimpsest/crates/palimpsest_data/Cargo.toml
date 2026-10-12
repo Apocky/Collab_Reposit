@@ -16,6 +16,10 @@ default = []
 # (canon §1.6, doc 02 §11.1). It is off by default so that layer-2 crates
 # (gen, ai), whose closure must not contain serde_json, can depend on the core.
 loader = ["dep:serde_json"]
+# Doc 02 §3.2 and §3.3: the `schema` module (JSON Schema export) is gated by
+# this feature, and `schemars` is allowed only through it. Doc 21 WP-005 adds
+# `dep:schemars`; until then the feature enables only the placeholder module.
+schema = []
 
 [dependencies]
 palimpsest_math = { workspace = true }

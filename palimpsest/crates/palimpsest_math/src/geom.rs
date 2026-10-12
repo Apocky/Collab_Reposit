@@ -533,9 +533,12 @@ pub fn capsule_overlap(c1: &Capsule, c2: &Capsule) -> bool {
     within(cp1, cp2, c1.r + c2.r)
 }
 
-/// SPEC: canon §1.8, doc 02 §4.6 ray against sphere. `rd` must be unit length. Returns the
-/// entry distance `t >= 0`, or `None` on a miss, a tangent ray, or when the
-/// entry point lies behind the origin.
+/// SPEC: canon §1.8, doc 02 §4.6 ray against sphere. `rd` must be unit length. With
+/// `b = rd · oc`, `c = |oc|² - r²` and `h = b² - c` in Q64.64, returns the
+/// entry distance `t = -b - sqrt(h)` when `t >= 0`. Returns `None` when
+/// `h < 0` (a miss) or when `t < 0` (the entry point lies behind the origin,
+/// which is every ray that starts inside the sphere). A tangent ray
+/// (`h == 0`) is a hit at `t = -b`.
 #[must_use]
 #[track_caller]
 pub fn ray_sphere(ro: Fx3, rd: Fx3, cen: Fx3, r: Fx) -> Option<Fx> {
@@ -546,8 +549,8 @@ pub fn ray_sphere(ro: Fx3, rd: Fx3, cen: Fx3, r: Fx) -> Option<Fx> {
     let h = bb
         .checked_sub(i128::from(c.raw()) << 32)
         .expect("ray_sphere: overflow");
-    if h <= 0 {
-        return None;
+    if h < 0 {
+        return None; // h == 0: tangent hit
     }
     let sq = i64::try_from(isqrt_u128(h.unsigned_abs())).expect("ray_sphere: sqrt out of range");
     nonneg(-b - Fx::from_raw(sq))
@@ -811,14 +814,23 @@ impl Iterator for VoxelDda {
     }
 }
 
-/// SPEC: canon §1.8, doc 02 §4.6 `dda(o, d, t_max, visit)`: callback form of
-/// [`VoxelDda`]. Calls `visit(cell, t, face)` for every block the ray crosses
-/// up to `t_max` (the start block first, with `t = 0` and no face) and stops
-/// early when `visit` returns `false`. Bounded by `t_max` and by the `i32`
-/// block range; use [`VoxelDda::new`] directly for an explicit step bound.
+/// SPEC: canon §1.8, doc 02 §4.6 `dda(o, d, t_max, max_steps, visit)`: callback
+/// form of [`VoxelDda`]. Calls `visit(cell, t, face)` for every block the ray
+/// crosses (the start block first, with `t = 0` and no face) and stops early
+/// when `visit` returns `false`. `max_steps` is the number of steps beyond
+/// the start block, so `visit` runs at most `max_steps + 1` times; the
+/// traversal also ends beyond `t_max`, when the ray does not move and at the
+/// `i32` block range, exactly as the iterator does. Doc 03 callers pass
+/// `max_steps = 3 × ceil_div(t_max.raw(), 2^32) + 3` for a unit direction.
 #[track_caller]
-pub fn dda(o: Fx3, d: Fx3, t_max: Fx, mut visit: impl FnMut(IVec3, Fx, Option<Face>) -> bool) {
-    for s in VoxelDda::new(o, d, t_max, u32::MAX) {
+pub fn dda(
+    o: Fx3,
+    d: Fx3,
+    t_max: Fx,
+    max_steps: u32,
+    mut visit: impl FnMut(IVec3, Fx, Option<Face>) -> bool,
+) {
+    for s in VoxelDda::new(o, d, t_max, max_steps) {
         if !visit(s.cell, s.t, s.face) {
             return;
         }
@@ -1146,6 +1158,10 @@ mod tests {
         assert_eq!(body.map(Fx::raw), Some(20_186_346_293));
         let cap = ray_capsule(Fx3::from_milli(0, 1700, 0), rd, pa, pb, r);
         assert_eq!(cap.map(Fx::raw), Some(20_514_452_597));
+        // Doc 02 §4.6: at height 1.8 m the ray grazes the top cap; ray_sphere
+        // finds h = 0 exactly and returns the tangent hit at raw 21474836480 (5 m).
+        let graze = ray_capsule(Fx3::from_milli(0, 1800, 0), rd, pa, pb, r);
+        assert_eq!(graze.map(Fx::raw), Some(21_474_836_480));
         let miss = ray_capsule(Fx3::from_milli(0, 2000, 0), rd, pa, pb, r);
         assert_eq!(miss, None);
         // Same through the Ray / Capsule types.
@@ -1192,14 +1208,14 @@ mod tests {
             Fx::from_int(2),
         );
         assert_eq!(t, Some(Fx::from_int(8)));
-        // Tangent counts as a miss (h <= 0).
+        // Doc 02 §4.6: a tangent ray (h == 0) is a hit at t = -b = 10.
         let t = ray_sphere(
             Fx3::from_ints(2, 0, 0),
             Fx3::from_ints(0, 0, -1),
             Fx3::from_ints(0, 0, -10),
             Fx::from_int(2),
         );
-        assert_eq!(t, None);
+        assert_eq!(t, Some(Fx::from_int(10)));
         // Behind the origin.
         let t = ray_sphere(
             Fx3::ZERO,
@@ -1220,6 +1236,116 @@ mod tests {
         assert_eq!(min_nonneg(None, None), None);
         assert_eq!(nonneg(Fx::from_raw(-1)), None);
         assert_eq!(clamp01(Fx::from_int(3)), Fx::ONE);
+    }
+
+    #[test]
+    fn ray_sphere_tangent_miss_and_inside_start() {
+        // Doc 02 §4.6: h == 0 is a tangent hit; h < 0 is a miss; a ray that
+        // starts inside the sphere has its entry point behind the origin.
+        let cen = Fx3::from_ints(0, 0, -10);
+        let r = Fx::from_int(2);
+        let rd = Fx3::from_ints(0, 0, -1);
+        // Tangent along x and along y: b = -10, c = 100, h = 0 exactly, t = 10.
+        assert_eq!(
+            ray_sphere(Fx3::from_ints(2, 0, 0), rd, cen, r),
+            Some(Fx::from_int(10))
+        );
+        assert_eq!(
+            ray_sphere(Fx3::from_ints(0, -2, 0), rd, cen, r),
+            Some(Fx::from_int(10))
+        );
+        // One raw unit further out: c = 100 + 4 raw, h = -2^34 < 0, a miss.
+        let ro = Fx3::new(Fx::from_int(2) + Fx::from_raw(1), Fx::ZERO, Fx::ZERO);
+        assert_eq!(ray_sphere(ro, rd, cen, r), None);
+        // Clearly outside: h < 0.
+        assert_eq!(ray_sphere(Fx3::from_ints(3, 0, 0), rd, cen, r), None);
+        // Doc 02 §4.6: ray from (0, 0.5, 0) along +X against the sphere at
+        // (5, 0, 0) with r = 0.5 m is tangent (h = 0) and hits at raw 21474836480.
+        let t = ray_sphere(
+            Fx3::from_milli(0, 500, 0),
+            Fx3::from_ints(1, 0, 0),
+            Fx3::from_ints(5, 0, 0),
+            m(500),
+        );
+        assert_eq!(t.map(Fx::raw), Some(21_474_836_480));
+        // Inside start at the center: b = 0, c = -4, h = 4, t = -2 < 0.
+        assert_eq!(ray_sphere(cen, rd, cen, r), None);
+        // Inside start off-center: b = -1, c = -3, h = 4, t = -1 < 0.
+        assert_eq!(ray_sphere(Fx3::from_ints(0, 0, -9), rd, cen, r), None);
+        // Inside start, pointing away: b = 1, c = -3, h = 4, t = -3 < 0.
+        assert_eq!(ray_sphere(Fx3::from_ints(0, 0, -11), rd, cen, r), None);
+        // Through ray_capsule's parallel-to-axis path (doc 02 §4.6: only the two
+        // end spheres are tested): starting at the center of cap pa, that sphere
+        // reports None (inside start) and the far sphere pb is entered at
+        // t = 10 - 2 = 8 (b = -10, c = 96, h = 4).
+        let pa = Fx3::from_ints(0, 0, -10);
+        let pb = Fx3::from_ints(0, 0, -20);
+        assert_eq!(ray_capsule(pa, rd, pa, pb, r), Some(Fx::from_int(8)));
+    }
+
+    #[test]
+    fn dda_callback_max_steps_stops_traversal() {
+        // Doc 02 §4.6: `max_steps` is the number of steps beyond the start
+        // block, so `visit` runs at most `max_steps + 1` times.
+        let o = Fx3::from_milli(500, 500, 500);
+        let d = Fx3::from_ints(1, 0, 0);
+        let mut cells = Vec::new();
+        dda(o, d, Fx::MAX, 3, |cell, _, _| {
+            cells.push(cell);
+            true
+        });
+        assert_eq!(
+            cells,
+            [
+                IVec3::new(0, 0, 0),
+                IVec3::new(1, 0, 0),
+                IVec3::new(2, 0, 0),
+                IVec3::new(3, 0, 0)
+            ]
+        );
+        // Doc 02 acceptance example: max_steps = 5 yields 6 blocks ending at (5, 0, 0).
+        let mut five = Vec::new();
+        dda(o, d, Fx::MAX, 5, |cell, _, _| {
+            five.push(cell);
+            true
+        });
+        assert_eq!(five.len(), 6);
+        assert_eq!(five.last(), Some(&IVec3::new(5, 0, 0)));
+        // Zero steps: only the start block.
+        let mut n = 0;
+        dda(o, d, Fx::MAX, 0, |_, t, face| {
+            assert_eq!((t, face), (Fx::ZERO, None));
+            n += 1;
+            true
+        });
+        assert_eq!(n, 1);
+        // t_max and max_steps compose: whichever ends the traversal first wins.
+        let mut n = 0;
+        dda(o, d, m(2500), 100, |_, _, _| {
+            n += 1;
+            true
+        });
+        assert_eq!(n, 4);
+        let mut n = 0;
+        dda(o, d, m(2500), 2, |_, _, _| {
+            n += 1;
+            true
+        });
+        assert_eq!(n, 3);
+        // Doc 03's bound 3 × ceil_div(t_max.raw(), 2^32) + 3 = 15 for t_max = 4 m
+        // covers every block the doc 02 §4.6 worked-example ray crosses.
+        let d = Fx3::from_milli(600, 0, -800);
+        let t_max = Fx::from_int(4);
+        let bound =
+            3 * u32::try_from(crate::int::ceil_div(t_max.raw(), 1 << 32)).expect("small") + 3;
+        assert_eq!(bound, 15);
+        let mut n = 0;
+        dda(o, d, t_max, bound, |_, _, _| {
+            n += 1;
+            true
+        });
+        assert_eq!(n, VoxelDda::new(o, d, t_max, u32::MAX).count());
+        assert_eq!(n, 6);
     }
 
     #[test]
@@ -1339,7 +1465,8 @@ mod tests {
         let d = Fx3::from_milli(600, 0, -800);
         let solid = IVec3::new(2, 1, -3);
         let mut seen = Vec::new();
-        dda(o, d, Fx::from_int(4), |cell, t, face| {
+        // Doc 02 §4.6: t_max 4 m, so doc 03 passes max_steps = 15.
+        dda(o, d, Fx::from_int(4), 15, |cell, t, face| {
             seen.push(DdaStep { cell, t, face });
             cell != solid
         });
@@ -1354,7 +1481,7 @@ mod tests {
         assert_eq!(seen.len(), 6);
         // Without a solid block the traversal runs to t_max.
         let mut n = 0;
-        dda(o, d, Fx::from_int(4), |_, t, _| {
+        dda(o, d, Fx::from_int(4), 15, |_, t, _| {
             assert!(t <= Fx::from_int(4));
             n += 1;
             true

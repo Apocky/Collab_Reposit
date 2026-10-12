@@ -2,10 +2,14 @@
 //! strings and JSON content checks. SPEC: canon §1.1, §1.6, §1.10, §19; doc 02
 //! §3.2, §11.
 //!
-//! The core (`ids`, `registry`, `text_key`, `hex`) is `no_std` + `alloc`, with
-//! no floats, no hash maps and no unsafe code (doc 02 §3.2). The `loader`
-//! feature adds std, serde_json and the `content_check` module (doc 02
-//! §3.3); unit tests always compile it.
+//! The core (`ids`, `registry`, `text_key`, `hex`, `mods`) is `no_std` +
+//! `alloc`, with no floats, no hash maps and no unsafe code (doc 02 §3.2). The
+//! `loader` feature adds std, serde_json, the `content_check` module (doc 02
+//! §3.3) and the `loader` module; unit tests always compile `content_check`.
+//! The `schema` feature adds the `schema` module. Doc 02 §3.2 names every
+//! module of this crate; `loader`, `schema` and `mods` are documented
+//! placeholders that doc 21 WP-006, WP-005 and WP-077 fill, and `db` and
+//! `hash` (`ContentDb`, `content_hash`, `presentation_hash`) arrive with them.
 #![cfg_attr(not(any(test, feature = "loader")), no_std)]
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
@@ -19,6 +23,11 @@ pub mod text_key;
 
 #[cfg(any(test, feature = "loader"))]
 pub mod content_check;
+#[cfg(feature = "loader")]
+pub mod loader;
+pub mod mods;
+#[cfg(feature = "schema")]
+pub mod schema;
 
 #[cfg(test)]
 mod canon_tests;
