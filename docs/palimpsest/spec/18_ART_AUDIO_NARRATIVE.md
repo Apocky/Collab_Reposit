@@ -268,7 +268,7 @@ Every font is SIL Open Font License 1.1 or Apache 2.0, verified against its lice
 |ur_text|Cinzel Decorative|EB Garamond|EB Garamond|full illuminated initial|
 |the Margin (hub)|EB Garamond|EB Garamond|EB Garamond|pencil versal, 2 lines|
 
-Every locale also ships Noto Sans CJK and Noto Serif CJK for Chinese, Japanese and Korean, and Atkinson Hyperlegible as the legibility font that doc 17's `access.font` substitutes for every body face. Functional UI text (HUD, menus, item cards, tooltips, numbers) uses doc 17's `access.font` body font; the heading faces above are doc 17's display fonts, and the body and numeral faces set Lore and Journal pages and title cards (doc 17 §2.4). A heading face without the glyphs of the active locale falls back to Noto Serif CJK or Noto Serif.
+Every locale also ships Noto Sans CJK and Noto Serif CJK for Chinese, Japanese and Korean, and Atkinson Hyperlegible as the legibility font that doc 17's `access.font` substitutes for every body face. Functional UI text (HUD, menus, item cards, tooltips, numbers) uses doc 17's `access.font` body font; the heading faces above are doc 17's display fonts, and the body and numeral faces set Lore and Journal pages and title cards (doc 17 §2.4). A heading face without the glyphs of the active locale falls back to Noto Serif CJK or Noto Serif. Launch locale records are `nar.locale.<tag>` (DECISIONS 40, doc 19 Canon gap G7): the BCP 47 tag is lower-cased with `-` written as `_`, so en-US is nar.locale.en_us, and the 15 launch locales each own one record.
 
 ### 3.6 Silhouette roles (`art.silhouette.<role>`)
 
@@ -456,7 +456,7 @@ The rule: **nothing on screen may tell the player they are hidden, lit, heard or
 
 ### 5.1 First-person viewmodel
 
-- The viewmodel is a separate camera layer (doc 02 §8.4) and always animates on 1s, whatever the genre's `anim_step`, because aim feel outranks style.
+- The viewmodel is a separate camera layer (doc 02 §8.4) and always animates on 1s, whatever the genre's `anim_step`, because aim feel outranks style. The third-person toggle (DECISIONS 143) moves only the viewpoint: hit detection is identical in first and third person, and the viewmodel is hidden in third person.
 - **Action sync.** Each action clip has an authored length `clip_ticks`. It plays at rate `clip_ticks / action_ticks`, where `action_ticks` is the simulation's duration (Canon §6.4 row 17 for reload, swap and use). Example: a 120-tick reload with SLT 60 gives `mult = 10000 + 20 × 50 = 11000` and `action_ticks = max(1, ceil_div(120 × 10000, 11000)) = 110`, so the clip plays at rate 120 / 110 ≈ 1.091 and ends on the tick the simulation finishes.
 - **Motion** from `art.vm.<archetype>` (example `art.vm.ranged.pistol`, for doc 05's `arch.ranged.pistol`: `bob_v_mm` 6, `bob_h_mm` 10, `sway_max_mm` 25, `sway_return_ticks` 7). Bob amplitude scales with `speed / 4300`, and its low point lands on each `ev.footstep` of the local player, so steps and bob agree. Sway lags look input by at most `sway_max_mm`, then springs back. Recoil kick and hitstop are doc 05's.
 - **Full-body awareness**: doc 02 §8.4 renders the avatar body headless; looking down shows the legs, held off-hand items and the belt quickbar.
