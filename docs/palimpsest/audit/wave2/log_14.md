@@ -1,0 +1,26 @@
+# Wave-2 fixer log: chapter 14
+
+Started 2026-10-12. Inputs: audit/wave2/requests_14.json (29 items), DECISIONS 89-129.
+Lint at start: clean (0 findings).
+
+## Progress
+- [done] fix:11 / verify:11: dropped "and doc 11's former-name table" from §2.4 intro. The brace-form doc 11 Interface row was already gone (row lists alch./arch./item. IDs).
+- [done] verify:04 / fix:04: Monk role list now "light armor set"; deleted the cloth-set sentence. Doc 04 §13 and §2.6.1 items already reflected in Interface row 04.
+- [done] fix:12 (a): Commit row states the bleed_on rule exactly (Daily/Weekly/typed seed, or >= 3 party run ends of §4.3 outside mode.prologue, departed excluded), run header, GenInput. (b)(c)(d) were already in §1.2/§5.5. (e) no stale canon-1.2 note remained; doc 12 citations §4 -> §4.1 and §14 -> §14.1.
+- [done] verify:01 / verify:15 / verify:18 / DECISIONS 114, 118, 119: §2.3 EA scope rewritten (all 12 core genres, 24 Echoes, Second Edition at EA; Daily Origins range(12); invasions, audience votes and traces post-EA). Every "from 1.0"/"at 1.0" qualifier removed (intro, §3.2 rows, §8.1 row, §8.2a, §8.9 heading, §9.1, Interface rows 12/13/17/18, test 53).
+- [done] verify:16 / DECISIONS 97: new §1.3: Appearance and name are presentation, outside ErratumChoice/SlotState (doc 18 invariant); peers learn them via doc 16 LobbyPick/JoinCharacter, PartyState, replay file, RunSummary. ErratumChoice now defined in full (kin, origin, calling, subs[24], human_skill | echo, trait_variant).
+- [done] fix:01 / verify:13 / verify:17 / fix:18 / DECISIONS 100-108, 117: §8.9 rewritten: EA, entry order, revised-Editor draw (3 of 5 from rng.run of f_ur), Author + final_hp_bp, fused pair per-pair no-repeat, run cap ends at Ur-Text, Ghost rule, Emendations, victory_present 0 on forfeit, cosm.frame.ironman, doc 15 mode row 1, doc 18 two-layer ending. RunState.se_editors, FolioRecord.fused/editor added. §3.7 points to §8.9.
+- [done] fix:18 / verify:18: §4.7 gains Editors, a Second Edition layer row (fused pairs, revised Editors, Author, ironman) and the party's looks; the paragraph names doc 18 §8.5's ur_clear_ending then nar.ending.second_edition with the Ironman line. RunSummary slot carries "appearance".
+- [done] fix:13: §3.8 already had onset 43,200, 10-stack cap at 59,400 and one hunter; added explicit rank.hunter rule for every hunter-scoped test (§7.3/§8.7/§9.3 factors, hunters_bane, S_hunters, ach.hunter(_10), hunters step).
+- [done] DECISIONS 115: §3.6 item 2 exemption. DECISIONS 116: Rule F1 fallback.
+- [done] DECISIONS 104: §8.1 mode.audience_votes overlay row and Audience votes rules (AudienceResult session intent; door, boon, Chaos kinds; Chaos on a labeled rng.run sub-stream), lobby row, enter_folio chaos line, §9.4 eligibility. DECISIONS 96: Asynchronous traces paragraph (presentation only; ranked runs hide same-seed traces; none in the Prologue).
+- [done] DECISIONS 111: season start tied to doc 15 T0. DECISIONS 112: Steam achievements. fix:09 / verify:09: §10 lists ev.entity_pacified methods 0-4. DECISIONS 127: §5.6 no relationship state.
+- [done] verify:12: Prologue passes the chosen Origin's genre as GenInput.prev_genre; L1 teaches the DECISIONS 95 movement kit; L3 far door scripted shut until harvest + ladder + plank (test 37 updated).
+- [done] verify:07 / verify:09: Shade lockpicks x1 (182); alt kit also drops hands_light (186, +219 Bp); script 182; spread 209-414; test 9 and Interface 04/11 updated. Cross-chapter request to doc 04 for the role list.
+- [done] Imports (Canon §3.2, docs 03, 12, 15, 16, 18, DECISIONS list), Interface rows 04, 11, 12, 13, 16, 17, 18; §5.1 Ledger notes no photo mode (DECISIONS 129).
+- [done] Exports: mode.audience_votes (fnv1a32 0x95ca8acc, no collision among 5,833 spec IDs); mode count 15; total 444; test 19.
+- [done] Canon gaps rewritten with exact canon-1.12 text: items 1-6 kept and made exact; new 7 (Redaction ghosts, Canon §17.9), 8 (Second Edition ghost entry, §17.6), 9 (rng.run Draws for, §3.2). Item 4 covers §17.1 paragraph, FINAL_FOLIO, BOSS_FOLIOS, GENRE_REPEAT_RULE, §13.7 ENH_CAP and Emendation ilvl, §13.8 ilvl.
+- [done] Tests: 4 (hunter rank tests), 53 (draw, final_hp_bp, ghost entry, fused record, victory_present), new 54-58 (EA scope, audience votes, presentation data, traces, Origin fallback). Invariants: 3 lines added.
+- [done] Lint: one undefined ID (rng.offer.p0) fixed; lint now clean; no hedge words.
+- [revised] Doc 13's parallel wave-2 fix (§9.4) now places the revised Editors with no draw (dominant axiom of the fused pair at n = 5, 10 with a cycle rule; boss.ur_editor_rev then boss.author at n = 15). Removed this chapter's 3-of-5 rng.run draw and RunState.se_editors; §8.9, §3.2 row, Interface 13, test 53, invariant and Canon gap 9 now follow doc 13 §9.4. Product question on the Editor choice dropped (doc 13 settled it).
+- [noted, not applied] DECISIONS rows 130-141 appeared in DECISIONS.md during this pass (uncommitted). Rows 130 (arcs via resident quests), 132 (no Prologue), 136 (contextual tips), 137 (first-run achievement replaces Prologue ones) and 141 (about 40 curated Steam achievements) land in doc 14 and restructure §5.6, §10, §11 and many tests; the task scope is rows 1-129 and no other chapter in this wave applies them, so they are reported as unresolved for a coordinated pass.

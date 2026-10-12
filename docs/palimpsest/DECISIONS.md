@@ -142,6 +142,22 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 127 | Margin relationships | **New: no relationships.** Residents are vendors and quest-givers whose fixed story arcs advance across runs (item 78); no friendship meters, gifts or romance | Docs 14, 18 |
 | 128 | Seeds | **Changed: cut.** `cat.seed` is retired; no planting in runs or in the Margin | Canon §13.1, §17.7; docs 07, 08, 11 |
 | 129 | Photo mode | **New: none.** Replays stay, without a photo mode | Docs 16, 17 |
+| 130 | Margin cast arcs | **Refines 78:** residents advance their fixed arcs through optional Folio quests they give; completing a quest unlocks the resident's next text scene | Docs 12, 14, 18 |
+| 131 | Last stand | **New:** in solo play, lethal damage that Death's Door does not prevent opens a last stand: a 5-second (300-tick) timed input that, on success, leaves the Erratum at 1 HP; once per Folio; on failure the Erasure scene plays | Canon §6.4, §11; docs 04, 05, 17 |
+| 132 | Prologue | **Changed: no Prologue.** `mode.prologue` is retired; the first real run teaches through contextual tips | Canon §17.7; docs 12, 13, 14, 15, 17 |
+| 133 | Difficulty presets | Kept: Scribe's Mercy plus Grades 0 to 20 are the whole difficulty range; no Story preset or extra sliders | Docs 14, 17 |
+| 134 | Last stand order | Kept (confirms 131): Death's Door rolls first; the last stand opens only if it fails; solo only; once per Folio | Canon §6.4; docs 04, 05 |
+| 135 | Last stand input | **New: ink-strike QTE.** Three prompted inputs in order within 300 ticks; accessibility settings switch it to a single hold or automatic success | Docs 05, 17 |
+| 136 | Onboarding | **New: contextual tips only.** First-encounter tips in the margins, dismissible, shown once per account; no special first-run seed | Docs 14, 17 |
+| 137 | Prologue replacement | **New:** a first-run achievement for finishing Folio 1 of the account's first run replaces the Prologue achievements; anything the Prologue unlocked is available from the start | Docs 14, 15 |
+| 138 | Procedural text localization | Kept: Project Fluent messages with per-locale gender, number and case selectors, so generated names inflect correctly in all 15 locales | Docs 02, 17, 18 |
+| 139 | Live tuning | Kept: balance changes ship only in patches; no server-pushed tuning | Docs 02, 16 |
+| 140 | Telemetry | Kept: opt-in per-run aggregate summaries, never for minor-flagged accounts, never free text | Docs 02, 16 |
+| 141 | Achievements | **Changed: about 40 curated Steam achievements** (story and mastery milestones, the first-run achievement, Second Edition Ironman); the long tail moves to in-game Codex marks | Docs 14, 15 |
+| 142 | Controller aiming | Kept: light slowdown and mild magnetism for sticks, none for mouse; full gyro aiming on Steam Deck and supported pads; assist off in PvP invasions | Docs 05, 17 |
+| 143 | Camera | Kept: first person by default with an over-the-shoulder third-person toggle; hit detection identical in both | Docs 05, 17, 18 |
+| 144 | Save profiles | Kept: 3 account profiles per Steam account, each with one suspended run, synced through Steam Cloud | Docs 02, 16 |
+| 145 | Survival meters | Kept: hunger only; no thirst or fatigue | Docs 04, 08 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 

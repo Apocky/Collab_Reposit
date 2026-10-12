@@ -29,12 +29,13 @@ This chapter defines the core of `palimpsest_sim`: the order of systems inside o
 | Doc 02 | §5.1–§5.5 | sorted-column store, deferred structural commands, `SystemDesc` and `due`, `step` lifecycle, `PlayerCommand` axes and button bits, intents, `SimEvent` |
 | Doc 02 | §6.5, §7.2, §8.5, §9, §15 | serialization sections and `palette_rle`; `ChunkView` generations; light field texture and agreement clamp; audio's use of `ev.noise`; `perf.deck.sim.*` gates |
 | Doc 04 | §2.3, §5.3, §7.2, §8.1, §8.5, §11.4, §11.5 | `body_move_bp(e)`, `air_jump_max(e)`, the Acrobatics 50 wall jump and Monk `wind_step` wall-run, part-state struct mirrored by `comp.body_plan`, comfort layer beside the §9.4 hazard layer, fall damage split over legs, `can_sprint`, `can_jump`, `can_dodge` |
-| Doc 05 | §1.3–§1.6, §2.1–§2.7, §3.2, §5.2, §6.8, §7, §9.4, §10.5 | combat phase C1–C9, `HitRecord`, keyed `seq` table, stance base speeds, query kinds, `LAGCOMP_MAX_TICKS = 16` and the rewind of every player-controlled attacker, the lean offset and its wall clamp, projectile combat fields and block penetration, `block_bp` (Table 3.2d, §5.2), ricochet, grenade explosion parameters, the homing `steer` hook |
+| Doc 05 | §1.3–§1.6, §2.1–§2.7, §3.2, §5.2, §6.8, §7, §9.4, §10.5 | combat phase C1–C9, `HitRecord`, keyed `seq` table, stance base speeds, query kinds, `LAGCOMP_MAX_TICKS = 16` and the rewind of every player-controlled attacker, the lean offset and its wall clamp, projectile combat fields and block penetration, `block_bp` (Table 3.2d, §5.2), ricochet, grenade explosion parameters (Tables 9.3, 9.3b), the homing turn rate it sets on a projectile at spawn |
 | Doc 06 | §2.1, §13.1, §13.2 | `aether_tick` in the per-tick resource step, `ignite(cell)`, `add_light(pos, level, expiry)`, `in_shadow_area(cell)`, conjured blocks |
 | Doc 07 | §1.2, §1.4, §2.5, §9, §10.1–§10.8 | the block records and their IDs (`block.air` at type index 0, `block.void_bedrock`, `block.ice`, `block.web`, the placeables such as `block.torch`), the `block.tag.*` tags and the material-to-block defaults; `placed_meta` (owner slot, HP, expiry, conjured flag), `PLACED_CAP_PER_PLAYER` 48 and `PLACED_CAP_PER_FOLIO` 160, `sys.crafting`, material table, `mining_ticks`, `block_hp(cell)`, `voxels_left(cell)`, `block_drops`, `on_block_changed`, lit and unlit twins, the repair refill |
 | Doc 08 | §2.2, §3.1, §3.4, §4.2, §4.3, §5.2, §5.3, §5.6 | liquid and gas records, `evap_gas`, viscosity clamp `500..=10000`, the working respirator, extended triggers, `alch_react`, nitro detonation |
 | Doc 09 | §1.3, §1.4, §6.8, §7.9, §13.1 | system slots #5, #7, #30 prelude, #31; `PerceptionState`; `convert_events()`; `door_locked(gidx)`; `awareness_above_unaware(e)`; `noise_level` |
 | Doc 10 | §5, §5.5 | appended `ev.item_identified` fields; appraisal pass inside `sys.needs` |
+| Doc 11 | §5.2, §14.1, §14.4, §14.5 | `mfr.cyberpunk.ghostline`'s homing rate, 16384 Bam/s through the Canon §2.3 accumulator; `carried_g`; ground items and the Lost Satchel |
 | Doc 12 | §2.3, §4.1, §9.2, §9.4, §9.5 | GPV fields `ambient_decic`, `liquid_viscosity_bp`, `gas_dissipation_bp`; the law-discovery payload; `protect`, `open_tag` and gravity-flip bits per chunk; relink door pairs |
 | Doc 13 | §2.4, §4.1, §4.2, §4.6, §9.2, §10.5, §10.6, §10.7 | `comp.tags` bit layout, `Blackboard` (`comp.ai`), telegraphs, the Censor's `blackout` and the `censor` kit's, `request_spawn`, Editor erasure |
 | Doc 14 | §3.2, §3.4 | `sys.run_layer` slot, Colophon entrance `protect` bits |
@@ -111,7 +112,7 @@ Systems run in exactly this order every tick. A system that is not due is skippe
 | 4 | `sys.input_apply` | 03, 16 | 1, 0 | copy each slot's `PlayerCommand` for `t` into `comp.control` in slot order `0..=4` (slot 4 is the invader, Canon §2.4), using doc 16's neutral substitute for a missing command (Canon §11.8); apply the tick's logged intents in ascending `(slot, action_seq)` (Canon §2.4); derive button presses |
 | 5 | `sys.perception` | 09 | 3, per entity | sight checks for awake observers (uses §5.18 DDA, §10 light, §7.6 concealment) |
 | 6 | `sys.ai_think` | 13 | 6, per entity | awake agents run doc 13 §4.1's stages (squads, Director, path service included) and write `comp.control` |
-| 7 | `sys.actions` | 05, 06, 07, 09, 11 | 1, 0 | doc 05 combat step C1: action state machines for attacks, casts and cast resolution (doc 06), item use, interaction, doors (§13.4), mining progress (§13.2), placing (§13.3), doc 09's lock, hack, takedown and hide machines; queue hits, request projectile spawns, queue explosions, request block edits, emit noise |
+| 7 | `sys.actions` | 05, 06, 07, 09, 11 | 1, 0 | doc 05 combat step C1: action state machines for attacks, casts and cast resolution (doc 06), item use, interaction, doors (§13.4), mining progress (§13.2), placing (§13.3), doc 09's lock, hack, takedown and hide machines, grappling-tool uses through `start_grapple` (§5.24); queue hits, request projectile spawns, queue explosions, request block edits, emit noise |
 | 8 | `sys.movement` | 03 | 1, 0 | `step_mover` (§5) for every awake body, ascending `EntityId`; portal crossings (§5.21); fall-damage hits queued for `sys.damage_late` |
 | 9 | `sys.push` | 03 | 1, 0 | entity–entity separation (§5.14); fills `push_contacts` |
 | 10 | `sys.env_sample` | 03 | 1, 0 | per body: local genre, Contradiction re-evaluation hook on change (doc 05), contact cells, immersion, eye cell, temperature, light, gravity sign (§5.20) |
@@ -122,11 +123,11 @@ Systems run in exactly this order every tick. A system that is not due is skippe
 | 15 | `sys.hitscan` | 05 on 03 primitives | 1, 0 | doc 05 step C4: lag-compensated rays and beam pulses (§5.17, §5.18) |
 | 16 | `sys.explosions` | 03 | 1, 0 | doc 05 step C5: at most 4 due explosions (§12) |
 | 17 | `sys.damage` | 05 | 1, 0 | doc 05 steps C6 to C9: resolve the actor batch of Canon §10.8 (weapon, spell, gadget and thrown-item hits, item explosions included) in ascending `(source EntityId, seq)`; fire surface triggers (§6.9); block damage (§13.2) |
-| 17a | `sys.crafting` | 07 | 1, 0 | craft channels, station queues, crops, torch expiry, gadget timers and placed-block expiry (doc 07 §1.4) |
+| 17a | `sys.crafting` | 07 | 1, 0 | craft channels, station queues, torch expiry, gadget timers and placed-block expiry (doc 07 §1.4) |
 | 18 | `sys.block_updates` | 03 | 1, 0 | at most 2048 queued cell updates (§13.5) |
 | 19 | `sys.random_ticks` | 03 | 1, 0 | 8 cells per active chunk (§13.7) |
 | 20 | `sys.liquids` | 03, 08 | 6, 1 | §6 |
-| 21 | `sys.gases` | 03, 08 | 6, 4 | §7 |
+| 21 | `sys.gases` | 03, 08 | 6, 4 | doc 08 §2.7 gas emitters, then §7.3 (§7.4) |
 | 22 | `sys.fire` | 03 | 12, 2 | §8 |
 | 23 | `sys.temperature` | 03 | 30, 5 | §9 |
 | 24 | `sys.surfaces` | 03 (table: Canon §12.1) | 15, 0 | surface contact effects (§6.10) |
@@ -287,12 +288,13 @@ For Errata, `Control.prev_buttons` and `Control.action_seq` are serialized in do
 ### 3.4 Core component definitions
 
 ```rust
-pub enum MoveMode { Ground, Air, Swim, Climb, Mantle, Dodge, Fly, Downed }  // grid.move.*
+pub enum MoveMode { Ground, Air, Swim, Climb, Mantle, Dodge, Fly, Downed, Slide, Grapple }  // grid.move.*, codes 0..=9
 pub struct BodyState {
     pub radius: Fx, pub stand_h: Fx, pub crouch_h: Fx, pub eye_stand: Fx, pub eye_crouch: Fx,
     pub step_up: Fx, pub base_mass_g: Grams, pub carried_g: Grams, pub kb_resist_bp: Bp,
     pub hitbox_scale_bp: Bp, pub flags: u16,  // 0 PUSHABLE, 1 COLLIDES_BODIES, 2 FLIER, 3 SWIMMER,
-                                              // 4 CAN_MANTLE, 5 CAN_CLIMB, 6 EDGE_GUARD, 7 NO_GRAVITY
+                                              // 4 CAN_MANTLE, 5 CAN_CLIMB, 6 EDGE_GUARD, 7 NO_GRAVITY,
+                                              // 8 CLIMB_ANY
 }
 pub struct MoveState {
     pub mode: MoveMode, pub grounded: bool, pub crouched: bool, pub ground_ny: Fx,
@@ -304,7 +306,11 @@ pub struct MoveState {
     pub wall_n: Fx3,           // horizontal unit normal of this tick's deepest wall contact; zero when none
     pub wall_jumped: bool,     // the doc 04 wall jump was used this airborne period
     pub wall_run_mm: i32,      // wall-run distance used this airborne period (doc 04 wind_step)
+    pub ledge_base_y: Fx,      // feet y at the end of the last tick grounded, swimming, climbing or grappling (§5.9)
+    pub slide_t: u8, pub slide_dir: Fx3, pub last_slide_start: Tick,   // sprint-slide (§5.23)
+    pub grapple: Option<Grapple>,                                      // grappling tool (§5.24)
 }
+pub struct Grapple { pub anchor: Fx3, pub cell: Gidx /* the anchor's cell */, pub t: u8, pub blocked: bool }
 pub struct Mantle { pub from: Fx3, pub to: Fx3, pub total: u8, pub t: u8, pub end_crouched: bool }
 pub struct Control {
     pub move_x: i8, pub move_z: i8, pub yaw: Bam, pub pitch: i16,
@@ -324,6 +330,7 @@ pub struct Projectile {                    // geometry and lifetime: doc 03; `co
     pub radius: Fx, pub gravity_bp: Bp, pub drag_bp: Bp, pub bounce_bp: Bp,
     pub end_tick: Tick, pub view_tick: Tick, pub catchup: u8 /* 0..=16 rewind steps, doc 05 §2.6 */,
     pub age: u32, pub resting: bool,
+    pub home_bam_s: u16 /* homing turn rate in Bam/s, 0 = none (§5.19) */, pub home_acc: i32 /* its Canon §2.3 accumulator */,
     pub combat: ProjCombat,                // arch, spawn_y, traveled_mm, pierce_left, wallpen0, wallpen_left,
                                            // keep_bp, ricochets, attack_bp, hit_set: BTreeSet<EntityId>,
                                            // counters, flags, block_bp (doc 05 §7.1, §7.3)
@@ -455,7 +462,7 @@ Every 1 m cell is 4 × 4 × 4 micro-voxels of 250 mm (Canon §4.4). Bit `mx + 4 
 
 - **Cell mask.** `mask_at(c)` is the cell's custom mask when its chunk stores one (§4.3), else `shape_mask[state_at(c)]`. `fill(c) = popcount(mask_at(c))`. A custom mask stands only on a cell whose shape chips (full, pillar, slab, stairs, layer) and is never 0.
 - **Collision boxes.** `boxes(m)` decomposes a mask into axis-aligned boxes whose union is exactly its occupied micro-voxels: take the lowest occupied bit not yet covered, extend the run along +X while the next micro-voxel is occupied and uncovered, then along +Z while the whole run is, then along +Y while the whole rectangle is; emit that box, mark it covered, and repeat. Every collision, ray, mantle, placement and explosion-center test in this chapter uses `boxes(mask_at(c))` in this decomposition order (Canon §4.4). A full cell gives the one box `[0,0,0]–[1000,1000,1000]`, a bottom slab `[0,0,0]–[1000,500,1000]`, and stairs at facing N `[0,0,0]–[1000,500,1000]` then `[0,500,0]–[1000,1000,500]`. Every box face lies on a 250 mm boundary.
-- **Fill rule** (Canon §4.4). The registry `light_filter`, `conceal` and `sound_atten_ddb` describe a full cell of the block (§4.5). A cell with `fill(c) >= 48` blocks light and sight: `light_filter_at(c) = 15`, `conceal_at(c) = 15`, and `sound_atten_at(c)` is the registry value. Below 48 each is the registry value `v` scaled to `floor_div(v × fill(c), 64)`. Cells of the four shapes with an empty predefined mask (none, ladder, cross, fixture) are not geometry and keep their registry values unscaled, so foliage keeps Canon §12.2's concealment (tall grass 2, leaves 3; Canon gaps G30). Examples: a stone bottom slab (registry `light_filter` 15, `conceal` 15) reads 7 and 7; a closed oak door (`sound_atten_ddb` 175) attenuates `floor_div(175 × 16, 64) = 43`.
+- **Fill rule** (Canon §4.4). The registry `light_filter`, `conceal` and `sound_atten_ddb` describe a full cell of the block (§4.5). A cell with `fill(c) >= 48` blocks light and sight: `light_filter_at(c) = 15`, `conceal_at(c) = 15`, and `sound_atten_at(c)` is the registry value. Below 48 each is the registry value `v` scaled to `floor_div(v × fill(c), 64)`. Cells of the four shapes with an empty predefined mask (none, ladder, cross, fixture) are not geometry and keep their registry values unscaled, so foliage keeps Canon §12.2's concealment (tall grass 2, leaves 3; Canon gaps G30). A closed door or closed trapdoor (props bit b2 clear) applies its block's registry `light_filter`, `conceal` and `sound_atten_ddb` unscaled, so a shut panel stops light and sound as a wall of its material does (Canon gaps G29). Examples: a stone bottom slab (registry `light_filter` 15, `conceal` 15) reads 7 and 7; an oak door (`light_filter` 15, `sound_atten_ddb` 175) reads 15 and 175 closed and `floor_div(15 × 16, 64) = 3` and `floor_div(175 × 16, 64) = 43` open.
 - **Gas.** `gas_open(c)` is false when `fill(c) >= 48`, when the block has `gas_tight`, or when the cell is a closed door or a closed trapdoor; otherwise gas passes. Liquid capacity follows §6.2.
 - **Sturdy faces.** `sturdy_at(c) = sturdy_faces[state] & full_faces(mask_at(c))`, where `full_faces(m)` holds each `N6` face whose 16 micro-voxels are all occupied, so a chipped face stops supporting attachments (§13.5).
 - Fence and pane connections are recomputed in `sys.block_updates` (§13.5): a side connects when the neighbor on that side is a fence or pane of the same shape, or has a sturdy face toward this cell.
@@ -527,7 +534,7 @@ At content load the registry is compiled into per-state tables indexed by `Block
 
 ### 4.6 Genre skins
 
-The simulation stores no skin. A block renders with the skin of `local_genre` at its cell, through doc 02 §8.3's per-genre texture arrays and §8.9's bleed blend. A block carried from Cyberpunk and placed in a Fairy Tale Folio therefore renders in the Fairy Tale skin. Skins change no block behaviour.
+The simulation stores no skin. A block renders with the skin of `local_genre` at its cell, through doc 02 §8.3's per-genre texture arrays and §8.9's bleed blend. A block carried from Cyberpunk and placed in a Fairy Tale Folio therefore renders in the Fairy Tale skin. Skins change no block behaviour. Gore mode (doc 17 `access.gore`, DECISIONS.md item 94) is presentation only in the same way: `liq.blood` and every other bleed liquid of doc 08 §3.3 keep their IDs, records and grid behaviour, and each viewer's renderer draws them as ink (the default), red blood or nothing, so peers with different settings simulate identically.
 
 ### 4.7 Fixed terrain, protection, open-area and flip masks
 
@@ -535,6 +542,33 @@ The simulation stores no skin. A block renders with the skin of `local_genre` at
 - `protect` bits come from worldgen (doc 12 §9.2): exit portals, Folio-boundary shells, boss-arena seals while sealed, the Colophon entrance until the Rubric completes (doc 14 §3.4), and scripted props. `set_block` refuses actor-caused edits of a protected cell with `protected`; worldgen and script causes bypass it. Explosions skip protected cells. Docs 12 and 14 clear a bit through `set_protect(c, false)` with cause `grid.cause.script`.
 - `open_tag` bits come from worldgen and mark cells in rooms doc 12 tags as open areas (courtyards, caverns lit by the genre's ambient). They feed the sky channel (§10.2).
 - `flip` bits come from worldgen (doc 12 §9.5, Oneiric gravity-flip rooms). A body whose center cell has the bit uses `gsign = +1` (§5.12); a projectile whose cell has the bit falls upward (§5.19). Liquids, gases, falling blocks and every grid ignore the bit.
+
+### 4.8 Folio climate: time of day and weather
+
+Each Folio has one time of day and one weather state (DECISIONS.md item 99). Doc 12 draws both at generation from the genre's tables and passes them to `set_climate(tod, wx)` before the light bake (§10.5); they stay fixed for the Folio, and `Climate { tod: Id32, wx: Id32 }` is saved in section 0 (§16.1). The IDs and the terms below are the Canon §5.12 text requested for canon-1.12 (Canon gaps G31); docs 09 and 18 read that table's fog and ambient-sound columns, and this chapter reads these:
+
+| Time of day | ID | `sky_delta` |
+|---|---|---|
+| dawn | `tod.dawn` | −1 |
+| day | `tod.day` | 0 |
+| dusk | `tod.dusk` | −1 |
+| night | `tod.night` | −3 |
+
+| Weather | ID | `sky_delta` | `sound_ddb` | `precip` | `fire_bp` |
+|---|---|---|---|---|---|
+| clear | `wx.clear` | 0 | 0 | none | 10000 |
+| rain | `wx.rain` | −1 | 2 | water | 5000 |
+| storm | `wx.storm` | −2 | 4 | water | 2500 |
+| fog | `wx.fog` | −1 | 0 | none | 10000 |
+| snow | `wx.snow` | −1 | 2 | none | 5000 |
+| dust | `wx.dust` | −1 | 3 | none | 12500 |
+
+- **Columns.** For each column `(x, z)`, `opaque_top` is the highest `y` whose cell has `light_filter_at == 15` and `solid_top` the highest `y` whose cell has `fill > 0`, each −1 when none. Both are derived (never saved): rebuilt at Folio entry and on restore, and updated by every edit, chip or refill that changes either test for a cell of that column. `sky_lit(c) = c.y > opaque_top`, the column test of §10.2's sky sources. `sky_open(c) = c.y >= solid_top`: no cell above `c` holds a micro-voxel, so `c` is open air under the sky or the topmost solid cell of its column.
+- **Light.** A `sky_lit` sky source gets `sky_delta(tod) + sky_delta(wx)` added to its level (§10.2).
+- **Sound.** A propagation step into a `sky_open` cell costs `sound_ddb(wx)` more (§11.2).
+- **Surfaces.** Under a weather with `precip` water, every body whose `body` contact cell is `sky_open` gains `st.soaked` on each status pulse (§6.10).
+- **Fire.** Spread into a `sky_open` cell is multiplied by `fire_bp(wx)` (§8.3).
+- Weather deposits no liquid or gas and changes no temperature, and a cell under any micro-voxel is sheltered from every weather term except the light term, which follows opacity. The climate changes no outcome inside a Folio whose cells are all roofed except through light.
 
 ---
 
@@ -563,6 +597,7 @@ pub struct MoverParams {
 }
 pub trait BlockQuery {
     fn state(&self, c: IVec3) -> BlockState;                     // block.void_bedrock outside the Folio
+    fn mask(&self, c: IVec3) -> u64;                             // mask_at(c) (§4.4), custom masks included; u64::MAX outside
     fn liquid_total(&self, c: IVec3) -> u16;                     // units, §6.1
     fn dominant_liquid(&self, c: IVec3) -> Option<(Id32, Bp)>;   // most units, ties to lower id32; its move_bp
     fn has_liquid(&self, c: IVec3, liq: Id32) -> bool;           // at least 1 unit (oil friction, §5.3)
@@ -591,14 +626,23 @@ pub struct MoverOut {
 | `dodge` | yes | scripted 12 ticks | DODGE press on ground, allowed by doc 04 and statuses | 12th tick done |
 | `fly` | no | 3D | `FLIER` creatures; ghosts | never (flags) |
 | `downed` | yes | crawl 800 mm/s, height 600 mm | `st.downed` gained | `st.downed` removed and standing room exists |
+| `slide` | yes | scripted, at most 45 ticks, crouch height | CROUCH press while sprinting on the ground (§5.23) | §5.23 end conditions |
+| `grapple` | no | scripted pull toward the anchor | a grappling-tool use through `start_grapple` (§5.24) | §5.24 end conditions |
 
-Evaluation order each tick, first match wins: downed, mantle in progress, dodge in progress, fly, swim, climb, dodge start, mantle start, jump, then ground or air from integration. The selection is a closed state machine: every mode is re-derived each tick from this function, so no mode can be left without a defined successor.
+Evaluation order each tick, first match wins: downed, mantle in progress, dodge in progress, grapple in progress, slide in progress, fly, swim, climb, dodge start, slide start, mantle start, jump, then ground or air from integration. The selection is a closed state machine: every mode is re-derived each tick from this function, so no mode can be left without a defined successor.
 
 ```
 select_mode(m, c, prm, q) -> MoveMode:
     if m.gates & DOWNED:                                 return downed
     if m.mv.mode == mantle ∧ m.mv.mantle.is_some():      return mantle            // until finished or aborted
     if m.mv.mode == dodge ∧ m.mv.dodge_t < 12:           return dodge
+    arrived = false
+    if m.mv.grapple.is_some():
+        if grapple_ends(m, c, q): release (§5.24)        // sets arrived on an arrival; falls through
+        else:                                            return grapple
+    if m.mv.mode == slide:
+        if slide_ends(m, c, prm): end the slide (§5.23)  // falls through
+        else:                                            return slide
     if prm.body.flags & FLIER ∨ m.gates & GHOST:         return fly
     if m.mv.gsign == −1:
         enter = if crouched { 700 } else { 1000 };  stay = if crouched { 600 } else { 900 }
@@ -607,13 +651,15 @@ select_mode(m, c, prm, q) -> MoveMode:
                                                          return climb
     if press(DODGE) ∧ m.mv.grounded ∧ prm.can_dodge ∧ ¬movement_gate(m) ∧ m.tick − m.mv.last_dodge_start ≥ 18:
         m.mv.dodge_t = 0; m.mv.last_dodge_start = m.tick;  return dodge
-    if press(JUMP) ∧ mantle_test(m, c, prm, q):          return mantle            // §5.9 sets m.mv.mantle
+    if slide_start(m, c, prm):                           start the slide (§5.23);  return slide
+    if (press(JUMP) ∨ (arrived ∧ fwd_in > 0)) ∧ mantle_test(m, c, prm, q):
+                                                         return mantle            // §5.9 sets m.mv.mantle
     return if m.mv.grounded { ground } else { air }                                // jumps fire in §5.7
 ```
 
-`press(b)` means bit `b` is held in `c.buttons` and was not in `c.prev_buttons`. `movement_gate(m)` is true when `gates` holds staggered, stunned, frozen, knocked down, sleeping, rooted or grappled (doc 16 §7.2 bits 0–6). Mode-specific steps run after selection: ground, air, dodge and downed use §5.2–§5.8 and §5.12; swim §5.10; climb §5.11; mantle §5.9; fly §5.12.
+`press(b)` means bit `b` is held in `c.buttons` and was not in `c.prev_buttons`. `movement_gate(m)` is true when `gates` holds staggered, stunned, frozen, knocked down, sleeping, rooted or grappled (doc 16 §7.2 bits 0–6). Mode-specific steps run after selection: ground, air, dodge and downed use §5.2–§5.8 and §5.12; swim §5.10; climb §5.11; mantle §5.9; fly §5.12; slide §5.23; grapple §5.24. At the end of every tick in which the body is grounded, swimming, climbing or grappling, and at spawn, `ledge_base_y = p.y`.
 
-**Status gates** (Canon §11.1, §9.1), read from `MoverSnap.gates`: `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping`, `st.rooted`, `st.grappled` zero the wish velocity. `st.overburdened` and a severed leg forbid sprint, jump and dodge. `st.exhausted` forbids sprint and dodge. `st.levitating` sets gravity to 0 and gives vertical control of 1500 mm/s through JUMP (up) and CROUCH (down). Doc 04's `can_sprint`, `can_jump` and `can_dodge` fold these with stamina, and `step_mover` reads only those three flags plus the gate bits.
+**Status gates** (Canon §11.1, §9.1), read from `MoverSnap.gates`: `st.staggered`, `st.stunned`, `st.frozen`, `st.knocked_down`, `st.sleeping`, `st.rooted`, `st.grappled` zero the wish velocity. `st.overburdened` and a severed leg forbid sprint, jump and dodge. `st.exhausted` forbids sprint and dodge. `st.levitating` sets gravity to 0 and gives vertical control of 1500 mm/s through JUMP (up) and CROUCH (down). A movement gate or `st.downed` also ends a slide (§5.23) and a grapple (§5.24). Doc 04's `can_sprint`, `can_jump` and `can_dodge` fold these with stamina, and `step_mover` reads only those three flags plus the gate bits.
 
 ### 5.2 Wish velocity
 
@@ -784,14 +830,16 @@ The apex tick counts the jump tick as tick 1, because the jump tick itself integ
 
 ### 5.9 Mantle
 
-Mantling climbs a ledge whose top is 550 mm (exclusive) to 1600 mm (inclusive) above the feet.
+Mantling climbs a ledge whose top lies more than 550 mm and at most 2000 mm above the feet, and at most 2000 mm above `ledge_base_y`, the feet height at the end of the body's last tick on the ground, swimming, climbing or grappling (§5.1). This is the ledge mantle of DECISIONS.md item 95 as the Canon §4.2 text requested for canon-1.12 states it (Canon gaps G31). A jump never adds reach: from a floor the highest ledge is 2000 mm, two blocks, at every VERVE.
 
 ```
-trigger: press(JUMP) ∧ fwd_in > 0 ∧ CAN_MANTLE ∧ gsign = −1 ∧ mode ∈ {ground, air, swim}
+trigger: (press(JUMP) ∨ a grapple arrival, §5.24) ∧ fwd_in > 0 ∧ CAN_MANTLE ∧ gsign = −1
+         ∧ mode ∈ {ground, air, swim, slide, grapple}
 f      = horizontal unit of fwdh;  q = p + f × (r + 400 mm)          // landing column 700 mm ahead
+top    = min(p.y, ledge_base_y) + 2000 mm;  no mantle when p.y + 550 mm ≥ top
 land_y = the highest top face y of any collision box in the cells overlapping
-         [q.x − r, q.x + r] × (p.y + 550 mm, p.y + 1600 mm] × [q.z − r, q.z + r] whose top lies in that
-         y range; none → no mantle.  h = land_y − p.y, so h ∈ (550, 1600] mm
+         [q.x − r, q.x + r] × (p.y + 550 mm, top] × [q.z − r, q.z + r] whose top lies in that
+         y range; none → no mantle.  h = land_y − p.y, so h ∈ (550, 2000] mm
 require: that box's cell has a shape other than grid.shape.fence and grid.shape.pane
 require: capsule (r, crouch_h) at (q.x, land_y + 1 mm, q.z) has no penetration and finds ground
          within GROUND_PROBE                                         // the ledge top is free and solid
@@ -804,7 +852,7 @@ motion: ticks 1..=ceil_div(total × 6, 10) raise y linearly to land_y + 1 mm; th
 abort:  if the capsule penetrates any box on a mantle tick, restore the last valid position, enter air
 ```
 
-Box tops lie on 250 mm boundaries, so from a floor the ledges are 750, 1000, 1250 and 1500 mm, taking 16, 18, 21 and 23 ticks; a 500 mm ledge is a step-up (§5.6), and 1750 mm fails the test. An airborne body's feet can lie between boundaries, so `h` takes any value in the range: 1600 mm takes 24 ticks. Fences and panes are never mantle targets (§4.4).
+Box tops lie on 250 mm boundaries, so from a floor the ledges are 750, 1000, 1250, 1500, 1750 and 2000 mm, taking 16, 18, 21, 23, 26 and 28 ticks; a 500 mm ledge is a step-up (§5.6), and a 2250 mm ledge fails the test, with or without a jump first, because its top lies 2250 mm above `ledge_base_y`. The source column needs 4 air cells, since the crouched capsule rises to `land_y + 1201` mm. An airborne body's feet can lie between boundaries, so `h` takes any value in the range: a body falling past a ledge whose top lies 1600 mm above its feet takes 24 ticks. Fences and panes are never mantle targets (§4.4). Doc 12 builds its 2-block pits and climbs on this reach (doc 12 §1, §15.1).
 
 State machine of a mantle: `Mantle.t` runs from 1 to `total`; on each tick `t` the body takes the scripted position for `t`; at `t = total` the mode re-selects (§5.1) with `grounded` from a fresh ground probe; an abort on any tick restores the last valid position and enters `air` with `v = 0`. A movement gate (§5.1) or `st.downed` on a mantle tick also aborts it.
 
@@ -817,7 +865,7 @@ State machine of a mantle: `Mantle.t` runs from 1 to `total`; on each tick `t` t
 
 ### 5.11 Climb
 
-- Climbable overlap: any cell with `climbable[state]` intersecting the capsule AABB expanded by 100 mm horizontally, between `p.y` and `p.y + h/2`.
+- Climbable overlap: any cell with `climbable[state]` intersecting the capsule AABB expanded by 100 mm horizontally, between `p.y` and `p.y + h/2`. A body with `CLIMB_ANY` (doc 04 §13: `body.amorphous` and `body.insectoid` climb any solid face) also counts every collision box that overlaps that expanded AABB with positive volume: between `p.y + STEP_UP` and `p.y + h` to enter `climb`, and between `p.y` and `p.y + h` to stay in it, so a step-up obstacle never starts a climb and a climb up a wall lasts until the feet reach its top. Doc 04 sets `CLIMB_ANY` on Errata of those plans; a creature template sets it only where doc 13's navigation uses wall climbing.
 - In `climb`: gravity off. `v.y = spd_c × sign(fwd_in)` with `spd_c = mul_bp(climb_base, row 21)` → × each status multiplier in ascending status ID (forward climbs up, back climbs down, no input holds); horizontal wish is capped at 1000 mm/s; CROUCH holds. JUMP leaves the ladder with `v.y = 4000` mm/s against gravity and `v_h = −fwdh × 2000` mm/s, and sets `climb_lock = 10` ticks. At GRP 60 the climb speed is 2640 mm/s.
 
 ### 5.12 Dodge, downed, flight, ghosts, gravity flip
@@ -859,9 +907,9 @@ Every pair with `overlap > 0` before the push is appended to `push_contacts: Vec
 
 ### 5.15 Falls, landing and footsteps
 
-- `peak_y` resets to `p.y` every tick the body is grounded, swimming, climbing, mantling or has `st.levitating`; otherwise it keeps the extreme against gravity (Canon §4.2).
+- `peak_y` resets to `p.y` every tick the body is grounded, swimming, climbing, mantling, grappling or has `st.levitating`; otherwise it keeps the extreme against gravity (Canon §4.2).
 - On the transition into `ground`, `fall_mm = max(0, to_mm(peak_y − p.y))` when `gsign = −1` and `max(0, to_mm(p.y − peak_y))` when `gsign = +1`. `step_mover` returns it in `MoverOut.landed_fall_mm`. If the canon fall formula gives damage, `sys.movement` queues a hit for `sys.damage_late` with `B = mul_bp(canon_damage, genre.fall_dmg_bp)`, type `dmg.blunt`, flag `fall`, entering Canon §10.5 at step 4; doc 04 §8.1 then multiplies it by each of its fall-damage factors (Acrobatics, kin, talents) in ascending source ID order, one `mul_bp` each (Canon §4.2), and splits it over the legs. When `fall_mm >= 300`, `ev.entity_landed` is emitted. Example: a 6 m fall at VERVE 5 with Max HP 85 gives `excess` raw 8589934592, 1600 Bp, and 13,600 mHP before `fall_dmg_bp`.
-- **Footsteps.** While in `ground` or `downed`, `stride_mm` accumulates horizontal distance in mm. When it reaches the stride length of the gait, it drops by that length and `ev.footstep` is emitted with the gait and the ground material. Gaits (`grid.gait.*`): `grid.gait.crouch` 500 mm (crouched in `ground`), `grid.gait.walk` 700 mm (`ground`, not crouched, not sprinting), `grid.gait.sprint` 900 mm (`ground` while §5.2's `sprint` holds), `grid.gait.crawl` 500 mm (`downed`). Doc 09 converts footsteps and landings into `ev.noise`.
+- **Footsteps.** While in `ground`, `slide` or `downed`, `stride_mm` accumulates horizontal distance in mm. When it reaches the stride length of the gait, it drops by that length and `ev.footstep` is emitted with the gait and the ground material. Gaits (`grid.gait.*`): `grid.gait.crouch` 500 mm (crouched in `ground`), `grid.gait.walk` 700 mm (`ground`, not crouched, not sprinting), `grid.gait.sprint` 900 mm (`ground` while §5.2's `sprint` holds, and `slide`), `grid.gait.crawl` 500 mm (`downed`). Doc 09 converts footsteps and landings into `ev.noise`.
 
 ### 5.16 Hitbox capsules from pose tables
 
@@ -905,7 +953,7 @@ Worked example: origin (5.5, 2.62, 12.5) m, `yaw = 4096`, `pitch = −2048`, so 
 
 ### 5.19 Projectile sweep
 
-`sys.projectiles` processes projectiles in ascending `EntityId`. This chapter owns integration, geometry, catch-up and lifetime; doc 05 §7 decides what each contact does through five hooks (`on_body_hit`, `on_stop`, `on_liquid_enter`, `on_block_enter`, `after_step`), and doc 05 §10.5's `steer` turns a homing projectile's velocity (`mfr.cyberpunk.ghostline`, doc 11) once per step, so the two chapters never disagree about where a projectile is.
+`sys.projectiles` processes projectiles in ascending `EntityId`. This chapter owns integration, geometry, catch-up and lifetime; doc 05 §7 decides what each contact does through five hooks (`on_body_hit`, `on_stop`, `on_liquid_enter`, `on_block_enter`, `after_step`), and this section's homing step turns a homing projectile's velocity (`mfr.cyberpunk.ghostline`, doc 11 §5.2), so the two chapters never disagree about where a projectile is.
 
 ```
 sys.projectiles, for each projectile pr, ascending EntityId:
@@ -921,7 +969,7 @@ proj_step(pr, pose_tick):
     gv  = mul_fx(fx_mm(mul_bp(mul_bp(20000, genre_phys(cell_of(p)).gravity_bp), pr.gravity_bp)), DT)
     v.y = if gs == −1 { max(v.y − gv, −fx_mm(50000)) } else { min(v.y + gv, fx_mm(50000)) }   // doc 05 §7.1
     v   = v − mul_bp_fx(v, pr.drag_bp) per axis                 // drag_bp 0 for every doc 05 ammo family
-    v   = doc05::steer(pr, v, pose_tick)                        // homing (doc 05 §10.5); pure, draws nothing; v unchanged otherwise
+    if pose_tick == t ∧ pr.home_bam_s > 0: v = home(pr, v)      // homing (below); catch-up steps never turn
     a   = p;  b = p + (mul_fx(v.x, DT), mul_fx(v.y, DT), mul_fx(v.z, DT));  passed = {}
     loop:
         w = first_world_event(a, b, pr.radius, passed)          // solid-box or liquid-cell entry after a, nearest
@@ -951,6 +999,10 @@ proj_step(pr, pose_tick):
 
 - `first_world_event` with `radius = 0` walks `raycast_blocks` (§5.18) over `[a, b]` and reports the nearest event among: the first entry into a solid box of a cell not in `passed`, and the first liquid cell (at least 1 unit) not in `passed` whose entry point lies strictly after `a`. A cell in `passed` is walked through as if it were air. `passed` holds at most the cells of one step, so the loop ends after at most one event per cell the segment crosses plus one body event per target. With `radius > 0` it uses `sphere_substeps`: the sphere is tested at each substep end, with step `max(radius, 100 mm)`, against the gathered boxes of cells not in `passed`, with doc 02's box distance; the first overlapping substep is the event, located at the previous substep position, and liquid cells are reported for the sphere's center as in the `radius = 0` case.
 - `first_body_event` tests `ray_capsule(a, unit(b − a), c0, c1, r_part + radius)` against the hitbox capsules of every candidate posed at `pose_tick`, excluding ghosts, the projectile's `hit_set`, and the owner until doc 05 marks it hittable after a ricochet. Candidates come from the broadphase when `pose_tick = t` and from the rewound scan of §5.16 otherwise. A hit counts when its `t` is at most `|b − a|`.
+- **Homing** (`mfr.cyberpunk.ghostline`, 16384 Bam/s, doc 11 §5.2). Doc 05 sets `home_bam_s` at spawn from the source item's manufacturer trait; every other projectile has 0. `home(pr, v)` runs on the normal step only and draws nothing:
+  1. The turn budget `q` (Bam) is one Canon §2.3 accumulator step with `R = home_bam_s`, `k = 60` and `acc = home_acc`: 273 or 274 at 16384. It advances every normal step, whether or not a target qualifies.
+  2. Candidates are the live, non-ghost entities with `body` that carry `st.marked`, other than the owner, whose `comp.faction` faction differs from the owner's, scanned in ascending `EntityId`; a projectile whose owner is gone has none. For candidate `e` with current position `e.p` and height `h_e`, `d = e.p + (0, floor_div(h_e, 2), 0) − p`. It qualifies when `dist2` gives `|d| ≤ 30000 mm` and `dot(v, d) × 2^30 ≥ cos_bam(10923) × len(v) × len(d)` (within 60° of the velocity), with `len(x) = isqrt_u128(Σ x_i.raw²)` and every product in `i128` raws. The target maximizes `dot(v, d) / len(d)`, compared as `dot(v, d_a) × len(d_b) > dot(v, d_b) × len(d_a)`, ties to the lower `EntityId`.
+  3. With a target and both `v` and `d` of horizontal length at least raw 256: `s = len(v)`, `yaw_v = yaw_from_dir(v.x, v.z)`, `pitch_v = pitch_from_dir(len(v_h), v.y)`, and `yaw_d`, `pitch_d` the same for `d`. `yaw' = yaw_v + clamp((yaw_d − yaw_v) as i16, −q, q)` and `pitch' = clamp(pitch_v + clamp(pitch_d − pitch_v, −q, q), −16000, 16000)`; then `v` per axis is `(fwd(yaw', pitch')_i × s) >> 30`. Otherwise `v` is unchanged.
 - `catchup` is set at spawn: `min(t − view_tick, LAGCOMP_MAX_TICKS)` for a projectile whose owner is player-controlled (an Erratum, or the slot-4 invader, whose commands carry a `view_tick` too; doc 05 §2.6), else 0. A projectile therefore advances `catchup + 1` steps on its spawn tick `t`, the last of them its normal step against the poses of `t`, and one step per tick from `t + 1`, each against that tick's poses. Doc 16 §8's catch-up follows this rule (triage C-08).
 - **Fixed terrain** (Canon §4.3). `on_block_enter` returns `Penetrate` only for a cell that is destructible or not opaque (`destructible_at(c) ∨ ¬opaque(c)`); fixed opaque terrain stops every projectile, beam and penetration (doc 05 §7.3).
 - `bounce_bp` is 0 for every projectile except fused grenades (doc 05 §9.2: 4000). `PROJECTILE_CAP` eviction follows Canon §4 at spawn time.
@@ -980,7 +1032,7 @@ pub struct PortalPair { pub a: PortalPlane, pub b: PortalPlane, pub period: Tick
 
 - **Plane.** A doorway at cell `(x, y, z)` with facing `f` has its plane through the cell center perpendicular to the facing axis: `z = z + 0.5` for facing N or S, `x = x + 0.5` for W or E. The opening spans the cell's width along the other horizontal axis and `y .. y + 2` vertically.
 - **Crossing.** A body (its origin) or a projectile (its position) crosses plane `a` on a tick when the segment from its position at the start of its move to its position at the end changes sides of the plane strictly inside the opening. Pairs are tested in ascending index, and only the first crossing on a tick applies.
-- **Transfer.** With `Δ = (b.facing − a.facing) & 3` quarter turns and `R` the exact rotation by `Δ × 16384` Bam about +Y (a quarter turn maps `(x, z) ↦ (z, −x)`, applied `Δ` times), the crossing body moves to `center(b) + R(p − center(a))`, where `center` is the doorway's floor center `(x + 0.5, y, z + 0.5)`. Its velocity and `wall_n` are rotated by `R`, its yaw gains `Δ × 16384`, `peak_y` shifts by the same vertical offset, and `TELEPORTED` is set. Crossing `b` maps back to `a` with `−Δ`. The rotation keeps the side: a body leaving `a`'s front exits `b`'s front.
+- **Transfer.** With `Δ = (b.facing − a.facing) & 3` quarter turns and `R` the exact rotation by `Δ × 16384` Bam about +Y (a quarter turn maps `(x, z) ↦ (z, −x)`, applied `Δ` times), the crossing body moves to `center(b) + R(p − center(a))`, where `center` is the doorway's floor center `(x + 0.5, y, z + 0.5)`. Its velocity, `wall_n` and `slide_dir` are rotated by `R`, its yaw gains `Δ × 16384`, `peak_y` and `ledge_base_y` shift by the same vertical offset, a grapple in progress ends with its velocity kept, and `TELEPORTED` is set. Crossing `b` maps back to `a` with `−Δ`. The rotation keeps the side: a body leaving `a`'s front exits `b`'s front.
 - **Scope.** Only bodies and projectiles use portals. Light, sound, liquids, gases, temperature, fire and every perception or hit ray use physical adjacency only, so in state 1 a doorway shows the room physically behind it while leading elsewhere.
 
 Example: pair `a` = cell (40, 2, 20) facing N, `b` = cell (100, 2, 64) facing E, `Δ = 3`. A body moving north crosses `a`'s plane `z = 20.5` and ends the tick at `(40.3, 2.0, 20.4)`, so `p − center(a) = (−0.2, 0, −0.1)`. Three quarter turns map `(x, z)` to `(z, −x)` three times: `(−0.2, −0.1) → (−0.1, 0.2) → (0.2, 0.1) → (0.1, −0.2)`. The body appears at `(100.6, 2.0, 64.3)` with its yaw increased by 49152 Bam.
@@ -988,6 +1040,67 @@ Example: pair `a` = cell (40, 2, 20) facing N, `b` = cell (100, 2, 64) facing E,
 ### 5.22 Resting bodies
 
 A body without control input (an item drop or a corpse) whose velocity is zero and whose ground probe finds a ground contact with `ground_ny = Fx::ONE` (a face exactly against gravity under its center) skips integration on that tick: `step_mover` returns at once with its state unchanged. Any impulse (knockback, push, a portal), any velocity change or a ground probe that fails ends the rest on that tick. The probe touches at most the 4 cells under the capsule bottom, so a resting body costs at most 0.2 µs, and the 2,048 ground items of `GROUND_ITEM_CAP` stay inside the movement budget (§17).
+
+### 5.23 Sprint-slide
+
+The sprint-slide belongs to the base movement kit (DECISIONS.md item 95; Canon §4.2 as requested for canon-1.12, Canon gaps G31). It needs no new button: doc 17 binds it as `input.crouch` pressed while sprinting. `dot_h(a, b) = mul_fx(a.x, b.x) + mul_fx(a.z, b.z)` and `len_h(v) = Fx(isqrt_u128(v.x.raw² + v.z.raw²))`.
+
+```
+slide_start(m, c, prm) = press(CROUCH) ∧ m.mv.grounded ∧ ¬m.mv.crouched ∧ SPRINT held ∧ fwd_in > 0
+                         ∧ §5.2's class is forward ∧ prm.can_sprint ∧ prm.stance_base = i32::MAX
+                         ∧ ¬movement_gate(m) ∧ len_h(v) ≥ fx_mm(5000) ∧ m.tick − m.mv.last_slide_start ≥ 60
+start the slide:  slide_dir = try_normalize((v.x, 0, v.z));  s0 = max(len_h(v), fx_mm(8000))
+                  (v.x, v.z) = slide_dir × s0 (mul_fx per axis);  crouched = true;  slide_t = 0;
+                  last_slide_start = m.tick
+each slide tick:  if slide_t > 0:
+                      dv = mul_fx(fx_mm(mul_bp(8000, ground.friction_bp)), DT)     // raw 572662304 at 10000
+                      s  = max(0, dot_h(v, slide_dir) − dv);  (v.x, v.z) = slide_dir × s
+                  gravity applies (§5.3); move_body at crouch_h without the edge guard (§5.4, §5.8);
+                  slide_t += 1
+slide_ends(m, c, prm), checked by §5.1 before the slide tick, first match:
+    press(JUMP)                          the slide ends; §5.1 continues with the mantle test, then the
+                                         ground jump of §5.7, which keeps the slide's horizontal velocity
+    ¬m.mv.grounded                        the slide ends; air keeps v
+    slide_t ≥ 45 ∨ dot_h(v, slide_dir) ≤ fx_mm(2000) ∨ movement_gate(m) ∨ DOWNED
+                                         the slide ends; §5.1 selects ground with v kept
+```
+
+During a slide the input axes, `stance_base` and the status multipliers change nothing; yaw and pitch stay free. The body keeps `crouch_h` until the slide ends, whatever the CROUCH bit does; then §5.8 applies, so the body stands when CROUCH is released and a standing capsule fits, and §5.3's ground acceleration brings the kept velocity to the wish. A wall hit clips `v` (§5.4), and the next tick's `s` reads the clipped velocity, so a head-on wall ends the slide through the speed test. The slide costs no stamina here; doc 04 gates it through `can_sprint`. Footsteps use `grid.gait.sprint` (§5.15), and doc 05 chooses the slide animation.
+
+Example: on a floor of `friction_bp` 10000 a slide from a 6500 mm/s sprint along +X starts at 8000 mm/s, lasts 45 ticks, reaches raw 9162596992 (2133 mm/s) on its last tick, and covers raw 16320875677 (3,799 mm). On ice (`friction_bp` 1500) it also lasts 45 ticks and covers 5,669 mm.
+
+### 5.24 Grappling tool
+
+The grappling tool is an item, never part of the base kit (DECISIONS.md item 95; Canon §4.2 and §13.1 as requested for canon-1.12, Canon gaps G31): a doc 11 `cat.tool` template with a genre skin, used from the quickbar as an item-use action in `sys.actions` (doc 05 §1.4's `seq` 0 action start). The use calls `start_grapple`, a host step outside `step_mover` like knockback (§5.13), which the client predictor receives as a correction (doc 16 §7.2).
+
+```
+start_grapple(e) -> bool:
+    refuse when e is downed, a ghost, movement-gated, mantling or dodging, or e's grapple is active
+    hit = raycast_blocks(p + (0, eye height at the current crouch state, 0), fwd3(yaw, pitch), 20000 mm)
+    refuse when there is no hit or the hit t is below 1000 mm      // any block, fixed terrain included
+    end a slide in progress;  grapple = Some(Grapple { anchor: hit point, cell: hit cell, t: 0, blocked: false })
+    return true
+each grapple tick:
+    c0 = p + (0, floor_div(h, 2), 0);  dir = try_normalize(anchor − c0)
+    v  = dir × fx_mm(12000) (mul_fx per axis);  no gravity
+    move_body(m, (mul_fx(v.x, DT), mul_fx(v.y, DT), mul_fx(v.z, DT)), …)     // 200 mm per tick
+    blocked = dist_mm(c0, anchor) − dist_mm(c1, anchor) < 1        // c1 = the new center
+    t += 1;  peak_y = p.y                                           // ledge_base_y follows §5.1
+    dist_mm(a, b) = to_mm(Fx(isqrt_u128(dist2(a, b)) as i64))
+grapple_ends(m, c, q), checked by §5.1 before the grapple tick, first match:
+    press(JUMP)                          release with v kept; this press sets no jump_buf and fires no
+                                         air jump, and the mantle test runs on it (§5.9)
+    DOWNED ∨ movement_gate(m)             release, v = mul_bp_fx(v, 2500) per axis
+    q.mask(cell) == 0                     the anchor block is gone: release, v × 2500
+    dist_mm(c0, anchor) ≤ 1000, or try_normalize(anchor − c0) is None
+                                         arrival: release, v × 2500, set arrived (§5.1); with fwd_in > 0
+                                         the mantle test runs as on a JUMP press
+    t ≥ 120 ∨ blocked                     release, v × 2500
+```
+
+A release clears `grapple`, and §5.1 continues down its list, so a released body enters a mantle, a jump, ground or air on the same tick. Because `ledge_base_y` follows the body during the pull, a pull toward a ledge followed by a JUMP press or an arrival with forward input mantles onto it. The anchor never moves; a body is never an anchor. A refused use spends nothing; doc 11 owns the item's cooldown and genre skins, and doc 05 §4.8a which actions run during a pull.
+
+Example: a pull toward an anchor 19,000 mm from the body center along +X moves raw 858993456 (200 mm) per tick and ends by arrival when the check before tick 91 finds `dist_mm` 1000, after 90 pull ticks, with `v` cut to 3000 mm/s.
 
 ---
 
@@ -1147,7 +1260,7 @@ pub struct Reaction {
 
 ### 6.10 Surface contact (`sys.surfaces`)
 
-On status-pulse ticks (`t % 15 == 0`), for every awake body in ascending `EntityId`, using `comp.env` contact (§5.20), apply Canon §12.1 rows in this order: liquids in ascending `id32`, then gases in ascending `id32`, then the charged flag, then blocks:
+On status-pulse ticks (`t % 15 == 0`), for every awake body in ascending `EntityId`, using `comp.env` contact (§5.20), apply Canon §12.1 rows in this order: liquids in ascending `id32`, then gases in ascending `id32`, then the charged flag, then blocks, then weather:
 
 | Contact | Applied as |
 |---|---|
@@ -1156,8 +1269,9 @@ On status-pulse ticks (`t % 15 == 0`), for every awake body in ascending `Entity
 | DoT rows | lava 1000 Bp and steam 50 Bp as `dmg.fire`, each through Canon §11.3 with stacks 1, potency 10000, rank DoT multiplier; `q` from the per-surface accumulator in `Env.contact_acc` with `k = 4`; queued for `sys.damage_late` with flags `dot`, `env`, `area` |
 | red ink | `red_ink_ticks += 15`; at each 300, +1 `st.erasure` |
 | movement rows (oil friction, ice) | §5.3, every tick |
+| weather (§4.8) | under `wx.rain` or `wx.storm` (`precip` water), `st.soaked` by direct application when the `body` contact cell is `sky_open` |
 
-Hits and buildup from a cell with `owner_slot ≠ 0xFF` carry that slot as instigator, so doc 05 applies `FF_AREA_BP` (Canon §17.5). Gas rows skip a bearer with a working respirator (Canon §12.1, doc 08 §4.3). Every status a contact row applies, by buildup or directly, is an `env` application (§3.3), so its DoT pulses carry `env`.
+Hits and buildup from a cell with `owner_slot ≠ 0xFF` carry that slot as instigator, so doc 05 applies `FF_AREA_BP` (Canon §17.5). A body whose `slot.face` holds a working doc 08 respirator (filter > 0, doc 08 §4.3) skips every gas row, the Canon miasma buildup and steam DoT included, and doc 08 vapor exposure (Canon §12.1); `inhaled` gas rows also skip a body with doc 08 purify immunity (doc 08 §4.3, §5.1), which still takes `skin` rows. Every status a contact row applies, by buildup or directly, is an `env` application (§3.3), so its DoT pulses carry `env`.
 
 Doc 08 §3.2 and §4.2 add contact rows for every other liquid and gas, and doc 08 §5.4 adds status-driven triggers evaluated after the contact rows. They run in the same order and through the same kinds of application, from data. Surface contact for an asleep body is skipped (§15.2).
 
@@ -1187,7 +1301,7 @@ Concentration 10000 is a cell saturated with that gas, 1,000,000 ml (doc 08 §1.
 
 ### 7.3 Gas run
 
-Runs on `(t + 4) % 6 == 0`, with run index `floor_div(t + 4, 6)`. Active cells (any gas) in active chunks are taken in ascending `Gidx` on even runs and descending on odd runs, with the same 16,384-cell budget and `last_run` fairness as liquids (§6.3).
+Runs on `(t + 4) % 6 == 0`, with run index `floor_div(t + 4, 6)`. Each run first calls doc 08's live gas emitters (doc 08 §2.7 `gas_emitter`, vaporizers included) in ascending creation order, each through `emit_gas_volume` (§7.4); the cells they fill join the active set before the run copies it. Active cells (any gas) in active chunks are taken in ascending `Gidx` on even runs and descending on odd runs, with the same 16,384-cell budget and `last_run` fairness as liquids (§6.3).
 
 ```
 for each component k of cell c (component order):
@@ -1286,11 +1400,12 @@ for n, roll in zip(N6, draws):
     if n or the cell above n holds an extinguishing liquid ≥ 10 units: base = 0
     dir_bp = 15000 for +Y, 4000 for −Y, 10000 sideways
     p = mul_bp(mul_bp(base, [0, 6000, 10000, 14000][intensity]), dir_bp)
+    if sky_open(n): p = mul_bp(p, fire_bp(wx))                       // §4.8 weather
     if roll < p and n is not burning: ignite n with this cell's instigator
 then: miasma ≥ 1000 in an N6 neighbor → gas blast (§7.5)
 ```
 
-Example: oak planks (`flammability_bp` 2500) above a fire of intensity 2 ignite with `mul_bp(mul_bp(2500, 10000), 15000) = 3750` Bp per run.
+Example: oak planks (`flammability_bp` 2500) above a fire of intensity 2 ignite with `mul_bp(mul_bp(2500, 10000), 15000) = 3750` Bp per run; when the planks are the topmost solid cell of their column under `wx.rain`, with `mul_bp(3750, 5000) = 1875`.
 
 ### 8.4 Burn, burnout and effects
 
@@ -1377,7 +1492,7 @@ Each cell stores `light_block` (low nibble) and `light_sky` (high nibble), each 
 
 ### 10.2 Sources
 
-- **Sky channel.** A cell is a sky source when `light_filter_at(c) < 15` and either its `open_tag` bit is set or no cell above it in its column up to y 63 has `light_filter_at == 15`. Its source level is `ambient_light` of `local_genre(cell)` (Canon §5.2). `sky_src` bits are recomputed for a column whenever a cell in it changes opacity, by a block edit or by a chip or refill that crosses 48 micro-voxels (§4.4).
+- **Sky channel.** A cell is a sky source when `light_filter_at(c) < 15` and either its `open_tag` bit is set or no cell above it in its column up to y 63 has `light_filter_at == 15` (`sky_lit(c)`, §4.8). Its source level is `sky_level(c) = clamp(ambient_light + d, 0, 15)`, with `ambient_light` of `local_genre(cell)` (Canon §5.2) and `d = sky_delta(tod) + sky_delta(wx)` when `sky_lit(c)`, else 0 (§4.8): a roofed `open_tag` cavern keeps the genre's ambient. Example: a Mythic Fantasy courtyard (`ambient_light` 4) reads 4 at `tod.day` under `wx.clear` and 0 at `tod.night` under `wx.rain`. `sky_src` bits are recomputed for a column whenever a cell in it changes opacity, by a block edit or by a chip or refill that crosses 48 micro-voxels (§4.4).
 - **Block channel.** `emission(c) = max(light_emit[state], dynamic emitters at c (§10.4), timed lights at c (§10.4), 12 if c is burning, light_emit of a liquid with ≥ 100 units in c)`.
 - **Filter.** Light entering cell `n` loses `1 + filter(n)`, where `filter(n) = light_filter_at(n) + (1 if n holds ≥ 500 liquid units else 0)` (§4.4 fill rule). A cell with `light_filter_at == 15` receives no light. A liquid cell crossing the 500-unit threshold in a liquids run requests a relight of that cell.
 
@@ -1424,9 +1539,9 @@ At Folio entry every sky source and emitter is seeded and both queues run to emp
 
 ### 10.6 Light overrides
 
-The Censor's `blackout` (doc 13 §9.2) and the `censor` kit's (doc 13 §10.7) force darkness without touching the grid. `light_overrides: Vec<LightOverride>` (saved, at most 8, ascending insertion; a request at the cap replaces the entry with the earliest `until`, ties to the earlier insertion) holds `LightOverride { lo: IVec3, hi: IVec3, sphere: Option<(Fx3, i32 /* radius mm */)>, max_level: u8, until: Tick }`. A cell is inside an override when it lies in the box `lo..=hi` and, when `sphere` is set, its center lies within the radius of the sphere's center (`dist2` against the squared radius, inclusive). The Censor's arena blackout is a box over the arena; the `censor` kit's blackout is a 12000 mm sphere around the invader's position at cast time, with its bounding box as `lo..=hi`.
+The Censor's `blackout` (doc 13 §9.2) and the `censor` kit's (doc 13 §10.7) force darkness without touching the grid. `light_overrides: Vec<LightOverride>` (saved, at most 8, ascending insertion; a request at the cap replaces the entry with the earliest `until`, ties to the earlier insertion) holds `LightOverride { lo: IVec3, hi: IVec3, sphere: Option<(Fx3, i32 /* radius mm */)>, min_level: u8, max_level: u8, until: Tick }`. A cell is inside an override when it lies in the box `lo..=hi` and, when `sphere` is set, its center lies within the radius of the sphere's center (`dist2` against the squared radius, inclusive). The Censor's arena blackout is a box over the arena; the `censor` kit's blackout is a 12000 mm sphere around the invader's position at cast time, with its bounding box as `lo..=hi`.
 
-Every read of `light_sky`, `light_block` or effective light at cell `c` returns `min(max(0, stored − dim(c)), m)`. `dim(c)` is 8 while doc 06's `in_shadow_area(c)` holds (doc 06 §13.1 shadow fields and `linger` areas), else 0. `m` is the smallest `max_level` of the active overrides that contain `c`, or 15 when none does. `sys.light_emitters` drops overrides whose `until <= t`. Overrides and shadow areas change no stored level and cost no relight; §10.3's propagation reads and writes stored levels only. Spawn light (Canon §12.3) reads `light_block` this way. Doc 02's view frame publishes the active overrides and doc 06's shadow areas, so the renderer applies the same read to the light field (Interface assumptions).
+Every read of `light_sky`, `light_block` or effective light at cell `c` returns `min(max(max(0, stored − dim(c)), n), m)`. `dim(c)` is 8 while doc 06's `in_shadow_area(c)` holds (doc 06 §13.1 shadow fields and `linger` areas), else 0. `n` is the largest `min_level` and `m` the smallest `max_level` of the active overrides that contain `c`, or 0 and 15 when none does; `m` wins over `n`. A darkening override has `min_level` 0. Doc 13's chrome king `strobe_overload` is a box override over the dance floor that doc 13 requests every 30 ticks for its 600 ticks, alternating `min_level = max_level = 15` and `min_level = max_level = 0`, each with `until = t + 30`. `sys.light_emitters` drops overrides whose `until <= t`. Overrides and shadow areas change no stored level and cost no relight; §10.3's propagation reads and writes stored levels only. Spawn light (Canon §12.3) reads `light_block` this way. Doc 02's view frame publishes the active overrides and doc 06's shadow areas, so the renderer applies the same read to the light field (Interface assumptions).
 
 ---
 
@@ -1444,8 +1559,9 @@ Costs are in tenths of a decibel (ddB). `L0 = 10 × level_db`.
 |---|---|
 | face neighbor (`N18` first six) | 20 |
 | edge neighbor (`N18` last twelve), allowed only when both face cells it cuts past have no `full` box | 28 |
-| plus the entered cell's `sound_atten_at(n)` (§4.4 fill rule) | air 0; an oak door, closed or open (175 for a full cell, 16 micro-voxels), 43; a full block of a 3,000 g/l material 400 |
+| plus the entered cell's `sound_atten_at(n)` (§4.4 fill rule) | air 0; an oak door 175 closed and 43 open (16 micro-voxels); a full block of a 3,000 g/l material 400 |
 | plus 10 when `n` holds ≥ 500 liquid units | |
+| plus `sound_ddb(wx)` when `n` is `sky_open` (§4.8) | `wx.clear` 0, `wx.rain` 2, `wx.storm` 4 |
 
 The level heard at a cell is `floor_div(L0 − cost, 10)` dB.
 
@@ -1469,6 +1585,7 @@ propagate(req, budget: &mut u32):                       // budget starts at 32,7
                 if ¬in_bounds(n) ∨ settled(n): continue
                 if i ≥ 6 ∧ (fill(c + d.face1) ≥ 48 ∨ fill(c + d.face2) ≥ 48): continue      // no corner cutting
                 cost = k + (if i < 6 { 20 } else { 28 }) + sound_atten_at(n) + (if V(n) ≥ 500 { 10 } else { 0 })
+                       + (if sky_open(n) { sound_ddb(wx) } else { 0 })                      // §4.8
                 if cost ≤ L0 ∧ (dist[n] is unset ∨ cost < dist[n]):
                     dist[n] = cost; parent[n] = c; bucket[cost].push_back(n)
     for each candidate e, ascending EntityId:
@@ -1483,14 +1600,14 @@ The candidate radius is exact: every step costs at least 19.8 ddB per metre of d
 
 ### 11.4 Budget and fallback
 
-All requests of a tick share 32,768 settled cells. When the budget runs out, every unsettled candidate of the current and later requests gets the ray estimate: `cost = floor_div(20 × d_mm, 1000) + Σ sound_atten` of the cells crossed by `raycast_blocks` between the two cells (endpoints excluded), `arrival_dir` = direction to the source, `exact = false`.
+All requests of a tick share 32,768 settled cells. When the budget runs out, every unsettled candidate of the current and later requests gets the ray estimate: `cost = floor_div(20 × d_mm, 1000) + Σ (sound_atten_at + the §4.8 weather cost)` of the cells crossed by `raycast_blocks` between the two cells (endpoints excluded), `arrival_dir` = direction to the source, `exact = false`.
 
 ### 11.5 Outputs
 
 - `HeardNoise { listener, emitter, noise, level_db, arrival_dir: Fx3, exact: bool, req: u32 }` per candidate with `level_db > 0`, appended to the tick's hearing list for `sys.hearing` (doc 09). `req` is the index of the originating request in the tick's noise list, so doc 09 reads the source position, source level, emitter and callout payload from it.
 - `ev.noise` carries the source level and, for each player slot `0..=4`, the heard level and arrival direction of that slot's entity, which the audio engine uses for gain, low-pass and apparent position (doc 02 §9). Slot 4 is the invader's. Doc 16's `listener_db[slot]` is `heard[slot]`'s level.
 
-**Examples.** A 130 dB shot (`L0` 1300) reaches a listener 10 m down a straight corridor at cost 200: 110 dB. With a closed oak door on the path the cost is 243: 105 dB. A 45 dB footstep reaches 25 dB at 10 m. Candidates for the shot lie within `68,421 + 1,732 = 70,153` mm.
+**Examples.** A 130 dB shot (`L0` 1300) reaches a listener 10 m down a straight corridor at cost 200: 110 dB. With an open oak door on the path the cost is 243: 105 dB; with the door closed it is 375: 92 dB. These examples hold under `wx.clear` or under a roof; in a `wx.storm` the open-air corridor costs `10 × (20 + 4) = 240`: 106 dB. A 45 dB footstep reaches 25 dB at 10 m. Candidates for the shot lie within `68,421 + 1,732 = 70,153` mm.
 
 ---
 
@@ -1519,7 +1636,7 @@ pub struct Explosion { pub center: Fx3, pub spec: ExplosionSpec, pub source: Sou
                        pub instigator: Option<EntityId>, pub instigator_slot: u8, pub due_tick: Tick, pub seq: u32 }
 ```
 
-- **Item explosions.** Doc 05 §9.3 archetype rows map onto the spec field for field (`radius_mm`, `inner_mm`, `edge_bp`, `shares`). Block power is `min(8000, mul_bp(4000, block_bp))` unless the item record sets `block_power_milli` itself, as doc 07's demolition charge does (6000). A frag grenade (`block_bp` 10000) gets 4000, a concussion grenade (5000) 2000, an incendiary grenade (2500) 1000, flash and counter grenades (0) no block damage. Doc 04's `sapper` multiplies the block power by 15000 and `demolition` adds 750 (1,000 mm of ray travel at 225 per 300 mm), both before the 8000 cap.
+- **Item explosions.** Doc 05 Tables 9.3 and 9.3b give each item explosion's spec field for field (`radius_mm`, `inner_mm`, `edge_bp`, `shares`, `block_power_milli`, `knockback_mm_s`, `smoke_conc`, `heat_decic`, ignition, `noise`). Block power is the table's `block_power_milli`: frag grenade 3000, concussion grenade 1000, launcher blast 4000, and incendiary, flash, smoke and counter grenades 0, which break no block. Doc 07 gadget records set their own (`gadget.demolition_charge` 6000). The block power that `queue_explosion` stores is `min(8000, mul_bp(base, sapper) + 750 × demolition + 750 × fieldcraft_100)`: `sapper` is 15000 when the instigator has doc 04's `sapper` talent, else 10000; `demolition` is 1 when it has doc 04's `demolition` talent; `fieldcraft_100` is 1 for a demolition charge deployed at Fieldcraft 100 (doc 07 §11.1 rule 10, doc 04 Fieldcraft 100), else 0. Each 750 is 1,000 mm of ray travel at 225 per 300 mm (§12.2). Example: a demolition charge deployed at Fieldcraft 100 by an Erratum with neither talent stores 6750.
 - **Invader.** `queue_explosion` sets `block_power_milli` to 0 and `incendiary` to false for an explosion whose `instigator_slot` is 4, so the invader's blasts break, chip and ignite no block (Canon §17.9).
 - **Ordering.** `queue_explosion` appends to `explosion_q` (saved) with a per-Folio `seq` counter; the queue holds at most 256 entries, and an append at the cap is refused (the source block still breaks, without a blast). Each tick `sys.explosions` stable-sorts the entries with `due_tick <= t` by `(due_tick, source_id with 0 last, seq)` and resolves the first 4; the rest wait for later ticks. Within a tick this is doc 05 §9.4's ascending source order.
 - **Center.** `queue_explosion` keeps `center` unless it lies inside a collision box; then it moves `center` out of that box along the §5.4 interior rule's cheapest axis to 1 mm beyond the face. A rocket that stops on a wall face at `x = 13.0` therefore explodes at `x = 12.999`, in the air cell it came from, and its rays and exposure tests start in free space.
@@ -1567,12 +1684,13 @@ perp    = try_normalize((−(tp.z − center.z), 0, tp.x − center.x)), or (1, 
 samples = [tp, p + (0, 100 mm, 0), p + (0, h − 100 mm, 0), tp + perp × r, tp − perp × r]    // r = body radius
 exposure = 2000 × (number of samples s for which raycast_blocks(center → s, t_max = |s − center|) meets no box)
 if exposure == 0: skip
-f       = mul_bp(falloff, exposure)                    // knockback, impact and status powers
+f       = mul_bp(falloff, exposure)                    // knockback only (doc 05 §9.4)
 B_eff   = mul_bp(mul_bp(B, falloff), exposure)          // one mul_bp each (Canon §10.4, doc 05 §9.4);
                                                        // B = b_mhp (item) or env_base_mhp (environment)
 if the target has pools: queue a hit (Item: sys.damage, the actor batch; Env: sys.damage_late, Canon §10.8):
           part = largest-share part, flags area (+ env for Env),
-          shares = spec.shares, instigator and instigator_slot; doc 05 scales impact and status powers by f
+          shares = spec.shares, instigator and instigator_slot; impact and status powers each scaled
+          by falloff and then by exposure, one mul_bp each (doc 05 §9.4, §10.1)
 apply_knockback(e, unit(q − center + (0, 500 mm, 0)), mul_bp(knockback_mm_s, f))       // q = p + (0, h/2, 0)
 ```
 
@@ -1599,7 +1717,7 @@ Example: `R = 4000`, `inner_mm = 1000`, `edge_bp = 2500`, `B = 40,000` mHP, targ
 4. `fixed_terrain`: the current block is not destructible, the type index changes, the cause is neither `grid.cause.worldgen` nor `grid.cause.script`, and the change is not a `grid.cause.toggled` swap between doc 07 §10.6 lit and unlit twins (§4.7, Canon §4.3).
 5. `actor_forbidden`: the actor is the invader (slot 4) or a ghost and the cause is `placed`, `mined`, `broken` or `erased` (Canon §11.6, §17.6, §17.9). Ghosts may toggle doors.
 
-On success, in this order: write the chunk, remove the cell's custom mask (or, for `set_block_mask`, store `mask`, removing the entry when it equals `shape_mask[new]`), and bump `block_gen`; delete liquid above the new `liquid_cap` and bump `fluid_gen`; end a block fire if the new block cannot burn; remove the cell's `block_damage` entry and, unless the cause is `froze` or `reverted`, its `timed_revert` entry; call doc 07's `on_block_changed(c, old, new, cause, actor)`, which clears `placed_meta`, `stations` and `crops` entries when the cause is not doc 07's own; update `heat_sources`, the thermal conductance cache and the column's `sky_src` bits; call light `on_change` for both channels; push `c` and its `N6` neighbors onto the block-update queue; emit `ev.block_changed`.
+On success, in this order: write the chunk, remove the cell's custom mask (or, for `set_block_mask`, store `mask`, removing the entry when it equals `shape_mask[new]`), and bump `block_gen`; delete liquid above the new `liquid_cap` and bump `fluid_gen`; end a block fire if the new block cannot burn; remove the cell's `block_damage` entry and, unless the cause is `froze` or `reverted`, its `timed_revert` entry; call doc 07's `on_block_changed(c, old, new, cause, actor)`, which clears `placed_meta` and `stations` entries when the cause is not doc 07's own; update `heat_sources`, the thermal conductance cache and the column's `sky_src` bits; call light `on_change` for both channels; push `c` and its `N6` neighbors onto the block-update queue; emit `ev.block_changed`.
 
 Causes (`grid.cause.*`), each the `cause` field of `ev.block_changed`:
 
@@ -1621,7 +1739,7 @@ Causes (`grid.cause.*`), each the `cause` field of `ev.block_changed`:
 | `grid.cause.froze` | §6.4 step 3 and the §6.9 frost trigger, including doc 08 §5.2's frost rows (lava to `block.basalt`, molten metal to `block.slag`) |
 | `grid.cause.reaction` | §6.8 doc 08 reaction outcomes |
 | `grid.cause.toggled` | §13.4 doors and trapdoors; doc 07 §10.6 light-block twin swaps (snuff, douse, switch and relight, by doc 09 §2.4 and doc 13 `ai.action.relight`) |
-| `grid.cause.grew`, `grid.cause.decayed`, `grid.cause.spread` | §13.7 random ticks; doc 07 §9.7 crop stages use `grew`; doc 07 torch burnout uses `decayed` |
+| `grid.cause.grew`, `grid.cause.decayed`, `grid.cause.spread` | §13.7 random ticks; doc 07 torch burnout uses `decayed`. No crop grows: DECISIONS.md item 128 retires seeds and planting |
 | `grid.cause.erased` | §13.8 Editor and red-ink erasure |
 | `grid.cause.reverted` | §6.9 timed revert of frost ice |
 | `grid.cause.expired` | doc 07 placed-block expiry and doc 06 conjured blocks at the end of their duration |
@@ -1629,7 +1747,7 @@ Causes (`grid.cause.*`), each the `cause` field of `ev.block_changed`:
 ### 13.2 Breaking
 
 - **Mining** (tool use, doc 07 §9): `sys.actions` sets `Mining { cell, state, needed = mining_ticks(...) }` (doc 07 §9.2) when a mining action targets a new cell, and adds 1 to `progress` on every tick the action continues. The block breaks whole when `progress >= needed`: the cell becomes its `break_result` (§4.5; a resource node becomes `block.node_spent`), with cause `grid.cause.mined` and doc 07 drops. Progress resets when the target cell or its state changes, or after 6 ticks without the action. `mining_ticks` returns `None` when the tool tier is too low or the block is not destructible.
-- **Damage** (weapons, projectiles, beams, spells, AI breaches): `damage_block(c, ip: Fx3, mhp, shares, actor, block_bp) -> bool` adds `amount = mul_bp(mhp, block_bp)`, where `ip` is the impact point (the area's center for area damage), where `mhp` is the hit's Canon §10.4 magnitude with its attack factors and `block_bp` is doc 05 §7.3's block factor (melee once per swing by archetype, 500 to 10000 with axes at 5000, doc 05 Table 3.2d; bullets, pellets, arrows, bolts and beam pulses 1000, thrown weapons 2000, launcher direct hits 10000, doc 05 §5.2). The amount is 0 when the cell is not breakable (§12.2), when the source's tool tier (doc 07 §9.1) is below the block's `tool_tier`, or when the actor is the invader (slot 4) or a ghost, so neither ever damages, chips or breaks a block (Canon §17.6, §17.9).
+- **Damage** (weapons, projectiles, beams, spells, AI breaches): `damage_block(c, ip: Fx3, mhp, shares, actor, block_bp) -> bool` adds `amount = mul_bp(mhp, block_bp)`, where `ip` is the impact point (the area's center for area damage), where `mhp` is the hit's Canon §10.4 magnitude with its attack factors and `block_bp` is the source's block factor: for weapons doc 05 §7.3's (melee once per swing by archetype, 500 to 10000 with axes at 5000, doc 05 Table 3.2d; bullets, pellets, arrows, bolts and beam pulses 1000, thrown weapons 2000, launcher direct hits 10000, doc 05 §5.2); for spells doc 06 §13.1's, `1000 ×` the largest block power among the stage's essences after its material multiplier (force 6; acid 3, or 6 on metal blocks; thunder 4, or 12 on glass and ice), with `mhp` the spell hit's Canon §10.4 step-0 `B` and `ip` the impact point or the area's center. The amount is 0 when the cell is not breakable (§12.2), when the source's tool tier (doc 07 §9.1) is below the block's `tool_tier`, or when the actor is the invader (slot 4) or a ghost, so neither ever damages, chips or breaks a block (Canon §17.6, §17.9).
   - A cell with doc 07 `placed_meta` loses `amount` from `placed_meta.hp` and breaks at 0 into its `break_result` (cause `grid.cause.broken`, no drop; doc 07 §10.4).
   - Any other cell accumulates in `block_damage: BTreeMap<Gidx, (i64 accumulated, Tick last)>` and breaks into its `break_result` (cause `grid.cause.broken`, doc 07 drops) when the sum reaches doc 07's `block_hp(c)`: the record's `block_hp_mhp` (§4.5), times doc 07 §10.7's lock factor `door_lock_bp(c)` (10000 for every block but a locked door), times Canon §13.8's item-power table at `P(d_current)`. Weapon magnitudes scale with `P(src_lvl)`, so an on-level weapon needs the same number of hits at every depth. Without the factor a Folio-25 mace (`P(25)` = 79110, `block_bp` 10000) would break a wooden door (`block_hp_mhp` 60,000) with one swing of 12,000 mHP base (94,932 mHP at Folio 25) and make every lock (doc 09 §13) meaningless; with it that swing needs 5 hits at Folio 1 and at Folio 25, and a 12,000 mHP base axe swing needs 10 (Canon §13.8). `sys.block_updates` removes entries untouched for 600 ticks.
   - The crack stage that doc 16 §6.11 replicates is `min(9, floor_div(accumulated × 10, block_hp(c)))`, or the same formula over `hp_max − hp` for placed cells.
@@ -1805,7 +1923,7 @@ Canon §18 lists the canonical core; every further `ev.` ID another document emi
 | `ev.enchant_applied` | `erratum: EntityId, uid: u64, ench: Id32, tier: u8, origin: Id32` | 06 | 10, 17 |
 | `ev.prayer_resolved` | `erratum: EntityId, patron: Id32, prayer: Id32, outcome: u8 /* 0 pleased, 1 displeased, 2 helped, 3 angry, 4 unheard, 5 petition */, need: u8 /* 0 none, 1..=8 */` | 06 | 14, 17 |
 | `ev.favor_changed` | `erratum: EntityId, patron: Id32, old: i32, new: i32, cause: u8 /* 0 sacrifice, 1 prayer, 2 taboo, 3 Folio exit, 4 Editor kill, 5 rider, 6 altar, 7 shrine bonus */` | 06 | 17 |
-| `ev.alarm_raised` | `raiser: EntityId /* 0 for a block device */, pos: Fx3, kind: u8 /* 0 creature (hound, civilian, bell or klaxon), 1 other device, 2 camera */` | 09 | 13, 17 |
+| `ev.alarm_raised` | `raiser: EntityId /* 0 for a block device */, pos: Fx3, kind: u8 /* 0 creature (hound, civilian, bell or klaxon), 1 every other alarm device, 2 camera; a callout raises none */` | 09 | 13, 17 |
 | `ev.body_discovered` | `observer: EntityId, body: EntityId, pos: Fx3` | 09 | 13 |
 | `ev.disguise_blown` | `wearer: EntityId, observer: EntityId` | 09 | 13, 17 |
 | `ev.lock_opened` | `by: EntityId, lock_key: u64 /* door Gidx or container EntityId, doc 09 §1.4 */, method: u8 /* 0 key, 1 picked, 2 hacked, 3 forced */` | 09 | 04, 13 |
@@ -1850,17 +1968,17 @@ Doc 02 §6.5 fixes the section order. This chapter's state maps onto it as follo
 
 | Section | This chapter's contents, in this order |
 |---|---|
-| 0 `meta` | boundary tick, `folio_entry_tick`, entity counter, explosion `seq` counter |
+| 0 `meta` | boundary tick, `folio_entry_tick`, entity counter, explosion `seq` counter, `Climate` (§4.8) |
 | 1 `rng` | `rng.fire`, `rng.blocktick`, `rng.physics` states |
-| 2 `entities` | every column of §3.3 in catalog order, including `Pose.hist` (32 records), `MoveState` (with `wall_n`, `wall_jumped`, `wall_run_mm`), `Env` accumulators, `Mining`, `LightEmitter.admitted`, `Projectile.catchup` and `resting`; then `spawn_q` |
-| 4 `blocks` | 128 chunks in slot order: `palette_rle` of `BlockState`, then `sky_src`, `open_tag`, `protect`, `flip` bitsets, then the ascending `(Local, u64)` custom masks of `mask_of` (§4.3); then `block_updates` FIFO, `block_damage`, `timed_revert` (with `Revert.at`), `explosion_q`, the Folio's `PortalPair` list; then doc 07's `placed_meta`, `stations` and `crops` maps in doc 07's declared order |
+| 2 `entities` | every column of §3.3 in catalog order, including `Pose.hist` (32 records), `MoveState` (with `wall_n`, `wall_jumped`, `wall_run_mm`, `ledge_base_y`, the slide fields and `grapple`), `Projectile.home_acc`, `Env` accumulators, `Mining`, `LightEmitter.admitted`, `Projectile.catchup` and `resting`; then `spawn_q` |
+| 4 `blocks` | 128 chunks in slot order: `palette_rle` of `BlockState`, then `sky_src`, `open_tag`, `protect`, `flip` bitsets, then the ascending `(Local, u64)` custom masks of `mask_of` (§4.3); then `block_updates` FIFO, `block_damage`, `timed_revert` (with `Revert.at`), `explosion_q`, the Folio's `PortalPair` list; then doc 07's `placed_meta` and `stations` maps in doc 07's declared order |
 | 5 `light` | per chunk `palette_rle` of the light bytes; then `Relight.dark` and `Relight.lit` in FIFO order; then `timed_lights` ascending and `light_overrides` in insertion order |
 | 6 `fluids` | per chunk ascending `(Local, LiquidCell)` and `(Local, GasCell)` lists; `liquid_active`, `gas_active` ascending; liquid and gas run counters |
 | 7 `thermal` | per chunk: 0 for asleep, or 1 then `palette_rle` of the 4,096 `DeciC` values as `u16` offsets `T + 2730`; then `fires` ascending |
 
 ### 16.2 Excluded derived state
 
-Never serialized, rebuilt in this order on restore: per-state block tables (§4.5); in-memory palettes from `palette_rle`; each chunk's custom-mask table and box cache from its saved masks (§4.3); `heat_sources` and thermal conductance caches; the dynamic-emitter map (from `admitted`). Also never saved: `block_gen`, `field_gen`, `fluid_gen`, meshes, navigation graphs (doc 13 rebuilds them from blocks), the per-tick lists (noise requests, `flashes`, `push_contacts`, hearing records, telegraphs), the sound scratch maps, the event list, and doc 02's view and doc 16's replication caches. The broadphase needs no restore step: `sys.tick_begin` rebuilds it before any system reads it (§3.6). Rebuilding is pure, so `restore` followed by `state_hash()` reproduces the saved hash (doc 02 SyncTest with depth 8).
+Never serialized, rebuilt in this order on restore: per-state block tables (§4.5); in-memory palettes from `palette_rle`; each chunk's custom-mask table and box cache from its saved masks (§4.3); the column tops `opaque_top` and `solid_top` (§4.8); `heat_sources` and thermal conductance caches; the dynamic-emitter map (from `admitted`). Also never saved: `block_gen`, `field_gen`, `fluid_gen`, meshes, navigation graphs (doc 13 rebuilds them from blocks), the per-tick lists (noise requests, `flashes`, `push_contacts`, hearing records, telegraphs), the sound scratch maps, the event list, and doc 02's view and doc 16's replication caches. The broadphase needs no restore step: `sys.tick_begin` rebuilds it before any system reads it (§3.6). Rebuilding is pure, so `restore` followed by `state_hash()` reproduces the saved hash (doc 02 SyncTest with depth 8).
 
 ### 16.3 Rules
 
@@ -1911,7 +2029,7 @@ Memory for 128 chunks: blocks 2 MiB typical (4-bit palettes) and 8 MiB worst (16
 | `grid.liqi.` | `grid.liqi.blocks`, `grid.liqi.permeable`, `grid.liqi.displaced`, `grid.liqi.absorbs` |
 | `grid.rt.` | `grid.rt.none`, `grid.rt.grow`, `grid.rt.decay`, `grid.rt.spread` |
 | `grid.ekind.` | `grid.ekind.erratum`, `grid.ekind.creature`, `grid.ekind.projectile`, `grid.ekind.item_drop`, `grid.ekind.falling_block`, `grid.ekind.container`, `grid.ekind.gadget`, `grid.ekind.zone`, `grid.ekind.corpse`, `grid.ekind.marker` (row order is the replicated kind code) |
-| `grid.move.` | `grid.move.ground`, `grid.move.air`, `grid.move.swim`, `grid.move.climb`, `grid.move.mantle`, `grid.move.dodge`, `grid.move.fly`, `grid.move.downed` |
+| `grid.move.` | `grid.move.ground`, `grid.move.air`, `grid.move.swim`, `grid.move.climb`, `grid.move.mantle`, `grid.move.dodge`, `grid.move.fly`, `grid.move.downed`, `grid.move.slide`, `grid.move.grapple` (row order is the `MoveMode` code) |
 | `grid.cause.` | `grid.cause.worldgen`, `grid.cause.script`, `grid.cause.placed`, `grid.cause.mined`, `grid.cause.broken`, `grid.cause.explosion`, `grid.cause.fire`, `grid.cause.liquid`, `grid.cause.unsupported`, `grid.cause.fell`, `grid.cause.landed`, `grid.cause.melted`, `grid.cause.froze`, `grid.cause.reaction`, `grid.cause.toggled`, `grid.cause.grew`, `grid.cause.decayed`, `grid.cause.spread`, `grid.cause.erased`, `grid.cause.reverted`, `grid.cause.expired`, `grid.cause.connected` |
 | `grid.despawn.` | `grid.despawn.expired`, `grid.despawn.consumed`, `grid.despawn.picked_up`, `grid.despawn.merged`, `grid.despawn.folio_exit`, `grid.despawn.cap_evicted`, `grid.despawn.landed`, `grid.despawn.dismissed`, `grid.despawn.script` |
 | `grid.gait.` | `grid.gait.crouch`, `grid.gait.walk`, `grid.gait.sprint`, `grid.gait.crawl` |
@@ -1921,27 +2039,27 @@ Memory for 128 chunks: blocks 2 MiB typical (4-bit palettes) and 8 MiB worst (16
 | `ev.` (registered for other chapters, §14.3) | `ev.wound_changed`, `ev.augment_changed`, `ev.entity_pacified`, `ev.secret_found`, `ev.objective_completed`, `ev.law_discovered`, `ev.cast_started`, `ev.cast_interrupted`, `ev.wild_surge`, `ev.glyph_learned`, `ev.enchant_applied`, `ev.prayer_resolved`, `ev.favor_changed`, `ev.alarm_raised`, `ev.body_discovered`, `ev.disguise_blown`, `ev.lock_opened`, `ev.object_revealed`, `ev.device_hacked`, `ev.takedown`, `ev.item_stolen`, `ev.rubric_completed`, `ev.colophon_entered`, `ev.colophon_desecrated`, `ev.boon_committed`, `ev.note_completed`, `ev.exit_committed`, `ev.boss_engaged`, `ev.volume_completed` |
 | `rng.` | none new; this chapter draws only `rng.fire`, `rng.blocktick`, `rng.physics` (Canon §3.2, §3.3) |
 
-Non-ID exports: `step_mover`, `MoverParams`, `BlockQuery`, `MoverOut`, `select_mode` (§5); `set_block`, `EditError`, `damage_block`, `mining` progress, `can_place`, `erase_placed`, `is_errata_placed`, `set_protect` (§4.7, §13); `state_at`, `solid`, `opaque`, `material_at`, `destructible_at`, `raycast_blocks`, `cell_conceal`, `cell_conceal_parts` (§4.5, §5.18, §7.6); `deposit`, `splash`, `drain`, `surface_trigger`, `emit_gas`, `emit_gas_volume` (§6, §7); `ignite` (§8.1); `add_heat` (§9.2); `add_light`, light overrides, `flashes` (§10); `emit_noise`, `HeardNoise` (§11); `queue_explosion`, `ExplosionSpec` (§12); `set_block_mask`, `refill_mask`, `mask_at`, `fill`, `boxes_at`, `light_filter_at`, `conceal_at`, `sound_atten_at`, `gas_open`, `sturdy_at`, `liquid_cap` (§4.3, §4.4, §6.2, §13); `apply_knockback` (§5.13); `push_contacts` (§5.14); `request_spawn` (§15.3); `PortalPair` (§5.21); the event payload schemas of §14.
+Non-ID exports: `set_climate`, `Climate`, `sky_lit`, `sky_open` (§4.8); `step_mover`, `MoverParams`, `BlockQuery`, `MoverOut`, `select_mode` (§5); `start_grapple` (§5.24); `set_block`, `EditError`, `damage_block`, `mining` progress, `can_place`, `erase_placed`, `is_errata_placed`, `set_protect` (§4.7, §13); `state_at`, `solid`, `opaque`, `material_at`, `destructible_at`, `raycast_blocks`, `cell_conceal`, `cell_conceal_parts` (§4.5, §5.18, §7.6); `deposit`, `splash`, `drain`, `surface_trigger`, `emit_gas`, `emit_gas_volume` (§6, §7); `ignite` (§8.1); `add_heat` (§9.2); `add_light`, light overrides, `flashes` (§10); `emit_noise`, `HeardNoise` (§11); `queue_explosion`, `ExplosionSpec` (§12); `set_block_mask`, `refill_mask`, `mask_at`, `fill`, `boxes_at`, `light_filter_at`, `conceal_at`, `sound_atten_at`, `gas_open`, `sturdy_at`, `liquid_cap` (§4.3, §4.4, §6.2, §13); `apply_knockback` (§5.13); `push_contacts` (§5.14); `request_spawn` (§15.3); `PortalPair` (§5.21); the event payload schemas of §14.
 
 ## Interface assumptions
 
 | Doc | This chapter assumes |
 |---|---|
 | 02 | the primitives, store, scheduler, `PlayerCommand` axes and bits, `SimEvent`, section order and `palette_rle` as imported; `palette_rle` also accepts the 4,096-entry thermal array; `SCHEDULE` lists the 39 systems of §2.2, so doc 02 §15 adds budget rows for `sys.crafting`, `sys.resources`, `sys.coop` and `sys.run_layer`; `ChunkView` carries `fluid_gen` (§4.3); copy-on-write chunk clones grow by the fourth bitset (`flip`, 4 KiB); the view frame publishes the active light overrides and doc 06's shadow areas (§10.6), and the renderer applies the §10.6 read to the light field; `dda` takes `max_steps` and visits at most `max_steps + 1` cells (actions_02 item 4); section 4 carries each chunk's custom masks (§16.1), and `ChunkView` carries the cell masks (predefined per state, plus the custom-mask map) for meshing; `extract_view` and doc 16's `ReplFrame` extraction are read-only passes outside the schedule; doc 02 §9 plays `ev.noise` for slot 4 like any party slot |
-| 04 | Errata `BodyState` values, with doc 04 §13's capsules, flags and base speeds (`walk_base` to `climb_base`) for Echo plans; `can_sprint`, `can_jump`, `can_dodge` and stamina spending; `body_move_bp(e)` (§8.5) replacing any leg or crutch factor here; `air_jump_max(e)` (§2.3); the Acrobatics 50 wall jump and `wind_step` wall-run as components that set `MoverParams.wall_jump` and `wall_run_max_mm` (2000); breath drain from `Env.eye_submerged` and unbreathable eye gas; the fall-damage factors (Acrobatics, kin, talents) applied after `fall_dmg_bp` in ascending source ID order, one `mul_bp` each (Canon §4.2), and the leg split; per-tick pool regeneration inside `sys.resources`; the `body.*` part lists that pose tables reference |
-| 05 | `HitRecord`, `queue_hit` and the pipeline in `sys.damage` and `sys.damage_late`; combat steps C1 to C9 mapped as in §2.2 (C1 runs before movement); calls to `surface_trigger` and to `damage_block` with the §13.2 `block_bp` table and the impact point `ip`; actor hits resolved in `sys.damage` and the environmental, contact, surface and DoT batch in `sys.damage_late` (Canon §10.8); DoT pulses carrying `env` from `StatusInst.env` (§3.3); `on_block_enter` returning `Penetrate` only for destructible or non-opaque cells (Canon §4.3); projectile templates (`radius`, `gravity_bp`, `drag_bp` 0, `bounce_bp` 4000 for fused grenades, pierce, lifetime) and the five §5.19 hooks with doc 05 §7 semantics; `LAGCOMP_MAX_TICKS = 16`; melee traces on doc 02 primitives; Contradiction re-evaluation called from `sys.env_sample`; `kb_resist_bp`; animation choice; stance base speeds and armor sprint and swim bases in `MoverParams`; item explosion parameters mapped as in §12.1, with `b_mhp` taken before Canon §10.4 and scaled by falloff and then exposure, one `mul_bp` each, and knockback, impact and status powers by `f = mul_bp(falloff, exposure)` (§12.4, doc 05 §9.4); `block_bp` from Table 3.2d and §5.2; the lean offset and wall clamp of doc 05 §6.8 (§5.8); a pure, drawless `steer(pr, v, pose_tick)` that turns a homing projectile's velocity (doc 05 §10.5) and returns every other projectile's unchanged (§5.19); friendly-fire scaling from `instigator_slot`; the §14.2 `ev.damage_dealt` fields `kind`, `base_mhp`, `stamina_loss_mst`, `d_armor` and `counters` and the `parried` and `negated` bits for every hit, and the lethal hit's `ev.damage_dealt` emitted before the victim's `ev.entity_killed` so that `damage_seq` names it |
+| 04 | Errata `BodyState` values, with doc 04 §13's capsules, flags and base speeds (`walk_base` to `climb_base`) for Echo plans; `can_sprint`, `can_jump`, `can_dodge` and stamina spending; `body_move_bp(e)` (§8.5) replacing any leg or crutch factor here; `air_jump_max(e)` (§2.3); the Acrobatics 50 wall jump and `wind_step` wall-run as components that set `MoverParams.wall_jump` and `wall_run_max_mm` (2000); `CLIMB_ANY` on Errata whose §13 plan climbs any solid face; no stamina cost for the sprint-slide, which `can_sprint` gates (§5.23); breath drain from `Env.eye_submerged` and unbreathable eye gas; the fall-damage factors (Acrobatics, kin, talents) applied after `fall_dmg_bp` in ascending source ID order, one `mul_bp` each (Canon §4.2), and the leg split; per-tick pool regeneration inside `sys.resources`; the `body.*` part lists that pose tables reference |
+| 05 | `HitRecord`, `queue_hit` and the pipeline in `sys.damage` and `sys.damage_late`; combat steps C1 to C9 mapped as in §2.2 (C1 runs before movement); calls to `surface_trigger` and to `damage_block` with the §13.2 `block_bp` table and the impact point `ip`; actor hits resolved in `sys.damage` and the environmental, contact, surface and DoT batch in `sys.damage_late` (Canon §10.8); DoT pulses carrying `env` from `StatusInst.env` (§3.3); `on_block_enter` returning `Penetrate` only for destructible or non-opaque cells (Canon §4.3); projectile templates (`radius`, `gravity_bp`, `drag_bp` 0, `bounce_bp` 4000 for fused grenades, pierce, lifetime) and the five §5.19 hooks with doc 05 §7 semantics; `LAGCOMP_MAX_TICKS = 16`; melee traces on doc 02 primitives; Contradiction re-evaluation called from `sys.env_sample`; `kb_resist_bp`; animation choice; stance base speeds and armor sprint and swim bases in `MoverParams`; item explosion parameters from doc 05 Tables 9.3 and 9.3b as in §12.1, `block_power_milli` included, with `b_mhp` taken before Canon §10.4 and damage, impact and status powers scaled by falloff and then exposure, one `mul_bp` each, and knockback by `f = mul_bp(falloff, exposure)` (§12.4, doc 05 §9.4, §10.1); `block_bp` from Table 3.2d and §5.2; the lean offset and wall clamp of doc 05 §6.8 (§5.8); `Projectile.home_bam_s` set at spawn from the source item's manufacturer trait (16384 for `mfr.cyberpunk.ghostline`, doc 11 §5.2), 0 for every other projectile, with §5.19's homing step doing the turn; friendly-fire scaling from `instigator_slot`; the slide and grapple animations chosen like any other, and its §4.8a and Table 6.3 rules for actions during a slide (§5.23) or a grapple pull (§5.24), with a grappling-tool use taking the `seq` 0 action start; the §14.2 `ev.damage_dealt` fields `kind`, `base_mhp`, `stamina_loss_mst`, `d_armor` and `counters` and the `parried` and `negated` bits for every hit, and the lethal hit's `ev.damage_dealt` emitted before the victim's `ev.entity_killed` so that `damage_seq` names it |
 | 06 | `aether_tick` inside `sys.resources`; cast resolution inside `sys.actions`; `ignite`, `add_light` and `add_heat` calls; conjured blocks placed through doc 07 `placed_meta` with the conjured flag and removed at expiry with cause `grid.cause.expired`; `surface_trigger` for the cells a spell touches; `st.levitating` control; `spell_hash` and `channel_ticks` on `ev.spell_cast`, fizzles reported only as `ev.spell_cast` with `fizzled = true`; the §14.3 payloads of doc 06 §19.1; the `self_cost` bit on Blood Price HP payments; `in_shadow_area(cell)`, which §10.6 reads to lower light by 8; `damage_block` calls with the area's center as `ip` |
-| 07 | every block record with the §4.5 fields and `tags`; the material-to-block defaults of doc 07 §2.5; `mining_ticks` and `block_hp`; `block_drops(state, cause, actor)`; ordered `tooltier.*`; `placed_meta`, `stations` and `crops` saved in section 4 and cleared by `on_block_changed` for foreign causes; placement rules after `can_place`; `sys.crafting`; `block.ice` (`friction_bp` 1500, melts to 1000 units of water) and `block.web` (`burn_runs` 5); `block_hp(cell)` for every cell without `placed_meta` (§13.2), `voxels_left(cell)` for chipping, and repairs through `refill_mask`; `break_result` on resource nodes; `hide`, `conceal_crouch_only` and `lightsrc` on records; the `explosive` spec of `block.powder_keg` as §4.5 shows; only `cat.placeable` items place blocks, a wall torch through `recipe.hand.wall_torch` (triage C-25); a block trap's hit queued with `source` 0, `item_uid` its `placed_meta.uid` and `ability` its block's content ID (§14.2) |
+| 07 | every block record with the §4.5 fields and `tags`; the material-to-block defaults of doc 07 §2.5; `mining_ticks` and `block_hp`; `block_drops(state, cause, actor)`; ordered `tooltier.*`; `placed_meta` and `stations` saved in section 4 and cleared by `on_block_changed` for foreign causes, with no crop map or planting (DECISIONS.md item 128); placement rules after `can_place`; `sys.crafting`; `block.ice` (`friction_bp` 1500, melts to 1000 units of water) and `block.web` (`burn_runs` 5); `block_hp(cell)` for every cell without `placed_meta` (§13.2), `voxels_left(cell)` for chipping, and repairs through `refill_mask`; `break_result` on resource nodes; `hide`, `conceal_crouch_only` and `lightsrc` on records; the `explosive` spec of `block.powder_keg` as §4.5 shows; only `cat.placeable` items place blocks, a wall torch through `recipe.hand.wall_torch` (triage C-25); a block trap's hit queued with `source` 0, `item_uid` its `placed_meta.uid` and `ability` its block's content ID (§14.2) |
 | 08 | liquid records (§6.5) and gas records (§7.2) for every `liq.` and `gas.` ID, including `evap_gas`; `alch_react` (§6.8); extended trigger rows and contact rows; `splash` amounts; nitro detonation specs with `block_power_milli` set directly (doc 08's "block-break power 2" is 2000); the working respirator in `slot.face` (doc 08 §4.3), which §5.20 and §6.10 read |
 | 09 | noise IDs, `noise_level` and `convert_events()` in the `sys.sound` prelude; consumption of `HeardNoise`; perception through `raycast_blocks`, `cell_conceal_parts`, light, overrides and `flashes`; `door_locked(gidx)`; `awareness_above_unaware(e)` for sleep; reading `push_contacts`; the `takedown` bit on takedown hits; `HeardNoise.req`; `grid.gait.crawl` footsteps from downed bodies; doc 13's pacification codes 3 and 4 for doc 09 hacks and subdues; `stealth_light` starting from `light_at`, which §10.6 already lowers inside doc 06 shadow areas, so doc 09 adds no second shadow term; sight rays tested against micro-voxel boxes through `raycast_blocks`, with `conceal_at` read through the §4.4 fill rule; `hide`, `conceal_crouch_only` and `lightsrc` read from the compiled block tables; the `ev.alarm_raised` and `ev.device_hacked` payloads as §14.3 registers them |
 | 10 | the appended `ev.item_identified` fields; appraisal passes inside `sys.needs` after doc 04's needs work |
-| 11 | item-drop contents, pickup, Lost Satchel merging at `GROUND_ITEM_CAP`, `carried_g`, death drops in `sys.despawn`; `perk.leg.worldbreaker` applied by doc 05 before `damage_block` |
+| 11 | item-drop contents, pickup, Lost Satchel merging at `GROUND_ITEM_CAP`, `carried_g`, death drops in `sys.despawn`; `perk.leg.worldbreaker` applied by doc 05 before `damage_block`; the grappling tool as a `cat.tool` template with a genre skin and a cooldown whose use calls `start_grapple` (§5.24); the 16384 Bam/s homing rate of `mfr.cyberpunk.ghostline`, which doc 05 copies into `Projectile.home_bam_s` (§5.19) |
 | 12 | worldgen chunks with `open_tag`, `protect` and `flip` bits; relink pairs as `PortalPair` records; liquid sources; bleed zones for `local_genre`; GPV fields `ambient_decic`, `liquid_viscosity_bp`, `gas_dissipation_bp`; hazard placement; worldgen calls the §10 propagation for its light pass; custom masks written through `set_block_mask` only on cells whose shape chips (§4.4); fences meant to contain built two cells tall (§4.4); `ev.law_discovered` emitted with doc 12 §4.1's payload on a Law's first trigger (§14.3) |
-| 13 | AI writes `control`; `request_spawn`; `comp.tags` bit layout (doc 13 §2.4); `Blackboard` as `comp.ai`; creature `BodyState` templates with radius at least 100 mm; navigation rebuilt from `ev.block_changed`; Editor erasure through `erase_placed` by every `fac.editors` member except the invader, and Errata-placed checks through `is_errata_placed(c)` (triage C-24); the Censor's `blackout` as a box override and the `censor` kit's as a 12000 mm sphere override (§10.6); telegraphs derived every tick from agents' action states into the per-tick list that `extract_view` reads (view data, never saved); the invader template `enemy.editors.invader` carries `comp.player` slot 4 and no `comp.ai`; `ev.entity_pacified` `method` codes 0 to 4 for doc 13 §4.9 spares, dialogue, Tame, doc 09 hacks and doc 09 subdues |
+| 13 | the chrome king's `strobe_overload` requested as 30-tick box overrides alternating `min_level = max_level = 15` and `0` (§10.6); AI writes `control`; `request_spawn`; `comp.tags` bit layout (doc 13 §2.4); `Blackboard` as `comp.ai`; creature `BodyState` templates with radius at least 100 mm; navigation rebuilt from `ev.block_changed`; Editor erasure through `erase_placed` by every `fac.editors` member except the invader, and Errata-placed checks through `is_errata_placed(c)` (triage C-24); the Censor's `blackout` as a box override and the `censor` kit's as a 12000 mm sphere override (§10.6); telegraphs derived every tick from agents' action states into the per-tick list that `extract_view` reads (view data, never saved); the invader template `enemy.editors.invader` carries `comp.player` slot 4 and no `comp.ai`; `ev.entity_pacified` `method` codes 0 to 4 for doc 13 §4.9 spares, dialogue, Tame, doc 09 hacks and doc 09 subdues |
 | 14 | `sys.run_layer` logic; `protect` bits for the sealed Colophon entrance cleared through `set_protect` |
-| 16 | delivery of commands and intents per tick for slots 0 to 4; the predictor calls `step_mover` with `MoverParams` built from replicated state, its `MoverSnap` carrying the active move-speed status list (`status_speed_bp`, `n_status`), because a single folded `speed_bp` rounds differently from Canon §4.2's per-status chain; `Player` semantics and `sys.coop` logic; lag compensation through `Pose.hist`; snapshot cadence; a trade emits `ev.item_dropped` with `cause = 1` and `ev.item_picked_up` with `from = 3` and `cause = 1`; a bleed-out death emits `ev.entity_killed` with `damage_seq = 0xFFFF_FFFF`; its §8 catch-up following §5.19 (triage C-08), for the slot-4 invader's projectiles as for an Erratum's; custom masks replicated from `ev.block_chipped` and chunk deltas |
-| 17 | `mercy_on` and `mercy_bp` stored in `comp.player`; `breath_held` in `comp.player`, written by `SetBreathHold` in `sys.input_apply`; the ledge mantle on a `JUMP` press at §5.9's 1,600 mm reach until Canon gaps G31 closes, and no slide input before then |
-| 18 | `art.anim.*` pose tables committed as content with the §5.16 schema, keyed by `anim`; `art.block.*` skins; debris and rims from `ev.block_chipped` and the masks in `ChunkView` (Canon §4.4) |
+| 16 | delivery of commands and intents per tick for slots 0 to 4; the predictor calls `step_mover` with `MoverParams` built from replicated state and a `BlockQuery` whose `mask` returns the replicated custom masks; `MoverSnap.mv` carries every `MoveState` field, the slide fields, `ledge_base_y` and `grapple` included, and `start_grapple` reaches the client as a correction (§5.24); its `MoverSnap` carrying the active move-speed status list (`status_speed_bp`, `n_status`), because a single folded `speed_bp` rounds differently from Canon §4.2's per-status chain; `Player` semantics and `sys.coop` logic; lag compensation through `Pose.hist`; snapshot cadence; a trade emits `ev.item_dropped` with `cause = 1` and `ev.item_picked_up` with `from = 3` and `cause = 1`; a bleed-out death emits `ev.entity_killed` with `damage_seq = 0xFFFF_FFFF`; its §8 catch-up following §5.19 (triage C-08), for the slot-4 invader's projectiles as for an Erratum's; custom masks replicated from `ev.block_chipped` and chunk deltas |
+| 17 | `mercy_on` and `mercy_bp` stored in `comp.player`; `breath_held` in `comp.player`, written by `SetBreathHold` in `sys.input_apply`; the ledge mantle on a `JUMP` press with §5.9's 2,000 mm reach measured from the floor; the sprint-slide on `input.crouch` pressed while sprinting (§5.23) and the grappling tool used from the quickbar (§5.24), so the movement kit needs no new button bit |
+| 18 | `art.anim.*` pose tables committed as content with the §5.16 schema, keyed by `anim`, including a slide and a grapple pull for every playable body plan; `art.block.*` skins; debris and rims from `ev.block_chipped` and the masks in `ChunkView` (Canon §4.4) |
 
 ## Canon gaps
 
@@ -1964,7 +2082,7 @@ Gaps G1 to G5 and G7 to G28 of earlier versions are closed by canon-1.11 and the
 8. **Wall.** The §5.4 wall example ends with `p.x` raw 45956150068.
 9. **Floor.** The §5.4 floor example ends with `p.y` exactly raw 4294967296, `v.y = 0`, grounded.
 10. **Jump.** The §5.7 table reproduces: `v0` raws 29205417893, 31085832879, 39131183219, 34932400672; each apex within 1 mm of `JUMP_H`, reached on ticks 20, 21, 27 and 30 counting the jump tick as 1; the Wuxia air jump from rest peaks at 1199.874 mm on tick 23.
-11. **Step and mantle.** A 500 mm slab is climbed without a jump; a 750 mm step and a 1000 mm block are not. Mantles of 750, 1000, 1250, 1500 and 1600 mm take 16, 18, 21, 23 and 24 ticks; 1750 mm fails; a fence cell fails the mantle test, and a fence two cells tall stops a VERVE 10 jump from the ground.
+11. **Step and mantle.** A 500 mm slab is climbed without a jump; a 750 mm step and a 1000 mm block are not. From a floor, mantles of 750, 1000, 1250, 1500, 1750 and 2000 mm take 16, 18, 21, 23, 26 and 28 ticks; a 2250 mm ledge fails from the floor and also at the apex of a VERVE 0 jump (feet 1100 mm higher, the ledge 2250 mm above `ledge_base_y`); a body falling past a ledge 1600 mm above its feet mantles in 24 ticks; a fence cell fails the mantle test, and a fence two cells tall stops a VERVE 10 jump from the ground.
 12. **Climb, dodge.** Climb speed at GRP 60 is 2640 mm/s. A dodge moves raw 12884901840 in 12 ticks.
 13. **Knockback, push.** 8000 mm/s on 120 kg gives 5000 mm/s. Two 75 kg bodies 500 mm apart each move 50 mm.
 14. **Fall.** A 6 m fall at VERVE 5 with Max HP 85 queues 13,600 mHP. The same fall in Wuxia (VERVE 10, so `SAFE_FALL` 4,800 mm, excess raw 5153960756, 960 Bp; `fall_dmg_bp` 5000) queues `mul_bp(8,160, 5000) = 4,080` mHP. A body landing after a gravity-flip change takes no damage from the height it had before the flip (§5.12).
@@ -1978,7 +2096,7 @@ Gaps G1 to G5 and G7 to G28 of earlier versions are closed by canon-1.11 and the
 22. **Temperature.** Air–air flux 100, air–stone flux 20, relaxation 40, one full lava cell 270 per run; the `T = 1000` hazard at Folio 10 against an Erratum is 3,238 mHP.
 23. **Light.** A torch on an open floor lights 1,834 cells in one tick; the cell 3 steps away reads 11; a water cell next to the torch reads 12 and the air cell beyond it 11. Removing the torch returns every cell to 0 within one tick (1,834 dark pops, no lit pops). Moving a level-10 emitter one cell along an axis in open space costs 1,150 dark and 1,192 lit pops; four such moves on one tick (9,368 pops) finish within 3 ticks. No tick exceeds 4,096 pops.
 24. **Sky light.** A Mythic Fantasy courtyard reads `light_sky` 4 and its corridor 3, 2, 1, 0. A spawn query in the courtyard with `light_block` 0 passes `spawn_block_max` 0.
-25. **Sound.** A 130 dB shot is heard at 110 dB 10 m down a corridor and 105 dB through a closed oak door (43 ddB, §4.4); a 45 dB step at 10 m gives 25 dB; candidates lie within 70,153 mm for the shot and 25,416 mm for the step. On 1,000 random 12³ grids the bucket-queue result equals a reference binary-heap Dijkstra over the same costs for every settled cell.
+25. **Sound.** A 130 dB shot is heard at 110 dB 10 m down a corridor, 105 dB through an open oak door (43 ddB) and 92 dB through the closed door (175 ddB, §4.4); a 45 dB step at 10 m gives 25 dB; candidates lie within 70,153 mm for the shot and 25,416 mm for the step. On 1,000 random 12³ grids the bucket-queue result equals a reference binary-heap Dijkstra over the same costs for every settled cell.
 26. **Explosion rays.** The table has 1,352 directions with entries 0 and 1215 as in §12.2; the worked ray marks only (13, 2, 10); draws equal 1,352 plus breakable marked cells.
 27. **Explosion damage.** The §12.4 example gives falloff 6250, 20,000 mHP and 5000 mm/s knockback.
 28. **Block damage.** A `block.cracked_wall` (`hardness_milli` 2000) breaks on the 7th 12,000 mHP axe swing, the 50th 8,000 mHP bullet or the 1st 40,000 mHP launcher hit; its crack stage after 5 swings is 7 and it keeps 16 micro-voxels; an entry untouched for 600 ticks is removed; the same hits on granite masonry (not destructible) add nothing.
@@ -2001,12 +2119,12 @@ Gaps G1 to G5 and G7 to G28 of earlier versions are closed by canon-1.11 and the
 45. **Event schemas.** Every ID of Canon §18 and §14.3 has exactly one payload row; the `heard` field of `ev.noise` has 5 entries and slot 4 hears like the party; `ev.invasion_ended` carries reason codes 0 to 6; serialized event logs contain only integers and `0x` strings.
 46. **Viscosity and gas room.** Lava in a genre with `liquid_viscosity_bp` 9000 has `flow_eff` 1350 and moves 135 units down per run. `emit_gas` of 500 smoke into a cell holding 9,900 steam adds 100.
 47. **Air and wall jumps.** With `air_jump_max` 2 a body jumps twice in one airborne period and not a third time; with `wall_jump` it wall-jumps once per airborne period off a wall it touched on the previous tick; landing resets both counters.
-48. **Light overrides.** A `blackout` override with `max_level` 0 over an arena makes `light_at` 0 for every Erratum inside, lets a spawn query with `spawn_block_max` 0 pass inside it, changes no stored light level, and expires on its `until` tick. A 12000 mm sphere override covers a cell whose center lies 12,000 mm from the sphere's center and not one 12,001 mm away. Inside a doc 06 shadow area a cell storing 10 reads 2 and a cell storing 6 reads 0.
+48. **Light overrides.** A `blackout` override with `max_level` 0 over an arena makes `light_at` 0 for every Erratum inside, lets a spawn query with `spawn_block_max` 0 pass inside it, changes no stored light level, and expires on its `until` tick. A 12000 mm sphere override covers a cell whose center lies 12,000 mm from the sphere's center and not one 12,001 mm away. Inside a doc 06 shadow area a cell storing 10 reads 2 and a cell storing 6 reads 0. A box override with `min_level` and `max_level` 15 makes a contained cell storing 0 read 15, and one with both 0 makes it read 0 even inside that first override.
 49. **Lag-compensated projectile.** An Erratum or invader projectile fired on tick 1000 with `view_tick` 994 takes 7 steps on tick 1000, testing poses of ticks 995 to 1000, then 1 step per tick; an NPC projectile takes 1 step on its spawn tick.
 50. **Resting items.** An item at rest on a flat floor keeps its exact position for 600 ticks with no integration; a 3000 mm/s knockback moves it on the next tick.
 51. **Payload reconciliation.** A lethal melee hit emits `ev.damage_dealt` with flag `lethal` and then `ev.entity_killed` whose `damage_seq` equals that event's `seq`; a downed Erratum bleeding out emits `ev.entity_killed` with `damage_seq = 0xFFFF_FFFF`. A parried hit carries bit 14, a dodge-negated hit bit 15 with every type 0 and its `base_mhp`, a takedown bit 13 and a Blood Price payment bit 16. A fizzled Grimoire spell emits one `ev.spell_cast` with `fizzled = true`, `spell = 0` and its `spell_hash`, and no other fizzle event. A traded item emits `ev.item_dropped` with `cause = 1` and `ev.item_picked_up` with `from = 3`, `cause = 1`. A downed Erratum crawling 1,000 mm emits two `ev.footstep` with gait `grid.gait.crawl`.
-52. **Retired kind code.** The content loader rejects an entity template with kind code 2; `MoveMode` has 8 variants and the §14.2 table has exactly one row per Canon §18 event (42 rows) plus the six events of this chapter.
-53. **Micro-voxel masks.** Every predefined mask has the §4.4 popcount (full 64, slab 32, stairs 48, door and trapdoor 16, fence 16 + 4 and pane 16 + 8 per connected side, layer 16 × `ceil_div(level + 1, 2)`, ladder, cross and fixture 0). Stairs at facing N decompose into `[0,0,0]–[1000,500,1000]` then `[0,500,0]–[1000,1000,500]`. A stone bottom slab (registry `light_filter` 15) reads `light_filter_at` 7 and is gas-open; stairs and a closed door are not gas-open, and an open door is. With `grid.liqi.permeable`, a bottom slab holds 500 liquid units, stairs 250 and a closed door 750. A `block.tall_grass` cell keeps `conceal` 2.
+52. **Retired kind code.** The content loader rejects an entity template with kind code 2; `MoveMode` has 10 variants with `Slide` code 8 and `Grapple` code 9, and the §14.2 table has exactly one row per Canon §18 event (42 rows) plus the six events of this chapter.
+53. **Micro-voxel masks.** Every predefined mask has the §4.4 popcount (full 64, slab 32, stairs 48, door and trapdoor 16, fence 16 + 4 and pane 16 + 8 per connected side, layer 16 × `ceil_div(level + 1, 2)`, ladder, cross and fixture 0). Stairs at facing N decompose into `[0,0,0]–[1000,500,1000]` then `[0,500,0]–[1000,1000,500]`. A stone bottom slab (registry `light_filter` 15) reads `light_filter_at` 7 and is gas-open; stairs and a closed door are not gas-open, and an open door is. A closed oak door reads `light_filter_at` 15 and `sound_atten_at` 175, the open door 3 and 43. With `grid.liqi.permeable`, a bottom slab holds 500 liquid units, stairs 250 and a closed door 750. A `block.tall_grass` cell keeps `conceal` 2.
 54. **Chipping.** Five 12,000 mHP axe swings at Folio 1 on one impact point of a `block.cracked_wall` remove 48 micro-voxels, each at most as far from that point as every one kept, and emit five `ev.block_chipped`; dropping the decayed damage entry 600 ticks later keeps the 16-voxel mask; `refill_mask` to 64 removes the custom mask. A wooden door hit for less than its block HP keeps its 16 micro-voxels. A save with chipped cells restores to the same `state_hash`.
 55. **DDA bound.** `raycast_blocks` with `t_max` 4 m passes `max_steps` 15 and never visits more than 16 cells; with `t_max` 4.5 m it passes 18.
 56. **Hit batches and `env`.** A weapon hit and a fall hit on the same tick resolve in `sys.damage` and `sys.damage_late` respectively, whatever their source IDs. A `st.burning` applied by lava contact pulses with `env`; after a fire-arrow hit without `env` refreshes it, its next pulses carry no `env`.
