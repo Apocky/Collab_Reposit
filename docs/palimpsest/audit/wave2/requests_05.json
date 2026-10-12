@@ -1,0 +1,78 @@
+[
+ {
+  "from": "fix:13",
+  "request": "`enemy.ab.lance_charge` is now an on-foot charge-and-trample attack profile (doc 13 §3). The NPC action state machine runs it like any other profile; drop the §17 mount sections and attack factor 3 (mounted charge) per C-30."
+ },
+ {
+  "from": "fix:14",
+  "request": "The Interface row for doc 14 is now satisfied: kits use only exported IDs, the longarm uses ammo.rifle, ammo.cell is at most 300, and sling stones are one arch.ranged.thrown stack of at most 20. Name the step-13 factor m13 (doc 14 §7.3) instead of difficulty_bp(att, tgt)."
+ },
+ {
+  "from": "fix:04",
+  "request": "Add natural-weapon skins of arch.melee.unarmed for non-humanoid Echoes: body.quadruped bite, claw and pounce (echo.fenrir); body.serpentine bite, constrict and spit (echo.jormungandr). Sources: canon §16.2, doc 04 §13, doc 14 §6.3."
+ },
+ {
+  "from": "fix:17",
+  "request": "§1.7 'Inputs consumed': drop input.mount (bit 25), now undefined in lint, and the remaining mount mechanics (C-30)."
+ },
+ {
+  "from": "fix:12",
+  "request": "Interface row for doc 12: remove the `room.no_mount` immediate-dismount rule (C-30). Doc 12 no longer has the tag or §16.4."
+ },
+ {
+  "from": "fix:08",
+  "request": "§9.3 throwables bullet: change 'Doc 08 bombs (`alch.bomb.*`) are area hits with `NO_CRIT`' to 'Doc 08 bombs (`alch.bomb.*`) and thrown potion splashes (doc 08 §10.2) are area hits with `NO_CRIT`'. In the §9.4 pseudocode, change '(+ NO_CRIT for bombs)' to '(+ NO_CRIT for doc 08 bombs and potion splashes)', so that both chapters name the same hits (G-096)."
+ },
+ {
+  "from": "fix:06",
+  "request": "§1.5 HitRecord and damage steps 2.5/2.6: for spell and prayer hits carry the spell's Contradiction potency and Edge (doc 06 §11.1: maximum over the root core glyphs, or the payload stage's own core) and use them at steps 2.5 and 2.6 instead of potency(h.item_uid, att) and edge_bp(h.item_uid, att), which read the implement; also carry the stage school (doc 06 §7.4 skill XP) and set move_id = the stage's form glyph id32."
+ },
+ {
+  "from": "fix:10",
+  "request": "Doc 05 names no `curse.` ID. Add a doc 10 Interface row and the §10.5 hooks for doc 10 §7.3/§7.8 combat terms:\n- `curse.brittle`: slash, pierce and blunt resist[t] −m Bp, before the step-4 clamp.\n- `curse.blunted`, `curse.pact.fury`, `curse.pact.executioner`: additive bucket.\n- `curse.dulled`, `curse.pact.nightmare`: crit chance gear term.\n- `curse.pact.glass`: crit damage gear term.\n- `curse.misfire`: failure chance.\n- `curse.bloodprice`, `curse.backlash`, `curse.pact.thorns`: dmg.true hits entering at step 4.\n- `curse.pact.bulwark`: poise.\n- `curse.pact.bloodthirst`: heals."
+ },
+ {
+  "from": "fix:03",
+  "request": "damage_block now takes the impact point: damage_block(c, ip, mhp, shares, actor, block_bp). Use the area's center as ip for area damage. Fall, environmental-explosion and falling-block hits resolve in sys.damage_late (Canon §10.8 second batch). DoT pulses carry env when StatusInst.env is set (C-32)."
+ },
+ {
+  "from": "verify:17",
+  "request": "Define the grappling tool's mechanics (DECISIONS 95). Doc 17 assumes it is an item used from the quickbar, so it needs no new button bit."
+ },
+ {
+  "from": "verify:08",
+  "request": "In the §9.3 bullet and the §9.4 explosion pseudocode, name doc 08 thrown potion splashes (doc 08 §10.2) as `NO_CRIT` area hits alongside `alch.bomb.*` bombs, e.g. '(+ NO_CRIT for doc 08 bombs and potion splashes)'. The Interface row for 08 already says 'flasks and bombs'."
+ },
+ {
+  "from": "verify:06",
+  "request": "§1.5 HitRecord and damage steps 2.5 and 2.6 (still open): for spell and prayer hits, carry the spell's Contradiction potency and Edge (doc 06 §11.1) and use them in place of potency(h.item_uid) and edge_bp(h.item_uid). Also carry the stage school and move_id = the stage's form glyph id32."
+ },
+ {
+  "from": "verify:10",
+  "request": "Carried forward from the fixer, still open because doc 05 names no curse. ID. Add a doc 10 Interface row and the §10.5 hooks for these doc 10 terms: curse.brittle (slash, pierce and blunt resist[t] −m Bp before the step-4 clamp); the additive-bucket terms of curse.blunted, curse.pact.fury and curse.pact.executioner; the crit-chance gear term of curse.dulled and curse.pact.nightmare; the crit-damage gear term of curse.pact.glass; the failure chance of curse.misfire and curse.pact.wildfire; the dmg.true hits of curse.bloodprice, curse.backlash and curse.pact.thorns, entering at step 4; the poise term of curse.pact.bulwark; and the heals of curse.pact.bloodthirst."
+ },
+ {
+  "from": "verify:03",
+  "request": "Define steer(pr, v, pose_tick) -> Fx3 in §10.5. It needs the homing target rule for st.marked targets, the per-tick turn (doc 11's 16384 Bam/s through a Canon §2.3 accumulator kept in ProjCombat) and how speed is preserved. It must be pure and draw nothing. Doc 03 §5.19 calls it after drag on every projectile step. The five-hook sentence in §7.1 can mention it."
+ },
+ {
+  "from": "fix:05",
+  "unresolved": "DECISIONS item 95 (sprint-slide, 2,000 mm ledge mantle, grappling tool) lists doc 05 under 'Lands in'. Neither canon §4 nor doc 03 defines the sprint-slide yet, so doc 05 adds no slide weapon gating or slide attack until doc 03 publishes the slide state. Mantling is already gated in §4.8a."
+ },
+ {
+  "from": "fix:05",
+  "unresolved": "Bomb crits: doc 05 keeps NO_CRIT for doc 08 bombs and splashes per triage G-096 ('these draw and ignore it'). Doc 08 currently lets the crit apply, so the two chapters disagree until doc 08 takes the request above or the orchestrator overrules G-096."
+ },
+ {
+  "from": "fix:05",
+  "unresolved": "Doc 05 has two open Canon gaps for the canon owner: (1) whether DECISIONS 84's 'limb' covers Errata tails and wings (doc 05 and doc 04 apply it to all severable Errata parts); (2) which batch takes shock chains, thorns and trait ricochets queued during the first batch (doc 05 and doc 03 use the second)."
+ },
+ {
+  "from": "verify:05",
+  "unresolved": "Neon Saint's '1000 mm of blocks' is hooked as exactly one penetrable cell (BLOCK_SIZE). A diagonal path through one cell is longer than 1000 mm, so doc 11, which owns the trait, should confirm this or ask for a path-length rule."
+ },
+ {
+  "from": "verify:05",
+  "unresolved": "DECISIONS 95 (sprint-slide, 2,000 mm mantle, grappling tool) stays open as Canon gap 3 until canon §4 and doc 03 define the slide and the grappling tool."
+ }
+]

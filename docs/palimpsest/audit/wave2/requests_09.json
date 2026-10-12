@@ -1,0 +1,74 @@
+[
+ {
+  "from": "verify:14",
+  "request": "§1.4: change 'doc 14's run.note.silent reads !run_alerted' to 'reads !folio_alerted on the tick the Rubric completes' (doc 14 §3.5; run_alerted never resets, so the note would be unreachable after one alert). Update the Interface row for 14 the same way. Pacifist tracking is now doc 14 §10 (party_kills, party_pacified, ach.pacifist)."
+ },
+ {
+  "from": "verify:16",
+  "request": "§8.3: give StealthHud.steps (footstep indicators) a 30-tick lifetime like rings, so doc 16 §6.8's cap of 4 newest steps is well defined."
+ },
+ {
+  "from": "fix:07",
+  "request": "Imports row for doc 07: 'lockpick, toolkit and hacking-deck durability and quality' → 'lockpick, toolkit and hacking-deck quality'. Close G21: doc 07 decided to add no snow material or snow-layer block (triage G-203), so noise.surface.snow stays unused or is retired."
+ },
+ {
+  "from": "fix:04",
+  "request": "§13.3 lockpicking: replace 'lockpicks durability −1 (doc 07)' with 'one item.tool.lockpicks unit is consumed from the stack' (C-31). Keep break_bp = 2500 so doc 04 Security 25's × 5000 still applies. In §11.4 and G9, drop 'Canon §3.3 lists no rng.check': canon-1.11 lists rng.check, and the bluff stays on rng.stealth seq 1006 because canon §3.3 assigns disguise challenges there (G-023)."
+ },
+ {
+  "from": "verify:07",
+  "request": "§13.4: say what a hack attempt does after its hacking deck sparks. Doc 07 §11.1 rule 4 rolls 1 keyed rng.combat failure per attempt at its start and deals the spark; for example, the attempt fails before any doc 09 draw and takes the auto-failure costs. Keep the draw count fixed."
+ },
+ {
+  "from": "fix:17",
+  "request": "§13.2 and §13.3: remove the lockpick break roll, durability −1 and seq 1005 pick-break (C-31). Remove the noise.mount.* rows (C-30). Read the per-slot lock_mode from the SetLockMode { manual } intent (doc 17 §10.11); an attempt keeps its starting mode. Expose to the owner's client each targeted device's verbs, chance, ticks and hack_fails, and each pickpocket target's stealable items with chance and ticks. The panels are ui.hud.hack and ui.hud.pickpocket (doc 17 §10.12)."
+ },
+ {
+  "from": "fix:12",
+  "request": "Change the citation 'doc 12 §10.2' for the light bands (dark ≤ 4, dim 5..=9, bright ≥ 10) to doc 12 §11.3."
+ },
+ {
+  "from": "fix:08",
+  "request": "§11.1 Outfits and masks: 'respirators are not masks (doc 08 §4.5)' should cite doc 08 §4.3."
+ },
+ {
+  "from": "fix:03",
+  "request": "§2.1 stealth_light: delete the line 'dark = 8 if e's light cell lies in a doc 06 shadow area' and 'env = max(0, env - dark)'. Doc 03 §10.6 already lowers every light read, light_at included, by 8 inside doc 06 shadow areas, so keeping both would dim twice. Also change the invariant 'stealth_light = max(env − shadow, own, flash, phosphor, spot)' to 'max(env, own, flash, phosphor, spot)'. The G23 sight request is met: doc 03 tests sight rays against micro-voxel boxes and scales conceal_at by fill."
+ },
+ {
+  "from": "verify:08",
+  "request": "§11 (line 1046): 'respirators are not masks (doc 08 §4.5)' should cite doc 08 §4.3."
+ },
+ {
+  "from": "fix:09",
+  "unresolved": "G23 (open canon gap): Canon §4.4 says a cell blocks sight only at 48 or more micro-voxels, which would let observers see through closed doors. Doc 09 keeps doc 03's box-level raycast and fill-scaled concealment until canon §4.4 is reworded."
+ },
+ {
+  "from": "fix:09",
+  "unresolved": "G24 (open canon gap): Canon §10.6's lethal-takedown row says 'HP plus ward', but doc 09's elite takedown deals half max HP plus ward. Doc 09 keeps the elite rule until the canon row's Notes are amended."
+ },
+ {
+  "from": "fix:09",
+  "unresolved": "DECISIONS 99 (time of day and weather feeding sound and light) is outside rows 1–88 and has no doc 12 weather table yet. For now doc 09 reads only gpv.evt.weather_front; it is recorded as a future input in Interface row 12."
+ },
+ {
+  "from": "fix:09",
+  "unresolved": "noise.surface.snow stays defined but no base-game material emits it (doc 07 decision). It is kept for data packs and for doc 18's 17 audio classes rather than retired."
+ },
+ {
+  "from": "fix:09",
+  "unresolved": "Doc 04's Security 25 perk text and its doc 09 Interface row (C-20, C-31) still say 'break chance' and 'rng.check' until doc 04's fixer applies the request."
+ },
+ {
+  "from": "verify:09",
+  "unresolved": "Invader interest filter: doc 09 §14.5 sends the invader an Erratum's transform when the invader perceives it, heard it, or a fac.editors source marked it. Doc 16 §6.6 rule 2 uses a symmetric 4-ray visibility test and says doc 09's filter is not applied (doc 16 O1). No triage ruling covers this. Doc 09 now records the conflict in Interface row 16, but which rule wins (or how they combine) needs an owner or orchestrator decision."
+ },
+ {
+  "from": "verify:09",
+  "unresolved": "Doc 09 keeps three open canon gaps that need canon edits: G23 (sight through partial cells: a closed door panel under Canon §4.4's 48-voxel rule), G24 (the elite half-HP lethal takedown against Canon §10.6's \"HP plus ward\" row), and the new G25 (`in_combat` \"alerted\" wording)."
+ },
+ {
+  "from": "verify:09",
+  "unresolved": "Not checked: whether doc 13 actually sets `outfit` on a template of every `fac.native.*` faction (test 60). This needs a full scan of doc 13's templates and is left as a request."
+ }
+]

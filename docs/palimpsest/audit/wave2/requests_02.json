@@ -1,0 +1,114 @@
+[
+ {
+  "from": "fix:13",
+  "request": "The curve-generator JSON declares `ai.curve.logistic_up`, `ai.curve.bell_mid` and `ai.curve.plateau` as \"id\" values in doc 13's `ai.` namespace (canon §19; lint multiply_defined). Rename the JSON key (e.g. \"curve\") or cite doc 13 §4.4 so the IDs are referenced, not declared."
+ },
+ {
+  "from": "fix:16",
+  "request": "§5.5 bit table: replace '26–31 reserved, must be 0; the replay validator rejects set bits' with 'ACTION' (bits 26–28, values 0..=5; 6 and 7 rejected by doc 16's sanitizer) and 'WHEEL_ENTRY' (bits 29–31); bit 25 (retired mount toggle) reserved, always 0 (triage C-10, C-30)."
+ },
+ {
+  "from": "fix:16",
+  "request": "§14 Steamworks bullet: replace 'invaders find open sessions through a separate lobby search' with 'invaders find open sessions through doc 16's svc.lobby beacon search' (triage C-13)."
+ },
+ {
+  "from": "fix:16",
+  "request": "§17.4: run summaries also carry, per Folio, genre, entry and exit ticks, offered doors and the committed door, the maximum equipped C per slot at entry, a Disconnected-weapon flag per slot, committed Rewrites, and NPC kills split into systemic and other; telemetry is barred for every minor-flagged account, not only those below juris.flag.child_data_consent_age (triage C-14; doc 16 §11.7)."
+ },
+ {
+  "from": "fix:16",
+  "request": "§11.2, §13.4 and test 35: only simulation-affecting mods enter content_hash's MOD section and the handshake refusal; presentation-only mods enter presentation_hash (Canon §2.4, DECISIONS 87). §13.2's sentence about 'doc 16's svc.workshop review' for consoles no longer matches doc 16 §11.8, where svc.workshop is the Epic build's mirror and no console port is planned (DECISIONS 98)."
+ },
+ {
+  "from": "fix:16",
+  "request": "Add an Opus encoder crate (doc 16 §9.12 voice is Opus 24 kbit/s, 20 ms frames on every build so Steam and Epic clients hear each other; doc 02 lists only opus-decoder) and the Epic Online Services platform layer (feature eos) for the Epic Games Store build (DECISIONS 73)."
+ },
+ {
+  "from": "fix:01",
+  "request": "Apply triage C-14 to §17.4. The opt-in run summary carries, per Folio: genre, entry and exit ticks, offered and committed doors, max equipped C per slot at entry, a Disconnected-weapon flag per slot, committed Rewrites, and NPC kills split into systemic (doc 01 §10.3) and other. Bar every minor-flagged account. Doc 16 §11.7 already does both."
+ },
+ {
+  "from": "verify:16",
+  "request": "DECISIONS 112 (Steam only): remove the EOS SDK row, feature eos, the EOS backend of crate.platform, the §14 Epic Games Store bullet and flag.net.crossplay. The opus row's reason should no longer name Epic players. §13.2's Workshop distribution should go through Steam Workshop, not svc.workshop, which runs nothing. Drop 'EOS' from the Imports DECISIONS row and from Interface row 16."
+ },
+ {
+  "from": "fix:11",
+  "request": "Add `IntentKind::DropLucre { amount: i64 }` beside `ShopHaggle { shop }` (C-15). Doc 11 §17 validates it: 1 <= amount <= purse; refused for ghosts, downed Errata and invaders. It creates a Public, non-fresh `item.lucre` pile; Lucre passes between party members only as dropped piles (decision 83)."
+ },
+ {
+  "from": "fix:15",
+  "request": "palimpsest_econ should also hold the Transcription claim (doc 15 §3.9.1), and pal odds should compute each build's odds records from its pools (doc 15 §3.2.7). §11.2's MOD section should hold only simulation-affecting mods, per canon-1.11 §2.4 (presentation-only mods go to presentation_hash); doc 15 §2.2's Apocrypha rule relies on this. Doc 02 G1 is resolved by canon-1.11."
+ },
+ {
+  "from": "fix:18",
+  "request": "Triage C-12: §8.3 texture layers become 64 × 64 px with full mip chains, 5,488 bytes per layer, world-space triplanar at 64 texels per meter (Canon §4.4). Also delete G1, since Canon §2.4 now defines `presentation_hash`."
+ },
+ {
+  "from": "verify:18",
+  "request": "§9 says aud.mix.default lets a full mix steal the quietest voice of a lower-priority pool. Doc 18 §6.6 says pools never borrow: a full priority-7 pool stops its oldest voice, and any other full pool replaces its quietest voice only for a louder request. Please align the wording. Also delete the web-build leftovers ('UASTC for the web build' in the asset table, 'on the web build' in the particle count) per DECISIONS 98."
+ },
+ {
+  "from": "verify:15",
+  "request": "palimpsest_econ also builds palimpsest-verify and holds the Transcription claim. pal odds computes per-build odds records (doc 15 §3.2.7). Clients keep the replay log of every reported run for 30 days (doc 15 §10.4). Drop EOS per DECISIONS 112 and 123."
+ },
+ {
+  "from": "fix:17",
+  "request": "§5.5: bit 25 MOUNT_TOGGLE becomes reserved and must be 0 (C-30). List ACTION (bits 26–28) and WHEEL_ENTRY (bits 29–31) and drop 'reserved' (C-10). IntentKind: add ShopHaggle { shop } and doc 17's kinds SetScribesMercy, MapPing, AssignWheelEntry, AssignAbilitySlot, QuickbarAssign, SetFocusLock, Examine, SetCastItemTarget, SetBreathHold, Vocalize (C-15), plus the new SetLockMode { manual } (doc 17 §10.11). §8.4: FOV setting 60–120° (C-11)."
+ },
+ {
+  "from": "fix:12",
+  "request": "Change the citations 'doc 12 §6.3' and 'doc 12 §13.1' to §7.3 and §14.1. The run header and GenInput carry `bleed_on` (doc 12 §14.1)."
+ },
+ {
+  "from": "fix:06",
+  "request": "(Triage C-15, restated because doc 06 depends on it) IntentKind includes SetCastItemTarget { uid } and Pray { patron, kind }, consumed by doc 06 §3.2, §5.3 and §16."
+ },
+ {
+  "from": "fix:03",
+  "request": "§4.6: dda takes max_steps and visits at most max_steps + 1 cells (actions_02 item 4); doc 03 passes 3 × ceil_div(t_max.raw, 2^32) + 3. §6.5 section 4: after the four cell bitsets of each chunk, add the ascending (Local, u64) custom masks (doc 03 §4.3, §16.1). ChunkView: carry the custom-mask map beside the block states for meshing. View frame: publish doc 06 shadow areas beside the light overrides."
+ },
+ {
+  "from": "verify:17",
+  "request": "Doc 02 cites the FOV setting as 'doc 17 §8.4' in §8.4's world-camera bullet and in its Imports row for docs 04–17. The setting is in doc 17 §13.5."
+ },
+ {
+  "from": "verify:12",
+  "request": "The citations 'Doc 12 §13.1' (lines ~938, ~1016) should read §14.1 (bleed plan), and any 'doc 12 §6.3' should read §7.3."
+ },
+ {
+  "from": "verify:06",
+  "request": "IntentKind table (doc 06 row): write ComposeSpell { slot, refs }, the payload doc 17 §6 sends and doc 06 §8.2 consumes."
+ },
+ {
+  "from": "fix:02",
+  "unresolved": "Canon gap G14 (Canon §1.3 checked shifts vs §3.1's wrapping xoshiro `s[1] << 17`) needs a canon edit. Doc 02 states its own reading: wrapping_shl."
+ },
+ {
+  "from": "fix:02",
+  "unresolved": "Doc 03 does not yet export everything doc 02's micro-voxel rendering contract assumes: the mask list in section 4 after the bitsets, and the block_gen bump on mask change. Doc 03 was being edited concurrently (it already mentions mask_at and dda max_steps). This is listed under Interface assumptions and in cross_chapter_requests."
+ },
+ {
+  "from": "fix:02",
+  "unresolved": "The Rust slice still differs from the spec in two places (task #8, outside this file): geom.rs ray_sphere returns None for a tangent ray (h == 0), and the callback `dda` lacks the `max_steps` parameter that VoxelDda::new already has."
+ },
+ {
+  "from": "fix:02",
+  "unresolved": "I accidentally overwrote the shared scratchpad file apply.py at 22:34. I replaced it with a generic version that picks its target chapter by unique anchors and then moved my own tooling to scratchpad/fix02/. The doc 15 fixer has since rewritten apply.py for itself. A batch file of another agent that relied on the original apply.py between those times may have failed its anchor assertion without writing anything."
+ },
+ {
+  "from": "verify:02",
+  "unresolved": "flag.net.crossplay is kept in Exports, marked inert under DECISIONS 112, because doc 16 still references it. Whether it retires is doc 16's call."
+ },
+ {
+  "from": "verify:02",
+  "unresolved": "The §17.2 `playtest` channel was rewritten as an invite-only, password-protected Steam branch to satisfy DECISIONS 113 ('no public playtest build'). That is a judgment call: the product owner may prefer to drop the channel entirely."
+ },
+ {
+  "from": "verify:02",
+  "unresolved": "Other chapters (03, 15, 18 and others) were being edited during this verification, and DECISIONS.md gained rows 109 to 125 after the fixer finished. The interface checks reflect the files on disk at about 23:30."
+ },
+ {
+  "from": "verify:02",
+  "unresolved": "palimpsest-verify's MIT licence against the proprietary workspace (DECISIONS 44) is doc 15's to settle."
+ }
+]

@@ -1,0 +1,118 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Canon wording for doc 14's Canon gaps: (1) section 3.5: append 'or, for a room fixture that has neither, the Folio index' to the context_uid definition (the boon altar). (2) Section 17.1 GLYPH_LIBRARY_START: note that runs on unlock.daily_baseline offer doc 06's 52 base-pool glyphs instead of the account library. (3) Section 17.1 ERASURE_STEP: replace 'folio_entry_tick + 43200 + 1800 × (k - 1)' with 'clock_start + 43200 + 1800 × (k - 1), where clock_start is the entry tick, or the Editor's death tick in a boss Folio (doc 14)'."
+ },
+ {
+  "from": "fix:05",
+  "request": "Adopt doc 05 Canon gap 1: in §9.1 replace \"An Erratum's limb severs only if\" with \"An Erratum's severable part (limb, tail or wing) severs only if\". Doc 04's on_part_damage already applies the rule to every severable Erratum part. Adopt doc 05 Canon gap 2: in §10.8 replace 'then environmental, contact, surface and DoT hits' with 'then environmental, contact, surface and DoT hits and every hit queued while the first batch resolves'."
+ },
+ {
+  "from": "fix:02",
+  "request": "Canon gap G14 (doc 02): Canon §1.3's shifts bullet should add \"except the bit-mixing shift `s[1] << 17` of §3.1, which wraps\". Without this, the canon's own xoshiro256++ line contradicts the rule that every `x << k` is a checked multiplication, and a checked shift would fail Canon §21 test 1."
+ },
+ {
+  "from": "fix:01",
+  "request": "In §4.2, state the DECISIONS 95 movement kit: a ledge mantle up to 2,000 mm, a sprint-slide in the base kit, and a genre-skinned grappling tool that is an item, never part of the base kit."
+ },
+ {
+  "from": "verify:13",
+  "request": "Add a Second Edition section (DECISIONS 100, 101, 103, 105, 106): run structure of 15 Folios in 3 Volumes, depth 25 + 2n for Second Edition Folio n in the P, T, H and S tables, and fused-genre Folios. Also resolve the name clash: §20 glosses Patron as 'the Author of a genre', while DECISIONS 103 names the new final boss 'the Author'."
+ },
+ {
+  "from": "verify:05",
+  "request": "Adopt doc 05 Canon gap 1 (Errata tails and wings under DECISIONS 84) and gap 2 (hits queued during the first batch go to the second). When DECISIONS 95 lands in §4, adopt gap 3 together with doc 03."
+ },
+ {
+  "from": "verify:14",
+  "request": "Canon wording for doc 14 Canon gaps items 4 to 6. Item 4: a §17.1 Second Edition paragraph (15 Folios after the Ur-Text, f = f_ur + n, d = 25 + 2n, 3 Volumes of 5, boss Folios at n = 5, 10, 15, not Marginalia), plus §13.7 and §13.8 depth and ENH_CAP text. Item 5: a §17 statement that asynchronous traces never read or advance a simulation stream or enter simulation state, saves or state_hash. Item 6: §5.8 'the Codex then remembers it' becomes 'the account's Index (doc 14) then remembers it'. Items 1 to 3 remain requested."
+ },
+ {
+  "from": "verify:01",
+  "request": "State the DECISIONS 95 movement kit in §4.2 (mantle up to 2,000 mm, saying whether it is measured from the feet; sprint-slide; grappling tool as an item). Add a fused-genre rule and the Second Edition structure and depth (DECISIONS 101, 106) and a trace rule (DECISIONS 96)."
+ },
+ {
+  "from": "fix:07",
+  "request": "§4.3: add 'plants, doc 08 reaction products' to the list of destructible blocks (block.leaves, block.tall_grass, block.vine, block.crop, block.obsidian, block.basalt, block.slag are destructible in doc 07). §4.4: add 'A destructible cell whose shape occupies no micro-voxels or whose mask follows its props breaks whole at 0 block HP (doc 07 §10.8).'"
+ },
+ {
+  "from": "fix:11",
+  "request": "Doc 11 Canon gap 1 proposes adding to §17.1 Abridged, after 'loot quantity means worldgen chests and floor-loot spots': 'and scaled kill-drop lines (doc 11 §9.1)'. Doc 11 multiplies scaled kill-drop lines by 16667 in Abridged, matching kill XP and §13.2's Abridged Lucre target."
+ },
+ {
+  "from": "fix:04",
+  "request": "§9.1 effects line: replace 'Losing a leg multiplies move speed by 5000 and removes sprint, jump and dodge' with 'Losing a leg of a two-legged plan multiplies move speed by 5000 and removes sprint, jump and dodge; doc 04 §8.3 and §13 set the factors for plans with more legs' (doc 04 Canon gap 1; §4.2 already routes leg factors through body_move_bp)."
+ },
+ {
+  "from": "fix:09",
+  "request": "§4.4 (doc 09 G23): replace the sight half of 'A cell blocks light and sight when popcount(mask) >= 48' with: 'A cell blocks light when `popcount(mask) >= 48`. A sight ray (doc 09) is blocked by a cell's occupied micro-voxel boxes; a crossed cell whose boxes it misses scales its concealment by the fill fraction.' §10.6 lethal-takedown row, Notes cell (doc 09 G24): add 'against `rank.elite`, `mul_bp(max HP, 5000)` plus ward instead (doc 09 §9.4)'. §17.7: add the `noise.mount.` family (noise.mount.walk, .gallop, .hover, .glide, .summon; retired by doc 09) to the retired IDs. tools/spec_lint.py RETIRED_PREFIX should gain 'noise.mount.'."
+ },
+ {
+  "from": "fix:18",
+  "request": "§3.8 Presentation generators: append \"and `Rng::from_seed64(seed)` over a name seed the simulation already recorded (doc 12 §20.1, doc 18 §7.4)\". Doc 18 §7.4 expands doc 12's recorded hero/rival name seeds this way, and its test vectors depend on it."
+ },
+ {
+  "from": "verify:11",
+  "request": "Rule on doc 11 Canon gap 1. Either add 'and scaled kill-drop lines (doc 11 §9.1)' to the §17.1 definition of Abridged loot quantity, or doc 11 drops the × 16667 on kill lines. Also rule on Canon gap 2: add DECISIONS 95 (grappling tool item) and 102/106 (Second Edition carry-over), and state `ENH_CAP` for Second Edition Folios in §13.7."
+ },
+ {
+  "from": "verify:07",
+  "request": "§4.3: add 'plants, furniture, switches and fuse boxes, doc 08 reaction products' to the list of destructible blocks (doc 07 Canon gap 1). §4.4: add 'A destructible cell whose shape occupies no micro-voxels or whose mask follows its props breaks whole at 0 block HP (doc 07 §10.8)' (doc 07 Canon gap 2)."
+ },
+ {
+  "from": "verify:04",
+  "request": "Still open, carried over: §9.1 effects line should read 'Losing a leg of a two-legged plan multiplies move speed by 5000 and removes sprint, jump and dodge; doc 04 §8.3 and §13 set the factors for plans with more legs.' (doc 04 Canon gap 1). When DECISIONS 106 lands, §13.8 should state the Second Edition depth (25 + 2n) so doc 04 §6.7 and doc 14 can cite canon."
+ },
+ {
+  "from": "verify:09",
+  "request": "§2.3 `in_combat`: replace \"any hostile AI held awareness `alerted`\" with \"any hostile AI held awareness `aware.alert` (doc 09)\" (doc 09 G25). Also, still open from the fixer: §4.4 sight wording (doc 09 G23); §10.6 lethal-takedown row Notes: \"against `rank.elite`, `mul_bp(max HP, 5000)` plus ward instead (doc 09 §9.4)\" (G24); §17.7: add the retired `noise.mount.` family (walk, gallop, hover, glide, summon). tools/spec_lint.py RETIRED_PREFIX should gain `noise.mount.`."
+ },
+ {
+  "from": "verify:18",
+  "request": "Unchanged from the fixer: Canon §3.8 should add 'and Rng::from_seed64(seed) over a name seed the simulation already recorded (doc 12 §20.1, doc 18 §7.4)'."
+ },
+ {
+  "from": "verify:15",
+  "request": "§13.9 `illuminated`: after \"Engine faces and rewards (doc 11 §2.3)\" add \"; for a Keepsake, one roll of its Keepsake generator (§3.6, doc 15 §5.4)\". As written, the canon names only rng.loot rolls, while Keepsakes are generated outside the simulation."
+ },
+ {
+  "from": "fix:17",
+  "request": "Add input.mount, input.ctx.mounted, ui.hud.mount and ui.tip.mount to §17.7's retired IDs. G28: in §5.8, replace 'the Codex then remembers it' with 'the account's Index (doc 14) then remembers it' (triage G-197 naming). G29: in §17.1 ERASURE_STEP, replace '`folio_entry_tick + 43200 + 1800 × (k - 1)`' with '`clock_start + 43200 + 1800 × (k - 1)`, where `clock_start` is the entry tick, or the Editor's death tick in a boss Folio (doc 14)'."
+ },
+ {
+  "from": "fix:08",
+  "request": "Confirm the respirator scope in §12.1. canon-1.11 says a working respirator blocks every gas contact row, which includes the skin rows of gas.steam, gas.caustic and gas.cold_fog. Doc 08 now conforms. If inhaled rows only were intended, change §12.1 to 'blocks every inhaled gas contact row' (doc 08 Canon gap 1)."
+ },
+ {
+  "from": "fix:06",
+  "request": "§17.1 GLYPH_LIBRARY_START: append 'Runs on unlock.daily_baseline (Canon §13.6) offer the 52 glyphs of doc 06's base pool in place of the account library.' (doc 06 G17, doc 14 gap 2)."
+ },
+ {
+  "from": "fix:03",
+  "request": "Canon §4.4: add 'A closed door or closed trapdoor applies its block's full light_filter and sound attenuation.' (doc 03 G29) and 'Shapes with no micro-voxels (cross, ladder, fixture) keep their block's light filter, concealment and sound attenuation unscaled.' (doc 03 G30). Also carry DECISIONS 95 (mantle to 2,000 mm, sprint-slide, a grappling tool that is an item) and DECISIONS 99 (time of day and weather) into canon so doc 03 can implement them (G31)."
+ },
+ {
+  "from": "verify:17",
+  "request": "G28 and G29 from doc 17 are still open. §5.8: change 'the Codex then remembers it' to 'the account's Index (doc 14) then remembers it'. §17.1 ERASURE_STEP: key the schedule on doc 14's clock_start, not folio_entry_tick."
+ },
+ {
+  "from": "verify:12",
+  "request": "§5.8 Law discovery says 'the Codex then remembers it'. Doc 14 §5.5 (G-197) keeps 'Codex' for the battle pass and stores discovered Laws with the Index. Reword to 'the account's discovered Laws (doc 14 §5.5) then remember it'."
+ },
+ {
+  "from": "verify:12",
+  "request": "Rows for DECISIONS 99 and 101 (doc 12 Canon gap G19): per-genre time-of-day weights and weather states, each with light, fog, sound-attenuation, surface and fire terms in Bp (§5.9, §12); and a fused-genre Folio rule for Second Edition (both genres' rosters, Laws and skins, axioms floor_div(a + b, 2)). Also rule on doc 21 §2.3 (a) lattice cascade and (b) Folio-1 mapping for content sets below 12 core genres (doc 12 G20), for canon-1.12."
+ },
+ {
+  "from": "verify:06",
+  "request": "§17.1 GLYPH_LIBRARY_START (doc 06 G17, doc 14 gap 2, still open): add 'Runs on unlock.daily_baseline offer the 52 glyphs of doc 06's base pool in place of the account library.'"
+ },
+ {
+  "from": "verify:03",
+  "request": "When adding DECISIONS 95 to canon §4.2, state where the 2,000 mm mantle is measured from: the feet at the press (as doc 03 §5.9 measures 1,600 mm), or including the jump. Measured from the feet, a jump plus mantle reaches 3,100 mm and makes 3-block walls climbable (doc 12 §15.1)."
+ },
+ {
+  "from": "verify:02",
+  "request": "Still open code follow-ups, where doc 02 governs:\n- geom.rs ray_sphere must hit when h == 0 (it returns None for h <= 0).\n- dda must take max_steps.\n- fx needs isqrt_u64.\n- palimpsest_sim lib.rs needs #![cfg_attr(not(test), no_std)].\n- palimpsest_data's future modules are named loader, schema and mods."
+ }
+]

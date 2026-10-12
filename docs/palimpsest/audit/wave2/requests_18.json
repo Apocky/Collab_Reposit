@@ -1,0 +1,110 @@
+[
+ {
+  "from": "fix:13",
+  "request": "Update the roster art notes for the converted cavalry, which now fight on foot as `enemy.role.charger`. Rename `war_rig_rider` motorbike to `ram_raider` with a welded car-door ram shield, `posse_rider` to `posse_deputy` (lasso) and `wild_hunt_rider` to `wild_huntsman` (antlers). Also rename any skin text for `hover_lancer` → `jet_lancer`, `getaway_driver` → `getaway_gunman` and `cavalry_general` → `jade_general`. Note that `boss.post_apocalypse.war_boss` now fights on foot in a ram harness."
+ },
+ {
+  "from": "fix:14",
+  "request": "Section 8.4: resident arc beats are text only (DECISIONS 78), 6 per margin.arc.<resident> (8 doc 13 residents plus the Narrator as Ledger pencil notes), keyed to doc 14 §5.6's conditions. Section 8.5a and the Interface row for doc 14: read the deed template and the hero and rival name seeds from FolioRecord.story (doc 12 §20.5 record), and treat story_solved as the solve tick (Option<u64>), as doc 12 §20.7 defines it."
+ },
+ {
+  "from": "verify:14",
+  "request": "Second ending layer: play it after a Second Edition victory (doc 14 §4.7, §8.9). A forfeited Second Edition shows only its closing line and plates. Canon gap 2's DECISIONS 100 item can cite doc 14 §8.9."
+ },
+ {
+  "from": "verify:16",
+  "request": "Add loc. keys for every net.reject.* and svc.err.* ID, including the new svc.err.insufficient_transcription."
+ },
+ {
+  "from": "extend:13-roster",
+  "request": "Add art notes, silhouettes, visual IDs and skins for the 82 new doc 13 roster templates and the 14 new mini-bosses. In §7's 'Editor and Revisor names' paragraph, list twelve Editor squad templates instead of six (add caret, em_dash, stet, bracket, deletion_mark, blue_pencil). Drop the interface request for 'the second mini-boss of each genre (doc 13 Canon gaps item 1)': doc 13 §9.3 now defines it and that gap is closed."
+ },
+ {
+  "from": "fix:07",
+  "request": "Add skins for block.altar, block.rubble, block.pit_lid and block.hull_panel. Render chipped destructible masks per doc 07 §10.8."
+ },
+ {
+  "from": "verify:11",
+  "request": "The name review and localization should pick up the renamed doc 11 presentation names. Vendors: Instrument Maker (cosmic_horror tinker), Tanner (weird_west armorer), Hardware Store (hardboiled_noir tinker), Music-Box Maker (oneiric tinker). Skins: Officer's Sabre (steampunk blade_long), Holster Pistol (gothic_horror pistol_heavy)."
+ },
+ {
+  "from": "verify:07",
+  "request": "Still open from the fixer: skins for block.altar, block.rubble, block.pit_lid and block.hull_panel, and rendering of chipped micro-voxel masks per doc 07 §10.8 and doc 03 ev.block_chipped."
+ },
+ {
+  "from": "verify:04",
+  "request": "In the Interface row for doc 04, drop '(§12.4 still seeds them with its own mix64 expression)'. Doc 04 §12.4 now seeds phantoms with pres_hash(\"madness.phantom\", run_seed ^ entity_id, floor_div(tick, 600)). Also author the 12 appearance presets per kin, with palette and marking colors, that doc 04 §2.1 and doc 17 cite (DECISIONS 97)."
+ },
+ {
+  "from": "verify:09",
+  "request": "§6.3 SFX material class: a feet cell holding `liq.mud` selects `mud` and any other liquid selects `water` (doc 09 §7.2). Currently any liquid selects water."
+ },
+ {
+  "from": "verify:15",
+  "request": "Supply display names and loc. keys for the 60 Plain Inkwell cosmetics (cosm.emote/ink/sigil/title.inkwell_<nn>) and for cosm.frame.ironman."
+ },
+ {
+  "from": "fix:17",
+  "request": "§9.1: tag each loc.nar.note.* key with the moment that shows it, so doc 17 §16.4 can place it (diegetic surface, notification, or tooltip footnote). Citations of 'doc 17 G8, G23, G26' still resolve through the closure paragraph but can point at doc 17 §2.2, §2.4 and §10.10."
+ },
+ {
+  "from": "fix:12",
+  "request": "Ship the story plaque's fixed line naming the seat room and the Folio Leaf (doc 12 §20.3). The closing manuscript keeps reading FolioRecord.story_solved (doc 12 §20.7)."
+ },
+ {
+  "from": "fix:03",
+  "request": "Drive debris and the 1 px rims from ev.block_chipped: removed bits and ip. Read cell masks from ChunkView."
+ },
+ {
+  "from": "verify:17",
+  "request": "Interface row for doc 17 (line 1405): 'doc 17 still defaults to `full`' is now stale. Doc 17 §13.5 defaults `access.gore` to `ink`, and the Margin dialogue box is `ui.menu.margin_dialogue` (§11.1). Also define the 12 creator presets per kin (DECISIONS 97)."
+ },
+ {
+  "from": "verify:12",
+  "request": "Still open: ship the story plaque's fixed line naming the seat room and the Folio Leaf (doc 12 §20.3). nar.job.codex_story renders a story opened from the Index, which may be solved without a Leaf (doc 14 §5.5)."
+ },
+ {
+  "from": "fix:18",
+  "unresolved": "Canon gap 1 (doc 18): Canon §3.8 lists only nar_rng and pres_hash, but §7.4's name grammars seed Rng::from_seed64 from doc 12's recorded name seeds. A canon sentence is needed (request sent to 00)."
+ },
+ {
+  "from": "fix:18",
+  "unresolved": "DECISIONS 97, 99, 100 and 103 name doc 18, but the owner chapters (04, 12, 13, 14) have no IDs for them yet. Doc 18 defines no presentation records for presets, time of day or weather, the Second Edition ending layer, or the Author boss. The Author also conflicts with §8.1's lore rules (Authors never appear in person or show a face) and needs a product-owner ruling."
+ },
+ {
+  "from": "fix:18",
+  "unresolved": "DECISIONS rows 89 to 104 postdate the computed task's 'rows 1 to 88' scope. Applied: 90 (Crowns), 91 (hunter rank) and 94 (ink gore, default ink). Doc 17 still defaults access.gore to full until it applies the request."
+ },
+ {
+  "from": "fix:18",
+  "unresolved": "Margin residents keep a 20-line voiced greeting set each (160 lines) while all dialogue and arc beats are text. This reads DECISIONS 78 as covering arcs only. If the product owner wants the Margin entirely unvoiced, drop the 160 lines (VO becomes 3,800 lines and 76,000,000 B)."
+ },
+ {
+  "from": "fix:18",
+  "unresolved": "Docs 01 (C-16) and 02 (C-12) still carry the old 'Redactor' name and 32 × 32 texture layers on disk. Doc 18's Interface rows record this as pending."
+ },
+ {
+  "from": "verify:18",
+  "unresolved": "DECISIONS 114 says 'the 4 secret genres follow the canon's unlock rules' without saying whether Oneiric and the Redaction are in the Early Access content set. Doc 18 §10.1 produces the Ur-Text and Unwritten assets before Early Access and leaves the other two to doc 21 §2.2, which still follows DECISIONS 41."
+ },
+ {
+  "from": "verify:18",
+  "unresolved": "The Second Edition Volumes (6–8) get no closing-manuscript sections, and the Author has no depiction, until doc 12 defines fused-genre records and doc 13 defines the revised Editors and the Author (Canon gaps item 2)."
+ },
+ {
+  "from": "verify:18",
+  "unresolved": "DECISIONS 99 (time of day and weather) has no presentation records until doc 12 G19 is settled by the canon."
+ },
+ {
+  "from": "verify:18",
+  "unresolved": "DECISIONS 96 (grammar-built marginal notes and ink-stain death echoes) will probably need a doc 18 grammar family, a §7.1 name review and VFX once docs 14 and 16 define the trace service. Not added: the row does not cite doc 18 and no owner records exist."
+ },
+ {
+  "from": "verify:18",
+  "unresolved": "The Appearance triple's storage (doc 04) and transport to peers (doc 16) are interface requests only; neither chapter defines them yet."
+ },
+ {
+  "from": "verify:18",
+  "unresolved": "Judgement call: 'hoofbeat' in the Weird West pulse stem is kept as a percussion texture, not a mount reference."
+ }
+]

@@ -1,0 +1,106 @@
+[
+ {
+  "from": "fix:13",
+  "request": "Delete 'doc 13 cavalry spawns dismounted' together with `room.no_mount` (C-30; doc 13 has no cavalry). For `gpv.evt.plea`, replace 'a bound `fac.neutral` captive (doc 13 hireling template)' with 'a bound `npc.captive.<genre_suffix>` of the zone genre's trader faction (doc 13 §13.1)', which is the faction that doc 13 §12.3 `fac.rep.free_captive` pays."
+ },
+ {
+  "from": "fix:14",
+  "request": "Section 17 secret.exit.unwritten: change '5 st.erasure stacks (from 540 s, doc 14 §3.8)' to 'from 840 s'. Write 'Index' instead of 'Codex' for the account encyclopedia in the Law-discovery and Folio Leaf sentences (G-197). Section 23 Prologue: room.prologue_l3 holds a block.node.timber node, an item.tool.pick, 3 block.ladder.wood and 2 block.bridge.plank cat.placeable items, a 3,000 mm drop and a 2,000 mm gap (doc 14 §11, C-03)."
+ },
+ {
+  "from": "verify:14",
+  "request": "At 1.0, draw each Second Edition Folio's fused genre pair, Folio 1's included, and its exits for run Folio f = f_ur + n at depth 25 + 2n (doc 14 §3.1, §8.9). SE Folios are not Marginalia, so no lattice.marg.* modifiers apply."
+ },
+ {
+  "from": "verify:16",
+  "request": "Add the net_always template flag on exit doors (doc 16 §6.6 rule 3)."
+ },
+ {
+  "from": "verify:01",
+  "request": "Fused Second Edition Folios and a lattice of fused pairs (DECISIONS 101, 117, 118), waiting on a canon fused-genre rule (doc 12 G19)."
+ },
+ {
+  "from": "extend:13-roster",
+  "request": "§21.2 mini-boss arena prefabs: add dressing for the 14 new doc 13 §9.3 mini-boss arenas (war camp, moorland graveyard, drowned observatory, hive chamber, nightclub, reactor hall, dry wash, rooftop, moon pavilion, airship deck, giant's kitchen, marsh temple, exam hall, containment wing). All fit inside the 46 × 46 m room.arena interior."
+ },
+ {
+  "from": "fix:07",
+  "request": "Use doc 07's new blocks: block.altar in room.shrine and secret.room.shrine; block.rubble for hazard.falling_debris and gpv.evt.tremor; block.pit_lid for the hazard.spike_pit lid and the hazard.collapsing_floor boards; block.hull_panel for hazard.hull_breach, replacing '`block.glass_pane` hardness'. Retire or reword room.stable ('mount bay', DECISIONS 55). Close G17, since canon §4.3 is amended."
+ },
+ {
+  "from": "fix:11",
+  "request": "Remove `item.quest.folio_leaf` from the Exports bullet 'Requested outside this chapter's namespaces …' and list it under Imports. Doc 11 §3.5 defines and exports it; lint reports it as multiply defined in 11 and 12. Separately, §20.5 ('doc 11's seat relic (affix themes from the 2 domains)') and Interface row I6 ('the story relic') point to a doc 11 template or table that does not exist. Either drop the relic, or specify it as an ordinary Placed item with a fixed card and request a domain-to-affix table from doc 11."
+ },
+ {
+  "from": "fix:09",
+  "request": "Define the per-Folio weather state of DECISIONS 99 with a fog term and a sound-attenuation term in Bp; doc 09 will add them to fog_q and sound_bp_eff the same way as gpv.evt.weather_front's. In the I7 note, drop '(doc 09's Canon gaps G19 asked for this tag)' and the remark about doc 09's 'doc 12 §10.2' citation; doc 09 now cites §11.3 for light bands and §12 for room.restricted."
+ },
+ {
+  "from": "fix:18",
+  "request": "For DECISIONS 99, expose each Folio's time-of-day and weather-state IDs in `FolioView` so doc 18 §3.2 can key light variants on them."
+ },
+ {
+  "from": "verify:11",
+  "request": "§13 story relic spot and I6: doc 11 defines no story relic. Either drop the relic, or make it an ordinary Placed item with a fixed card and ask doc 11 for a domain-to-affix table. Doc 10's interface row for doc 12 (identify_instance with appr.reason.story) depends on this choice."
+ },
+ {
+  "from": "verify:07",
+  "request": "Still open from the fixer: name block.altar in room.shrine and secret.room.shrine; use block.rubble for hazard.falling_debris and gpv.evt.tremor; use block.pit_lid for the spike-pit lid and collapsing-floor boards; use block.hull_panel for hazard.hull_breach instead of 'block.glass_pane hardness'; retire or reword room.stable (mounts are cut)."
+ },
+ {
+  "from": "verify:09",
+  "request": "I7 note: drop \"(doc 09's Canon gaps G19 asked for this tag)\" and the remark about doc 09's \"doc 12 §10.2\" citation. Doc 09 now cites §11.3 for light bands and §12 for `room.restricted`. Define the DECISIONS 99 per-Folio weather state with a fog term and a sound term in Bp, so doc 09 can add them to `fog_q` and `sound_bp_eff`."
+ },
+ {
+  "from": "verify:18",
+  "request": "Apply DECISIONS 114 and 109/110 to G20: Early Access ships the 12 core genres, so the relaxation cascade is no longer needed."
+ },
+ {
+  "from": "verify:15",
+  "request": "Record both genres of a fused Second Edition Folio. Doc 15 §5.1 credits Editor-kill and Folio-completion Reliquaries to the pair's genre with the lower Canon §5.2 row number."
+ },
+ {
+  "from": "fix:17",
+  "request": "Define a trigger condition for each World Law and an event when a Law first fires in a Folio, naming the Errata it affected, so doc 17 §7 can record account discovery (DECISIONS 56, canon §5.8). §5.7's 'the active Laws' preview field shows only Laws the viewing account has discovered."
+ },
+ {
+  "from": "fix:03",
+  "request": "Write worldgen custom masks through doc 03's set_block_mask, and only on cells whose shape is full, pillar, slab, stairs or layer. A fence cell is now 1 m tall (doc 03 §4.4), so a fence meant to contain must be two cells tall (2000 mm)."
+ },
+ {
+  "from": "verify:03",
+  "request": "In §4.1 and I1, name the law-discovery event ev.law_discovered { law: Id32, slots: u8 }, which doc 03 §14.3 now registers, and drop the I1 registration request."
+ },
+ {
+  "from": "fix:12",
+  "unresolved": "Canon gap G18 (open): canon §5.2, §5.9 and §5.10 cover exactly 16 genres. Each Folio Expansion genre needs a canon amendment (axioms, aether_axiom, gravity, ambient light, skins, tier; §5.4 Origin row if it can be an Origin; §5.9 identity and manufacturers; §5.10 required Laws) before its GPV can be written. That is a product-owner and canon task once the expansions are designed."
+ },
+ {
+  "from": "fix:12",
+  "unresolved": "The law-discovery event ID is not backticked in chapter 12 until doc 03 registers it; doc 12 §4.1 and I1 describe only the payload."
+ },
+ {
+  "from": "fix:12",
+  "unresolved": "The story relic (doc 12 §13, §20.4) depends on doc 11 defining the fill; until then the relic spot is empty and solving identifies nothing there."
+ },
+ {
+  "from": "fix:12",
+  "unresolved": "Bleed design decisions taken here to meet DECISIONS 54. Seeded runs (Daily, Weekly, typed seed) always have bleed on, so every player of one seed meets the same Folios. 'Finished 3 runs' counts doc 14 §4.3 party run ends outside the Prologue, from the host's account. The product owner could override either."
+ },
+ {
+  "from": "verify:12",
+  "unresolved": "Product-owner decision: run.mut.wild_bleed (doc 14, score × 11000) now only doubles drift genres in the 1 Folio in 10 that bleeds, because §14.1 forces the bleed only for the Oneiric, lattice.marg.bleeding and run.marg.bleeding_genres. The owner may want wild_bleed to force the bleed too (add bleed_mult > 1 to `forced`). No stated vector depends on this either way."
+ },
+ {
+  "from": "verify:12",
+  "unresolved": "DECISIONS 95 (mantle up to 2,000 mm, a grappling-tool item) is not yet in the canon or doc 03, which keeps the 1600 mm mantle. When it lands, recheck §1 pit depth, the §9.2 rationale against vertical OneWay drops (6400 mm reach), §15.1's climb edges and §17.3 ceiling-hatch reach."
+ },
+ {
+  "from": "verify:12",
+  "unresolved": "G19 (time of day and weather; Second Edition fused Folios) and G20 (Early Access lattice cascade and Folio-1 mapping) cannot be specified here until the canon rules on them."
+ },
+ {
+  "from": "verify:12",
+  "unresolved": "Minor ambiguity left as is: §4.1 says triggers are evaluated only where the Law is active, but the dread meter's in_combat gains are Folio-wide. When the governing clock Law comes from a bleed zone, its discovery tick does not depend on where any Erratum stands."
+ }
+]

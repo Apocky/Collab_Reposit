@@ -1,0 +1,82 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Section 13: replace 'No launch Echo (doc 14 §6.3) uses a non-humanoid plan' with 'echo.fenrir (body.quadruped) and echo.jormungandr (body.serpentine) use non-humanoid plans (doc 14 §6.3)'. Section 2.6.1 budget table and test 37: replace the retired aldric_unsworn row (2/2/0) with fenrir (damage_dealt.unarmed add_bp 2000, broad → 2; buy_price mul 11000, broad → 1; 2/1/1), and add sun_wukong (3/1/2) and loki (2/1/1). Interface row for doc 14: drop the ghost-XP conflict sentence (resolved by C-01; doc 14 §3.10 now shares kill XP with ghosts)."
+ },
+ {
+  "from": "fix:07",
+  "request": "self_repair: replace 'spends one use of a cat.tool tagged repair_kit (... doc 07 sets its uses)' with 'needs a carried cat.tool tagged repair_kit, never consumed, and consumes 1 metal material unit (doc 07 §8.2); refused with no_supplies without them'. Remove the item-durability perks: Smithing 25 'repairs restore × 15000', the 'crafted gear max durability × 20000' half of Smithing 100 (keep material_bp +500), Armor 25 'armor durability loss × 7500', talent field_repair, the smithing/tinkering 'repair' XP row (keep salvage) and the crafted_durability key. The Interface row for 07 should read '`repair_kit` tag (never consumed) and self-repair supplies' instead of 'tool uses'."
+ },
+ {
+  "from": "fix:11",
+  "request": "`self_repair` must not spend a use of the `repair_kit` tool. Doc 11's `item.tool.toolkit` carries the tag and is never consumed (Canon §4.3: tools never wear), and doc 07 already says it is 'never worn or consumed'."
+ },
+ {
+  "from": "fix:09",
+  "request": "§5.3 Security 25: replace 'lockpick break chance × 5000' with 'slip chance × 5000 (doc 09 §13.2)' (C-31). Interface row for 09 (C-20): read 'disguise Deceive checks on `rng.stealth` seq 1006', and delete the passive-detection-cadence and cat.placeable requests, which doc 09 already meets. §6.1 Pacify row: a subdue takedown pacifies on an entity's first subdue even though the NPC can wake later (doc 09 §9.4)."
+ },
+ {
+  "from": "fix:18",
+  "request": "§12.4: seed madness phantoms through Canon §3.8's `pres_hash`, for example `pres_hash(\"art.phantom\", run_seed ^ entity_id, floor_div(tick, 600))`, instead of the bare `mix64(run_seed ^ entity_id ^ floor_div(tick, 600))`."
+ },
+ {
+  "from": "fix:18",
+  "request": "For DECISIONS 97, define the preset IDs (12 per kin) and the palette and marking color sets so doc 18 can author the matching `art.` records."
+ },
+ {
+  "from": "verify:07",
+  "request": "§5.2 craft XP row: write recipe_tier 0..=5. Process recipes have recipe_tier 0 and pay 1000 × input_units (doc 07 §4.4, §14.3). Fieldcraft 75 and the fieldcraft XP row: 'ore vein or salvage pile' means doc 07's mineral or salvage node (doc 07 §9.3). Optional: the Shade kit's 5 lockpicks can become 1, since lockpicks are never consumed."
+ },
+ {
+  "from": "verify:09",
+  "request": "§5.3 Security 25 still reads \"lockpick break chance (doc 09 `break_bp`) × 5000\", and Interface row 09 still describes \"a lockpick break roll against `break_bp` ... where a break spends one pick from the `item.tool.lockpicks` stack\". Both should become doc 09 §13.2's slip chance (`slip_bp` 2500, × 5000 at Security 25), with no pick spent (C-31). Optional: the Shade kit's \"5 lockpicks\" (§2.5) can be 1, since one set is never consumed. Also, still open from the fixer: the pacify row should count a subdue on the entity's first subdue, even though the NPC can wake."
+ },
+ {
+  "from": "verify:18",
+  "request": "§2.1 Cosmetics step: record the chosen Appearance { preset: Id32, base: u8, marking: u8 } (doc 18 §5.6, art.preset.<kin_suffix>.<nn>) with the Erratum's creation choices, and have Going Native (§2.8) keep it."
+ },
+ {
+  "from": "fix:17",
+  "request": "§12.4: madness phantoms carry a client-side flag that doc 17's access.mark_hallucinations reads (DECISIONS 49). Doc 17 forces the marking on while mercy_on."
+ },
+ {
+  "from": "fix:08",
+  "request": "Imports row for doc 08: cite §4.3, not §4.5, for respirators and rebreathers. Doc 08 has no §4.5. C-19 envenom is already applied and matches doc 08 §10.3."
+ },
+ {
+  "from": "verify:17",
+  "request": "Define the 12 creator presets per kin, with palette and marking colors and their IDs (DECISIONS 97). Doc 17 §5.7's Cosmetics page lists them."
+ },
+ {
+  "from": "verify:08",
+  "request": "The Imports row for doc 08 (line 35) cites §4.5 for respirators. It should cite doc 08 §4.3."
+ },
+ {
+  "from": "verify:10",
+  "request": "§5.3 Appraisal 25 reads 'an item whose est_skill >= 25 shows its exact true value'. That shows value_true before BUC is known and so leaks the curse state. Reword to 'your appraisal completions apply doc 10's tier-1 reveal set, which makes the value line exact (doc 10 §5.5, §6.3)'. Separately, add the doc 10 curse and pact terms to the doc 04 modifier registry and its doc 10 Interface row: sub-attribute penalties and bonuses before the Canon §6.2 clamp (curse.fumbling, .feeble, .sluggish, .frail, .addled, .myopic, .muffled, .ill_starred, and the pacts titan, seer, gambler, glass, aegis, bulwark, hush); natural regeneration (curse.thirsting, curse.pact.transfusion); healing received (curse.pact.thorns, curse.pact.miser); satiation (curse.ravenous); composure (curse.dread, curse.pact.nightmare); aether regeneration (curse.siphon, curse.pact.transfusion); and the HP drain of curse.pact.bloodthirst."
+ },
+ {
+  "from": "fix:04",
+  "unresolved": "Canon gap 1 (open): leg loss on plans with more than two legs. Canon §9.1 fixes ×5000 per lost leg; doc 04 §8.3 and §13 use 7500 for quadruped legs and 8500 per insectoid walking leg, through canon §4.2's body_move_bp. Until the canon rules, doc 04 assumes these factors and that losing one leg on such a plan removes no sprint, jump or dodge."
+ },
+ {
+  "from": "fix:04",
+  "unresolved": "Lint reports hedges {'might': 2}. Both hits are the canonical ID attr.might (§3 heading and the §15.1 register row), not hedge words, and cannot be renamed in doc 04."
+ },
+ {
+  "from": "fix:04",
+  "unresolved": "Doc 14 Canon gap 2 open points (b) and (c) were not changed here: standard kits span 209 to 442 Lucre of base value, and no kit carries a pick or torches. Doc 04 owns kit balance, but neither point is a triage ruling."
+ },
+ {
+  "from": "verify:04",
+  "unresolved": "Doc 01's Interface row asks each of the 13 Calling kits to list its ally-targeting verbs (pillar.party_of_errata.t2). No triage or DECISIONS row covers this, and it needs a design pass on the kit role lists in §2.5."
+ },
+ {
+  "from": "verify:04",
+  "unresolved": "The Shade kit's '5 lockpicks' is left over from the durability rules: doc 09 never consumes picks, so one would do. It is unchanged because doc 14 §2.4.2 prices the kit with it (the Shade kit is the 442 Lucre maximum). This is a kit-balance call for docs 04 and 14."
+ },
+ {
+  "from": "verify:04",
+  "unresolved": "DECISIONS 106 (Second Edition depth 25 + 2n) is not yet in canon §13.8, so doc 04 §6.7 defers the depth to doc 14 instead of giving the number."
+ }
+]

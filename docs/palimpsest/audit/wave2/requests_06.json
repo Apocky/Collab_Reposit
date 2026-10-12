@@ -1,0 +1,54 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Add a section 8.1 learning-source row 'Glyph Library (doc 14 §5.7): the slot's 0..=2 picks, origin = the Erratum's Origin genre (genre.ur_text for an Unwritten Origin), learned after the run-start set at run start or join; ev.glyph_learned source 0'."
+ },
+ {
+  "from": "fix:07",
+  "request": "Worldgen altars are doc 07's block.altar (fixed terrain, never breaks). The 200-favor loss for breaking an altar block applies only to block.shrine_lamp and block.shrine_lamp_out."
+ },
+ {
+  "from": "verify:11",
+  "request": "Interface row for doc 11: delete 'Still requested: the item.text.inscribed row also names a scraped identified cat.text'. Doc 11 §3.5 now names it."
+ },
+ {
+  "from": "verify:09",
+  "request": "§13 shadow table row says \"`in_shadow_area(cell)` ... (doc 09 reads it)\". Doc 03 §10.6 is the reader; doc 09 gets the shadow through `light_at` and has no shadow term of its own."
+ },
+ {
+  "from": "fix:17",
+  "request": "§16.4's example 'Devotion 50 pays floor_div(60 × 100, 150) = 40' omits the skill.devotion.m25 ×8000 that the same paragraph applies. With it the cost is floor_div(48 × 100, 150) = 32, which doc 17 §10.7 shows. Fix the example, or state that m25 does not apply. Apply C-28 if not done yet."
+ },
+ {
+  "from": "verify:08",
+  "request": "The Interface row for doc 08 (line 1895) should use doc 08 §2.7's signatures with the instigator slot: `add_liquid(c, liq, ml, slot)`, `place_gas(c, gas, conc, slot)`, `move_gas(c, dir, n)`."
+ },
+ {
+  "from": "verify:10",
+  "request": "Wand spell draw weights disagree with doc 11. Doc 06 §8.4 says doc 11 draws a wand's spell weighted by wand_weight, while doc 11 §2.3 step 11c uses weight 100 each over the legal wand_pool spells. Docs 06 and 11 should agree on one rule. Doc 10 is unaffected: its type key is the spell either way."
+ },
+ {
+  "from": "fix:06",
+  "unresolved": "Doc 06 G17 (open canon gap): Canon §17.1 GLYPH_LIBRARY_START does not state the baseline-run (unlock.daily_baseline) exception; doc 06 assumes the 52 base-pool glyphs are offered, matching doc 14 §5.7."
+ },
+ {
+  "from": "fix:06",
+  "unresolved": "Spell Contradiction potency and Edge on doc 05 HitRecord for steps 2.5/2.6 are still missing in doc 05 (requested)."
+ },
+ {
+  "from": "fix:06",
+  "unresolved": "Shadow-area darkness (-8) in doc 03's general light reads is still missing (doc 09 already applies it for stealth); requested from doc 03."
+ },
+ {
+  "from": "verify:06",
+  "unresolved": "§13.1's 'largest block power among the stage's essences' and the spell tool tier (source item's primary-material tier, t0 with none) are new verifier rulings. The old text did not say how two block-power essences combine. If the owner prefers summing, the worked example still holds because it uses a single essence."
+ },
+ {
+  "from": "verify:06",
+  "unresolved": "Interface rows for docs 04, 12, 13, 15 and 16 carry no '(present)' mark. I spot-checked them: doc 04 does not yet state the Unwritten Origin glyph origin genre.ur_text, and no chapter states the 'Colophon tome stock' asked of doc 12. I left these as open assumptions and did not audit them row by row."
+ },
+ {
+  "from": "verify:06",
+  "unresolved": "The §16.2/§16.4 prayer.intercession mid-Folio resurrection is older than this pass and goes beyond Canon §17.6's next-Folio resurrection. Nothing in canon-1.11 forbids it, so I left it unchanged."
+ }
+]

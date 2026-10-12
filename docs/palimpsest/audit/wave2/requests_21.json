@@ -1,0 +1,46 @@
+[
+ {
+  "from": "fix:02",
+  "request": "Doc 02 now has 53 acceptance tests: 48 intent order, 49 command bits 25-31, 50 canonical encoding bytes, 51 draw counters outside state, 52 micro-voxel remesh and debris, 53 seams and reveal. Update the count row 'doc 02 | 47 | 47'. Assign 48-51 to WP-010/WP-011 (Sim API and canonical serialization), 52 to WP-050 (renderer core) and 53 to WP-049 (bridge). Close G16: doc 02 §2.1 and §14 now follow DECISIONS 98. §18 item 8 now points to §3.5, and §3.2 copies the §4.1 module paths."
+ },
+ {
+  "from": "fix:01",
+  "request": "Doc 01 now mirrors §2.3 (e) in §2.7 and has the price at USD 19.99, PAR-12 with 6 EA genres, §9.2 PC only and the Erasure clock at 43,200. Doc 21 G4, G5, G6, G8 and G16 and its doc 01 Canon-gaps row can close. Doc 01 acceptance tests 1-23 keep their numbers; 24 and 25 are new."
+ },
+ {
+  "from": "verify:14",
+  "request": "§2.3(f): 47 of doc 14's 59 achievements register at Early Access (ach.pacifist needs no 1.0 content). Change the doc 14 row's '46 achievements ... 58 achievements' to 47 and 59. Test 11 totals become 47 + 12 = 59. Global record families: 59 achievements, 818 records and 1,636 keys. G15: doc 14 now specifies the Second Edition flow (§8.9) and the run-layer rules for traces and votes (§8.1 Later overlays)."
+ },
+ {
+  "from": "verify:02",
+  "request": "Apply DECISIONS 112 and 123. Drop 'a pinned EOS binding behind feature eos' from the Interface row for doc 02 and any EOS work package. Update G16 (still 'Windows on Steam and Epic') and RQ-13 (still the Steam Playtest app, against DECISIONS 113). Change the test-count row 'doc 02 | 47 | 47' to 53 and assign tests 48–53 (as the fixer requested)."
+ },
+ {
+  "from": "verify:16",
+  "request": "DECISIONS 112: remove the Epic Games Store and EOS from: the platform rows (lines 58 and 137), WP-069, WP-101's Epic build, M5 criterion 3 (the Epic client over svc.relay), R-06, R-12's Epic review, RQ-07, G12, G16, the doc 16 Interface row ('EOS at Early Access') and the platform invariant. Drop the Workshop mirror (WP-123, line 133). svc.relay and svc.workshop are reserved and run nothing (doc 16 §3.5, §11.1). The same applies to tools/roadmap/template.md and wps.py."
+ },
+ {
+  "from": "verify:01",
+  "request": "Apply DECISIONS 109 to 125. §2.2 scope table: 12 core genres, mode.standard and the Second Edition at Early Access; invasions, asynchronous traces and streaming votes in updates before 1.0; Steam only with no Epic or svc.relay; no demo or playtest build; no hard dates; Folio Expansions at USD 9.99. Retire §2.3 (e)'s Early Access pillar-test readings and gaps G4, G6 and G16. Reword M4 (6 EA genres), M11 and WP-100 (6 EA genres). Update its doc 01 Interface row: doc 01 §2.7 now reads all 18 tests as written at Early Access, PAR-12 has no lattice relaxation (DECISIONS 110), and §9.2 is Steam only."
+ },
+ {
+  "from": "extend:13-roster",
+  "request": "§5 content production plan: §5.1 step 3 and gap G11 assume roster templates and second mini-bosses are 'records that no chapter lists'. Doc 13 §8 and §9.3 now specify all 192 templates and 28 mini-bosses, so update that text, and change the current-count column '7 (Fairy Tale 8)' to 12."
+ },
+ {
+  "from": "fix:15",
+  "request": "Doc 15 now meets G5 (USD 19.99), G7 (T0 = 1820448000 with every example recomputed) and G14 (doc 15 §3.2.7 gating), so these can be closed. WP-074 scope adds the Transcription shelf (doc 15 §3.9.1); its tests should include doc 15 tests 36 to 40."
+ },
+ {
+  "from": "verify:18",
+  "request": "Apply DECISIONS 114 to §2.2–§2.3 (Early Access genre list, 'Not at Early Access' row, genre-set rules) and say which secret genres are in the Early Access content set. Doc 18 §10.1 defers to §2.2 for Oneiric and the Redaction."
+ },
+ {
+  "from": "verify:15",
+  "request": "Apply DECISIONS 111 (no hard dates; §3.3's T0 becomes illustrative, set at launch), 112 (Steam only: drop the Epic Games Store build, WP-069, R-06, RQ-07), 113 (no Steam Playtest app; RQ-13), 114 (12 genres at Early Access; the §2.3 (g) Lost Chapter gating no longer applies, and doc 15 test 37 is now a synthetic content-set test) and 122 (RQ-11: expansions at USD 9.99). Add doc 15 tests 41 and 42 to the test coverage table."
+ },
+ {
+  "from": "verify:17",
+  "request": "If doc 17 §7's heading 'Journal and Codex knowledge' is renamed so it no longer says 'Codex' (G-197), update tools/roadmap/headings.json and WP-055's section title at the same time."
+ }
+]

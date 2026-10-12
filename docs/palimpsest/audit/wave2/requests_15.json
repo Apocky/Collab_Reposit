@@ -1,0 +1,70 @@
+[
+ {
+  "from": "fix:14",
+  "request": "The fields requested of doc 14 now exist: RunState.run_id, RunState.satchels, SlotState.active_ticks and last_input_tick, and per-slot RunSummary victory_present, kills_present, types_identified, crafts, revives and codex_entries_new; mark them consumed. Apply C-29: 'Item Codex' becomes 'Index'. The base-game price of 24.99 in the SKU table conflicts with DECISIONS 42 (19.99)."
+ },
+ {
+  "from": "fix:16",
+  "request": "§8.5 Adult defaults: add 'voice with players who are not friends starts muted' (DECISIONS 75; doc 16 §9.12 mutes non-friends per member on join and sends VoiceMute)."
+ },
+ {
+  "from": "verify:14",
+  "request": "§2.2 achievement row and §2.4 achievement row: doc 14 §10 now has 59 achievements paying 6,440 Ink and 1,960 Quires (new ach.pacifist, grade 2). Add the exclusive Ironman cosmetic to the catalog, granted once per account when RunSummary.ironman is true (doc 14 §8.9, DECISIONS 108). The Interface request for §5.4a to count the 36 Scripts is now satisfied."
+ },
+ {
+  "from": "verify:02",
+  "request": "palimpsest-verify is now a palimpsest_tools binary that links palimpsest_econ (doc 02 §3.2), because its --content check regenerates Keepsakes through doc 11's item generator in palimpsest_sim, which palimpsest_econ may not link. Restate the Interface row for doc 02 to match. Doc 15 should also settle how the tool's MIT licence fits the proprietary crates (DECISIONS 44)."
+ },
+ {
+  "from": "verify:16",
+  "request": "§10.3: the idem-key s for an Archive purchase and for a Transcription claim is the request's req_id in hex (doc 16 §11.1), not a 'client request UUID'. §4.6: name the pity receipt counters folio_exits and transcription, as doc 16 §11.4 does. §7: drop the Epic Games Store pricing mention (DECISIONS 112). Note that doc 16 §11.4 now has POST /v1/econ/archive/transcribe and svc.err.insufficient_transcription."
+ },
+ {
+  "from": "verify:18",
+  "request": "Apply DECISIONS 114: §3.2.7 Lost Chapter Early Access gating, the p001 rule and test 37 assume 6 Early Access genres."
+ },
+ {
+  "from": "fix:17",
+  "request": "§8.5 adult default 'voice push-to-talk, party only': voice with non-friend party members should start off (DECISIONS 75)."
+ },
+ {
+  "from": "fix:12",
+  "request": "§1.1 can name the first two Folio Expansions (Age of Sail and Pirates; Kaiju and Mecha; DECISIONS 53) and point to doc 12 §25 for what each genre pack carries (GPV, Laws with discovery triggers, tilesets, Lost Chapter templates, drift_bp 1000, no vehicles)."
+ },
+ {
+  "from": "fix:10",
+  "request": "Triage C-29: in §5.5's last bullet change \"recorded in the account's Item Codex\" to \"recorded in the account's Index\". In the `pass.xp.codex_entry` row change \"first account-wide Item Codex or Bestiary entry\" to \"first account-wide Index or Bestiary entry\"."
+ },
+ {
+  "from": "verify:06",
+  "request": "§3.1.2 Rubricated Scripts row: drop 'inside their rarity bands (doc 06)'. Glyphs have tiers and loot pools, not rarity bands; each unlock.glyph.<family> adds its 4 glyphs to the glyph loot pool (doc 06 §8.1)."
+ },
+ {
+  "from": "fix:15",
+  "unresolved": "DECISIONS 79 applied by a fixer design addition: Scripts (non-cosmetic) were reachable only through the Inkwell or a Vellum bill far beyond 80 hours. I added the §3.9.1 Transcription shelf (16/32 qualified exits; 768 exits for all 36 launch Scripts, 64.0 to 76.8 reference hours). The product owner may prefer another deterministic route or different costs. Doc 14 §5.4a should add the Scripts row."
+ },
+ {
+  "from": "fix:15",
+  "unresolved": "Doc 14 §2.3 (Echoes of unshipped genres absent at Early Access) conflicts with doc 21 §2.3 (c) (all 24 Echoes ship at Early Access). Doc 15 §3.2.7 is written to work either way, but docs 14 and 21 must agree."
+ },
+ {
+  "from": "fix:15",
+  "unresolved": "The authored 19.99 price-matrix row (EUR 19.99, GBP 16.99, BRL 74.99, JPY 2,900, KRW 24,400, AUD 29.95, CAD 25.99, CNY 90) follows the other rows' ratios. The product owner approves price changes (doc 21 §6)."
+ },
+ {
+  "from": "fix:15",
+  "unresolved": "DECISIONS rows 89-104 are newer than the task's 1-88 binding range. Of these, 94 (ink gore) and 98 (PC only) land in or touch doc 15 and were applied lightly in §8.6 and §7.2. Rows 100-103 (Second Edition) may need victory and Endless-switch rules for Ink and Codex XP once doc 14 defines Second Edition; doc 14 has no Second Edition text yet."
+ },
+ {
+  "from": "verify:15",
+  "unresolved": "The Transcription shelf (§3.9.1) is still a fixer design addition, made to meet DECISIONS 79. Doc 14 §5.4a has adopted it, but the product owner has not ruled on it."
+ },
+ {
+  "from": "verify:15",
+  "unresolved": "DECISIONS 108 leaves two Second Edition reward details open, so the chapter now rules on them: the Ur-Text victory Ink and XP are forfeited together with the clear, and the exclusive Ironman cosmetic is a portrait frame, cosm.frame.ironman. The product owner may prefer a different cosmetic kind."
+ },
+ {
+  "from": "verify:15",
+  "unresolved": "DECISIONS rows 109-125 landed (commit 40d2963) after the fixer's batches, and docs 14 and 21 had not yet applied rows 114, 118 and 122 when this pass ended. Until they do, doc 15 (12 genres at Early Access, expansions at USD 9.99, T0 set at launch) disagrees with doc 14 §2.3 and doc 21."
+ }
+]

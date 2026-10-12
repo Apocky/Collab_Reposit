@@ -1,0 +1,118 @@
+[
+ {
+  "from": "fix:13",
+  "request": "§3.8 must follow canon §17.1 and §11.6: stack k at c = 43200 + 1800 × (k − 1), with the tenth stack at 59,400 (990 s), not 25200 + 1800 × (k − 1). Exactly one Erasure hunter spawns per Folio: delete 'another spawns every 5400 ticks' and the second- and third-hunter timeline rows (780 s and 870 s), and update the timeline table and the Colophon-entry example to match. The Erasure hunter keeps `rank.hunter` identity, so the hunter-scoped Grade factors and the ach.hunter counter still apply."
+ },
+ {
+  "from": "fix:16",
+  "request": "RunState holds the set of room indices the party has visited in the current Folio (in addition to the rooms_visited count) and a per-Folio map-revealed flag set when an Erratum reads item.text.mapping; doc 16 RunView replicates both as rooms_visited: Vec<u16> and map_revealed: bool."
+ },
+ {
+  "from": "fix:01",
+  "request": "Specify Second Edition (DECISIONS 100-108) for 1.0. This includes whether the choice is offered at every Ur-Text clear or only once the account has a previous clear. DECISIONS 100 and 108 leave this open; doc 01 Canon gaps G2 records it."
+ },
+ {
+  "from": "verify:13",
+  "request": "Specify the Second Edition flow and d(f) for Second Edition Folios (25 + 2n). Doc 13 §2.2 reads doc 14's d(f), so its scaling then works unchanged. Doc 13 needs that flow before it can define the revised Editors, the Author's boss ID and the fused-genre faction and roster draws (doc 13 Canon gaps item 3)."
+ },
+ {
+  "from": "verify:16",
+  "request": "Confirm whether a Custom Erratum's appearance (doc 04 §2: kin preset, palette and marking colors, DECISIONS 97) is part of ErratumChoice/SlotState. If it is, doc 16's LobbyPick, JoinCharacter and the Folio-entry state carry it; if not, say where peers learn it."
+ },
+ {
+  "from": "verify:01",
+  "request": "§2.3 Early Access scope per DECISIONS 114: all 12 core genres at Early Access (it still cites DECISIONS 41's 6 genres and draws the Daily's Origins over range(6) at Early Access). §8.1 mode table and §8.9 heading per DECISIONS 118: mode.second_edition from Early Access, not 'from 1.0'. §9.1 also still says 'the 1.0 \"Second Edition\" door'."
+ },
+ {
+  "from": "fix:11",
+  "request": "C-02: the Interface row for doc 11 still lists former names in brace form. Replace `item.potion.{healing, haste, focus, fortify, aether, antidote, invisibility, clarity, regeneration, shielding}` with doc 08's `alch.potion.healing`, `.haste`, `.calm`, `.fortitude`, `.aether`, `.cure`, `.invisibility`, `.purity`, `.honeyed_healing`, `.shielding`. Replace `item.throwable.{javelin, knife, smoke, frag, fire_flask, poison_flask, disruptor_flask}` with `arch.ranged.thrown` (javelin and knife skins), `arch.ranged.grenade_smoke`, `arch.ranged.grenade_frag`, `alch.bomb.firebomb`, `alch.potion.toxic_gas` and `item.throwable.counter_disruptor`. In §2.4, drop 'and doc 11's former-name table': doc 11 deleted its doc-14 rows, and the mapping stays in audit/map_items.json."
+ },
+ {
+  "from": "fix:04",
+  "request": "Close Canon gap 22's requests to doc 04. Doc 04 §13 now names Fenrir (body.quadruped) and Jormungandr (body.serpentine), and §2.6.1 scores fenrir 2/1/1, sun_wukong 3/1/2 and loki 2/1/1. Canon gap 2 open point (a) is adopted in doc 04 §2.5: field alembic = mortar + alembic, and the Monk gets the light armor set."
+ },
+ {
+  "from": "fix:09",
+  "request": "Pacifist tracking (DECISIONS 62): count non-lethal defeats from ev.entity_pacified (doc 09 subdues are method 4, Hacking-100 seizes method 3). A lethal takedown that kills counts as a kill (ev.entity_killed)."
+ },
+ {
+  "from": "fix:15",
+  "request": "§5.4a: count the 36 launch Scripts among DECISIONS 79's non-cosmetic options. Add the row '36 Scripts by Transcription alone (doc 15 §3.9.1): 768 qualified exits, 76.8 hours at 10 Folios per hour'. State that margin.vellum_archive hosts the Transcription shelf. Separately, §2.3 says Echoes keyed to an unshipped core genre are absent from Early Access content sets, while doc 21 §2.3 (c) ships all 24 Echoes at Early Access. Please align with doc 21 (doc 15 §3.2.7 handles either outcome)."
+ },
+ {
+  "from": "fix:18",
+  "request": "For DECISIONS 100, define the Second Edition ending-layer IDs and inputs, as §4.7 does for the first ending, so doc 18 §8.5a can add the second layer."
+ },
+ {
+  "from": "verify:11",
+  "request": "§2.4 (line ~258) still says it binds roles 'through doc 05 §5.6's role names and doc 11's former-name table'. Drop 'and doc 11's former-name table': the table has no doc-14 rows any more (C-02), and the mapping stays in audit/map_items.json."
+ },
+ {
+  "from": "verify:07",
+  "request": "Optional: the Shade kit gives item.tool.lockpicks × 1 instead of × 5, since lockpicks are never consumed (doc 09 §13.2)."
+ },
+ {
+  "from": "verify:04",
+  "request": "§2.4.2 Monk row, 'doc 04 §2.5 role list' column: write 'hand wraps (unarmed archetype), light armor set'. Delete the sentence 'Doc 04's \"cloth armor set\" is the light set.' because doc 04 now says light set."
+ },
+ {
+  "from": "verify:09",
+  "request": "§2.4 kit table: the Shade's `item.tool.lockpicks` ×5 can be ×1 (no consumption). Pacifist tracking (DECISIONS 62) is not yet written: count non-lethal defeats from `ev.entity_pacified` (doc 09 subdues are method 4, Hacking-100 seizes method 3); a lethal takedown that kills counts as a kill."
+ },
+ {
+  "from": "verify:18",
+  "request": "Apply DECISIONS 114 to the §2.3 Early Access scope (still 6 genres, range(6) Daily Origins). §4.7 and §8.9 may cite doc 18 §8.5 for the second ending layer: ur_clear_ending, then nar.ending.second_edition, with an Ironman line when RunSummary.ironman is true."
+ },
+ {
+  "from": "verify:15",
+  "request": "§2.3 'Early Access scope' still cites DECISIONS 41 (6 genres); update it to DECISIONS 114 (all 12 core genres). §8.9 says '(1.0)', but DECISIONS 118 ships Second Edition at Early Access. Note that doc 15 now pays mode.second_edition under its mode row 1 and treats a forfeited Second Edition as victory_present = 0."
+ },
+ {
+  "from": "fix:17",
+  "request": "Apply C-04: remove every † mark and its sentence in §10, and 'access.scribes_mercy active (doc 17)' from §7.4. Apply C-03: rewrite Prologue room L3. §3.8: onset 43,200 ticks (canon §17.1), stacks capped at 10, one Erasure hunter per Folio with no 5,400-tick repeats (canon §11.6, DECISIONS 26). RunSummary: add mercy_ever_on and min_game_speed_bp, and the ranked rule excluding speeds below 10000 (G-201). Keep the account's discovered World Laws with the Index (§5.5)."
+ },
+ {
+  "from": "fix:12",
+  "request": "(a) Set `bleed_on` at Commit, store it in the run header and pass it in doc 12's GenInput. It is 1 for Daily, Weekly and typed-seed runs, or when the host account has at least 3 party run ends of §4.3 outside `mode.prologue`; otherwise 0. (b) Add `laws_triggered: BTreeMap<Id32, u8>` to RunState and merge it into each account's §5.5 Codex knowledge at run end and on `run.end.departed`. (c) Add `story` (doc 12 §20.5 record), `story_solved: Option<u64>` and `leaf_carried: bool` to FolioRecord; doc 18 §8.5a already reads `story_solved`. (d) Add Laws and Folio Leaf stories to §5.5 Codex knowledge. (e) Replace the stale 'doc 12 conforms to canon-1.2' note and change the citations doc 12 §4.5/§4.6/§4.9/§5.1-5.3 to §5.5, §5.6, §6.1-§6.3."
+ },
+ {
+  "from": "verify:17",
+  "request": "Specify the Second Edition flow (DECISIONS 100–108): the choice offered at the Ur-Text clear, a party wipe recorded as a non-clear, and the Ironman reward and leaderboard mark. Doc 17 §11.6 adds its screens once that exists."
+ },
+ {
+  "from": "verify:12",
+  "request": "In mode.prologue, pass the chosen Origin's genre as GenInput.prev_genre so doc 12 §23 can build the authored L1–L2 bleed zone. Doc 14 §11's room table is otherwise matched by doc 12 §23."
+ },
+ {
+  "from": "fix:14",
+  "unresolved": "DECISIONS 62 (pacifist play rewarded through achievements): doc 14 has stealth achievements (ach.ghost_step, run.note.silent) but none explicitly for pacifism. Adding one (for example ach.pacifist) would change the 58-achievement and 1,935-Quire totals that docs 01 and 15 cite, so it was left for the orchestrator."
+ },
+ {
+  "from": "fix:14",
+  "unresolved": "Three canon wording requests stay open as doc 14 Canon gaps 1 to 3: context_uid for the boon altar, Glyph Library picks in baseline runs, and the boss-Folio Erasure clock_start."
+ },
+ {
+  "from": "fix:14",
+  "unresolved": "Recomputed kit values depend on the current doc 11 section 3 base values (thrown 6 per unit, smoke 10, counter grenade 14) and doc 08 values (healing 30, toxic gas 15, purity 20, mortar 10, alembic 15). If docs 08 or 11 change those values again, the kit values and acceptance tests 9 and 38 must be recomputed."
+ },
+ {
+  "from": "verify:14",
+  "unresolved": "DECISIONS 103 vs 105: 5 revised Editors return but Second Edition has only 3 Volumes. Which revised Editor ends each Volume is left to doc 13 or the product owner. The Author is placed after the Volume-3 Editor inside SE Folio 15, the only reading consistent with '15 Folios'."
+ },
+ {
+  "from": "verify:14",
+  "unresolved": "Second Edition design calls made here that the product owner may want to overrule: (a) the door is offered at every Ur-Text victory, the account's first included (doc 01 G2 asked doc 14 to decide); (b) Abandon and run.end.abandoned_version in SE also forfeit the clear; (c) Ironman means no ev.player_died in SE Folios only, not the whole run; (d) from 1.0 an Abridged Final Folio's Endpaper opens the Colophon and VictoryChoice instead of ending the run at once."
+ },
+ {
+  "from": "verify:14",
+  "unresolved": "ach.pacifist was added for DECISIONS 62 with a threshold of 5 pacifications and 0 credited kills in one standard or challenge Folio. Docs 01, 15 and 21 cite the old totals (58, 1,935 Quires, 6,360 Ink, 46 of 58 at EA) until they update."
+ },
+ {
+  "from": "verify:14",
+  "unresolved": "§3.10 Redaction leaves a Ghost slot a Ghost (Canon §17.6 resurrection timing), while Canon §17.9 says 'every Erratum ... respawns'. Doc 14 owns the detail and the text is consistent internally, but the canon wording is ambiguous."
+ },
+ {
+  "from": "verify:14",
+  "unresolved": "Canon gaps items 1 to 6 remain open pending canon wording."
+ }
+]

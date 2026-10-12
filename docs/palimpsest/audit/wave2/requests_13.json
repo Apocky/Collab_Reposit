@@ -1,0 +1,82 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Delete Canon gap 2 (doc 14 §3.8 now follows canon-1.11: 720 s onset, 10-stack cap, one hunter per Folio). Delete gap 20: doc 14 §5.3a defines unlock.invader.annotator, .censor and .footnoter (gates first_editor_v1, first_editor_v2, first_victory), and revisor stays available to every account."
+ },
+ {
+  "from": "verify:14",
+  "request": "Canon gap 3: doc 14 §8.9 now specifies the Second Edition run flow. Define the revised Editors' and the Author's boss. IDs, which revised Editor ends each SE Volume (run Volumes 6 to 8, boss Folios at n = 5, 10, 15), and the Author's encounter after the revised Editor of the Final SE Folio, whose death ends the run. Resolve the name collision with Canon §20 'the Author of a genre'. Confirm that §11.1 kill credit feeds doc 14's party_kills."
+ },
+ {
+  "from": "verify:16",
+  "request": "Set net_always on Editor bosses during BossFight and on hunters (doc 16 §6.6 rule 3)."
+ },
+ {
+  "from": "verify:01",
+  "request": "The revised Editors and the Author (DECISIONS 103, 118; doc 13 Canon gaps item 3)."
+ },
+ {
+  "from": "fix:09",
+  "request": "Set the `outfit` flag (and outfit_mass_g) on at least one template of every fac.native.* faction (DECISIONS 64; doc 09 §11.1, test 60). On an entity's first subdue, emit ev.entity_pacified method 4, read from doc 09's ev.takedown with lethal false. In the Interface row for 09, replace 'hacking buildup' with 'hacking (doc 09 §13.4, §13.5; no buildup)'."
+ },
+ {
+  "from": "fix:18",
+  "request": "Add a `visual` field (an `art.visual.*` ID) to every enemy template. Author humanoid brutes (`leg_breaker`) at `stand_mm` ≥ 2200 so doc 18 §3.6's silhouette lint passes. When defining the Second Edition bosses (DECISIONS 103), give the Author an ID and confirm doc 18's proposal that it appears as a writing hand, a quill and handwriting, never a face."
+ },
+ {
+  "from": "verify:09",
+  "request": "Still open from the fixer: set `outfit` and `outfit_mass_g` on at least one template of every `fac.native.*` faction (DECISIONS 64). Emit `ev.entity_pacified` method 4 on an entity's first subdue, read from `ev.takedown` with lethal false. Interface row 09 and `npc.companion.glitch` still say \"hacking buildup\"; doc 09 hacks have no buildup (§13.4, §13.5)."
+ },
+ {
+  "from": "verify:18",
+  "request": "Add a visual: art.visual.* field on every template. Author leg_breaker and other humanoid brutes at stand_mm ≥ 2200. Author the second mini-boss per genre (DECISIONS 69), which doc 18 §6.5 now budgets at 28 × 30 voiced lines. Define the Second Edition revised Editors and the Author (DECISIONS 103), with a ruling on doc 18's proposal that the Author is shown only as a writing hand, never a face."
+ },
+ {
+  "from": "verify:15",
+  "request": "Confirm that the revised Second Edition Editors carry rank.editor, so that doc 15's Editor-kill Ink, Codex XP and account Reliquaries apply. State the Author's rank."
+ },
+ {
+  "from": "fix:13",
+  "unresolved": "DECISIONS item 69 roster expansion (12+ enemy types and 2+ mini-bosses per genre) is not done; doc 13 still has 6 to 8 entries per genre and 1 mini-boss per core genre. It is recorded as open Canon gap 1."
+ },
+ {
+  "from": "fix:13",
+  "unresolved": "Doc 14 §3.8 still uses the 25200-tick onset and the 5400-tick hunter repeat. Doc 13 follows canon §17.1/§11.6 and records the conflict as open Canon gap 2 until doc 14 changes."
+ },
+ {
+  "from": "fix:13",
+  "unresolved": "The Colophon vendor's invulnerability (§13.2) and the chapter-hireling base entries (§13.4) are defaults that await product-owner confirmation (reconciler Q4, Q5); recorded as open Canon gap 3."
+ },
+ {
+  "from": "fix:13",
+  "unresolved": "Six cavalry roster IDs were renamed (hover_lancer, war_rig_rider, posse_rider, getaway_driver, cavalry_general, wild_hunt_rider). No audit map file was written for them because only fix_13.md was in scope; the old→new table is in fix_13.md and the doc 18 request."
+ },
+ {
+  "from": "verify:13",
+  "unresolved": "Knockback units (existed before the fixer's batches, not in the brief): the §2.1 attack-profile schema has no knockback field. The brute's enemy.ab.charge ('knockback 3000 mm'), iron_palm (5000 mm), huff_and_puff (4000 mm) and ember_wyrm tail_sweep (3000) give knockback as a distance, while doc 03 §5.13 apply_knockback takes a speed in mm/s; the charger, ram and War Boss give speeds. Fixing it needs a design call: add a knockback_mm_s field and convert those distances to speeds."
+ },
+ {
+  "from": "verify:13",
+  "unresolved": "Roster size (DECISIONS 69): §8 still lists 6 to 8 templates per genre and §9.3 one mini-boss per genre. The rest are to be authored as content (doc 21 G11). A genre with two mini-bosses needs a rule for choosing one in §10.2 step 4, which is open in Canon gaps item 1."
+ },
+ {
+  "from": "verify:13",
+  "unresolved": "Second Edition (DECISIONS 100, 101, 103, 105, 106) is recorded as open Canon gaps item 3. It is blocked on canon and doc 14 (see cross-chapter requests)."
+ },
+ {
+  "from": "verify:13",
+  "unresolved": "Product-owner confirmation still pending for the invulnerable Colophon vendor and the chapter-hireling base entries (questions Q4 and Q5 in audit/notes_enemies.md; Canon gaps item 2)."
+ },
+ {
+  "from": "extend:13-roster",
+  "unresolved": "The task asked for 2 mini-bosses in every genre, but product-owner DECISIONS item 124 keeps champion substitution with no bespoke mini-bosses for the Unwritten and the Ur-Text. I followed item 124, so 14 genres have 2 mini-bosses each (28). This matches the 28 that doc 18 §6.5 and doc 21 already budget."
+ },
+ {
+  "from": "extend:13-roster",
+  "unresolved": "The roster tables keep their existing columns. HP base, damage profile, resistances and behavior set come from each row's role in §3 and §4.7, not from per-row columns, so sounds and skins stay with doc 18 (cross-chapter request filed)."
+ },
+ {
+  "from": "extend:13-roster",
+  "unresolved": "Canon gaps item 2 (Colophon vendor and chapter-hireling base entries) is still waiting on the product owner. No core genre gained a second soldier-role entry, so the §13.4 base-entry rule stays unambiguous."
+ }
+]

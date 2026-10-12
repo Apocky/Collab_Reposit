@@ -1,0 +1,50 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Section 12.3 and Canon gaps item 5 cite 'doc 14 Canon gap 16', which has been deleted (stale per triage §4.1). Cite triage G-197 instead, or drop the citation."
+ },
+ {
+  "from": "fix:07",
+  "request": "§5.9: name doc 07's block.altar as the worldgen patron altar block that sells appr.svc.*."
+ },
+ {
+  "from": "fix:11",
+  "request": "Move `cat.wand` from Exports to Imports (multiply defined with 00 and 11). Delete gap 25: doc 11 §3.5 now weights `item.text.amnesia` at 1000 out of 10000, so test 39 holds. Update gap 24 and the doc 11 Interface row: doc 11 §11.2 now defines the Fortune Engine cursed capsule (face 4, source `CursedCapsule`, OMEN set). §9.1 applies `curse.pact.miser` to fresh piles, §2.2 stores `zaps_total`, and §15 prices Rewrite from `value_vendor`."
+ },
+ {
+  "from": "fix:15",
+  "request": "The §12 intro ('which ... doc 15 the Item Codex') and the Canon gaps item 5 parenthetical ('doc 15 says \"Item Codex\"') are stale. Doc 15 now writes 'Index' (C-29), so both parentheticals can be deleted."
+ },
+ {
+  "from": "verify:11",
+  "request": "Interface row for doc 11: delete 'Still asked: §12.2's \"unknown enhancement as 0\" ...'. Doc 11 §12.2 and §18 now say 'the hidden part of `eff_enh` as 0'."
+ },
+ {
+  "from": "verify:09",
+  "request": "§5.3 Witness uses \"the Erratum's most recent sight check\", and Interface row 09 asks for \"per-observer sight results at most 2 ticks old\". Errata run no sight checks on ordinary NPCs (doc 09 §4.8). Use doc 09's `erratum_sees(e, n)` (V ≥ 500 with the erratum profile, computed on the event tick) instead. Doc 10 still owns the timing (triage G-207)."
+ },
+ {
+  "from": "fix:06",
+  "request": "§5.9 and gap 21: replace 'an Erratum-placed altar (doc 06 §16)' with 'a block.shrine_lamp (doc 07; doc 06 §16.1)' and close gap 21 (triage G-145: the placed altar is the shrine lamp, a cat.placeable light source; block.altar is worldgen fixed terrain)."
+ },
+ {
+  "from": "fix:10",
+  "unresolved": "Lint still reports hedges {'might': 1}. It is the doc 11 ring ID `item.ring.might`, cited as `might` in the §3.5 worked example ring list, not a hedge word. Other fixers (docs 04, 08, 11) accepted the same false positive."
+ },
+ {
+  "from": "fix:10",
+  "unresolved": "This changed doc 10's value model to match doc 11 (owner of `value`): `worth_true` became `value_true`, and the 'unread' and 'known cursed' × 5000 sale factors were dropped because doc 11 §12.2 never applies them. If the product owner wants those sale penalties, doc 11 §12.2 has to add them to sell_trade, and doc 10 §6.2/§10.2 would follow."
+ },
+ {
+  "from": "fix:10",
+  "unresolved": "The session scratchpad is shared by every chapter fixer. Early on this fixer wrote apply.py, b1.py, b2.py and b4.py at the scratchpad root, which can overwrite another fixer's files of the same names. Another fixer's apply.py (targeting doc 15) later replaced this one. One attempted run against it failed on its first anchor and wrote nothing. Later chapter-10 scripts live in scratchpad/fix10_private/."
+ },
+ {
+  "from": "verify:10",
+  "unresolved": "Mass curses: I narrowed curse.leaden and the curse.pact.bulwark drawback to carried mass (carried_g, encumbrance only). They no longer feed doc 05's mass-driven attack timing. This removes an ambiguity in the effect text but is a design call, and the product owner or doc 05 may want the heavier weapon to swing slower as well."
+ },
+ {
+  "from": "verify:10",
+  "unresolved": "Doc 11's statement that Volume rewards are sealed is now treated as authoritative, and §11 follows it. If the product owner instead wants Volume reward offers shown unsealed, the reversal belongs in doc 11 §2.4 and §9.8 first."
+ }
+]

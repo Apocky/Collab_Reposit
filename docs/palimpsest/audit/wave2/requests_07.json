@@ -1,0 +1,74 @@
+[
+ {
+  "from": "fix:01",
+  "request": "With doc 03, make hits from cat.placeable block traps (block.trap.spikes, doc 07 §10.4) identifiable as trap hits in ev.damage_dealt, for doc 01 §10.3."
+ },
+ {
+  "from": "verify:01",
+  "request": "Block-trap hits identifiable as their trap's source (with doc 03), for doc 01 §10.3."
+ },
+ {
+  "from": "fix:11",
+  "request": "Informational: doc 11 §16.4 salvage yields are now `mul_bp(mul_bp(component mass, 6000), 10000 + X)`, where X is the item's `affix.engineered` value (0 if it has none). Doc 07 rounds the units as before."
+ },
+ {
+  "from": "fix:04",
+  "request": "§10.4 placeable repair formula: after the Fieldcraft 75 factor, apply one more mul_bp by 15000 when the repairer has talent.artificer.field_repair (doc 04 §7.2), and add field_repair to the Interface row's Artificer talent list for doc 04. In the same row, write the Tinkering gadget-hit XP as min(750, floor_div(750 × dmg, norm)) using canon §7.1's norm_mhp instead of max."
+ },
+ {
+  "from": "verify:11",
+  "request": "Salvage (doc 07 §8): doc 11 §16.4 multiplies yields by `10000 + X` of `affix.engineered`, the replacement for the durability affix. Doc 07 rounds the units as before."
+ },
+ {
+  "from": "verify:09",
+  "request": "Optional: §11.1 rule 4 can cite \"doc 09 §13.4 ends the attempt\" in place of \"doc 09 says what the attempt does after a spark\"; doc 09 now defines it."
+ },
+ {
+  "from": "verify:18",
+  "request": "Block records' skins (doc 03 §4.5) should name doc 18 §3.8's art.block.* records."
+ },
+ {
+  "from": "fix:12",
+  "request": "Define the worldgen patron-altar block that doc 12 places in `room.shrine` and `secret.room.shrine` (notes_materials.md decision 2), or confirm `block.shrine_lamp`. Confirm that §9.4's 'the socket's cells' is doc 12 §10.1's 4-cell node-socket strip against a wall."
+ },
+ {
+  "from": "fix:03",
+  "request": "§10.8: chipping is done by doc 03 §13.2. It removes micro-voxels in ascending squared distance from the impact point, ties to the lower bit index, until fill <= voxels_left(c). The repair refill calls doc 03's refill_mask(c, n). Layer level L has ceil_div(L + 1, 2) micro-voxel rows, so spikes at level 1 have 16. Doc 03 §12.2 never marks block.tag.node cells for explosions. break_result is now a doc 03 registry field. The §4.5 sample records are gone; only the powder keg ExplosionSpec remains."
+ },
+ {
+  "from": "verify:03",
+  "request": "Queue each block-trap hit (§10.4 block.trap.spikes and the other block traps) with source 0, item_uid set to the trap's placed_meta.uid, and ability set to the trap block's content ID, so ev.damage_dealt identifies the trap (doc 03 §14.2; doc 01's systemic-kill KPI)."
+ },
+ {
+  "from": "fix:07",
+  "unresolved": "Canon gap 1 (torch placement) stays open until doc 03 §13.3 drops item.tool.torch (C-25)."
+ },
+ {
+  "from": "fix:07",
+  "unresolved": "Canon gaps 2 and 3 are requests to canon: plants and reaction products in §4.3's destructible list, and whole-break of thin shapes in §4.4. Doc 07's rules stand until the canon owner decides."
+ },
+ {
+  "from": "fix:07",
+  "unresolved": "multiply_defined still lists block.air, block.cover.sandbag, block.door.wood, block.masonry.marble and block.powder_keg under 03 and 07, because doc 03 §4.5's illustrative JSON uses \"id\" values. Only doc 03 can fix this."
+ },
+ {
+  "from": "fix:07",
+  "unresolved": "Open product questions from notes_materials.md left unchanged: mat.role.block has no consumer, and the sandbag blast_res_milli is 1000 by formula against 3500 in doc 03's sample. These need a product-owner ruling, not a canon fix."
+ },
+ {
+  "from": "verify:07",
+  "unresolved": "What a hack attempt does after a hacking-deck spark is left to doc 09. Doc 07 now defines only the roll, the hit and the failure count."
+ },
+ {
+  "from": "verify:07",
+  "unresolved": "A crop has hp_max 0 in placed_meta. Doc 03's crack-stage formula for placed cells divides by hp_max. Any positive damage breaks a crop, so the formula is never evaluated on an unbroken crop, but doc 03 could guard hp_max == 0 explicitly."
+ },
+ {
+  "from": "verify:07",
+  "unresolved": "Two design calls are the verifier's own rather than spelled out by a source: lockpick yield 1 (follows doc 09's no-consumption rule) and staves governed by Inscription (follows recipe.bench.staff). The product owner may want to confirm them."
+ },
+ {
+  "from": "verify:07",
+  "unresolved": "DECISIONS 99 (weather) and 106 (Second Edition depth) have not landed in canon or in doc 07's sources. If weather later adds snow surfaces, the G-203 decision (no snow block) needs revisiting."
+ }
+]

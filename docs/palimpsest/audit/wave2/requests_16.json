@@ -1,0 +1,86 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Delete G16 (C-01: doc 14 now shares kill XP with ghosts). Close G15 (doc 14 §8.8 now follows §9.3 hot, warm and cold migration) and G20 (the doc 14 §9.4 example now uses §11.1 hex forms, with req_id and run_id). Doc 14 §8.8 lists the session-intent effects, and §12.3 counts FolioRestart as a restore."
+ },
+ {
+  "from": "verify:14",
+  "request": "RunView's rooms_visited and map_revealed are now backed by doc 14 FolioRun (§1.2). Specify the trace service and the audience-vote path (vote results as host intents logged in the replay; overlay refused in Daily, Weekly, Prologue and ranked lobbies) per doc 14 §8.1 Later overlays (DECISIONS 96, 104)."
+ },
+ {
+  "from": "verify:02",
+  "request": "Apply DECISIONS 112 and 123 (Steam only, EOS SDK dropped). Remove the EOS backend, /v1/auth/epic, net.route.relay for Epic members, §3.6 crossplay identity, the Epic value of `platform: u8` and the Epic Workshop mirror (svc.workshop). Rule on whether flag.net.crossplay retires; doc 02 still exports it, marked inert. Drop 'an Epic Online Services platform layer' from the Interface row for doc 02. Cite rows 112 and 123 instead of 73's Epic build."
+ },
+ {
+  "from": "verify:01",
+  "request": "Specify the asynchronous-trace service and the streaming-vote path (DECISIONS 96, 104, 118; doc 16 O2)."
+ },
+ {
+  "from": "fix:11",
+  "request": "Delete G11: G-148 and decision 83 ruled on it, and doc 11 §17 now passes Lucre only as `DropLucre` piles. Trades and `DropItemFor` keep refusing `cat.currency`. Also drop 'not mounted' from the §9.7 trade-eligibility rule (mounts are cut, C-30). Apply to both doc 16 files on disk."
+ },
+ {
+  "from": "fix:15",
+  "request": "§11.4 pull example: change banner.echo.p001's window from [1792886400, 1795305600) to [1820448000, 1822867200) (T0 = 1820448000). Use a receipt iat inside the new window (for example 1820451600) and kid rk_2027a in place of 1792890000 and rk_2026a. §9.12 voice defaults should read: adults push-to-talk, party only, and a party member who is not on the player's platform friends list starts voice-muted (doc 15 §8.5, DECISIONS 75)."
+ },
+ {
+  "from": "fix:18",
+  "request": "Define the reliable host-to-client message `ScribeText { key: [u8; 32], job: Id32, subject: u64, json: ≤ 4,096 bytes }` that carries the host's validated Scribe text (doc 18 §9.6)."
+ },
+ {
+  "from": "verify:11",
+  "request": "Interface row for doc 11 ('a Keepsake flag on item instances'): cite doc 11 §2.2's new `keepsake` field, which §14.4 DropItemFor refuses."
+ },
+ {
+  "from": "verify:09",
+  "request": "Canon gaps O1: reconcile §6.6 rule 2's symmetric 4-ray PvP culling with doc 09 §14.5's invader interest filter (perceived at V ≥ 300, heard within 60 ticks with position quantized to 4000 mm, or marked by a fac.editors source). Doc 09's Interface row 16 now records that doc 16 does not apply the filter."
+ },
+ {
+  "from": "verify:18",
+  "request": "Carry each slot's Appearance (doc 18 §5.6) in the data a joining peer receives, presentation only. Also add the reliable host-to-client ScribeText { key: [u8; 32], job: Id32, subject: u64, json: ≤ 4,096 bytes } message."
+ },
+ {
+  "from": "verify:15",
+  "request": "§11.4 pull example: move the window to [1820448000, 1822867200), use an iat inside it and kid rk_2027a (the fixer's request, still open). Remove the Epic Games Store and EOS paths (auth/epic, net.route.relay for Epic, account linking, the Workshop mirror, 'Steam and Epic clients' in voice) per DECISIONS 112 and 123. The run-report endpoint must accept doc 15 §10.4's new `ironman` field."
+ },
+ {
+  "from": "fix:17",
+  "request": "C-09: add the light byte beside light_at (low nibble light_block, high nibble light_sky, values after canon §2.3 light overrides). C-10: the sanitizer replaces a command whose ACTION is 6 or 7, or whose bit 25 is set. While an invader is present, nothing pauses and game speed is 10000 (doc 17 P8, §13.9)."
+ },
+ {
+  "from": "fix:03",
+  "request": "Replicate custom micro-voxel masks, from ev.block_chipped (cell, mask, removed, ip, actor) or from chunk deltas. Change §8 item 2 per triage C-08: '…then takes its normal step against the poses of t, and one step per tick from t + 1 (doc 03 §5.19)'."
+ },
+ {
+  "from": "verify:17",
+  "request": "Resolve open item O2: specify the asynchronous trace service and the streaming vote path (DECISIONS 96, 104). Doc 17 §11.6 adds the screens and settings once that is done."
+ },
+ {
+  "from": "verify:03",
+  "request": "Add crouch_base and climb_base to OwnerDelta.mover (§6.10) and to the §7.2 sentence listing the MoverParams sources. Doc 03 MoverParams now carries both, so Echo plans (doc 04 §13) predict correctly."
+ },
+ {
+  "from": "fix:16",
+  "unresolved": "O1: doc 09 §14.5 defines a perception-based filter (V ≥ 300 with aware.profile.invader, noise heard within 60 ticks with positions quantized to 4,000 mm, or st.marked from fac.editors) for what the invader's client receives. Doc 16 §6.6 rule 2 uses a symmetric 4-ray visibility test with a 16,000 mm near radius and a 30-tick grace. The triage has no ruling. Doc 16 states that rule 2 governs until a ruling lands."
+ },
+ {
+  "from": "fix:16",
+  "unresolved": "O2: DECISIONS 96 (asynchronous traces: opt-in marginal notes and ink-stain death echoes) and 104 (opt-in streaming audience votes) both land in doc 16. Neither the trace service nor the vote path is specified yet (doc 21 schedules them for Updates 1 and 2). They were outside this task's decision list (73–76)."
+ },
+ {
+  "from": "verify:16",
+  "unresolved": "DECISIONS 112 was added to DECISIONS.md at 23:16, after the fixer finished. I applied it to doc 16 because its 'Lands in' column cites doc 16. Docs 01, 02, 15 and 21 (and tools/roadmap) still specify the Epic Games Store and EOS until their owners change. net.route.relay, svc.relay and svc.workshop are kept in doc 16 Exports as reserved IDs so docs 02 and 21 stay lint-clean; once those chapters drop them, the IDs could be retired outright."
+ },
+ {
+  "from": "verify:16",
+  "unresolved": "LAN and direct-IP host migration was under-specified before this pass and still is. §9.3 sends MigrateAnnounce only as a Steam lobby chat message, and takeover step 2 relies on 'its LAN address from PartyState', a field SlotSummary does not have."
+ },
+ {
+  "from": "verify:16",
+  "unresolved": "A falling block's custom mask (doc 03 §13.6) is not replicated with its entity, so a chipped block renders whole while it falls. This is presentation only."
+ },
+ {
+  "from": "verify:16",
+  "unresolved": "§5.8 keeps the bit-25 sanitizer test even though the C-10 ruling says 'drop the reserved-bit test'. I read that ruling as covering bits 26–31. Docs 02 §5.5 and 17 §12.2 both require rejecting bit 25 (the retired mount toggle), so I left it as is."
+ }
+]

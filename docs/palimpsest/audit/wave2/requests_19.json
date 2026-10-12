@@ -1,0 +1,14 @@
+[
+ {
+  "from": "fix:02",
+  "request": "In the loot-table record schema, set `\"x-patchable\": true` on `lines`, which doc 02 §13.1's `02.patch` example targets."
+ },
+ {
+  "from": "fix:01",
+  "request": "The 01.pillar_test record (content/01/pillar/tests.json) is now defined in doc 01 §2.7 with fields id, pillar, index (1..=3) and carry_forward (true only for pillar.one_ruleset.t3). 01.pillar and 01.kpi are unchanged."
+ },
+ {
+  "from": "verify:11",
+  "request": "Doc 11 §2.1 now says owner-ID loot data is serialized as your `11.template_loot` records. If those records carry IDs in the proposed `loot.tpl.` namespace, give the exact ID scheme so doc 11 can export them; otherwise state that they are keyed by the owner ID through x-idref and carry no ID of their own."
+ }
+]

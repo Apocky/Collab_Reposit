@@ -1,0 +1,118 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Close G2 (margin.plot is the trophy alcove), G4 (Mercy no longer blocks achievements or Grades in doc 14) and G21 (L3 now teaches a node harvest and placeables). Keep G29 aligned with doc 14 Canon gap 3. Show doc 14 §5.6 arc beats as text in the Margin dialogue box and the §5.7 Glyph Library picks in the Dramatis."
+ },
+ {
+  "from": "fix:16",
+  "request": "Draw the stealth meter from doc 16 §6.8's STEALTH section: at most 4 rings (newest), 8 marks (highest meter) and 4 steps (newest); a mark's arc direction comes from its 'bearing' field because the observer may not be relevant (handle 8191). The ping double-tap window is net.params.default ping_danger_ticks = 15."
+ },
+ {
+  "from": "fix:02",
+  "request": "§13.6 says '(doc 02 picks the crate)' for access.narrator. Doc 02 §2.2 now names `tts` 0.26.3 (Windows speech API), with AccessKit through bevy_a11y in bevy_winit; cite them."
+ },
+ {
+  "from": "fix:01",
+  "request": "Add a binding (and an input. action if needed) for the DECISIONS 95 sprint-slide. Doc 01 Q-25 defaults to input.crouch pressed while sprinting. Doc 01 §7 marks it 'requested from doc 17' and will copy it."
+ },
+ {
+  "from": "verify:14",
+  "request": "§11.6 later screens: doc 14 §8.9 now specifies the Second Edition door (in VictoryChoice after the Margins doors and before Close the Book; in Abridged with Close the Book only), the stakes text (every non-victory end forfeits the clear, Abandon included) and the Ironman mark. Close that dependency in the Interface row for 14. G28 matches doc 14 Canon gaps item 6."
+ },
+ {
+  "from": "verify:16",
+  "request": "Draw the stalled and migration overlays, stale entities, the kick vote, the lobby browser, per-member voice unmute, the cosmetic-difference notice, and the STEALTH caps (4 rings, 8 marks, 4 steps). No crossplay setting or friend codes exist any more (DECISIONS 112)."
+ },
+ {
+  "from": "verify:01",
+  "request": "State the DECISIONS 95 sprint-slide (input.crouch pressed while sprinting) in §12's action list or binding tables. Today only the Interface row for doc 03 states it, while doc 01 §7 and Q-25 copy it."
+ },
+ {
+  "from": "fix:07",
+  "request": "The Disassembly row cites 'doc 07 §8.3' (formerly §8.5). No durability display anywhere (canon §4.3)."
+ },
+ {
+  "from": "fix:09",
+  "request": "§10.11: access.lock_mode / SetLockMode also governs hacks, Seize included (doc 09 §13.3). The auto lock panel shows 'Slip x.x%' from slip_bp (2500, or 1250 at Security 25) beside the success chance. The manual dial also applies to hacks: 2 + tier pins, layout on rng.stealth seq 1004, misses shown as cracks, a pin restarts 30 ticks after a miss, and the third crack is a failed hack. Interface row for 09: replace 'no lockpick break roll (C-31)' with 'the slip roll of doc 09 §13.2 (no break, no wear)'."
+ },
+ {
+  "from": "fix:15",
+  "request": "Vellum Archive screen: add the Transcription shelf (doc 15 §3.9.1) showing the transcription counter, costs 16 (Rubricated) and 32 (Illuminated), and the refusal insufficient_transcription. Show non-friend party members as voice-muted by default (doc 15 §8.5). The ink-or-blood toggle defaults to ink (DECISIONS 94, doc 15 §8.6)."
+ },
+ {
+  "from": "fix:18",
+  "request": "`access.gore`: set the default to `ink` (DECISIONS 94). `full` is the red-blood toggle. Describe the values as \"ink wounds and unravelling script on severed parts (default), red blood, or no decals\" (doc 18 §5.4)."
+ },
+ {
+  "from": "verify:07",
+  "request": "§6 Disassembly row: cite doc 07 §8.3 (it still says §8.5)."
+ },
+ {
+  "from": "verify:09",
+  "request": "Interface row 09: replace \"no lockpick break roll (C-31)\" with \"the slip roll of doc 09 §13.2 (no break, no wear)\". Optionally §10.11/§10.12 could show the 30-tick pin restart, and that a deck spark ends a hack attempt (doc 09 §13.4)."
+ },
+ {
+  "from": "verify:15",
+  "request": "Add the Fairness panel (fresh and pinned client-seed modes, 'Reveal now'). Add a Vellum Archive screen with the Transcription shelf (counter, costs 16 and 32, refusal insufficient_transcription). Display cosm.frame.ironman."
+ },
+ {
+  "from": "fix:12",
+  "request": "The door panel and HUD Law list/Folio header show only the viewer's discovered Laws (doc 12 §4.1), with no placeholder, plus a toast on the law-discovery event. List the optional Folio quest (solve the story; carry the Folio Leaf out) under the Rubric, with each step's state (doc 12 §20.6)."
+ },
+ {
+  "from": "fix:06",
+  "request": "§6.5 cast wheel: open the lore target list only for an entry whose spell has glyph.ess.appraise or glyph.ess.psychometry with the self form; glyph.ess.omen has no item target (doc 06 §5.3). The rest of §6.5/§12.2 (bit 9 with instant/cast_time selections, channel/charge select-only, SetCastItemTarget then CAST) already matches doc 06 §3.2."
+ },
+ {
+  "from": "fix:10",
+  "request": "§4.3 item card row 13: change \"≈ 160–340 Nobles\" to \"≈ 160–340 Crowns\" (DECISIONS 90 keeps Crowns as the Mythic Fantasy Lucre skin; triage Q9 overruled)."
+ },
+ {
+  "from": "verify:12",
+  "request": "Still open: list the optional Folio quest (solve the story, carry the Leaf) under the Rubric with each step's state (doc 12 §20.6)."
+ },
+ {
+  "from": "verify:06",
+  "request": "§6.5 (still open): open the lore target list only for glyph.ess.appraise or glyph.ess.psychometry with the self form; glyph.ess.omen has no item target. Separately, in §10.7's petition line, write 'the fourth waits 3480 ticks (58 s)' instead of 60 s, to match doc 06 §16.4."
+ },
+ {
+  "from": "verify:03",
+  "request": "The interface row for doc 03 assumes a ledge mantle 'up to 2,000 mm'. Doc 03 §5.9 reaches 1,600 mm until doc 03 G31 closes, so the row should say so (as doc 01 G1 does)."
+ },
+ {
+  "from": "fix:17",
+  "unresolved": "G28 (open canon gap): canon §5.8 says 'the Codex' remembers discovered World Laws, but triage G-197 reserves 'Codex' for the pass. Doc 17 assumes the Index; the canon text change is proposed, not applied."
+ },
+ {
+  "from": "fix:17",
+  "unresolved": "G29 (open canon gap): canon §17.1's Erasure schedule counts from folio_entry_tick, while §11.6's boss-Folio pause and doc 14's clock_start (the Editor's death tick) disagree. Doc 17 uses doc 14's clock_start; the canon text change is proposed."
+ },
+ {
+  "from": "fix:17",
+  "unresolved": "World Law discovery depends on doc 12 defining each Law's trigger and a first-fire event, and on doc 14 storing the account set with the Index. Neither exists on disk yet."
+ },
+ {
+  "from": "fix:17",
+  "unresolved": "Doc 06's petition-cost example (40 at Devotion 50) conflicts with its own m25 rule. Doc 17 shows 32, pending doc 06's confirmation."
+ },
+ {
+  "from": "fix:17",
+  "unresolved": "Docs 01 and 05 still name input.mount, which is now undefined, until their fixers apply C-30. Docs 02, 09, 11, 14 and 16 still carry the mount, durability, reserved-bit or 25,200-tick Erasure text that the triage rows assign to them."
+ },
+ {
+  "from": "fix:17",
+  "unresolved": "New in this pass and not yet reviewed by the owners of the other chapters: §9.8 killcam and replay viewer, §10.12 hack and pickpocket panels, the SetLockMode intent, the pencil token and access.mark_hallucinations."
+ },
+ {
+  "from": "verify:17",
+  "unresolved": "The §7 heading still reads 'Journal and Codex knowledge', which conflicts with G-197's rule that 'Codex' means only the pass. I left it unchanged because tools/roadmap/headings.json and doc 21 WP-055 quote that heading word for word; renaming needs a coordinated doc 21 regeneration."
+ },
+ {
+  "from": "verify:17",
+  "unresolved": "DECISIONS 95, 96, 104 and 108 name doc 17, but the owning chapters have not specified the mechanics or services yet: the sprint-slide and grappling tool in docs 03, 05 and 11, the trace and vote services in doc 16 (O2), and the Second Edition flow in doc 14. Doc 17 records only the ledger's binding rules (§11.6 'Later screens') and the dependencies in Interface assumptions; no screens or IDs are defined."
+ },
+ {
+  "from": "verify:17",
+  "unresolved": "The fixer's petition-cost example (Benediction at Devotion 50 = 32, applying the m25 ×8000 factor) disagrees with doc 06 §16.4's own example (40). Doc 06's prose supports 32. The request to doc 06 is already in the fixer's log; doc 06 still shows 40."
+ }
+]

@@ -1,0 +1,122 @@
+[
+ {
+  "from": "fix:13",
+  "request": "Canon §17.7 retires `shop.stablemaster`. Delete the shop row, its vendor-draw weight (the Σ becomes 17), the 'Mount mending' service row and the mount-token loot lines (C-30). Doc 13 now defines 10 `npc.vendor.<type>` IDs, one per remaining shop."
+ },
+ {
+  "from": "fix:14",
+  "request": "Delete the doc-14 rows of the former-name table (C-02): doc 14 now names only owner IDs. Drop the Interface-row clause about doc 14 kits using former names. Close Canon gap 17 (deep pockets), since doc 14 §3.9 applies it to fresh piles only (C-05)."
+ },
+ {
+  "from": "fix:05",
+  "request": "In the manufacturer trait table, cite doc 05 §10.5 for the hooks of perihelion, umbra, rustmaw, lastditch, jade_lotus, hephaesteum, somnambule and bureau. State that jade_lotus throws the weapon with input.throw when no throwable is on the quickbar, and that rustmaw's 'reload time × 13000' covers reload_ticks, the shotgun's 20-tick start and 32-tick per-shell interval, and the 18-tick nock."
+ },
+ {
+  "from": "fix:02",
+  "request": "Mark the `lines` array of `loot.` table records `\"x-patchable\": true` (with doc 19's schema), so doc 02 §13.1's example patch, which appends a line to `loot.chest.plain`, is valid."
+ },
+ {
+  "from": "fix:01",
+  "request": "Add a record for the genre-skinned grappling tool item of DECISIONS 95. Doc 01 §7 lists it as a quickbar item."
+ },
+ {
+  "from": "verify:05",
+  "request": "§5.2 manufacturer table: cite doc 05 §10.5 for deepanvil, grimhallow and neon_saint, as well as perihelion, umbra, rustmaw, lastditch, jade_lotus, hephaesteum, somnambule and bureau. Confirm that neon_saint's '1000 mm of blocks' means the first penetrable cell, and that a refused grimhallow HP cost starts no reload."
+ },
+ {
+  "from": "verify:14",
+  "request": "Canon gap 2 (Second Edition ENH_CAP) is mirrored by doc 14 Canon gaps item 4. SE Folios are not Marginalia (doc 14 §8.9), so they grant no Marginalia Emendation, and SE loot rules can key on d(f) = 25 + 2n."
+ },
+ {
+  "from": "verify:01",
+  "request": "A genre-skinned grappling tool item record (DECISIONS 95), once the canon states the movement kit."
+ },
+ {
+  "from": "fix:07",
+  "request": "Remove item durability (C-31): the U tendency letter; the durability gimmicks of Dunwold, Rustmaw, Glass Cobbler and Hephaesteum; affix.durability and affix.self_repair. item.tool.toolkit use text: 'construct self-repair (repair_kit, doc 07 §8.2) and gadgets'. The Interface row for 07 drops 'durability'."
+ },
+ {
+  "from": "verify:07",
+  "request": "Optional: shop.tinker stocks item.tool.lockpicks × 1 instead of × 5, since no attempt consumes lockpicks (doc 09) and doc 07's recipe now yields 1. Still open from the fixer: §3.6 'Gadgets have dependency techne' should read as doc 07 §11.1 rule 3's genre-skin dependencies (none in WX, UW, UT)."
+ },
+ {
+  "from": "verify:04",
+  "request": "loot.pool.implants_2 cites 'the 8 implant-form aug.* that doc 04 tags implants_2', but doc 04 defines no implants_2 tag. Loot pools belong to doc 11, so list the 8 aug.* IDs in the pool row itself (§2.5 and §3.4) and fix the Interface row for doc 04 to match."
+ },
+ {
+  "from": "verify:09",
+  "request": "`shop.tinker` sells `item.tool.lockpicks` × 5 with stack 10; doc 09 never consumes picks, so a single set is enough (optional cleanup)."
+ },
+ {
+  "from": "verify:15",
+  "request": "In §2.3, state that a Keepsake's step 2 eligible templates come from the opener's account content set at open time (doc 15 §5.4)."
+ },
+ {
+  "from": "fix:17",
+  "request": "§12.3: delete the 'Repair to max durability' and 'Mount mending' service rows (C-31, C-30)."
+ },
+ {
+  "from": "fix:12",
+  "request": "Define the story-relic fill for doc 12 §13's story relic spot: one item whose affix themes follow the story's 2 domains, identified when the story is solved (doc 12 §20.4); doc 11 has no seat or story relic template yet. Update the §3.5 `item.quest.folio_leaf` row: the Leaf is consumed on the exit-commit tick when an Active Erratum holds it, which sets FolioRecord.leaf_carried."
+ },
+ {
+  "from": "fix:06",
+  "request": "item.text.inscribed row: change 'created only by inscription (doc 06 §8.3) from item.tool.blank_text' to 'created only by inscription (doc 06 §8.3) from item.tool.blank_text or a scraped identified cat.text'."
+ },
+ {
+  "from": "fix:10",
+  "request": "§12.2: replace \"unknown enhancement as 0\" with \"the hidden part of `eff_enh` as 0 (stored enhancement is public, doc 10 §2.1)\", so value_vendor keeps stored `enhancement` in its (10000 + 1000 × eff_enh) factor as doc 10 §6.2 states."
+ },
+ {
+  "from": "verify:17",
+  "request": "Add the grappling tool item record (DECISIONS 95). Doc 17 binds it as a quickbar item."
+ },
+ {
+  "from": "verify:12",
+  "request": "Still open: define the story-relic fill for doc 12 §13's story relic spot (one item whose affix themes follow the story's 2 domains; doc 12 §20.4 identifies it with appr.reason.story)."
+ },
+ {
+  "from": "verify:10",
+  "request": "§9.1 Lucre find: add curse.greed to the fresh-pile chain, × (10000 − m) for each equipped instance in ascending item uid, next to curse.pact.miser, with sales and dropped piles excluded, and list it in the doc 10 Interface row. §14.1: count an equipped item bearing curse.leaden or curse.pact.bulwark in carried_g at mul_bp(mass_g, 10000 + m). §3.4: '15 rings (at most 20)' should read '(at most 24)', because doc 10 §3.2's ring pool of 26 minus 2 decoys allows 24 types."
+ },
+ {
+  "from": "fix:11",
+  "unresolved": "Doc 12's 'seat relic' / 'story relic' (doc 12 §20.5 and I6) expects a doc 11 item with affix themes taken from the story's two domains. Doc 11 has no such template and no domain-to-affix table. It was not invented here because it needs a design decision; a request was filed to doc 12."
+ },
+ {
+  "from": "fix:11",
+  "unresolved": "Canon gap 1 (Abridged kill-drop scaling) stays open until the canon owner adopts or rejects the proposed §17.1 wording. Doc 11 keeps scaling kill-drop lines in the meantime."
+ },
+ {
+  "from": "fix:11",
+  "unresolved": "The lint's hedge count {'might': 3} is a false positive from the IDs `item.ring.might` and canon `attr.might`. Removing it would mean renaming a canon attribute ID, so it was left as is."
+ },
+ {
+  "from": "fix:11",
+  "unresolved": "Deleting the `item.face.respirator` alias (C-26) leaves 3 undefined-ID lint hits in doc 08 until doc 08 applies its side of C-26 (request filed)."
+ },
+ {
+  "from": "fix:11",
+  "unresolved": "Doc 14 is being edited concurrently and still names former IDs in brace form in its Interface row for doc 11. Doc 11's doc-14 former-name rows were already deleted per C-02, so the exact mapping was put in the doc 14 request; it is also kept in audit/map_items.json."
+ },
+ {
+  "from": "verify:11",
+  "unresolved": "Doc 08 asks doc 11 to add found raw-liquid bottles (apparatus.vessel.bottle holding 750 ml) to loot.chest.plain consumable draws and shop.apothecary lines. Doc 11 has no such line or weights yet, and adding them needs per-genre weights. This is outside the verifier checklist."
+ },
+ {
+  "from": "verify:11",
+  "unresolved": "Doc 09 asks doc 11 for an `outfit_of` instance field, door keys in cat.key with `key_tag`, tool qualities and a lock.kind.container lock on loot.chest.locked. None of these is in doc 11 yet. This is outside the verifier checklist."
+ },
+ {
+  "from": "verify:11",
+  "unresolved": "Doc 12 and doc 10 rely on a 'story relic' that doc 11 fills. Doc 11 defines none, so the request goes back to doc 12 (listed under cross-chapter requests)."
+ },
+ {
+  "from": "verify:11",
+  "unresolved": "Doc 19's proposed `loot.tpl.` record IDs: if they are adopted, doc 11 must own and export them."
+ },
+ {
+  "from": "verify:11",
+  "unresolved": "Canon gap 1 (Abridged kill drops) remains open until the canon owner rules. Doc 11 keeps scaling kill lines by 16667 in Abridged, and its §13.2 Abridged Lucre target depends on that scaling."
+ }
+]

@@ -1,0 +1,78 @@
+[
+ {
+  "from": "fix:14",
+  "request": "Section 6.3 Erasure table and the paragraph after it still use a 420 s onset with repeating hunters. Replace with canon-1.11 timing: cues at 36,000 and 41,400; stack 1 at 43,200 (720 s), one stack every 1,800 ticks up to the cap of 10 at 59,400 (990 s); the single Erasure hunter at the first Erratum's threshold (59,400 at 0 doses), with no repeat. A party that reaches the Colophon by tick 43,199 never gains a stack, and a hunter spawns only if some Erratum reaches its threshold before Colophon entry."
+ },
+ {
+  "from": "fix:05",
+  "request": "§7 verb table (~line 566): delete the row 'Mount, dismount | `input.mount` | H | LB+L3 | `st.mounted`, 30-tick summon | 05' (C-30). Doc 05 no longer has mounts or input.mount, and doc 17 retires bit 25."
+ },
+ {
+  "from": "fix:02",
+  "request": "§9.2 Platforms still lists Linux, macOS 14+, a WebGPU demo and console ports after 1.0. DECISIONS 98 makes the client Windows-only through 1.0 (Steam and Epic, Steam Deck verified via Proton), so rewrite it accordingly. Q-11 (macOS at EA or 1.0) is moot."
+ },
+ {
+  "from": "verify:14",
+  "request": "§6 Bindery paragraph (line ~536): achievements now pay 1,960 Quires, leaving 5,710, i.e. 5710/60 = 95.2 h and 5710/143 = 39.9 h (about 8.0 to 19.0 weeks at 5 h per week). G2: doc 14 §8.9 decides the Second Edition offer at every Ur-Text victory of Standard or Abridged, the account's first included; close that part of G2 and cite §8.9."
+ },
+ {
+  "from": "verify:02",
+  "request": "§9.2, PAR-03, Q-11 and the doc 16 Imports row still describe Epic Games Store crossplay and an EOS build. Update them to DECISIONS 112 and 123 (Steam only)."
+ },
+ {
+  "from": "verify:16",
+  "request": "DECISIONS 112: remove Epic crossplay from the doc 16 Imports row, PAR-03, §9.2 and Q-11. Also drop the ChooseExit intent from the doc 16 import: exits are votes by position (doc 16 §9.8)."
+ },
+ {
+  "from": "fix:15",
+  "request": "§9.3 price row: change 'Base game | 24.99 in EA, 29.99 at 1.0 (EA owners keep it)' to '19.99 at Early Access and 1.0 (EA owners keep it; DECISIONS 42)'."
+ },
+ {
+  "from": "fix:18",
+  "request": "Triage C-16: write \"the Censor\" and \"the Censor's office\" for `boss.editor_v2` in §1.3's premise, the Editors diagram, Q-17 and the Interface row for doc 18. Invaders stay lowercase \"redactors\"."
+ },
+ {
+  "from": "verify:18",
+  "request": "Apply DECISIONS 114 (all 12 core genres and the 25-Folio Standard run at Early Access; supersedes 41). §2.7, PAR-12, the shipped-content readings and tests 22, 24 and 25 still describe 6 Early Access genres."
+ },
+ {
+  "from": "verify:15",
+  "request": "Change the Folio Expansion price from USD 12.99 to 9.99 (DECISIONS 122) in the §9.3 price table, Q-12 and the Risk of Rain 2 comparables row. Change the §9.3 base price to 19.99 if not already done (the fixer's request)."
+ },
+ {
+  "from": "fix:17",
+  "request": "§7 verb table: drop the input.mount row (C-30; doc 17 no longer exports it, so lint reports it undefined). Delete G7: B in input.ctx.casting is bound (doc 17 §12.4)."
+ },
+ {
+  "from": "fix:01",
+  "unresolved": "DECISIONS 95 movement kit is not yet in canon §4.2, doc 03 (mantle stops at 1,600 mm), doc 11 (no grappling tool record) or doc 17 (no sprint-slide binding). Doc 01 §7 states the decision and marks the slide binding as requested (Canon gaps G1, Q-25)."
+ },
+ {
+  "from": "fix:01",
+  "unresolved": "Second Edition (DECISIONS 100-108) and asynchronous traces (DECISIONS 96) have no owner text yet. Doc 01 states only what the decisions fix. The Second Edition gating (first clear vs every clear) is open for doc 14 (Canon gaps G2)."
+ },
+ {
+  "from": "fix:01",
+  "unresolved": "Doc 02 §17.4 does not yet carry the per-Folio KPI aggregates or the minor-flagged bar (C-14). Until it does, those KPIs rely on doc 16 §11.7 and bot sweeps."
+ },
+ {
+  "from": "fix:01",
+  "unresolved": "Hits from Errata-placed block traps are not yet identifiable in ev.damage_dealt (no source entity). The systemic-kill rule counts them, so it depends on docs 03 and 07 adding that."
+ },
+ {
+  "from": "verify:01",
+  "unresolved": "The computed brief asked to reflect '6 genres at Early Access (41)'. DECISIONS 114, committed after the brief and the fixer, supersedes 41 with all 12 core genres at Early Access, and the chapter now follows 114. Until doc 14 §2.3 and doc 21 §2.2–§2.3 are updated, doc 01 deliberately disagrees with them; both mismatches are listed in Interface assumptions."
+ },
+ {
+  "from": "verify:01",
+  "unresolved": "Doc 21 still lists invasions at Early Access, but DECISIONS 118 and 125 move them to an update before 1.0. Doc 01 follows the decisions. Doc 21 also keeps calendar dates (2027 milestones) that DECISIONS 111 removes. Doc 01 has no dates, so the only effect here is the doc 21 request."
+ },
+ {
+  "from": "verify:01",
+  "unresolved": "Q-25 (which input starts the sprint-slide) stays an open product-owner question. Its default (input.crouch while sprinting) is what doc 17 has adopted, but doc 17 states it only in its Interface row for doc 03, not in its §12 binding tables."
+ },
+ {
+  "from": "verify:01",
+  "unresolved": "Interface row 04 (each Calling kit contains an ally-targeting verb for pillar.party_of_errata.t2) stays open. No chapter lists these verbs per Calling, so the content audit cannot yet be confirmed on disk."
+ }
+]

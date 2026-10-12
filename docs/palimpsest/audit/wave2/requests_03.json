@@ -1,0 +1,142 @@
+[
+ {
+  "from": "fix:05",
+  "request": "§12.4: an item explosion's damage must be B_eff = mul_bp(mul_bp(b_mhp, falloff), exposure), one mul_bp per attack factor as canon §10.4 requires (doc 05 §9.4 attack factor 7). Keep mul_bp(B, f) for env_base_mhp only. In the Interface row for 05, replace 'with impact and status powers scaled by `f = mul_bp(falloff, exposure)` of §12.4 in place of doc 05 §9.4's binary line-of-sight test' with 'with damage, impact and status powers scaled by falloff and then exposure, one mul_bp each (doc 05 §9.4, §10.1)'. In G19, replace \"doc 05's distance point\" with 'the target point `tp`' and drop 'in place of doc 05's binary line-of-sight test'."
+ },
+ {
+  "from": "fix:05",
+  "request": "Canon §10.8 two hit batches: in §12.4, queue environmental-explosion hits (source Env) for sys.damage_late and item-explosion hits for sys.damage. In the §2.2 system table, rows 17 and 26 should name the batches: #17 is the first batch (actor hits); #26 is the second (environmental, contact, surface and DoT hits, plus hits queued during #17 such as shock chains and thorns). This matches doc 05 §1.3 and §2.7."
+ },
+ {
+  "from": "fix:16",
+  "request": "§5 SPEC comment for MoverSnap: list 'status_speed_bp, n_status' instead of 'speed_bp' (doc 16 §7.2 carries the per-status list, as doc 03's own Interface row 16 requires). §5.19: set catchup = min(t − view_tick, LAGCOMP_MAX_TICKS) also for a projectile whose owner is the slot-4 invader, not only an Erratum (doc 05 §2.6 says 'a player's projectile'; doc 16 §8 item 2)."
+ },
+ {
+  "from": "fix:02",
+  "request": "For Canon §4.4 rendering and collision (doc 02 §4.6, §6.5, §7.2, §8.2), provide: a predefined u64 micro-voxel mask for every shape and state in the per-state tables; a `mask_at(c) -> u64` query; and each chunk's list of masks that differ from their shape's mask (custom and chipped). Serialize that list in section 4 directly after the four cell bitsets as ascending `(Local: u16, mask: u64)` pairs, and list it in §16.1 row 4. Bump `block_gen` on every mask change. `raycast_blocks` should pass `max_steps = 3 × ceil_div(t_max.raw(), 2^32) + 3` to doc 02's `dda`. Doc 03's Interface row for doc 02 is otherwise met: the 39 systems are budgeted, `fluid_gen`, the flip bitset in the clone size, light overrides in the view frame, `extract_view` read-only, and slot 4 noise. That row can be marked met."
+ },
+ {
+  "from": "fix:01",
+  "request": "§5.9: raise the mantle bound from h ∈ (550, 1600] mm to 2,000 mm (DECISIONS 95). Define the sprint-slide motion. With doc 07, make an ev.damage_dealt from an Errata-placed block trap (block.trap.spikes and other cat.placeable block traps) identify that trap, so doc 01 §10.3's systemic-kill rule can count it."
+ },
+ {
+  "from": "verify:05",
+  "request": "§5.8 lean: replace the eye point test ('If the eye point would lie inside a box, lean steps back toward 0 that tick') and the floored offset `350 mm × lean / 9` with doc 05 §6.8's rule. The offset is `sign(lean_k) × floor_div(350 × |lean_k|, 9)`, so lean −1 gives −38 mm, not −39. Then a 100 mm sphere clamp lowers |offset_mm| by 50 until clear, while lean_k keeps moving. Canon §4.2 gives the lean to doc 05."
+ },
+ {
+  "from": "verify:05",
+  "request": "§12.1 and §12.4 (extends fixer request 1): Source::Item.b_mhp is doc 05 base_mhp × attack factors 1 and 2, before Canon §10.4, not the 'Canon §10.4 magnitude'. An item hit carries HitRecord.base_mhp = mul_bp(mul_bp(b_mhp, falloff), exposure), and Canon §10.4 applies when the hit resolves; replace 'enters at step 1 with B = B_eff'. Item block power comes from doc 05 Tables 9.3 and 9.3b block_power_milli (frag 3000, concussion 1000, launcher blast 4000; incendiary, flash, smoke and counter 0). Drop the min(8000, mul_bp(4000, block_bp)) derivation and its examples (frag 4000, concussion 2000, incendiary 1000)."
+ },
+ {
+  "from": "verify:05",
+  "request": "§5.19: add the homing step that mfr.cyberpunk.ghostline needs, turning the projectile's velocity before the move. The turn rate is doc 11's 16384 Bam/s through the Canon §2.3 accumulator."
+ },
+ {
+  "from": "verify:02",
+  "request": "No change needed. Doc 03's Interface row for doc 02 is now fully met: shadow areas and the override sphere are published in ViewFrame and applied in §8.5. The fixer's earlier request (mask_at, custom masks in section 4, block_gen bumps, raycast_blocks max_steps) is already met on disk."
+ },
+ {
+  "from": "verify:01",
+  "request": "Unchanged from the fixer: mantle up to 2,000 mm and sprint-slide motion (doc 03 G31). Also, with doc 07, an ev.damage_dealt from an Errata-placed block trap such as block.trap.spikes must identify the trap, for doc 01 §10.3's systemic-kill KPI."
+ },
+ {
+  "from": "fix:07",
+  "request": "§13.3: drop 'and `item.tool.torch`' (triage C-25); a held torch becomes block.torch via doc 07 recipe.hand.wall_torch."
+ },
+ {
+  "from": "fix:07",
+  "request": "§13.8 sys.erasure: erasers are hunters and every fac.editors member EXCEPT the invader (canon §11.6 as amended by G-113), replacing 'hunters and the invader included'."
+ },
+ {
+  "from": "fix:07",
+  "request": "§4.5 illustrative JSON records: stop declaring block.air, block.masonry.marble, block.door.wood, block.cover.sandbag and block.powder_keg through JSON \"id\" values (lint multiply_defined), for example by keying them \"example_of\". Alternatively align their values with doc 07 §2.5/§10.1 (block.masonry.marble: tool_tier tooltier.t0, blast_res_milli 4000, heat_cond_bp 2800, sound_atten_ddb 370)."
+ },
+ {
+  "from": "fix:07",
+  "request": "Implement doc 07 §10.8 micro-voxel chipping. Give every §4.4 shape a predefined mask. After each damage event, remove micro-voxels down to voxels_left = ceil_div(popcount(shape mask) × hp_left, hp_total): inside the damage volume nearest the impact first, then nearest the impact anywhere in the cell. Keep chipped masks when a decayed block_damage entry is dropped. On a doc 07 §10.4 repair, refill in ascending bit index. Scale conceal, light_filter and sound_atten_ddb by fill fraction. Door, trapdoor, ladder, fence, pane, cross and fixture shapes, and resource nodes, break whole."
+ },
+ {
+  "from": "fix:09",
+  "request": "§14.3: change ev.device_hacked to `device: u64 /* EntityId, or Gidx for a block device (fuse box, laser emitter) */`. Reword ev.alarm_raised's kind comment to '0 creature (hound, civilian, bell or klaxon), 1 alarm device, 2 camera'; callouts raise no ev.alarm_raised. Implement doc 09 G23's sight reading: raycast_blocks blocks on occupied micro-voxel boxes, and cell_conceal of a partial cell is scaled by its fill fraction. §5.15 gaits (line ~870): replace 'doc 09 G16' with 'doc 09 §7.2'."
+ },
+ {
+  "from": "fix:18",
+  "request": "Triage C-16: write \"the Censor's `blackout`\" instead of \"Redactor `blackout`\" (Imports row for doc 13 and §light overrides)."
+ },
+ {
+  "from": "verify:07",
+  "request": "§13.2 damage_block: the amount is 0 when the actor is the invader (slot 4), so the invader's hits never lower a placed block's hp or a block's damage total (Canon §17.9; doc 07 §10.5 rule 4). Without this, its hits can drain placed_meta.hp while set_block refuses the final break with actor_forbidden. §12.1 item explosions: list doc 04 Fieldcraft 100's +750 block power for demolition charges beside sapper (× 15000) and demolition (+750), all before the 8000 cap (doc 07 §11.1 rule 10)."
+ },
+ {
+  "from": "fix:17",
+  "request": "Line 272 cites 'doc 17 G22', which is now closed. Cite Canon §2.4's intent replay log instead."
+ },
+ {
+  "from": "fix:12",
+  "request": "Register a law-discovery event (suggested `ev.law_discovered`, payload `{ law: Id32, slots: u8 }`, producer 12, consumers 14 and 17), emitted once per Law per run on its first trigger (doc 12 §4.1). Also give each §4.4 predefined shape its 64-bit micro-voxel mask, and store doc 12's per-chunk custom-mask tables (doc 12 §10.4, Canon §4.4)."
+ },
+ {
+  "from": "fix:08",
+  "request": "§6.10 Surface contact: add the sentence 'A body whose slot.face holds a working doc 08 respirator (filter > 0, doc 08 §4.3) skips every gas row, the Canon miasma buildup and steam DoT included, and doc 08 vapor exposure (Canon §12.1); inhaled gas rows also skip a body with doc 08 purify immunity (doc 08 §5.1).'"
+ },
+ {
+  "from": "fix:06",
+  "request": "§10.6 light reads and the Interface row for doc 06: every light read inside a doc 06 shadow area (in_shadow_area(cell), doc 06 §13.1: shadow fields and linger areas) is lowered by 8, floor 0, applied at read time like the light overrides."
+ },
+ {
+  "from": "verify:17",
+  "request": "§5.9: raise the mantle height to 2,000 mm per DECISIONS 95 (it currently allows h in (550, 1600]). Define the sprint-slide; doc 17 assumes it starts on a CROUCH press while sprinting and needs no new button bit."
+ },
+ {
+  "from": "verify:08",
+  "request": "§6.10 should also skip `inhaled` gas rows and doc 08 vapor exposure for a bearer with doc 08 purify immunity (doc 08 §4.3, §5.1). Doc 03 should also run doc 08 gas emitters (doc 08 §2.7 `gas_emitter`) at the start of each gas run, before §7.3. The working-respirator skip is already on disk in §5.20 and §6.10."
+ },
+ {
+  "from": "verify:12",
+  "request": "Still open: register a law-discovery event (suggested ev.law_discovered { law: Id32, slots: u8 }, producer 12, consumers 14 and 17), emitted once per Law per run on its first trigger (doc 12 §4.1)."
+ },
+ {
+  "from": "verify:06",
+  "request": "§13.2 damage_block: name doc 06 §13.1 as the block factor for spells, block_bp = 1000 × the largest block power among the stage's essences (force 6, acid 3 or 6 on metal, thunder 4 or 12 on glass and ice), with mhp = the spell hit's step-0 B. Today the text lists only doc 05's factors."
+ },
+ {
+  "from": "fix:03",
+  "unresolved": "G29: under Canon §4.4's literal fill rule a closed door or trapdoor (16 micro-voxels) filters only 3 light levels and attenuates 43 of 175 ddB, so light and sound leak through closed doors. Doc 03 follows the canon for now, and a canon wording change is requested."
+ },
+ {
+  "from": "fix:03",
+  "unresolved": "G30: shapes with no micro-voxels (cross, ladder, fixture) keep their registry concealment so that Canon §12.2's foliage values hold. This conflicts with a literal reading of §4.4, and a canon wording change is requested."
+ },
+ {
+  "from": "fix:03",
+  "unresolved": "G31: DECISIONS 95 (mantle to 2,000 mm, sprint-slide, grappling tool) and 99 (time of day and weather) name doc 03, but canon-1.11 has neither. Doc 03 waits for canon text."
+ },
+ {
+  "from": "fix:03",
+  "unresolved": "G6 (ghost collision reading) was never triaged and stays open."
+ },
+ {
+  "from": "fix:03",
+  "unresolved": "Doc 09 must drop its own shadow-area term, or shadow areas will dim stealth light twice (cross-chapter request filed)."
+ },
+ {
+  "from": "verify:03",
+  "unresolved": "G31 (DECISIONS 95 and 99) stays open. The canon carries neither the movement kit nor weather. The '2,000 mm mantle' is ambiguous about whether it includes the jump, and the sprint-slide and grappling tool have no numbers in any chapter. §5.9 keeps 1,600 mm, while doc 17's interface row assumes 2,000 mm."
+ },
+ {
+  "from": "verify:03",
+  "unresolved": "The math of the homing turn is not defined anywhere (target selection, turn geometry, where the accumulator lives). Doc 03 now only gives the call site (doc05::steer)."
+ },
+ {
+  "from": "verify:03",
+  "unresolved": "Doc 04 §13 says body.amorphous and body.insectoid 'climb any solid face'. Doc 03's climb mode only climbs climbable blocks. These are not launch Echo plans, but no chapter defines wall climbing."
+ },
+ {
+  "from": "verify:03",
+  "unresolved": "Canon §4.4 says 'Destruction removes micro-voxels, not whole cells'. Docs 03 and 07 still break door, trapdoor, ladder, fence, pane, cross and fixture cells whole, and explosions break the cells they mark whole. I judged this an acceptable reading (the marked cell is inside the blast volume; panel shapes are 16 voxels or fewer) and did not raise a gap."
+ },
+ {
+  "from": "verify:03",
+  "unresolved": "G6, G29 and G30 remain open canon requests, as the fixer recorded."
+ }
+]

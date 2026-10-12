@@ -138,7 +138,8 @@ def main():
             except Exception as e:
                 jerr.append(f"json block {k}: {e.__class__.__name__}: {str(e)[:80]}")
         r["json_issues"] = jerr
-        words = re.findall(r"[A-Za-z]+", t)
+        prose = re.sub(r"`[^`\n]*`", " ", t)  # backticked IDs such as attr.might are not hedges
+        words = re.findall(r"[A-Za-z]+", prose)
         r["hedges"] = {h: sum(1 for w in words if w == h) for h in HEDGES if any(w == h for w in words)}
         r["words"] = len(t.split())
         report[n] = r

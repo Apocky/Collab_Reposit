@@ -1,0 +1,34 @@
+[
+ {
+  "from": "fix:05",
+  "request": "Triage G-096 rules that alchemical area hits draw one crit value and ignore it. Doc 05 §9.3 and §9.4 mark thrown splashes, area potions and bombs NO_CRIT. Doc 08 should state 'one keyed rng.combat crit value drawn per target and ignored (NO_CRIT)' in: the §7 damage text (~line 594), the harmful area effects (~line 1040), §13.2 bombs (~line 1230), the firebomb worked example (~line 1249, 'then adds row 12 and the crit roll'), gap 14, test 50, the 'thrown splash|bomb' invariant and the doc 05 Interface row (~line 1411)."
+ },
+ {
+  "from": "fix:11",
+  "request": "C-26: doc 11 no longer has the alias, so every backticked `item.face.respirator` in doc 08 is now an undefined ID. Replace all three mentions: §4.3 respirator bullet, the Interface row for doc 11 ('aliased to `apparatus.respirator.mask` (Canon gaps 8)'), and Canon gap 8. Use: 'doc 11 §3.4 stores loot records directly on `apparatus.respirator.cloth`, `.mask` and `.rebreather` (values 15, 40, 90; weights 40, 40, 20)'. Close gap 8. Also move `slot.face`, `cat.potion`, `cat.throwable`, `cat.tool` and `cat.container` out of Exports into Imports; canon §19 gives `cat.` and `slot.` to docs 00 and 11, and lint reports them as multiply defined."
+ },
+ {
+  "from": "fix:04",
+  "request": "Delete Canon gap 17 (envenom). Doc 04 §7.2 now reads 'your coats (doc 08 §10.3) get +5 charges, and the coat's buildup factor 5000 becomes 10000' (C-19)."
+ },
+ {
+  "from": "fix:08",
+  "unresolved": "Respirator scope (doc 08 Canon gap 1). canon-1.11 §12.1 makes a working respirator block every gas contact row, skin rows included. The old doc 08 gap asked for inhaled rows only. Doc 08 conforms to the canon, and the canon owner needs to confirm which was intended."
+ },
+ {
+  "from": "fix:08",
+  "unresolved": "The lint reports hedge 'might' ×7. Every one is inside the exported ID alch.eff.fortify_might, which mirrors canon attr.might; none is a hedge word in prose. The ID was not renamed."
+ },
+ {
+  "from": "verify:08",
+  "unresolved": "§8.5: the account-wide 'Margin codex' record of discovered ingredient-effect pairs had no owner and conflicted with the Index definition. I removed it rather than ask docs 10 and 14 to add an ingredient page to the Index. If the product owner wants a hub-only page of discovered effects, docs 10 §12.1 and 14 §5.5 must add it, and doc 08 §8.5 must point to it."
+ },
+ {
+  "from": "verify:08",
+  "unresolved": "§3.2 drink rows: 'hazard N HP' (for example, drinking raw acid) enters as Canon §10.6's environmental hazard 'not from an item' even when the raw liquid is drunk from a vessel. Canon may intend the consumable self-damage row for vessel drinks. This text predates the fixer and was left unchanged."
+ },
+ {
+  "from": "verify:08",
+  "unresolved": "Doc 07 Canon gap 1 asks whether doc 08's reaction products (`block.obsidian`, `block.basalt`, `block.slag`) are destructible. If they are not, a lava-and-water reaction can permanently plug a corridor. Doc 07 or the canon owner must answer. Doc 08 only places them in air cells."
+ }
+]
