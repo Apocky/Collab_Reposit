@@ -5064,4 +5064,75 @@ mod tests {
             prop_assert_eq!(shielded.dr_bp[0], armor_dr_bp(effective_armor(ar + shield, DamageType::Slash, 0), b));
         }
     }
+
+    // ---------------- GAP interpretations pinned (P2, 2026-10-12) ----------------
+    // Each property fixes the CURRENT reading of one `GAP:` comment so a spec ruling that
+    // changes it shows up as a failing test with a counterexample, not a silent drift.
+
+    proptest! {
+        /// GAP (chip_floor): "types" means the types this hit carries (share above 0); the surplus
+        /// lands on one carried, non-immune type, and nothing changes when none qualifies.
+        #[test]
+        fn prop_gap_chip_floor_surplus_goes_to_a_carried_type(
+            t in prop::array::uniform15(0i64..50_000), d2 in 0i64..2_000_000, s in arb_shares(), def in arb_defender(),
+        ) {
+            let mut d = t;
+            let surplus = chip_floor(&mut d, d2, &s, &def);
+            prop_assert!(surplus >= 0);
+            let carried = |ty: DamageType| s.get(ty) > 0 && !def.is_immune(ty);
+            let changed: Vec<DamageType> = DamageType::ALL.iter().copied().filter(|ty| d[ty.index()] != t[ty.index()]).collect();
+            if surplus == 0 {
+                prop_assert!(changed.is_empty());
+            } else {
+                prop_assert_eq!(changed.len(), 1);
+                prop_assert!(carried(changed[0]), "surplus went to a type the hit does not carry");
+                prop_assert_eq!(d.iter().sum::<i64>(), t.iter().sum::<i64>() + surplus);
+            }
+            if !DamageType::ALL.iter().any(|&ty| carried(ty)) { prop_assert_eq!(surplus, 0); }
+        }
+
+        /// GAP (resolve_lethal): under `st.unmoored` Death's Door is skipped, the roll is never
+        /// drawn, and the once-per-Folio "used" flag is NOT spent.
+        #[test]
+        fn prop_gap_unmoored_skips_deaths_door_without_spending_it(
+            erratum: bool, used: bool, other_up: bool, other_alive: bool, downs in 0u8..4,
+        ) {
+            let input = LethalInput { is_erratum: erratum, deaths_door_used: used, unmoored: true,
+                other_member_up: other_up, other_erratum_alive: other_alive, prior_downs_folio: downs };
+            let mut drawn = false;
+            let out = resolve_lethal(input, || { drawn = true; true });
+            prop_assert!(!drawn, "unmoored must not draw the Death's Door roll");
+            prop_assert!(!out.deaths_door_rolled);
+            prop_assert_eq!(out.deaths_door_used, used);
+            prop_assert_ne!(out.outcome, LethalOutcome::DeathsDoor);
+        }
+
+        /// GAP (heal): a single heal ends `st.bleeding` exactly when its GROSS amount (before the
+        /// Max HP cap) is at least 10% of Max HP; applied HP never passes Max HP.
+        #[test]
+        fn prop_gap_heal_bleeding_measured_on_gross(
+            max in 1i64..10_000_000, hp_frac in 0i64..=10_000, amount in 0i64..10_000_000,
+            recv in 0i32..=20_000, erasure in 0u8..10, withering: bool,
+        ) {
+            let hp = mul_bp(max, hp_frac as i32);
+            let r = heal(hp, max, amount, recv, erasure, withering);
+            prop_assert!(r.hp_mhp <= max.max(hp));
+            prop_assert!(r.applied_mhp >= 0 && r.applied_mhp <= r.gross_mhp);
+            prop_assert_eq!(r.ends_bleeding, r.gross_mhp >= mul_bp(max, status::BLEEDING_HEAL_END_BP));
+        }
+
+        /// GAP (absorb_wards): `ev.ward_broken` is reported whenever a pool that held ward reaches
+        /// 0, including an exact hit equal to the pool; a pool that was already 0 never "breaks".
+        #[test]
+        fn prop_gap_ward_broken_on_exact_depletion(sh in 0i64..200_000, extra in 0i64..3) {
+            let wards = Wards { shielded_mhp: sh, ..Wards::NONE };
+            let mut d = [0i64; TYPE_COUNT];
+            d[DamageType::Slash.index()] = sh + extra - 1;
+            let before: i64 = d.iter().sum();
+            let out = absorb_wards(&mut d, &wards, false);
+            prop_assert!(out.shielded_after >= 0 && out.shielded_after <= sh);
+            prop_assert_eq!(out.shielded_broken, sh > 0 && out.shielded_after == 0);
+            if sh > 0 && before >= sh { prop_assert!(out.shielded_broken, "an exact or larger hit must break the pool"); }
+        }
+    }
 }
