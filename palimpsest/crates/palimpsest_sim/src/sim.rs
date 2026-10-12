@@ -35,7 +35,7 @@ use crate::time::{
     after_secs_without, boundary_after, is_hash_boundary, runs_on, runs_on_entity, secs,
 };
 use palimpsest_math::geom::{Fx3, semi_implicit_euler};
-use palimpsest_math::int::{ceil_div, floor_div, floor_div_i128, mul_bp, narrow_i64};
+use palimpsest_math::int::{ceil_div, floor_div, mul_bp, narrow_i64};
 use palimpsest_math::rng::{seq, stream_rng, streams};
 use palimpsest_math::trig::clamp_pitch;
 use palimpsest_math::{
@@ -2395,13 +2395,13 @@ pub fn wish_velocity(move_x: i8, move_z: i8, yaw: Bam, speed: Fx) -> (Fx, Fx) {
     if len2 > lim * lim {
         let len = isqrt_u128(u128::try_from(len2).expect("len2 >= 0"));
         let len = i128::try_from(len).expect("len fits i128");
-        wx = floor_div_i128(wx * lim, len);
-        wz = floor_div_i128(wz * lim, len);
+        wx = (wx * lim) / len;
+        wz = (wz * lim) / len;
     }
     let sp = i128::from(speed.raw());
     (
-        Fx::from_raw(narrow_i64(floor_div_i128(sp * wx, lim))),
-        Fx::from_raw(narrow_i64(floor_div_i128(sp * wz, lim))),
+        Fx::from_raw(narrow_i64((sp * wx) / lim)),
+        Fx::from_raw(narrow_i64((sp * wz) / lim)),
     )
 }
 
