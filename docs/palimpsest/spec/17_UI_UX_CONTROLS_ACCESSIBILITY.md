@@ -1,6 +1,6 @@
 # 17 — UI, UX, Controls and Accessibility
 
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-11. Status: BINDING. Written against canon-1.12 (adversarial check pending).
 
 This chapter owns everything the player sees and touches that is not the 3D world itself: the genre UI skins, the HUD, every menu, the input action layer and its bindings, the accessibility suite (including the assist mode **Scribe's Mercy**), localization rules, onboarding, tooltips and feedback. It owns the namespaces `ui.`, `input.` and `access.` (Canon §19). Every rule below was checked against canon-1.11, the canon on disk, including limited building, Margin trophies, invasions, the canon-1.5 display rounding of `Fx` quantities, the retirement of mounts (canon-1.8) and of item durability (canon-1.10), and canon-1.11's small-rate display, intent replay log, Scribe's Mercy step 6c and World Law discovery. It also follows DECISIONS rows 89 to 129, among them Second Edition at Early Access (118), Steam as the only storefront (112), Steam Workshop mods (126), residents without relationships (127) and no photo mode (129).
 

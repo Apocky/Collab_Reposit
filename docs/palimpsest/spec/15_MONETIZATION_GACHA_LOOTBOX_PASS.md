@@ -1,6 +1,6 @@
 # 15 — Monetization: Inkwell Gacha, Reliquaries, Codex Pass, Store and Compliance
 
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11 (checked against every section of `spec/00_CANON.md` canon-1.11, including §2.4 `presentation_hash`, §3.6 account draws, §14 welcome Ink, §17.8 Margin trophies and §17.9 invasions, against DECISIONS.md through row 145, and against the on-disk docs 01 to 04, 06, 10 to 14, 16 to 18 and 21).
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending) (checked against every section of `spec/00_CANON.md` canon-1.11, including §2.4 `presentation_hash`, §3.6 account draws, §14 welcome Ink, §17.8 Margin trophies and §17.9 invasions, against DECISIONS.md through row 145, and against the on-disk docs 01 to 04, 06, 10 to 14, 16 to 18 and 21).
 
 This chapter specifies account currencies, randomized account rewards, the battle pass, the store, and the legal and ratings layer. The governing decision is DESIGN_BRIEF §8, **Earned Randomness, Paid Certainty**. Account economy state lives on the economy service (§10) and, offline, in the local client. The simulation only reports facts it already emits and receives only Keepsake item records (§5.5).
 

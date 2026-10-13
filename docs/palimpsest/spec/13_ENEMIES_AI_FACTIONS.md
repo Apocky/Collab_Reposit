@@ -1,6 +1,6 @@
 # 13 — Enemies, AI, Factions and NPCs
 
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. DECISIONS coverage: through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). DECISIONS coverage: through row 145.
 
 This chapter defines every hostile and non-player actor: enemy templates and scaling, roles, the AI, rosters, bosses, the Director, XP pacing, factions and NPCs. All AI runs on the host inside `palimpsest_sim` and its helper crate `palimpsest_ai` (doc 02 §3.2).
 

@@ -1,5 +1,5 @@
 # 11 — Items, Loot, Reliquaries, Fortune Engines and Economy
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. DECISIONS coverage: through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). DECISIONS coverage: through row 145.
 
 This chapter defines item templates and instances, the deterministic loot generator, genre skins for every weapon archetype, manufacturers, affixes, perks, Legendary perks, Exotics and Palimpsestic uniques, every loot source (kills, chests, in-run Reliquaries, bosses, secrets, Fortune Engines, shops), the Lucre economy, the inventory, Rewriting, Emendations, reforging, salvage, co-op loot and the Item Power score. Archetype mechanics stay with their owners (Canon §19): doc 05 owns `arch.*`, `ammo.` and `counter.`; doc 06 owns spells, staves, foci and tomes; doc 08 owns `alch.` potions and bombs and `apparatus.` vessels and respirators; doc 04 owns `aug.` implants; doc 07 owns `gadget.` and `part.`. This chapter attaches loot-facing records (value, weight, deck card, stack, manufacturer class) to those IDs and mints new IDs only in its own namespaces.
 

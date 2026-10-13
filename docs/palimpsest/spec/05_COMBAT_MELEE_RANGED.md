@@ -1,5 +1,5 @@
 # 05 — Combat: Melee, Ranged, Armor and Damage
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-11. Status: BINDING. Written against canon-1.12 (adversarial check pending).
 
 This chapter owns every weapon, armor, shield, ward generator and ammunition archetype, the melee moveset, firing, ballistics, explosions, poise and stagger, blocking and parrying, threat, the doc-05 details of the canonical damage pipeline (Canon §10.5), champion counters, weapon Contradiction failures and the combat-feel parameters. Every number here is a starting value tuned against the Folio-1 anchors of Canon §17.4. Every formula is integer, every random draw is keyed, and nothing here reads a float. Gear has no durability (Canon §4.3, DECISIONS.md item 65): no weapon, armor, shield, ward generator or throwable wears or breaks; only destructible blocks and placeables have block HP (doc 07).
 

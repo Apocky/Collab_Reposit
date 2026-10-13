@@ -34,7 +34,7 @@ wp(6, "Content loader and validator `pal validate`", "M0", "EA",
    [("02", ["11.1", "11.2", "11.3"]), ("00", ["1.1", "1.6", "2.4", "17.7"]), ("19", [])],
    "palimpsest_data::loader; palimpsest_tools::validate", [5],
    "token pre-pass, schema pass, semantic pass (grammar, references, §19 ownership, weight sums, aliases, `id32` collisions, retired IDs, genre-set lint), `ContentDb`, `content_hash` and `presentation_hash`",
-   {"C": [29, 34], "02": [17, 19, 27], "18": [53]}, 8)
+   {"C": [29, 34], "02": [17, 19, 27], "18": [53, 59, 60, 61, 62, 63, 64, 65, 66]}, 8)
 wp(7, "Flag, perf and crate records; `pal perf report`", "M0", "EA",
    [("02", ["15", "17.3"]), ("15", ["8.2"])], "palimpsest_data; palimpsest_tools", [6],
    "flag and perf record loaders, the jurisdiction flag hook, budget arithmetic check",
@@ -502,3 +502,15 @@ MILESTONES = [
 ]
 
 RETIRED = {}
+
+
+# Acceptance tests added after the first mapping: merged into the first work package that already covers each chapter.
+_EXTRA_TESTS = {40: {'01': [24, 25, 26, 27, 28]}, 1: {'02': [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60]}, 9: {'03': [53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66]}, 26: {'04': [56, 57, 58, 59, 60, 61, 62, 63]}, 22: {'05': [64]}, 29: {'06': [57, 58]}, 31: {'07': [53, 54, 55]}, 34: {'09': [58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73]}, 37: {'10': [44]}, 36: {'11': [45, 46, 47, 48, 49, 50, 51, 52, 53, 54]}, 39: {'13': [56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73]}, 46: {'14': [52, 53, 54, 55, 56, 57, 58]}, 73: {'15': [36, 37, 38, 39, 40, 41, 42, 43, 44, 45]}, 62: {'16': [57, 58, 59, 60, 61, 62, 63, 64, 65, 66]}, 53: {'17': [66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]}}
+for _w in WPS:
+    for _c, _nums in _EXTRA_TESTS.get(_w['id'], {}).items():
+        _w['tests'][_c] = sorted(set(_w['tests'].get(_c, [])) | set(_nums))
+
+_EXTRA_TESTS_CANON = {1: {'C': [48, 49, 50]}}
+for _w in WPS:
+    for _c, _nums in _EXTRA_TESTS_CANON.get(_w['id'], {}).items():
+        _w['tests'][_c] = sorted(set(_w['tests'].get(_c, [])) | set(_nums))

@@ -1,5 +1,5 @@
 # 06 — Magic and Spellcrafting
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies `DECISIONS.md` through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). Applies `DECISIONS.md` through row 145.
 
 This chapter owns aether, casting, the glyph grammar, the glyph catalog, spell cost and potency, magic schools, glyph learning, the Grimoire, texts, wands, enchanting, summons, polymorph, dispel and anti-magic, prayer and Devotion, and the 16 patrons. Every number here is final for implementation. Where this chapter needs something the canon or another chapter has not yet defined, the need is stated under Interface assumptions or Canon gaps, together with the value this chapter uses.
 

@@ -1,5 +1,5 @@
 # 04 — Attributes, Skills, Progression and Body
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). Applies DECISIONS.md through row 145.
 
 This document owns creation, sub-attribute growth, skills, levels, talents, the body, augments, kin, afflictions, needs, Death's Door, madness and player-controlled statuses. All of it runs in `palimpsest_sim`. Canon wins every conflict; conflicts are listed under Canon gaps.
 

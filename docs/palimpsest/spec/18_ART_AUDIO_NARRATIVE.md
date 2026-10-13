@@ -1,5 +1,5 @@
 # 18 — Art, Audio, Narrative and the Narrator
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-11. Status: BINDING. Written against canon-1.12 (adversarial check pending).
 
 This chapter conforms to canon-1.11 (Canon §23), including §2.4's `presentation_hash`, §3.8's presentation generators, §4.3's fixed terrain and the end of item durability, §4.4's micro-voxels, the softer Erasure of §11.6 and §17.1, the public-domain Echoes of §16.2 and the mount retirement of §17.7; to DECISIONS.md items 28, 37, 38, 40, 46, 49, 53, 55, 65, 69, 77, 78, 87, 90, 91, 94, 97, 98, 100 and 114 (114 supersedes 41); to the rulings of `audit/canon_gaps_triage.md` that name it; and to the on-disk chapters 01 to 17 named in Imports. It owns everything the player sees, hears and reads that the simulation never reads: art direction and the per-genre art bibles, rendering style techniques built on doc 02's pipeline, animation, music and sound, the text skins and registers of every genre, the lore, and the Narrator with its optional on-device Scribe model. Every record here is presentation. `palimpsest_sim` never depends on any of it (Canon §22: rendering reads the simulation and never feeds it; language-model text is cosmetic only).
 

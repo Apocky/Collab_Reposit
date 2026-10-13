@@ -1,6 +1,6 @@
 # 02 — Technical Architecture
 
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). Applies DECISIONS.md through row 145.
 
 This chapter fixes the stack, crate layout, simulation architecture, math library, determinism plan, presentation, pipelines, saves, mods, platforms, budgets, tests and coding rules. Every rule was checked against canon-1.11, including the invader replay slot 4 (Canon §2.4, §17.9), intents in the replay log and `presentation_hash` (Canon §2.4), the hand-written canonical serialization (Canon §2.5), fixed terrain with placeables and no item durability (Canon §4.3), 250 mm micro-voxels (Canon §4.4), the cut of mounts (Canon §17.7) and Margin trophies (Canon §17.8). The Rust workspace `palimpsest/` (crates `palimpsest_math`, `palimpsest_data`, `palimpsest_sim`) is the reference implementation of §3 and §4; where this chapter and that code differ, this chapter governs and the code is changed.
 

@@ -1,6 +1,6 @@
 # 10 — Identification and Appraisal
 
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). Applies DECISIONS.md through row 145.
 
 This chapter owns item knowledge and how it grows, the knowledge-filtered vendor value and the appraisal estimate, curses, pacts and blessings, the type-hiding rule and the wand classification rule (the `cat.wand` category itself is Canon §13.1's), sealed Reliquary contents, and the identification side of the Index and Bestiary.
 

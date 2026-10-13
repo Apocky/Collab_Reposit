@@ -1,5 +1,5 @@
 # 07 — Crafting, Materials and Building
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending).
 
 This chapter owns the one material table (Canon §13.8a), crafting quality, stations, recipes, assembly and parts, salvage and reforging, mining and gathering, blocks with their block HP and micro-voxel chipping, Errata building, gadgets and cooking. It carries the canon-1.2 additions assigned to this chapter (every Canon §5.9 material, `cat.part` loose parts and licensed grafts, `block.ice`, `block.web`, the Fieldcraft hooks that replaced the Delving hooks, and Hacking-free gadgets) under canon-1.11: building is limited to placeables on fixed terrain (Canon §4.3, DECISIONS.md item 16), items have no durability (Canon §4.3, DECISIONS.md item 65), every block is a 250 mm micro-voxel mask on the 1 m simulation grid (Canon §4.4, DECISIONS.md item 37), mounts are cut (Canon §17.7) and the hub has trophy and decoration slots, doc 14 §5.1a's trophy alcove, instead of a building plot (Canon §17.8). Seeds are cut, so this chapter has no planting and no crops (DECISIONS.md item 128, §9.7), and Second Edition Folios scale at doc 14's depth `25 + 2n` (DECISIONS.md item 106, §1.5). Where an older canon text differs, canon-1.11 wins.
 

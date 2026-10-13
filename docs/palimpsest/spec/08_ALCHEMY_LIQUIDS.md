@@ -1,5 +1,5 @@
 # 08 — Alchemy and Liquids
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). Applies DECISIONS.md through row 145.
 
 Owns liquids, gases, ingredients, alchemical effects, apparatus, potions, bombs, transmutations, the liquid and gas automata transfer rules, the full Canon §12.1 table, the liquid and gas API other chapters call (§2.7), `res.toxicity`, and the behavior of `st.poisoned`, `st.irradiated`, `st.soaked`, `st.oiled` and `st.focused`.
 

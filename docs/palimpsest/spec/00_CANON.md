@@ -86,7 +86,7 @@ Bp content values are `i32`; power-table values and `i64` table multipliers are 
 
 - `floor_div(a, b)` requires `b > 0` and panics otherwise. It equals `a.div_euclid(b)`, which is floor division when `b > 0`.
 - `ceil_div(a, b)`, with `b > 0`, returns the smallest integer `q` with `q × b >= a`. It equals `-floor_div(-a, b)` wherever that does not overflow; implementations use a non-negating form so `a = i64::MIN` is defined.
-- **Shifts.** Rust's `<<` is not covered by overflow checks. Every `x << k` in a normative formula means a checked multiplication by `2^k` that panics on overflow. `>>` on a signed integer is an arithmetic shift, which is floor division by `2^k`.
+- **Shifts.** Rust's `<<` is not covered by overflow checks. Every `x << k` in a normative formula means a checked multiplication by `2^k` that panics on overflow. Exception: the bit-mixing shift `s[1] << 17` of §3.1 wraps (it drops high bits), as Rust's `wrapping_shl` does; every other `<<` in a normative formula is a checked multiplication. `>>` on a signed integer is an arithmetic shift, which is floor division by `2^k`.
 - `round_half_even(a, b)` for `b > 0`: `q = floor_div(a, b)`, `r = a - b*q`. Return `q + 1` if `2r > b`, `q` if `2r < b`, otherwise `q + (q & 1)`.
 - `mul_bp(x, bp) = floor_div(x as i128 * bp as i128, 10000)`, narrowed back to the input width with a checked conversion that panics on overflow.
 - Several Bp multipliers chain left to right, rounding after each step, in the exact order a formula lists them. Implementations must not reorder for speed.
@@ -471,6 +471,7 @@ All values are given in content units (§1.6). Code converts them with `fx_from_
 - **Fall damage.** `fall_height = max(0, peak - land)`, measured along the current gravity axis. `peak` is the extreme origin coordinate against gravity since the entity last stood on ground, swam, climbed or had `st.levitating`. `SAFE_FALL = 4000 mm × (10000 + (vrv(e) - 5) × 400) Bp`. If `excess = fall_height - SAFE_FALL > 0`, damage is `mul_bp(max_hp_mhp, ((excess.raw as i128 × 800) >> 32) as i32)` mHP, which is 8% of Max HP per meter of excess. It is a `dmg.blunt` hit entering the damage pipeline at step 4 (§10.5). It skips armor and the chip floor and never crits. It is then multiplied by the local genre's `fall_dmg_bp` (§5.9), then by each doc 04 fall-damage factor (Acrobatics, kin, talents) in ascending source ID order, one `mul_bp` each.
 - **Dodge.** A 3000 mm burst over 12 ticks costing 20 stamina. Invulnerability starts on the dodge's first tick and lasts `min(12, 8 + floor_div(max(0, AGI - 40), 15))` ticks, never past the dodge's 12th tick. A new dodge cannot start until 18 ticks after the previous one started.
 - **Final move speed** is base speed, then §6.4 row 11, then doc 04's body factor `body_move_bp` (severed legs, crutch, leg wounds), then each active status multiplier in ascending status ID byte order. Base speed is the table above, or the doc 05 stance base that replaces it (combat and casting stances, armor sprint and swim bases); armor never multiplies speed. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
+- **Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet (and at most 2000 mm above the feet height at the last grounded tick, doc 03 §5.9), and a sprint-slide started by a crouch press while sprinting (doc 03 §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
 
 **Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet, and a sprint-slide started by a crouch press while sprinting (doc 03 §5.9, §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
 
@@ -688,7 +689,7 @@ All axiom values here are local axioms at the relevant entity's position (§5.8)
 
 ### 5.8 Local genre and personal VERVE
 
-- `local_genre(pos)` is the genre of the bleed zone containing block `fx_floor_block(pos)`, or the Folio's genre outside bleed zones. Doc 12 defines bleed zones.
+- `local_genre(pos)` is the genre of the bleed zone containing block `fx_floor_block(pos)`, or the Folio's genre outside bleed zones. In a Second Edition fused Folio written in an ordered pair of core genres (A, B) that doc 12 records, outside bleed and seam zones `local_axiom(pos, a) = floor_div(axiom_A + axiom_B, 2)`, both genres' rosters, native and wild factions, World Laws and skins are active, and entities of either genre count as native (DECISIONS 101, 117). Doc 12 defines bleed and seam zones.
 - `local_axiom(pos, a)` is the axiom value of `local_genre(pos)`.
 - §5.5 to §5.7 always use local values at the wielder's position, except that "native" uses the target's position.
 - **Law discovery.** World Laws are discovered in play (DECISIONS.md, item 56). A Law is hidden from exit previews and HUD until it first triggers for the account; the Codex then remembers it and previews show it in later runs.
@@ -754,6 +755,23 @@ Each genre has 1 to 3 **World Laws** (`law.<genre_suffix>.<name>`, owned by doc 
 - **Unmoored.** Three Contradiction failures (jams, fizzles, sparks, failed potions) by one character within 600 ticks apply `st.unmoored` for 300 ticks. While it lasts, Fortune-derived effects (Death's Door, Serendipity procs) are off, and Strained components use the C = 3 row of §5.5. It clears early on entering a Colophon or a seam zone.
 
 ---
+### 5.12 Time of day and weather (DECISIONS 99, doc 03 §4.8, doc 12 §3.7)
+
+Each Folio rolls one time of day from its genre's table and one weather state (doc 12), fixed for the Folio. Time of day: dawn −1, day 0, dusk −1, night −3 sky levels. Weather terms apply only at cells with no micro-voxel above them (`sky_open`), except the sky-level term, which applies to every sky-lit source.
+
+| Weather | ID | `sky_delta` | `sound_ddb` | `wet` | `fire_bp` | `FOG` | `AMB` (dB) | wash | snow |
+|---|---|---|---|---|---|---|---|---|---|
+| clear | `wx.clear` | 0 | 0 | 0 | 10000 | 0 | 0 | no | no |
+| rain | `wx.rain` | −1 | 2 | 1 | 5000 | 0 | 5 | yes | no |
+| storm | `wx.storm` | −2 | 4 | 1 | 2500 | 1 | 10 | yes | no |
+| fog | `wx.fog` | −1 | 0 | 0 | 10000 | 1 | 0 | no | no |
+| snow | `wx.snow` | −1 | 2 | 0 | 5000 | 1 | 0 | no | yes |
+| dust | `wx.dust` | −1 | 3 | 0 | 12500 | 1 | 5 | no | no |
+
+Weather deposits no liquid or gas and changes no temperature. Sound weather cost `sound_ddb` is added per propagation step into `sky_open` cells once (doc 03 §11.2).
+
+---
+
 ## 6. Attributes and sub-attributes
 
 ### 6.1 Structure
@@ -955,7 +973,7 @@ Every creature has one body plan. Each body part is a simulation hitbox capsule.
 Severing is deterministic and draws no random numbers.
 
 - Severable parts: limbs, tails and wings on every plan, and heads on NPCs. Errata heads never sever.
-- A severable part is severed by a hit with positive part damage whose largest share is `dmg.slash`, or which carries the flag `sever`, when the part's condition pool is 0 after the hit, including a pool that was already 0. An Erratum's limb severs only if its pool was at most 2500 Bp of its max before the hit (doc 04 `wound.crippled` or worse); a healthy limb never severs, however large the hit (DECISIONS.md item 84). Severing an NPC head also requires the attacker's governing weapon skill ≥ 75, and kills single-headed creatures.
+- A severable part is severed by a hit with positive part damage whose largest share is `dmg.slash`, or which carries the flag `sever`, when the part's condition pool is 0 after the hit, including a pool that was already 0. An Erratum's severable part (limb, tail or wing) severs only if its pool was at most 2500 Bp of its max before the hit (doc 04 `wound.crippled` or worse); a healthy part never severs, however large the hit (DECISIONS.md item 84). Losing a leg of a two-legged plan multiplies move speed by 5000 and removes sprint, jump and dodge; doc 04 §8.3 and §13 set the factors for plans with other leg counts. Severing an NPC head also requires the attacker's governing weapon skill ≥ 75, and kills single-headed creatures.
 - **Hand bindings.** `bp.arm_r` holds the active weapon slot. `bp.arm_l` holds `slot.offhand` and the second hand of two-handed weapons. `bp.arm_extra_N` grants `slot.hand_extra_N`, which holds a one-handed weapon or an off-hand item.
 - **Effects.** Losing an arm drops the item in that hand, disables two-handed weapons and disables `slot.implant_arms` for that side. Losing a leg multiplies move speed by 5000 and removes sprint, jump and dodge; a crutch tool restores × 7000.
 - A severed part becomes a `cat.body_part` item that rots after 7200 ticks. It can be reattached by Medicine ≥ 25 (600-tick channel), by a Scriptorium service or by a successful prayer, or replaced by an `aug.prosthetic_*` augment skinned per genre: hook, clockwork arm, cyberarm, silver hand, jade arm.
@@ -1240,7 +1258,7 @@ While `st.shocked` is active, each hit the bearer takes (except a `no_chain` hit
 - Each stack makes the bearer 1 dB louder (doc 09) and multiplies healing received by `10000 - 300 × stacks`.
 - When the first Erratum reaches 10 stacks, one Editor hunter spawns for the party (product-owner decision: softer Erasure). It carries `rank.hunter` for identity, immunities, post-proc protection and presentation, but uses `rank.elite`'s HP, damage, kill XP, DoT-taken and control-duration multipliers and the minion-to-champion row of §17.2. No further Erasure hunters spawn in that Folio. Stacks stay at 10 with their effects until the party leaves.
 - `st.erasure` is removed from every Erratum on `ev.folio_entered`.
-- Erasure accrual and satiation decay pause in boss Folios while the boss lives.
+- Erasure accrual and satiation decay pause in boss Folios while the boss lives. In the Final Second Edition Folio the pause lasts until the Author (`boss.author`) dies (DECISIONS 103).
 - Hunters and every `fac.editors` member except an invader (§17.9) erase Errata placeables within 1500 mm of them, at one placeable block per 10 ticks.
 - Each dose of the `afflict.red_ink` affliction (§16.4) lowers the hunter-spawn threshold by 1, from 10 down to a minimum of 6.
 
@@ -1471,7 +1489,7 @@ Genre skins rename curse states, for example Blessed / — / Hexed, or Signed / 
 
 ### 13.8 Item level, depth and power tables
 
-- Item level `ilvl` is the Folio index where the item was generated: 1 to 25 for the main run, 26 or more in Marginalia. Rewriting keeps `ilvl`.
+- Item level `ilvl` is the Folio index where the item was generated: 1 to 25 for the main run, 26 or more in Marginalia. Second Edition Folio `n` (n ≥ 1) uses depth `25 + 2n` in the P, T, H and S tables (DECISIONS 106). Rewriting keeps `ilvl`.
 - Every table is `i64` Bp. Rows 1 to 40 are committed literal constants and are never regenerated at runtime. Rows 1 to 25 were generated in exact integer arithmetic as `floor_div(10000 × 10900^(d-1), 10000^(d-1))` for P and `floor_div(10000 × 10550^(d-1), 10000^(d-1))` for T. Rows 26 to 40 follow the recurrence.
 - For `d > 40`: `P(d) = mul_bp(P(d-1), 10600)` and `T(d) = mul_bp(T(d-1), 10400)`, computed with `i128` intermediates.
 - **Power depth cap.** Every table, including `S`, uses `min(d, 300)` (or `min(lvl, 300)`). Deeper Marginalia scales only through doc 14 difficulty multipliers. Depths, item levels and source levels are `u32` values of at least 1.
@@ -1695,7 +1713,7 @@ Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and
 | `LATTICE_CANDIDATES` | always exactly 3 drawn at the exit of each Folio, by weighted choice without replacement over eligible core genres using lattice edge weights (doc 12); the first `EXIT_OFFERS` are shown. The draw happens on the tick the exit UI opens. |
 | `GENRE_REPEAT_RULE` | no genre twice in the same Volume; at most 3 appearances per run before Marginalia |
 | `ERASURE_ONSET` | 720 s after Folio entry |
-| `ERASURE_STEP` | 30 s; stack `k >= 1` is granted on tick `folio_entry_tick + 43200 + 1800 × (k - 1)`, so the tenth stack lands 990 s after entry |
+| `ERASURE_STEP` | 30 s; stack `k >= 1` is granted on tick `clock_start + 43200 + 1800 × (k - 1)`, where `clock_start` is the Folio entry tick, or the Editor's death tick in a boss Folio (doc 14 §3.8), so the tenth stack lands 990 s after `clock_start` |
 | `PARTY_MAX` | 4 |
 | `GLYPH_LIBRARY_START` | 2: every glyph an Erratum learns in any run joins the account's permanent Glyph Library (horizontal meta, doc 14); at run start each Erratum pre-learns 2 glyphs chosen from it (doc 06); runs on `unlock.daily_baseline` offer the 52 glyphs of doc 06's `base` pool in place of the library |
 | Loot | instanced per player |
@@ -1779,7 +1797,7 @@ Doc 05, doc 11 and doc 13 tune all content against these Folio-1 anchors.
 
 ### 17.7 Mounts
 
-Cut by product-owner decision (DECISIONS.md, item 55). The game has no mounts or vehicles. `cat.mount`, `slot.mount`, `st.mounted`, `arch.mount.`, `ev.mounted`, `ev.dismounted`, `room.no_mount`, `npc.vendor.stablemaster`, `shop.stablemaster`, `ai.nav.mounted`, `ai.action.remount`, `ai.set.cavalry` and `enemy.role.cavalry` are retired IDs and must not appear in content. Former cavalry enemies fight on foot as the unmounted role `enemy.role.charger` (doc 13), which replaces `enemy.role.cavalry`.
+Cut by product-owner decision (DECISIONS.md, item 55). The game has no mounts or vehicles. `cat.mount`, `slot.mount`, `st.mounted`, `arch.mount.`, `ev.mounted`, `ev.dismounted`, `room.no_mount`, `npc.vendor.stablemaster`, `shop.stablemaster`, `ai.nav.mounted`, `ai.action.remount`, `ai.set.cavalry`, `enemy.role.cavalry` and `noise.mount.` are retired IDs and must not appear in content. `cat.seed`, `block.crop` and `mat.tag.tillable` (DECISIONS.md, item 128) and `mode.prologue` and `enemy.prologue_hunter` (item 132) are retired IDs and must not appear in content. Former cavalry enemies fight on foot as the unmounted role `enemy.role.charger` (doc 13), which replaces `enemy.role.cavalry`.
 
 `noise.mount.` (walk, gallop, hover, glide, summon) is retired with the mount family.
 
@@ -1983,6 +2001,12 @@ Doc 03 owns the event bus and the full payload schemas. The IDs below are the ca
 
 ---
 
+48. **Wrapping xoshiro shift (§1.3).** The shift `s[1] << 17` in xoshiro256++ wraps without panic on high bits; every other shift in normative formulas panics on overflow.
+49. **Solo last stand window (§10.8 step 2a).** In solo play an Erratum failing Death's Door enters last stand of 300 ticks with HP 0; timed input restores 1,000 mHP; in co-op it enters st.downed.
+50. **Second Edition depth (§13.8).** For Second Edition Folio n = 1, depth is 27; for n = 5, depth is 35; for n = 15, depth is 55.
+
+---
+
 ## 22. Invariants annex
 
 ```
@@ -2028,6 +2052,21 @@ Cut from the wave-2 canon requests (audit/canon_1_12_apply_log.txt; 37 applied, 
 - Glyph Library start on unlock.daily_baseline (doc 06, doc 14 gap 2) (§17.1).
 
 Not in this cut: the ghost-collision rule (old text did not match), the 1,600 mm mantle wording (old text did not match), doc 19's §19 table restructure (rejected: it broke the generator), and the Second Edition revised-Editor rule (doc 13 owns it).
+
+### canon-1.12 (2026-10-12)
+
+Cut after wave-2 cross-chapter synchronization and DECISIONS.md rows 89–145.
+
+- Conventions (§1.3): clarified wrapping xoshiro bit-mixing shift `s[1] << 17`.
+- Movement (§4.2): standardized the complete movement kit: walk, sprint, crouch, jump, air jump, dodge, lean, 2,000 mm ledge mantle, sprint-slide, and grappling tool as an item (DECISIONS 95).
+- Climate (§5.12): added normative per-Folio climate table (time of day `tod.*` and weather `wx.*`) feeding light, sound, surface wetness, fire spread, and stealth (DECISIONS 99).
+- Fused Folios (§5.8): defined Second Edition fused-genre pairs with averaged axioms `floor_div(a + b, 2)`, shared rosters, laws, and native status (DECISIONS 101, 117).
+- Damage & Lethality (§9.1, §10.8): Errata limbs, tails and wings sever only from a crippled pool (DECISIONS 84); added solo last stand 300-tick input window at step 2a (DECISIONS 131, 134, 135).
+- Erasure & Bosses (§11.6, §17.1): boss-Folio Erasure pause lasts until the Author (`boss.author`) dies in Second Edition (DECISIONS 103); Erasure clock starts from `clock_start` in boss Folios; daily baseline runs offer 52 base glyphs in place of library (DECISIONS 33).
+- Scaling (§13.8): Second Edition depth defined as `25 + 2n` for Folio `n` in P, T, H, S tables (DECISIONS 106).
+- Retirements (§13.1, §17.7): retired `cat.seed`, `block.crop`, `mat.tag.tillable` (DECISIONS 128), `mode.prologue`, `enemy.prologue_hunter` (DECISIONS 132), and `noise.mount.` (DECISIONS 55).
+- Patron terminology (§16.5, §20): designated genre patrons as "the author of its genre" in lower case, reserving "the Author" for final boss `boss.author` (DECISIONS 103).
+- Added acceptance tests 48, 49, and 50.
 
 ### canon-1.11 (2026-10-11)
 

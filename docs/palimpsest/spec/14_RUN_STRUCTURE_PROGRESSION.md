@@ -1,6 +1,6 @@
 # 14 — Run Structure and Meta Progression
 
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-11. Status: BINDING. Written against canon-1.12 (adversarial check pending).
 
 This chapter defines how a run starts in the Margin, how each Folio flows from arrival through its Colophon to the exit, how a run is scored and ends, what the account keeps, the Margin's unlock tree (the Bindery), Echo Recollection trials, Errata Grades 0 to 20, every mode (including Canon §17.1 Abridged, the Canon §17.5 co-op modes and Second Edition), Endless Marginalia scaling, leaderboards, achievements, contextual tips, save and suspend rules, the account Glyph Library, the Margin residents and their arcs, and the run data the closing manuscript is built from. Account currencies are `cur.quire` (Bindery) and `cur.ink` (Inkwell), exactly as Canon §14 assigns them. Doc 15 owns every account earn rate (Canon §19: account economy rules for `cur.` are doc 15's); this chapter supplies the inputs doc 15 consumes (`run_score`, achievement grades, Echo slot bindings) and prices the Bindery against doc 15's Quire income.
 

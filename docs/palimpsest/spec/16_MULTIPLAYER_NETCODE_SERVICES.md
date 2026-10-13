@@ -1,6 +1,6 @@
 # 16 — Multiplayer, Netcode and Online Services
 
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). Applies DECISIONS.md through row 145.
 
 This chapter defines how 1 to 4 players share one authoritative simulation: the three topologies, transports and NAT traversal, the wire protocol with exact packet layouts, snapshot replication with delta compression, quantization, interest management and priorities, voxel and field replication, client prediction and reconciliation, lag compensation, the co-op rules this chapter owns (`st.downed`, `st.ghost`, revive, trading, host migration, drop-in), replays, daily-score verification, desync diagnostics, and every backend service with its API. Every rule below was checked against canon-1.11, including §1.3 (checked shifts, non-negating `ceil_div`), §2.2 (named state boundaries), §2.4 (intents in the replay log, `presentation_hash`, `run_seed` from the run header), §2.5 (length-prefixed multi-field hashing; solo saves deferred during an invasion), §3.6 (strict seed and date decoding), §4.3 (fixed terrain, placeables), §11.1 and §11.8 (downed rules owned here, substituted commands), §14 (Lucre between party members only as dropped piles) and §17.9 (invasions, Redaction while downed). Canon-1.8 cut mounts and canon-1.10 removed item durability, so neither appears in any rule below.
 

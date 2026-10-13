@@ -1,5 +1,5 @@
 # 12 — World Generation and Genres
-As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-11. Status: BINDING. Written against canon-1.12 (adversarial check pending).
 
 This chapter owns everything that turns a run seed into a playable Folio: the full Genre Parameter Vector (GPV) of all 16 genres, the World Laws, the Genre Lattice and its exit offers, Folio types, the generation pipeline from mission graph to validated voxel blueprint, bleed and seam zones, the room catalog, secrets, hazards, events, Folio story fragments with the optional Folio quest and the story records the procedural ending reads, boss arenas, Marginalia modifiers, the Abridged layout and the way Folio Expansion genres join generation. Generation is one pure function in `crate.gen` (doc 02). Every rule here was checked against canon-1.11, including fixed terrain with `block.tag.destructible`, 250 mm micro-voxels, Canon §5.9 identity, spawn light, World Laws and their discovery in play, seams, `st.unmoored`, the Colophon, Abridged mode, invasions, the cut of mounts (canon-1.8) and the removal of item durability (canon-1.10).
 

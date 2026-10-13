@@ -607,7 +607,6 @@ pub enum Category {
     Quest,
     Part,
     WardGen,
-    Seed,
     Corpse,
     BodyPart,
 }
@@ -615,7 +614,7 @@ pub enum Category {
 impl Category {
     /// SPEC: canon §13.1. Every category, with each accessory kind listed
     /// separately (31 entries; `cat.mount` is retired, canon §17.7).
-    pub const ALL: [Category; 31] = [
+    pub const ALL: [Category; 30] = [
         Category::WeaponMelee,
         Category::WeaponRanged,
         Category::Wand,
@@ -644,7 +643,6 @@ impl Category {
         Category::Quest,
         Category::Part,
         Category::WardGen,
-        Category::Seed,
         Category::Corpse,
         Category::BodyPart,
     ];
@@ -677,7 +675,6 @@ impl Category {
             Category::Quest => "cat.quest",
             Category::Part => "cat.part",
             Category::WardGen => "cat.ward_gen",
-            Category::Seed => "cat.seed",
             Category::Corpse => "cat.corpse",
             Category::BodyPart => "cat.body_part",
         }

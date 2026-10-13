@@ -1,6 +1,6 @@
 # 19 — Data Schemas
 
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11. Applies DECISIONS.md through row 145.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending). Applies DECISIONS.md through row 145.
 
 This chapter fixes how content is stored and checked: the file layout and envelope, schema identity, the common definitions every record schema builds on, the custom schema keywords, the validation pipeline with its error codes, the catalog of record kinds that chapters 00 to 18 define, and the rules the Rust loader in `palimpsest_data` mirrors. It owns the full item instance schema (Canon §13.9). It owns no content namespace. Per-chapter record schemas arrive as fragments in §6.
 

@@ -1,5 +1,5 @@
 # 01 — Vision, Pillars and Inspiration Ledger
-As of 2026-10-12. Status: BINDING. Conforms to canon-1.11.
+As of 2026-10-12. Status: BINDING. Written against canon-1.12 (adversarial check pending).
 
 This chapter fixes what PALIMPSEST is, what it must feel like, which games it learns from and how its success is measured. Every other chapter answers to the pillars in §2. When a system choice is ambiguous, the pillar tests decide. This chapter draws no random numbers and adds no simulation state. Every rule here was checked against canon-1.11 and the product-owner rows of DECISIONS.md, including the cut of mounts (canon-1.8, DECISIONS 55), the removal of item durability (canon-1.10, DECISIONS 65), the softer Erasure clock (DECISIONS 26), all 12 core genres and the Standard run at Early Access (DECISIONS 114, which supersedes the 6 genres of DECISIONS 41), the Second Edition at Early Access (DECISIONS 118) and the PC-only, Steam-only release (DECISIONS 98, 112). It applies DECISIONS.md through row 145.
 
