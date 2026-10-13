@@ -472,9 +472,6 @@ All values are given in content units (§1.6). Code converts them with `fx_from_
 - **Dodge.** A 3000 mm burst over 12 ticks costing 20 stamina. Invulnerability starts on the dodge's first tick and lasts `min(12, 8 + floor_div(max(0, AGI - 40), 15))` ticks, never past the dodge's 12th tick. A new dodge cannot start until 18 ticks after the previous one started.
 - **Final move speed** is base speed, then §6.4 row 11, then doc 04's body factor `body_move_bp` (severed legs, crutch, leg wounds), then each active status multiplier in ascending status ID byte order. Base speed is the table above, or the doc 05 stance base that replaces it (combat and casting stances, armor sprint and swim bases); armor never multiplies speed. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
 - **Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet (and at most 2000 mm above the feet height at the last grounded tick, doc 03 §5.9), and a sprint-slide started by a crouch press while sprinting (doc 03 §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
-- **Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet (and at most 2000 mm above the feet height at the last grounded tick, doc 03 §5.9), and a sprint-slide started by a crouch press while sprinting (doc 03 §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
-
-**Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet, and a sprint-slide started by a crouch press while sprinting (doc 03 §5.9, §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
 
 ### 4.3 Terrain and placeables
 
@@ -693,7 +690,7 @@ All axiom values here are local axioms at the relevant entity's position (§5.8)
 - `local_genre(pos)` is the genre of the bleed zone containing block `fx_floor_block(pos)`, or the Folio's genre outside bleed zones. In a Second Edition fused Folio written in an ordered pair of core genres (A, B) that doc 12 records, outside bleed and seam zones `local_axiom(pos, a) = floor_div(axiom_A + axiom_B, 2)`, both genres' rosters, native and wild factions, World Laws and skins are active, and entities of either genre count as native (DECISIONS 101, 117). Doc 12 defines bleed and seam zones.
 - `local_axiom(pos, a)` is the axiom value of `local_genre(pos)`.
 - §5.5 to §5.7 always use local values at the wielder's position, except that "native" uses the target's position.
-- **Law discovery.** World Laws are discovered in play (DECISIONS.md, item 56). A Law is hidden from exit previews and HUD until it first triggers for the account; the Codex then remembers it and previews show it in later runs.
+- **Law discovery.** World Laws are discovered in play (DECISIONS.md, item 56). A Law is hidden from exit previews and HUD until it first triggers for the account; the account's Index (doc 14) then remembers it and previews show it in later runs.
 - **Seam zones.** Doc 12 may place at most one `zone.seam` per Folio, covering 1 or 2 rooms, where two genres are stitched together. Inside a seam zone, `local_genre(pos)` is the Folio's genre, `local_axiom(pos, a)` is the larger of the two genres' axiom values for each `a`, both genres' World Laws (§5.10) are active, entities of either genre count as native, and the Folio's genre supplies skins. This is the only place where both toolsets work at full strength.
 - `vrv(e) = min(10, local_axiom(e.pos, verve) + 2 × [e has st.inspired])`. Jump, safe fall, crit chance and Death's Door use `vrv(e)`. Contradiction requirements always use the unmodified local axiom.
 
@@ -1792,7 +1789,7 @@ Doc 05, doc 11 and doc 13 tune all content against these Folio-1 anchors.
 
 ### 17.6 Ghosts and resurrection
 
-- A dead Erratum whose party still has a living member becomes a ghost with `st.ghost`. A ghost has no collision, cannot deal damage or pick up items, and cannot be perceived by AI. It can open doors, press switches, ping, and apply `st.marked` (8 s duration, 600-tick cooldown).
+- A dead Erratum whose party still has a living member becomes a ghost with `st.ghost`. A ghost collides with voxels only: it has no body collision and appears in no hit, push or perception query. It cannot deal damage or pick up items. It can open doors, press switches, ping, and apply `st.marked` (8 s duration, 600-tick cooldown).
 - The body drops Remains, a `cat.corpse` item of 75,000 g.
 - If an ally carries the Remains through the exit, the ghost resurrects at the next `ev.folio_entered` with 50% Max HP. Otherwise it resurrects there with 25% Max HP and loses one random equipped non-weapon item, chosen with keyed `rng.loot` (actor = the ghost's EntityId, seq 0).
 - The run ends when no Erratum is alive. Events: `ev.player_died`, `ev.player_ghosted`, `ev.player_resurrected`.
@@ -2054,6 +2051,8 @@ Cut from the wave-2 canon requests (audit/canon_1_12_apply_log.txt; 37 applied, 
 - Shifts (doc 02 G14): the bit-mixing shift in the xoshiro line wraps (§1.3).
 - Patrons (doc 06 G17): one patron per genre, the author of its genre; the Author is boss.author (§16.5, §20).
 - Glyph Library start on unlock.daily_baseline (doc 06, doc 14 gap 2) (§17.1).
+- Ghosts (doc 03 G6, requests 28 and 34): a ghost collides with voxels only (§17.6).
+- Law memory (doc 17 G28): a discovered World Law is remembered by the account's Index, not the Codex battle pass (§5.8). Erasure schedule keyed on clock_start (doc 17 G29; already in §17.1).
 
 Not in this cut: the ghost-collision rule (old text did not match), the 1,600 mm mantle wording (old text did not match), doc 19's §19 table restructure (rejected: it broke the generator), and the Second Edition revised-Editor rule (doc 13 owns it).
 

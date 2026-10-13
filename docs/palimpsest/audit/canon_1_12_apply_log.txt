@@ -44,3 +44,9 @@ SKIPPED (6)
 09 §5.12 (new, merged with doc 03 G31): section not found
 12 §5.12: section not found
 13 §20: old matches 0, not applied
+
+LATER APPLIED (same session):
+- 03 §17.6 ghost collision: applied with the requested text (section 17.6, sentence replaced).
+- 17 §5.8 G28: applied.
+- 06 §16.5 and §20 Patron wording and 13 §20 Author wording: applied by the cut (06 requests) or already present (13 request).
+- 03 §4.2 mantle text: canon §4.2 now carries the DECISIONS 95 movement kit text from request 01; the 03 wording was not applied separately.

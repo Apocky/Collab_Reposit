@@ -670,79 +670,79 @@ Each owner document supplies its fragment in its section below; the orchestrator
 
 ## 6.00 Doc 00 records
 
-<!-- SCHEMA-FRAGMENT:00 -->
+Generated: `palimpsest/schemas/00.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 00 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.01 Doc 01 records
 
-<!-- SCHEMA-FRAGMENT:01 -->
+Generated: `palimpsest/schemas/01.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 01 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.02 Doc 02 records
 
-<!-- SCHEMA-FRAGMENT:02 -->
+Generated: `palimpsest/schemas/02.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 02 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.03 Doc 03 records
 
-<!-- SCHEMA-FRAGMENT:03 -->
+Generated: `palimpsest/schemas/03.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 03 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.04 Doc 04 records
 
-<!-- SCHEMA-FRAGMENT:04 -->
+Generated: `palimpsest/schemas/04.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 04 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.05 Doc 05 records
 
-<!-- SCHEMA-FRAGMENT:05 -->
+Generated: `palimpsest/schemas/05.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 05 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.06 Doc 06 records
 
-<!-- SCHEMA-FRAGMENT:06 -->
+Generated: `palimpsest/schemas/06.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 06 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.07 Doc 07 records
 
-<!-- SCHEMA-FRAGMENT:07 -->
+Generated: `palimpsest/schemas/07.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 07 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.08 Doc 08 records
 
-<!-- SCHEMA-FRAGMENT:08 -->
+Generated: `palimpsest/schemas/08.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 08 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.09 Doc 09 records
 
-<!-- SCHEMA-FRAGMENT:09 -->
+Generated: `palimpsest/schemas/09.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 09 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.10 Doc 10 records
 
-<!-- SCHEMA-FRAGMENT:10 -->
+Generated: `palimpsest/schemas/10.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 10 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.11 Doc 11 records
 
-<!-- SCHEMA-FRAGMENT:11 -->
+Generated: `palimpsest/schemas/11.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 11 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.12 Doc 12 records
 
-<!-- SCHEMA-FRAGMENT:12 -->
+Generated: `palimpsest/schemas/12.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 12 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.13 Doc 13 records
 
-<!-- SCHEMA-FRAGMENT:13 -->
+Generated: `palimpsest/schemas/13.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 13 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.14 Doc 14 records
 
-<!-- SCHEMA-FRAGMENT:14 -->
+Generated: `palimpsest/schemas/14.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 14 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.15 Doc 15 records
 
-<!-- SCHEMA-FRAGMENT:15 -->
+Generated: `palimpsest/schemas/15.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 15 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.16 Doc 16 records
 
-<!-- SCHEMA-FRAGMENT:16 -->
+Generated: `palimpsest/schemas/16.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 16 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.17 Doc 17 records
 
-<!-- SCHEMA-FRAGMENT:17 -->
+Generated: `palimpsest/schemas/17.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 17 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ## 6.18 Doc 18 records
 
-<!-- SCHEMA-FRAGMENT:18 -->
+Generated: `palimpsest/schemas/18.table_row.schema.json` (written by `tools/catalog/extract_content.py`) validates every table row of chapter 18 that has a backticked ID in its first cell. Its records keep the table text in `fields`. Kind-specific field schemas are not written yet; chapter 20 section 1 records this gap.
 
 ---
 

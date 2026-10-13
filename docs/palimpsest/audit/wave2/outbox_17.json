@@ -1,0 +1,27 @@
+{
+ "chapter": "17",
+ "status": "complete",
+ "requests_handled": 27,
+ "edits": "see log_17.md",
+ "canon_requests": [
+  {
+   "section": "§5.8",
+   "old": "the Codex then remembers it",
+   "new": "the account's Index (doc 14) then remembers it",
+   "why": "doc 17 G28 (requests 28, 34)"
+  },
+  {
+   "section": "§17.1",
+   "old": "folio_entry_tick + 43200 + 1800 × (k - 1)",
+   "new": "clock_start + 43200 + 1800 × (k - 1), where clock_start is the entry tick, or the Editor's death tick in a boss Folio (doc 14)",
+   "why": "doc 17 G29 (already present in canon-1.12 §17.1)"
+  }
+ ],
+ "cross_chapter_requests": [],
+ "product_questions": [],
+ "unresolved": [
+  "The log names cross-chapter requests to docs 02, 03, 06, 09, 12, 14, 16 and 21 but does not record their text; the text must be recovered from the chapter edits before those requests can be checked.",
+  "Petition count (32 vs 40) left open for doc 06 in log_17.md."
+ ],
+ "summary": "Reconstructed from log_17.md, which records the dispositions. G28 applied to canon §5.8 and recorded in the canon-1.12 changelog; G29 already present."
+}

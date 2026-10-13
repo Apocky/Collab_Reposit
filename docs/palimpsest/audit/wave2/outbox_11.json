@@ -1,0 +1,14 @@
+{
+ "chapter": "11",
+ "status": "partial",
+ "requests_handled": 27,
+ "edits": "see log_11.md",
+ "canon_requests": [],
+ "cross_chapter_requests": [],
+ "product_questions": [],
+ "unresolved": [
+  "log_11.md records canon requests for §13.7 (Second Edition ENH_CAP, triage item 7), §17.1 Abridged kill-drop loot (item 17) and §13.1 cat.seed retirement (item 24); their text is not in the log. §13.1 cat.seed was applied by the canon-1.12 cut through chapter 10's request.",
+  "No cross-chapter request texts are recorded in the log."
+ ],
+ "summary": "Reconstructed from log_11.md. Dispositions are recorded there; request texts were not, so this outbox records no requests as sent."
+}
