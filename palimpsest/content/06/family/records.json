@@ -1,0 +1,71 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "family.ember",
+   "kind": "family",
+   "owner": "06",
+   "section": "06 8.1 Lexicon and learning sources",
+   "fields": {
+    "glyphs": "modifiers linger and volatile, trigger on_kill, condition burning",
+    "added_by": "`unlock.glyph.ember` (doc 15 Script)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "family.hollow",
+   "kind": "family",
+   "owner": "06",
+   "section": "06 8.1 Lexicon and learning sources",
+   "fields": {
+    "glyphs": "essence shadow, modifiers siphon and leech, condition dark",
+    "added_by": "`unlock.glyph.hollow`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "family.mirror",
+   "kind": "family",
+   "owner": "06",
+   "section": "06 8.1 Lexicon and learning sources",
+   "fields": {
+    "glyphs": "essences veil and dominion, modifiers twin and split",
+    "added_by": "`unlock.glyph.mirror`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "family.storm",
+   "kind": "family",
+   "owner": "06",
+   "section": "06 8.1 Lexicon and learning sources",
+   "fields": {
+    "glyphs": "essences thunder and gale, modifier ricochet, trigger proximity",
+    "added_by": "`unlock.glyph.storm`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "family.thorn",
+   "kind": "family",
+   "owner": "06",
+   "section": "06 8.1 Lexicon and learning sources",
+   "fields": {
+    "glyphs": "essences venom and polymorph, modifier delay, trigger on_struck",
+    "added_by": "`unlock.glyph.thorn`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "family.tide",
+   "kind": "family",
+   "owner": "06",
+   "section": "06 8.1 Lexicon and learning sources",
+   "fields": {
+    "glyphs": "essence tide, condition wet, modifier anchor, trigger pulse",
+    "added_by": "`unlock.glyph.tide`"
+   },
+   "also_in": []
+  }
+ ]
+}

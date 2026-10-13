@@ -266,6 +266,18 @@ mod tests {
         }
     }
 
+    /// SPEC: canon-1.12 §21 test 50. Second Edition depth (§13.8).
+    #[test]
+    fn canon_t50_second_edition_depth() {
+        // Second Edition Folio n uses depth 25 + 2n (DECISIONS 106).
+        let se_depth = |n: u32| 25 + 2 * n;
+        assert_eq!(se_depth(1), 27);
+        assert_eq!(se_depth(5), 35);
+        assert_eq!(se_depth(15), 55);
+        assert_eq!(power_p(se_depth(1)), P_ROWS[26]);
+        assert_eq!(power_p(se_depth(5)), P_ROWS[34]);
+    }
+
     #[test]
     fn canon_table_spot_rows() {
         // Spot rows copied from the canon §13.8 table.

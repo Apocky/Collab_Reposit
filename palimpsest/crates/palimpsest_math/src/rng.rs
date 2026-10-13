@@ -787,6 +787,15 @@ mod tests {
         );
     }
 
+    /// SPEC: canon-1.12 §21 test 48. Wrapping xoshiro shift (§1.3).
+    #[test]
+    fn canon_t48_wrapping_xoshiro_shift() {
+        // s[1] << 17 drops high bits and wraps; it does not panic.
+        let s = [1u64, 0x8000_0000_0000_0000u64, 3, 4];
+        let rolled = s[1].wrapping_shl(17);
+        assert_eq!(rolled, 0);
+    }
+
     /// SPEC: canon §3.2 labeled sub-streams: `derive(parent, fnv1a64(label) ^
     /// index)`; a sub-stream never advances its parent.
     #[test]

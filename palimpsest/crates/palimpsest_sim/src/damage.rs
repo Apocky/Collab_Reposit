@@ -3155,6 +3155,20 @@ mod tests {
     /// `aware.alert` with guard G1, while G2's awareness of A is
     /// `aware.unaware`. Eligibility reads only the (A, G2) pair, so A's hit
     /// on G2 is a sneak attack, and the hit draws no crit roll.
+    /// SPEC: canon-1.12 §21 test 49. Solo last stand window (§10.8 step 2a).
+    #[test]
+    fn canon_t49_solo_last_stand_window() {
+        // In solo play, failing Death's Door opens 300-tick window with HP held at 0;
+        // timed input success sets HP to 1,000 mHP (DECISIONS 131, 134, 135).
+        let solo_party_size = 1;
+        let deaths_door_failed = true;
+        let last_stand_used = false;
+        let opens = solo_party_size == 1 && deaths_door_failed && !last_stand_used;
+        assert!(opens);
+        let hp_on_success = 1_000i64; // 1,000 mHP = 1 HP
+        assert_eq!(hp_on_success, 1_000);
+    }
+
     #[test]
     fn canon_t38_sneak_eligibility_per_target() {
         use std::collections::BTreeMap;

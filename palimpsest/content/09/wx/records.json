@@ -1,0 +1,83 @@
+{
+ "schema": "09.table_row",
+ "records": [
+  {
+   "id": "wx.clear",
+   "kind": "wx",
+   "owner": "09",
+   "section": "09 15.3 Time of day and weather",
+   "fields": {
+    "fog": "0",
+    "amb_db": "0",
+    "wash": "no",
+    "snow": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wx.rain",
+   "kind": "wx",
+   "owner": "09",
+   "section": "09 15.3 Time of day and weather",
+   "fields": {
+    "fog": "0",
+    "amb_db": "5",
+    "wash": "yes",
+    "snow": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wx.storm",
+   "kind": "wx",
+   "owner": "09",
+   "section": "09 15.3 Time of day and weather",
+   "fields": {
+    "fog": "1",
+    "amb_db": "10",
+    "wash": "yes",
+    "snow": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wx.fog",
+   "kind": "wx",
+   "owner": "09",
+   "section": "09 15.3 Time of day and weather",
+   "fields": {
+    "fog": "1",
+    "amb_db": "0",
+    "wash": "no",
+    "snow": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wx.snow",
+   "kind": "wx",
+   "owner": "09",
+   "section": "09 15.3 Time of day and weather",
+   "fields": {
+    "fog": "1",
+    "amb_db": "0",
+    "wash": "no",
+    "snow": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wx.dust",
+   "kind": "wx",
+   "owner": "09",
+   "section": "09 15.3 Time of day and weather",
+   "fields": {
+    "fog": "1",
+    "amb_db": "5",
+    "wash": "no",
+    "snow": "no"
+   },
+   "also_in": []
+  }
+ ]
+}

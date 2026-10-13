@@ -472,6 +472,7 @@ All values are given in content units (§1.6). Code converts them with `fx_from_
 - **Dodge.** A 3000 mm burst over 12 ticks costing 20 stamina. Invulnerability starts on the dodge's first tick and lasts `min(12, 8 + floor_div(max(0, AGI - 40), 15))` ticks, never past the dodge's 12th tick. A new dodge cannot start until 18 ticks after the previous one started.
 - **Final move speed** is base speed, then §6.4 row 11, then doc 04's body factor `body_move_bp` (severed legs, crutch, leg wounds), then each active status multiplier in ascending status ID byte order. Base speed is the table above, or the doc 05 stance base that replaces it (combat and casting stances, armor sprint and swim bases); armor never multiplies speed. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
 - **Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet (and at most 2000 mm above the feet height at the last grounded tick, doc 03 §5.9), and a sprint-slide started by a crouch press while sprinting (doc 03 §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
+- **Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet (and at most 2000 mm above the feet height at the last grounded tick, doc 03 §5.9), and a sprint-slide started by a crouch press while sprinting (doc 03 §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
 
 **Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet, and a sprint-slide started by a crouch press while sprinting (doc 03 §5.9, §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
 
@@ -1119,6 +1120,7 @@ Hits in the same tick resolve in two batches: actor hits (weapons, spells, gadge
 
 1. **Errata only:** if Death's Door is unused this Folio, roll §6.4 row 43 with keyed `rng.combat`. On success, HP = 1,000 mHP and the Erratum gains `st.deaths_door` for 60 ticks. Death's Door is marked used whether the roll succeeds or fails.
 2. On failure, if at least one other party member is alive and not downed, the Erratum gains `st.downed` with HP 0 and `ev.player_downed` is emitted (doc 16).
+2a. **Errata in solo play only:** if Death's Door did not prevent the lethal damage and the last stand is unused this Folio, the Erratum enters a last stand of 300 ticks (doc 04 §12.1a, doc 05 §12.1a) with HP 0, taking no damage. On success of the timed input its HP = 1,000 mHP; on failure step 3 applies (DECISIONS 131, 134, 135).
 3. Otherwise, emit `ev.entity_killed`. NPCs always go straight to this step. An Erratum that dies while another Erratum lives becomes a ghost (§17.6) and emits `ev.player_died` and `ev.player_ghosted`. A downed Erratum that bleeds out follows the same rule.
 
 2a. **Errata in solo play only:** if Death's Door did not prevent the lethal damage and the last stand is unused this Folio, the Erratum enters a last stand of 300 ticks (doc 04 §12.1a, doc 05 §12.1a) with HP 0, taking no damage. On success its HP = 1,000 mHP; on failure step 3 applies.
@@ -1258,7 +1260,7 @@ While `st.shocked` is active, each hit the bearer takes (except a `no_chain` hit
 - Each stack makes the bearer 1 dB louder (doc 09) and multiplies healing received by `10000 - 300 × stacks`.
 - When the first Erratum reaches 10 stacks, one Editor hunter spawns for the party (product-owner decision: softer Erasure). It carries `rank.hunter` for identity, immunities, post-proc protection and presentation, but uses `rank.elite`'s HP, damage, kill XP, DoT-taken and control-duration multipliers and the minion-to-champion row of §17.2. No further Erasure hunters spawn in that Folio. Stacks stay at 10 with their effects until the party leaves.
 - `st.erasure` is removed from every Erratum on `ev.folio_entered`.
-- Erasure accrual and satiation decay pause in boss Folios while the boss lives. In the Final Second Edition Folio the pause lasts until the Author (`boss.author`) dies (DECISIONS 103).
+- Erasure accrual and satiation decay pause in boss Folios while the boss lives. In the Final Second Edition Folio the pause lasts until the Author (`boss.author`) dies (DECISIONS 103). In the Final Second Edition Folio the pause lasts until the Author (`boss.author`) dies (DECISIONS 103).
 - Hunters and every `fac.editors` member except an invader (§17.9) erase Errata placeables within 1500 mm of them, at one placeable block per 10 ticks.
 - Each dose of the `afflict.red_ink` affliction (§16.4) lowers the hunter-spawn threshold by 1, from 10 down to a minimum of 6.
 
@@ -1906,6 +1908,8 @@ Doc 03 owns the event bus and the full payload schemas. The IDs below are the ca
 | `crate.`, `flag.`, `perf.` | 02 |
 | `comp.`, `sys.`, `grid.` | 03 |
 | `loc.` text keys | 18 (not content IDs, §1.10) |
+| `wx.` | 09 (weather states, §5.12) |
+| `family.` | 06 (glyph families, doc 06) |
 
 ---
 

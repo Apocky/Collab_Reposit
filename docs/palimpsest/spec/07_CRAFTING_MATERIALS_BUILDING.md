@@ -1104,7 +1104,7 @@ A block without `destructible` has `hardness_milli = -1` (§2.5), so worldgen te
 | `block.barricade.gate` | oak | door | 3000 | placeable; opens only for `fac.errata` |
 | `block.bridge.plank`, `block.bridge.metal` | oak, iron | slab (bottom) | 2000, 4000 | placeable |
 | `block.ladder.wood`, `block.ladder.rope`, `block.ladder.metal` | oak, linen, iron | ladder | 1000, 500, 3000 | placeable, climbable |
-| `block.cover.sandbag`, `block.cover.plate` | sand, iron | full | 3000, 6000 | placeable deployable cover; `blast_res_milli` 1000 and 5500, the §2.5 defaults (no override) |
+| `block.cover.sandbag`, `block.cover.plate` | sand, iron | full | 3000, 6000 | placeable deployable cover; `blast_res_milli` 3500 (heavy cover override, DECISIONS 147) and 5500 |
 | `block.cover.barrier` | aetherium | pane, `gas_tight` 0 | 2000 | gadget-made: each cell gets `placed_meta` with the deployer's slot, §11.2's `hp_max` and the gadget's expiry, outside the §10.3 caps; `light_filter` 0, conceal 2 |
 | `block.trap.spikes` | iron | layer level 1 | 1500 | placeable trap |
 | `block.torch`, `block.lantern` | oak, iron | fixture | 500, 2000 | light 14 (burns `TORCH_TICKS`), 15 |
