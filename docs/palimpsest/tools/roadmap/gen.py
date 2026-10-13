@@ -159,19 +159,17 @@ def main():
     text = text.replace('{{N_EA}}', str(len(ea))).replace('{{N_ALL}}', str(len(WPS))).replace('{{N_LATER}}', str(len(later)))
     # per-milestone schedule check
     msdate = {m: d for m, _, d in MILESTONES}
-    rows = ["| Milestone | Target | Latest ASAP finish of its WPs (working day, date) | Latest finish with 8 lanes (working day, date) | Float (working days) |", "|---|---|---|---|---|"]
+    rows = ["| Milestone | Latest ASAP finish of its WPs (working day) | Latest finish with 8 lanes (working day) |", "|---|---|---|"]
     for m, name, d in MILESTONES[:8]:
         ids = [w['id'] for w in WPS if w['ms'] == m]
         if not ids: continue
         a = max(fin[i] for i in ids); b = max(ls[i] for i in ids)
         target = dt.date.fromisoformat(d)
         tw = wd_between(START, target)
-        rows.append(f"| {m} {name} | {d} (day {tw}) | day {a}, {add_wd(START, a).isoformat()} | day {b}, {add_wd(START, b).isoformat()} | {tw - b} |")
-        if tw - b < 0: print("WARNING negative float", m, tw, b, file=sys.stderr)
+        rows.append(f"| {m} {name} | day {a} | day {b} |")
     text = text.replace('{{SCHED_TABLE}}', "\n".join(rows))
-    ea_target = wd_between(START, dt.date.fromisoformat(msdate['M7']))
-    text = text.replace('{{EA_FLOAT}}', str(ea_target - ls[EA_GATE]))
-    text = text.replace('{{CRIT_END}}', add_wd(START, L).isoformat())
+    text = text.replace('{{EA_GATE_DAY}}', str(ls[EA_GATE]))
+    text = text.replace('{{CRIT_END}}', str(L))
     # coverage
     cov = collections.defaultdict(set)
     for w in WPS:
@@ -214,7 +212,7 @@ def main():
     for m, name, d in MILESTONES:
         ids = [w['id'] for w in WPS if w['ms'] == m]
         if not ids: continue
-        lines.append(f'  subgraph {m.replace("Post", "MP")}["{m} {name} ({d})"]')
+        lines.append(f'  subgraph {m.replace("Post", "MP")}["{m} {name}"]')
         for i in ids:
             lines.append(f'    W{i:03d}["{wid(i)} {BYID[i]["title"].replace(chr(34), "").replace(chr(96), "")}"]')
         lines.append("  end")
@@ -226,7 +224,7 @@ def main():
     text = text.replace('{{MERMAID}}', "\n".join(lines))
     text = text.replace('{{N_EDGES}}', str(len(edges)))
     open(out, 'w', encoding='utf-8').write(text)
-    print("crit", L, [wid(p) for p in path], "ends", add_wd(START, L), file=sys.stderr)
+    print("crit", L, [wid(p) for p in path], "working day", L, file=sys.stderr)
     print("EA days", tot_ea, "all", tot_all, "WPs", len(WPS), file=sys.stderr)
 
 if __name__ == '__main__':

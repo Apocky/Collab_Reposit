@@ -142,22 +142,22 @@ Novella plays Folios 1 to 15 at the Standard depth `d(f) = f` (doc 14 §8.3, Nov
 
 ### 3.1 Milestone table
 
-| Milestone | Name | Target | Work packages |
+| Milestone | Name | Gate | Work packages |
 |---|---|---|---|
-| M0 | Foundations | Fri 2026-11-13 | WP-001–WP-008 |
-| M1 | Headless world core | Fri 2027-01-15 | WP-009–WP-021 |
-| M2 | Headless rules | Fri 2027-03-12 | WP-022–WP-042, WP-079, WP-080 |
-| M3 | Headless game | Fri 2027-05-14 | WP-043–WP-048, WP-081 |
-| M4 | First playable client | Fri 2027-05-28 | WP-049–WP-055, WP-057, WP-060 |
-| M5 | Online, platforms and economy | Fri 2027-06-25 | WP-059, WP-062–WP-076 |
-| M6 | Content complete (Early Access candidate) | Fri 2027-08-06 | WP-056, WP-058, WP-061, WP-077, WP-078, WP-082–WP-099 |
-| M7 | Early Access | Thu 2027-09-09 | WP-100–WP-102 |
-| M8 | Update 1: Fairy Tale, Mythic Antiquity, asynchronous traces | Thu 2027-11-04 | WP-103–WP-107 |
-| M9 | Update 2: Cosmic Horror, Hardboiled Noir, streaming votes | Thu 2027-12-16 | WP-108–WP-112 |
-| M10 | Update 3: Space Opera, Post-Apocalypse | Thu 2028-02-10 | WP-113–WP-116 |
-| M11 | 1.0 | Thu 2028-04-06 | WP-117–WP-126 |
-| M12 | Folio Expansion 01: Age of Sail and Pirates | Thu 2029-01-18 | WP-127 |
-| M13 | Folio Expansion 02: Kaiju and Mecha | Thu 2029-10-18 | WP-128 |
+| M0 | Foundations | exit criteria only | WP-001–WP-008 |
+| M1 | Headless world core | exit criteria only | WP-009–WP-021 |
+| M2 | Headless rules | exit criteria only | WP-022–WP-042, WP-079, WP-080 |
+| M3 | Headless game | exit criteria only | WP-043–WP-048, WP-081 |
+| M4 | First playable client | exit criteria only | WP-049–WP-055, WP-057, WP-060 |
+| M5 | Online, platforms and economy | exit criteria only | WP-059, WP-062–WP-076 |
+| M6 | Content complete (Early Access candidate) | exit criteria only | WP-056, WP-058, WP-061, WP-077, WP-078, WP-082–WP-099 |
+| M7 | Early Access | exit criteria only | WP-100–WP-102 |
+| M8 | Update 1: Fairy Tale, Mythic Antiquity, asynchronous traces | exit criteria only | WP-103–WP-107 |
+| M9 | Update 2: Cosmic Horror, Hardboiled Noir, streaming votes | exit criteria only | WP-108–WP-112 |
+| M10 | Update 3: Space Opera, Post-Apocalypse | exit criteria only | WP-113–WP-116 |
+| M11 | 1.0 | exit criteria only | WP-117–WP-126 |
+| M12 | Folio Expansion 01: Age of Sail and Pirates | exit criteria only | WP-127 |
+| M13 | Folio Expansion 02: Kaiju and Mecha | exit criteria only | WP-128 |
 
 A milestone that misses its target moves every later milestone by the same number of working days. Early Access ships only when every M7 criterion passes on one candidate build: when a criterion fails, the launch moves to the next Thursday on which all pass, and no criterion is waived.
 
@@ -175,9 +175,9 @@ A milestone that misses its target moves every later milestone by the same numbe
 
 **M5 Online, platforms and economy.** (1) Docs 15 and 16 are green; doc 14 tests 16–18, 24, 26, 36, 39–41, 46, 47, 49 and 51 are green. (2) `pillar.fair_page.t1`, `pillar.fair_page.t2` and `pillar.fair_page.t3` pass. (3) A 4-player Abridged run over Steam Datagram Relay and one over LAN finish; an Epic Games Store client and a Steam client finish a Folio together over `svc.relay`; an invasion runs from beacon to Redaction and from beacon to invader death. (4) Nightly 4-player bot co-op shows 0 desyncs over 1,000 bot hours.
 
-**M6 Content complete.** (1) The generated catalog meets every Early Access count of §5.3 and §5.4. (2) 0 keys are missing in 15 locales after the text freeze of 2027-07-09. (3) Doc 17 and doc 18 are green except the Scribe tests of WP-120; doc 02 tests 28, 29, 33, 35, 40, 41 and 47 and doc 14 test 48 are green. (4) Every `perf.deck.*` budget is green on `deck-01` and on the minimum-PC runner (PAR-13). (5) 17 of the 18 pillar tests pass on the candidate build, all but `pillar.one_ruleset.t3`. (6) The release candidate is cut.
+**M6 Content complete.** (1) The generated catalog meets every Early Access count of §5.3 and §5.4. (2) 0 keys are missing in 15 locales after the text freeze at the M6 gate. (3) Doc 17 and doc 18 are green except the Scribe tests of WP-120; doc 02 tests 28, 29, 33, 35, 40, 41 and 47 and doc 14 test 48 are green. (4) Every `perf.deck.*` budget is green on `deck-01` and on the minimum-PC runner (PAR-13). (5) 17 of the 18 pillar tests pass on the candidate build, all but `pillar.one_ruleset.t3`. (6) The release candidate is cut.
 
-**M7 Early Access.** (1) `release_gate(pillars, results, build, Gate::EarlyAccess)` returns true: all 18 pillar tests pass on the candidate build (doc 01 §2.7). (2) The build has passed doc 02 §17.2 (Release channels) in order: 3 consecutive green nightlies to `playtest`, 7 days on `playtest` with no P0 and crash-free sessions ≥ 99.0% to `beta`, 7 days on `beta` with crash-free sessions ≥ 99.5% to `stable`. From the M6 cut on 2027-08-06 the earliest `stable` promotion is 2027-08-23. (3) Ratings exist for the doc 15 §8.6 (Rating targets) set. (4) Every Steam Deck Verified checklist item of doc 02 §14 is green, with Proton in place of the native Linux build (DECISIONS 98). (5) The economy service is configured with `T0 = 1820448000`.
+**M7 Early Access.** (1) `release_gate(pillars, results, build, Gate::EarlyAccess)` returns true: all 18 pillar tests pass on the candidate build (doc 01 §2.7). (2) The build has passed doc 02 §17.2 (Release channels) in order: 3 consecutive green nightlies to `playtest`, 7 days on `playtest` with no P0 and crash-free sessions ≥ 99.0% to `beta`, 7 days on `beta` with crash-free sessions ≥ 99.5% to `stable`. From the M6 cut the earliest `stable` promotion is 2027-08-23. (3) Ratings exist for the doc 15 §8.6 (Rating targets) set. (4) Every Steam Deck Verified checklist item of doc 02 §14 is green, with Proton in place of the native Linux build (DECISIONS 98). (5) The economy service is configured with `T0 = 1820448000`.
 
 **M8, M9, M10 Updates.** For each update: the two genres meet §5.3; doc 12 test 18 sweeps the enlarged genre set; `pillar.one_ruleset.t3` is re-run with the new genres, because its earlier pass carries forward only while the genre set is unchanged (doc 01 §2.7); `release_gate` with `Gate::Later` returns true. M8 also ships asynchronous traces (WP-103) and M9 streaming votes (WP-108).
 
@@ -187,11 +187,11 @@ A milestone that misses its target moves every later milestone by the same numbe
 
 ### 3.3 Early Access date and `T0`
 
-Early Access launches on **Thursday 2027-09-09** at 00:00:00 UTC. Doc 15 §3.2.3 (Schedule) defines `T0` as that instant: **`T0 = 1820448000`**. Doc 15's examples use `T0 = 1792886400` (2026-10-25), which must move to 1820448000 (Interface assumptions). With the new `T0`: banner period p001 is [2027-09-09, 2027-10-07); one week after `T0` is 1821052800; a 28-day banner ends at 1822867200. Codex `N` releases at `T0 + 84 × (N − 1)` days (doc 15 §6.6, Cadence): Codex 001 on 2027-09-09, 002 on 2027-12-02, 003 on 2028-02-24, 004 on 2028-05-18.
+Early Access has no launch date in this chapter. It is gated by M7's criteria (DECISIONS 111). `T0`, the Early Access instant in doc 15 §3.2.3, is a configuration value set at launch; this chapter states no value. Doc 15's schedule examples are relative to `T0`.
 
 ### 3.4 Post-Early Access cadence
 
-Free updates arrive every 6 to 8 weeks (PAR-11): Update 1 eight weeks after launch, Update 2 six weeks later, before the year-end holidays, Update 3 and 1.0 eight weeks apart. Genre order follows lattice affinity and asset reuse: Fairy Tale and Mythic Antiquity (both 90 to Mythic Fantasy), Cosmic Horror and Hardboiled Noir, then Space Opera and Post-Apocalypse (RQ-08). From M7 on, 3 of the 8 lanes stay reserved for live fixes; post-launch content WPs use the other 5. Folio Expansions follow 1.0 at 9 to 12 months each (doc 15 §1.1).
+Free updates ship when each update's gate passes (DECISIONS 111). No cadence is set here. Genre order follows lattice affinity and asset reuse: Fairy Tale and Mythic Antiquity (both 90 to Mythic Fantasy), Cosmic Horror and Hardboiled Noir, then Space Opera and Post-Apocalypse (RQ-08). From M7 on, 3 of the 8 lanes stay reserved for live fixes; post-launch content WPs use the other 5. Folio Expansions follow 1.0 when their gates pass (doc 15 §1.1).
 
 ### 3.5 Doc 02's task order
 
@@ -215,6 +215,17 @@ Doc 02 §18 (Coding conventions for AI agents) item 8 lists an engineering task 
 | mods | WP-077, WP-078 |
 | services | WP-068, WP-074 |
 | Deck verification and performance | WP-061 |
+
+### 3.6 Measured velocity
+
+Sizes in this chapter are estimates. Elapsed time is measured from the repository and the workflow runs. Commit times are UTC unless marked PT.
+
+- **Design pass.** The design brief and canon draft were committed at 17:25 UTC on 2026-10-11. All 18 chapters were written and reviewed by 20:18 UTC. The Rust slice passed the canon tests by 20:22 UTC. That is three hours from brief to a passing slice, by commit timestamps.
+- **Canon to 1.11 and the 558-test slice.** Committed by 22:59 UTC on 2026-10-11.
+- **Wave 2 apply and checks.** Began 22:10 PT on 2026-10-11 and ended 17:17 PT on 2026-10-12, 19 hours. Most of that time was waiting on usage limits, not working; the cuts are visible in the failed agent results.
+- **Workflow durations.** The two Rust follow-up runs took 1,010,991 ms and 135,997 ms of wall time, from the workflow results.
+
+Calibration rule: this chapter states no elapsed-time estimate until each work package records its start and finish commit timestamps. The next revision converts agent-days to hours from those records and marks the ratio MEASURED.
 
 ## 4. Work packages
 
@@ -240,7 +251,7 @@ The longest size-weighted chain ends at the Early Access gate WP-102 and holds {
 
 {{CRIT_PATH}}
 
-With one agent per WP it finishes on working day {{CRIT_LEN}}, {{CRIT_END}}. With 8 lanes the gate finishes {{EA_FLOAT}} working days before launch day; that float covers the 17 calendar days of channel promotion, ratings, store review and estimate error. A slip on any critical-path WP moves M3 to M7 by the same number of working days unless the float absorbs it. The path runs through the content loader, the simulation core, combat, items, identification and loot, enemies and bosses, the run layer, the Margin and meta layer, the account economy, the store and compliance layer and release engineering. Near-critical WPs, with their slack in working days: {{NEAR_CRIT}}. The genre data and asset packs start inside M3, once WP-043 and WP-045 merge, and carry at least {{PACK_SLACK}} working days of slack.
+With one agent per WP it finishes on working day {{CRIT_END}} (sizes in agent-days, not yet calibrated to elapsed time; see 3.6). With 8 lanes the gate finishes on working day {{EA_GATE_DAY}}. No float against a launch date is computed, because no launch date is set (DECISIONS 111). A slip on any critical-path WP moves M3 to M7 by the same number of working days unless the float absorbs it. The path runs through the content loader, the simulation core, combat, items, identification and loot, enemies and bosses, the run layer, the Margin and meta layer, the account economy, the store and compliance layer and release engineering. Near-critical WPs, with their slack in working days: {{NEAR_CRIT}}. The genre data and asset packs start inside M3, once WP-043 and WP-045 merge, and carry at least {{PACK_SLACK}} working days of slack.
 
 ### 4.5 Schedule check
 
@@ -268,7 +279,7 @@ Every Canon §21 test and every acceptance test on disk in chapters 01 to 18 is 
 6. **Catalog.** `pal catalog` regenerates `spec/20_CONTENT_CATALOG.md` from `content/` and reports the counts of §5.3 and §5.4 per genre (WP-080).
 7. **Hash and goldens.** A content change changes `content_hash`, and the same pull request commits the re-blessed golden replays (doc 02 §6.6, Golden replays).
 8. **Assets.** Presentation assets pass doc 18 §10.1 (Pipeline): author, export, bake, compress, lint, hash.
-9. **Translate.** en-US keys freeze 4 weeks before each content milestone; translators deliver the 14 other locales; CI fails on a missing key or an `en-XA` overflow.
+9. **Translate.** en-US keys freeze at the text-freeze gate before each content milestone; translators deliver the 14 other locales; CI fails on a missing key or an `en-XA` overflow.
 
 **Source of truth.** A chapter table is normative for every record it lists, and its JSON record must equal it (`pal spec-sync`). A record no chapter lists is normative in `content/`. Doc 20 is generated and never edited by hand.
 
@@ -412,15 +423,15 @@ A WP is done when: every acceptance test in its row is named and green on all CI
 | R-01 | Cross-platform desync from a float, iteration order or width bug | medium | high: breaks `pillar.living_page.t2`, co-op and ranked boards | any determinism-matrix mismatch or SyncTest failure on `main`; any desync in nightly co-op bot runs | `xtask` scans, the five-target matrix on every pull request, `pal desync-diff`, the `SIM_VERSION` rule | merges stop until the fix lands; ranked verification runs on the x86_64 verifier only; shadows (`flag.net.shadow`) turn off while the host simulation stays authoritative and deterministic |
 | R-02 | Simulation tick over budget on Steam Deck | medium | high: PAR-13 blocks Early Access | nightly `perf.deck.sim.tick_mean` above 4.5 ms or `perf.deck.sim.tick_p99` above 7.2 ms | per-group budgets from M1, unit-cost benchmarks, the perf harness WP-021 | a Deck hosts at most 2 players while PC hosts 4; render presets drop to `deck_battery`; no simulation grid or cap is cut |
 | R-03 | Lattice infeasible with 6 genres | certain until G1 is ruled | high: runs assert at a Volume's fifth Folio | doc 12 test 3 run over the Early Access genre set | the cascade of §2.3 (a) proposed for canon-1.12 before WP-041 merges | WP-041 waits for the ruling; no Early Access build ships without a canon rule; the product owner picks between the cascade and another amendment |
-| R-04 | Content volume for 41 new templates, 12 mini-bosses and 8 genre asset sets | high | high: DECISIONS 69 sets a floor | the generated catalog below 50% of §5.4's Early Access counts on 2027-06-11 | archetype × skin reuse, AI-assisted production with weekly curation, genre packs start inside M3 with slack | Early Access moves by whole weeks; no genre ships below 12 templates and 2 mini-bosses; secondary tilesets drop to doc 12's floor of 40 prototypes first |
+| R-04 | Content volume for 41 new templates, 12 mini-bosses and 8 genre asset sets | high | high: DECISIONS 69 sets a floor | the generated catalog below 50% of §5.4's Early Access counts at the M5 gate | archetype × skin reuse, AI-assisted production with weekly curation, genre packs start inside M3 with slack | Early Access moves by whole weeks; no genre ships below 12 templates and 2 mini-bosses; secondary tilesets drop to doc 12's floor of 40 prototypes first |
 | R-05 | Bevy 0.20 or a coupled crate fails a client test | medium | medium | a client acceptance test red for 3 nightlies | doc 02 §2.4 (Ecosystem rule): thin in-house layers, exact pins | replace the crate in-house (cosmetic physics, particles); stay on 0.20 through 1.0 |
-| R-06 | EOS integration has no pinned Rust binding and needs FFI | medium | medium | WP-069 not merged by 2027-06-11 | in-house binding behind feature `eos` with `// SAFETY:` review | Steam Early Access ships on date; the Epic Games Store build and crossplay ship with Update 1 |
+| R-06 | EOS integration has no pinned Rust binding and needs FFI | medium | medium | WP-069 not merged at the M5 gate | in-house binding behind feature `eos` with `// SAFETY:` review | Steam Early Access ships when its gate passes; the Epic Games Store build and crossplay ship with Update 1 |
 | R-07 | New loot-box or consumer law (the EU Digital Fairness Act proposal expected in November 2026) | medium | high | a regime that restricts earned randomness or battle passes | separation wall, `juris.` flags, earned-only currencies | per-jurisdiction flags hide account Reliquaries or the Inkwell in that region; everything stays earned-only, so `pillar.fair_page` holds |
 | R-08 | Balance bands fail (pacing, party parity, earn rates) | high | medium | nightly bot bands outside doc 02 §16 item 7; `kpi.coop.party_parity` above 1000 Bp in bot runs | the balance harness from M3; tuning by data only | data-only tuning patches after launch; no formula changes; Canon §17.2 stays until live KPIs report (doc 01 §11 Q-20) |
 | R-09 | Spec churn while chapters are fixed concurrently | high | medium | more than 20 open intake rows, or any row older than 2 working days; any `spec_lint` finding on `main` | the triage loop of §6.6, canon freeze after M6 | WPs proceed on recorded defaults; release notes record the canon version |
 | R-10 | Translation quality in 15 locales | medium | medium | linguistic QA defects per 1,000 keys above 5; any missing key after a freeze | text freezes, glossary from doc 18 §9.11, `en-XA` CI | a locale ships with its open defects listed and fixed in the next patch; no locale is dropped (DECISIONS 40) |
 | R-11 | Review and curation bandwidth of one product owner | high | medium | pull-request queue age p50 above 2 working days; curation backlog above 40 assets | agent cross-review, weekly curation batches, question rounds with defaults | agents continue non-blocked WPs; critical-path WPs get first review |
-| R-12 | Platform review: Deck Verified, ratings, Epic store review | medium | medium | any submission not started by 2027-07-23 | the rating dossiers of WP-075 at M5; IARC ratings | launch with every Verified checklist item green internally while Valve's review is pending |
+| R-12 | Platform review: Deck Verified, ratings, Epic store review | medium | medium | any submission not started at the M6 gate | the rating dossiers of WP-075 at M5; IARC ratings | launch with every Verified checklist item green internally while Valve's review is pending |
 | R-13 | Invasion griefing or cheating | medium | medium | reports per 1,000 invasions above 10; invader win rate above 7000 Bp | invader isolation and sealing (doc 16 §1.1), opt-in only | `svc.status` turns invasion beacons off globally; co-op and solo play are untouched |
 | R-14 | Asset provenance (public-domain figures, AI-assisted assets) | low | high | any license-manifest lint failure | the manifest lint of WP-081, doc 18 §10.3 | the asset is replaced before release; no asset without provenance ships |
 | R-15 | Online services overload at launch | medium | medium | a load test at 3 times the projected peak fails | horizontal scaling of `svc.econ` and `svc.lobby`, CDN for odds pages | offline-complete play; pulls queue as Sealed Drafts; invasions pause |
@@ -440,7 +451,7 @@ Each default below is in force until answered; answers land in `DECISIONS.md`.
 |---|---|---|
 | RQ-01 | The 25-Folio run cannot fill 24 non-final Folios with 6 genres under `GENRE_REPEAT_RULE` (each genre would appear 4 times), and the procedural ending needs an Ur-Text victory. Is Abridged the Early Access full-story run? | yes: Abridged, Novella, Daily and Weekly at Early Access; Standard and Endless at 1.0 |
 | RQ-02 | Adopt the lattice relaxation cascade of §2.3 (a) for genre sets below 12? | yes, proposed for canon-1.12 |
-| RQ-03 | Early Access on Thursday 2027-09-09 and 1.0 on Thursday 2028-04-06? | yes |
+| RQ-03 | Launch dates are set at launch, not in this plan (DECISIONS 111)? | yes |
 | RQ-04 | All 12 Origins and 24 Echoes at Early Access, with kit skins in all 12 genres? | yes |
 | RQ-05 | On-device Scribe at Early Access or 1.0? | 1.0; template text at Early Access |
 | RQ-06 | Asynchronous traces (DECISIONS 96) at Early Access or later? | Update 1 |
@@ -467,7 +478,7 @@ This chapter defines no content ID and owns no Canon §19 namespace. It exports 
 - **G4. Pillar tests at Early Access.** Doc 01 §2 words five tests for Standard runs and 12 genres. Proposal: doc 01 adopts the readings of §2.3 (e) for the Early Access gate.
 - **G5. Price.** Doc 01 §9.3 and doc 15 §1.1 list USD 24.99 at Early Access and 29.99 at 1.0; DECISIONS 42 sets 19.99 for both. This chapter uses 19.99; both chapters change.
 - **G6. Early Access breadth.** Doc 01 §4.2 (PAR-12) and §11 (Q-06) put all 16 genres at Early Access; DECISIONS 41 sets 6. PAR-12's lower bound of 8 genres holds from Update 1 on.
-- **G7. `T0`.** Doc 15 §3.2.3 uses `T0 = 1792886400` (2026-10-25) in its examples; the Early Access date makes it 1820448000 (§3.3).
+- **G7. `T0`.** Doc 15 §3.2.3 uses placeholder `T0` values in its examples; the value is set at launch (§3.3).
 - **G8. Erasure onset.** Doc 01 §6 (Core loops at five time scales) and its test 15 grant stack 1 at clock 25,200; Canon §17.1 (Run constants) grants it at 43,200 since canon-1.6 (DECISIONS 26), and doc 14 §3.8 (Erasure pressure timeline) now follows the canon. WPs implement the canon.
 - **G9. Milestone labels.** Doc 02 §18 item 8 uses M0 to M15 for its task order and calls the slice "M0 to M4"; the slice covers the math step and parts of the data and save steps, and none of the grids. Proposal: doc 02 replaces item 8 with a pointer to §3.5 of this chapter.
 - **G10. SPEC reference form.** Doc 02 §18 item 2 requires `SPEC: 00 §x.y`; the slice uses `SPEC: canon §x.y`. Ruling applied by WP-003: `xtask spec-refs` accepts both, `canon` meaning `00`, and new code uses the doc 02 form.
@@ -488,7 +499,7 @@ This chapter defines no content ID and owns no Canon §19 namespace. It exports 
 | 12 | the cascade (G1) in §5.4 and §5.5; the Folio-1 mapping (G2) in §5.6; secret exits gated by the content set; time-of-day and weather rolls (DECISIONS 99); fused Second Edition Folios (DECISIONS 101) |
 | 13 | the roster templates and second mini-boss per genre authored as content (G11) |
 | 14 | the Early Access mode set of §2.2; achievement registration by tier (§2.3 (f)) |
-| 15 | `T0 = 1820448000` in §3.2.3 with every dependent example recomputed: the p001 end date 2027-10-07, the banner `start_utc` 1820448000 and `end_utc` 1822867200, the receipt `iat` one week after `T0` (1821052800), the Codex `release_utc`; base price USD 19.99; banner-pool gating of §2.3 (g) |
+| 15 | `T0` in §3.2.3 is a configuration value; dependent examples are recomputed at launch (DECISIONS 111) |
 | 16 | EOS at Early Access; the asynchronous-traces service of DECISIONS 96 for Update 1 and the streaming-vote overlay of DECISIONS 104 for Update 2 |
 | 17 | UI skins for the shipped genre set |
 | 18 | the Ur-Text and Unwritten families in the Early Access batch; ink gore (DECISIONS 94) in the VFX language; creator presets (DECISIONS 97); time-of-day and weather presentation (DECISIONS 99) |
@@ -503,7 +514,7 @@ This chapter defines no content ID and owns no Canon §19 namespace. It exports 
 4. **Pillars.** Each of the 18 pillar tests appears in exactly one Early Access WP, and SM-01 to SM-11 in WP-048.
 5. **Critical path.** The longest size-weighted path ending at WP-102 is the path of §4.4, {{CRIT_LEN}} agent-days.
 6. **Schedule.** With 8 lanes, every WP of M0 to M7 finishes on or before its milestone's target (§4.5).
-7. **Calendar.** 2027-09-09 is a Thursday; `T0 = 1820448000` is 2027-09-09T00:00:00Z; the M0 to M6 targets are Fridays and every release date from M7 on is a Thursday; Codex 001 to 004 fall on 2027-09-09, 2027-12-02, 2028-02-24 and 2028-05-18.
+7. **Calendar.** No launch date is set. `T0` is a configuration value (DECISIONS 111).
 8. **Diagram.** The Mermaid node set equals the {{N_ALL}} WPs, and its edge set equals the transitive reduction of the *Depends on* column ({{N_EDGES}} edges).
 9. **Cascade.** For a Novella run choosing Folio 5 after Mythic Fantasy, Gothic Horror, Cyberpunk and Weird West over the Early Access set, `e0` = {Wuxia, Steampunk} and the cascade returns {Mythic Fantasy, Gothic Horror, Wuxia, Steampunk}; for every legal history of Novella, Abridged and Daily over that set, the cascade returns at least 3 genres and `rng.lattice` makes exactly 3 `range` calls.
 10. **Folio-1 mapping.** For each core genre outside the Early Access set the mapped genre is the maximum of its doc 12 §5.2 row over the Early Access genres, ties to lattice order: Cosmic Horror → Gothic Horror, Space Opera → Cyberpunk, Post-Apocalypse → Weird West, Hardboiled Noir → Cyberpunk, Fairy Tale → Mythic Fantasy, Mythic Antiquity → Mythic Fantasy.

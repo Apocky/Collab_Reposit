@@ -391,7 +391,7 @@ asset_ids["ur_text"] = n; n += 1
 assert n == 98, n
 wp(98, "Localization production, EA", "M6", "EA",
    [("17", ["14"]), ("18", ["9.11"])], "`assets/loc/`", [57, 82] + list(data_ids.values()),
-   "14 translations of every EA key, linguistic QA, `en-XA` pass, text freeze on 2027-07-09",
+   "14 translations of every EA key, linguistic QA, `en-XA` pass, text freeze at the M6 gate",
    {"X": ["0 missing keys in 15 locales"]}, 10)
 wp(99, "EA balance and bot pillar sweeps", "M6", "EA",
    [("02", ["16"]), ("01", ["2", "6.6"]), ("13", ["11.2"]), ("15", ["2.7", "2.8"]), ("14", ["5.4"])], "palimpsest_bots; `content/`", [47, 74] + list(data_ids.values()),
