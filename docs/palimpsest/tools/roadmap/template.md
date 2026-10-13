@@ -46,8 +46,8 @@ Committed state at `efece38`, verified by running the suite:
 
 | Area | Early Access content | Binding source |
 |---|---|---|
-| Genres | Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West, Wuxia and Steampunk as lattice genres; `genre.ur_text` as the depth-25 Folio of every full-story run; `genre.unwritten` for the Prologue only. No secret exit opens. | DECISIONS 41; §2.3 |
-| Modes | `mode.prologue`, `mode.abridged` (the Early Access full-story run: 15 Folios, all five Editors, the Ur-Text and the closing manuscript), `mode.novella`, `mode.daily`, `mode.weekly_gauntlet`, `mode.seeded` and `mode.custom` with the Novella and Abridged structures, and the overlays `mode.ff_off`, `mode.ff_full`, `mode.loot_shared`, `mode.invasion_open` | DECISIONS 2, 51; §2.3; RQ-01 |
+| Genres | Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West, Wuxia and Steampunk as lattice genres; `genre.ur_text` as the depth-25 Folio of every full-story run; `genre.unwritten` for Unwritten only. No secret exit opens. | DECISIONS 41; §2.3 |
+| Modes | `mode.abridged` (the Early Access full-story run: 15 Folios, all five Editors, the Ur-Text and the closing manuscript), `mode.novella`, `mode.daily`, `mode.weekly_gauntlet`, `mode.seeded` and `mode.custom` with the Novella and Abridged structures, and the overlays `mode.ff_off`, `mode.ff_full`, `mode.loot_shared`, `mode.invasion_open` | DECISIONS 2, 51; §2.3; RQ-01 |
 | Price | base game USD 19.99, kept by Early Access owners at 1.0; Codex premium track USD 9.99; cosmetics USD 1.99 to 9.99; no premium currency | DECISIONS 1, 42, 58 |
 | Co-op and PvP | 1 to 4 players; Barony-style ghosts; friendly fire 50% direct and 100% area; host migration with hot, warm and cold paths; opt-in invasions with the Redacted outcome and cosmetic-only invader rewards | DECISIONS 15, 31, 32, 50, 76, 86, 93 |
 | World | fixed terrain with limited building of placeables; 250 mm micro-voxels; no mounts or vehicles; no item durability; the movement kit with a 2,000 mm mantle, sprint-slide and a grappling tool item; one time of day and one weather state per Folio | DECISIONS 16, 37, 55, 65, 95, 99 |
@@ -82,7 +82,7 @@ Rule 5 (freshness) and the 3 `range` calls of `rng.lattice` are unchanged, so th
 
 **(c) Origins, Echoes and kits.** All 12 core Origins and all 24 Echoes ship at Early Access, so the required Echoes Loki (Mythic Antiquity) and Jörmungandr (Cosmic Horror) are playable (DECISIONS 28). Kit items carry the Origin skin (doc 14 §2.4.4, Margin Translation), so the skins of every standard, alternative, Script and Echo kit template ship in all 12 core genres. Every other per-genre skin ships with its genre. Exotics whose home genre is not shipped stay out of loot pools: 12 of the 24 of doc 11 §8.2 (Exotics (24)) ship at Early Access.
 
-**(d) Secret genres.** No secret exit opens before 1.0. `genre.ur_text` ships complete for the final Folio; `genre.unwritten` ships only as the Prologue's fixed layout.
+**(d) Secret genres.** No secret exit opens before 1.0. `genre.ur_text` ships complete for the final Folio; `genre.unwritten` ships as a secret genre, unlocked by its canon rules.
 
 **(e) Pillar tests at the Early Access gate.** Doc 01 §2.7 (Pillar records and the release gate) requires all 18 tests. Their wording assumes Standard runs and 12 genres, so the Early Access gate reads them as follows; every other test reads as written.
 
@@ -118,7 +118,7 @@ Novella plays Folios 1 to 15 at the Standard depth `d(f) = f` (doc 14 §8.3, Nov
 |---|---|---|---|---|
 | Simulation core (doc 03) | integer and fixed-point primitives, tick timers, `EntityId`, save and hash skeleton | entity store, scheduler, all six grids, controller with the DECISIONS 95 kit, explosions, block edits, event bus | unchanged | unchanged |
 | Determinism and tooling (doc 02) | float and `HashMap` bans, canon tests | `xtask`, 5-target matrix (Linux verifiers must match Windows clients), golden replays, SyncTest, desync dumps, `pal` tools | unchanged | unchanged |
-| World generation and genres (doc 12) | genre table, Contradiction, Anachronism Edge, World Law formulas | 6 genres, Ur-Text Folios, Prologue, cascade of §2.3, bleed, seams, secret rooms, time of day and weather | 16 genres, secret exits, gravity flip, Marginalia modifiers, fused Second Edition Folios | expansion genres |
+| World generation and genres (doc 12) | genre table, Contradiction, Anachronism Edge, World Law formulas | 6 genres, Ur-Text Folios, cascade of §2.3, bleed, seams, secret rooms, time of day and weather | 16 genres, secret exits, gravity flip, Marginalia modifiers, fused Second Edition Folios | expansion genres |
 | Combat (doc 05) | damage pipeline, wards, blocking | melee, ranged, armor, counters, jams, grappling tool | unchanged | expansion skins |
 | Attributes, skills, body (doc 04) | derived stats, skills, levels | full chapter, crippled-pool severing (DECISIONS 84) | unchanged | unchanged |
 | Magic (doc 06) | glyph dependency rule | full chapter, Glyph Library | unchanged | expansion skins |
@@ -171,7 +171,7 @@ A milestone that misses its target moves every later milestone by the same numbe
 
 **M3 Headless game.** (1) C 1–47 are all green, test 31 comparing block data. (2) The doc 12 pull-request sweep (12: 18) passes over the 6 Early Access genres and the Ur-Text with today's 7-template rosters. (3) Doc 13 is green except 47 (M5); doc 14 is green for every test of WP-046. (4) SM-01 to SM-11 pass headless (01: 20). (5) `perf.ci.bot_tps` is at least 6,000, and 200 nightly bot runs of `mode.novella` and `mode.abridged` finish with no panic, no desync between two replicas and no Folio longer than 36,000 ticks (doc 02 §16, Testing strategy, item 6).
 
-**M4 First playable client.** (1) A tester plays the Prologue and a `mode.abridged` run from the Lectern to the closing manuscript on Windows and on Steam Deck through Proton, with greybox art in the 6 Early Access genres. (2) Doc 02 tests 12–16, 18, 34, 37, 42 and 43, the doc 17 tests of WP-053 to WP-055 and WP-057, and the doc 18 tests of WP-050 to WP-052 are green. (3) The client smoke test passes under 16 schedule shuffle seeds. (4) SM-10 and then SM-06 are playable in the client (doc 01 §11 Q-19).
+**M4 First playable client.** (1) A tester plays a first run with contextual tips and a `mode.abridged` run from the Lectern to the closing manuscript on Windows and on Steam Deck through Proton, with greybox art in the 6 Early Access genres. (2) Doc 02 tests 12–16, 18, 34, 37, 42 and 43, the doc 17 tests of WP-053 to WP-055 and WP-057, and the doc 18 tests of WP-050 to WP-052 are green. (3) The client smoke test passes under 16 schedule shuffle seeds. (4) SM-10 and then SM-06 are playable in the client (doc 01 §11 Q-19).
 
 **M5 Online, platforms and economy.** (1) Docs 15 and 16 are green; doc 14 tests 16–18, 24, 26, 36, 39–41, 46, 47, 49 and 51 are green. (2) `pillar.fair_page.t1`, `pillar.fair_page.t2` and `pillar.fair_page.t3` pass. (3) A 4-player Abridged run over Steam Datagram Relay and one over LAN finish; an Epic Games Store client and a Steam client finish a Folio together over `svc.relay`; an invasion runs from beacon to Redaction and from beacon to invader death. (4) Nightly 4-player bot co-op shows 0 desyncs over 1,000 bot hours.
 
@@ -274,7 +274,7 @@ Every Canon §21 test and every acceptance test on disk in chapters 01 to 18 is 
 
 ### 5.2 Order of production
 
-Doc 18 §10.1 fixes the order: every per-genre asset family for the 6 Early Access genres first, then the other 6 core genres, then the secret genres. This chapter adds the Ur-Text and Unwritten sets to the Early Access batch, because the final Folio and the Prologue need them (Canon gaps G13). Global assets ship complete at Early Access. The product owner curates every AI-assisted asset under doc 18 §10.3 (AI-assisted production, curation and licensing) in weekly batches; an uncurated asset never ships.
+Doc 18 §10.1 fixes the order: every per-genre asset family for the 6 Early Access genres first, then the other 6 core genres, then the secret genres. This chapter adds the Ur-Text and Unwritten sets to the Early Access batch, because the final Folio and Unwritten need them (Canon gaps G13). Global assets ship complete at Early Access. The product owner curates every AI-assisted asset under doc 18 §10.3 (AI-assisted production, curation and licensing) in weekly batches; an uncurated asset never ships.
 
 ### 5.3 Counts per core genre
 
@@ -310,7 +310,7 @@ Every core genre meets these counts when it ships, at Early Access, at 1.0 or in
 | Family | Early Access | Added by 1.0 | 1.0 total | Each expansion |
 |---|---|---|---|---|
 | Lattice genres | 6 | 6 | 12 | 1 |
-| Non-lattice genres | Ur-Text, Unwritten (Prologue) | Oneiric, The Redaction, generated Unwritten | 4 | 0 |
+| Non-lattice genres | Ur-Text, Unwritten | Oneiric, The Redaction, generated Unwritten | 4 | 0 |
 | Roster templates | 96: 6 × 12, 12 Ur-Text, 12 Editor squads (the Unwritten roster) | 96 | 192 | 12 |
 | Cross-genre templates | 4 (doc 13 §8.17) | 0 | 4 | 0 |
 | New templates to author | 41 (6 × 5, 5 Ur-Text, 6 Editor squads) | 41 | 82 | 12 |
@@ -330,7 +330,7 @@ The Ur-Text and the Unwritten keep doc 13 §9.3's champion in place of a mini-bo
 
 ### 5.5 Global content at Early Access
 
-The 13 Calling kits with alternative and Script kits; 24 Echoes with Recollection trials and the quadruped and serpentine bodies; the 5 Editors with verses for every dominant axiom; 12 Editor-squad templates; the 4 cross-genre templates; the 89 glyphs, 27 enchantments, 19 summons and 14 prayers of doc 06; the 41 materials, 9 stations, 120 recipes and 68 parts of doc 07; the ingredients, liquids and gases of doc 08; 116 affixes, 51 perks, 16 genre traits, 26 Legendary perks and 10 Palimpsestic uniques of doc 11; the 91 Bindery nodes, 58 achievement records and 32 Margin slots of doc 14; the Margin hub and its residents; the Prologue.
+The 13 Calling kits with alternative and Script kits; 24 Echoes with Recollection trials and the quadruped and serpentine bodies; the 5 Editors with verses for every dominant axiom; 12 Editor-squad templates; the 4 cross-genre templates; the 89 glyphs, 27 enchantments, 19 summons and 14 prayers of doc 06; the 41 materials, 9 stations, 120 recipes and 68 parts of doc 07; the ingredients, liquids and gases of doc 08; 116 affixes, 51 perks, 16 genre traits, 26 Legendary perks and 10 Palimpsestic uniques of doc 11; the 91 Bindery nodes, 58 achievement records and 32 Margin slots of doc 14; the Margin hub and its residents; the contextual tips.
 
 ### 5.6 Localization volume
 
@@ -473,7 +473,7 @@ This chapter defines no content ID and owns no Canon §19 namespace. It exports 
 - **G10. SPEC reference form.** Doc 02 §18 item 2 requires `SPEC: 00 §x.y`; the slice uses `SPEC: canon §x.y`. Ruling applied by WP-003: `xtask spec-refs` accepts both, `canon` meaning `00`, and new code uses the doc 02 form.
 - **G11. Roster size.** Doc 13 §8 holds 6 to 8 templates and §9.3 one mini-boss per genre, against DECISIONS 69. The missing templates are authored as content records (§5.1 step 3) under doc 13's column rules; doc 13 gap 1 records it.
 - **G12. EOS timing.** Doc 16 §3.6 (Crossplay identity) lists `epic` as a later platform; DECISIONS 73 keeps the EOS build, and this chapter ships it at Early Access.
-- **G13. Early Access asset set.** Doc 18 §10.1 produces the secret genres' families by 1.0, but the final Folio and the Prologue need the Ur-Text and Unwritten families at Early Access.
+- **G13. Early Access asset set.** Doc 18 §10.1 produces the secret genres' families by 1.0, but the final Folio and Unwritten need the Ur-Text and Unwritten families at Early Access.
 - **G14. Lost Chapter Scripts.** Doc 15's launch catalog includes Scripts for genres that ship after Early Access; §2.3 (g) keeps them out of banner pools until their genre ships.
 - **G15. Newest owner rows.** DECISIONS 94 to 104 (ink gore, movement kit, asynchronous traces, creator presets, PC only, time of day and weather, Second Edition, streaming votes) are not yet in their chapters, and items 99 and 101 need Canon §5 and §12 changes. This chapter assigns them: 94 to WP-050, 95 to WP-014 and WP-024, 96 to WP-103, 97 to WP-054 and WP-083, 98 to WP-060, WP-061 and WP-101, 99 to WP-043, 100 to 103 to WP-120 to WP-122, 104 to WP-108.
 - **G16. Platforms.** DECISIONS 98 makes the game PC only through 1.0: Windows on Steam and Epic, the Steam Deck through Proton. Doc 01 §9.2 (Platforms) and doc 02 §2.1 (Toolchain) and §14 (Platforms) still list native Linux and macOS builds, a WebGPU demo, consoles and a native Linux build for the Deck checklist. Linux remains a CI and server target, because `svc.verify` re-simulates Windows clients' replays on Linux.

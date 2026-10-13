@@ -188,7 +188,7 @@ wp(42, "Layout: mission graph, embedding, WFC", "M2", "EA",
 # ---------------- M3 Headless game ----------------
 wp(43, "Folio finishing, validation, secrets, stories, arenas", "M3", "EA",
    [("12", ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "23"])], "palimpsest_gen::finish", [42, 16, 17, 18],
-   "dressing, nodes, light plan, hazards, population and loot-spot interfaces, zones, validation and repair, room services and puzzles, secret rooms, events, story fragments, boss arenas, Abridged and Prologue layouts, the per-Folio time-of-day and weather rolls that feed light, sound, surfaces and fire (DECISIONS 99)",
+   "dressing, nodes, light plan, hazards, population and loot-spot interfaces, zones, validation and repair, room services and puzzles, secret rooms, events, story fragments, boss arenas, Abridged layouts, the per-Folio time-of-day and weather rolls that feed light, sound, surfaces and fire (DECISIONS 99)",
    {"C": [31], "12": [10, 11, 12, 13, 18, 19, 20, 24, 26] + R(29, 35) + [37, 40, 41, 43]}, 12)
 wp(44, "Enemies, Director, factions and NPCs", "M3", "EA",
    [("13", ["2", "3", "5", "6", "7", "10", "12", "13"]), ("00", ["11.6", "15", "17.3"])], "palimpsest_sim::enemies", [39, 25, 38, 34, 43],
@@ -200,7 +200,7 @@ wp(45, "Bosses: five Editors and mini-bosses", "M3", "EA",
    {"13": [24, 25, 26, 32]}, 7)
 wp(46, "Run layer for the EA modes", "M3", "EA",
    [("14", ["1", "2", "3", "4", "7", "8.1", "8.2a", "8.3", "8.4", "8.5", "8.6", "8.7", "8.8", "11", "12"])], "palimpsest_sim::run", [45, 41, 36, 28],
-   "`RunState`, lobby machine, content sets, kits and Margin Translation, Folio phases, Rubrics, notes, exit votes, boss gates, Erasure timeline, rests, ghosts, score, Grades, the EA modes and overlays, Prologue, save and suspend",
+   "`RunState`, lobby machine, content sets, kits and Margin Translation, Folio phases, Rubrics, notes, exit votes, boss gates, Erasure timeline, rests, ghosts, score, Grades, the EA modes and overlays, save and suspend",
    {"14": [1, 3, 4, 5, 6] + R(9, 15) + [20, 21, 22, 23, 25] + R(29, 35) + [37, 43, 45, 50], "01": [12, 13, 14, 15], "P": ["every_find_a_question.t3"]}, 12)
 wp(47, "Bots and the balance harness", "M3", "EA",
    [("02", ["16"]), ("13", ["11"])], "palimpsest_bots", [46, 30, 33, 35],
@@ -370,10 +370,10 @@ for suf, name, sec in GENRES_EA:
        "≥ 12 roster templates, 2 mini-bosses, GPV, World Laws, 2 tilesets, 6 hazards, 6 events, story grammar, weapon and armor skins, 2 manufacturers, alchemy and appearance skins, en-US keys (§5.3)",
        {"12": [18], "X": [f"§5.3 counts for {name}"]}, 10)
     data_ids[suf] = n; n += 1
-wp(n, "Genre pack data: The Ur-Text and the Prologue", "M6", "EA",
+wp(n, "Genre pack data: The Ur-Text and Unwritten", "M6", "EA",
    [("12", ["21", "23"]), ("13", ["8.16"]), ("14", ["11"])], "`content/*/` records for `genre.ur_text`, `genre.unwritten`",
    [80, 36, 43, 45],
-   "Ur-Text GPV, Law, tilesets and a 12-template roster; the Prologue's seven rooms",
+   "Ur-Text GPV, Law, tilesets and a 12-template roster; the Unwritten's seven rooms",
    {"X": ["§5.3 counts for the Ur-Text"]}, 8)
 data_ids["ur_text"] = n; n += 1
 asset_ids = {}
@@ -383,9 +383,9 @@ for suf, name, sec in GENRES_EA:
        "block array, art bible, palette, light rig, post, LUT, UI skin, meshes for the roster and mini-bosses, Going Native forms, time-of-day and weather sets, music track of 5 stems, ambience, SFX set",
        {"18": [34], "X": [f"doc 18 lints pass for {name}"]}, 18)
     asset_ids[suf] = n; n += 1
-wp(n, "Assets: The Ur-Text and the Prologue", "M6", "EA",
+wp(n, "Assets: The Ur-Text and Unwritten", "M6", "EA",
    [("18", ["3", "6.1", "8.5a"])], "`assets/`", [data_ids["ur_text"], 81, 51, 52],
-   "Ur-Text block array, palette, post, music and quote stems, closing-manuscript plates; the Prologue's Unwritten set",
+   "Ur-Text block array, palette, post, music and quote stems, closing-manuscript plates; the Unwritten's Unwritten set",
    {"X": ["doc 18 lints pass for the Ur-Text and Unwritten sets"]}, 12)
 asset_ids["ur_text"] = n; n += 1
 assert n == 98, n

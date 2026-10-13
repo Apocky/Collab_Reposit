@@ -1,0 +1,46 @@
+APPLIED (37)
+insert 01 §4.2
+insert 02 §1.3
+insert 03 §4.4
+insert 03 §4.4
+insert 03 §4.4
+insert 03 §6.4
+insert 03 §13.1
+insert 03 §19
+insert 04 §10.8
+insert 04 §13.8
+insert 04 §9.1
+insert 05 §10.8
+replace 06 §17.1
+replace 06 §16.5
+replace 06 §20
+insert 09 §4.4
+replace 09 §10.6
+insert 09 §17.7
+delete 10 §13.1
+insert 12 §5.8
+insert 13 §5
+insert 13 §11.6
+insert 13 §17.7
+insert 14 §17.1
+insert 14 §17.7
+replace 19 §19
+replace 19 §1.1
+replace 19 §19
+replace 19 §1.1
+insert 19 §1.2
+replace 19 §1.6
+insert 19 §1.10
+insert 19 §17.7
+insert 19 §1.6
+insert 19 §1.6
+replace 19 §19
+insert 19 §17.7
+
+SKIPPED (6)
+03 §17.6: old matches 0, not applied
+03 §4.2: old matches 0, not applied
+03 §5.12: section not found
+09 §5.12 (new, merged with doc 03 G31): section not found
+12 §5.12: section not found
+13 §20: old matches 0, not applied

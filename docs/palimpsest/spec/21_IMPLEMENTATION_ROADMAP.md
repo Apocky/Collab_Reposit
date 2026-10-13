@@ -46,8 +46,8 @@ Committed state at `efece38`, verified by running the suite:
 
 | Area | Early Access content | Binding source |
 |---|---|---|
-| Genres | Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West, Wuxia and Steampunk as lattice genres; `genre.ur_text` as the depth-25 Folio of every full-story run; `genre.unwritten` for the Prologue only. No secret exit opens. | DECISIONS 41; §2.3 |
-| Modes | `mode.prologue`, `mode.abridged` (the Early Access full-story run: 15 Folios, all five Editors, the Ur-Text and the closing manuscript), `mode.novella`, `mode.daily`, `mode.weekly_gauntlet`, `mode.seeded` and `mode.custom` with the Novella and Abridged structures, and the overlays `mode.ff_off`, `mode.ff_full`, `mode.loot_shared`, `mode.invasion_open` | DECISIONS 2, 51; §2.3; RQ-01 |
+| Genres | Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West, Wuxia and Steampunk as lattice genres; `genre.ur_text` as the depth-25 Folio of every full-story run; `genre.unwritten` for Unwritten only. No secret exit opens. | DECISIONS 41; §2.3 |
+| Modes | `mode.abridged` (the Early Access full-story run: 15 Folios, all five Editors, the Ur-Text and the closing manuscript), `mode.novella`, `mode.daily`, `mode.weekly_gauntlet`, `mode.seeded` and `mode.custom` with the Novella and Abridged structures, and the overlays `mode.ff_off`, `mode.ff_full`, `mode.loot_shared`, `mode.invasion_open` | DECISIONS 2, 51; §2.3; RQ-01 |
 | Price | base game USD 19.99, kept by Early Access owners at 1.0; Codex premium track USD 9.99; cosmetics USD 1.99 to 9.99; no premium currency | DECISIONS 1, 42, 58 |
 | Co-op and PvP | 1 to 4 players; Barony-style ghosts; friendly fire 50% direct and 100% area; host migration with hot, warm and cold paths; opt-in invasions with the Redacted outcome and cosmetic-only invader rewards | DECISIONS 15, 31, 32, 50, 76, 86, 93 |
 | World | fixed terrain with limited building of placeables; 250 mm micro-voxels; no mounts or vehicles; no item durability; the movement kit with a 2,000 mm mantle, sprint-slide and a grappling tool item; one time of day and one weather state per Folio | DECISIONS 16, 37, 55, 65, 95, 99 |
@@ -82,7 +82,7 @@ Rule 5 (freshness) and the 3 `range` calls of `rng.lattice` are unchanged, so th
 
 **(c) Origins, Echoes and kits.** All 12 core Origins and all 24 Echoes ship at Early Access, so the required Echoes Loki (Mythic Antiquity) and Jörmungandr (Cosmic Horror) are playable (DECISIONS 28). Kit items carry the Origin skin (doc 14 §2.4.4, Margin Translation), so the skins of every standard, alternative, Script and Echo kit template ship in all 12 core genres. Every other per-genre skin ships with its genre. Exotics whose home genre is not shipped stay out of loot pools: 12 of the 24 of doc 11 §8.2 (Exotics (24)) ship at Early Access.
 
-**(d) Secret genres.** No secret exit opens before 1.0. `genre.ur_text` ships complete for the final Folio; `genre.unwritten` ships only as the Prologue's fixed layout.
+**(d) Secret genres.** No secret exit opens before 1.0. `genre.ur_text` ships complete for the final Folio; `genre.unwritten` ships as a secret genre, unlocked by its canon rules.
 
 **(e) Pillar tests at the Early Access gate.** Doc 01 §2.7 (Pillar records and the release gate) requires all 18 tests. Their wording assumes Standard runs and 12 genres, so the Early Access gate reads them as follows; every other test reads as written.
 
@@ -118,7 +118,7 @@ Novella plays Folios 1 to 15 at the Standard depth `d(f) = f` (doc 14 §8.3, Nov
 |---|---|---|---|---|
 | Simulation core (doc 03) | integer and fixed-point primitives, tick timers, `EntityId`, save and hash skeleton | entity store, scheduler, all six grids, controller with the DECISIONS 95 kit, explosions, block edits, event bus | unchanged | unchanged |
 | Determinism and tooling (doc 02) | float and `HashMap` bans, canon tests | `xtask`, 5-target matrix (Linux verifiers must match Windows clients), golden replays, SyncTest, desync dumps, `pal` tools | unchanged | unchanged |
-| World generation and genres (doc 12) | genre table, Contradiction, Anachronism Edge, World Law formulas | 6 genres, Ur-Text Folios, Prologue, cascade of §2.3, bleed, seams, secret rooms, time of day and weather | 16 genres, secret exits, gravity flip, Marginalia modifiers, fused Second Edition Folios | expansion genres |
+| World generation and genres (doc 12) | genre table, Contradiction, Anachronism Edge, World Law formulas | 6 genres, Ur-Text Folios, cascade of §2.3, bleed, seams, secret rooms, time of day and weather | 16 genres, secret exits, gravity flip, Marginalia modifiers, fused Second Edition Folios | expansion genres |
 | Combat (doc 05) | damage pipeline, wards, blocking | melee, ranged, armor, counters, jams, grappling tool | unchanged | expansion skins |
 | Attributes, skills, body (doc 04) | derived stats, skills, levels | full chapter, crippled-pool severing (DECISIONS 84) | unchanged | unchanged |
 | Magic (doc 06) | glyph dependency rule | full chapter, Glyph Library | unchanged | expansion skins |
@@ -171,7 +171,7 @@ A milestone that misses its target moves every later milestone by the same numbe
 
 **M3 Headless game.** (1) C 1–47 are all green, test 31 comparing block data. (2) The doc 12 pull-request sweep (12: 18) passes over the 6 Early Access genres and the Ur-Text with today's 7-template rosters. (3) Doc 13 is green except 47 (M5); doc 14 is green for every test of WP-046. (4) SM-01 to SM-11 pass headless (01: 20). (5) `perf.ci.bot_tps` is at least 6,000, and 200 nightly bot runs of `mode.novella` and `mode.abridged` finish with no panic, no desync between two replicas and no Folio longer than 36,000 ticks (doc 02 §16, Testing strategy, item 6).
 
-**M4 First playable client.** (1) A tester plays the Prologue and a `mode.abridged` run from the Lectern to the closing manuscript on Windows and on Steam Deck through Proton, with greybox art in the 6 Early Access genres. (2) Doc 02 tests 12–16, 18, 34, 37, 42 and 43, the doc 17 tests of WP-053 to WP-055 and WP-057, and the doc 18 tests of WP-050 to WP-052 are green. (3) The client smoke test passes under 16 schedule shuffle seeds. (4) SM-10 and then SM-06 are playable in the client (doc 01 §11 Q-19).
+**M4 First playable client.** (1) A tester plays a first run with contextual tips and a `mode.abridged` run from the Lectern to the closing manuscript on Windows and on Steam Deck through Proton, with greybox art in the 6 Early Access genres. (2) Doc 02 tests 12–16, 18, 34, 37, 42 and 43, the doc 17 tests of WP-053 to WP-055 and WP-057, and the doc 18 tests of WP-050 to WP-052 are green. (3) The client smoke test passes under 16 schedule shuffle seeds. (4) SM-10 and then SM-06 are playable in the client (doc 01 §11 Q-19).
 
 **M5 Online, platforms and economy.** (1) Docs 15 and 16 are green; doc 14 tests 16–18, 24, 26, 36, 39–41, 46, 47, 49 and 51 are green. (2) `pillar.fair_page.t1`, `pillar.fair_page.t2` and `pillar.fair_page.t3` pass. (3) A 4-player Abridged run over Steam Datagram Relay and one over LAN finish; an Epic Games Store client and a Steam client finish a Folio together over `svc.relay`; an invasion runs from beacon to Redaction and from beacon to invader death. (4) Nightly 4-player bot co-op shows 0 desyncs over 1,000 bot hours.
 
@@ -270,10 +270,10 @@ Doc 02 §18 (Coding conventions for AI agents) item 8 lists an engineering task 
 | WP-040 | GPV, genres and World Laws | M2 | 12 §2 Genre identity (Canon §5.9); §3 Genre Parameter Vector (GPV); §4 World Laws; §24.3 st.contradicted and st.unmoored (owner 12)<br>00 §5 Axioms, genres, Contradiction and Anachronism | palimpsest_data (GPV records); palimpsest_sim::genre | WP-006 | GPV records for all 16 genres, lints L1–L10, World Laws with discovery state (DECISIONS 56), `st.contradicted`, `st.unmoored` | C 14, 15, 40; 01: 5; 12: 14–16, 27, 39; `pillar.one_ruleset.t2` | 5 |
 | WP-041 | Lattice, exits, Folio types, sub-streams, bleed plan | M2 | 12 §5 Genre Lattice; §6 Folio types; §7 Generation pipeline; §14.1 Bleed plan (pure, previewed)<br>00 §3.2 Sequential streams; §17.1 Run constants | palimpsest_gen::lattice | WP-001, WP-040 | pure `lattice_candidates` with the EA relaxation cascade (§2.3), Folio types, stage seeds, bleed plan, exit previews | C 47; 12: 1–9, 38, 44 | 5 |
 | WP-042 | Layout: mission graph, embedding, WFC | M2 | 12 §8 Mission graph grammar; §9 Spatial embedding and corridors; §10 Room templates and Wave Function Collapse | palimpsest_gen::layout | WP-013, WP-041 | mission graph grammar, spatial embedding, corridors and stairs, relink pairs, room templates, tilesets, WFC | 12: 17, 21, 25, 28, 42 | 10 |
-| WP-043 | Folio finishing, validation, secrets, stories, arenas | M3 | 12 §11 Dressing, nodes, light, liquids and hazards; §12 Population interface (doc 13 §10); §13 Loot spots (doc 11 §9–§12); §14 Bleed, seam and dynamic zones; §15 Validation and repair; §16 Room catalog; §17 Secrets; §18 Hazards and traps; §19 Ambient and narrative events; §20 Folio story fragments; §21 Boss Folios and Editor arenas; §23 Abridged and Prologue layouts | palimpsest_gen::finish | WP-016, WP-017, WP-018, WP-042 | dressing, nodes, light plan, hazards, population and loot-spot interfaces, zones, validation and repair, room services and puzzles, secret rooms, events, story fragments, boss arenas, Abridged and Prologue layouts, the per-Folio time-of-day and weather rolls that feed light, sound, surfaces and fire (DECISIONS 99) | C 31; 12: 10–13, 18–20, 24, 26, 29–35, 37, 40, 41, 43 | 12 |
+| WP-043 | Folio finishing, validation, secrets, stories, arenas | M3 | 12 §11 Dressing, nodes, light, liquids and hazards; §12 Population interface (doc 13 §10); §13 Loot spots (doc 11 §9–§12); §14 Bleed, seam and dynamic zones; §15 Validation and repair; §16 Room catalog; §17 Secrets; §18 Hazards and traps; §19 Ambient and narrative events; §20 Folio story fragments; §21 Boss Folios and Editor arenas; §23 Abridged layouts | palimpsest_gen::finish | WP-016, WP-017, WP-018, WP-042 | dressing, nodes, light plan, hazards, population and loot-spot interfaces, zones, validation and repair, room services and puzzles, secret rooms, events, story fragments, boss arenas, Abridged layouts, the per-Folio time-of-day and weather rolls that feed light, sound, surfaces and fire (DECISIONS 99) | C 31; 12: 10–13, 18–20, 24, 26, 29–35, 37, 40, 41, 43 | 12 |
 | WP-044 | Enemies, Director, factions and NPCs | M3 | 13 §2 Enemy entity model; §3 Roles; §5 Items, spells, stealth, weapons, summons and hacking; §6 The minion contract; §7 Ranks, elite modifiers and champions; §10 The Director; §12 Factions; §13 NPCs<br>00 §11.6 Erasure; §15 Factions; §17.3 Enemy ranks | palimpsest_sim::enemies | WP-025, WP-034, WP-038, WP-039, WP-043 | templates and scaling, roles, ranks, elites and champions, minions, enemy items and spells, Director, softer Erasure hunters (DECISIONS 26), factions and run-scoped reputation (DECISIONS 71), vendors, quests, hirelings and tamed beasts (DECISIONS 36), dialogue | 13: 1–3, 11–22, 27–31, 33, 36–39, 45, 46, 48–51, 53–55 | 12 |
 | WP-045 | Bosses: five Editors and mini-bosses | M3 | 13 §9 Bosses<br>12 §21 Boss Folios and Editor arenas | palimpsest_sim::enemies::boss | WP-044 | Editor templates with verses (DECISIONS 45), mini-boss framework for 2 per genre (DECISIONS 69), phases, enrage, arena construction | 13: 24–26, 32 | 7 |
-| WP-046 | Run layer for the EA modes | M3 | 14 §1 Constants and run state; §2 Start flow from the Margin; §3 Folio flow; §4 Score, run end and payout; §7 Errata Grades; §8.1 Mode table; §8.2a Abridged; §8.3 Novella; §8.4 Daily; §8.5 Weekly Gauntlet; §8.6 Seeded; §8.7 Custom mutators; §8.8 Co-op overlay; §11 Onboarding: the Prologue Folio; §12 Save and suspend rules | palimpsest_sim::run | WP-028, WP-036, WP-041, WP-045 | `RunState`, lobby machine, content sets, kits and Margin Translation, Folio phases, Rubrics, notes, exit votes, boss gates, Erasure timeline, rests, ghosts, score, Grades, the EA modes and overlays, Prologue, save and suspend | 01: 12–15; 14: 1, 3–6, 9–15, 20–23, 25, 29–35, 37, 43, 45, 50; `pillar.every_find_a_question.t3` | 12 |
+| WP-046 | Run layer for the EA modes | M3 | 14 §1 Constants and run state; §2 Start flow from the Margin; §3 Folio flow; §4 Score, run end and payout; §7 Errata Grades; §8.1 Mode table; §8.2a Abridged; §8.3 Novella; §8.4 Daily; §8.5 Weekly Gauntlet; §8.6 Seeded; §8.7 Custom mutators; §8.8 Co-op overlay; §11 Onboarding: contextual tips; §12 Save and suspend rules | palimpsest_sim::run | WP-028, WP-036, WP-041, WP-045 | `RunState`, lobby machine, content sets, kits and Margin Translation, Folio phases, Rubrics, notes, exit votes, boss gates, Erasure timeline, rests, ghosts, score, Grades, the EA modes and overlays, save and suspend | 01: 12–15; 14: 1, 3–6, 9–15, 20–23, 25, 29–35, 37, 43, 45, 50; `pillar.every_find_a_question.t3` | 12 |
 | WP-047 | Bots and the balance harness | M3 | 02 §16 Testing strategy<br>13 §11 Character XP pacing | palimpsest_bots | WP-030, WP-033, WP-035, WP-046 | Pilgrim bots with combat-led, stealth-led and environment-led policies, `run_batch`, `pal balance`, `bot_typical` throughput | 02: 47; 05: 48; 13: 23; `perf.ci.bot_tps` ≥ 6,000 ticks per second | 8 |
 | WP-048 | Signature moments, pillar registry, KPI functions | M3 | 01 §2.7 Pillar records and the release gate; §3.13 Signature-moment scenario tests; §10 KPIs and success metrics | palimpsest_bots::moments; palimpsest_tools::gate | WP-047 | SM-01 to SM-11 scenario files and runner, pillar records, `release_gate`, `prefer`, KPI `evaluate` and `aggregate` | 01: 1–4, 6–11, 16, 19, 20, 22, 23; SM-01–SM-11 | 6 |
 | WP-049 | Sim-render bridge | M4 | 02 §7 Sim-render bridge | palimpsest_bridge | WP-010, WP-020 | view mailbox, view frame, interpolation, entity mapping, the float boundary `conv`, event routing | 02: 13, 34, 37 | 5 |
@@ -317,14 +317,14 @@ Doc 02 §18 (Coding conventions for AI agents) item 8 lists an engineering task 
 | WP-087 | Genre pack data: Weird West | M6 | 12 §3 Genre Parameter Vector (GPV); §4 World Laws; §18.2 Per-genre hazard lists (skin names); §19.2 Per-genre event lists (skin names); §20 Folio story fragments<br>13 §8.7 Weird West; §9.3 Genre mini-bosses<br>11 §4.2 Weapon skins (28 archetypes × 16 genres); §5.2 Manufacturer table | `content/*/` records for `genre.weird_west` | WP-036, WP-043, WP-045, WP-080 | ≥ 12 roster templates, 2 mini-bosses, GPV, World Laws, 2 tilesets, 6 hazards, 6 events, story grammar, weapon and armor skins, 2 manufacturers, alchemy and appearance skins, en-US keys (§5.3) | 12: 18; §5.3 counts for Weird West | 10 |
 | WP-088 | Genre pack data: Wuxia | M6 | 12 §3 Genre Parameter Vector (GPV); §4 World Laws; §18.2 Per-genre hazard lists (skin names); §19.2 Per-genre event lists (skin names); §20 Folio story fragments<br>13 §8.9 Wuxia; §9.3 Genre mini-bosses<br>11 §4.2 Weapon skins (28 archetypes × 16 genres); §5.2 Manufacturer table | `content/*/` records for `genre.wuxia` | WP-036, WP-043, WP-045, WP-080 | ≥ 12 roster templates, 2 mini-bosses, GPV, World Laws, 2 tilesets, 6 hazards, 6 events, story grammar, weapon and armor skins, 2 manufacturers, alchemy and appearance skins, en-US keys (§5.3) | 12: 18; §5.3 counts for Wuxia | 10 |
 | WP-089 | Genre pack data: Steampunk | M6 | 12 §3 Genre Parameter Vector (GPV); §4 World Laws; §18.2 Per-genre hazard lists (skin names); §19.2 Per-genre event lists (skin names); §20 Folio story fragments<br>13 §8.10 Steampunk; §9.3 Genre mini-bosses<br>11 §4.2 Weapon skins (28 archetypes × 16 genres); §5.2 Manufacturer table | `content/*/` records for `genre.steampunk` | WP-036, WP-043, WP-045, WP-080 | ≥ 12 roster templates, 2 mini-bosses, GPV, World Laws, 2 tilesets, 6 hazards, 6 events, story grammar, weapon and armor skins, 2 manufacturers, alchemy and appearance skins, en-US keys (§5.3) | 12: 18; §5.3 counts for Steampunk | 10 |
-| WP-090 | Genre pack data: The Ur-Text and the Prologue | M6 | 12 §21 Boss Folios and Editor arenas; §23 Abridged and Prologue layouts<br>13 §8.16 The Ur-Text (secret)<br>14 §11 Onboarding: the Prologue Folio | `content/*/` records for `genre.ur_text`, `genre.unwritten` | WP-036, WP-043, WP-045, WP-080 | Ur-Text GPV, Law, tilesets and a 12-template roster; the Prologue's seven rooms | §5.3 counts for the Ur-Text | 8 |
+| WP-090 | Genre pack data: The Ur-Text and Unwritten | M6 | 12 §21 Boss Folios and Editor arenas; §23 Abridged layouts<br>13 §8.16 The Ur-Text (secret)<br>14 §11 Onboarding: contextual tips | `content/*/` records for `genre.ur_text`, `genre.unwritten` | WP-036, WP-043, WP-045, WP-080 | Ur-Text GPV, Law, tilesets and a 12-template roster; the Unwritten's seven rooms | §5.3 counts for the Ur-Text | 8 |
 | WP-091 | Genre pack assets: Mythic Fantasy | M6 | 18 §3 Per-genre art bibles; §5.5 Going Native forms; §6.1 Music system; §6.3 SFX taxonomy; §7.4 Name grammars<br>17 §2 Genre UI skins | `assets/` | WP-051, WP-052, WP-081, WP-084 | block array, art bible, palette, light rig, post, LUT, UI skin, meshes for the roster and mini-bosses, Going Native forms, time-of-day and weather sets, music track of 5 stems, ambience, SFX set | 18: 34; doc 18 lints pass for Mythic Fantasy | 18 |
 | WP-092 | Genre pack assets: Gothic Horror | M6 | 18 §3 Per-genre art bibles; §5.5 Going Native forms; §6.1 Music system; §6.3 SFX taxonomy; §7.4 Name grammars<br>17 §2 Genre UI skins | `assets/` | WP-051, WP-052, WP-081, WP-085 | block array, art bible, palette, light rig, post, LUT, UI skin, meshes for the roster and mini-bosses, Going Native forms, time-of-day and weather sets, music track of 5 stems, ambience, SFX set | 18: 34; doc 18 lints pass for Gothic Horror | 18 |
 | WP-093 | Genre pack assets: Cyberpunk | M6 | 18 §3 Per-genre art bibles; §5.5 Going Native forms; §6.1 Music system; §6.3 SFX taxonomy; §7.4 Name grammars<br>17 §2 Genre UI skins | `assets/` | WP-051, WP-052, WP-081, WP-086 | block array, art bible, palette, light rig, post, LUT, UI skin, meshes for the roster and mini-bosses, Going Native forms, time-of-day and weather sets, music track of 5 stems, ambience, SFX set | 18: 34; doc 18 lints pass for Cyberpunk | 18 |
 | WP-094 | Genre pack assets: Weird West | M6 | 18 §3 Per-genre art bibles; §5.5 Going Native forms; §6.1 Music system; §6.3 SFX taxonomy; §7.4 Name grammars<br>17 §2 Genre UI skins | `assets/` | WP-051, WP-052, WP-081, WP-087 | block array, art bible, palette, light rig, post, LUT, UI skin, meshes for the roster and mini-bosses, Going Native forms, time-of-day and weather sets, music track of 5 stems, ambience, SFX set | 18: 34; doc 18 lints pass for Weird West | 18 |
 | WP-095 | Genre pack assets: Wuxia | M6 | 18 §3 Per-genre art bibles; §5.5 Going Native forms; §6.1 Music system; §6.3 SFX taxonomy; §7.4 Name grammars<br>17 §2 Genre UI skins | `assets/` | WP-051, WP-052, WP-081, WP-088 | block array, art bible, palette, light rig, post, LUT, UI skin, meshes for the roster and mini-bosses, Going Native forms, time-of-day and weather sets, music track of 5 stems, ambience, SFX set | 18: 34; doc 18 lints pass for Wuxia | 18 |
 | WP-096 | Genre pack assets: Steampunk | M6 | 18 §3 Per-genre art bibles; §5.5 Going Native forms; §6.1 Music system; §6.3 SFX taxonomy; §7.4 Name grammars<br>17 §2 Genre UI skins | `assets/` | WP-051, WP-052, WP-081, WP-089 | block array, art bible, palette, light rig, post, LUT, UI skin, meshes for the roster and mini-bosses, Going Native forms, time-of-day and weather sets, music track of 5 stems, ambience, SFX set | 18: 34; doc 18 lints pass for Steampunk | 18 |
-| WP-097 | Assets: The Ur-Text and the Prologue | M6 | 18 §3 Per-genre art bibles; §6.1 Music system; §8.5a The closing manuscript (DECISIONS item 46) | `assets/` | WP-051, WP-052, WP-081, WP-090 | Ur-Text block array, palette, post, music and quote stems, closing-manuscript plates; the Prologue's Unwritten set | doc 18 lints pass for the Ur-Text and Unwritten sets | 12 |
+| WP-097 | Assets: The Ur-Text and Unwritten | M6 | 18 §3 Per-genre art bibles; §6.1 Music system; §8.5a The closing manuscript (DECISIONS item 46) | `assets/` | WP-051, WP-052, WP-081, WP-090 | Ur-Text block array, palette, post, music and quote stems, closing-manuscript plates; the Unwritten's Unwritten set | doc 18 lints pass for the Ur-Text and Unwritten sets | 12 |
 | WP-098 | Localization production, EA | M6 | 17 §14 Localization<br>18 §9.11 Localization | `assets/loc/` | WP-057, WP-082, WP-084, WP-085, WP-086, WP-087, WP-088, WP-089, WP-090 | 14 translations of every EA key, linguistic QA, `en-XA` pass, text freeze on 2027-07-09 | 0 missing keys in 15 locales | 10 |
 | WP-099 | EA balance and bot pillar sweeps | M6 | 02 §16 Testing strategy<br>01 §2 Design pillars; §6.6 Balance check against the canon anchors<br>13 §11.2 Tuning simulation<br>15 §2.7 Reference income; §2.8 Hours to earn<br>14 §5.4 Totals and pacing | palimpsest_bots; `content/` | WP-047, WP-074, WP-084, WP-085, WP-086, WP-087, WP-088, WP-089, WP-090 | Folio-1 anchors, depth curve, pacing bands, party parity, Quire and Ink rates, Abridged and Novella lengths, the EA reading of the bot pillar tests (§2.3) | 02: 47; `pillar.one_ruleset.t1`, `pillar.out_of_story.t1`, `pillar.out_of_story.t2`, `pillar.living_page.t1`, `pillar.living_page.t3`, `pillar.party_of_errata.t1` | 10 |
 | WP-100 | Human playtests and blind genre recognition | M7 | 01 §2.1 pillar.one_ruleset — One Ruleset, Many Skins | palimpsest_client (test flag) | WP-061, WP-065, WP-091, WP-092, WP-093, WP-094, WP-095, WP-096, WP-097 | ≥ 20 fresh testers over the 6 EA genres with labels hidden, Deck sessions, co-op nights, P0 and P1 triage | `pillar.one_ruleset.t3` | 4 |
@@ -396,24 +396,24 @@ Every Canon §21 test and every acceptance test on disk in chapters 01 to 18 is 
 | Chapter | Tests on disk | Covered by WPs | Retired |
 |---|---|---|---|
 | Canon §21 | 47 | 47 | — |
-| doc 01 | 23 | 23 | — |
-| doc 02 | 47 | 47 | — |
-| doc 03 | 52 | 52 | — |
-| doc 04 | 55 | 55 | — |
-| doc 05 | 63 | 63 | — |
-| doc 06 | 56 | 56 | — |
-| doc 07 | 52 | 52 | — |
+| doc 01 | 28 | 28 | — |
+| doc 02 | 60 | 60 | — |
+| doc 03 | 66 | 66 | — |
+| doc 04 | 63 | 63 | — |
+| doc 05 | 67 | 67 | — |
+| doc 06 | 58 | 58 | — |
+| doc 07 | 55 | 55 | — |
 | doc 08 | 59 | 59 | — |
-| doc 09 | 57 | 57 | — |
-| doc 10 | 43 | 43 | — |
-| doc 11 | 44 | 44 | — |
+| doc 09 | 73 | 73 | — |
+| doc 10 | 44 | 44 | — |
+| doc 11 | 54 | 54 | — |
 | doc 12 | 44 | 44 | — |
-| doc 13 | 55 | 55 | — |
-| doc 14 | 51 | 51 | — |
-| doc 15 | 35 | 35 | — |
-| doc 16 | 56 | 56 | — |
-| doc 17 | 65 | 65 | — |
-| doc 18 | 58 | 58 | — |
+| doc 13 | 73 | 73 | — |
+| doc 14 | 58 | 58 | — |
+| doc 15 | 45 | 45 | — |
+| doc 16 | 66 | 66 | — |
+| doc 17 | 80 | 80 | — |
+| doc 18 | 67 | 67 | — |
 
 ## 5. Content production plan
 
@@ -433,7 +433,7 @@ Every Canon §21 test and every acceptance test on disk in chapters 01 to 18 is 
 
 ### 5.2 Order of production
 
-Doc 18 §10.1 fixes the order: every per-genre asset family for the 6 Early Access genres first, then the other 6 core genres, then the secret genres. This chapter adds the Ur-Text and Unwritten sets to the Early Access batch, because the final Folio and the Prologue need them (Canon gaps G13). Global assets ship complete at Early Access. The product owner curates every AI-assisted asset under doc 18 §10.3 (AI-assisted production, curation and licensing) in weekly batches; an uncurated asset never ships.
+Doc 18 §10.1 fixes the order: every per-genre asset family for the 6 Early Access genres first, then the other 6 core genres, then the secret genres. This chapter adds the Ur-Text and Unwritten sets to the Early Access batch, because the final Folio and Unwritten need them (Canon gaps G13). Global assets ship complete at Early Access. The product owner curates every AI-assisted asset under doc 18 §10.3 (AI-assisted production, curation and licensing) in weekly batches; an uncurated asset never ships.
 
 ### 5.3 Counts per core genre
 
@@ -469,7 +469,7 @@ Every core genre meets these counts when it ships, at Early Access, at 1.0 or in
 | Family | Early Access | Added by 1.0 | 1.0 total | Each expansion |
 |---|---|---|---|---|
 | Lattice genres | 6 | 6 | 12 | 1 |
-| Non-lattice genres | Ur-Text, Unwritten (Prologue) | Oneiric, The Redaction, generated Unwritten | 4 | 0 |
+| Non-lattice genres | Ur-Text, Unwritten | Oneiric, The Redaction, generated Unwritten | 4 | 0 |
 | Roster templates | 96: 6 × 12, 12 Ur-Text, 12 Editor squads (the Unwritten roster) | 96 | 192 | 12 |
 | Cross-genre templates | 4 (doc 13 §8.17) | 0 | 4 | 0 |
 | New templates to author | 41 (6 × 5, 5 Ur-Text, 6 Editor squads) | 41 | 82 | 12 |
@@ -489,7 +489,7 @@ The Ur-Text and the Unwritten keep doc 13 §9.3's champion in place of a mini-bo
 
 ### 5.5 Global content at Early Access
 
-The 13 Calling kits with alternative and Script kits; 24 Echoes with Recollection trials and the quadruped and serpentine bodies; the 5 Editors with verses for every dominant axiom; 12 Editor-squad templates; the 4 cross-genre templates; the 89 glyphs, 27 enchantments, 19 summons and 14 prayers of doc 06; the 41 materials, 9 stations, 120 recipes and 68 parts of doc 07; the ingredients, liquids and gases of doc 08; 116 affixes, 51 perks, 16 genre traits, 26 Legendary perks and 10 Palimpsestic uniques of doc 11; the 91 Bindery nodes, 58 achievement records and 32 Margin slots of doc 14; the Margin hub and its residents; the Prologue.
+The 13 Calling kits with alternative and Script kits; 24 Echoes with Recollection trials and the quadruped and serpentine bodies; the 5 Editors with verses for every dominant axiom; 12 Editor-squad templates; the 4 cross-genre templates; the 89 glyphs, 27 enchantments, 19 summons and 14 prayers of doc 06; the 41 materials, 9 stations, 120 recipes and 68 parts of doc 07; the ingredients, liquids and gases of doc 08; 116 affixes, 51 perks, 16 genre traits, 26 Legendary perks and 10 Palimpsestic uniques of doc 11; the 91 Bindery nodes, 58 achievement records and 32 Margin slots of doc 14; the Margin hub and its residents; the contextual tips.
 
 ### 5.6 Localization volume
 
@@ -693,14 +693,14 @@ flowchart LR
     W087["WP-087 Genre pack data: Weird West"]
     W088["WP-088 Genre pack data: Wuxia"]
     W089["WP-089 Genre pack data: Steampunk"]
-    W090["WP-090 Genre pack data: The Ur-Text and the Prologue"]
+    W090["WP-090 Genre pack data: The Ur-Text and Unwritten"]
     W091["WP-091 Genre pack assets: Mythic Fantasy"]
     W092["WP-092 Genre pack assets: Gothic Horror"]
     W093["WP-093 Genre pack assets: Cyberpunk"]
     W094["WP-094 Genre pack assets: Weird West"]
     W095["WP-095 Genre pack assets: Wuxia"]
     W096["WP-096 Genre pack assets: Steampunk"]
-    W097["WP-097 Assets: The Ur-Text and the Prologue"]
+    W097["WP-097 Assets: The Ur-Text and Unwritten"]
     W098["WP-098 Localization production, EA"]
     W099["WP-099 EA balance and bot pillar sweeps"]
   end
@@ -1056,7 +1056,7 @@ This chapter defines no content ID and owns no Canon §19 namespace. It exports 
 - **G10. SPEC reference form.** Doc 02 §18 item 2 requires `SPEC: 00 §x.y`; the slice uses `SPEC: canon §x.y`. Ruling applied by WP-003: `xtask spec-refs` accepts both, `canon` meaning `00`, and new code uses the doc 02 form.
 - **G11. Roster size.** Doc 13 §8 holds 6 to 8 templates and §9.3 one mini-boss per genre, against DECISIONS 69. The missing templates are authored as content records (§5.1 step 3) under doc 13's column rules; doc 13 gap 1 records it.
 - **G12. EOS timing.** Doc 16 §3.6 (Crossplay identity) lists `epic` as a later platform; DECISIONS 73 keeps the EOS build, and this chapter ships it at Early Access.
-- **G13. Early Access asset set.** Doc 18 §10.1 produces the secret genres' families by 1.0, but the final Folio and the Prologue need the Ur-Text and Unwritten families at Early Access.
+- **G13. Early Access asset set.** Doc 18 §10.1 produces the secret genres' families by 1.0, but the final Folio and Unwritten need the Ur-Text and Unwritten families at Early Access.
 - **G14. Lost Chapter Scripts.** Doc 15's launch catalog includes Scripts for genres that ship after Early Access; §2.3 (g) keeps them out of banner pools until their genre ships.
 - **G15. Newest owner rows.** DECISIONS 94 to 104 (ink gore, movement kit, asynchronous traces, creator presets, PC only, time of day and weather, Second Edition, streaming votes) are not yet in their chapters, and items 99 and 101 need Canon §5 and §12 changes. This chapter assigns them: 94 to WP-050, 95 to WP-014 and WP-024, 96 to WP-103, 97 to WP-054 and WP-083, 98 to WP-060, WP-061 and WP-101, 99 to WP-043, 100 to 103 to WP-120 to WP-122, 104 to WP-108.
 - **G16. Platforms.** DECISIONS 98 makes the game PC only through 1.0: Windows on Steam and Epic, the Steam Deck through Proton. Doc 01 §9.2 (Platforms) and doc 02 §2.1 (Toolchain) and §14 (Platforms) still list native Linux and macOS builds, a WebGPU demo, consoles and a native Linux build for the Deck checklist. Linux remains a CI and server target, because `svc.verify` re-simulates Windows clients' replays on Linux.

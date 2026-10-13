@@ -1,6 +1,6 @@
 # 00 — CANON: Single Source of Truth
 
-As of 2026-10-11. Status: BINDING. Version: canon-1.11 (changelog in §23).
+As of 2026-10-12. Status: BINDING. Version: canon-1.12 (changelog in §23).
 
 This document defines every shared identifier, enum, unit, constant and cross-system formula in PALIMPSEST. When any other spec document disagrees with this one, this one wins. When this one is silent, the owning document named in §19 decides. `DESIGN_BRIEF.md` explains why; this document says exactly what.
 
@@ -36,11 +36,11 @@ This document defines every shared identifier, enum, unit, constant and cross-sy
 
 ### 1.1 Content identifiers
 
-Every piece of content and every enum value has a string **content ID**.
+Every piece of content and every enum value that other records reference, or that saves and packets carry as `id32`, has a string **content ID**. A closed set used by one field only is a JSON Schema `enum` of bare words (doc 19 G4).
 
 - Grammar (regex): `^[a-z][a-z0-9_]*(\.[a-z0-9_]+){1,5}$`. Maximum 64 bytes, ASCII only.
 - The first segment is the **namespace**. §19 assigns each namespace to one owning document.
-- Content IDs are permanent once shipped. Renaming requires an alias entry in `data/aliases.json`.
+- Content IDs are permanent once shipped. Renaming requires an alias entry: the renamed record lists its old IDs in `aliases` (doc 19 §1.2).
 - `id32 = fnv1a32(utf8(id))` is the compact form used in saves and packets. It is computed for content IDs only, never for text keys (§1.10).
 - The content loader rejects any `id32` collision among base content and aliases at build time. An alias's old ID takes part in the collision check and maps to the new ID's `id32` at load.
 - A mod whose content ID collides with an already loaded `id32` is rejected at mod load with error `id32_collision`.
@@ -78,6 +78,8 @@ Simulation state never contains `f32` or `f64`. Rendering, audio and UI may use 
 | armor | `i64` | AR per body part |
 | EntityId, item uid | `u64` | §1.11 |
 
+Bp content values are `i32`; power-table values and `i64` table multipliers are `i64` Bp and in content stay within `±(2^53 - 1)` (doc 19 `bp`, `bp_i64`).
+
 ### 1.3 Integer primitives (normative)
 
 `palimpsest_sim` sets `overflow-checks = true` in every Cargo profile, so overflow panics in debug and release alike.
@@ -89,6 +91,8 @@ Simulation state never contains `f32` or `f64`. Rendering, audio and UI may use 
 - `mul_bp(x, bp) = floor_div(x as i128 * bp as i128, 10000)`, narrowed back to the input width with a checked conversion that panics on overflow.
 - Several Bp multipliers chain left to right, rounding after each step, in the exact order a formula lists them. Implementations must not reorder for speed.
 - Clamp always happens last in a formula unless the formula places it elsewhere.
+
+Shifts bullet, appended sentence: "Exception: the bit-mixing shift `s[1] << 17` of §3.1 wraps (it drops high bits), as Rust's `wrapping_shl` does; every other `<<` in a normative formula is a checked multiplication."
 
 ### 1.4 Fixed-point primitives (normative)
 
@@ -121,7 +125,11 @@ Simulation state never contains `f32` or `f64`. Rendering, audio and UI may use 
 
 - Content files contain no floating-point numbers. A float in content is a schema error.
 - Lengths are authored in integer millimeters, speeds in mm/s, accelerations in mm/s², angles in Bam, chances and multipliers in Bp, durations in ticks, masses in grams, volumes in ml, temperatures in DeciC.
-- Every JSON integer in content lies in `-(2^53 - 1)..=2^53 - 1`. Larger values, and every `u64` such as a seed or a hash, are written as `"0x"`-prefixed hexadecimal strings, because JSON tooling loses precision above 2^53.
+- Every JSON integer in content lies in `-(2^53 - 1)..=2^53 - 1`. Larger values, and every `u64` such as a seed or a hash, are written as `"0x"` followed by exactly 16 upper-case hexadecimal digits, because JSON tooling loses precision above 2^53 and `content_hash` hashes the JSON text.
+
+- The integer token `-0` is not an integer; content never contains it.
+
+- A JSON object in content never repeats a key.
 
 ### 1.7 Ranges
 
@@ -154,6 +162,8 @@ Ranges use Rust syntax. `a..=b` is inclusive and `a..b` is half-open.
 - Each content ID has `loc.<id>.name`, and optionally `loc.<id>.desc` and `loc.<id>.flavor`.
 - A genre skin overrides with `loc.<id>.skin.<genre_suffix>.name`, where `genre_suffix` is the part after `genre.`. Example: `loc.arch.melee.blade_long.skin.wuxia.name = "Jian"`.
 - Name resolution order: the local genre skin (§5.8), then the item's origin genre skin, then the archetype default name.
+
+Locale tags are not content IDs. A locale record has the ID `nar.locale.<tag>`, the BCP 47 tag lower-cased with `-` written as `_` (for example `nar.locale.en_us`); doc 18 owns the records.
 
 ### 1.11 Entity IDs and item uids
 
@@ -462,6 +472,8 @@ All values are given in content units (§1.6). Code converts them with `fx_from_
 - **Dodge.** A 3000 mm burst over 12 ticks costing 20 stamina. Invulnerability starts on the dodge's first tick and lasts `min(12, 8 + floor_div(max(0, AGI - 40), 15))` ticks, never past the dodge's 12th tick. A new dodge cannot start until 18 ticks after the previous one started.
 - **Final move speed** is base speed, then §6.4 row 11, then doc 04's body factor `body_move_bp` (severed legs, crutch, leg wounds), then each active status multiplier in ascending status ID byte order. Base speed is the table above, or the doc 05 stance base that replaces it (combat and casting stances, armor sprint and swim bases); armor never multiplies speed. Encumbrance is applied only through `st.encumbered` and `st.overburdened`.
 
+**Movement kit.** The base kit is walk, sprint, crouch, jump, air jump, dodge, lean, a ledge mantle onto a ledge whose top lies more than 550 mm and at most 2000 mm above the feet, and a sprint-slide started by a crouch press while sprinting (doc 03 §5.9, §5.23). A grappling tool is a `cat.tool` item with a genre skin, never part of the base kit (doc 03 §5.24; doc 11).
+
 ### 4.3 Terrain and placeables
 
 Building is limited (DECISIONS.md, item 16).
@@ -486,7 +498,23 @@ Higher-resolution geometry by product-owner decision (DECISIONS.md, item 37). Do
 
 ---
 
+A closed door or closed trapdoor applies its block's full `light_filter`, concealment and sound attenuation.
+
+Shapes with no micro-voxels (cross, ladder, fixture) keep their block's light filter, concealment and sound attenuation unscaled.
+
+Panel, ladder, fence, pane, cross and fixture cells, resource nodes and cells marked by an explosion's rays break whole.
+
+Sight rays test each cell's micro-voxel boxes through `raycast_blocks` and read `conceal_at` through the fill rule; closed doors are unscaled.
+
 ## 5. Axioms, genres, Contradiction and Anachronism
+
+A fused Folio holds both genres' rosters, native and wild factions, World Laws and skins; a native of either genre is native there; its axioms are floor_div(a + b, 2) per axis.
+
+**Time of day and weather.** Each Folio rolls one time of day from its genre's table and one weather state (doc 12), fixed for the Folio. Time of day: dawn −1, day 0, dusk −1, night −3 sky levels. Weather terms apply only at cells with no micro-voxel above them (`sky_open`), except the sky-level term, which applies to every sky-lit source. Columns `sky_delta`, `sound_ddb` (added per sound step), `wet` (soaks bodies), `fire_bp` (multiplies fire spread), `fog`, `ambient_db`, `scent`, `snow`: clear 0, 0, 0, 10000, 0, 0, 0, 0; rain −1, 2, 1, 5000, 0, 5, 1, 0; storm −2, 4, 1, 2500, 1, 10, 1, 0; fog −1, 0, 0, 10000, 1, 0, 0, 0; snow −1, 2, 0, 5000, 1, 0, 1, 1; dust −1, 3, 0, 12500, 1, 5, 0, 0. Weather deposits no liquid or gas and changes no temperature.
+
+Each `wx.*` row also carries the stealth columns `FOG` (whole fog points added to the genre fog, §12.2), `AMB` (dB added to the ambient mask), wash (scent lasts 1800 ticks) and snow (footsteps read `noise.surface.snow`), applied only at `sky_open` cells (doc 09 §15.3): `wx.clear` 0, 0, no, no; `wx.rain` 0, 5, yes, no; `wx.storm` 1, 10, yes, no; `wx.fog` 1, 0, no, no; `wx.snow` 1, 0, no, yes; `wx.dust` 1, 5, no, no. Weather sound is the per-step `sound_ddb(wx)` alone.
+
+Each Folio rolls one time of day and one weather state (doc 12), fixed for the Folio. Per-genre weights over `tod.dawn`, `tod.day`, `tod.dusk`, `tod.night` and `wx.clear`, `wx.rain`, `wx.storm`, `wx.fog`, `wx.snow`, `wx.dust` feed light, sound, surfaces and fire (doc 03 §4.8) and stealth (doc 09 §15.3).
 
 ### 5.1 Axioms
 
@@ -667,6 +695,8 @@ All axiom values here are local axioms at the relevant entity's position (§5.8)
 - **Seam zones.** Doc 12 may place at most one `zone.seam` per Folio, covering 1 or 2 rooms, where two genres are stitched together. Inside a seam zone, `local_genre(pos)` is the Folio's genre, `local_axiom(pos, a)` is the larger of the two genres' axiom values for each `a`, both genres' World Laws (§5.10) are active, entities of either genre count as native, and the Folio's genre supplies skins. This is the only place where both toolsets work at full strength.
 - `vrv(e) = min(10, local_axiom(e.pos, verve) + 2 × [e has st.inspired])`. Jump, safe fall, crit chance and Death's Door use `vrv(e)`. Contradiction requirements always use the unmodified local axiom.
 
+**Fused Folios.** A Second Edition Folio is written in an ordered core genre pair (A, B) that doc 12 records. Outside bleed and seam zones `local_axiom(pos, a) = floor_div(axiom_A + axiom_B, 2)`, both genres' rosters, World Laws and skins are active, and entities of either genre count as native (DECISIONS 101).
+
 ### 5.9 Genre identity
 
 Doc 12 copies this table into the full Genre Parameter Vectors. Doc 07 defines every listed material. Doc 11 owns manufacturer mechanics and adds one more manufacturer per core genre plus the Errata manufacturer. Physics columns multiply the base constants of §4: `air_accel_bp` multiplies air acceleration, `fall_dmg_bp` multiplies fall damage, `ground_friction_bp` multiplies ground deceleration. `spawn_block_max` is the highest block-light level in which ambient spawns, wave spawns and the initial population may occur (§12.3).
@@ -803,6 +833,8 @@ All doc-04-owned growth feeds these formulas, and no other document defines a co
 | 43 | Death's Door chance, once per Folio, Errata only | `min(6000, mul_bp(clamp(1000 + d(PRV) × 50, 0, 4000), 10000 + (vrv(e) - 5) × 1000))` Bp | 10% |
 | 44 | Curse resistance on equip | `max(0, d(PRV) × 50)` Bp | 0% |
 
+**Last stand.** In solo play only, a lethal hit that Death's Door does not prevent opens a 300-tick window, once per Folio; a successful timed input in that window leaves the Erratum at 1 HP, and on failure the hit kills. The world keeps running and further hits on the Erratum are negated during the window.
+
 ### 6.5 Rows that apply to NPCs
 
 - NPCs use rows 11, 13 (without the gear term), 15, 16, 17, 18, 22, 23, 24, 25, 30, 31, 32, 33, 34, 35, 39 and 41, computed from their effective sub-attributes (§13.8).
@@ -930,6 +962,8 @@ Severing is deterministic and draws no random numbers.
 - Events: `ev.part_severed`, `ev.part_reattached`.
 
 ---
+
+Losing a leg of a two-legged plan multiplies move speed by 5000 and removes sprint, jump and dodge; doc 04 §8.3 and §13 set the factors for plans with more legs.
 ## 10. Damage types, resistances, armor and the damage pipeline
 
 ### 10.1 Damage types
@@ -1045,7 +1079,7 @@ Inputs: `B`, type shares `share[t]` in Bp summing to 10000, `pen_bp`, the weapon
 | Environmental hazards not from an item | step 3 with `D2 = base × P(d)` against NPCs or `base × T(d)` against Errata | crit | doc 12 |
 | Reflected damage (thorns) | step 3 | crit, buildup, reflection | |
 | A consumable's damage to its own drinker or injected target (doc 08) | step 3 with `D2 = B` | steps 1 and 2 (additive bucket, crit, friendly fire) | |
-| A lethal takedown (doc 09) | step 7 as `dmg.true` equal to the target's HP plus ward | crit, resistance, armor, chip floor | flag `takedown` |
+| A lethal takedown (doc 09) | step 7 as `dmg.true` equal to the target's HP plus ward; against a `rank.elite` target, `mul_bp(max HP, 5000)` (doc 09 §9.4) | crit, resistance, armor, chip floor | flag `takedown` |
 
 ### 10.7 Blocking
 
@@ -1068,6 +1102,8 @@ Hits in the same tick resolve in two batches: actor hits (weapons, spells, gadge
 1. **Errata only:** if Death's Door is unused this Folio, roll §6.4 row 43 with keyed `rng.combat`. On success, HP = 1,000 mHP and the Erratum gains `st.deaths_door` for 60 ticks. Death's Door is marked used whether the roll succeeds or fails.
 2. On failure, if at least one other party member is alive and not downed, the Erratum gains `st.downed` with HP 0 and `ev.player_downed` is emitted (doc 16).
 3. Otherwise, emit `ev.entity_killed`. NPCs always go straight to this step. An Erratum that dies while another Erratum lives becomes a ghost (§17.6) and emits `ev.player_died` and `ev.player_ghosted`. A downed Erratum that bleeds out follows the same rule.
+
+2a. **Errata in solo play only:** if Death's Door did not prevent the lethal damage and the last stand is unused this Folio, the Erratum enters a last stand of 300 ticks (doc 04 §12.1a, doc 05 §12.1a) with HP 0, taking no damage. On success its HP = 1,000 mHP; on failure step 3 applies.
 
 ### 10.9 Healing
 
@@ -1208,6 +1244,8 @@ While `st.shocked` is active, each hit the bearer takes (except a `no_chain` hit
 - Hunters and every `fac.editors` member except an invader (§17.9) erase Errata placeables within 1500 mm of them, at one placeable block per 10 ticks.
 - Each dose of the `afflict.red_ink` affliction (§16.4) lowers the hunter-spawn threshold by 1, from 10 down to a minimum of 6.
 
+In the Final Second Edition Folio the boss-Folio pause of the Erasure clock lasts until the Author (boss.author) dies.
+
 ### 11.7 Multiplier order
 
 When several statuses multiply the same stat, they apply after all non-status factors, one `mul_bp` per status, in ascending status ID byte order.
@@ -1321,9 +1359,10 @@ Ambient spawns, wave spawns and the initial population (doc 13) occur only in ce
 | `cat.quest` | narrative items | 12 |
 | `cat.part` | loose weapon parts and licensed grafts that cross manufacturers | 07, 11 |
 | `cat.ward_gen` | ward generators: shields of every skin, from aegis charms to kinetic barriers | 05, 11 |
-| `cat.seed` | plantable seeds | 07, 08 |
 | `cat.corpse` | corpses and Errata Remains: carry, loot, eat, raise, sacrifice | 04, 13, 16 |
 | `cat.body_part` | severed body parts (§9.1) | 04, 07, 08 |
+
+**Grappling tool.** A `cat.tool` item, never base kit: a 20,000 mm ray from the eye anchors on any block face at least 1,000 mm away and pulls the body at 12,000 mm/s without gravity for at most 120 ticks; it releases on a jump (velocity kept), on arrival within 1,000 mm, when blocked, gated or downed, or when the anchor block is gone (velocity × 0.25 on every release but a jump). A body is never an anchor.
 
 ### 13.2 Equipment slots
 
@@ -1492,6 +1531,8 @@ Every damage, ward or summon-stat magnitude is `base × P(src_lvl)` (or `T` wher
 
 `gear_hp_mhp = Σ over equipped armor pieces of mul_bp(hp_base[slot] × 1000, max(0, T(ilvl) - T(25)))`, with `hp_base`: body 30, head 14, legs 14, hands 6, feet 6. It adds 0 in the main run, 745,143 mHP for a full set at ilvl 60 and 4,538,772 mHP at ilvl 100, which keeps Errata between 70 and 130 HP per threat unit through depth 150.
 
+Second Edition Folio `n` (n ≥ 1) uses depth `25 + 2n` in the P, T, H and S tables.
+
 ### 13.8a One material table
 
 Blocks and items share one material table owned by doc 07, following IVAN. A block is a material plus a shape. An item component is a material plus a volume. Harvesting a resource node yields its material. An item's mass is its volume times its material density.
@@ -1629,7 +1670,7 @@ Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and
 
 ### 16.5 Patrons and prayer
 
-- Each genre has one patron Author, `patron.<genre_suffix>`, 16 in all, owned by doc 06.
+- Each genre has one patron, the author of its genre, `patron.<genre_suffix>`, 16 in all, owned by doc 06.
 - `res.favor` per patron is run-scoped, `-1000..=1000`. Each Erratum has a `prayer_timer` in ticks.
 - Prayer resolution follows IVAN's table, with timers of +18000 ticks (pleased), +36000 (displeased), +90000 (helped anyway) and +180000 (angry). Doc 06 owns the table. Rolls use keyed `rng.magic`.
 - Favor gains are × `(100 + devotion) / 100` and losses × `100 / (100 + devotion)`, with integer floor division.
@@ -1656,7 +1697,7 @@ Afflictions (`afflict.`, owner 04) are run-long conditions with real upsides and
 | `ERASURE_ONSET` | 720 s after Folio entry |
 | `ERASURE_STEP` | 30 s; stack `k >= 1` is granted on tick `folio_entry_tick + 43200 + 1800 × (k - 1)`, so the tenth stack lands 990 s after entry |
 | `PARTY_MAX` | 4 |
-| `GLYPH_LIBRARY_START` | 2: every glyph an Erratum learns in any run joins the account's permanent Glyph Library (horizontal meta, doc 14); at run start each Erratum pre-learns 2 glyphs chosen from it (doc 06) |
+| `GLYPH_LIBRARY_START` | 2: every glyph an Erratum learns in any run joins the account's permanent Glyph Library (horizontal meta, doc 14); at run start each Erratum pre-learns 2 glyphs chosen from it (doc 06); runs on `unlock.daily_baseline` offer the 52 glyphs of doc 06's `base` pool in place of the library |
 | Loot | instanced per player |
 | Target Folio duration | 180 to 420 s |
 | Target full-run duration | 100 to 150 min |
@@ -1666,6 +1707,8 @@ Secret genres are never lattice candidates. They are reached only through secret
 **Colophon.** Every Folio ends in a Colophon room (`room.colophon`, docs 12 and 14), the analog of Noita's Holy Mountain, placed before the exits. It offers one full heal, a full aether refresh, a shop (none in `genre.unwritten`, §5.2), an altar of 3 boons with 1 reroll, and a Scriptorium station. Erasure accrual stops for the rest of the Folio once any Erratum enters it. Damaging its blocks marks the party for the run: an Editor hunter waits in every later Colophon, and after 3 hunter kills it becomes an elite hunter.
 
 **Abridged mode** (`mode.abridged`, owner 14) is the shorter full-story run. It has 5 Volumes of 3 Folios each: two regular Folios plus the boss. Effective depth `d_eff(v, f) = (v - 1) × 5 + [1, 3, 5][f - 1]` feeds `P`, `T`, `H`, `S`, `ilvl` and `enemy_level`. Kill XP and loot quantity per Folio are × 16667 Bp, where loot quantity means worldgen chests and floor-loot spots; Reliquaries, Fortune Engines and vendor stock are unchanged. `EMENDATIONS_PER_VOLUME` stays 3. The final Folio is the Ur-Text at `d_eff = 25`. Target duration is 60 to 75 minutes. The 25-Folio Standard mode remains the full run.
+
+ERASURE_ONSET = 720 s, ERASURE_STEP = 30 s; single Erasure hunter spawns at 720 s and tenth stack at 990 s (59,400 ticks).
 
 ### 17.2 Party-size tables (Bp, for party sizes 1, 2, 3, 4)
 
@@ -1737,6 +1780,16 @@ Doc 05, doc 11 and doc 13 tune all content against these Folio-1 anchors.
 ### 17.7 Mounts
 
 Cut by product-owner decision (DECISIONS.md, item 55). The game has no mounts or vehicles. `cat.mount`, `slot.mount`, `st.mounted`, `arch.mount.`, `ev.mounted`, `ev.dismounted`, `room.no_mount`, `npc.vendor.stablemaster`, `shop.stablemaster`, `ai.nav.mounted`, `ai.action.remount`, `ai.set.cavalry` and `enemy.role.cavalry` are retired IDs and must not appear in content. Former cavalry enemies fight on foot as the unmounted role `enemy.role.charger` (doc 13), which replaces `enemy.role.cavalry`.
+
+`noise.mount.` (walk, gallop, hover, glide, summon) is retired with the mount family.
+
+enemy.prologue_hunter is retired with mode.prologue (DECISIONS 132).
+
+cat.seed, block.crop, mat.tag.tillable (DECISIONS 128) and mode.prologue (DECISIONS 132) are retired IDs.
+
+Every ID the canon replaces is listed as retired in §17.7, including the block category and the Delving skill IDs replaced in canon-1.4.
+
+cat.seed, block.crop and mat.tag.tillable (DECISIONS.md, item 128) and mode.prologue (item 132) are retired IDs and must not appear in content. (Write the IDs in backticks in the canon so gen_namespaces.py retires them.)
 
 ### 17.8 The Margin trophies
 
@@ -1831,6 +1884,7 @@ Doc 03 owns the event bus and the full payload schemas. The IDs below are the ca
 | `art.`, `aud.`, `nar.`, `vfx.` | 18 |
 | `ev.`, `rng.` | 00 for the core lists; 03 for the event bus |
 | `pillar.`, `kpi.` | 01 |
+| `meta.` | 00 |
 | `crate.`, `flag.`, `perf.` | 02 |
 | `comp.`, `sys.`, `grid.` | 03 |
 | `loc.` text keys | 18 (not content IDs, §1.10) |
@@ -1870,7 +1924,7 @@ Doc 03 owns the event bus and the full payload schemas. The IDs below are the ca
 | Keyed draw | a random draw seeded by (stream, Folio, actor, tick, seq) (§3.3) |
 | Rank | an enemy's power tier: minion, standard, elite, champion, boss, editor, hunter |
 | Kin | an Erratum's people: human, construct, undead, beastkin, fae, mutant |
-| Patron | the Author of a genre, who answers prayers |
+| Patron | the author of a genre (lower case; the Author is `boss.author`), who answers prayers |
 | Ghost | a dead Erratum still present while a party member lives |
 | Remains | a dead Erratum's carryable body, which speeds resurrection |
 | Quires | earned account currency for Margin unlocks |
@@ -1957,6 +2011,23 @@ N! skin name ∈ {brands, third-party currency names, cur./ent. names except its
 ---
 
 ## 23. Changelog
+
+### canon-1.12 (2026-10-12)
+
+Cut from the wave-2 canon requests (audit/canon_1_12_apply_log.txt; 37 applied, 6 skipped with reasons there).
+
+- Movement kit (DECISIONS 95): base kit, ledge mantle, sprint-slide and a grappling tool that is an item, not base kit (§4.2, §13.1).
+- Last stand (DECISIONS 131, 134, 135): solo only, once per Folio, 300 ticks, ink-strike input (§6.4, §10.8).
+- Second Edition (DECISIONS 100, 101, 105, 106, 117): depth 25 + 2n, fused Folios, the revised-Editor boss pause (§5.8, §5, §11.6, §13.8).
+- Time of day and weather (DECISIONS 99): one time of day and weather state per Folio (§5, §5.12 added inside §5).
+- Light and sight (DECISIONS 95; doc 03 G29, G30; doc 09 G23): closed doors unscaled; micro-voxel-free shapes unscaled; sight rays use the fill rule (§4.4).
+- Retirements (DECISIONS 128, 132; doc 09; doc 17): cat.seed, block.crop, mat.tag.tillable, mode.prologue, enemy.prologue_hunter and the noise.mount. family are retired and must not appear in content (§17.7).
+- Locales (DECISIONS 40; doc 19 G7): nar.locale.<tag> records (§1.10).
+- Shifts (doc 02 G14): the bit-mixing shift in the xoshiro line wraps (§1.3).
+- Patrons (doc 06 G17): one patron per genre, the author of its genre; the Author is boss.author (§16.5, §20).
+- Glyph Library start on unlock.daily_baseline (doc 06, doc 14 gap 2) (§17.1).
+
+Not in this cut: the ghost-collision rule (old text did not match), the 1,600 mm mantle wording (old text did not match), doc 19's §19 table restructure (rejected: it broke the generator), and the Second Edition revised-Editor rule (doc 13 owns it).
 
 ### canon-1.11 (2026-10-11)
 
