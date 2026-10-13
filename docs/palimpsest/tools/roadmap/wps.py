@@ -514,3 +514,8 @@ _EXTRA_TESTS_CANON = {1: {'C': [48, 49, 50]}}
 for _w in WPS:
     for _c, _nums in _EXTRA_TESTS_CANON.get(_w['id'], {}).items():
         _w['tests'][_c] = sorted(set(_w['tests'].get(_c, [])) | set(_nums))
+
+_EXTRA_TESTS_RENUM = {22: {'05': [65, 66, 67]}, 6: {'18': [67]}}
+for _w in WPS:
+    for _c, _nums in _EXTRA_TESTS_RENUM.get(_w['id'], {}).items():
+        _w['tests'][_c] = sorted(set(_w['tests'].get(_c, [])) | set(_nums))

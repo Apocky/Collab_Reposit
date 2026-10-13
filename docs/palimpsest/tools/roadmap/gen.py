@@ -168,6 +168,16 @@ def main():
         tw = wd_between(START, target)
         rows.append(f"| {m} {name} | day {a} | day {b} |")
     text = text.replace('{{SCHED_TABLE}}', "\n".join(rows))
+    _vel = HERE / 'velocity.csv'
+    _rows = [r for r in __import__('csv').DictReader(open(_vel, encoding='utf-8'))] if _vel.exists() else []
+    _rows = [r for r in _rows if r.get('wp')]
+    if len(_rows) >= 3:
+        _h = sum((dt.datetime.fromisoformat(r['finish_utc'].replace('Z', '+00:00')) - dt.datetime.fromisoformat(r['start_utc'].replace('Z', '+00:00'))).total_seconds() for r in _rows) / 3600
+        _d = sum(float(r['agent_days_claimed']) for r in _rows)
+        _cal = f"MEASURED from {len(_rows)} finished work packages: {_h:.2f} elapsed hours for {_d:g} agent-days claimed, so {_h / _d:.2f} hours per agent-day claimed."
+    else:
+        _cal = f"NOT CALIBRATED: {len(_rows)} of 3 finished work packages recorded in tools/roadmap/velocity.csv. No elapsed-time estimate is given."
+    text = text.replace('{{CALIBRATION}}', _cal)
     text = text.replace('{{EA_GATE_DAY}}', str(ls[EA_GATE]))
     text = text.replace('{{CRIT_END}}', str(L))
     # coverage

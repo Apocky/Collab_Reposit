@@ -225,7 +225,9 @@ Sizes in this chapter are estimates. Elapsed time is measured from the repositor
 - **Wave 2 apply and checks.** Began 22:10 PT on 2026-10-11 and ended 17:17 PT on 2026-10-12, 19 hours. Most of that time was waiting on usage limits, not working; the cuts are visible in the failed agent results.
 - **Workflow durations.** The two Rust follow-up runs took 1,010,991 ms and 135,997 ms of wall time, from the workflow results.
 
-Calibration rule: this chapter states no elapsed-time estimate until each work package records its start and finish commit timestamps. The next revision converts agent-days to hours from those records and marks the ratio MEASURED.
+Calibration status: {{CALIBRATION}}
+
+Calibration rule: work packages are timed with `tools/roadmap/record_wp.py` (start and finish in UTC when the work package's commit is ready). Elapsed-time estimates appear only after three rows are recorded.
 
 ## 4. Work packages
 
