@@ -1,0 +1,1732 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "item.ring.might",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to PWR, BRN, GRP (the `attr.might` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each (each reaches +10 at +15)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.finesse",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to PRC, AGI, SLT (the `attr.finesse` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.vigor",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to TGH, END, RES (the `attr.vigor` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.intellect",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to LOG, MEM, ANL (the `attr.intellect` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.will",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to FOC, RSV, ATN (the `attr.will` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.perception",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to SGT, HRG, ITU (the `attr.perception` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.presence",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to CHM, MEN, GUI (the `attr.presence` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.fortune",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2 each to FAT, SER, PRV (the `attr.fortune` sub-attributes)",
+    "per_eff_enh": "`+floor_div(eff_enh + 1, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.arcane_tongue",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "`gear_tol` +1 on arcana",
+    "per_eff_enh": "+1 more at `eff_enh >= 8`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.machine_tongue",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "`gear_tol` +1 on techne",
+    "per_eff_enh": "+1 more at `eff_enh >= 8`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.sacred_tongue",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "`gear_tol` +1 on mythos",
+    "per_eff_enh": "+1 more at `eff_enh >= 8`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.bold_tongue",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "`gear_tol` +1 on verve",
+    "per_eff_enh": "+1 more at `eff_enh >= 8`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.warding",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+400 Bp resist to fire, frost, shock, acid, radiation and sonic",
+    "per_eff_enh": "+50 Bp each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.wealth",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+1500 Bp in the wearer's Lucre-find sum (§9.1)",
+    "per_eff_enh": "+150 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.ring.keen",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+200 Bp crit chance (Canon §6.4 row 13 gear)",
+    "per_eff_enh": "+40 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.sanctuary",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+600 Bp resist radiant, umbral, psychic",
+    "per_eff_enh": "+60 Bp each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.elements",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+700 Bp resist fire, frost, shock",
+    "per_eff_enh": "+70 Bp each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.ferocity",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+2000 Bp crit multiplier (row 14 gear)",
+    "per_eff_enh": "+250 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.composure",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+4 RSV, +4 FOC",
+    "per_eff_enh": "`+floor_div(eff_enh, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.vigor",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+4 TGH, +4 RES",
+    "per_eff_enh": "`+floor_div(eff_enh, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.fortune",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+3 FAT, +3 SER, +3 PRV",
+    "per_eff_enh": "`+floor_div(eff_enh, 3)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.wayfarer",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+4 END, +4 AGI",
+    "per_eff_enh": "`+floor_div(eff_enh, 2)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.amulet.scholar",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "implicit_at_0": "+3 LOG, +3 MEM, +3 ANL",
+    "per_eff_enh": "`+floor_div(eff_enh, 3)` each"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.lattice_lens",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "carried anywhere in the inventory: `EXIT_OFFERS = 3` (Canon §17.1); +2 ITU when equipped"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.lucky_coin",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "+4 FAT, +4 PRV"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.whetstone",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "+600 Bp melee damage (additive bucket), +50 per `eff_enh`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.powder_horn",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "+600 Bp ranged weapon damage (additive bucket), +50 per `eff_enh`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.reliquary_bone",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "+1000 Bp resist umbral and radiant"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.compass_rose",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "+6 ITU"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.hourglass",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "on `ev.folio_entered`, `st.hasted` applied directly for 600 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.thimble",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "+8 armor poise"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.holy_symbol",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "base",
+    "effect": "prayer implement: prayers take its `ilvl` as `src_lvl` (doc 06 §3.1); +4 PRV"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.wishbone",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "the Fortune Engine top-face guarantee arms after 7 non-top capsules instead of 9 (§11.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.merchants_scale",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "buy trade factor × 9500 (§12.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.keyring_charm",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "on entering the first Folio of each Volume, receive 1 `item.key.bound`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.lodestone",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "every auto-pickup radius × 2 (§14.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.warning_bell",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "HUD shows hostiles at `aware.suspicious` or higher within 15000 mm (doc 09 states)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.saints_finger",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "+6 RSV, +6 ATN"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.clockwork_heart",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "+6 END"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.dragon_scale",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "+800 Bp resist fire, +2 armor poise"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.cat_eye",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "+6 SGT"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.trinket.forged_papers",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "pool": "relics_2",
+    "effect": "+6 GUI"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.belt.sash",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.belt`",
+    "value": "30",
+    "mass_g": "200",
+    "effect": "quickbar 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.belt.bandolier",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.belt`",
+    "value": "45",
+    "mass_g": "400",
+    "effect": "quickbar 6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.belt.harness",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.belt`",
+    "value": "60",
+    "mass_g": "600",
+    "effect": "quickbar 7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.belt.utility",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.belt`",
+    "value": "80",
+    "mass_g": "800",
+    "effect": "quickbar 8"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.back.cloak",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.back`",
+    "value": "40",
+    "mass_g": "1200",
+    "effect": "+300 Bp resist frost and fire"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.back.satchel",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.back`",
+    "value": "40",
+    "mass_g": "800",
+    "effect": "+6 backpack slots"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.back.rucksack",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.back`",
+    "value": "70",
+    "mass_g": "1600",
+    "effect": "+10 backpack slots"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.back.expedition_pack",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.back`",
+    "value": "110",
+    "mass_g": "2500",
+    "effect": "+14 backpack slots"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.face.mask",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.face`",
+    "value": "30",
+    "mass_g": "200",
+    "effect": "disguise item (doc 09)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.face.goggles",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.4 Accessories",
+   "fields": {
+    "slot": "`slot.face`",
+    "value": "40",
+    "mass_g": "300",
+    "effect": "+4 SGT"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.text.appraisal",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "22",
+    "weight": "1000",
+    "effect_owner": "doc 10 `appr.eff.identify`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.text.sanctify",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "30",
+    "weight": "600",
+    "effect_owner": "doc 10 `appr.eff.unbind`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.text.survey",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "20",
+    "weight": "600",
+    "effect_owner": "doc 10 `appr.eff.survey`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.text.omen",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "18",
+    "weight": "600",
+    "effect_owner": "doc 10 `appr.eff.omen`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.text.consecrate",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "30",
+    "weight": "600",
+    "effect_owner": "doc 10 `appr.eff.consecrate`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.text.intuit",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "24",
+    "weight": "600",
+    "effect_owner": "doc 10 `appr.eff.intuit`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.throwable.counter_breaker",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "14",
+    "weight": "800",
+    "mechanics": "`arch.ranged.grenade_counter` with bit `counter.ward_breaker`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.throwable.counter_disruptor",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "14",
+    "weight": "800",
+    "mechanics": "same archetype, bit `counter.disruptor`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.throwable.counter_staggerer",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "14",
+    "weight": "800",
+    "mechanics": "same archetype, bit `counter.staggerer`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.throwable.counter_sunder",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "14",
+    "weight": "800",
+    "mechanics": "same archetype, bit `counter.sunder`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.throwable.counter_anchor",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "14",
+    "weight": "800",
+    "mechanics": "same archetype, bit `counter.anchor`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.food.ration",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "4",
+    "mass_g": "300",
+    "satiation": "600",
+    "rot_ticks": "never",
+    "eat_ticks": "60",
+    "notes": "also cooked by doc 07 `recipe.cook.smoked_rations`"
+   },
+   "also_in": [
+    "14 2.4.1 Universal kit `run.kit.universal` (every Erratum, doc 04 §2.5)"
+   ]
+  },
+  {
+   "id": "item.food.meal",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "8",
+    "mass_g": "500",
+    "satiation": "900",
+    "rot_ticks": "36000",
+    "eat_ticks": "60",
+    "notes": "composure +10; every cooked dish is a meal carrying `dish` (doc 07)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.food.bread",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "2",
+    "mass_g": "200",
+    "satiation": "300",
+    "rot_ticks": "18000",
+    "eat_ticks": "60",
+    "notes": "doc 04's light-food row (snack, bread, fruit, produce)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.bandage",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "6",
+    "mass_g": "50",
+    "stack": "10",
+    "use_owner": "treatment (doc 04 §8.4); ends `st.bleeding`"
+   },
+   "also_in": [
+    "14 2.4.1 Universal kit `run.kit.universal` (every Erratum, doc 04 §2.5)"
+   ]
+  },
+  {
+   "id": "item.tool.splint",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "8",
+    "mass_g": "300",
+    "stack": "5",
+    "use_owner": "treatment (doc 04)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.salve",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "8",
+    "mass_g": "100",
+    "stack": "10",
+    "use_owner": "treatment (doc 04)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.surgical_kit",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "40",
+    "mass_g": "1200",
+    "stack": "1",
+    "use_owner": "treatment and reattachment (doc 04); 3 charges"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.torch",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "2",
+    "mass_g": "400",
+    "stack": "10",
+    "use_owner": "held light source, `light_block` 12, burns 3600 ticks (doc 03)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.pick",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "12",
+    "mass_g": "2500",
+    "stack": "1",
+    "use_owner": "harvests resource nodes (Canon §4.3, doc 07)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.lockpicks",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "40",
+    "mass_g": "100",
+    "stack": "10",
+    "use_owner": "locks (doc 09)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.toolkit",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "24",
+    "mass_g": "1500",
+    "stack": "1",
+    "use_owner": "construct self-repair (`repair_kit`, doc 07 §8.2) and gadgets; crafting tool tier (doc 07); never consumed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.hacking_deck",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "60",
+    "mass_g": "600",
+    "stack": "1",
+    "use_owner": "hacking (doc 09); dependency techne"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.rope",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "6",
+    "mass_g": "1000",
+    "stack": "5",
+    "use_owner": "climbing (doc 07)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.crutch",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "10",
+    "mass_g": "2000",
+    "stack": "1",
+    "use_owner": "held in `slot.offhand`: a severed or tier-4 leg moves at × 7000 (Canon §9.1, doc 04 §8.5)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.blank_text",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "8",
+    "mass_g": "50",
+    "stack": "10",
+    "use_owner": "inscription (doc 06 §8.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.rewrite_quill",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "60",
+    "mass_g": "50",
+    "stack": "5",
+    "use_owner": "Rewrite anywhere (§15)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.emendation",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "300",
+    "mass_g": "50",
+    "stack": "15",
+    "use_owner": "§16; never sold or bought"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.tool.grapple",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "30",
+    "mass_g": "1500",
+    "stack": "1",
+    "use_owner": "grappling tool (DECISIONS 95, doc 03 §5.24); never consumed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_abjuration",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.abjuration`",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_alteration",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.alteration`",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_conjuration",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.conjuration`",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_divination",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.divination`",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_evocation",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.evocation`",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_illusion",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.illusion`",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_restoration",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.restoration`",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.primer_spellcraft",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "glyph tome",
+    "teaches": "glyphs of `school.spellcraft` (its modifiers, every trigger and condition)",
+    "value": "48",
+    "mass_g": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.book.schematic",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "kind": "schematic",
+    "teaches": "one recipe with `learn: 1` (doc 07 §6.5)",
+    "value": "40",
+    "mass_g": "200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.key.bound",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "30",
+    "opens": "`reliq.plain`, `reliq.bound`",
+    "sources": "elite and champion key lines, the mini-boss key line (§9.5); plain and locked chests (§9.6); Volume-plan caches (§9.9); `item.trinket.keyring_charm`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.key.gilded",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "90",
+    "opens": "`reliq.plain` to `reliq.gilded`",
+    "sources": "champion key line, the mini-boss key line (§9.5); plain chests (§9.6); the Volume-plan gilded cache (§9.9)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.key.illumined",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "250",
+    "opens": "every tier",
+    "sources": "the Editor table `loot.boss.editor` (§9.5)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.key.door",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "value": "0",
+    "opens": "the `Locked` door of its `key_tag`",
+    "sources": "doc 12 places one `Public` ground key at each `Key(k)` node with `key_tag = k`; vendors refuse it; it is removed from every inventory at Folio exit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.quest.catchword",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "category": "`cat.quest`",
+    "mass_g": "1000",
+    "placed_by": "doc 14 §3.4 `run.rubric.catchwords`: three in distinct rooms of a Folio with that Rubric",
+    "rules": "cannot be dropped (doc 14 §3.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.quest.parcel",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "category": "`cat.quest`",
+    "mass_g": "1000",
+    "placed_by": "doc 13 retrieve and deliver quests",
+    "rules": "delivered to the quest's target"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.quest.folio_leaf",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "category": "`cat.quest`",
+    "mass_g": "50",
+    "placed_by": "doc 12 §20.5: one per Folio at the story seat, a `Public` ground item",
+    "rules": "consumed on the exit-commit tick when an Active Erratum holds it, which sets `FolioRecord.leaf_carried` (doc 12 §20.5, doc 14)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.remains",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "category": "`cat.corpse`",
+    "mass_g": "75000",
+    "placed_by": "doc 14 §3.10, when an Erratum becomes a ghost",
+    "rules": "records the ghost's slot and holds no items; carried through an exit it sets `remains_carried` (doc 14 §3.10, doc 16)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.relic.lattice_lens",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 3.10 Retired IDs",
+   "fields": {
+    "retired": "before first ship",
+    "replacement": "`item.trinket.lattice_lens`",
+    "reason": "every trinket uses the `item.trinket.` prefix (§3.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.dragonsong",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "blade_long",
+    "home": "mythic_fantasy",
+    "mfr": "runecourt",
+    "pool": "base",
+    "dep": "arcana",
+    "intrinsic": "every 3rd consecutive hit within 120 ticks releases a 4000 mm cone of `dmg.fire` for 6000 Bp of its `D2` plus 60 `st.burning` power"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.widowmaker",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "pistol_heavy",
+    "home": "weird_west",
+    "mfr": "coffin_creek",
+    "pool": "base",
+    "dep": "verve",
+    "intrinsic": "magazine fixed at 6 (tendencies, affixes and perks never change it); the 6th shot uses crit chance 10000 and +5000 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.ghost_protocol",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "head_light",
+    "home": "cyberpunk",
+    "mfr": "chromaw",
+    "pool": "base",
+    "dep": "techne",
+    "intrinsic": "crouched without attacking for 60 ticks: `st.invisible` applied directly, refreshed every 60 ticks; the first hit after it ends +3000 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.paper_moon",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "`arch.ward.aegis`",
+    "home": "oneiric",
+    "mfr": "somnambule",
+    "pool": "base",
+    "dep": "arcana",
+    "intrinsic": "capacity × 15000; while ward > 0, immune to `st.feared` and `st.dread`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.quietus",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "dagger",
+    "home": "gothic_horror",
+    "mfr": "vesper_sons",
+    "pool": "exotic_arms",
+    "dep": "none",
+    "intrinsic": "+10000 Bp on sneak attacks; sneak kills restore 15 composure"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.starfall",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "charge_rifle",
+    "home": "space_opera",
+    "mfr": "perihelion",
+    "pool": "exotic_arms",
+    "dep": "techne",
+    "intrinsic": "a fully charged shot calls a 3000 mm strike at impact 60 ticks later: 15000 Bp of the shot's `D2` as `dmg.radiant` (environmental entry)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.thunderwright",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "warhammer",
+    "home": "mythic_antiquity",
+    "mfr": "hephaesteum",
+    "pool": "exotic_arms",
+    "dep": "mythos",
+    "intrinsic": "heavy attacks emit a 4000 mm `dmg.shock` nova: 5000 Bp of the hit's `D2` plus 40 `st.shocked` power"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.redline_sutra",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "smg",
+    "home": "cyberpunk",
+    "mfr": "ghostline",
+    "pool": "exotic_arms",
+    "dep": "techne",
+    "intrinsic": "attack speed +250 Bp per 6 consecutive shots, max +2500; at max, +15 `st.burning` power per hit; resets after 20 idle ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.rust_psalm",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "shotgun",
+    "home": "post_apocalypse",
+    "mfr": "rustmaw",
+    "pool": "exotic_arms",
+    "dep": "none",
+    "intrinsic": "every 4 pellets of one shot that hit the same target apply one `st.corroded` stack directly"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.gallows_oath",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "crossbow",
+    "home": "weird_west",
+    "mfr": "coffin_creek",
+    "pool": "exotic_arms",
+    "dep": "verve",
+    "intrinsic": "leg-part hits on non-boss targets apply `st.rooted` directly for 120 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.cogheart",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "rifle_auto",
+    "home": "steampunk",
+    "mfr": "aetherline",
+    "pool": "exotic_arms",
+    "dep": "techne",
+    "intrinsic": "spends no ammo while the wielder has not moved for 60 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.briar_rose",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "chain",
+    "home": "fairy_tale",
+    "mfr": "thornwood",
+    "pool": "exotic_arms",
+    "dep": "arcana",
+    "intrinsic": "+30 `st.sleeping` power per hit; +5000 Bp against `st.sleeping` targets"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.hydra_bow",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "charge_rifle",
+    "home": "mythic_antiquity",
+    "mfr": "argive",
+    "pool": "exotic_arms",
+    "dep": "mythos",
+    "intrinsic": "each arrow splits on its first hit into 2 more that hit the 2 nearest other hostiles within 6000 mm for 3000 Bp of its `D2`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.dead_drop",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "crossbow",
+    "home": "hardboiled_noir",
+    "mfr": "midnight_avenue",
+    "pool": "exotic_arms",
+    "dep": "none",
+    "intrinsic": "bolts emit 0 dB; a lodged bolt detonates after 180 ticks for 8000 Bp of its hit's `D2` as `dmg.blunt` within 1500 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.black_bar",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "staff",
+    "home": "redacted",
+    "mfr": "bureau",
+    "pool": "exotic_arms",
+    "dep": "techne",
+    "intrinsic": "precision-part hits apply `st.blinded` directly"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.lullaby",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "wand",
+    "home": "oneiric",
+    "mfr": "somnambule",
+    "pool": "exotic_arms",
+    "dep": "arcana",
+    "intrinsic": "every 3rd charge spent is refunded; holds a `wand_pool` spell drawn by step 11c (doc 10 §4.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.stormcrown",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "head_medium",
+    "home": "mythic_fantasy",
+    "mfr": "deepanvil",
+    "pool": "exotic_armor",
+    "dep": "arcana",
+    "intrinsic": "the wearer's crits add 3000 Bp of the crit's `D2` as `dmg.shock`, at most once per 60 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.ironhide_greaves",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "legs_heavy",
+    "home": "post_apocalypse",
+    "mfr": "geigerhaus",
+    "pool": "exotic_armor",
+    "dep": "none",
+    "intrinsic": "immune to `st.slowed` and `st.rooted`; +10 poise"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.tidecaller_wraps",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "hands_light",
+    "home": "cosmic_horror",
+    "mfr": "dunwold",
+    "pool": "exotic_armor",
+    "dep": "mythos",
+    "intrinsic": "throw range × 15000; +2000 Bp against `st.soaked` targets"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.cloud_step",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "feet_light",
+    "home": "wuxia",
+    "mfr": "iron_crane",
+    "pool": "exotic_armor",
+    "dep": "verve",
+    "intrinsic": "one extra air jump per airborne period; `law_bound: law.wuxia.qinggong` (Canon §5.10)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.drifters_duster",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "body_light",
+    "home": "weird_west",
+    "mfr": "sundown_rail",
+    "pool": "exotic_armor",
+    "dep": "verve",
+    "intrinsic": "the first shot within 60 ticks after a dodge uses crit chance 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.brass_lungs",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "body_medium",
+    "home": "steampunk",
+    "mfr": "boilerheart",
+    "pool": "exotic_armor",
+    "dep": "techne",
+    "intrinsic": "gases breathable; fire DoT on the wearer × 5000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.veil_of_vespers",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "head_light",
+    "home": "gothic_horror",
+    "mfr": "ashgrave",
+    "pool": "exotic_armor",
+    "dep": "mythos",
+    "intrinsic": "composure loss × 5000 (doc 04)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.exotic.stampede_sabatons",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.2 Exotics (24)",
+   "fields": {
+    "archetype": "feet_heavy",
+    "home": "mythic_antiquity",
+    "mfr": "hephaesteum",
+    "pool": "exotic_armor",
+    "dep": "none",
+    "intrinsic": "sprint costs no stamina; sprinting into a minion- or standard-rank hostile applies `st.knocked_down` directly, once per target per 300 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.first_word",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "blade_long",
+    "intrinsic": "+5000 Bp vs `fac.editors`; each such kill removes 1 `st.erasure` stack from the wielder"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.omnibus",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "rifle_marksman",
+    "intrinsic": "also carries the local genre's genre trait (§7.2), re-evaluated when the local genre changes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.marginal_gloss",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "`arch.ward.bulwark`",
+    "intrinsic": "capacity × 20000; ward break applies `st.staggered` to non-boss hostiles within 4000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.errata_sheet",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "body_medium",
+    "intrinsic": "`gear_tol` +2 on every axis (Canon §5.4 cap still 6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.authors_quill",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "staff",
+    "intrinsic": "once per 600 ticks a spell cast through it costs 0 aether"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.dog_ear",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "trinket",
+    "intrinsic": "stores the bearer's position at Folio entry; using it (60-tick channel) returns there, once per Folio"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.endpaper_band",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "ring",
+    "intrinsic": "+6 to each sub-attribute of the wearer's lowest primary, re-evaluated on change"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.blank_page",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "shield_heater",
+    "intrinsic": "blocked hits from `fac.editors` use block stability 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.running_head",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "head_light",
+    "intrinsic": "HUD shows every Fortune Engine, Reliquary and secret within 32000 mm; mimics are revealed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.palimpsestic.colophon_mark",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 8.3 Palimpsestic uniques (10)",
+   "fields": {
+    "archetype": "amulet",
+    "intrinsic": "Lucre generated for the bearer × 12500; the bearer's buy prices × 9000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.bag.boss",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 9.7 Treasure bags (Experienced Pixel Dungeon analog)",
+   "fields": {
+    "contents": "`2 + range(2)` items, shift 3000, floor Uncommon; Lucre `range_incl(mul_bp(40, P), mul_bp(85, P))`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.bag.editor",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 9.7 Treasure bags (Experienced Pixel Dungeon analog)",
+   "fields": {
+    "contents": "1 item, shift 4000, floor Rare; Lucre `range_incl(mul_bp(80, P), mul_bp(170, P))`; the Volume's unplaced Emendations (§9.9)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.bag.lucky",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 9.7 Treasure bags (Experienced Pixel Dungeon analog)",
+   "fields": {
+    "contents": "`range(15)` items (0 to 14), no floor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.bag.elite",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 9.7 Treasure bags (Experienced Pixel Dungeon analog)",
+   "fields": {
+    "contents": "one uncursed item per card `cat.weapon_melee`, `cat.weapon_ranged`, `cat.armor`, `cat.offhand`, `cat.accessory`, `cat.ward_gen`; dropped by Marginalia Editors"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.bag.refined",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 9.7 Treasure bags (Experienced Pixel Dungeon analog)",
+   "fields": {
+    "contents": "`3 × range(15)` items (one draw, 0 to 42) plus 1 item with floor Epic"
+   },
+   "also_in": []
+  },
+  {
+   "id": "item.bag.burnt",
+   "kind": "item",
+   "owner": "11",
+   "section": "11 9.7 Treasure bags (Experienced Pixel Dungeon analog)",
+   "fields": {
+    "contents": "Lucre `mul_bp(20, P)`"
+   },
+   "also_in": []
+  }
+ ]
+}

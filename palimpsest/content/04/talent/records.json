@@ -1,0 +1,2215 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "talent.vanguard.heavy_hand",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.bulwark",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.shield_wall",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.second_wind",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.crushing_blow",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.taunting_roar",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.plated",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.unyielding",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.juggernaut",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.retaliation",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.rallying_presence",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.vanguard.last_bastion",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.vanguard`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.vanguard.unyielding`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.riposte",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.fleet_foot",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.en_garde",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.flourish",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.lunge",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.feint",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.challenge",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.silver_tongue",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.blade_dance",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.uncanny_dodge",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.coup_de_grace",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.duelist.thousand_cuts",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.duelist`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.duelist.blade_dance`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.steady_aim",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.fast_hands",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.long_shot",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.trick_toss",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.fan_the_hammer",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.deadeye",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.dive_shot",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.quick_draw",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.mark_for_death",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "3",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.ricochet",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.high_noon",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.gunslinger.dead_mans_hand",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.gunslinger`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.gunslinger.deadeye`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.blast_padding",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.bandolier",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.big_iron",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.sapper",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.cook_off",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.shrapnel",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.bracing",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.demolition",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.chain_reaction",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.suppressing_fire",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.walking_arsenal",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.grenadier.carpet_bomb",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.grenadier`",
+    "tier": "4",
+    "kind": "active",
+    "requires": "`talent.grenadier.cook_off`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.efficient_casting",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.glyph_scholar",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.overchannel",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "1",
+    "kind": "toggle",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.arcane_focus",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.extend",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.widen",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.mana_shield",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.quicken",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.spell_echo",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.elemental_attunement",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.complex_lattice",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.spellwright.grand_design",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.spellwright`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.spellwright.complex_lattice`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.potent_brews",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.iron_stomach",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.quick_quaff",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.splash_master",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.double_batch",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.volatile_mix",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.field_medic",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.transmuter",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.catalyst",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.philosophers_vial",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.antivenom",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.alchemist.magnum_opus",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.alchemist`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.alchemist.potent_brews`, `skill.alchemy` ≥ 75"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.soft_step",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.backstab",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.light_fingers",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.nightborn",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.vanish",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.quiet_kill",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.envenom",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.escape_artist",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.shadow_mark",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.death_from_above",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.ghost_walk",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.shade.unseen_blade",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.shade`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.shade.backstab`, `skill.sneak` ≥ 50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.overclock",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.field_repair",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.scrap_savant",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.turret_tech",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.modular",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.drone_companion",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.reinforced",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.hardlight",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.masterwork",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.self_destruct",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.smart_rounds",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.artificer.legion",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.artificer`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.artificer.turret_tech`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.guardian",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.mender",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.warding",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.steadfast",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.intercept",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.purge",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.aegis_bash",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.sanctuary",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.martyr",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.resurgence",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.bastion",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.warden.last_light",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.warden`",
+    "tier": "4",
+    "kind": "passive",
+    "requires": "`talent.warden.martyr`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.foresight",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.devout",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.spirit_guide",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.omen_reader",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.prophecy",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.divine_favor",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.spectral_host",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.glimpse",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.fated",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.omen_ward",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.consecrated",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.oracle.avatar_of_fate",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.oracle`",
+    "tier": "4",
+    "kind": "active, once per Folio",
+    "requires": "`talent.oracle.fated`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.backdoor",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.ghost_signal",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.overload",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.firewall",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.puppet_master",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.daemon",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.jammer",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.remote_access",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.botnet",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.feedback",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.data_thief",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.netrunner.system_crash",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.netrunner`",
+    "tier": "4",
+    "kind": "active",
+    "requires": "`talent.netrunner.daemon`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.pack_leader",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.feral_bond",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.tracker",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.beast_tongue",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.sic_em",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "2",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.hardy_beasts",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.kindred_bond",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.shared_senses",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.alpha",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.primal_fury",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "3",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.herd_mend",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.beastbinder.chimera_call",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.beastbinder`",
+    "tier": "4",
+    "kind": "active",
+    "requires": "`talent.beastbinder.alpha`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.iron_fist",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.wind_step",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.centered",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.deflect",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.flurry",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.pressure_points",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.still_breath",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.roll_with_it",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.stunning_palm",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "3",
+    "kind": "active",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.diamond_body",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.drunken_master",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "3",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.monk.quivering_palm",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "`calling.monk`",
+    "tier": "4",
+    "kind": "active",
+    "requires": "`talent.monk.stunning_palm`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.toughened",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.quick_learner",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.pack_mule",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.lucky",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.polyglot",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.iron_will",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.forager",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.hardy",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.marathon",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "1",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.polyglot_ii",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "`talent.general.polyglot`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.keen_senses",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.field_dressing",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.scavenger",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "talent.general.light_sleeper",
+   "kind": "talent",
+   "owner": "04",
+   "section": "04 15.4 Talents",
+   "fields": {
+    "tree": "general",
+    "tier": "2",
+    "kind": "passive",
+    "requires": "—"
+   },
+   "also_in": []
+  }
+ ]
+}

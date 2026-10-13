@@ -1,0 +1,29 @@
+{
+ "schema": "15.table_row",
+ "records": [
+  {
+   "id": "store.sku.base_game",
+   "kind": "store",
+   "owner": "15",
+   "section": "15 7.1 Catalog",
+   "fields": {
+    "usd": "19.99 at Early Access and 1.0",
+    "contents_all_deterministic_all_listed_before_purchase": "the game",
+    "limit": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "store.sku.supporter_pack",
+   "kind": "store",
+   "owner": "15",
+   "section": "15 7.1 Catalog",
+   "fields": {
+    "usd": "4.99",
+    "contents_all_deterministic_all_listed_before_purchase": "weapon ink set (5 `cosm.ink.*`), 1 sigil, title \"Patron of the Margin\", digital soundtrack (FLAC and MP3), digital art book (PDF)",
+    "limit": "1"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,135 @@
+{
+ "schema": "16.table_row",
+ "records": [
+  {
+   "id": "svc.auth",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "sign-in through Steam tickets, access and refresh tokens, the platform identity table (§3.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.profile",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "account profile (unlocks, Codex, Echo roster, settings references, Margin trophies), export and deletion"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.econ",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "doc 15 economy (`econ-api`, `econ-db`, `econ-verify`, `econ-platform`, `econ-signer`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.lobby",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "invasion beacons, tickets and outcome matching"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.relay",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "none: retired before shipping with `net.route.relay` (§3.5, DECISIONS 112); no node runs and the ID stays reserved"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.leaderboard",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "ranked tokens, submissions, boards"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.verify",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "headless replay re-simulation workers (`palimpsest_server verify`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.telemetry",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "opt-in usage batches (doc 02 §17.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.crash",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "opt-in minidumps and desync dumps"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.cloud",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "account cloud saves (§11.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.workshop",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "none: a mod mirror for a store other than Steam, which DECISIONS 98 and 112 rule out; nothing runs and the ID stays reserved (§11.8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.status",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "build gates, maintenance notices"
+   },
+   "also_in": []
+  },
+  {
+   "id": "svc.moderation",
+   "kind": "svc",
+   "owner": "16",
+   "section": "16 11.1 Services and technology",
+   "fields": {
+    "responsibility": "chat and player reports, account blocks"
+   },
+   "also_in": []
+  }
+ ]
+}

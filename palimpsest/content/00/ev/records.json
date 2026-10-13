@@ -1,0 +1,519 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "ev.folio_entered",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "the party enters a Folio"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.folio_exited",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "the party leaves through an exit"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.entity_spawned",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "any entity is created"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.entity_despawned",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "any entity is removed without dying"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.damage_dealt",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "step 9 of §10.5, and every §10.6 entry point"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.healed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "healing applied"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.entity_killed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "lethal resolution reached step 3 of §10.8"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.status_applied",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a status starts or gains a stack"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.status_expired",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a status ends"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.noise",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a sound is emitted into the sound grid (doc 09)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.awareness_changed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an AI awareness state changes (doc 09)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.item_picked_up",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an item enters an inventory"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.item_dropped",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an item leaves an inventory onto the ground"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.item_used",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a consumable or activatable item is used"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.item_identified",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an instance or a type becomes known (doc 10)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.item_crafted",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "crafting completes (doc 07)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.potion_brewed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "brewing completes (doc 08)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.spell_cast",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a spell resolves (doc 06)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.block_changed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a block is placed, broken or transformed"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.liquid_reaction",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "two liquids, or a liquid and a block, react (doc 08)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.skill_gained",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a skill level rises"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.level_gained",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "character level rises"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.contradiction_changed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a component's Contradiction state changes"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.container_opened",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a chest or Reliquary opens (doc 11)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.engine_spun",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a Fortune Engine resolves (doc 11)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.reputation_changed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "faction reputation changes"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.erasure_stack",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "`st.erasure` gained"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.hunter_spawned",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an Erasure hunter spawns (§11.6)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.player_downed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "`st.downed` applied"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.player_revived",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "`st.downed` removed by an ally"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.run_ended",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "victory, death of the whole party, or abandonment"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.player_died",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an Erratum dies (§10.8)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.player_ghosted",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an Erratum becomes a ghost (§17.6)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.player_resurrected",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a ghost resurrects (§17.6)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.ward_broken",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a ward reaches 0 (§10.5 step 7)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.part_severed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a body part is severed (§9.1)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.part_reattached",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a severed part is reattached or replaced (§9.1)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.minion_bound",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a minion joins its owner (§15.1)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.minion_released",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "a minion leaves or dies (§15.1)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.affliction_changed",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an affliction begins incubating, takes hold or is cured (§16.4)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.invasion_started",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an invader joins (§17.9)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.invasion_ended",
+   "kind": "ev",
+   "owner": "00",
+   "section": "00 18. Core simulation events",
+   "fields": {
+    "emitted_when": "an invader leaves, dies, times out, or the party is Redacted (§17.9)"
+   },
+   "also_in": [
+    "03 14.2 Payload schemas"
+   ]
+  },
+  {
+   "id": "ev.fire_started",
+   "kind": "ev",
+   "owner": "00",
+   "section": "09 7.9 Event conversion",
+   "fields": {
+    "noise": "`noise.env.fire` at the cell"
+   },
+   "also_in": []
+  }
+ ]
+}

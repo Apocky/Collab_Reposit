@@ -1,0 +1,356 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "ench.focus",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "armor, accessories",
+    "points": "2 / 3 / 4",
+    "effect": "effective FOC +2 / +4 / +6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.attunement",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "armor, accessories",
+    "points": "2 / 3 / 4",
+    "effect": "effective ATN +2 / +4 / +6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.logic",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "armor, accessories",
+    "points": "2 / 3 / 4",
+    "effect": "effective LOG +2 / +4 / +6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.memory",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "armor, accessories",
+    "points": "2 / 3 / 4",
+    "effect": "effective MEM +2 / +4 / +6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.toughness",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "armor, accessories",
+    "points": "2 / 3 / 4",
+    "effect": "effective TGH +2 / +4 / +6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.agility",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "armor, accessories",
+    "points": "2 / 3 / 4",
+    "effect": "effective AGI +2 / +4 / +6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.resistance",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "armor, accessories, ward generators",
+    "points": "2 / 3 / 5",
+    "effect": "`resist[param]` +1000 / +2000 / +3000 Bp; `param` is any `dmg.` except `dmg.true`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.potency",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "implements, accessories",
+    "points": "2 / 4 / 6",
+    "effect": "+800 / +1600 / +2400 Bp to spell damage in Canon §10.5 step 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.valor",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "weapons",
+    "points": "2 / 4 / 6",
+    "effect": "+800 / +1600 / +2400 Bp to weapon damage in step 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.precision",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "any",
+    "points": "2 / 3 / 4",
+    "effect": "crit chance gear term +300 / +600 / +900 Bp (Canon §6.4 row 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.ruin",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "weapons, implements",
+    "points": "2 / 4 / 6",
+    "effect": "crit damage gear term +1000 / +2000 / +3000 Bp (row 14)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.thrift",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "implements",
+    "points": "2 / 4 / 6",
+    "effect": "cast cost × 9500 / 9000 / 8500 (§6.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.celerity",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "implements",
+    "points": "2 / 4 / 6",
+    "effect": "cast speed × 10500 / 11000 / 11500 (§3.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.lightbearer",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "any",
+    "points": "1 / 2 / 3",
+    "effect": "the bearer emits `light_block` 8 / 11 / 14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.breath",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "face, head, neck",
+    "points": "3 / 5 / —",
+    "effect": "I: gases breathable as a respirator; II: `res.breath` never drains"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.surefoot",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "constant",
+    "slots": "feet",
+    "points": "2 / — / —",
+    "effect": "ignores the `block.ice` and `liq.oil` friction multipliers"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.searing",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "2 / 4 / 6",
+    "effect": "converts 1500 / 2500 / 3500 Bp of the hit's shares to `dmg.fire` and adds `st.burning` power 20 / 30 / 40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.frostbite",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "2 / 4 / 6",
+    "effect": "same with `dmg.frost` and `st.frozen`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.galvanic",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "2 / 4 / 6",
+    "effect": "same with `dmg.shock` and `st.shocked`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.corrosive",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "2 / 4 / 6",
+    "effect": "same with `dmg.acid` and `st.corroded`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.sanctified",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "2 / 4 / 6",
+    "effect": "same with `dmg.radiant` and `st.blinded`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.vampiric",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "3 / 5 / 7",
+    "effect": "leech (§6.6) with factor 1000 / 1500 / 2000 instead of 2500, cap 1000 Bp per hit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.siphoning",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "3 / 5 / 7",
+    "effect": "siphon (§6.6) with 500 / 750 / 1000 Bp instead of 1500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.disruption",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-hit",
+    "slots": "weapons, staves",
+    "points": "2 / 4 / 6",
+    "effect": "`st.unraveled` power 20 / 35 / 50, carrier `dmg.arcane`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.spellstore",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-use",
+    "slots": "implements, accessories",
+    "points": "3 / 5 / 7",
+    "effect": "holds one spell of complexity at most 4 / 6 / 8, fixed at enchanting, never a channel or charge spell (a single activation, as for texts, §8.3); 1 / 2 / 3 uses per Folio at 0 aether, `src_lvl` = item `ilvl`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.blink",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-use",
+    "slots": "feet, back, neck",
+    "points": "3 / 4 / 5",
+    "effect": "teleports the bearer up to 8000 mm along the aim to the farthest standable cell with line of effect; 2 / 3 / 4 uses"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ench.restoring",
+   "kind": "ench",
+   "owner": "06",
+   "section": "06 9.4 Enchantment catalog",
+   "fields": {
+    "mode": "on-use",
+    "slots": "any",
+    "points": "2 / 4 / 6",
+    "effect": "heals 2500 Bp of Max HP; 1 / 2 / 3 uses"
+   },
+   "also_in": []
+  }
+ ]
+}

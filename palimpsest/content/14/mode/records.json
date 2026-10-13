@@ -1,0 +1,247 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "mode.ff_off",
+   "kind": "mode",
+   "owner": "14",
+   "section": "00 17.5 Friendly fire and co-op modes",
+   "fields": {
+    "value": "sets the two constants to 0 and 5000"
+   },
+   "also_in": [
+    "14 8.1 Mode table"
+   ]
+  },
+  {
+   "id": "mode.ff_full",
+   "kind": "mode",
+   "owner": "14",
+   "section": "00 17.5 Friendly fire and co-op modes",
+   "fields": {
+    "value": "sets both to 10000"
+   },
+   "also_in": [
+    "14 8.1 Mode table"
+   ]
+  },
+  {
+   "id": "mode.loot_shared",
+   "kind": "mode",
+   "owner": "14",
+   "section": "00 17.5 Friendly fire and co-op modes",
+   "fields": {
+    "value": "one drop per kill, first pickup wins, as in Barony; instanced loot stays the default"
+   },
+   "also_in": [
+    "14 8.1 Mode table"
+   ]
+  },
+  {
+   "id": "mode.standard",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Standard, 25 (Endless optional)",
+    "seed": "host CSPRNG",
+    "content_set": "account",
+    "erratum": "free",
+    "grade": "0..=max",
+    "mutators": "none",
+    "ranked": "yes",
+    "mode_quire_bp": "10000",
+    "folio_scale_bp": "10000",
+    "mid_run_save_canon_2_5": "solo: any tick; co-op: Folio entry",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.abridged",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Abridged, 15 (`d = 25`)",
+    "seed": "host CSPRNG",
+    "content_set": "account",
+    "erratum": "free",
+    "grade": "0..=max",
+    "mutators": "none",
+    "ranked": "yes",
+    "mode_quire_bp": "7500",
+    "folio_scale_bp": "9000",
+    "mid_run_save_canon_2_5": "solo: any tick; co-op: Folio entry",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.novella",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Novella, 15",
+    "seed": "host CSPRNG",
+    "content_set": "account",
+    "erratum": "free",
+    "grade": "0..=max",
+    "mutators": "none",
+    "ranked": "yes",
+    "mode_quire_bp": "10000",
+    "folio_scale_bp": "8000",
+    "mid_run_save_canon_2_5": "solo: any tick; co-op: Folio entry",
+    "opens_at": "`first_editor_v1`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.daily",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Daily, 5",
+    "seed": "Canon §3.6 daily",
+    "content_set": "`unlock.daily_baseline`",
+    "erratum": "drawn",
+    "grade": "2",
+    "mutators": "1 drawn",
+    "ranked": "first attempt per UTC day",
+    "mode_quire_bp": "10000 ranked, 5000 practice",
+    "folio_scale_bp": "8000",
+    "mid_run_save_canon_2_5": "as Standard; ranked rules §12.3",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.weekly_gauntlet",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Novella, 15",
+    "seed": "Canon §3.6 weekly",
+    "content_set": "`unlock.daily_baseline`",
+    "erratum": "free from baseline",
+    "grade": "6",
+    "mutators": "3 drawn",
+    "ranked": "yes",
+    "mode_quire_bp": "10000",
+    "folio_scale_bp": "8000",
+    "mid_run_save_canon_2_5": "as Standard; ranked rules §12.3",
+    "opens_at": "`first_editor_v2`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.seeded",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Standard, Novella or Abridged",
+    "seed": "typed",
+    "content_set": "baseline (toggle: account)",
+    "erratum": "free",
+    "grade": "0..=max",
+    "mutators": "none",
+    "ranked": "no",
+    "mode_quire_bp": "5000",
+    "folio_scale_bp": "by structure",
+    "mid_run_save_canon_2_5": "as Standard",
+    "opens_at": "`first_editor_v1`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.second_edition",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Second Edition (§8.9), `final_folio` = Ur-Text index + 15",
+    "seed": "inherited",
+    "content_set": "inherited",
+    "erratum": "inherited",
+    "grade": "inherited",
+    "mutators": "none",
+    "ranked": "as its base run",
+    "mode_quire_bp": "inherited",
+    "folio_scale_bp": "10000",
+    "mid_run_save_canon_2_5": "as Standard",
+    "opens_at": "an Ur-Text victory in `mode.standard` or `mode.abridged`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.endless",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Standard continued, none (≤ 9999)",
+    "seed": "inherited",
+    "content_set": "inherited",
+    "erratum": "inherited",
+    "grade": "inherited",
+    "mutators": "Marginal mutations only (§9.3)",
+    "ranked": "yes",
+    "mode_quire_bp": "10000",
+    "folio_scale_bp": "10000",
+    "mid_run_save_canon_2_5": "as Standard",
+    "opens_at": "`first_standard_victory`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.custom",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "structure_final_folio": "Standard (25, or 10 with `run.mut.short_book`), Novella or Abridged",
+    "seed": "CSPRNG or typed",
+    "content_set": "account",
+    "erratum": "free",
+    "grade": "0..=max",
+    "mutators": "any owned",
+    "ranked": "no",
+    "mode_quire_bp": "5000; 2000 with `run.mut.short_book`; 0 with an easing mutator",
+    "folio_scale_bp": "by structure",
+    "mid_run_save_canon_2_5": "as Standard",
+    "opens_at": "`first_victory`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.invasion_open",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "slots": "1..=4",
+    "effect": "Redactor invasions may open under Canon §17.9's window and limits (doc 13, doc 16); a Redaction replaces the run end of §3.2 row 1",
+    "stored_in": "`RunState.invasion_open`",
+    "ranked": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mode.audience_votes",
+   "kind": "mode",
+   "owner": "14",
+   "section": "14 8.1 Mode table",
+   "fields": {
+    "slots": "1..=4",
+    "effect": "streaming viewers vote on the host's doors and boons and on a Chaos mutator (Audience votes, below)",
+    "stored_in": "`RunState.audience`",
+    "ranked": "no"
+   },
+   "also_in": []
+  }
+ ]
+}

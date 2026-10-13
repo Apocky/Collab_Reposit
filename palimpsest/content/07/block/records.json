@@ -1,0 +1,885 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "block.node.iron",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "`mat.iron.ore`",
+    "base": "2",
+    "hardness": "5",
+    "req": "t1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.titanium",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "`mat.titanium.ore`",
+    "base": "2",
+    "hardness": "7",
+    "req": "t2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.coal",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "`mat.coal`",
+    "base": "3",
+    "hardness": "4",
+    "req": "t1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.jade",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "`mat.jade`",
+    "base": "1",
+    "hardness": "6",
+    "req": "t2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.psi_crystal",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "`mat.psi_crystal`",
+    "base": "1",
+    "hardness": "7",
+    "req": "t3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.stone",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "the genre stone",
+    "base": "3",
+    "hardness": "6",
+    "req": "t1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.timber",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "the genre wood",
+    "base": "3",
+    "hardness": "3",
+    "req": "t0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.salvage",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "the genre salvage pair",
+    "base": "3",
+    "hardness": "3",
+    "req": "t0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node.bone",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 9.3 Resource nodes",
+   "fields": {
+    "yield": "`mat.bone`",
+    "base": "3",
+    "hardness": "3",
+    "req": "t0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.tag.destructible",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "meaning": "Canon §4.3 destructible: damage, mining and explosions affect it; `hardness_milli = 1000 × hardness` unless the row overrides it (§2.5)",
+    "carried_by": "every block below whose `hardness_milli` is not −1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.tag.errata_placeable",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "meaning": "placed by a `cat.placeable` item (§10.3); doc 03 §4.5 loader rule 4 requires `destructible` with it",
+    "carried_by": "every placeable and `block.conjured`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.tag.node",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "meaning": "resource node (§9.3): mined in place, breaks to `block.node_spent`, never broken by explosions",
+    "carried_by": "the 23 `block.node.*`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.tag.hearth",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "meaning": "rest fire: doc 04 grants +2 composure per second within 3 m while its `light_block ≥ 12` and the Erratum is not `in_combat`",
+    "carried_by": "`block.campfire`, `block.campfire_out`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.tag.altar",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "meaning": "doc 06 altar block for supplication, petition and offering within 3000 mm; an Erratum-placed one keeps the patron chosen at placement (§10.4); doc 10 sells `appr.svc.*` only at a worldgen `block.altar` (triage G-145)",
+    "carried_by": "`block.altar`, `block.shrine_lamp`, `block.shrine_lamp_out`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.cracked_wall",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "granite",
+    "shape": "full",
+    "hardness_milli": "2000",
+    "notes": "destructible; hides secrets"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.planks",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "oak",
+    "shape": "full",
+    "hardness_milli": "3000",
+    "notes": "destructible wooden structures"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.glass_pane",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "glass",
+    "shape": "pane",
+    "hardness_milli": "1000",
+    "notes": "destructible"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.leaves",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "leaves",
+    "shape": "cross",
+    "hardness_milli": "0",
+    "notes": "destructible, conceal 3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.node_spent",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "granite",
+    "shape": "full",
+    "hardness_milli": "−1",
+    "notes": "a broken node (§9.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.conjured",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "granite",
+    "shape": "full",
+    "hardness_milli": "2000",
+    "notes": "doc 06 walls; renders as the local genre stone"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.barricade.gate",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "oak",
+    "shape": "door",
+    "hardness_milli": "3000",
+    "notes": "placeable; opens only for `fac.errata`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.cover.barrier",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "aetherium",
+    "shape": "pane, `gas_tight` 0",
+    "hardness_milli": "2000",
+    "notes": "gadget-made: each cell gets `placed_meta` with the deployer's slot, §11.2's `hp_max` and the gadget's expiry, outside the §10.3 caps; `light_filter` 0, conceal 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.trap.spikes",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "iron",
+    "shape": "layer level 1",
+    "hardness_milli": "1500",
+    "notes": "placeable trap"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.shrine_lamp",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "gold",
+    "shape": "fixture",
+    "hardness_milli": "2000",
+    "notes": "light 12; `altar` (doc 06 offering)"
+   },
+   "also_in": [
+    "07 10.6 Light sources, switches and props"
+   ]
+  },
+  {
+   "id": "block.crate",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "oak",
+    "shape": "full",
+    "hardness_milli": "2000",
+    "notes": "destructible; doc 11 container that drops its contents when broken"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.barrel",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "oak",
+    "shape": "full",
+    "hardness_milli": "2000",
+    "notes": "destructible; `hide: enclosed` (doc 09 §10)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.powder_keg",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "oak",
+    "shape": "full",
+    "hardness_milli": "1000",
+    "notes": "destructible; `flammability_bp` 6000, `burn_runs` 5 and the `explosive` record below"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.wardrobe",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "oak",
+    "shape": "full",
+    "hardness_milli": "3000",
+    "notes": "destructible; `hide: enclosed`; skins closet, locker, sarcophagus, dumpster"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.tall_grass",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "leaves",
+    "shape": "cross",
+    "hardness_milli": "0",
+    "notes": "destructible; conceal 2 with `conceal_crouch_only` 1, so it conceals only crouched or downed targets and corpses (Canon §12.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.vine",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "leaves",
+    "shape": "ladder",
+    "hardness_milli": "0",
+    "notes": "destructible; climbable (doc 13 climb link)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.light_switch",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "iron",
+    "shape": "fixture",
+    "hardness_milli": "500",
+    "notes": "destructible; toggles its room's electric fixtures (doc 09 §2.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.fuse_box",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "iron",
+    "shape": "fixture",
+    "hardness_milli": "3000",
+    "notes": "destructible; doc 09 power cut"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.altar",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "marble",
+    "shape": "full",
+    "hardness_milli": "−1",
+    "notes": "worldgen patron altar of doc 12's `room.shrine` and `secret.room.shrine`; `altar`; fixed terrain that never breaks; its patron is the zone genre's patron (doc 06); skinned per genre"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.rubble",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "granite",
+    "shape": "full",
+    "hardness_milli": "2000",
+    "notes": "destructible; `gravity` 1; dropped by doc 12's `hazard.falling_debris` and `gpv.evt.tremor`; renders as the local genre stone"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.pit_lid",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "oak",
+    "shape": "slab (top)",
+    "hardness_milli": "1000",
+    "notes": "destructible; the hidden lid of doc 12's `hazard.spike_pit` and the boards of `hazard.collapsing_floor`, which doc 12 breaks under a load of 40,000 g or more; renders as the room's floor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.hull_panel",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "material": "plasteel",
+    "shape": "full",
+    "hardness_milli": "1000",
+    "notes": "destructible; the Space Opera hull panel of doc 12's `hazard.hull_breach`, which triggers when it breaks and reseals it"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.granite",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "5500",
+    "heat_cond_bp": "2800",
+    "sound_atten_ddb": "370",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "MF W F; WX W F; UT W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.slate",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "3500",
+    "heat_cond_bp": "2800",
+    "sound_atten_ddb": "380",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "GH W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.basalt",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "5500",
+    "heat_cond_bp": "3700",
+    "sound_atten_ddb": "400",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "CH W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.sandstone",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "3000",
+    "heat_cond_bp": "2800",
+    "sound_atten_ddb": "330",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "WW W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.marble",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4000",
+    "heat_cond_bp": "2800",
+    "sound_atten_ddb": "370",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "MA W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.brick",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4000",
+    "heat_cond_bp": "2800",
+    "sound_atten_ddb": "290",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "GH W; HN W; SP W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.concrete",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4500",
+    "heat_cond_bp": "2800",
+    "sound_atten_ddb": "340",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "CP W F; PA W F; HN W F; RD W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.terracotta",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "2500",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "290",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "MA W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.coral",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "3000",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "240",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "stone",
+    "doc_18_3_4_use": "CH W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.plasteel",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "7500",
+    "heat_cond_bp": "4600",
+    "sound_atten_ddb": "450",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "metal",
+    "doc_18_3_4_use": "SO W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.titanium",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "7500",
+    "heat_cond_bp": "3700",
+    "sound_atten_ddb": "551",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "metal",
+    "doc_18_3_4_use": "SO W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.polymer",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4500",
+    "heat_cond_bp": "1000",
+    "sound_atten_ddb": "220",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "synthetic",
+    "doc_18_3_4_use": "CP W; RD W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.scrap_iron",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4000",
+    "heat_cond_bp": "6400",
+    "sound_atten_ddb": "600",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "metal",
+    "doc_18_3_4_use": "PA W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.cast_iron",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4000",
+    "heat_cond_bp": "5500",
+    "sound_atten_ddb": "600",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "metal",
+    "doc_18_3_4_use": "SP W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.oak",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4500",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "175",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "wood",
+    "doc_18_3_4_use": "MF W F; FT W F; SP F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.pine",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "3000",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "150",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "wood",
+    "doc_18_3_4_use": "WW W F; HN F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.birch",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "3500",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "167",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "wood",
+    "doc_18_3_4_use": "FT W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.cedar",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "3000",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "138",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "wood",
+    "doc_18_3_4_use": "WX W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.bamboo",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "4500",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "170",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "wood",
+    "doc_18_3_4_use": "WX W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.blackwood",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "5500",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "220",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "wood",
+    "doc_18_3_4_use": "GH W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.thornwood",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "5000",
+    "heat_cond_bp": "1900",
+    "sound_atten_ddb": "190",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "wood",
+    "doc_18_3_4_use": "FT W"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.dreamstuff",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "5000",
+    "heat_cond_bp": "3700",
+    "sound_atten_ddb": "140",
+    "conceal": "6",
+    "light_emit": "7",
+    "acoustic": "cloth",
+    "doc_18_3_4_use": "ON W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.paper",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "1000",
+    "heat_cond_bp": "1000",
+    "sound_atten_ddb": "180",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "paper",
+    "doc_18_3_4_use": "ON W; UW W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.masonry.vellum",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.1 Block catalog",
+   "fields": {
+    "blast_res_milli": "6000",
+    "heat_cond_bp": "1000",
+    "sound_atten_ddb": "190",
+    "conceal": "15",
+    "light_emit": "0",
+    "acoustic": "paper",
+    "doc_18_3_4_use": "UT W F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.torch",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.6 Light sources, switches and props",
+   "fields": {
+    "light_emit": "14",
+    "lightsrc": "flame",
+    "unlit_twin": "`block.torch_out`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.lantern",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.6 Light sources, switches and props",
+   "fields": {
+    "light_emit": "15",
+    "lightsrc": "flame",
+    "unlit_twin": "`block.lantern_out`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "block.campfire",
+   "kind": "block",
+   "owner": "07",
+   "section": "07 10.6 Light sources, switches and props",
+   "fields": {
+    "light_emit": "15",
+    "lightsrc": "flame",
+    "unlit_twin": "`block.campfire_out` (also when its fuel runs out, §5.3)"
+   },
+   "also_in": []
+  }
+ ]
+}

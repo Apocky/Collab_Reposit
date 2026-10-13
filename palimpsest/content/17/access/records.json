@@ -1,0 +1,501 @@
+{
+ "schema": "17.table_row",
+ "records": [
+  {
+   "id": "access.subtitles",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.2 Subtitles and captions",
+   "fields": {
+    "range": "off, dialogue, dialogue and captions",
+    "default": "dialogue and captions"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.subtitle_size_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.2 Subtitles and captions",
+   "fields": {
+    "range": "10000..=20000 step 2500 (base 20 px)",
+    "default": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.subtitle_bg_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.2 Subtitles and captions",
+   "fields": {
+    "range": "backplate opacity 0..=10000",
+    "default": "7500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.speaker_names",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.2 Subtitles and captions",
+   "fields": {
+    "range": "on, off",
+    "default": "on (name in the speaker's party or faction color plus the name text)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.caption_direction",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.2 Subtitles and captions",
+   "fields": {
+    "range": "on, off",
+    "default": "on"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.fov_deg",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "60..=120, horizontal at 16:10, Hor+ on wider screens (DECISIONS 92, triage Q10)",
+    "default": "90 (64.01° vertical; 96.03° horizontal at 16:9; 120 gives 94.54° vertical)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.viewmodel_fov_deg",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "45..=75 vertical",
+    "default": "54 (doc 02 §8.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.camera_shake_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "0..=10000",
+    "default": "10000; scales doc 05 §18 camera kick and explosion shake"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.head_bob_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "0..=10000",
+    "default": "5000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.reduce_motion",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "on, off",
+    "default": "off: the comfort preset of docs 02 and 18. It replaces the page-turn transition (doc 02 §8.8) with a 90-tick crossfade, sets lean roll to 0°, stops UI parallax and idle animations, turns off chromatic aberration, scanlines, film grain, vignette and Dutch angles (doc 02 §8.6), and forces doc 18's `anim_step` to 1 for every entity (doc 18 §3.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.center_dot",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "on, off",
+    "default": "off; a 4 px dot always at the screen center, including in menus over the world view (motion-sickness aid)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.third_person_distance_mm",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "1500..=4000",
+    "default": "2500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.hitstop",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "on, off",
+    "default": "on; off removes doc 05 hitstop visuals only"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.gore",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.5 Motion, camera and FOV",
+   "fields": {
+    "range": "`ink`, `full`, `minimal` (doc 18 §5.4): ink wounds and unravelling script on severed parts (the default), red blood, or no decals",
+    "default": "`ink` (DECISIONS 94); `full` is the red-blood toggle, and `minimal` also drops mist and script while severing keeps its ink-cap"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.scribes_mercy",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "§13.1",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.hold_to_toggle",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "§12.9",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.aim_assist",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "§12.7",
+    "default": "gamepad `standard`, KBM `off` (inert for mouse)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.auto_sprint",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "sprint stays on while moving forward",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.dodge_double_tap",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "double-tap a direction within 12 frames to dodge (KBM)",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.wheel_dwell",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "wheels commit on a 30-frame hover",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.navigation_line",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "a dotted ink line along a client-side path to the open Colophon (or the Incipit) through visited cells",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.enemy_outline",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "a 2 px `hostile` outline on rendered hostiles in line of sight; never through blocks",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.shimmer_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "opacity of invisible stalkers beyond 2000 mm (doc 13)",
+    "default": "2500 (range 2500..=6000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.stealth_meter_always",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "§10.10",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.damage_numbers",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "off, own hits, all",
+    "default": "own hits"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.damage_numbers_mono",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "damage numbers in `ink` with type glyphs",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.mono_audio",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "downmix to mono",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.sound_ripples",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "§13.7 world-space ripples",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.hud_layout",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "`standard`, `large` (§3.1, §3.4)",
+    "default": "standard"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.lock_mode",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "`auto`, `manual` (§10.11)",
+    "default": "auto"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.dynamic_range",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "wide, normal, night (compressed)",
+    "default": "normal"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.mark_hallucinations",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.10 Assist options",
+   "fields": {
+    "effect": "marks madness phantoms (doc 04 §12.4): each draws with a dashed `muted` outline and a \"?\" glyph above it, captions of the sounds it makes end in \"(phantom)\", and the Whispers episode's caption reads \"[Whispers (madness)]\"; forced on while the local slot's `mercy_on` is true (DECISIONS 49)",
+    "default": "off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.colorblind_mode",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "`none`, `deuteranopia`, `protanopia`, `tritanopia`, `monochrome`",
+    "default": "`none`",
+    "section": "§2.2, §13.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.world_filter",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "off, on",
+    "default": "off",
+    "section": "§13.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.ui_scale_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "7500..=20000 step 500",
+    "default": "10000",
+    "section": "§2.4, §13.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.text_scale_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "10000..=20000 step 1000",
+    "default": "10000; 11000 on Steam Deck (§12.5)",
+    "section": "§2.4, §13.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.font",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "`standard`, `legible`, `dyslexic`",
+    "default": "`standard`",
+    "section": "§2.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.high_contrast",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "off, on",
+    "default": "off",
+    "section": "§3.5, §13.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.consistent_skin",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "off, on",
+    "default": "off",
+    "section": "§2.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.lean_toggle",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "off (hold), on (toggle)",
+    "default": "off",
+    "section": "§10.9"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.narrator",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "off, on; speech rate 50..=300 words per minute",
+    "default": "off; 180 words per minute",
+    "section": "§13.6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.sound_viz",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "off, on",
+    "default": "off",
+    "section": "§13.7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.photosensitive",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "off, on",
+    "default": "off",
+    "section": "§13.8"
+   },
+   "also_in": []
+  },
+  {
+   "id": "access.game_speed_bp",
+   "kind": "access",
+   "owner": "17",
+   "section": "17 13.11 Remaining settings",
+   "fields": {
+    "values": "5000..=10000 step 1000, solo only",
+    "default": "10000",
+    "section": "§13.9"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,203 @@
+{
+ "schema": "01.table_row",
+ "records": [
+  {
+   "id": "pillar.one_ruleset.t1",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.1 `pillar.one_ruleset` — One Ruleset, Many Skins",
+   "fields": {
+    "pass_condition": "0 genre-skin records (doc 11 §4) carry a numeric mechanic field other than `dep`, `law_bound` and perk-pool entries",
+    "method": "content validator, every build"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.one_ruleset.t2",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.1 `pillar.one_ruleset` — One Ruleset, Many Skins",
+   "fields": {
+    "pass_condition": "for all 66 pairs of core genres, `syntax_delta(g, h) >= 3` (below) and the axiom L1 distance is ≥ 6 (Canon §5.2)",
+    "method": "content lint over doc 12 GPVs and doc 13 rosters, every build"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.one_ruleset.t3",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.1 `pillar.one_ruleset` — One Ruleset, Many Skins",
+   "fields": {
+    "pass_condition": "blind recognition: ≥ 20 testers who have not seen the game each enter all 12 core genres once in a per-tester order drawn by the test harness; with the Folio title card, every genre name, Lucre and Aether skin label and the exit preview hidden by a test flag, each names the genre from the 12 display names within 600 ticks (10 s) of `ev.folio_entered`; for every genre, `floor_div(correct × 10000, testers) >= 8000`",
+    "method": "playtest protocol, before EA and on every added or reskinned genre"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.out_of_story.t1",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.2 `pillar.out_of_story` — Out of Your Story",
+   "fields": {
+    "pass_condition": "in 1,000 solo Standard bot runs, ≥ 9000 Bp contain at least one exit offer whose doors give the bot different forecast `C` (doc 14 §3.6)",
+    "method": "headless bot sweep"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.out_of_story.t2",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.2 `pillar.out_of_story` — Out of Your Story",
+   "fields": {
+    "pass_condition": "for all 12 core genres × 13 Callings, the Folio-1 shop plus guaranteed loot holds ≥ 1 weapon with empty `dep` usable by a Calling major combat skill",
+    "method": "generator sweep, 100 seeds per pair"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.out_of_story.t3",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.2 `pillar.out_of_story` — Out of Your Story",
+   "fields": {
+    "pass_condition": "10000 Bp of item cards and HUD weapon widgets show the component state icon (Coherent, Strained, Contradicted, Disconnected) matching the simulation state, on the first rendered frame whose interpolated simulation tick is ≥ the tick of `ev.contradiction_changed`",
+    "method": "UI automation over 1,000 scripted genre changes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.living_page.t1",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.3 `pillar.living_page` — The Page Is Alive",
+   "fields": {
+    "pass_condition": "`systemic_share >= 800` Bp of NPC kills (definition in §10.3, `kpi.pillar.systemic_kill_share`); before EA measured over 1,000 solo and 1,000 four-player Standard bot runs, after EA over opt-in live runs",
+    "method": "event tally joining `ev.entity_killed` to the lethal `ev.damage_dealt`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.living_page.t2",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.3 `pillar.living_page` — The Page Is Alive",
+   "fields": {
+    "pass_condition": "the doc 02 §6.4 determinism set (50 golden replays of 3,600 ticks per pull request, 500 of 18,000 ticks nightly) writes byte-identical `hashes.json` on all 5 targets",
+    "method": "determinism CI"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.living_page.t3",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.3 `pillar.living_page` — The Page Is Alive",
+   "fields": {
+    "pass_condition": "each Rubric type (`run.rubric.keeper`, `run.rubric.catchwords`, `run.rubric.seal`) in each core genre is completed by the combat-led bot policy in ≥ 6000 Bp of 200 seeds, and by the stealth-led and the environment-led policies in ≥ 3000 Bp each (108 cells)",
+    "method": "headless bot sweep (doc 02 §16 bots)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.party_of_errata.t1",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.4 `pillar.party_of_errata` — Lost Together",
+   "fields": {
+    "pass_condition": "the Volume I clear rate (share of runs in which `boss.editor_v1` dies) per party size 1..=4 is within ±1000 Bp of the four-size mean (`kpi.coop.party_parity`)",
+    "method": "before EA: 1,000 Standard Grade-0 bot runs per party size; after EA: the live KPI"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.party_of_errata.t2",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.4 `pillar.party_of_errata` — Lost Together",
+   "fields": {
+    "pass_condition": "13 of 13 Calling kits contain ≥ 1 verb that targets or benefits an ally (heal, ward, buff, revive speed, taunt, mark, thrown potion with area effect)",
+    "method": "content audit against doc 04 kits and doc 14 §2.4 kit records"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.party_of_errata.t3",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.4 `pillar.party_of_errata` — Lost Together",
+   "fields": {
+    "pass_condition": "in default co-op (instanced loot), across 10,000 generated item drops in 4-player runs, 0 items in ground state `Instanced(s)` are visible to or pickable by any slot other than `s`; only an owner's `DropItem` makes an item `Public` (doc 11 §14.4, §17)",
+    "method": "sim test"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.every_find_a_question.t1",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.5 `pillar.every_find_a_question` — Every Find Is a Question",
+   "fields": {
+    "pass_condition": "every type-hidden item type is identifiable by ≥ 3 distinct methods among use or zap or throw, equip, witness, a doc 10 text, appraisal, an Analysis check (Examine), price observation, a Scriptorium or altar service, a divination glyph (doc 10 §5.1–§5.10)",
+    "method": "content audit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.every_find_a_question.t2",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.5 `pillar.every_find_a_question` — Every Find Is a Question",
+   "fields": {
+    "pass_condition": "for each weapon archetype, 100,000 generated drops at Folio 10 give ≥ 1,000 distinct (manufacturer, sorted affix-ID set, perk-option set) tuples",
+    "method": "generator sweep"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.every_find_a_question.t3",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.5 `pillar.every_find_a_question` — Every Find Is a Question",
+   "fields": {
+    "pass_condition": "(a) on one Daily seed (`unlock.daily_baseline`), a fresh account and a fully unlocked account produce byte-identical item records at every Folio; (b) for every loot table, the rarity weight vector at every depth 1..=40 is identical for the fresh and the fully unlocked content set (doc 14 §5.2 band renormalization)",
+    "method": "sim test and content lint"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.fair_page.t1",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.6 `pillar.fair_page` — The Fair Page",
+   "fields": {
+    "pass_condition": "SEP-1 to SEP-7 (doc 15 §1.2) pass; `juris.paid_random_items_enabled` is the compile-time constant `false`",
+    "method": "content validator, ledger tests, build assert"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.fair_page.t2",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.6 `pillar.fair_page` — The Fair Page",
+   "fields": {
+    "pass_condition": "the Inkwell, account Reliquaries, in-run Reliquaries and Fortune Engines each show every outcome's probability through `pct4` (doc 15 §3.11) before the commit input, plus every live pity counter the system has (Inkwell `top_since`, `mid_since` and spark; Reliquary counters; Engine `need − pity`); `palimpsest-verify` (doc 15 §4.3) returns `PASS` for 10,000 logged pulls and 10,000 logged Reliquary opens",
+    "method": "UI automation, verifier run"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pillar.fair_page.t3",
+   "kind": "pillar",
+   "owner": "01",
+   "section": "01 2.6 `pillar.fair_page` — The Fair Page",
+   "fields": {
+    "pass_condition": "with the network disabled: a bot completes Standard Folios 1–10 and a LAN co-op Folio; an online account queues an Inkwell pull as a Sealed Draft; an offline-only profile pulls the Retrospective banner and verifies it locally; Codex XP accrues locally; only leaderboards, invasions, cloud saves and telemetry are unavailable (doc 15 §4.5, §11.3; doc 16 §13)",
+    "method": "offline integration test"
+   },
+   "also_in": []
+  }
+ ]
+}

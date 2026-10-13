@@ -1,0 +1,249 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "genre.mythic_fantasy",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "2",
+    "tec": "0",
+    "myt": "1",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.gothic_horror",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "1",
+    "myt": "2",
+    "vrv": "0"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.cosmic_horror",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "1",
+    "myt": "2",
+    "vrv": "0"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.space_opera",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "2",
+    "myt": "0",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.cyberpunk",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "0",
+    "tec": "2",
+    "myt": "1",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.post_apocalypse",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "0",
+    "tec": "2",
+    "myt": "1",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.weird_west",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "0",
+    "myt": "1",
+    "vrv": "2"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.hardboiled_noir",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "0",
+    "tec": "2",
+    "myt": "1",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.wuxia",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "0",
+    "myt": "1",
+    "vrv": "2"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.steampunk",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "2",
+    "myt": "0",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.fairy_tale",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "2",
+    "tec": "0",
+    "myt": "1",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.mythic_antiquity",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "0",
+    "myt": "2",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table"
+   ]
+  },
+  {
+   "id": "genre.oneiric",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "2",
+    "tec": "0",
+    "myt": "1",
+    "vrv": "1"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table",
+    "11 5.3 Manufacturer draw"
+   ]
+  },
+  {
+   "id": "genre.redacted",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "1",
+    "tec": "2",
+    "myt": "1",
+    "vrv": "0"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table",
+    "11 5.3 Manufacturer draw"
+   ]
+  },
+  {
+   "id": "genre.unwritten",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "2",
+    "tec": "1",
+    "myt": "1",
+    "vrv": "0"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table",
+    "11 5.3 Manufacturer draw"
+   ]
+  },
+  {
+   "id": "genre.ur_text",
+   "kind": "genre",
+   "owner": "00",
+   "section": "00 5.4 Tolerance",
+   "fields": {
+    "arc": "2",
+    "tec": "1",
+    "myt": "1",
+    "vrv": "0"
+   },
+   "also_in": [
+    "06 2.2 Genre-native casting table",
+    "11 5.3 Manufacturer draw"
+   ]
+  }
+ ]
+}

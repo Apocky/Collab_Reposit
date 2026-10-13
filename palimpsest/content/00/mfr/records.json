@@ -1,0 +1,148 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "mfr.mythic_fantasy.deepanvil",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "weapons: attack speed × 9000 joins §6.2's `atk_speed_bp` after the shortfall factor, and poise damage × 15000 joins §12.4 after the blunt factor, one `mul_bp` each; armor pieces: doc 11's +4 joins §11.2's per-piece `poise` before its chain"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.gothic_horror.grimhallow",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "a reload never enters `Reloading`: on the tick §6.1 would start one, the rounds move from reserve to magazine at once (the shotgun loads every shell), the weapon stays `Ready` and doc 11 charges the HP; when doc 11 refuses the cost, no reload starts. A melee heavy spends doc 11's HP cost in place of §4.2's stamina"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.space_opera.perihelion",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "a \"× N\" trait: the charged shot's × 15000 multiplies `B` once after Canon §10.4 and before step 1 (§10.1)"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.space_opera.umbra",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "the weapon has no magazine and spends no ammunition: §6.1 treats its magazine as always holding `ammo_per_shot` and never enters `Reloading`; a shot that brings doc 11's heat to 10000 moves the machine to `Stalled(0)` with `stall_total` 90 instead of `Ready`, and heat is 0 when `Stalled` ends"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.cyberpunk.neon_saint",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "§7.3 step 2: a charged shot (doc 11) passes the first penetrable cell it enters without spending penetration, whatever its flight distance; fixed terrain stops it"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.post_apocalypse.rustmaw",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "magazine × 20000, and every reload duration of the weapon (§6.1 `reload_ticks`, the shotgun's 20-tick start and 32-tick per-shell interval, the 18-tick nock) × 13000, one `mul_bp` each before `action_ticks`"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.post_apocalypse.lastditch",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "its per-shot and per-swing chance component draws at `seq` 0 in ascending ID (§1.4)"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.wuxia.jade_lotus",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "`input.throw` with such a melee weapon active and no throwable on the quickbar throws the weapon itself: a `move.throw` with §9.2's 12-tick minimum wind, 18-tick recovery and `seq` 0 action start, flying with `arch.ranged.thrown`'s Table 5.2b ballistics at §9.1's speed; its hit uses the weapon's own `base_mhp`, shares, `pen_bp`, impact and Canon §10.4 chain with move factor 10000, and it rolls Contradiction as a throw (§16.3 dud). While it is away the melee machine is `Holstered` and `input.attack` performs `arch.melee.unarmed` attacks; exactly 30 ticks after release it returns to the hand wherever it is and enters `Drawing(0)`"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.mythic_antiquity.hephaesteum",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "the bearer is immune to `st.disarmed` and `st.corroded`, buildup and direct application alike, so `counter.sunder` cannot corrode it (§15.1)"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.oneiric.somnambule",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "§7.3 step 2: after 10000 mm of flight its projectiles pass destructible and non-opaque cells without spending penetration; fixed terrain stops them"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.redacted.bureau",
+   "kind": "mfr",
+   "owner": "00",
+   "section": "05 10.5 Manufacturer trait hooks (Canon §5.9)",
+   "fields": {
+    "doc_05_hook": "`failure_bp = 0`; the potency loss still applies (§16.1)"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 5.2 Manufacturer table"
+   ]
+  }
+ ]
+}

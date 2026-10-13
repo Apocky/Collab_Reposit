@@ -1,0 +1,126 @@
+{
+ "schema": "15.table_row",
+ "records": [
+  {
+   "id": "pass.xp.active_minute",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "3,600 active ticks (§2.2), at most 240 per run",
+    "xp": "150"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.folio_exit",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "qualified Folio exit (present at `exit_tick`, dwell ≥ 5,400 ticks)",
+    "xp": "400"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.editor_kill",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "`rank.editor` killed with the player present",
+    "xp": "1,000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.kill",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "`ev.entity_killed` of a hostile of any rank except `rank.editor`, counted for every party member present at the kill tick",
+    "xp": "per run, `Σ over party sizes n of floor_div(10000 × K[n], enemy_count_bp[n])`, where `K[n]` is the sum of `floor_div(5 × rank_xp_bp, 10000)` over counted kills made while the Folio's party size (doc 14 §8.8) was `n`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.run_end",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "`ev.run_ended` of a run that paid no Ur-Text victory XP, after ≥ 3 qualified Folio exits for this player (Novella, Daily, Weekly Gauntlet and `run.mut.short_book` victories included)",
+    "xp": "800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.run_victory",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "`boss.ur_editor` dies with the player present and the run keeps its clear (§2.2 Second Edition rule; `final_folio` read before any Endless or Second Edition switch, as in §2.2)",
+    "xp": "`VICTORY_XP_PER_FOLIO × final_folio` = 160 × 25 = 4,000 for the Standard structure, 160 × 15 = 2,400 for Abridged"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.type_identified",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "`ev.item_identified` that makes an item type known for the first time in the run, to the identifying player",
+    "xp": "25"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.craft",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "`ev.item_crafted` or `ev.potion_brewed`, to the crafter",
+    "xp": "25"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.revive",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "`ev.player_revived`, to the reviver",
+    "xp": "100"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.codex_entry",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "each Index template page or Bestiary page that opens for the first time on the account (doc 10 §12.1: a template's first `know.identified` instance; §12.4: `know.bestiary.sighted`), to each player whose account it opens; listed in the run report as `codex_entries_new`; Index skin entries and curse pages pay nothing. The ID names the pass XP source; the page itself is an Index or Bestiary page",
+    "xp": "200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "pass.xp.achievement",
+   "kind": "pass",
+   "owner": "15",
+   "section": "15 6.2 XP sources",
+   "fields": {
+    "trigger": "any achievement or Codex mark unlock (doc 14 §10)",
+    "xp": "2,000"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,1205 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "affix.dmg_pct",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_pct",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp damage (additive bucket)",
+    "t1": "400–600",
+    "t2": "600–900",
+    "t3": "900–1200",
+    "t4": "1200–1600",
+    "t5": "1600–2100",
+    "wt": "120",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.dmg_vs_elite",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_rank",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp vs elite, champion, boss, editor, hunter",
+    "t1": "800–1200",
+    "t2": "1200–1700",
+    "t3": "1700–2300",
+    "t4": "2300–3000",
+    "t5": "3000–3800",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.dmg_vs_undead",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_tag",
+    "cats": "WR",
+    "class": "sacred",
+    "effect_x_rolled_value": "+X Bp vs undead or fiend",
+    "t1": "1200–1800",
+    "t2": "1800–2500",
+    "t3": "2500–3300",
+    "t4": "3300–4300",
+    "t5": "4300–5500",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.dmg_vs_construct",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_tag",
+    "cats": "WR",
+    "class": "tech",
+    "effect_x_rolled_value": "+X Bp vs body.construct",
+    "t1": "1200–1800",
+    "t2": "1800–2500",
+    "t3": "2500–3300",
+    "t4": "3300–4300",
+    "t5": "4300–5500",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.dmg_vs_beast",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_tag",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp vs fac.wild.*",
+    "t1": "1200–1800",
+    "t2": "1800–2500",
+    "t3": "2500–3300",
+    "t4": "3300–4300",
+    "t5": "4300–5500",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.dmg_vs_editor",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_tag",
+    "cats": "WR",
+    "class": "sacred",
+    "effect_x_rolled_value": "+X Bp vs fac.editors",
+    "t1": "1200–1800",
+    "t2": "1800–2500",
+    "t3": "2500–3300",
+    "t4": "3300–4300",
+    "t5": "4300–5500",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.interloper",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_origin",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp vs native targets (Canon §5.6)",
+    "t1": "600–900",
+    "t2": "900–1300",
+    "t3": "1300–1800",
+    "t4": "1800–2400",
+    "t5": "2400–3000",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.crit_chance",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "crit_chance",
+    "cats": "WRC",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp crit chance (Canon §6.4 row 13 gear)",
+    "t1": "100–200",
+    "t2": "200–300",
+    "t3": "300–400",
+    "t4": "400–550",
+    "t5": "550–700",
+    "wt": "80",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.crit_mult",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "crit_mult",
+    "cats": "WRC",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp crit multiplier (row 14 gear)",
+    "t1": "1000–1500",
+    "t2": "1500–2000",
+    "t3": "2000–2700",
+    "t4": "2700–3500",
+    "t5": "3500–4500",
+    "wt": "70",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.precision",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "precision",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp to the weapon precision multiplier",
+    "t1": "500–800",
+    "t2": "800–1200",
+    "t3": "1200–1700",
+    "t4": "1700–2300",
+    "t5": "2300–3000",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.penetration",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "pen",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp pen_bp",
+    "t1": "500–800",
+    "t2": "800–1100",
+    "t3": "1100–1500",
+    "t4": "1500–2000",
+    "t5": "2000–2600",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.rate",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "rate",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "attack speed +X Bp",
+    "t1": "300–500",
+    "t2": "500–700",
+    "t3": "700–900",
+    "t4": "900–1200",
+    "t5": "1200–1500",
+    "wt": "70",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.reload",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "reload",
+    "cats": "R",
+    "class": "mundane",
+    "effect_x_rolled_value": "reload ticks ×(10000 − X)",
+    "t1": "800–1200",
+    "t2": "1200–1600",
+    "t3": "1600–2000",
+    "t4": "2000–2500",
+    "t5": "2500–3000",
+    "wt": "60",
+    "requires": "magazine"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.magazine",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "magazine",
+    "cats": "R",
+    "class": "mundane",
+    "effect_x_rolled_value": "magazine ×(10000 + X), at least +1",
+    "t1": "1500–2500",
+    "t2": "2500–3500",
+    "t3": "3500–4500",
+    "t4": "4500–6000",
+    "t5": "6000–8000",
+    "wt": "60",
+    "requires": "magazine"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.spread",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "spread",
+    "cats": "R",
+    "class": "mundane",
+    "effect_x_rolled_value": "base spread ×(10000 − X)",
+    "t1": "800–1200",
+    "t2": "1200–1600",
+    "t3": "1600–2000",
+    "t4": "2000–2500",
+    "t5": "2500–3200",
+    "wt": "50",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.recoil",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "recoil",
+    "cats": "R",
+    "class": "mundane",
+    "effect_x_rolled_value": "recoil ×(10000 − X)",
+    "t1": "800–1200",
+    "t2": "1200–1600",
+    "t3": "1600–2000",
+    "t4": "2000–2500",
+    "t5": "2500–3200",
+    "wt": "40",
+    "requires": "firearm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.range",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "range",
+    "cats": "R",
+    "class": "mundane",
+    "effect_x_rolled_value": "effective range ×(10000 + X)",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–2800",
+    "t4": "2800–3500",
+    "t5": "3500–4500",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.stamina",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "stamina",
+    "cats": "W",
+    "class": "mundane",
+    "effect_x_rolled_value": "melee stamina cost ×(10000 − X)",
+    "t1": "800–1200",
+    "t2": "1200–1600",
+    "t3": "1600–2000",
+    "t4": "2000–2500",
+    "t5": "2500–3200",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.poise_dmg",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "poise_dmg",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "poise damage ×(10000 + X)",
+    "t1": "1500–2500",
+    "t2": "2500–3500",
+    "t3": "3500–4500",
+    "t4": "4500–6000",
+    "t5": "6000–8000",
+    "wt": "50",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.reach",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "reach",
+    "cats": "W",
+    "class": "mundane",
+    "effect_x_rolled_value": "melee reach +X mm",
+    "t1": "100–150",
+    "t2": "150–200",
+    "t3": "200–260",
+    "t4": "260–330",
+    "t5": "330–400",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.handling",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "handling",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "swap and draw ticks ×(10000 − X)",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–2800",
+    "t4": "2800–3500",
+    "t5": "3500–4500",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.bleed_power",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "bleed_power",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X st.bleeding power per hit",
+    "t1": "15–22",
+    "t2": "22–30",
+    "t3": "30–40",
+    "t4": "40–52",
+    "t5": "52–65",
+    "wt": "50",
+    "requires": "edged"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.stun_power",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "stun_power",
+    "cats": "W",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X st.stunned power per hit",
+    "t1": "15–22",
+    "t2": "22–30",
+    "t3": "30–40",
+    "t4": "40–52",
+    "t5": "52–65",
+    "wt": "50",
+    "requires": "blunt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.expose_power",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "expose_power",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X st.exposed power per hit",
+    "t1": "15–22",
+    "t2": "22–30",
+    "t3": "30–40",
+    "t4": "40–52",
+    "t5": "52–65",
+    "wt": "40",
+    "requires": "pierce"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.leech",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "sustain",
+    "cats": "WR",
+    "class": "sacred",
+    "effect_x_rolled_value": "heal X Bp of HP damage dealt",
+    "t1": "100–150",
+    "t2": "150–220",
+    "t3": "220–300",
+    "t4": "300–400",
+    "t5": "400–500",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.kill_heal",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "sustain",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "on kill heal X Bp of Max HP",
+    "t1": "150–250",
+    "t2": "250–400",
+    "t3": "400–550",
+    "t4": "550–750",
+    "t5": "750–1000",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.kill_stamina",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "kill_res",
+    "cats": "W",
+    "class": "mundane",
+    "effect_x_rolled_value": "on kill restore X stamina",
+    "t1": "5–8",
+    "t2": "8–12",
+    "t3": "12–16",
+    "t4": "16–21",
+    "t5": "21–27",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.kill_aether",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "kill_res",
+    "cats": "WRN",
+    "class": "infused",
+    "effect_x_rolled_value": "on kill restore X aether",
+    "t1": "3–5",
+    "t2": "5–7",
+    "t3": "7–10",
+    "t4": "10–13",
+    "t5": "13–17",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.kill_haste",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "kill_buff",
+    "cats": "WR",
+    "class": "cine",
+    "effect_x_rolled_value": "on kill apply st.hasted for X ticks",
+    "t1": "60–90",
+    "t2": "90–120",
+    "t3": "120–150",
+    "t4": "150–200",
+    "t5": "200–260",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.arc_proc",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "proc",
+    "cats": "WR",
+    "class": "tech",
+    "effect_x_rolled_value": "X Bp chance per hit to arc 3000 Bp of D2 as dmg.shock (4 m)",
+    "t1": "300–500",
+    "t2": "500–700",
+    "t3": "700–900",
+    "t4": "900–1200",
+    "t5": "1200–1500",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.ricochet",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "proc",
+    "cats": "WR",
+    "class": "cine",
+    "effect_x_rolled_value": "crits ricochet X Bp of their D2 (8 m)",
+    "t1": "2000–2800",
+    "t2": "2800–3600",
+    "t3": "3600–4400",
+    "t4": "4400–5200",
+    "t5": "5200–6000",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.executioner",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_state",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp vs targets below 3000 Bp HP",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–3000",
+    "t4": "3000–4000",
+    "t5": "4000–5000",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.ambusher",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_state",
+    "cats": "WRC",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp on sneak attacks",
+    "t1": "1000–1500",
+    "t2": "1500–2500",
+    "t3": "2500–3500",
+    "t4": "3500–4500",
+    "t5": "4500–5500",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.first_strike",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "dmg_vs_state",
+    "cats": "WR",
+    "class": "cine",
+    "effect_x_rolled_value": "+X Bp on the first hit against each target",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–3000",
+    "t4": "3000–4000",
+    "t5": "4000–5000",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.quiet",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "quiet",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "attack noise −X dB",
+    "t1": "4–6",
+    "t2": "6–9",
+    "t3": "9–12",
+    "t4": "12–16",
+    "t5": "16–20",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.frugal",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "ammo",
+    "cats": "R",
+    "class": "mundane",
+    "effect_x_rolled_value": "X Bp chance per shot to spend no ammo",
+    "t1": "500–800",
+    "t2": "800–1200",
+    "t3": "1200–1800",
+    "t4": "1800–2500",
+    "t5": "2500–3200",
+    "wt": "30",
+    "requires": "ammo"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.buildup",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "buildup",
+    "cats": "WR",
+    "class": "mundane",
+    "effect_x_rolled_value": "every status power of hits ×(10000 + X)",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–3000",
+    "t4": "3000–4000",
+    "t5": "4000–5000",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.spell_dmg",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "spell_dmg",
+    "cats": "RNOC",
+    "class": "infused",
+    "effect_x_rolled_value": "+X Bp damage for spell sources",
+    "t1": "500–800",
+    "t2": "800–1200",
+    "t3": "1200–1600",
+    "t4": "1600–2100",
+    "t5": "2100–2600",
+    "wt": "80",
+    "requires": "casting"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.cast_speed",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "cast_speed",
+    "cats": "RNOC",
+    "class": "infused",
+    "effect_x_rolled_value": "cast ticks ×(10000 − X)",
+    "t1": "500–800",
+    "t2": "800–1100",
+    "t3": "1100–1500",
+    "t4": "1500–2000",
+    "t5": "2000–2500",
+    "wt": "50",
+    "requires": "casting"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.aether_cost",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "aether_cost",
+    "cats": "RNOC",
+    "class": "infused",
+    "effect_x_rolled_value": "spell aether cost ×(10000 − X)",
+    "t1": "500–800",
+    "t2": "800–1100",
+    "t3": "1100–1500",
+    "t4": "1500–2000",
+    "t5": "2000–2500",
+    "wt": "50",
+    "requires": "casting"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.summon_vigor",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "summon",
+    "cats": "RNOC",
+    "class": "infused",
+    "effect_x_rolled_value": "summon Max HP ×(10000 + X)",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–3000",
+    "t4": "3000–4000",
+    "t5": "4000–5000",
+    "wt": "30",
+    "requires": "casting"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.charges",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "charges",
+    "cats": "N",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X max charges",
+    "t1": "1",
+    "t2": "1–2",
+    "t3": "2",
+    "t4": "2–3",
+    "t5": "3–4",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.recharge",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "recharge",
+    "cats": "N",
+    "class": "infused",
+    "effect_x_rolled_value": "charge recharge ticks ×(10000 − X)",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–2800",
+    "t4": "2800–3500",
+    "t5": "3500–4500",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.armor_pct",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "armor_pct",
+    "cats": "AO",
+    "class": "mundane",
+    "effect_x_rolled_value": "this piece AR ×(10000 + X)",
+    "t1": "500–800",
+    "t2": "800–1100",
+    "t3": "1100–1500",
+    "t4": "1500–2000",
+    "t5": "2000–2600",
+    "wt": "120",
+    "requires": "armored"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.poise",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "poise",
+    "cats": "A",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X armor poise",
+    "t1": "2–3",
+    "t2": "3–5",
+    "t3": "5–7",
+    "t4": "7–9",
+    "t5": "9–12",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.stability",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "stability",
+    "cats": "O",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp shield stability (row 19)",
+    "t1": "300–500",
+    "t2": "500–800",
+    "t3": "800–1100",
+    "t4": "1100–1500",
+    "t5": "1500–2000",
+    "wt": "60",
+    "requires": "shield"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.resist_elements",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "resist_elements",
+    "cats": "AOC",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp resist fire, frost and shock each",
+    "t1": "150–250",
+    "t2": "250–400",
+    "t3": "400–550",
+    "t4": "550–700",
+    "t5": "700–900",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.resist_all",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "resist_all",
+    "cats": "AC",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp resist every type except true",
+    "t1": "100–150",
+    "t2": "150–220",
+    "t3": "220–300",
+    "t4": "300–380",
+    "t5": "380–450",
+    "wt": "15",
+    "requires": "min T2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.thorns",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "thorns",
+    "cats": "AO",
+    "class": "mundane",
+    "effect_x_rolled_value": "reflect X Bp of melee D2 taken (Canon §10.6)",
+    "t1": "500–800",
+    "t2": "800–1200",
+    "t3": "1200–1700",
+    "t4": "1700–2400",
+    "t5": "2400–3200",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.engineered",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "engineered",
+    "cats": "WRAOG",
+    "class": "mundane",
+    "effect_x_rolled_value": "salvaging this item (§16.4) yields each component material ×(10000 + X)",
+    "t1": "2000–3000",
+    "t2": "3000–4500",
+    "t3": "4500–6000",
+    "t4": "6000–8000",
+    "t5": "8000–10000",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.featherweight",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "mass",
+    "cats": "WRAOCG",
+    "class": "mundane",
+    "effect_x_rolled_value": "item mass ×(10000 − X)",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–2800",
+    "t4": "2800–3500",
+    "t5": "3500–4500",
+    "wt": "50",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.self_injector",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "injector",
+    "cats": "WRAOG",
+    "class": "tech",
+    "effect_x_rolled_value": "every X ticks the bearer heals `mul_bp(max_hp_mhp, mul_bp(100, pot))` mHP (Canon §10.9; `pot` = this affix's potency, nothing while Disconnected); injectors do not add: only the smallest X among the bearer's equipped items applies, counted from the last injector heal",
+    "t1": "1200–900",
+    "t2": "900–700",
+    "t3": "700–500",
+    "t4": "500–380",
+    "t5": "380–300",
+    "wt": "20",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.ward_capacity",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "ward_capacity",
+    "cats": "G",
+    "class": "base",
+    "effect_x_rolled_value": "ward capacity ×(10000 + X)",
+    "t1": "1000–1500",
+    "t2": "1500–2200",
+    "t3": "2200–3000",
+    "t4": "3000–4000",
+    "t5": "4000–5500",
+    "wt": "120",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.ward_siphon",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "ward_siphon",
+    "cats": "G",
+    "class": "base",
+    "effect_x_rolled_value": "on kill restore X Bp of ward capacity",
+    "t1": "500–800",
+    "t2": "800–1200",
+    "t3": "1200–1700",
+    "t4": "1700–2400",
+    "t5": "2400–3200",
+    "wt": "60",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.ward_nova",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "ward_nova",
+    "cats": "G",
+    "class": "base",
+    "effect_x_rolled_value": "on ward break stagger non-boss hostiles within X mm",
+    "t1": "2000–2200",
+    "t2": "2200–2500",
+    "t3": "2500–2900",
+    "t4": "2900–3400",
+    "t5": "3400–4000",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.ward_full",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "ward_full",
+    "cats": "G",
+    "class": "base",
+    "effect_x_rolled_value": "+X Bp damage while ward is full",
+    "t1": "300–500",
+    "t2": "500–800",
+    "t3": "800–1100",
+    "t4": "1100–1500",
+    "t5": "1500–2000",
+    "wt": "40",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.lucre_find",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "lucre",
+    "cats": "AC",
+    "class": "mundane",
+    "effect_x_rolled_value": "+X Bp in the bearer's Lucre-find sum (§9.1, capped)",
+    "t1": "300–500",
+    "t2": "500–800",
+    "t3": "800–1100",
+    "t4": "1100–1500",
+    "t5": "1500–2000",
+    "wt": "30",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.soft_step",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "soft_step",
+    "cats": "A",
+    "class": "mundane",
+    "effect_x_rolled_value": "footstep noise −X dB",
+    "t1": "3–4",
+    "t2": "4–6",
+    "t3": "6–8",
+    "t4": "8–10",
+    "t5": "10–12",
+    "wt": "40",
+    "requires": "legs_feet"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.radiance",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "radiance",
+    "cats": "OC",
+    "class": "mundane",
+    "effect_x_rolled_value": "emits light_block X",
+    "t1": "4",
+    "t2": "5",
+    "t3": "6",
+    "t4": "7",
+    "t5": "8",
+    "wt": "20",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "affix.gloss",
+   "kind": "affix",
+   "owner": "11",
+   "section": "11 6.2 Affix table (113 affixes)",
+   "fields": {
+    "group": "gloss",
+    "cats": "WR",
+    "class": "gloss",
+    "effect_x_rolled_value": "another core genre manufacturer gimmick as a component",
+    "t1": "1",
+    "t2": "1",
+    "t3": "1",
+    "t4": "1",
+    "t5": "1",
+    "wt": "20",
+    "requires": "pool:cross_glosses min T3"
+   },
+   "also_in": []
+  }
+ ]
+}

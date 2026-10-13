@@ -1,0 +1,341 @@
+{
+ "schema": "12.table_row",
+ "records": [
+  {
+   "id": "hazard.dart_trap",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "hidden plate",
+    "effect": "3 darts at 25000 mm/s from the nearest wall, 6 `dmg.pierce` each",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.blade_trap",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "sweeps every 60 ticks along a 4-block arc",
+    "effect": "14 `dmg.slash`, 30 bleeding",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.spike_pit",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "a hidden `block.pit_lid` over a 1 × 1 pit 2 blocks deep; it breaks under ≥ 40,000 g",
+    "effect": "10 `dmg.pierce`, 40 bleeding; the 2000 mm fall is under every `SAFE_FALL`; climb out by jump and mantle (§1)",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.crusher",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "slams every 120 ticks after a 30-tick telegraph",
+    "effect": "25 `dmg.blunt`",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.flame_jet",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "active on ticks 0..60 of every 180; 4 m cone, half-angle 2731 Bam",
+    "effect": "6 `dmg.fire` per pulse, 60 burning",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.gas_vent",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "hidden plate",
+    "effect": "6 cells of `gas.miasma` over 120 ticks",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.shock_floor",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "E; 3 × 3 floor live on ticks 0..90 of every 180",
+    "effect": "6 `dmg.shock` per pulse, 40 shocked",
+    "dep": "techne"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.alarm",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "hidden tripwire or sensor",
+    "effect": "`ev.noise` 90 dB at the source; rearms after 600 ticks",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.net_snare",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "hidden tripwire",
+    "effect": "`st.rooted` directly; 3 × 3 `block.web` around the cell",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.rune_ward",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "hidden glyph",
+    "effect": "3 m blast, 18 `dmg.arcane`, 50 unraveled",
+    "dep": "arcana"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.curse_glyph",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "hidden glyph",
+    "effect": "60 dread and 40 withering buildup to every entity within 2 m",
+    "dep": "mythos"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.camera",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "E; cone half-angle 8192 Bam, 16 m, sweeping ±4096 Bam over 360 ticks",
+    "effect": "60 consecutive ticks of sight on an Erratum fire the `hazard.alarm` effect at the camera and doc 09's `alarm_raised`; hackable",
+    "dep": "techne"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.collapsing_floor",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "3 × 3 `block.pit_lid` boards over a 3 × 3 pit 2 blocks deep; they break 30 ticks after bearing ≥ 40,000 g",
+    "effect": "drop 2 blocks; climb out by jump and mantle (§1)",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.falling_debris",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "an `ev.noise` of ≥ 80 dB within 6 m",
+    "effect": "3 `block.rubble` blocks fall, 12 `dmg.blunt` each",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.lava_pool",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "contact",
+    "effect": "a 3 × 3 × 1 basin of `liq.lava` (Canon §12.1)",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.acid_pool",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "contact",
+    "effect": "a 3 × 3 × 1 basin of `liq.acid`",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.deep_water",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "contact",
+    "effect": "a 3 × 3 basin of `liq.water` 3 blocks deep (swim, breath)",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.oil_slick",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "contact",
+    "effect": "3 × 3 floor cells of `liq.oil`, 1,000 ml each (contact needs 100 ml)",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.ink_seep",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "contact",
+    "effect": "3 × 3 floor cells of `liq.red_ink`, 1,000 ml each",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.steam_vent",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "active on ticks 0..60 of every 240",
+    "effect": "2 cells of `gas.steam`",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.rad_zone",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "a 4 × 4 floor area, always on",
+    "effect": "20 irradiated per pulse",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.miasma_bog",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "persistent",
+    "effect": "`gas.miasma` filling 3 × 3 × 2 cells",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.web_field",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "persistent",
+    "effect": "`block.web` filling 3 × 3 × 2 cells",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.quicksand",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "a 3 × 3 mire",
+    "effect": "`st.slowed` while inside; the body sinks at most 1 block",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.hull_breach",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "a `block.hull_panel` (doc 07 §10.1, replacing glass pane hardness) breaks",
+    "effect": "a pull of 3000 mm/s² toward the panel on every body within 8 m for 300 ticks, then the panel reseals",
+    "dep": "techne"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.redaction_bar",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "a 1 × 3 × 8 slab sliding at 2000 mm/s along its corridor, reversing at the ends",
+    "effect": "conceal 15; contact applies `st.silenced` directly",
+    "dep": "techne"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.chasm",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "structural: the trench of `room.chasm`, 6 blocks deep",
+    "effect": "fall damage (Canon §4.2); the trench stair leads back up",
+    "dep": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "hazard.gravity_flip",
+   "kind": "hazard",
+   "owner": "12",
+   "section": "12 18.1 Archetypes",
+   "fields": {
+    "trigger_and_cycle": "structural: a §9.5 flip room",
+    "effect": "gravity reversed",
+    "dep": "none"
+   },
+   "also_in": []
+  }
+ ]
+}

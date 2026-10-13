@@ -1,0 +1,59 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "know.unknown",
+   "kind": "know",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "player_knows": "appearance only"
+   },
+   "also_in": [
+    "10 2.4 Derived state and state machine",
+    "10 2.4 Derived state and state machine",
+    "10 6.4 Display formats"
+   ]
+  },
+  {
+   "id": "know.classified",
+   "kind": "know",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "player_knows": "item type, for example \"Potion of Healing\" or \"Longsword\""
+   },
+   "also_in": [
+    "10 2.4 Derived state and state machine",
+    "10 2.4 Derived state and state machine",
+    "10 6.4 Display formats"
+   ]
+  },
+  {
+   "id": "know.appraised",
+   "kind": "know",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "player_knows": "rarity and a value range"
+   },
+   "also_in": [
+    "10 2.4 Derived state and state machine",
+    "10 6.4 Display formats"
+   ]
+  },
+  {
+   "id": "know.identified",
+   "kind": "know",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "player_knows": "everything: affixes, enhancement, curse state, charges"
+   },
+   "also_in": [
+    "10 2.4 Derived state and state machine",
+    "10 6.4 Display formats"
+   ]
+  }
+ ]
+}

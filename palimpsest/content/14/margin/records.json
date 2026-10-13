@@ -1,0 +1,385 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "margin.lectern",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Lectern",
+    "function": "modes, Grade, mutators, seeds, run start (§2.1)",
+    "opens_at": "`margin.milestone.first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.dramatis",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Dramatis",
+    "function": "Erratum presets, Echo selection and trait variant, kit, lens pocket",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.index",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Index",
+    "function": "item encyclopedia (§5.5)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.bestiary",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Bestiary",
+    "function": "enemy encyclopedia (§5.5)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.first_page",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The First Page",
+    "function": "replays nothing; unlocked by completing the first run's Folio 1 (§11)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.bindery",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Bindery",
+    "function": "unlock tree, paid in Quires (§5.2)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.ledger",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Ledger",
+    "function": "run history, shareable deterministic replays with the killcam (DECISIONS 48; doc 16 replay files, doc 17 viewer; no photo mode, DECISIONS 129) and leaderboards (§9.4)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.wardrobe",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Wardrobe",
+    "function": "cosmetics and Bindings",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.inkwell",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Inkwell",
+    "function": "gacha paid in Ink (doc 15)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.codex_desk",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Codex Desk",
+    "function": "battle pass (doc 15)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.store",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Store",
+    "function": "fiat SKUs (doc 15)",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.reliquary_vault",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Reliquary Vault",
+    "function": "opens account Reliquaries (doc 15)",
+    "opens_at": "`first_reliquary`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.vellum_archive",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Vellum Archive",
+    "function": "Vellum shop and the Transcription shelf (doc 15 §3.9.1)",
+    "opens_at": "`first_vellum`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.recollections",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Recollection Alcove",
+    "function": "Echo trials (§6)",
+    "opens_at": "`first_editor_v1`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.proving_page",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Proving Page",
+    "function": "sandbox: target dummies, every unlocked item at ilvl 1, no rewards",
+    "opens_at": "purchase of `unlock.facility.proving_page`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.plot",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "name": "The Trophy Alcove",
+    "function": "the account's trophy alcove: 32 fixed trophy and decoration slots (§5.1a, Canon §17.8); no building, no gameplay stats",
+    "opens_at": "`first_run_end`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_run_end",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "any run of any mode ends"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_editor_v1",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "the account's player is present when `boss.editor_v1` dies"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_editor_v2",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "same for `boss.editor_v2`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_victory",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "`run.end.victory` in Standard, Abridged or Novella"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_ur_text_victory",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "`run.end.victory` in Standard or Abridged (`boss.ur_editor` killed)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_standard_victory",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "`run.end.victory` in Standard"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_reliquary",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "the first account Reliquary is credited"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.milestone.first_vellum",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.1 Facilities and milestones",
+   "fields": {
+    "set_when": "the first Vellum is credited (doc 15)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.archivist",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.archivist`",
+    "facilities": "`margin.index`, `margin.bestiary`",
+    "beat_conditions_1_to_6": "`first_run_end`; 25 Bestiary templates; `first_editor_v2`; 100 Bestiary templates; `ach.appraiser`; every Editor (`boss.editor_v1` to `boss.editor_v4`, `boss.ur_editor`) in the Bestiary"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.binder",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.binder`",
+    "facilities": "`margin.bindery`",
+    "beat_conditions_1_to_6": "`first_run_end`; 5 Bindery nodes owned; 20; 46; 70; 91"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.recollector",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.recollector`",
+    "facilities": "`margin.recollections`",
+    "beat_conditions_1_to_6": "`first_editor_v1`; one trial step at its target; 1 trial complete; 6; 12; 24"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.cartographer",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.cartographer`",
+    "facilities": "`margin.ledger`, `margin.lectern`",
+    "beat_conditions_1_to_6": "`first_run_end`; Folios of 6 core genres cleared; `ach.atlas`; any secret genre entered; `ach.secret_trio`; `ach.marginalia_50`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.inkwell_keeper",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.inkwell_keeper`",
+    "facilities": "`margin.inkwell`, `margin.reliquary_vault`",
+    "beat_conditions_1_to_6": "`first_run_end`; `first_editor_v1`; `first_victory`; 10 runs ended; `first_ur_text_victory`; 50 runs ended"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.codex_scribe",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.codex_scribe`",
+    "facilities": "`margin.codex_desk`",
+    "beat_conditions_1_to_6": "1 run ended; 5; 15; 30; 60; 100"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.quartermaster",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.quartermaster`",
+    "facilities": "`margin.store`, `margin.vellum_archive`, `margin.wardrobe`",
+    "beat_conditions_1_to_6": "`first_run_end`; `first_editor_v2`; 3 ranked Daily runs ended; `ach.gauntlet`; Grade 10 unlocked; Grade 20 unlocked"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.drillmaster",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "`npc.margin.drillmaster`",
+    "facilities": "`margin.proving_page`",
+    "beat_conditions_1_to_6": "`first_editor_v1`; `ach.triad`; `ach.master`; `ach.deaths_door`; `ach.callings_v1`; `ach.callings_win`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "margin.arc.narrator",
+   "kind": "margin",
+   "owner": "14",
+   "section": "14 5.6 Margin residents and their arcs",
+   "fields": {
+    "resident": "the Narrator (doc 18 `nar.narrator`)",
+    "facilities": "`margin.ledger` (pencil notes)",
+    "beat_conditions_1_to_6": "`first_run_end`; `first_editor_v1`; `first_victory`; `first_ur_text_victory`; `ach.marginalia_30`; `ach.marginalia_100`"
+   },
+   "also_in": []
+  }
+ ]
+}

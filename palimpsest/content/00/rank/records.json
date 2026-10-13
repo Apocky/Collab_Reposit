@@ -1,0 +1,110 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "rank.minion",
+   "kind": "rank",
+   "owner": "00",
+   "section": "00 17.3 Enemy ranks",
+   "fields": {
+    "hp_bp": "4000",
+    "damage_bp": "6000",
+    "kill_xp_bp": "3000",
+    "dot_taken_bp": "10000",
+    "control_duration_bp": "10000",
+    "notes": "swarm fodder"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rank.standard",
+   "kind": "rank",
+   "owner": "00",
+   "section": "00 17.3 Enemy ranks",
+   "fields": {
+    "hp_bp": "10000",
+    "damage_bp": "10000",
+    "kill_xp_bp": "10000",
+    "dot_taken_bp": "10000",
+    "control_duration_bp": "10000",
+    "notes": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "rank.elite",
+   "kind": "rank",
+   "owner": "00",
+   "section": "00 17.3 Enemy ranks",
+   "fields": {
+    "hp_bp": "30000",
+    "damage_bp": "13000",
+    "kill_xp_bp": "30000",
+    "dot_taken_bp": "5000",
+    "control_duration_bp": "7500",
+    "notes": "one elite modifier (doc 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rank.champion",
+   "kind": "rank",
+   "owner": "00",
+   "section": "00 17.3 Enemy ranks",
+   "fields": {
+    "hp_bp": "60000",
+    "damage_bp": "15000",
+    "kill_xp_bp": "60000",
+    "dot_taken_bp": "5000",
+    "control_duration_bp": "5000",
+    "notes": "one champion aspect (§17.3a), countered by its matching counter type (doc 05)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rank.boss",
+   "kind": "rank",
+   "owner": "00",
+   "section": "00 17.3 Enemy ranks",
+   "fields": {
+    "hp_bp": "200000",
+    "damage_bp": "16000",
+    "kill_xp_bp": "200000",
+    "dot_taken_bp": "2500",
+    "control_duration_bp": "2500",
+    "notes": "genre mini-boss; immune to charmed, sleeping, confused"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rank.editor",
+   "kind": "rank",
+   "owner": "00",
+   "section": "00 17.3 Enemy ranks",
+   "fields": {
+    "hp_bp": "400000",
+    "damage_bp": "18000",
+    "kill_xp_bp": "400000",
+    "dot_taken_bp": "2500",
+    "control_duration_bp": "2500",
+    "notes": "Volume boss; same immunities"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rank.hunter",
+   "kind": "rank",
+   "owner": "00",
+   "section": "00 17.3 Enemy ranks",
+   "fields": {
+    "hp_bp": "120000",
+    "damage_bp": "20000",
+    "kill_xp_bp": "50000",
+    "dot_taken_bp": "2500",
+    "control_duration_bp": "2500",
+    "notes": "Erasure hunter identity (its multipliers are `rank.elite`'s, §11.6) and invaders (§17.9); same immunities"
+   },
+   "also_in": []
+  }
+ ]
+}

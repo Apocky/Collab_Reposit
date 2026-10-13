@@ -1,0 +1,887 @@
+{
+ "schema": "05.table_row",
+ "records": [
+  {
+   "id": "arch.melee.dagger",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "blade",
+    "base_mhp": "10100",
+    "shares_bp": "pierce 6000, slash 4000",
+    "precision": "15000",
+    "cleave": "1",
+    "impact": "6",
+    "ref_dps_light": "27.0",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.blade_short",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "blade",
+    "base_mhp": "13000",
+    "shares_bp": "slash 6000, pierce 4000",
+    "precision": "13000",
+    "cleave": "1",
+    "impact": "9",
+    "ref_dps_light": "30.0",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.blade_long",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "blade",
+    "base_mhp": "14700",
+    "shares_bp": "slash 8000, pierce 2000",
+    "precision": "12500",
+    "cleave": "2",
+    "impact": "12",
+    "ref_dps_light": "30.1",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.blade_great",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "2",
+    "skill": "blade",
+    "base_mhp": "20000",
+    "shares_bp": "slash 8000, blunt 2000",
+    "precision": "12500",
+    "cleave": "3",
+    "impact": "25",
+    "ref_dps_light": "29.0",
+    "requirement": "MGT 45"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.axe",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "hafted",
+    "base_mhp": "16400",
+    "shares_bp": "slash 8500, blunt 1500",
+    "precision": "12500",
+    "cleave": "2",
+    "impact": "14",
+    "ref_dps_light": "30.1",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.axe_great",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "2",
+    "skill": "hafted",
+    "base_mhp": "21600",
+    "shares_bp": "slash 8000, blunt 2000",
+    "precision": "12500",
+    "cleave": "3",
+    "impact": "28",
+    "ref_dps_light": "29.1",
+    "requirement": "MGT 50"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.mace",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "hafted",
+    "base_mhp": "15600",
+    "shares_bp": "blunt 9000, pierce 1000",
+    "precision": "12500",
+    "cleave": "1",
+    "impact": "18",
+    "ref_dps_light": "30.2",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.warhammer",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "2",
+    "skill": "hafted",
+    "base_mhp": "22500",
+    "shares_bp": "blunt 8500, pierce 1500",
+    "precision": "12500",
+    "cleave": "2",
+    "impact": "34",
+    "ref_dps_light": "29.1",
+    "requirement": "MGT 55"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.spear",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "polearm",
+    "base_mhp": "15000",
+    "shares_bp": "pierce 9000, slash 1000",
+    "precision": "14000",
+    "cleave": "1",
+    "impact": "12",
+    "ref_dps_light": "30.1",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.halberd",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "2",
+    "skill": "polearm",
+    "base_mhp": "22700",
+    "shares_bp": "slash 5000, pierce 3000, blunt 2000",
+    "precision": "12500",
+    "cleave": "3",
+    "impact": "24",
+    "ref_dps_light": "29.1",
+    "requirement": "MGT 45"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.quarterstaff",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "2",
+    "skill": "polearm",
+    "base_mhp": "12100",
+    "shares_bp": "blunt 10000",
+    "precision": "12500",
+    "cleave": "2",
+    "impact": "12",
+    "ref_dps_light": "29.0",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.fist",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "unarmed",
+    "base_mhp": "8200",
+    "shares_bp": "blunt 7000, pierce 3000",
+    "precision": "13000",
+    "cleave": "1",
+    "impact": "7",
+    "ref_dps_light": "27.1",
+    "requirement": "—"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.whip",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "polearm",
+    "base_mhp": "16700",
+    "shares_bp": "slash 10000",
+    "precision": "15000",
+    "cleave": "2",
+    "impact": "8",
+    "ref_dps_light": "29.1",
+    "requirement": "FIN 45"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.chain",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "1",
+    "skill": "polearm",
+    "base_mhp": "17800",
+    "shares_bp": "blunt 7000, pierce 3000",
+    "precision": "12500",
+    "cleave": "2",
+    "impact": "18",
+    "ref_dps_light": "29.1",
+    "requirement": "MGT 40"
+   },
+   "also_in": [
+    "11 3.2 Weapons"
+   ]
+  },
+  {
+   "id": "arch.melee.unarmed",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 3.2 Archetype tables",
+   "fields": {
+    "hands": "body",
+    "skill": "unarmed",
+    "base_mhp": "6600",
+    "shares_bp": "blunt 10000",
+    "precision": "12500",
+    "cleave": "1",
+    "impact": "5",
+    "ref_dps_light": "22.2",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.pistol",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "semi",
+    "skill": "marksmanship",
+    "base_mhp": "8600",
+    "pellets": "1",
+    "rpm_interval_ticks": "360 (10)",
+    "magazine": "12",
+    "reload": "72",
+    "ammo": "`ammo.light`",
+    "shares": "pierce 10000",
+    "pen_bp": "1000",
+    "precision": "15000",
+    "impact": "6",
+    "ref_dps": "30.2",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.pistol_heavy",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "semi",
+    "skill": "marksmanship",
+    "base_mhp": "20600",
+    "pellets": "1",
+    "rpm_interval_ticks": "150 (24)",
+    "magazine": "6",
+    "reload": "110",
+    "ammo": "`ammo.heavy`",
+    "shares": "pierce 10000",
+    "pen_bp": "2500",
+    "precision": "16000",
+    "impact": "16",
+    "ref_dps": "30.0",
+    "requirement": "MGT 40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.smg",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "auto",
+    "skill": "marksmanship",
+    "base_mhp": "4500",
+    "pellets": "1",
+    "rpm_interval_ticks": "900 (4)",
+    "magazine": "32",
+    "reload": "100",
+    "ammo": "`ammo.light`",
+    "shares": "pierce 10000",
+    "pen_bp": "0",
+    "precision": "13000",
+    "impact": "2",
+    "ref_dps": "30.3",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.rifle_auto",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "auto",
+    "skill": "heavy_arms",
+    "base_mhp": "5600",
+    "pellets": "1",
+    "rpm_interval_ticks": "600 (6)",
+    "magazine": "30",
+    "reload": "120",
+    "ammo": "`ammo.heavy`",
+    "shares": "pierce 10000",
+    "pen_bp": "1500",
+    "precision": "14000",
+    "impact": "3",
+    "ref_dps": "30.3",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.rifle_marksman",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "semi",
+    "skill": "marksmanship",
+    "base_mhp": "11600",
+    "pellets": "1",
+    "rpm_interval_ticks": "240 (15)",
+    "magazine": "12",
+    "reload": "120",
+    "ammo": "`ammo.rifle`",
+    "shares": "pierce 10000",
+    "pen_bp": "3000",
+    "precision": "17500",
+    "impact": "10",
+    "ref_dps": "28.0",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.shotgun",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "bolt",
+    "skill": "heavy_arms",
+    "base_mhp": "6200",
+    "pellets": "8",
+    "rpm_interval_ticks": "72 (50)",
+    "magazine": "6",
+    "reload": "20 + 32 per shell",
+    "ammo": "`ammo.shell`",
+    "shares": "pierce 10000",
+    "pen_bp": "0",
+    "precision": "12500",
+    "impact": "4 per pellet",
+    "ref_dps": "30.1",
+    "requirement": "MGT 40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.sniper",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "bolt",
+    "skill": "marksmanship",
+    "base_mhp": "41200",
+    "pellets": "1",
+    "rpm_interval_ticks": "45 (80)",
+    "magazine": "5",
+    "reload": "150",
+    "ammo": "`ammo.rifle`",
+    "shares": "pierce 10000",
+    "pen_bp": "5000",
+    "precision": "20000",
+    "impact": "30",
+    "ref_dps": "24.0",
+    "requirement": "FIN 45"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.launcher",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "semi",
+    "skill": "heavy_arms",
+    "base_mhp": "direct 10000; blast 54000",
+    "pellets": "1",
+    "rpm_interval_ticks": "60 (60)",
+    "magazine": "1",
+    "reload": "90",
+    "ammo": "`ammo.ordnance`",
+    "shares": "direct blunt 10000; blast pierce 2000, blunt 4000, fire 4000",
+    "pen_bp": "0",
+    "precision": "10000",
+    "impact": "direct 20; blast 40",
+    "ref_dps": "26.3",
+    "requirement": "MGT 50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.beam",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "beam",
+    "skill": "heavy_arms",
+    "base_mhp": "3700 per pulse",
+    "pellets": "1",
+    "rpm_interval_ticks": "600 pulses (6)",
+    "magazine": "60 units",
+    "reload": "120",
+    "ammo": "`ammo.cell`",
+    "shares": "fire 10000",
+    "pen_bp": "0",
+    "precision": "12500",
+    "impact": "1",
+    "ref_dps": "30.2",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.charge_rifle",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "charge",
+    "skill": "marksmanship",
+    "base_mhp": "30000 at full charge",
+    "pellets": "1",
+    "rpm_interval_ticks": "0 (draw 15–45, nock 18)",
+    "magazine": "1",
+    "reload": "18",
+    "ammo": "`ammo.draw`",
+    "shares": "pierce 10000",
+    "pen_bp": "2500",
+    "precision": "17500",
+    "impact": "18 at full",
+    "ref_dps": "29.9",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.crossbow",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "semi",
+    "skill": "marksmanship",
+    "base_mhp": "35700",
+    "pellets": "1",
+    "rpm_interval_ticks": "0 (single load)",
+    "magazine": "1",
+    "reload": "80",
+    "ammo": "`ammo.draw`",
+    "shares": "pierce 10000",
+    "pen_bp": "4000",
+    "precision": "17500",
+    "impact": "22",
+    "ref_dps": "28.0",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.thrown",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.2 Archetype tables",
+   "fields": {
+    "fire_mode": "throw",
+    "skill": "throwing",
+    "base_mhp": "14800",
+    "pellets": "1",
+    "rpm_interval_ticks": "120 (30)",
+    "magazine": "the held stack",
+    "reload": "0",
+    "ammo": "itself",
+    "shares": "pierce 7000, slash 3000",
+    "pen_bp": "1500",
+    "precision": "15000",
+    "impact": "8",
+    "ref_dps": "27.1",
+    "requirement": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.staff",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.4 Casting implements in doc 05 namespaces",
+   "fields": {
+    "category": "`cat.weapon_ranged` (Canon §13.1 lists staves there)",
+    "hands": "2",
+    "ref_mass_g": "1530",
+    "weapon_function": "the `arch.melee.quarterstaff` moveset exactly: Tables 3.2a to 3.2d rows, `skill.polearm`, `block_bp` 10000, with §3.3 timing measured against `ref_mass_g` 1530"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.wand",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.4 Casting implements in doc 05 namespaces",
+   "fields": {
+    "category": "`cat.wand`",
+    "hands": "1",
+    "ref_mass_g": "300",
+    "weapon_function": "none: `input.attack` casts the bound spell (doc 06 §8.4); `input.heavy` performs quick melee (§4.7)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.offhand.tome",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 5.4 Casting implements in doc 05 namespaces",
+   "fields": {
+    "category": "`cat.offhand`",
+    "hands": "off-hand",
+    "ref_mass_g": "900",
+    "weapon_function": "none; cannot block or parry (§12.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ranged.grenade_frag",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 9.3 Grenade archetypes",
+   "fields": {
+    "detonation": "fuse",
+    "fuse_ticks": "150",
+    "base_mhp_at_center": "48000",
+    "shares": "pierce 6000, blunt 3000, fire 1000",
+    "radius_inner_mm_edge_bp": "4500 / 1000 / 2000",
+    "impact": "40",
+    "status_power": "default",
+    "block_power_milli": "3000",
+    "mass_g": "400"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "arch.ranged.grenade_incendiary",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 9.3 Grenade archetypes",
+   "fields": {
+    "detonation": "first contact",
+    "fuse_ticks": "—",
+    "base_mhp_at_center": "20000",
+    "shares": "fire 10000",
+    "radius_inner_mm_edge_bp": "3000 / 3000 / 10000",
+    "impact": "0",
+    "status_power": "burning 60",
+    "block_power_milli": "0",
+    "mass_g": "500"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "arch.ranged.grenade_concussion",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 9.3 Grenade archetypes",
+   "fields": {
+    "detonation": "fuse",
+    "fuse_ticks": "90",
+    "base_mhp_at_center": "15000",
+    "shares": "blunt 10000",
+    "radius_inner_mm_edge_bp": "4000 / 1500 / 3000",
+    "impact": "80",
+    "status_power": "stunned 50",
+    "block_power_milli": "1000",
+    "mass_g": "400"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "arch.ranged.grenade_flash",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 9.3 Grenade archetypes",
+   "fields": {
+    "detonation": "fuse",
+    "fuse_ticks": "90",
+    "base_mhp_at_center": "2000",
+    "shares": "radiant 5000, sonic 5000",
+    "radius_inner_mm_edge_bp": "6000 / 2000 / 5000",
+    "impact": "0",
+    "status_power": "blinded 150, deafened 150",
+    "block_power_milli": "0",
+    "mass_g": "300"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "arch.ranged.grenade_smoke",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 9.3 Grenade archetypes",
+   "fields": {
+    "detonation": "fuse",
+    "fuse_ticks": "60",
+    "base_mhp_at_center": "0",
+    "shares": "—",
+    "radius_inner_mm_edge_bp": "releases `gas.smoke` at concentration 10000 into each of the 27 cells of the 3 × 3 × 3 cube around the center cell, ascending `Gidx`, each capped by the cell's free room (doc 03 §7); doc 08's dissipation removes it",
+    "impact": "0",
+    "status_power": "—",
+    "block_power_milli": "0",
+    "mass_g": "300"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "arch.ranged.grenade_counter",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 9.3 Grenade archetypes",
+   "fields": {
+    "detonation": "fuse",
+    "fuse_ticks": "90",
+    "base_mhp_at_center": "12000",
+    "shares": "blunt 10000",
+    "radius_inner_mm_edge_bp": "3000 / 3000 / 10000",
+    "impact": "20",
+    "status_power": "default",
+    "block_power_milli": "0",
+    "mass_g": "400"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.offhand.shield_buckler",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 12.1 Off-hand archetypes",
+   "fields": {
+    "base_ar": "10",
+    "stability_bp": "+1000",
+    "arc_bam": "8192",
+    "raise": "4",
+    "parry_ticks": "9",
+    "mass_g": "1500",
+    "bash_impact_base_mhp": "15 / 4000",
+    "blocks_area_hits": "no"
+   },
+   "also_in": [
+    "11 3.3 Armor, off-hands and ward generators"
+   ]
+  },
+  {
+   "id": "arch.offhand.shield_heater",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 12.1 Off-hand archetypes",
+   "fields": {
+    "base_ar": "25",
+    "stability_bp": "+2500",
+    "arc_bam": "10923",
+    "raise": "6",
+    "parry_ticks": "6",
+    "mass_g": "4000",
+    "bash_impact_base_mhp": "25 / 5000",
+    "blocks_area_hits": "no"
+   },
+   "also_in": [
+    "11 3.3 Armor, off-hands and ward generators"
+   ]
+  },
+  {
+   "id": "arch.offhand.shield_tower",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 12.1 Off-hand archetypes",
+   "fields": {
+    "base_ar": "45",
+    "stability_bp": "+4000",
+    "arc_bam": "13653",
+    "raise": "10",
+    "parry_ticks": "0 (cannot parry)",
+    "mass_g": "9000",
+    "bash_impact_base_mhp": "35 / 6000",
+    "blocks_area_hits": "yes"
+   },
+   "also_in": [
+    "11 3.3 Armor, off-hands and ward generators"
+   ]
+  },
+  {
+   "id": "arch.offhand.lantern",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 12.1 Off-hand archetypes",
+   "fields": {
+    "base_ar": "—",
+    "stability_bp": "—",
+    "arc_bam": "—",
+    "raise": "—",
+    "parry_ticks": "—",
+    "mass_g": "1200",
+    "bash_impact_base_mhp": "—",
+    "blocks_area_hits": "—"
+   },
+   "also_in": [
+    "11 3.3 Armor, off-hands and ward generators"
+   ]
+  },
+  {
+   "id": "arch.offhand.focus",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 12.1 Off-hand archetypes",
+   "fields": {
+    "base_ar": "—",
+    "stability_bp": "—",
+    "arc_bam": "—",
+    "raise": "—",
+    "parry_ticks": "—",
+    "mass_g": "600",
+    "bash_impact_base_mhp": "—",
+    "blocks_area_hits": "—"
+   },
+   "also_in": [
+    "11 3.3 Armor, off-hands and ward generators"
+   ]
+  },
+  {
+   "id": "arch.ward.aegis",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 15.4 Ward generators (`slot.ward`, `cat.ward_gen`)",
+   "fields": {
+    "cap_base_hp": "20",
+    "depletion_profile_bp": "all 10000",
+    "on_break": "none",
+    "mass_g": "300",
+    "hum_db": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ward.kinetic",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 15.4 Ward generators (`slot.ward`, `cat.ward_gen`)",
+   "fields": {
+    "cap_base_hp": "24",
+    "depletion_profile_bp": "slash, pierce, blunt 8000; shock 15000; others 10000",
+    "on_break": "2000 mm pulse: impact 20, no damage",
+    "mass_g": "1200",
+    "hum_db": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ward.reflector",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 15.4 Ward generators (`slot.ward`, `cat.ward_gen`)",
+   "fields": {
+    "cap_base_hp": "16",
+    "depletion_profile_bp": "arcane 7500; others 10000",
+    "on_break": "while ward > 0, 1000 Bp of absorbed damage returns to the attacker through the thorns entry (Canon §10.6)",
+    "mass_g": "800",
+    "hum_db": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "arch.ward.bulwark",
+   "kind": "arch",
+   "owner": "05",
+   "section": "05 15.4 Ward generators (`slot.ward`, `cat.ward_gen`)",
+   "fields": {
+    "cap_base_hp": "36",
+    "depletion_profile_bp": "all 12500",
+    "on_break": "bearer gains `st.slowed` directly",
+    "mass_g": "3000",
+    "hum_db": "2"
+   },
+   "also_in": []
+  }
+ ]
+}

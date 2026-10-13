@@ -1,0 +1,257 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "grade.g00",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Fair Copy",
+    "modifier_added_at_this_grade": "none",
+    "grade_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g01",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Smudged Ink",
+    "modifier_added_at_this_grade": "`dmg_bp` = 10500",
+    "grade_bp": "10550"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g02",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Thicker Vellum",
+    "modifier_added_at_this_grade": "`hp_bp` = 10500",
+    "grade_bp": "11200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g03",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Lean Purse",
+    "modifier_added_at_this_grade": "`lucre_bp` = 9000",
+    "grade_bp": "11950"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g04",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Elite Ink",
+    "modifier_added_at_this_grade": "`elite_promote_add_bp` = 500",
+    "grade_bp": "12800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g05",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Dear Pages",
+    "modifier_added_at_this_grade": "`shop_price_bp` = 11500",
+    "grade_bp": "13750"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g06",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Cold Hearth",
+    "modifier_added_at_this_grade": "`rest_heal_bp` = 7500",
+    "grade_bp": "14800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g07",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Champion's Page",
+    "modifier_added_at_this_grade": "`champion_extra` = 1",
+    "grade_bp": "15950"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g08",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Heavy Bindings",
+    "modifier_added_at_this_grade": "`boss_hp_bp` = 11000",
+    "grade_bp": "17200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g09",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Smudged Ink II",
+    "modifier_added_at_this_grade": "`dmg_bp` = 11000",
+    "grade_bp": "18550"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g10",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Spare Kit",
+    "modifier_added_at_this_grade": "`kit_consumables` = false",
+    "grade_bp": "20000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g11",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Pack Hunters",
+    "modifier_added_at_this_grade": "`hunter_hp_bp` = 12500",
+    "grade_bp": "21550"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g12",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Scarce Keys",
+    "modifier_added_at_this_grade": "`reliq_key_delta` = −1",
+    "grade_bp": "23200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g13",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Thicker Vellum II",
+    "modifier_added_at_this_grade": "`hp_bp` = 11000",
+    "grade_bp": "24950"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g14",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Editors' Fury",
+    "modifier_added_at_this_grade": "`editor_dmg_bp` = 11500",
+    "grade_bp": "26800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g15",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Ambush Pages",
+    "modifier_added_at_this_grade": "`ambush_extra` = 1",
+    "grade_bp": "28750"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g16",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Smudged Ink III",
+    "modifier_added_at_this_grade": "`dmg_bp` = 11500",
+    "grade_bp": "30800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g17",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Lean Purse II",
+    "modifier_added_at_this_grade": "`lucre_bp` = 8000",
+    "grade_bp": "32950"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g18",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Elite Ink II",
+    "modifier_added_at_this_grade": "`elite_promote_add_bp` = 1000",
+    "grade_bp": "35200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g19",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "Thicker Vellum III",
+    "modifier_added_at_this_grade": "`hp_bp` = 12000",
+    "grade_bp": "37550"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grade.g20",
+   "kind": "grade",
+   "owner": "14",
+   "section": "14 7.1 Grade table",
+   "fields": {
+    "name": "The Final Draft",
+    "modifier_added_at_this_grade": "`final_hp_bp` = 12500; `final_phase_extra` = true",
+    "grade_bp": "40000"
+   },
+   "also_in": []
+  }
+ ]
+}

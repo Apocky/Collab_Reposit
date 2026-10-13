@@ -1,0 +1,1709 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "recipe.kind.shaped",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.1 Kinds",
+   "fields": {
+    "rule": "3×3 grid; the trimmed grid must equal the pattern or its horizontal mirror"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kind.shapeless",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.1 Kinds",
+   "fields": {
+    "rule": "the grid holds exactly the listed keys and counts, in any cells"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kind.assembly",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.1 Kinds",
+   "fields": {
+    "rule": "named component cells plus optional part slots (§7)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kind.process",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.1 Kinds",
+   "fields": {
+    "rule": "queued, timed, at a station (§5.3); never rolls quality"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kind.disassembly",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.1 Kinds",
+   "fields": {
+    "rule": "reverses gear into materials, parts or grafts (§8.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.copper",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1 or campfire",
+    "skill": "smithing 0",
+    "inputs_output": "1 `mat.copper.ore` → 1 `mat.copper`",
+    "ticks": "200",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.tin",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1 or campfire",
+    "skill": "smithing 0",
+    "inputs_output": "1 `mat.tin.ore` → 1 `mat.tin`",
+    "ticks": "160",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.zinc",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1 or campfire",
+    "skill": "smithing 0",
+    "inputs_output": "1 `mat.zinc.ore` → 1 `mat.zinc`",
+    "ticks": "160",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.iron",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 0",
+    "inputs_output": "1 `mat.iron.ore` → 1 `mat.iron`",
+    "ticks": "240",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.silver",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "inputs_output": "1 `mat.silver.ore` → 1 `mat.silver`",
+    "ticks": "240",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.gold",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "inputs_output": "1 `mat.gold.ore` → 1 `mat.gold`",
+    "ticks": "240",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.titanium",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 40",
+    "inputs_output": "1 `mat.titanium.ore` → 1 `mat.titanium`",
+    "ticks": "480",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.orichalcum",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 3",
+    "skill": "smithing 50",
+    "inputs_output": "1 `mat.orichalcum.ore` → 1 `mat.orichalcum`",
+    "ticks": "600",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.aetherium",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 3",
+    "skill": "smithing 50",
+    "inputs_output": "1 `mat.aetherium.ore` → 1 `mat.aetherium`",
+    "ticks": "600",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.smelt.star_metal",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 4",
+    "skill": "smithing 60",
+    "inputs_output": "1 `mat.star_metal.ore` → 1 `mat.star_metal`",
+    "ticks": "720",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.alloy.bronze",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "inputs_output": "3 copper + 1 tin → 4 `mat.bronze`",
+    "ticks": "360",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.alloy.brass",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "inputs_output": "2 copper + 1 zinc → 3 `mat.brass`",
+    "ticks": "360",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.alloy.steel",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 25",
+    "inputs_output": "2 iron + 1 coal → 2 `mat.steel`",
+    "ticks": "600",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.alloy.cast_iron",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "inputs_output": "1 `mat.iron.ore` + 1 coal → 1 `mat.cast_iron`",
+    "ticks": "300",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.cold_iron",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 25",
+    "inputs_output": "1 iron → 1 `mat.cold_iron` (cold-hammered, no fuel)",
+    "ticks": "600",
+    "flags": "L"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.ritual.hexed_silver",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "enchanting 2",
+    "skill": "inscription 20",
+    "inputs_output": "1 silver + 1 bone → 1 `mat.hexed_silver`; local MYT ≥ 4",
+    "ticks": "900",
+    "flags": "L"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.ritual.moonsilver",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "enchanting 3",
+    "skill": "inscription 40",
+    "inputs_output": "2 silver + 1 glass → 1 `mat.moonsilver`; local ARC ≥ 6",
+    "ticks": "1200",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kiln.glass",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 0",
+    "inputs_output": "2 sand → 1 `mat.glass`",
+    "ticks": "300",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kiln.brick",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 0",
+    "inputs_output": "2 soil → 2 `mat.brick`",
+    "ticks": "300",
+    "flags": "F"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kiln.charcoal",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "campfire",
+    "skill": "survival 0",
+    "inputs_output": "2 W → 1 `mat.coal`",
+    "ticks": "300",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.kiln.alch_charcoal",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "campfire",
+    "skill": "survival 0",
+    "inputs_output": "1 W → 2 `ing.charcoal` (doc 08 §8.2)",
+    "ticks": "300",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.loom.tan_leather",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "loom 1",
+    "skill": "survival 0",
+    "inputs_output": "1 `mat.hide` → 1 `mat.leather`",
+    "ticks": "600",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.loom.weave_silk",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "loom 2",
+    "skill": "survival 20",
+    "inputs_output": "3 web → 1 `mat.silk`",
+    "ticks": "600",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.fab.polymer",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "inputs_output": "1 rubber + 1 coal → 2 `mat.polymer`",
+    "ticks": "600",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.fab.carbon_fiber",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 3",
+    "skill": "tinkering 50",
+    "inputs_output": "2 polymer + 1 coal → 1 `mat.carbon_fiber`",
+    "ticks": "900",
+    "flags": "L"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.fab.plasteel",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 3",
+    "skill": "tinkering 50",
+    "inputs_output": "1 steel + 1 polymer → 1 `mat.plasteel`",
+    "ticks": "900",
+    "flags": "L"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.fab.nanoweave",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 4",
+    "skill": "tinkering 75",
+    "inputs_output": "1 carbon fiber + 1 silk → 1 `mat.nanoweave`",
+    "ticks": "1200",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ammo_light",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 0",
+    "inputs_output": "1 M + 1 coal → 24 `ammo.light`",
+    "ticks": "240",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ammo_heavy",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 10",
+    "inputs_output": "1 M + 1 coal → 16 `ammo.heavy`",
+    "ticks": "240",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ammo_shell",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 10",
+    "inputs_output": "1 M + 1 coal → 5 `ammo.shell`",
+    "ticks": "240",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ammo_draw",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 0",
+    "inputs_output": "1 W + 1 B → 6 `ammo.draw`",
+    "ticks": "180",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ammo_rifle",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "inputs_output": "2 M + 2 coal → 7 `ammo.rifle`",
+    "ticks": "300",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ammo_cell",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "inputs_output": "1 copper + 1 coal → 30 `ammo.cell`",
+    "ticks": "300",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ammo_ordnance",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 3",
+    "skill": "tinkering 50",
+    "inputs_output": "2 M + 2 coal → 1 `ammo.ordnance`",
+    "ticks": "600",
+    "flags": "L"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.dagger",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 0",
+    "pattern_or_inputs_output": "`B/H` → `arch.melee.dagger`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.blade_short",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 5",
+    "pattern_or_inputs_output": "`.B/H.` → `arch.melee.blade_short`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.blade_long",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "pattern_or_inputs_output": "`B/B/H` → `arch.melee.blade_long`",
+    "ticks": "360",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.blade_great",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 25",
+    "pattern_or_inputs_output": "`.B/BB/H.` → `arch.melee.blade_great`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.axe",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 5",
+    "pattern_or_inputs_output": "`BH` → `arch.melee.axe`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.axe_great",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 25",
+    "pattern_or_inputs_output": "`BB/.H/.H` → `arch.melee.axe_great`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.mace",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 5",
+    "pattern_or_inputs_output": "`DH/.H` → `arch.melee.mace`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.warhammer",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 25",
+    "pattern_or_inputs_output": "`DD/DD/.H` → `arch.melee.warhammer`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.spear",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 5",
+    "pattern_or_inputs_output": "`..B/.H./H..` → `arch.melee.spear`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.halberd",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 25",
+    "pattern_or_inputs_output": "`.B/BH/.H` → `arch.melee.halberd`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.quarterstaff",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "smithing 0",
+    "pattern_or_inputs_output": "`HHH` → `arch.melee.quarterstaff`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.fist",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "pattern_or_inputs_output": "`S.D` → `arch.melee.fist`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.loom.whip",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "loom 1",
+    "skill": "smithing 10",
+    "pattern_or_inputs_output": "`S./.S/H.` → `arch.melee.whip`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.chain",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 25",
+    "pattern_or_inputs_output": "`DD./..S` → `arch.melee.chain`",
+    "ticks": "420",
+    "tier": "2",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.thrown",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "throwing 0",
+    "pattern_or_inputs_output": "`B/B` → 3 `arch.ranged.thrown`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.pick",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 0",
+    "pattern_or_inputs_output": "`DDD/.H./.H.` → `item.tool.pick`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.toolkit",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 0",
+    "pattern_or_inputs_output": "shapeless 1 F + 1 H → `item.tool.toolkit`",
+    "ticks": "180",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.lockpicks",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 0",
+    "pattern_or_inputs_output": "shapeless 1 M → 1 `item.tool.lockpicks`",
+    "ticks": "120",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.hacking_deck",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "pattern_or_inputs_output": "shapeless 1 F + 2 copper + 1 G → 1 `item.tool.hacking_deck`",
+    "ticks": "360",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.torch",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "`C/W` → 4 `item.tool.torch`",
+    "ticks": "30",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.wall_torch",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "shapeless 1 `item.tool.torch` → 1 `block.torch`",
+    "ticks": "10",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.bandage",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "medicine 0",
+    "pattern_or_inputs_output": "shapeless 1 T → 3 `item.tool.bandage`",
+    "ticks": "30",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.barricade_wood",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "`WWW/WWW` → 4 `block.barricade.wood`",
+    "ticks": "120",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.barricade_stone",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "`KK/KK` → 2 `block.barricade.stone`",
+    "ticks": "120",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.barricade_gate",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 10",
+    "pattern_or_inputs_output": "`WW/WW/WW` → 1 `block.barricade.gate`",
+    "ticks": "120",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.barricade_metal",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "fieldcraft 10",
+    "pattern_or_inputs_output": "`MMM/M.M/MMM` → 4 `block.barricade.metal`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.ladder_wood",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "`W.W/WWW/W.W` → 4 `block.ladder.wood`",
+    "ticks": "60",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.loom.ladder_rope",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "loom 1",
+    "skill": "fieldcraft 10",
+    "pattern_or_inputs_output": "`T.T/TTT/T.T` → 4 `block.ladder.rope`",
+    "ticks": "120",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.rope_ladder",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "shapeless 1 `item.tool.rope` → 1 `block.ladder.rope`",
+    "ticks": "30",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.ladder_metal",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "fieldcraft 10",
+    "pattern_or_inputs_output": "`M.M/MMM/M.M` → 4 `block.ladder.metal`",
+    "ticks": "120",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.bridge_plank",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "`WWW/W.W` → 4 `block.bridge.plank`",
+    "ticks": "90",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.bridge_metal",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "fieldcraft 10",
+    "pattern_or_inputs_output": "`MMM/M.M` → 4 `block.bridge.metal`",
+    "ticks": "180",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.campfire",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "`.C./WWW` → 1 `block.campfire`",
+    "ticks": "60",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.lantern",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 0",
+    "pattern_or_inputs_output": "`.M./MGM/.M.` → 1 `block.lantern`",
+    "ticks": "180",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.cover_sandbag",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "shapeless 2 Y + 1 T → 2 `block.cover.sandbag`",
+    "ticks": "120",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.cover_plate",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "fieldcraft 10",
+    "pattern_or_inputs_output": "`MM/MM` → 2 `block.cover.plate`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.trap_spikes",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "fieldcraft 10",
+    "pattern_or_inputs_output": "`BBB` → 2 `block.trap.spikes`",
+    "ticks": "180",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.hand.web_trap",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "hand",
+    "skill": "fieldcraft 0",
+    "pattern_or_inputs_output": "shapeless 3 E → 1 `block.web`",
+    "ticks": "60",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.shrine_lamp",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "inscription 10",
+    "pattern_or_inputs_output": "shapeless 1 G + 1 `arcane_reagent` + 1 M → 1 `block.shrine_lamp`",
+    "ticks": "300",
+    "tier": "2",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.loom.armor_cloth",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "loom 1",
+    "skill": "smithing 0",
+    "pattern_or_inputs_output": "shapeless T × (1/1/1/1/1) → `arch.armor.<slot>_cloth`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.loom.armor_light",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "loom 1",
+    "skill": "smithing 10",
+    "pattern_or_inputs_output": "shapeless non-fabric S × (1/5/1/3/2) → `arch.armor.<slot>_light`",
+    "ticks": "360",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.armor_medium",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 15",
+    "pattern_or_inputs_output": "shapeless P × (1/5/1/3/1) → `arch.armor.<slot>_medium`",
+    "ticks": "480",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.armor_heavy",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 2",
+    "skill": "smithing 30",
+    "pattern_or_inputs_output": "shapeless P × (2/8/1/4/2) → `arch.armor.<slot>_heavy`",
+    "ticks": "600",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.pistol",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 10",
+    "components_output": "F1 H1 → `arch.ranged.pistol`",
+    "ticks": "360",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.pistol_heavy",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "components_output": "F1 H1 → `arch.ranged.pistol_heavy`",
+    "ticks": "420",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.smg",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "components_output": "F2 H1 → `arch.ranged.smg`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.rifle_auto",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 30",
+    "components_output": "F2 H2 → `arch.ranged.rifle_auto`",
+    "ticks": "540",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.rifle_marksman",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 30",
+    "components_output": "F2 H2 → `arch.ranged.rifle_marksman`",
+    "ticks": "540",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.shotgun",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "components_output": "F2 H2 → `arch.ranged.shotgun`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.sniper",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 3",
+    "skill": "tinkering 50",
+    "components_output": "F3 H2 → `arch.ranged.sniper`",
+    "ticks": "720",
+    "tier": "3",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.launcher",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 3",
+    "skill": "tinkering 50",
+    "components_output": "F4 H1 → `arch.ranged.launcher`",
+    "ticks": "720",
+    "tier": "3",
+    "flags": "L"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.beam",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 3",
+    "skill": "tinkering 50",
+    "components_output": "F3 O1 → `arch.ranged.beam`",
+    "ticks": "720",
+    "tier": "3",
+    "flags": "L"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.charge_rifle",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "smithing 10",
+    "components_output": "L2 S1 → `arch.ranged.charge_rifle`",
+    "ticks": "360",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.crossbow",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "components_output": "L2 H4 → `arch.ranged.crossbow`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": "L r2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.staff",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "inscription 10",
+    "components_output": "H2 O1 → `arch.ranged.staff`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.focus",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "enchanting 1",
+    "skill": "inscription 10",
+    "components_output": "O1 → `arch.offhand.focus`",
+    "ticks": "240",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.loom.tome",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "loom 1",
+    "skill": "inscription 10",
+    "components_output": "S1 O1 → `arch.offhand.tome`",
+    "ticks": "300",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.lantern_held",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 0",
+    "components_output": "F1 + 1 glass → `arch.offhand.lantern`",
+    "ticks": "180",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.shield",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 10",
+    "components_output": "buckler P1 H1, heater P2 H1, tower P5 H1 → `arch.offhand.shield_*`",
+    "ticks": "360",
+    "tier": "1",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.ward",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "components_output": "aegis, kinetic, reflector F1 O1; bulwark F2 O1 → `arch.ward.*`",
+    "ticks": "480",
+    "tier": "2",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.modify",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 6.6 Catalog",
+   "fields": {
+    "station": "workbench or forge 1",
+    "skill": "item's governing skill (§8.1)",
+    "components_output": "install or remove parts on any compatible item",
+    "ticks": "60 per part",
+    "tier": "0",
+    "flags": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.part_gun",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "station": "workbench 1",
+    "skill": "tinkering 15",
+    "variants_and_inputs": "barrel short, long, heavy, rifled F1; barrel suppressor F1 + 1 S; feed (3) F1 + 1 M; optic iron F1; optic scope, reflex F1 + 1 G; stock (2) H1",
+    "ticks": "240",
+    "tier": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.part_melee",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 15",
+    "variants_and_inputs": "edge (3) B1; haft (2) H1; grip wrapped S1; grip guarded P1",
+    "ticks": "240",
+    "tier": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.forge.part_armor",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "station": "forge 1",
+    "skill": "smithing 15",
+    "variants_and_inputs": "plate reinforced P2; lining padded S1",
+    "ticks": "300",
+    "tier": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.part_arcane",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "station": "enchanting 1",
+    "skill": "inscription 20",
+    "variants_and_inputs": "focus crystal 1 G + 1 `arcane_reagent`; focus conduit O1 + 1 M; coil capacitor 1 copper + 1 G",
+    "ticks": "300",
+    "tier": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.bench.part_module",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "station": "workbench 2",
+    "skill": "tinkering 25",
+    "variants_and_inputs": "each module F1 + 1 material with `tech_affinity >= 6`",
+    "ticks": "300",
+    "tier": "2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.disassemble.salvage",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 8.3 Salvage and disassembly",
+   "fields": {
+    "station": "any station, or field",
+    "skill": "governing skill 0",
+    "rule": "doc 11 §16.4; per component the salvaged mass is `m = mul_bp(mul_bp(mass_g, 6000), 10000 + X)`, where `X` is the item's `affix.engineered` value after potency (doc 11 §6.1; 0 without the affix, so every crafted item has 0), and `units = round_half_even(m, unit_mass_g)`, raised to 1 when 0 and `m >= floor_div(unit_mass_g, 4)`; talent `scrap_savant` adds `floor_div(units, 3)`",
+    "ticks": "0 at a station, 60 in the field"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.disassemble.strip",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 8.3 Salvage and disassembly",
+   "fields": {
+    "station": "workbench or forge",
+    "skill": "0",
+    "rule": "removes every part intact",
+    "ticks": "60"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.disassemble.extract_graft",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 8.3 Salvage and disassembly",
+   "fields": {
+    "station": "workbench 3",
+    "skill": "Tinkering or Smithing 50",
+    "rule": "destroys a Rare-or-better item and yields 1 graft of its manufacturer",
+    "ticks": "600 (L r2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.roast",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "campfire",
+    "inputs_output": "1 flesh → 1 meal",
+    "ticks": "120",
+    "buff_while_active": "none",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.hearty_stew",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "campfire",
+    "inputs_output": "2 flesh + 1 plant `ing.` + 250 ml `liq.water` → 2 meals",
+    "ticks": "300",
+    "buff_while_active": "`RowPost(5, 11500)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.spiced_skewers",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "campfire",
+    "inputs_output": "1 flesh + 1 `ing.firebloom` → 1 meal",
+    "ticks": "180",
+    "buff_while_active": "`dmg.frost` resist +1000; `DmgAdd(melee, 300)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.strong_coffee",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "campfire",
+    "inputs_output": "2 `ing.coffee_bean` + 250 ml water → 2 meals",
+    "ticks": "120",
+    "buff_while_active": "`RowPost(17, 11000)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.mint_tea",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "campfire",
+    "inputs_output": "2 `ing.mint_leaf` + 250 ml water → 2 meals",
+    "ticks": "120",
+    "buff_while_active": "composure +15 on eating; `RowPost(6, 8500)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.mushroom_soup",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "kitchen 1",
+    "inputs_output": "2 `ing.glowshroom` + 250 ml water → 1 meal",
+    "ticks": "240",
+    "buff_while_active": "`RowFlat(31, 2)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.herb_bread",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "kitchen 1",
+    "inputs_output": "2 `ing.sungrass` + 1 `ing.earthroot` → 2 meals",
+    "ticks": "360",
+    "buff_while_active": "`RowPost(2, 12000)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.smoked_rations",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "kitchen 1",
+    "inputs_output": "3 flesh + 1 coal → 2 `item.food.ration`",
+    "ticks": "600",
+    "buff_while_active": "none; never rots",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.ginseng_broth",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "kitchen 2",
+    "inputs_output": "1 `ing.ginseng` + 1 flesh + 250 ml water → 1 meal",
+    "ticks": "300",
+    "buff_while_active": "`RowFlat(4, 10)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.troll_pie",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "kitchen 2",
+    "inputs_output": "1 `ing.troll_fat` + 2 flesh → 2 meals",
+    "ticks": "480",
+    "buff_while_active": "`RowFlat(18, 8)`",
+    "pool": "base"
+   },
+   "also_in": []
+  },
+  {
+   "id": "recipe.cook.wanderers_feast",
+   "kind": "recipe",
+   "owner": "07",
+   "section": "07 12.2 Recipes and buffs",
+   "fields": {
+    "station": "kitchen 3",
+    "inputs_output": "2 flesh + 1 `ing.starflower` + 1 `ing.ginseng` + 250 ml water → 4 meals",
+    "ticks": "600",
+    "buff_while_active": "`RowPost(5, 11500)` and `RowFlat(13, 300)`",
+    "pool": "r2, L"
+   },
+   "also_in": []
+  }
+ ]
+}

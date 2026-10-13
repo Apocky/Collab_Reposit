@@ -1,0 +1,148 @@
+{
+ "schema": "09.table_row",
+ "records": [
+  {
+   "id": "disguise.tier.full",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.1 Outfits and masks",
+   "fields": {
+    "requirement": "outfit of F and a mask",
+    "suspicion_factor": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.tier.partial",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.1 Outfits and masks",
+   "fields": {
+    "requirement": "outfit of F, no mask",
+    "suspicion_factor": "20000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.tier.none",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.1 Outfits and masks",
+   "fields": {
+    "requirement": "anything else",
+    "suspicion_factor": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.weapon_raised",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "attack windup, ADS, heavy charge or aim",
+    "amount": "+4000 per check"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.trespass",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "inside a doc 12 room tagged `room.restricted` of F",
+    "amount": "+1500 per check"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.climb",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "climbing, mantling or reeling on a grappling line",
+    "amount": "+1500 per check"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.sprint",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "gait sprint, a sprint-slide included",
+    "amount": "+1000 per check"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.company",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "an undisguised Erratum within 3000 mm is also visible",
+    "amount": "+1000 per check"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.crouch",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "crouched and moving",
+    "amount": "+500 per check"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.body",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "carrying a body",
+    "amount": "+5000 per check"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.crime",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "lockpicking, hacking, a failed pickpocket, a takedown or snuffing a light",
+    "amount": "+6000 once"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.attack",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "any attack that hits anything",
+    "amount": "`S = 10000`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "disguise.trigger.strip",
+   "kind": "disguise",
+   "owner": "09",
+   "section": "09 11.3 Triggers",
+   "fields": {
+    "condition": "changing outfit or mask",
+    "amount": "`S = 10000`"
+   },
+   "also_in": []
+  }
+ ]
+}

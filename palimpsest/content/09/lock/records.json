@@ -1,0 +1,115 @@
+{
+ "schema": "09.table_row",
+ "records": [
+  {
+   "id": "lock.t1",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "dc_doc_04_ladder": "25 Easy",
+    "lock_hp": "20",
+    "pick_ticks": "60",
+    "hack_ticks": "80",
+    "placed_at_depth": "1–5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lock.t2",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "dc_doc_04_ladder": "40 Standard",
+    "lock_hp": "24",
+    "pick_ticks": "75",
+    "hack_ticks": "100",
+    "placed_at_depth": "6–10"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lock.t3",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "dc_doc_04_ladder": "55 Hard",
+    "lock_hp": "28",
+    "pick_ticks": "90",
+    "hack_ticks": "120",
+    "placed_at_depth": "11–15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lock.t4",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "dc_doc_04_ladder": "70 Severe",
+    "lock_hp": "32",
+    "pick_ticks": "105",
+    "hack_ticks": "140",
+    "placed_at_depth": "16–20"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lock.t5",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "dc_doc_04_ladder": "85 Heroic",
+    "lock_hp": "36",
+    "pick_ticks": "120",
+    "hack_ticks": "160",
+    "placed_at_depth": "21–25"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lock.t6",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "dc_doc_04_ladder": "100 Legendary",
+    "lock_hp": "40",
+    "pick_ticks": "135",
+    "hack_ticks": "180",
+    "placed_at_depth": "26+"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lock.kind.door",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "placement_owner": "door of a `Locked(k)` or `Locked(k1, k2)` edge, including the heist Treasury door (doc 12 §8.1, §9.2)",
+    "skin": "TEC rule",
+    "key_tags": "the edge's key items: `[k, 0]` or `[k1, k2]`"
+   },
+   "also_in": [
+    "09 13.1 Locks"
+   ]
+  },
+  {
+   "id": "lock.kind.container",
+   "kind": "lock",
+   "owner": "09",
+   "section": "09 13.1 Locks",
+   "fields": {
+    "placement_owner": "every chest of kind `loot.chest.locked` (doc 11 §9.6)",
+    "skin": "TEC rule",
+    "key_tags": "`[0, 0]` unless doc 11 binds a key"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,138 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "rar.common",
+   "kind": "rar",
+   "owner": "00",
+   "section": "00 13.3 Rarity",
+   "fields": {
+    "name": "Common",
+    "color": "`#E6E6E6`",
+    "affixes": "0",
+    "special": "none",
+    "base_weight": "7000",
+    "power_bp": "10000",
+    "value_multiplier": "×1"
+   },
+   "also_in": [
+    "11 3.8 Rarities",
+    "15 5.3 Rarity table and bad-luck counters"
+   ]
+  },
+  {
+   "id": "rar.uncommon",
+   "kind": "rar",
+   "owner": "00",
+   "section": "00 13.3 Rarity",
+   "fields": {
+    "name": "Uncommon",
+    "color": "`#3CC45A`",
+    "affixes": "1",
+    "special": "none",
+    "base_weight": "2200",
+    "power_bp": "10500",
+    "value_multiplier": "×2"
+   },
+   "also_in": [
+    "11 3.8 Rarities",
+    "15 5.3 Rarity table and bad-luck counters"
+   ]
+  },
+  {
+   "id": "rar.rare",
+   "kind": "rar",
+   "owner": "00",
+   "section": "00 13.3 Rarity",
+   "fields": {
+    "name": "Rare",
+    "color": "`#3D8BFF`",
+    "affixes": "2",
+    "special": "none",
+    "base_weight": "600",
+    "power_bp": "11000",
+    "value_multiplier": "×4"
+   },
+   "also_in": [
+    "11 3.8 Rarities",
+    "15 5.3 Rarity table and bad-luck counters"
+   ]
+  },
+  {
+   "id": "rar.epic",
+   "kind": "rar",
+   "owner": "00",
+   "section": "00 13.3 Rarity",
+   "fields": {
+    "name": "Epic",
+    "color": "`#A64DFF`",
+    "affixes": "3",
+    "special": "none",
+    "base_weight": "150",
+    "power_bp": "11500",
+    "value_multiplier": "×8"
+   },
+   "also_in": [
+    "11 3.8 Rarities",
+    "15 5.3 Rarity table and bad-luck counters"
+   ]
+  },
+  {
+   "id": "rar.legendary",
+   "kind": "rar",
+   "owner": "00",
+   "section": "00 13.3 Rarity",
+   "fields": {
+    "name": "Legendary",
+    "color": "`#FF9A1F`",
+    "affixes": "3",
+    "special": "one legendary perk",
+    "base_weight": "45",
+    "power_bp": "12500",
+    "value_multiplier": "×16"
+   },
+   "also_in": [
+    "11 3.8 Rarities",
+    "15 5.3 Rarity table and bad-luck counters"
+   ]
+  },
+  {
+   "id": "rar.exotic",
+   "kind": "rar",
+   "owner": "00",
+   "section": "00 13.3 Rarity",
+   "fields": {
+    "name": "Exotic",
+    "color": "`#FFD84A`",
+    "affixes": "2",
+    "special": "one fixed named intrinsic; at most one Exotic among `slot.weapon_1..3`, `slot.offhand` and `slot.hand_extra_1..2`, at most one among the five armor slots, and at most one among every other slot; Palimpsestic items are exempt",
+    "base_weight": "15",
+    "power_bp": "12500",
+    "value_multiplier": "×32"
+   },
+   "also_in": [
+    "11 3.8 Rarities",
+    "15 5.3 Rarity table and bad-luck counters"
+   ]
+  },
+  {
+   "id": "rar.palimpsestic",
+   "kind": "rar",
+   "owner": "00",
+   "section": "00 13.3 Rarity",
+   "fields": {
+    "name": "Palimpsestic",
+    "color": "animated prismatic gradient",
+    "affixes": "4",
+    "special": "immune to Contradiction; re-skins itself to the local genre; effective ilvl `max(ilvl, current Folio index)`, re-evaluated on `ev.folio_entered`",
+    "base_weight": "0",
+    "power_bp": "13000",
+    "value_multiplier": "×64"
+   },
+   "also_in": [
+    "11 3.8 Rarities",
+    "15 5.3 Rarity table and bad-luck counters"
+   ]
+  }
+ ]
+}

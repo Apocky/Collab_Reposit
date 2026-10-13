@@ -1,0 +1,304 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "summon.familiar",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "none",
+    "body": "avian",
+    "hp_mhp": "30000",
+    "ar": "0",
+    "attack_mhp_type_interval_ticks_reach_mm": "4000, arcane, 60, 8000 ranged",
+    "move_mm_s": "6000, flies",
+    "profile": "support",
+    "special": "the pet: one per Erratum, no duration; every 120 ticks applies `st.marked` (480 ticks) to each hostile it sees within 12000 mm; emits light 8"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.elemental",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "flame, frost, storm, acid, thunder, arcane",
+    "body": "amorphous",
+    "hp_mhp": "60000",
+    "ar": "0",
+    "attack_mhp_type_interval_ticks_reach_mm": "8000, that essence's type, 45, 8000 ranged; status power 30",
+    "move_mm_s": "4000",
+    "profile": "artillery",
+    "special": "immune to its own type"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.servitor",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "shadow",
+    "body": "humanoid",
+    "hp_mhp": "70000",
+    "ar": "10",
+    "attack_mhp_type_interval_ticks_reach_mm": "10000, slash, 60, 2000",
+    "move_mm_s": "4300",
+    "profile": "guardian",
+    "special": "tagged undead; immune to `st.poisoned` and `st.diseased`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.swarm",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "venom",
+    "body": "swarm",
+    "hp_mhp": "40000",
+    "ar": "0",
+    "attack_mhp_type_interval_ticks_reach_mm": "3000, toxin, 15, 1000; status power 20",
+    "move_mm_s": "5000, flies",
+    "profile": "skirmisher",
+    "special": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.wisp",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "radiance, mend",
+    "body": "amorphous",
+    "hp_mhp": "35000",
+    "ar": "0",
+    "attack_mhp_type_interval_ticks_reach_mm": "none",
+    "move_mm_s": "6000, flies",
+    "profile": "healer",
+    "special": "every 120 ticks heals the lowest HP-ratio ally within 10000 mm by `mul_bp(400, pot)` Bp of Max HP; emits light 12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.golem",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "shape",
+    "body": "construct",
+    "hp_mhp": "140000",
+    "ar": "20",
+    "attack_mhp_type_interval_ticks_reach_mm": "14000, blunt, 90, 2000",
+    "move_mm_s": "3000",
+    "profile": "guardian",
+    "special": "every 300 ticks applies `st.taunted` direct to hostiles within 5000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.hound",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "edge, force",
+    "body": "quadruped",
+    "hp_mhp": "60000",
+    "ar": "5",
+    "attack_mhp_type_interval_ticks_reach_mm": "9000, slash (edge) or blunt (force), 45, 2000",
+    "move_mm_s": "7000",
+    "profile": "skirmisher",
+    "special": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.phantasm",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "mind",
+    "body": "humanoid",
+    "hp_mhp": "40000",
+    "ar": "0",
+    "attack_mhp_type_interval_ticks_reach_mm": "none",
+    "move_mm_s": "4300",
+    "profile": "decoy",
+    "special": "2 spawn per cast with Illusion 100, each counting toward the cap; on spawn `st.taunted` direct to hostiles within 6000 mm; on death `st.confused` power 60 (carrier psychic) within 3000 mm and 100 dB noise"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.sentinel",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "ward",
+    "body": "construct",
+    "hp_mhp": "80000",
+    "ar": "30",
+    "attack_mhp_type_interval_ticks_reach_mm": "none",
+    "move_mm_s": "6500, flies",
+    "profile": "bodyguard",
+    "special": "a hostile projectile whose path passes within 1500 mm of it hits it instead"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.herald",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "prayer only (§16.3)",
+    "body": "humanoid",
+    "hp_mhp": "150000",
+    "ar": "30",
+    "attack_mhp_type_interval_ticks_reach_mm": "16000, radiant, 60, 2500",
+    "move_mm_s": "6000, flies",
+    "profile": "guardian",
+    "special": "friendly: 3600 ticks; hostile: an NPC of `rank.elite` in `fac.wild.<local genre suffix>` (doc 13 §5.5)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.misprint",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.2 Summon templates",
+   "fields": {
+    "secondary_essence": "surge only (§11.3)",
+    "body": "amorphous",
+    "hp_mhp": "50000",
+    "ar": "0",
+    "attack_mhp_type_interval_ticks_reach_mm": "10000, arcane, 60, 2000",
+    "move_mm_s": "5000",
+    "profile": "hostile (doc 13 hunter behavior)",
+    "special": "`fac.editors`, `rank.standard`; erases Errata-placed blocks like an Editor (Canon §11.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.poly.toad",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.3 Polymorph templates (`st.polymorphed`)",
+   "fields": {
+    "registers": "fairy_tale, wuxia",
+    "body": "quadruped",
+    "capsule_r_h_mm": "200 / 400",
+    "move_mm_s": "2400",
+    "jump_mm": "1500",
+    "attack_reach_mm_bp_of_reference_interval_ticks": "1500, 1000, 60",
+    "special": "swims at 3000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.poly.sheep",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.3 Polymorph templates (`st.polymorphed`)",
+   "fields": {
+    "registers": "mythic_fantasy, mythic_antiquity",
+    "body": "quadruped",
+    "capsule_r_h_mm": "350 / 1000",
+    "move_mm_s": "3000",
+    "jump_mm": "600",
+    "attack_reach_mm_bp_of_reference_interval_ticks": "none",
+    "special": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.poly.rat",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.3 Polymorph templates (`st.polymorphed`)",
+   "fields": {
+    "registers": "gothic_horror, post_apocalypse, hardboiled_noir",
+    "body": "quadruped",
+    "capsule_r_h_mm": "150 / 300",
+    "move_mm_s": "5000",
+    "jump_mm": "500",
+    "attack_reach_mm_bp_of_reference_interval_ticks": "600, 1500, 30",
+    "special": "passes 1-block gaps"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.poly.crow",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.3 Polymorph templates (`st.polymorphed`)",
+   "fields": {
+    "registers": "weird_west, oneiric",
+    "body": "avian",
+    "capsule_r_h_mm": "200 / 400",
+    "move_mm_s": "4000",
+    "jump_mm": "600",
+    "attack_reach_mm_bp_of_reference_interval_ticks": "800, 1000, 45",
+    "special": "gravity × 2000 while falling"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.poly.ooze",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.3 Polymorph templates (`st.polymorphed`)",
+   "fields": {
+    "registers": "cosmic_horror, space_opera",
+    "body": "amorphous",
+    "capsule_r_h_mm": "450 / 600",
+    "move_mm_s": "1500",
+    "jump_mm": "0",
+    "attack_reach_mm_bp_of_reference_interval_ticks": "1000, 2500, 60",
+    "special": "immune to `st.bleeding`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.poly.paper",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.3 Polymorph templates (`st.polymorphed`)",
+   "fields": {
+    "registers": "cyberpunk, steampunk, redacted, ur_text",
+    "body": "humanoid",
+    "capsule_r_h_mm": "300 / 1800",
+    "move_mm_s": "4300",
+    "jump_mm": "1100",
+    "attack_reach_mm_bp_of_reference_interval_ticks": "none",
+    "special": "`resist[dmg.fire] = −10000`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "summon.poly.beast",
+   "kind": "summon",
+   "owner": "06",
+   "section": "06 12.3 Polymorph templates (`st.polymorphed`)",
+   "fields": {
+    "registers": "`afflict.beast` only",
+    "body": "quadruped",
+    "capsule_r_h_mm": "400 / 1200",
+    "move_mm_s": "7500",
+    "jump_mm": "1700",
+    "attack_reach_mm_bp_of_reference_interval_ticks": "2200, Errata `B = mul_bp(mul_bp(20000, P(d_current)), 15000)`, 40",
+    "special": "Canon §16.4: applied only by `afflict.beast` (doc 04 §10.2) for 1800 ticks, unscaled; the damage-taken break below does not apply: the form ends at expiry, when the bearer is downed, or on a cure, and it is not dispellable (§14.1); no items, no casting"
+   },
+   "also_in": []
+  }
+ ]
+}

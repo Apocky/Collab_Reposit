@@ -1,0 +1,949 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "skill.blade",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Blade",
+    "governing_sub_attribute": "PRC",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.hafted",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Hafted",
+    "governing_sub_attribute": "PWR",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.polearm",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Polearm",
+    "governing_sub_attribute": "GRP",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.unarmed",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Unarmed",
+    "governing_sub_attribute": "PWR",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.shield",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Shield",
+    "governing_sub_attribute": "BRN",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.marksmanship",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Marksmanship",
+    "governing_sub_attribute": "PRC",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.heavy_arms",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Heavy Arms",
+    "governing_sub_attribute": "GRP",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.throwing",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Throwing",
+    "governing_sub_attribute": "SLT",
+    "group": "combat"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.armor",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Armor",
+    "governing_sub_attribute": "TGH",
+    "group": "defense"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.acrobatics",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Acrobatics",
+    "governing_sub_attribute": "AGI",
+    "group": "mobility"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.athletics",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Athletics",
+    "governing_sub_attribute": "END",
+    "group": "mobility"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.evocation",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Evocation",
+    "governing_sub_attribute": "ATN",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.abjuration",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Abjuration",
+    "governing_sub_attribute": "RSV",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.alteration",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Alteration",
+    "governing_sub_attribute": "FOC",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.conjuration",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Conjuration",
+    "governing_sub_attribute": "MEM",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.illusion",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Illusion",
+    "governing_sub_attribute": "GUI",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.restoration",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Restoration",
+    "governing_sub_attribute": "RES",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.divination",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Divination",
+    "governing_sub_attribute": "ITU",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.spellcraft",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Spellcraft",
+    "governing_sub_attribute": "LOG",
+    "group": "magic"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.devotion",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Devotion",
+    "governing_sub_attribute": "PRV",
+    "group": "faith"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.sneak",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Sneak",
+    "governing_sub_attribute": "AGI",
+    "group": "stealth"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.security",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Security",
+    "governing_sub_attribute": "SLT",
+    "group": "stealth"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.pickpocket",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Pickpocket",
+    "governing_sub_attribute": "GUI",
+    "group": "stealth"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.smithing",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Smithing",
+    "governing_sub_attribute": "BRN",
+    "group": "craft"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.tinkering",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Tinkering",
+    "governing_sub_attribute": "LOG",
+    "group": "craft"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.alchemy",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Alchemy",
+    "governing_sub_attribute": "ANL",
+    "group": "craft"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.inscription",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Inscription",
+    "governing_sub_attribute": "MEM",
+    "group": "craft"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.appraisal",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Appraisal",
+    "governing_sub_attribute": "ITU",
+    "group": "knowledge"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.medicine",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Medicine",
+    "governing_sub_attribute": "ANL",
+    "group": "knowledge"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.survival",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Survival",
+    "governing_sub_attribute": "SGT",
+    "group": "knowledge"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.speech",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Speech",
+    "governing_sub_attribute": "CHM",
+    "group": "social"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.leadership",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Leadership",
+    "governing_sub_attribute": "MEN",
+    "group": "social"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.hacking",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Hacking",
+    "governing_sub_attribute": "LOG",
+    "group": "stealth"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.fieldcraft",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Fieldcraft",
+    "governing_sub_attribute": "END",
+    "group": "craft"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.awareness",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Awareness",
+    "governing_sub_attribute": "HRG",
+    "group": "stealth"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.handling",
+   "kind": "skill",
+   "owner": "04",
+   "section": "00 7. Skills",
+   "fields": {
+    "name": "Handling",
+    "governing_sub_attribute": "CHM",
+    "group": "social"
+   },
+   "also_in": [
+    "04 15.2 Skills and mastery perks"
+   ]
+  },
+  {
+   "id": "skill.evocation.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "damage-essence status power × 12000",
+    "hook": "§6.4 status power, after `spell_pot`, for damage essences of evocation-school stages"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.evocation.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "charge factor caps at 17500, reached at `c = 90`",
+    "hook": "§3.3: `c` runs `0..=90` past `ct`, `charge_bp(c) = 10000 + floor_div(7500 × c, 90)`, auto-release at `held = ct + 150`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.evocation.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "chain +1 jump",
+    "hook": "§5.2 chain: up to 4 jumps"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.evocation.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "orb, nova and rune radius × 12500",
+    "hook": "§6.4 radius, after widen and `perk.wide_conduit`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.abjuration.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "ward magnitude × 12000",
+    "hook": "§6.4 `ward_bp` chain"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.abjuration.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "dispel count +1",
+    "hook": "§14.1 `n`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.abjuration.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "counterspell silence 180 ticks instead of 60",
+    "hook": "§14.3 base duration"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.abjuration.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "a ward cast also applies `st.fortified` for 300 ticks",
+    "hook": "every recipient of this caster's ward essence also gets `st.fortified` by direct application, base 300 ticks (unscaled, Canon §11.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.alteration.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "helpful direct durations × 12500",
+    "hook": "§6.4 helpful direct duration"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.alteration.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "shape power +2",
+    "hook": "§13.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.alteration.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "polymorph break threshold 4000 Bp instead of 2000",
+    "hook": "§12.3, for polymorphs this caster applies"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.alteration.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "swiftness and levitate cost × 5000",
+    "hook": "§6.1 `core`: those essences' `cost` × 5000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.conjuration.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "summon duration × 15000",
+    "hook": "§12.1 duration"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.conjuration.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "summon Max HP × 12500",
+    "hook": "§12.1 Max HP, a `[T]` factor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.conjuration.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "summons resist every type +1500 Bp, within their caps",
+    "hook": "§12.1 resistances, NPC cap 9000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.conjuration.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "summon attacks carry status power × 20000",
+    "hook": "§12.1 summon status power, after `pot`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.illusion.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "veil duration × 15000",
+    "hook": "§6.4 helpful direct duration of the `st.invisible` a veil essence applies"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.illusion.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "control status power × 12500",
+    "hook": "§6.4 status power, after `spell_pot`, for control-kind essences (§5.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.illusion.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "targets you charm deal damage × 12000",
+    "hook": "+2000 Bp in Canon §10.5 step 1 for hits by an entity this caster charmed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.illusion.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "phantasm spawns 2 copies",
+    "hook": "§12.2: a phantasm cast spawns 2 `summon.phantasm`, each counting toward the minion cap"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.restoration.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "heal magnitude × 11000, before row 3",
+    "hook": "§6.4 heal chain"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.restoration.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "mend also ends one DoT status (lowest status ID)",
+    "hook": "each mend resolution removes the target's DoT-category status with the lowest ID (`ev.status_expired` reason 1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.restoration.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "healing beyond Max HP becomes `st.shielded` up to 1000 Bp of Max HP",
+    "hook": "a mend's amount above Max HP is added to the target's `st.shielded` pool, at most 1000 Bp of Max HP from this source, expiry 600 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.restoration.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "a mend that reaches a downed ally completes its revival at once (doc 16 §9.4), once per ally per Folio",
+    "hook": "a mend resolution on a `st.downed` ally completes doc 16's revival with its `revive_hp_bp`, then the heal applies"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.divination.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "sight radius × 15000",
+    "hook": "the area radius of sight-essence stages and the 6000 mm self-sight radius (§13.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.divination.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "keen costs 0; awareness icons through walls (doc 09 §8.3)",
+    "hook": "§6.1: `glyph.mod.keen` has `cost_add_bp` 0 for this caster"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.divination.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "condition glyphs cost 0 complexity",
+    "hook": "§4.4: `condition.cx = 0` for this caster"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.divination.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "see `st.invisible` entities within 12000 mm",
+    "hook": "doc 09 sight ignores `st.invisible` within 12000 mm for this Erratum"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.spellcraft.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "modifier cost addends × 8000",
+    "hook": "§6.1: each positive `cost_add_bp` × 8000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.spellcraft.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "depth surcharge −1",
+    "hook": "§4.4 `spellcraft_hook = 1`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.spellcraft.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "trigger `max_fires` +1",
+    "hook": "§5.5, with `fires_bp` unchanged"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.spellcraft.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "a stage holds 4 modifiers",
+    "hook": "§4.2 BNF and §4.3 check 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.devotion.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "petition favor cost × 8000",
+    "hook": "§16.4, before Devotion scaling"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.devotion.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "a supplication answered pleased resolves 2 needs",
+    "hook": "§16.3: the first two needs that apply"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.devotion.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "prayers to non-local patrons apply × 12500",
+    "hook": "§16.3 boon and wrath durations and §16.4 magnitudes, in place of the local patron's 15000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.devotion.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "the first supplication each Folio ignores the prayer timer",
+    "hook": "that supplication takes the `timer == 0` branch of §16.3; its timer increment still applies"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.inscription.m25",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "+1 enchantment capacity point per item",
+    "hook": "items this Erratum enchants (§9.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.inscription.m50",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "text inscription aether × 7500",
+    "hook": "§8.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.inscription.m75",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "4 enchantments per item",
+    "hook": "items this Erratum enchants (§9.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "skill.inscription.m100",
+   "kind": "skill",
+   "owner": "04",
+   "section": "06 7.3 Mastery hooks for doc 04 perks",
+   "fields": {
+    "effect": "on-use enchantments +1 use per Folio",
+    "hook": "on-use enchantments of items this Erratum has equipped (§9.4)"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,1804 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "glyph.form.bolt",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "24",
+    "cost_m_aether": "1000",
+    "cx": "1",
+    "tier": "1",
+    "school": "evocation",
+    "magnitude_bp": "10000",
+    "range_mm": "40000",
+    "speed_mm_s": "30000",
+    "radius_mm": "0",
+    "duration_ticks": "0",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "0",
+    "cast_noise_db": "55"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.orb",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "36",
+    "cost_m_aether": "2000",
+    "cx": "2",
+    "tier": "1",
+    "school": "evocation",
+    "magnitude_bp": "8000",
+    "range_mm": "30000",
+    "speed_mm_s": "15000",
+    "radius_mm": "2000",
+    "duration_ticks": "0",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "0",
+    "cast_noise_db": "60"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.beam",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "channel",
+    "cast_ticks": "12",
+    "cost_m_aether": "2000",
+    "cx": "2",
+    "tier": "2",
+    "school": "evocation",
+    "magnitude_bp": "3000",
+    "range_mm": "12000",
+    "speed_mm_s": "0",
+    "radius_mm": "0",
+    "duration_ticks": "300",
+    "pulse_ticks": "15",
+    "cooldown_ticks": "0",
+    "cast_noise_db": "50"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.cone",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "12",
+    "cost_m_aether": "1500",
+    "cx": "1",
+    "tier": "1",
+    "school": "evocation",
+    "magnitude_bp": "7000",
+    "range_mm": "6000",
+    "speed_mm_s": "0",
+    "radius_mm": "0",
+    "duration_ticks": "0",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "60",
+    "cast_noise_db": "60"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.touch",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "instant",
+    "cast_ticks": "0",
+    "cost_m_aether": "0",
+    "cx": "1",
+    "tier": "1",
+    "school": "alteration",
+    "magnitude_bp": "13000",
+    "range_mm": "2500",
+    "speed_mm_s": "0",
+    "radius_mm": "0",
+    "duration_ticks": "0",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "0",
+    "cast_noise_db": "40"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.self",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "instant",
+    "cast_ticks": "0",
+    "cost_m_aether": "0",
+    "cx": "0",
+    "tier": "1",
+    "school": "alteration",
+    "magnitude_bp": "10000",
+    "range_mm": "0",
+    "speed_mm_s": "0",
+    "radius_mm": "0",
+    "duration_ticks": "0",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "0",
+    "cast_noise_db": "40"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.aura",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "30",
+    "cost_m_aether": "3000",
+    "cx": "2",
+    "tier": "2",
+    "school": "abjuration",
+    "magnitude_bp": "600",
+    "range_mm": "0",
+    "speed_mm_s": "0",
+    "radius_mm": "4000",
+    "duration_ticks": "600",
+    "pulse_ticks": "30",
+    "cooldown_ticks": "900",
+    "cast_noise_db": "50"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.field",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "30",
+    "cost_m_aether": "2500",
+    "cx": "2",
+    "tier": "2",
+    "school": "alteration",
+    "magnitude_bp": "800",
+    "range_mm": "25000",
+    "speed_mm_s": "0",
+    "radius_mm": "3000",
+    "duration_ticks": "480",
+    "pulse_ticks": "30",
+    "cooldown_ticks": "300",
+    "cast_noise_db": "55"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.wall",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "30",
+    "cost_m_aether": "2000",
+    "cx": "2",
+    "tier": "2",
+    "school": "alteration",
+    "magnitude_bp": "800",
+    "range_mm": "20000",
+    "speed_mm_s": "0",
+    "radius_mm": "0",
+    "duration_ticks": "600",
+    "pulse_ticks": "30",
+    "cooldown_ticks": "300",
+    "cast_noise_db": "55"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.rune",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "48",
+    "cost_m_aether": "1500",
+    "cx": "2",
+    "tier": "2",
+    "school": "abjuration",
+    "magnitude_bp": "12000",
+    "range_mm": "4000",
+    "speed_mm_s": "0",
+    "radius_mm": "2500",
+    "duration_ticks": "3600",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "0",
+    "cast_noise_db": "30"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.nova",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "24",
+    "cost_m_aether": "3000",
+    "cx": "2",
+    "tier": "2",
+    "school": "evocation",
+    "magnitude_bp": "7000",
+    "range_mm": "0",
+    "speed_mm_s": "0",
+    "radius_mm": "5000",
+    "duration_ticks": "0",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "180",
+    "cast_noise_db": "75"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.chain",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "30",
+    "cost_m_aether": "2500",
+    "cx": "2",
+    "tier": "3",
+    "school": "evocation",
+    "magnitude_bp": "8000",
+    "range_mm": "25000",
+    "speed_mm_s": "0",
+    "radius_mm": "6000",
+    "duration_ticks": "0",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "0",
+    "cast_noise_db": "60"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.form.manifest",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.2 Forms",
+   "fields": {
+    "cast_type": "cast_time",
+    "cast_ticks": "60",
+    "cost_m_aether": "3000",
+    "cx": "2",
+    "tier": "1",
+    "school": "conjuration",
+    "magnitude_bp": "10000",
+    "range_mm": "15000",
+    "speed_mm_s": "0",
+    "radius_mm": "0",
+    "duration_ticks": "3600",
+    "pulse_ticks": "0",
+    "cooldown_ticks": "600",
+    "cast_noise_db": "50"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.flame",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "evocation",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.fire` base 24000 mHP; `st.burning` power 40"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.frost",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "evocation",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.frost` base 20000 mHP; `st.frozen` power 35"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.storm",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "evocation",
+    "tier": "1",
+    "cost_m_aether": "4500",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.shock` base 22000 mHP; `st.shocked` power 35"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.acid",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "alteration",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.acid` base 20000 mHP; `st.corroded` power 45"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.force",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "alteration",
+    "tier": "1",
+    "cost_m_aether": "3500",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.blunt` base 22000 mHP; `st.stunned` power 25"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.edge",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "conjuration",
+    "tier": "1",
+    "cost_m_aether": "3500",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.slash` base 22000 mHP; `st.bleeding` power 35"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.radiance",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "restoration",
+    "tier": "2",
+    "cost_m_aether": "5000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.radiant` base 22000 mHP; `st.blinded` power 35"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.shadow",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "conjuration",
+    "tier": "2",
+    "cost_m_aether": "5000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.umbral` base 22000 mHP; `st.withering` power 40"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.mind",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "illusion",
+    "tier": "2",
+    "cost_m_aether": "5000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.psychic` base 20000 mHP; `st.dread` power 45"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.arcane",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "evocation",
+    "tier": "1",
+    "cost_m_aether": "4500",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.arcane` base 21000 mHP; `st.unraveled` power 35"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.venom",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "alteration",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.toxin` base 18000 mHP; `st.poisoned` power 50"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.thunder",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "damage",
+    "polarity": "harm",
+    "school": "evocation",
+    "tier": "2",
+    "cost_m_aether": "4500",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`dmg.sonic` base 20000 mHP; `st.deafened` power 40"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.mend",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "heal",
+    "polarity": "help",
+    "school": "restoration",
+    "tier": "1",
+    "cost_m_aether": "5000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "heal 2000 Bp of recipient Max HP"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.ward",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "heal",
+    "polarity": "help",
+    "school": "abjuration",
+    "tier": "1",
+    "cost_m_aether": "5000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`st.shielded` pool 2500 Bp of recipient Max HP, 600 ticks"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.swiftness",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "buff",
+    "polarity": "help",
+    "school": "alteration",
+    "tier": "2",
+    "cost_m_aether": "5000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "direct `st.hasted`, base 480 ticks"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.levitate",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "buff",
+    "polarity": "help",
+    "school": "alteration",
+    "tier": "2",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "direct `st.levitating`, base 600 ticks"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.veil",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "buff",
+    "polarity": "help",
+    "school": "illusion",
+    "tier": "2",
+    "cost_m_aether": "6000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "600",
+    "payload": "direct `st.invisible`, base 600 ticks"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.bind",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "control",
+    "polarity": "harm",
+    "school": "alteration",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "direct `st.rooted` (single-target forms) or `st.slowed` (area forms)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.dread",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "control",
+    "polarity": "harm",
+    "school": "illusion",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`st.feared` power 60, carrier `dmg.psychic`"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.dominion",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "control",
+    "polarity": "harm",
+    "school": "illusion",
+    "tier": "3",
+    "cost_m_aether": "7000",
+    "cx": "2",
+    "cast_add_ticks": "12",
+    "cooldown_add_ticks": "300",
+    "payload": "`st.charmed` power 40, carrier `dmg.psychic`"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.slumber",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "control",
+    "polarity": "harm",
+    "school": "illusion",
+    "tier": "2",
+    "cost_m_aether": "5000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`st.sleeping` power 50, carrier `dmg.psychic`"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.hush",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "control",
+    "polarity": "harm",
+    "school": "abjuration",
+    "tier": "2",
+    "cost_m_aether": "5000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "`st.silenced` power 50, carrier `dmg.arcane`"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.polymorph",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "poly",
+    "polarity": "harm",
+    "school": "alteration",
+    "tier": "3",
+    "cost_m_aether": "9000",
+    "cx": "3",
+    "cast_add_ticks": "30",
+    "cooldown_add_ticks": "900",
+    "payload": "direct `st.polymorphed`, template by register (§12.3)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.unmaking",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "dispel",
+    "polarity": "neutral",
+    "school": "abjuration",
+    "tier": "2",
+    "cost_m_aether": "6000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "dispel count 2 + floor_div(abjuration, 25) (§14.1)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.summon",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "summon",
+    "polarity": "neutral",
+    "school": "conjuration",
+    "tier": "1",
+    "cost_m_aether": "8000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "one minion, template by second essence (§12.2)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.shape",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "world",
+    "polarity": "neutral",
+    "school": "alteration",
+    "tier": "2",
+    "cost_m_aether": "4000",
+    "cx": "2",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "break or place blocks, shape power 3 + floor_div(alteration, 25) (§13.2)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.tide",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "world",
+    "polarity": "neutral",
+    "school": "conjuration",
+    "tier": "1",
+    "cost_m_aether": "3000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "creates `liq.water`, 2000 ml per bolt impact (§13.1)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.gale",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "world",
+    "polarity": "neutral",
+    "school": "alteration",
+    "tier": "1",
+    "cost_m_aether": "3000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "impulse 8000 mm/s; moves gas cells (§13.1)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.lumen",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "world",
+    "polarity": "neutral",
+    "school": "divination",
+    "tier": "1",
+    "cost_m_aether": "2000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "light source level 14 (§13.1)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.sight",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "world",
+    "polarity": "neutral",
+    "school": "divination",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "0",
+    "payload": "direct `st.marked` 480 ticks; reveals hidden objects (§13.1); applies doc 10's `appr.eff.aura` to items within the omen radius (doc 10 §5.10)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.appraise",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "lore",
+    "polarity": "neutral",
+    "school": "divination",
+    "tier": "2",
+    "cost_m_aether": "8000",
+    "cx": "2",
+    "cast_add_ticks": "60",
+    "cooldown_add_ticks": "3600",
+    "payload": "doc 10 `appr.eff.divine_identify` on one chosen item (doc 10 §5.10)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.omen",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "lore",
+    "polarity": "neutral",
+    "school": "divination",
+    "tier": "1",
+    "cost_m_aether": "4000",
+    "cx": "1",
+    "cast_add_ticks": "0",
+    "cooldown_add_ticks": "600",
+    "payload": "doc 10 `appr.eff.divine_omen` within `4000 + 2000 × div_tier` mm"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.ess.psychometry",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.3 Essences",
+   "fields": {
+    "kind": "lore",
+    "polarity": "neutral",
+    "school": "divination",
+    "tier": "2",
+    "cost_m_aether": "5000",
+    "cx": "2",
+    "cast_add_ticks": "30",
+    "cooldown_add_ticks": "1800",
+    "payload": "doc 10 `appr.eff.psychometry`: one unknown type-hidden item in the caster's inventory; 1 keyed `rng.ident` draw"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.empower",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "spellcraft",
+    "cost_add_bp": "+5000",
+    "applies_to": "all forms",
+    "effect": "magnitude × 13000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.extend",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "alteration",
+    "cost_add_bp": "+4000",
+    "applies_to": "stages with a duration, a direct status or a summon",
+    "effect": "every duration of the stage × 20000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.widen",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "evocation",
+    "cost_add_bp": "+4000",
+    "applies_to": "orb, cone, aura, field, rune, nova, chain",
+    "effect": "radius, cone half-angle and chain jump range × 15000 (half-angle capped at 16384 Bam); magnitude × 9000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.reach",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "spellcraft",
+    "cost_add_bp": "+2000",
+    "applies_to": "bolt, orb, beam, cone, chain, field, wall, rune, manifest, touch",
+    "effect": "range × 20000; projectile speed × 15000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.quicken",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "spellcraft",
+    "cost_add_bp": "+3000",
+    "applies_to": "cast_time forms",
+    "effect": "cast ticks × 5000; a result of 6 or less becomes instant"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.charged",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "evocation",
+    "cost_add_bp": "+0",
+    "applies_to": "bolt, orb, cone, nova, chain",
+    "effect": "cast type becomes charge (§3.3); magnitude and cost × charge factor"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.split",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "2",
+    "tier": "2",
+    "school": "evocation",
+    "cost_add_bp": "+6000",
+    "applies_to": "bolt, orb",
+    "effect": "3 projectiles at yaw offsets −1820, 0, +1820 Bam; magnitude × 4500 each"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.homing",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "divination",
+    "cost_add_bp": "+3000",
+    "applies_to": "bolt, orb",
+    "effect": "steers toward a locked hostile at 136 Bam per tick"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.pierce",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "evocation",
+    "cost_add_bp": "+3000",
+    "applies_to": "bolt, beam",
+    "effect": "passes through 2 more entities; each later hit × 8000 of the previous"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.ricochet",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "spellcraft",
+    "cost_add_bp": "+2000",
+    "applies_to": "bolt, orb",
+    "effect": "bounces off up to 3 solid blocks; magnitude × 9000 per bounce"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.linger",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "2",
+    "tier": "2",
+    "school": "conjuration",
+    "cost_add_bp": "+5000",
+    "applies_to": "bolt, orb, nova, rune",
+    "effect": "impact leaves a 2000 mm field of the stage essences for 300 ticks at pulse magnitude 800 per 30 ticks, plus surfaces (§13.1)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.delay",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "spellcraft",
+    "cost_add_bp": "+2000",
+    "applies_to": "bolt, orb, nova",
+    "effect": "resolution waits 60 ticks (rules below); magnitude × 12000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.hushed",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "illusion",
+    "cost_add_bp": "+3000",
+    "applies_to": "all forms",
+    "effect": "every noise of the stage −30 dB, floor 0"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.thrift",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "spellcraft",
+    "cost_add_bp": "-2500",
+    "applies_to": "all forms",
+    "effect": "magnitude × 8500"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.volatile",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "evocation",
+    "cost_add_bp": "+0",
+    "applies_to": "stages with magnitude",
+    "effect": "magnitude × (5000 + v0), v0 from rng.magic (§3.9)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.keen",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "divination",
+    "cost_add_bp": "+3000",
+    "applies_to": "damaging stages",
+    "effect": "crit chance +1500 Bp; bolt and chain hits on precision parts use precision multiplier 15000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.siphon",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "2",
+    "tier": "3",
+    "school": "abjuration",
+    "cost_add_bp": "+4000",
+    "applies_to": "damaging stages",
+    "effect": "caster regains aether per HP hit (§6.6)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.leech",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "2",
+    "tier": "3",
+    "school": "restoration",
+    "cost_add_bp": "+4000",
+    "applies_to": "damaging stages",
+    "effect": "caster heals per HP hit (§6.6)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.sculpt",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "2",
+    "school": "abjuration",
+    "cost_add_bp": "+3000",
+    "applies_to": "orb, cone, aura, field, wall, rune, nova, chain",
+    "effect": "harmful area effects skip every `fac.errata` member"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.anchor",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "alteration",
+    "cost_add_bp": "+2000",
+    "applies_to": "aura, field, wall, rune",
+    "effect": "aura stays at the cast position; duration × 15000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.heavy",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "1",
+    "tier": "1",
+    "school": "alteration",
+    "cost_add_bp": "+3000",
+    "applies_to": "damaging stages",
+    "effect": "poise damage × 20000; knockback +4000 mm/s; projectile speed × 7500"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.mod.twin",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.4 Modifiers",
+   "fields": {
+    "cx": "2",
+    "tier": "3",
+    "school": "spellcraft",
+    "cost_add_bp": "+7000",
+    "applies_to": "every form except beam, manifest and stages with polymorph",
+    "effect": "the stage resolves again 20 ticks later at magnitude × 6000"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.on_impact",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "2",
+    "tier_spellcraft": "1",
+    "flat_cost_m_aether": "1000",
+    "fires_max": "1",
+    "fire_cost_factor_bp": "10000",
+    "host_forms": "bolt, orb, chain, rune",
+    "fires_when": "the host projectile or burst first touches an entity or a solid block; the last chain hit",
+    "payload_origin_and_aim": "impact point; aim = host travel direction"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.on_kill",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "2",
+    "tier_spellcraft": "2",
+    "flat_cost_m_aether": "1500",
+    "fires_max": "3",
+    "fire_cost_factor_bp": "20000",
+    "host_forms": "any damaging stage",
+    "fires_when": "a hit of the host stage kills an entity",
+    "payload_origin_and_aim": "the corpse origin; aim = host hit direction"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.on_expire",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "2",
+    "tier_spellcraft": "2",
+    "flat_cost_m_aether": "1000",
+    "fires_max": "1",
+    "fire_cost_factor_bp": "10000",
+    "host_forms": "aura, field, wall, rune, manifest",
+    "fires_when": "the host entity ends by expiry, dispel or death",
+    "payload_origin_and_aim": "host position; aim = caster aim at that tick"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.timer",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "2",
+    "tier_spellcraft": "1",
+    "flat_cost_m_aether": "1000",
+    "fires_max": "1",
+    "fire_cost_factor_bp": "10000",
+    "host_forms": "bolt, orb",
+    "fires_when": "45 ticks after launch; the host projectile ends",
+    "payload_origin_and_aim": "projectile position; aim = travel direction"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.proximity",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "2",
+    "tier_spellcraft": "2",
+    "flat_cost_m_aether": "1500",
+    "fires_max": "1",
+    "fire_cost_factor_bp": "10000",
+    "host_forms": "bolt, orb, field, wall",
+    "fires_when": "a hostile origin comes within 2000 mm of the host",
+    "payload_origin_and_aim": "host position; aim = toward that hostile"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.on_struck",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "3",
+    "tier_spellcraft": "3",
+    "flat_cost_m_aether": "2000",
+    "fires_max": "1",
+    "fire_cost_factor_bp": "10000",
+    "host_forms": "self, touch with a helpful essence",
+    "fires_when": "the bearer takes a non-DoT hostile hit within 600 ticks",
+    "payload_origin_and_aim": "bearer position; aim = toward the attacker"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.on_status",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "2",
+    "tier_spellcraft": "3",
+    "flat_cost_m_aether": "1500",
+    "fires_max": "3",
+    "fire_cost_factor_bp": "20000",
+    "host_forms": "stages that apply a status",
+    "fires_when": "a hit of the host stage fills a buildup meter or applies a direct status",
+    "payload_origin_and_aim": "the afflicted entity origin; aim = host hit direction"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.trig.pulse",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.5 Triggers",
+   "fields": {
+    "cx": "3",
+    "tier_spellcraft": "3",
+    "flat_cost_m_aether": "2500",
+    "fires_max": "5",
+    "fire_cost_factor_bp": "40000",
+    "host_forms": "aura, field, wall, manifest",
+    "fires_when": "every 120 ticks while the host exists",
+    "payload_origin_and_aim": "host position; aim = caster aim at that tick"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.foe",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "1",
+    "flat_cost_m_aether": "500",
+    "passes_when": "subject entity is hostile to the caster (§15 stance hostile, or `st.charmed` by the caster reversed)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.ally",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "1",
+    "flat_cost_m_aether": "500",
+    "passes_when": "subject entity is the caster or a `fac.errata` member"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.wounded",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "1",
+    "flat_cost_m_aether": "500",
+    "passes_when": "subject entity HP is below 5000 Bp of its Max HP"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.native",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "2",
+    "flat_cost_m_aether": "500",
+    "passes_when": "subject entity is native (Canon §5.6)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.wet",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "1",
+    "flat_cost_m_aether": "500",
+    "passes_when": "subject has `st.soaked` or Contact (Canon §12.1) with any liquid; a cell subject holds at least 100 ml of liquid"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.burning",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "1",
+    "flat_cost_m_aether": "500",
+    "passes_when": "subject has `st.burning`; a cell subject is on fire (doc 03 fire grid)"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.dark",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "2",
+    "flat_cost_m_aether": "500",
+    "passes_when": "`light_at(subject)` at most 4; a cell subject has effective light at most 4"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  },
+  {
+   "id": "glyph.cond.unaware",
+   "kind": "glyph",
+   "owner": "06",
+   "section": "06 5.6 Conditions",
+   "fields": {
+    "cx": "1",
+    "tier_spellcraft": "2",
+    "flat_cost_m_aether": "500",
+    "passes_when": "subject is an NPC whose awareness of the caster is below `aware.alert`, or has `st.sleeping`"
+   },
+   "also_in": [
+    "06 5.7 Skin names",
+    "06 5.7 Skin names",
+    "06 5.7 Skin names"
+   ]
+  }
+ ]
+}

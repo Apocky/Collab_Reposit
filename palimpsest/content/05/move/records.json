@@ -1,0 +1,350 @@
+{
+ "schema": "05.table_row",
+ "records": [
+  {
+   "id": "move.light",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.attack` in `Idle`; one combo step per press",
+    "rules": "§4.1, Tables 3.2b and 3.2c"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.heavy",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.heavy` charge and release",
+    "rules": "§4.2, Table 3.2b"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.sprint_attack",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.attack` after at least 20 sprint ticks",
+    "rules": "§4.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.jump_attack",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.attack` or `input.heavy` while airborne with the §4.4 air probe",
+    "rules": "§4.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.riposte",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.attack` or `input.heavy` inside a riposte window",
+    "rules": "§4.5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.shove",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.heavy` while guarding without a shield",
+    "rules": "§4.6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.quick_melee",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.heavy` with a ranged weapon active",
+    "rules": "§4.7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.guard",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.alt` held with no off-hand weapon",
+    "rules": "§4.8, §12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.shield_bash",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.heavy` while guarding with a shield",
+    "rules": "§12.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.taunt",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.reload` while guarding with a shield",
+    "rules": "§4.8, §19.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.grapple",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "full heavy of a fist weapon or unarmed; full chain heavy",
+    "rules": "§19.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.struggle",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.interact` while grappled",
+    "rules": "§19.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.ads",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.alt` held with a ranged weapon that allows ADS",
+    "rules": "§6.3, §6.6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.hold_breath",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.sprint` while fully aimed with `ads_sway >= 27`",
+    "rules": "§6.7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.throw",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "release of a thrown weapon or a quickbar throwable after a wind of at least 12 ticks",
+    "rules": "§5.3, §9.2"
+   },
+   "also_in": [
+    "05 6.2 Fire cadence and modes"
+   ]
+  },
+  {
+   "id": "move.cook",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.throw` pressed with a throwable on the quickbar",
+    "rules": "§9.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.reload",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.reload` with a partial or empty magazine",
+    "rules": "§6.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.clear_jam",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "`input.reload` while `Jammed`",
+    "rules": "§6.1, §16.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.imbue",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "use of an `ammo.charge_*` counter charge",
+    "rules": "§15.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.quickdraw",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "law-bound technique of `law.weird_west.high_noon`",
+    "rules": "§19.4"
+   },
+   "also_in": [
+    "05 19.4 Law-bound techniques (Canon §5.10, doc 12)"
+   ]
+  },
+  {
+   "id": "move.qinggong_strike",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 1.8 Move index",
+   "fields": {
+    "trigger": "law-bound technique of `law.wuxia.qinggong`",
+    "rules": "§19.4"
+   },
+   "also_in": [
+    "05 19.4 Law-bound techniques (Canon §5.10, doc 12)"
+   ]
+  },
+  {
+   "id": "move.shape_rl",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 2.3 Melee traces",
+   "fields": {
+    "yaw_s_j": "`Y - arc + floor_div(2 × arc × (j + 1), N)`",
+    "pitch_s_j": "`Pt`",
+    "tip_dist_j": "`reach`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.shape_lr",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 2.3 Melee traces",
+   "fields": {
+    "yaw_s_j": "`Y + arc - floor_div(2 × arc × (j + 1), N)`",
+    "pitch_s_j": "`Pt`",
+    "tip_dist_j": "`reach`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.shape_overhead",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 2.3 Melee traces",
+   "fields": {
+    "yaw_s_j": "`Y`",
+    "pitch_s_j": "`Pt + av - floor_div(2 × av × (j + 1), N)`, `av = max(arc, 5461)`, clamped to ±16000",
+    "tip_dist_j": "`reach`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.shape_thrust",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 2.3 Melee traces",
+   "fields": {
+    "yaw_s_j": "`Y`",
+    "pitch_s_j": "`Pt`",
+    "tip_dist_j": "`r0 + floor_div((reach - r0) × (j + 1), N)`, `r0 = mul_bp(reach, 4000)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.fire_semi",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 6.2 Fire cadence and modes",
+   "fields": {
+    "trigger_condition": "a press; a press during cooldown is buffered 6 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.fire_auto",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 6.2 Fire cadence and modes",
+   "fields": {
+    "trigger_condition": "held"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.fire_burst",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 6.2 Fire cadence and modes",
+   "fields": {
+    "trigger_condition": "a press fires `burst_n` (default 3) shots `burst_ticks` (default 3) apart (§6.1 `Burst`); each later burst shot sets `cool_mt = interval_mt`, so the normal interval follows the last one; used only by doc 11 overrides"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.fire_bolt",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 6.2 Fire cadence and modes",
+   "fields": {
+    "trigger_condition": "a press; the interval includes the cycling action; ADS persists"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.fire_charge",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 6.2 Fire cadence and modes",
+   "fields": {
+    "trigger_condition": "release after a draw (§5.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "move.fire_beam",
+   "kind": "move",
+   "owner": "05",
+   "section": "05 6.2 Fire cadence and modes",
+   "fields": {
+    "trigger_condition": "held; pulses every 6 ticks"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,181 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "prayer.supplication",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16. Prayers and Devotion",
+   "fields": {
+    "kind": "supplication",
+    "activation": "60-tick Winding cast through §3.5, interruptible by §3.7; sent by `input.pray` as `Pray { patron, kind: supplication }` (doc 17 §10.7), default patron the local genre's",
+    "gate": "any timer value; refused under `st.silenced`, `st.downed`, `st.ghost`, `st.polymorphed` and every other §3.9 `Disabled` status",
+    "favor": "PLEASED `+gain(50)`, DISPLEASED `−loss(50)`, HELPED `−loss(75)`, ANGRY `−loss(100)`, Unheard 0",
+    "prayer_timer": "PLEASED +18000, DISPLEASED +36000, HELPED +90000, ANGRY +180000, Unheard +3600",
+    "draws": "4 `rng.magic` always; 1 `rng.combat` when its Contradiction failure chance is above 0 (§19.2)",
+    "rules": "§16.3; emits `ev.prayer_resolved` with outcome 0 to 4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.offering",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16. Prayers and Devotion",
+   "fields": {
+    "kind": "sacrifice",
+    "activation": "not a cast: each item stack confirmed in the altar offering menu (doc 17 §10.7) resolves on the tick its command applies, with the Erratum within 3000 mm of an altar block",
+    "gate": "refused under `st.downed`, `st.ghost` and `st.polymorphed`; allowed under `st.silenced` (no voice) and at any timer value",
+    "favor": "`+gain(base)` per stack (§16.5)",
+    "prayer_timer": "unchanged",
+    "draws": "none; no Contradiction roll",
+    "rules": "§16.5; counts as a prayer made at a shrine for §16.2; emits `ev.favor_changed` cause 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.benediction",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "60",
+    "minimum_favor": "0",
+    "effect": "`st.blessed` 1800 ticks on the petitioner and allies within 8000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.smite",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "40",
+    "minimum_favor": "0",
+    "effect": "a `dmg.radiant` hit on the aimed target within 20000 mm, `dmg_base` 30000 mHP, step 0 with the prayer `src_lvl`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.sanctuary",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "80",
+    "minimum_favor": "100",
+    "effect": "a field of radius 4000 mm for 600 ticks; hostile NPCs inside gain `st.feared` (direct, base 60) every 30 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.mending",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "50",
+    "minimum_favor": "0",
+    "effect": "heals 2500 Bp of Max HP on the petitioner or a touched ally (4312 Bp at ATN 40, Devotion 50, local patron)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.reattachment",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "150",
+    "minimum_favor": "200",
+    "effect": "reattaches every severed part of the petitioner or a touched ally"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.absolution",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "200",
+    "minimum_favor": "300",
+    "effect": "uncurses the lowest-uid cursed equipped item (doc 10 §7.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.turning",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "50",
+    "minimum_favor": "0",
+    "effect": "undead- and fiend-tagged hostiles within 10000 mm gain `st.feared` (direct, base 240)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.provision",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "30",
+    "minimum_favor": "0",
+    "effect": "satiation +800, at most 2400"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.vigil",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "40",
+    "minimum_favor": "0",
+    "effect": "composure +5000 Bp of max"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.intercession",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "400",
+    "minimum_favor": "500",
+    "effect": "a ghost ally whose Remains are within 3000 mm resurrects now at 2500 Bp of Max HP (Canon §17.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.lantern",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "10",
+    "minimum_favor": "0",
+    "effect": "a light-15 source at the petitioner's position for 7200 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "prayer.oath",
+   "kind": "prayer",
+   "owner": "06",
+   "section": "06 16.4 Petitions",
+   "fields": {
+    "favor_cost": "50",
+    "minimum_favor": "50",
+    "effect": "`st.empowered` 480 and `st.fortified` 600 on the petitioner"
+   },
+   "also_in": []
+  }
+ ]
+}

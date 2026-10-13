@@ -1,0 +1,83 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "kin.human",
+   "kind": "kin",
+   "owner": "04",
+   "section": "00 16.3 Kin",
+   "fields": {
+    "body_plan": "`body.humanoid`",
+    "rules": "no changes"
+   },
+   "also_in": [
+    "04 15.5 Kin"
+   ]
+  },
+  {
+   "id": "kin.construct",
+   "kind": "kin",
+   "owner": "04",
+   "section": "00 16.3 Kin",
+   "fields": {
+    "body_plan": "`body.humanoid`",
+    "rules": "immune to `st.poisoned`, `st.diseased`, `st.bleeding`; no satiation, refuels from `cat.material` tagged fuel; needs no breath; resist shock −2500; potion healing × 5000; Tinkering repair heals"
+   },
+   "also_in": [
+    "04 15.5 Kin"
+   ]
+  },
+  {
+   "id": "kin.undead",
+   "kind": "kin",
+   "owner": "04",
+   "section": "00 16.3 Kin",
+   "fields": {
+    "body_plan": "`body.humanoid`",
+    "rules": "no natural HP regeneration; `dmg.umbral` taken heals 5000 Bp of its amount instead; resist radiant −5000; immune to `st.poisoned`, `st.diseased`; needs no breath"
+   },
+   "also_in": [
+    "04 15.5 Kin"
+   ]
+  },
+  {
+   "id": "kin.beastkin",
+   "kind": "kin",
+   "owner": "04",
+   "section": "00 16.3 Kin",
+   "fields": {
+    "body_plan": "`body.humanoid` plus `bp.tail`",
+    "rules": "unarmed attacks carry a 5000 Bp slash share; dark-vision +2 m"
+   },
+   "also_in": [
+    "04 15.5 Kin"
+   ]
+  },
+  {
+   "id": "kin.fae",
+   "kind": "kin",
+   "owner": "04",
+   "section": "00 16.3 Kin",
+   "fields": {
+    "body_plan": "`body.humanoid`",
+    "rules": "ARCANA tolerance +1; takes × 12500 damage from `mat.cold_iron` and `mat.iron` weapons"
+   },
+   "also_in": [
+    "04 15.5 Kin"
+   ]
+  },
+  {
+   "id": "kin.mutant",
+   "kind": "kin",
+   "owner": "04",
+   "section": "00 16.3 Kin",
+   "fields": {
+    "body_plan": "`body.humanoid`",
+    "rules": "starts with one `aug.` mutation chosen from 3 offered; +1 mutation point every 2 levels"
+   },
+   "also_in": [
+    "04 15.5 Kin"
+   ]
+  }
+ ]
+}

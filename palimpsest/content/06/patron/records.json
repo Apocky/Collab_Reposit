@@ -1,0 +1,213 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "patron.mythic_fantasy",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "Ysolde of the Thousand Roads",
+    "signature_boon_pleased_no_need": "`st.blessed` 1800 ticks",
+    "wrath_displeased_angry_doubles_durations": "`st.weakened` 1800",
+    "taboo_favor_loss": "leaving a Folio while an ally's Remains stay behind: 100"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.gothic_horror",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Vigil-Keeper",
+    "signature_boon_pleased_no_need": "`st.regenerating` 1200",
+    "wrath_displeased_angry_doubles_durations": "`st.withering` 480 and composure −20",
+    "taboo_favor_loss": "each `summon.servitor` cast: 30"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.cosmic_horror",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Sleeper Under the Index",
+    "signature_boon_pleased_no_need": "one unknown carried item type becomes known (doc 10 `identify_one_unknown`, reason `appr.reason.prayer`); composure −10",
+    "wrath_displeased_angry_doubles_durations": "composure −30",
+    "taboo_favor_loss": "destroying a `cat.book`: 50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.space_opera",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Admiral of the Last Fleet",
+    "signature_boon_pleased_no_need": "`st.shielded` 4000 Bp, 1800 ticks",
+    "wrath_displeased_angry_doubles_durations": "`st.slowed` 600",
+    "taboo_favor_loss": "a friendly-fire hit removing at least 1000 Bp of an ally's Max HP: 20"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.cyberpunk",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Sysop",
+    "signature_boon_pleased_no_need": "`st.hasted` 1200",
+    "wrath_displeased_angry_doubles_durations": "`st.silenced` 1800",
+    "taboo_favor_loss": "killing a non-hostile NPC: 50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.post_apocalypse",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "Mother Rust",
+    "signature_boon_pleased_no_need": "satiation +600, toxicity −50000",
+    "wrath_displeased_angry_doubles_durations": "3 stacks of `st.irradiated`",
+    "taboo_favor_loss": "satiation reaching 0: 30, once per Folio"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.weird_west",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Rider at the Crossroads",
+    "signature_boon_pleased_no_need": "`st.focused` 1800 and `st.inspired` 600",
+    "wrath_displeased_angry_doubles_durations": "`st.marked` on the Erratum 1800",
+    "taboo_favor_loss": "killing a `st.feared` enemy: 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.hardboiled_noir",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Witness",
+    "signature_boon_pleased_no_need": "`st.marked` 480 on every hostile within 30000 mm",
+    "wrath_displeased_angry_doubles_durations": "lose 1000 Bp of carried Lucre",
+    "taboo_favor_loss": "each successful pickpocket: 10"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.wuxia",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Sage of the Ninth Peak",
+    "signature_boon_pleased_no_need": "`st.inspired` 1800",
+    "wrath_displeased_angry_doubles_durations": "`st.confused` 300",
+    "taboo_favor_loss": "each sneak-attack kill: 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.steampunk",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Grand Engineer",
+    "signature_boon_pleased_no_need": "`st.fortified` 1800",
+    "wrath_displeased_angry_doubles_durations": "`st.burning` 240",
+    "taboo_favor_loss": "each of the Erratum's Device-register spells (§10.10) that fizzles or wild-surges: 10"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.fairy_tale",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Godmother of Thorns",
+    "signature_boon_pleased_no_need": "`st.blessed` 900 and Bargain Debt cleared",
+    "wrath_displeased_angry_doubles_durations": "`st.polymorphed` as toad, direct, base 300 (Canon §11.4)",
+    "taboo_favor_loss": "Folio exit with Debt: `ceil_div(Debt, 1000)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.mythic_antiquity",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Laurel-Crowned",
+    "signature_boon_pleased_no_need": "`st.empowered` 1200",
+    "wrath_displeased_angry_doubles_durations": "a `dmg.radiant` hit of 2000 Bp of Max HP entering Canon §10.5 at step 4",
+    "taboo_favor_loss": "40 kills since the last sacrifice or shrine prayer to this patron: 100, counter resets (the per-Erratum mirror of doc 12's `law.mythic_antiquity.hubris`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.oneiric",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Dreamer Who Writes Us",
+    "signature_boon_pleased_no_need": "aether to max and `st.levitating` 600",
+    "wrath_displeased_angry_doubles_durations": "`st.sleeping` 240",
+    "taboo_favor_loss": "waking a `st.sleeping` creature with damage: 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.redacted",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Undersigned",
+    "signature_boon_pleased_no_need": "removes 2 stacks of `st.erasure`",
+    "wrath_displeased_angry_doubles_durations": "adds 2 stacks of `st.erasure`",
+    "taboo_favor_loss": "reading a `cat.text`: 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.unwritten",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The Blank Page",
+    "signature_boon_pleased_no_need": "removes `st.unmoored`, clears the Canon §5.11 failure count, and `st.blessed` 900",
+    "wrath_displeased_angry_doubles_durations": "none",
+    "taboo_favor_loss": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "patron.ur_text",
+   "kind": "patron",
+   "owner": "06",
+   "section": "06 16.1 Patrons",
+   "fields": {
+    "name": "The First Author",
+    "signature_boon_pleased_no_need": "removes every DoT, debuff, control and mental status; HP to max",
+    "wrath_displeased_angry_doubles_durations": "`st.dread`",
+    "taboo_favor_loss": "none"
+   },
+   "also_in": []
+  }
+ ]
+}

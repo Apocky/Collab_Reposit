@@ -1,0 +1,137 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "origin.mythic_fantasy",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "PWR +3, ATN +3, RSV +2, PRV +2, LOG −3, SLT −2, GUI −3, ANL −2",
+    "origin_skill": "evocation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.gothic_horror",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "RSV +4, PRV +3, ITU +3, CHM −3, AGI −2, SER −2, END −3",
+    "origin_skill": "devotion"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.cosmic_horror",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "ANL +4, MEM +3, HRG +3, RSV −4, CHM −3, PWR −3",
+    "origin_skill": "inscription"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.space_opera",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "PRC +3, LOG +3, CHM +2, FAT +2, GRP −3, RES −3, ATN −2, GUI −2",
+    "origin_skill": "handling"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.cyberpunk",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "SLT +3, LOG +3, GUI +2, SGT +2, RES −3, PRV −3, CHM −2, END −2",
+    "origin_skill": "hacking"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.post_apocalypse",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "END +3, RES +4, SER +3, CHM −4, MEM −3, ATN −3",
+    "origin_skill": "survival"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.weird_west",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "PRC +4, MEN +3, FAT +3, MEM −3, ANL −3, CHM −2, LOG −2",
+    "origin_skill": "marksmanship"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.hardboiled_noir",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "ITU +4, GUI +3, TGH +3, CHM −3, FAT −3, ATN −4",
+    "origin_skill": "awareness"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.wuxia",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "AGI +4, FOC +3, GRP +3, GUI −3, LOG −3, BRN −2, SLT −2",
+    "origin_skill": "acrobatics"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.steampunk",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "LOG +3, ANL +3, SLT +2, BRN +2, AGI −3, ITU −3, ATN −2, FAT −2",
+    "origin_skill": "tinkering"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.fairy_tale",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "CHM +4, SER +3, PRV +3, PWR −3, TGH −3, MEN −4",
+    "origin_skill": "speech"
+   },
+   "also_in": []
+  },
+  {
+   "id": "origin.mythic_antiquity",
+   "kind": "origin",
+   "owner": "04",
+   "section": "04 2.3 Origins",
+   "fields": {
+    "modifiers_all_others_0": "PWR +3, BRN +3, MEN +2, FAT +2, SLT −3, LOG −3, GUI −2, HRG −2",
+    "origin_skill": "polearm"
+   },
+   "also_in": []
+  }
+ ]
+}

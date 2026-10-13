@@ -1,0 +1,49 @@
+{
+ "schema": "10.table_row",
+ "records": [
+  {
+   "id": "know.rank.noted",
+   "kind": "know",
+   "owner": "10",
+   "section": "10 12.1 Index",
+   "fields": {
+    "points": "1",
+    "unlocks": "page with description, price group, use rule"
+   },
+   "also_in": []
+  },
+  {
+   "id": "know.rank.studied",
+   "kind": "know",
+   "owner": "10",
+   "section": "10 12.1 Index",
+   "fields": {
+    "points": "3",
+    "unlocks": "the in-run Ledger shows this type's price group and use rule next to each candidate"
+   },
+   "also_in": []
+  },
+  {
+   "id": "know.rank.familiar",
+   "kind": "know",
+   "owner": "10",
+   "section": "10 12.1 Index",
+   "fields": {
+    "points": "6",
+    "unlocks": "the type may be named in a Cross-Reference (§12.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "know.rank.mastered",
+   "kind": "know",
+   "owner": "10",
+   "section": "10 12.1 Index",
+   "fields": {
+    "points": "10",
+    "unlocks": "gilded page, lore text, title cosmetic"
+   },
+   "also_in": []
+  }
+ ]
+}

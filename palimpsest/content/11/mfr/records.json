@@ -1,0 +1,499 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "mfr.mythic_fantasy.silverbough",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Silverbough Fletchery",
+    "makes": "ML RD AR WG",
+    "tendencies": "S+500 W−2000 D−300",
+    "parts_5_4": "ek hg bl os",
+    "signature_gimmick": "attack noise −20 dB; armor: footstep noise −6 dB",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.mythic_fantasy.runecourt",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "The Runecourt",
+    "makes": "CA WG ML MM",
+    "tendencies": "C−800",
+    "parts_5_4": "fc fn ek cc",
+    "signature_gimmick": "Spellsink: every kill made with or cast through the item restores 3 aether; ward generators: ward break restores 10 aether",
+    "dep": "arcana"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.gothic_horror.vesper_sons",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Vesper & Sons",
+    "makes": "ML MM RD CA",
+    "tendencies": "D+300",
+    "parts_5_4": "ek es br fc",
+    "signature_gimmick": "2000 Bp of each hit moves from its largest physical share to `dmg.radiant`",
+    "dep": "mythos"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.gothic_horror.ashgrave",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Ashgrave Ironworks",
+    "makes": "MH MM AR SH WG",
+    "tendencies": "A+1000 W+2000 S−300",
+    "parts_5_4": "eh gg pr lp cc",
+    "signature_gimmick": "Grave Iron: while HP ≤ 3000 Bp of Max HP, Ashgrave armor and shield AR × 13000 and Ashgrave weapons +2000 Bp",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.cosmic_horror.hollow_lantern",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Hollow Lantern Optics",
+    "makes": "RG RD CA ML",
+    "tendencies": "R+1500 D−300",
+    "parts_5_4": "os br fc ek",
+    "signature_gimmick": "hits apply `st.marked` directly for 240 ticks",
+    "dep": "mythos"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.cosmic_horror.outer_choir",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "The Outer Choir",
+    "makes": "CA RH MM",
+    "tendencies": "D+500",
+    "parts_5_4": "fn bh eh fd",
+    "signature_gimmick": "2500 Bp of each hit moves from its largest share to `dmg.psychic`; +1500 Bp; each attack costs 1 composure, and at 0 composure the item cannot attack",
+    "dep": "mythos"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.cosmic_horror.dunwold",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Dunwold Expedition Supply",
+    "makes": "RG MM MH AR SH WG",
+    "tendencies": "T−1000 S−300",
+    "parts_5_4": "br fe hl pr lp",
+    "signature_gimmick": "Field-Tested: weapons reload while sprinting; armor: +300 Bp resist acid and toxin",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.space_opera.starwright",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Starwright Psionics",
+    "makes": "CA ML MM MH AR SH",
+    "tendencies": "D+200 W−1500",
+    "parts_5_4": "fc ek hg pr",
+    "signature_gimmick": "Kinetic Echo: every 5th hit repeats 20 ticks later as a `dmg.psychic` hit entering Canon §10.6 at step 3 with `D2` = 5000 Bp of the original `D2`; armor: every 5th melee hit taken pushes the attacker 1500 mm",
+    "dep": "arcana"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.cyberpunk.ghostline",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Ghostline Systems",
+    "makes": "RG RD ML",
+    "tendencies": "P−1500 D−500",
+    "parts_5_4": "or br fq ek",
+    "signature_gimmick": "projectiles home on `st.marked` targets at 16384 Bam/s, turned per tick through the Canon §2.3 accumulator (`k = 60`: 273 or 274 Bam per tick); doc 05 copies the 16384 into `Projectile.home_bam_s` at spawn and the accumulator lives in `Projectile.home_acc` (doc 03 §5.19); melee: +1500 Bp vs `st.marked`",
+    "dep": "techne"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.cyberpunk.chromaw",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Chromaw Biotech",
+    "makes": "ML MM MH AR SH CA",
+    "tendencies": "S+600",
+    "parts_5_4": "es hg gw lp fn",
+    "signature_gimmick": "Neurotoxin Coat: +40 `st.poisoned` power per hit; armor: +500 Bp resist toxin",
+    "dep": "techne"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.post_apocalypse.geigerhaus",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Geiger & Daughters",
+    "makes": "RH CA AR SH WG MM",
+    "tendencies": "D+400 W+1500",
+    "parts_5_4": "bh fn pr cc",
+    "signature_gimmick": "Hot Load: 1500 Bp of each hit moves to `dmg.radiation` and +25 `st.irradiated` power; armor: +600 Bp resist radiation",
+    "dep": "techne"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.weird_west.coffin_creek",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Coffin Creek Revolver Co.",
+    "makes": "RG RD",
+    "tendencies": "D+500 M−2000 L+1000",
+    "parts_5_4": "br oi fq",
+    "signature_gimmick": "crits ricochet 5000 Bp of their `D2` to the nearest other hostile within 8000 mm (Canon §10.6 step 3, no crit, no further ricochet)",
+    "dep": "verve"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.weird_west.seven_seals",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Seven Seals Armory",
+    "makes": "RG MM CA ML",
+    "tendencies": "D+300 P+500",
+    "parts_5_4": "bs es fc gw",
+    "signature_gimmick": "2000 Bp of each hit moves from its largest share to `dmg.umbral`",
+    "dep": "mythos"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.weird_west.sundown_rail",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Sundown Rail & Powder",
+    "makes": "RH RG MH AR SH WG",
+    "tendencies": "D+800 S−700",
+    "parts_5_4": "bh fe eh pr",
+    "signature_gimmick": "Sticky Fuse: projectile hits leave a charge (max 6 per target); starting a reload detonates every charge for 3000 Bp of its hit's `D2` as `dmg.fire` within 2000 mm (Canon §10.6 environmental entry, no crit); melee: heavy attacks leave the charge and the next heavy attack detonates it; armor: +500 Bp resist fire",
+    "dep": "techne"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.hardboiled_noir.midnight_avenue",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Midnight Avenue Arms",
+    "makes": "RG ML RD",
+    "tendencies": "H−3000 R−1500",
+    "parts_5_4": "bs oi gw ek",
+    "signature_gimmick": "shot noise capped at 50 dB; melee swing noise capped at 40 dB",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.hardboiled_noir.rainslick",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Rainslick & Co.",
+    "makes": "MM MH RG",
+    "tendencies": "O+2000 D+300",
+    "parts_5_4": "eh gg bh",
+    "signature_gimmick": "× 12000 against `st.staggered` or `st.knocked_down` targets",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.hardboiled_noir.halloran",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Halloran Typewriter & Arms",
+    "makes": "RG RH AR SH WG CA",
+    "tendencies": "S+1000 P+1500 D−500",
+    "parts_5_4": "fd fe or lp",
+    "signature_gimmick": "Typewriter: attack speed +500 Bp per 10 consecutive shots, max +2000, reset after 30 ticks without firing; armor: +2 poise",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.wuxia.iron_crane",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Iron Crane School",
+    "makes": "MM MH SH AR",
+    "tendencies": "T−1500 D+200",
+    "parts_5_4": "gg hl eh pr",
+    "signature_gimmick": "a block started within 6 ticks before impact reflects 5000 Bp of the hit's `D2` (Canon §10.6 reflected)",
+    "dep": "verve"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.wuxia.cloudpiercer",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Cloudpiercer Hall",
+    "makes": "RD RG RH CA WG",
+    "tendencies": "X+1000 R+1500 D−300",
+    "parts_5_4": "bl os fc cc",
+    "signature_gimmick": "Acupoint: precision-part hits add 40 `st.stunned` power",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.steampunk.brassworth",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Brassworth & Cog",
+    "makes": "RG MM ML",
+    "tendencies": "S+300",
+    "parts_5_4": "br fq ek gw",
+    "signature_gimmick": "+200 Bp per consecutive hit, max +3000; a hit is consecutive within 120 ticks of the previous hit; a miss or 120 ticks resets",
+    "dep": "techne"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.steampunk.aetherline",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Aetherline Galvanic",
+    "makes": "RG RH CA WG",
+    "tendencies": "D−300 M+2000",
+    "parts_5_4": "bl fe fn cc",
+    "signature_gimmick": "every 4th hit chains 3000 Bp of its `D2` as `dmg.shock` to the 2 nearest other hostiles within 5000 mm (Canon §10.6 step 3, `no_chain`); ward generators: ward break emits the chain from the bearer for 3000 Bp of capacity",
+    "dep": "techne"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.steampunk.boilerheart",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Boilerheart Works",
+    "makes": "MH RH AR SH RD",
+    "tendencies": "D+900 S−800 W+2500",
+    "parts_5_4": "bh eh pr fd",
+    "signature_gimmick": "Pressure Valve: 3 steam charges, +1 per 120 ticks; a heavy attack or alt-fire spends 1 for +5000 Bp and places one `gas.steam` cell at impact; armor: +2 poise",
+    "dep": "techne"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.fairy_tale.thimbleweald",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Thimbleweald Tailors",
+    "makes": "ML MM RD MH",
+    "tendencies": "W−2500 D−400",
+    "parts_5_4": "ek hg bs",
+    "signature_gimmick": "× 13000 against targets with a larger capsule radius than the wielder",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.fairy_tale.thornwood",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Thornwood Coven",
+    "makes": "MM RD CA WG",
+    "tendencies": "O+1000 S−200",
+    "parts_5_4": "hl bl fc cc",
+    "signature_gimmick": "1000 Bp chance per hit to apply `st.rooted` (keyed `rng.status`); ward generators: ward break roots non-boss hostiles within 3000 mm",
+    "dep": "arcana"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.fairy_tale.glass_cobbler",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "The Glass Cobbler",
+    "makes": "ML AR SH RG RH",
+    "tendencies": "V+2000",
+    "parts_5_4": "ek es br pr",
+    "signature_gimmick": "Glass Edge: +2500 Bp while the bearer's HP is at least 5000 Bp of Max HP, else nothing; armor: AR × 12000 under the same condition",
+    "dep": "arcana"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.mythic_antiquity.argive",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Argive Arms",
+    "makes": "MM SH RD AR ML",
+    "tendencies": "D+200 T−1000",
+    "parts_5_4": "hl gg bl pr",
+    "signature_gimmick": "+1500 Bp while another allied Erratum's origin is within 3000 mm; armor and shields: +1000 Bp resist slash, pierce and blunt under the same condition",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.mythic_antiquity.delphic",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "Delphic Workshops",
+    "makes": "CA RD WG RG",
+    "tendencies": "X+1500 S−300",
+    "parts_5_4": "fc os br cc",
+    "signature_gimmick": "Foresight: the first hit on each target in a Folio uses crit chance 10000 (the crit draw is still made); ward generators: the first hit taken each Folio is fully absorbed",
+    "dep": "mythos"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.ur_text.first_press",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "The First Press",
+    "makes": "Palimpsestic only",
+    "tendencies": "none",
+    "parts_5_4": "none",
+    "signature_gimmick": "none beyond Canon §13.3 Palimpsestic rules",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table"
+   ]
+  },
+  {
+   "id": "mfr.errata.marginal_press",
+   "kind": "mfr",
+   "owner": "11",
+   "section": "11 5.2 Manufacturer table",
+   "fields": {
+    "name": "The Marginal Press",
+    "makes": "all classes",
+    "tendencies": "none",
+    "parts_5_4": "all",
+    "signature_gimmick": "Stubborn Margin: while the base component has `C` in `1..=5`, +800 × `C` Bp; the gimmick has dependency none, so it never loses potency",
+    "dep": "none"
+   },
+   "also_in": [
+    "11 5.2 Manufacturer table",
+    "11 15. Rewrite"
+   ]
+  }
+ ]
+}

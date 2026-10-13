@@ -1,0 +1,305 @@
+{
+ "schema": "18.table_row",
+ "records": [
+  {
+   "id": "vfx.dmg.slash",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "crescent streak",
+    "color": "`#C9CED6`",
+    "count": "18",
+    "life_ticks": "12",
+    "speed_mm_s": "6000",
+    "spread_bam": "4096",
+    "gravity_bp": "0",
+    "drag_bp": "2000",
+    "size_mm": "40",
+    "decal": "thin cut line",
+    "icon": "crescent blade"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.pierce",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "forward puncture cone",
+    "color": "`#E8E2C8`",
+    "count": "10",
+    "life_ticks": "10",
+    "speed_mm_s": "9000",
+    "spread_bam": "1024",
+    "gravity_bp": "2000",
+    "drag_bp": "1000",
+    "size_mm": "24",
+    "decal": "round hole",
+    "icon": "arrowhead"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.blunt",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "ground ring and chunks",
+    "color": "`#A68A64`",
+    "count": "14",
+    "life_ticks": "18",
+    "speed_mm_s": "3000",
+    "spread_bam": "16384",
+    "gravity_bp": "10000",
+    "drag_bp": "3000",
+    "size_mm": "60",
+    "decal": "crack star",
+    "icon": "hammer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.fire",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "rising tongues and embers",
+    "color": "`#FF6A1A`",
+    "count": "24",
+    "life_ticks": "40",
+    "speed_mm_s": "1500",
+    "spread_bam": "8192",
+    "gravity_bp": "−3000",
+    "drag_bp": "1500",
+    "size_mm": "80",
+    "decal": "scorch",
+    "icon": "flame"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.frost",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "shards and mist",
+    "color": "`#9BE7FF`",
+    "count": "16",
+    "life_ticks": "30",
+    "speed_mm_s": "2500",
+    "spread_bam": "16384",
+    "gravity_bp": "5000",
+    "drag_bp": "2500",
+    "size_mm": "50",
+    "decal": "rime",
+    "icon": "snowflake"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.shock",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "forked arcs",
+    "color": "`#FFE14D`",
+    "count": "8",
+    "life_ticks": "8",
+    "speed_mm_s": "12000",
+    "spread_bam": "32768",
+    "gravity_bp": "0",
+    "drag_bp": "0",
+    "size_mm": "30",
+    "decal": "none",
+    "icon": "zigzag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.acid",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "droplets and bubbles",
+    "color": "`#9AE13B`",
+    "count": "20",
+    "life_ticks": "36",
+    "speed_mm_s": "2000",
+    "spread_bam": "12288",
+    "gravity_bp": "10000",
+    "drag_bp": "1000",
+    "size_mm": "40",
+    "decal": "pitting",
+    "icon": "bubbling drop"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.radiation",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "slow motes",
+    "color": "`#2F6BFF`",
+    "count": "12",
+    "life_ticks": "60",
+    "speed_mm_s": "500",
+    "spread_bam": "32768",
+    "gravity_bp": "0",
+    "drag_bp": "500",
+    "size_mm": "30",
+    "decal": "faint glow",
+    "icon": "three-blade fan"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.sonic",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "3 expanding rings",
+    "color": "`#C8B6FF`",
+    "count": "3",
+    "life_ticks": "20",
+    "speed_mm_s": "10000",
+    "spread_bam": "0",
+    "gravity_bp": "0",
+    "drag_bp": "0",
+    "size_mm": "200",
+    "decal": "none",
+    "icon": "wave arcs"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.toxin",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "drifting clouds",
+    "color": "`#6B8E23`",
+    "count": "10",
+    "life_ticks": "48",
+    "speed_mm_s": "800",
+    "spread_bam": "32768",
+    "gravity_bp": "−500",
+    "drag_bp": "3000",
+    "size_mm": "120",
+    "decal": "stain",
+    "icon": "vial drop"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.radiant",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "rays and glare",
+    "color": "`#FFF4C2`",
+    "count": "12",
+    "life_ticks": "16",
+    "speed_mm_s": "7000",
+    "spread_bam": "32768",
+    "gravity_bp": "0",
+    "drag_bp": "0",
+    "size_mm": "40",
+    "decal": "none",
+    "icon": "sun"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.umbral",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "inward wisps",
+    "color": "`#5B2A86`",
+    "count": "16",
+    "life_ticks": "30",
+    "speed_mm_s": "−2000",
+    "spread_bam": "32768",
+    "gravity_bp": "0",
+    "drag_bp": "2000",
+    "size_mm": "70",
+    "decal": "shadow stain",
+    "icon": "eclipse"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.psychic",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "kaleidoscope glyphs",
+    "color": "`#FF5FD2`",
+    "count": "8",
+    "life_ticks": "24",
+    "speed_mm_s": "1500",
+    "spread_bam": "32768",
+    "gravity_bp": "0",
+    "drag_bp": "1000",
+    "size_mm": "60",
+    "decal": "none",
+    "icon": "spiral eye"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.arcane",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "circles and triangles",
+    "color": "`#3FE0D0`",
+    "count": "10",
+    "life_ticks": "24",
+    "speed_mm_s": "2000",
+    "spread_bam": "32768",
+    "gravity_bp": "0",
+    "drag_bp": "1500",
+    "size_mm": "50",
+    "decal": "sigil burn",
+    "icon": "circled triangle"
+   },
+   "also_in": []
+  },
+  {
+   "id": "vfx.dmg.true",
+   "kind": "vfx",
+   "owner": "18",
+   "section": "18 4.5 Damage-type VFX language (`vfx.dmg.<type>`)",
+   "fields": {
+    "motif": "hairline ink stroke and paper tear",
+    "color": "`#FFFFFF`",
+    "count": "6",
+    "life_ticks": "12",
+    "speed_mm_s": "4000",
+    "spread_bam": "2048",
+    "gravity_bp": "0",
+    "drag_bp": "0",
+    "size_mm": "20",
+    "decal": "none",
+    "icon": "full stop"
+   },
+   "also_in": []
+  }
+ ]
+}

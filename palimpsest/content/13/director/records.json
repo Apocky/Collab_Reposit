@@ -1,0 +1,116 @@
+{
+ "schema": "13.table_row",
+ "records": [
+  {
+   "id": "director.profile.standard",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10. The Director",
+   "fields": {
+    "folio_types": "standard, challenge",
+    "population_pop_10_1": "`mul_bp(POP_BASE_MSKE, density_bp)`, planned in full: mini-boss, champions, elites, minions, standards, reserve and Keeper",
+    "initial_phase_10_4": "`director.phase.build_up`",
+    "reserve_waves_10_4": "yes; the three Seal waves under `run.rubric.seal`",
+    "scripted_waves_10_4": "every source",
+    "erasure_clock_start_10_5": "Folio entry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.profile.boss",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10. The Director",
+   "fields": {
+    "folio_types": "boss (Editor Folio)",
+    "population_pop_10_1": "`mul_bp(mul_bp(POP_BASE_MSKE, density_bp), BOSS_APPROACH_BP)` as the checkpoint squad in `room.editor_checkpoint`: elites, minions and standards only, no reserve",
+    "initial_phase_10_4": "`director.phase.boss`",
+    "reserve_waves_10_4": "none",
+    "scripted_waves_10_4": "only after the Editor's death",
+    "erasure_clock_start_10_5": "the Editor's death tick"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.profile.rest",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10. The Director",
+   "fields": {
+    "folio_types": "rest",
+    "population_pop_10_1": "0: no initial population",
+    "initial_phase_10_4": "`director.phase.exhausted`",
+    "reserve_waves_10_4": "none",
+    "scripted_waves_10_4": "none (doc 12 §6.2: no ambient or scripted waves)",
+    "erasure_clock_start_10_5": "Folio entry; hunters use the spawn anchors of non-safe rooms, which doc 12 keeps"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.phase.build_up",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10.4 Phase machine and waves",
+   "fields": {
+    "reserve_waves": "one wave when `t - last_wave_tick >= 900`, the reserve is not empty and the Rubric is not `run.rubric.seal`",
+    "exit_condition_next_first_match": "`I ≥ 8000` → `sustain`; reserve empty and no member of a reserve or Seal wave alive → `exhausted`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.phase.sustain",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10.4 Phase machine and waves",
+   "fields": {
+    "reserve_waves": "none",
+    "exit_condition_next_first_match": "300 ticks since entering → `fade`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.phase.fade",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10.4 Phase machine and waves",
+   "fields": {
+    "reserve_waves": "none",
+    "exit_condition_next_first_match": "`I ≤ 2000` → `relax`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.phase.relax",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10.4 Phase machine and waves",
+   "fields": {
+    "reserve_waves": "none",
+    "exit_condition_next_first_match": "1200 ticks since entering → `build_up`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.phase.boss",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10.4 Phase machine and waves",
+   "fields": {
+    "reserve_waves": "none; boss scripts own adds",
+    "exit_condition_next_first_match": "the Editor's `ev.entity_killed` (the Author's in the Final Second Edition Folio, §9.4) → `exhausted`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "director.phase.exhausted",
+   "kind": "director",
+   "owner": "13",
+   "section": "13 10.4 Phase machine and waves",
+   "fields": {
+    "reserve_waves": "none",
+    "exit_condition_next_first_match": "none (terminal); hunters (§10.5) and scripted waves continue"
+   },
+   "also_in": []
+  }
+ ]
+}

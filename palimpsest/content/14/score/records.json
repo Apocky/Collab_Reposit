@@ -1,0 +1,177 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "score.progress",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_progress`",
+    "sign": "≥ 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.editor",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_editor`",
+    "sign": "≥ 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.speed",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_speed`",
+    "sign": "≥ 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.explore",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_explore`",
+    "sign": "≥ 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.notes",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_notes`",
+    "sign": "≥ 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.treasure",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_treasure`",
+    "sign": "≥ 0, at most 8000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.hunters",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_hunters`",
+    "sign": "≥ 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.deaths",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 4.2 Score formula",
+   "fields": {
+    "term": "`S_deaths`",
+    "sign": "≤ 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.board.standard",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 9.4 Leaderboards",
+   "fields": {
+    "metric_descending_unless_noted": "score",
+    "tie_breaks_in_order": "fewer `end_tick`; earlier submission",
+    "partitions": "party size 1..=4; all-time and per 12-week season"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.board.standard_speed",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 9.4 Leaderboards",
+   "fields": {
+    "metric_descending_unless_noted": "`end_tick` ascending, victories only",
+    "tie_breaks_in_order": "higher score; earlier submission",
+    "partitions": "party size; Grade 0..=20"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.board.abridged",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 9.4 Leaderboards",
+   "fields": {
+    "metric_descending_unless_noted": "score",
+    "tie_breaks_in_order": "fewer `end_tick`; earlier submission",
+    "partitions": "party size; all-time and season"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.board.novella",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 9.4 Leaderboards",
+   "fields": {
+    "metric_descending_unless_noted": "score",
+    "tie_breaks_in_order": "fewer `end_tick`; earlier submission",
+    "partitions": "party size; all-time and season"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.board.daily",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 9.4 Leaderboards",
+   "fields": {
+    "metric_descending_unless_noted": "score",
+    "tie_breaks_in_order": "deeper Folio; fewer `end_tick`",
+    "partitions": "party size; UTC date"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.board.weekly_gauntlet",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 9.4 Leaderboards",
+   "fields": {
+    "metric_descending_unless_noted": "best score",
+    "tie_breaks_in_order": "fewer `end_tick`",
+    "partitions": "party size; ISO week"
+   },
+   "also_in": []
+  },
+  {
+   "id": "score.board.endless",
+   "kind": "score",
+   "owner": "14",
+   "section": "14 9.4 Leaderboards",
+   "fields": {
+    "metric_descending_unless_noted": "deepest Folio cleared",
+    "tie_breaks_in_order": "higher score; fewer `end_tick`",
+    "partitions": "party size; all-time and season"
+   },
+   "also_in": []
+  }
+ ]
+}

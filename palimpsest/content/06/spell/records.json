@@ -1,0 +1,397 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "spell.searing_bolt",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt flame",
+    "complexity": "2",
+    "wand_weight": "1000"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.frost_orb",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "orb frost widen",
+    "complexity": "4",
+    "wand_weight": "900"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.packet_surge",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt storm quicken",
+    "complexity": "3",
+    "wand_weight": "900"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.thorn_sleep",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt slumber",
+    "complexity": "2",
+    "wand_weight": "700"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_striking",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt force",
+    "complexity": "2",
+    "wand_weight": "800"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_digging",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt shape",
+    "complexity": "3",
+    "wand_weight": "600"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_light",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt lumen",
+    "complexity": "2",
+    "wand_weight": "700"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_haste",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "self swiftness",
+    "complexity": "2",
+    "wand_weight": "600"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_polymorph",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt polymorph",
+    "complexity": "4",
+    "wand_weight": "300"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_dispel",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "bolt unmaking",
+    "complexity": "3",
+    "wand_weight": "600"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_fear",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "cone dread",
+    "complexity": "2",
+    "wand_weight": "600"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_lightning",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "chain storm",
+    "complexity": "3",
+    "wand_weight": "700"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_venom",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "cone venom",
+    "complexity": "2",
+    "wand_weight": "700"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_conjure",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "manifest summon edge",
+    "complexity": "5",
+    "wand_weight": "400"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.wand_invisibility",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.4 Wands",
+   "fields": {
+    "glyphs": "self veil",
+    "complexity": "2",
+    "wand_weight": "500"
+   },
+   "also_in": [
+    "06 8.6 Authored spell catalog"
+   ]
+  },
+  {
+   "id": "spell.storm_ray",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "beam storm",
+    "complexity": "3",
+    "school": "evocation",
+    "tags_and_use": "W3; channel, never in the wand pool"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.firestorm_bolt",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "bolt flame storm empower",
+    "complexity": "4",
+    "school": "evocation",
+    "tags_and_use": "W4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.cinder_bolt",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "bolt flame on_impact ( nova frost )",
+    "complexity": "9",
+    "school": "evocation",
+    "tags_and_use": "W5; the §4.6 record"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.flame_conjuration",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "manifest summon flame",
+    "complexity": "5",
+    "school": "conjuration",
+    "tags_and_use": "W6; spawns `summon.elemental`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.mending_aura",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "aura mend extend",
+    "complexity": "4",
+    "school": "restoration",
+    "tags_and_use": "W7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.mountain_palm",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.wuxia`",
+    "glyphs": "touch force heavy",
+    "complexity": "3",
+    "school": "alteration",
+    "tags_and_use": "W9 (§10)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.gaze_of_madness",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.cosmic_horror`",
+    "glyphs": "cone mind",
+    "complexity": "3",
+    "school": "illusion",
+    "tags_and_use": "W10"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.boiler_burst",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.steampunk`",
+    "glyphs": "nova thunder",
+    "complexity": "3",
+    "school": "evocation",
+    "tags_and_use": "W12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.text_mending",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "nova mend",
+    "complexity": "3",
+    "school": "restoration",
+    "tags_and_use": "`item.text.mending` (§8.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.text_demolition",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "nova force shape",
+    "complexity": "5",
+    "school": "alteration",
+    "tags_and_use": "`item.text.demolition`; shape removes only `block.tag.destructible` blocks within 2000 mm (§13.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.text_warding",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "nova ward",
+    "complexity": "3",
+    "school": "abjuration",
+    "tags_and_use": "`item.text.warding`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.text_silence",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "field hush",
+    "complexity": "3",
+    "school": "abjuration",
+    "tags_and_use": "`item.text.silence`; a null field (§14.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "spell.text_summoning",
+   "kind": "spell",
+   "owner": "06",
+   "section": "06 8.6 Authored spell catalog",
+   "fields": {
+    "origin_genre": "`genre.mythic_fantasy`",
+    "glyphs": "manifest summon edge",
+    "complexity": "5",
+    "school": "conjuration",
+    "tags_and_use": "`item.text.summoning`; spawns `summon.hound`"
+   },
+   "also_in": []
+  }
+ ]
+}

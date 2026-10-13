@@ -1,0 +1,70 @@
+{
+ "schema": "18.table_row",
+ "records": [
+  {
+   "id": "art.visual.echo.sun_wukong",
+   "kind": "art",
+   "owner": "18",
+   "section": "18 8.9 Public-domain Echoes (Canon §16.2, DECISIONS item 28)",
+   "fields": {
+    "echo_doc_14": "`echo.sun_wukong`",
+    "origin_genre": "wuxia",
+    "sources": "*Journey to the West* (16th century)",
+    "presentation_rules": "the Monkey King of the novel: golden fillet, staff that changes size, cloud-somersault; speaks in the wuxia register with the novel's irreverence"
+   },
+   "also_in": []
+  },
+  {
+   "id": "art.visual.echo.loki",
+   "kind": "art",
+   "owner": "18",
+   "section": "18 8.9 Public-domain Echoes (Canon §16.2, DECISIONS item 28)",
+   "fields": {
+    "echo_doc_14": "`echo.loki`",
+    "origin_genre": "mythic_antiquity",
+    "sources": "*Poetic Edda*, *Prose Edda* (13th century)",
+    "presentation_rules": "a shape-shifting trickster with the scarred, sewn lips of the *Skáldskaparmál* tale; no horned helmet, which is a modern costume convention"
+   },
+   "also_in": []
+  },
+  {
+   "id": "art.visual.echo.lilith",
+   "kind": "art",
+   "owner": "18",
+   "section": "18 8.9 Public-domain Echoes (Canon §16.2, DECISIONS item 28)",
+   "fields": {
+    "echo_doc_14": "`echo.lilith`",
+    "origin_genre": "gothic_horror",
+    "sources": "medieval Jewish folklore (the *Alphabet of Ben Sira*, about 8th to 10th century) and Victorian poetry about her",
+    "presentation_rules": "a literary night-figure presented in gothic register; lines never quote scripture, never state a religious claim and never name a living religion (§8.8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "art.visual.echo.fenrir",
+   "kind": "art",
+   "owner": "18",
+   "section": "18 8.9 Public-domain Echoes (Canon §16.2, DECISIONS item 28)",
+   "fields": {
+    "echo_doc_14": "`echo.fenrir`",
+    "origin_genre": "mythic_fantasy",
+    "sources": "*Poetic Edda*, *Prose Edda*",
+    "presentation_rules": "a vast grey wolf with the broken links of Gleipnir at the neck; `body.quadruped`; speaks, as in the Eddas"
+   },
+   "also_in": []
+  },
+  {
+   "id": "art.visual.echo.jormungandr",
+   "kind": "art",
+   "owner": "18",
+   "section": "18 8.9 Public-domain Echoes (Canon §16.2, DECISIONS item 28)",
+   "fields": {
+    "echo_doc_14": "`echo.jormungandr`",
+    "origin_genre": "cosmic_horror",
+    "sources": "*Poetic Edda*, *Prose Edda*",
+    "presentation_rules": "the World Serpent drawn as a sea-dark coil with an eel's eye; `body.serpentine`; speaks seldom and in cosmic-horror register"
+   },
+   "also_in": []
+  }
+ ]
+}

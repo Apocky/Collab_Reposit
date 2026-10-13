@@ -1,0 +1,1478 @@
+{
+ "schema": "08.table_row",
+ "records": [
+  {
+   "id": "ing.aether_crystal",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "restore_aether",
+    "effect_2": "ward",
+    "effect_3": "levitate",
+    "effect_4": "unravel",
+    "potency_bp": "13000",
+    "mass_g": "30",
+    "value": "20",
+    "sources": "M mine: arcane genres",
+    "tags": "mineral",
+    "skin_examples": "space_opera: Psi-crystal; cyberpunk: Bandwidth shard"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.amber",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "resist_shock",
+    "effect_2": "regenerate",
+    "effect_3": "focus",
+    "effect_4": "ward",
+    "potency_bp": "12000",
+    "mass_g": "20",
+    "value": "12",
+    "sources": "M mine; D tag beast",
+    "tags": "mineral",
+    "skin_examples": "mythic_antiquity: Electrum amber; cyberpunk: Insulgel"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.angel_feather",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "bless",
+    "effect_2": "featherfall",
+    "effect_3": "heal",
+    "effect_4": "resist_umbral",
+    "potency_bp": "13000",
+    "mass_g": "5",
+    "value": "25",
+    "sources": "D tag divine; W shrines",
+    "tags": "monster holy",
+    "skin_examples": "mythic_antiquity: Nike's feather; fairy_tale: Godmother's plume"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.ash_of_errata",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "inspire",
+    "effect_2": "weaken",
+    "effect_3": "fortify_finesse",
+    "effect_4": "resist_radiation",
+    "potency_bp": "12000",
+    "mass_g": "5",
+    "value": "16",
+    "sources": "D fac.editors; ruins",
+    "tags": "monster",
+    "skin_examples": "redacted: Expunged ash; ur_text: Margin ash"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.basilisk_eye",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "paralyze",
+    "effect_2": "fortify",
+    "effect_3": "blind",
+    "effect_4": "mind_vision",
+    "potency_bp": "13000",
+    "mass_g": "30",
+    "value": "22",
+    "sources": "D tag basilisk, gorgon",
+    "tags": "monster",
+    "skin_examples": "mythic_antiquity: Gorgon eye; space_opera: Petrifier lens"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.blessed_salt",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "purify",
+    "effect_2": "bless",
+    "effect_3": "resist_umbral",
+    "effect_4": "silence",
+    "potency_bp": "11000",
+    "mass_g": "20",
+    "value": "10",
+    "sources": "S temple shops; W shrines",
+    "tags": "mineral holy",
+    "skin_examples": "gothic_horror: Consecrated salt; weird_west: Mission salt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.blindweed",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "invisibility",
+    "effect_2": "blind",
+    "effect_3": "confuse",
+    "effect_4": "night_eye",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "6",
+    "sources": "H weed: ruins",
+    "tags": "plant",
+    "skin_examples": "hardboiled_noir: Shade-weed; fairy_tale: Hide-me-not"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.bloodmoss",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "heal",
+    "effect_2": "restore_stamina",
+    "effect_3": "resist_frost",
+    "effect_4": "disease",
+    "potency_bp": "10000",
+    "mass_g": "20",
+    "value": "4",
+    "sources": "H moss: every genre",
+    "tags": "plant",
+    "skin_examples": "gothic_horror: Grave-moss; cyberpunk: Hemo-lichen culture"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.bombardier_gland",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "corrode",
+    "effect_2": "burn",
+    "effect_3": "expose",
+    "effect_4": "resist_acid",
+    "potency_bp": "11000",
+    "mass_g": "10",
+    "value": "7",
+    "sources": "D tag beetle, insect",
+    "tags": "animal",
+    "skin_examples": "steampunk: Boiler-beetle gland; wuxia: Fire-beetle sac"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.brimstone",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "burn",
+    "effect_2": "fear",
+    "effect_3": "wither",
+    "effect_4": "resist_frost",
+    "potency_bp": "10000",
+    "mass_g": "60",
+    "value": "4",
+    "sources": "M mine: volcanic",
+    "tags": "mineral",
+    "skin_examples": "mythic_fantasy: Hellstone; space_opera: Sulfur ore"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.charcoal",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "purify",
+    "effect_2": "detox",
+    "effect_3": "resist_toxin",
+    "effect_4": "blind",
+    "potency_bp": "8000",
+    "mass_g": "30",
+    "value": "1",
+    "sources": "S shop; crafted from wood (doc 07)",
+    "tags": "mineral filter",
+    "skin_examples": "post_apocalypse: Filter char; hardboiled_noir: Carbon"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.cinnabar",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "fortify_vigor",
+    "effect_2": "regenerate",
+    "effect_3": "poison",
+    "effect_4": "inspire",
+    "potency_bp": "12000",
+    "mass_g": "40",
+    "value": "10",
+    "sources": "M mine: wuxia, antiquity",
+    "tags": "mineral",
+    "skin_examples": "wuxia: Cinnabar (dan sand); mythic_antiquity: Dragon's-blood ore"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.circuit_dust",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "focus",
+    "effect_2": "fortify_intellect",
+    "effect_3": "shock",
+    "effect_4": "confuse",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "6",
+    "sources": "D tag construct; M scrap",
+    "tags": "tech",
+    "skin_examples": "space_opera: Quantum filings; steampunk: Brass filings"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.clockwork_spring",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "haste",
+    "effect_2": "fortify_finesse",
+    "effect_3": "shock",
+    "effect_4": "slow",
+    "potency_bp": "10000",
+    "mass_g": "40",
+    "value": "8",
+    "sources": "D tag clockwork; M scrap",
+    "tags": "tech",
+    "skin_examples": "steampunk: Mainspring; wuxia: Mechanism coil"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.coffee_bean",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "focus",
+    "effect_2": "restore_stamina",
+    "effect_3": "fortify_perception",
+    "effect_4": "drain_stamina",
+    "potency_bp": "9000",
+    "mass_g": "10",
+    "value": "3",
+    "sources": "S shop; H plantations",
+    "tags": "plant",
+    "skin_examples": "hardboiled_noir: Joe; cyberpunk: Caf-pellet"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.demon_horn",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "empower",
+    "effect_2": "berserk",
+    "effect_3": "fear",
+    "effect_4": "wither",
+    "potency_bp": "12000",
+    "mass_g": "120",
+    "value": "18",
+    "sources": "D tag fiend",
+    "tags": "monster",
+    "skin_examples": "gothic_horror: Devil's horn; wuxia: Yaoguai horn"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.dreamfoil",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "sleep",
+    "effect_2": "restore_composure",
+    "effect_3": "mind_vision",
+    "effect_4": "confuse",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "5",
+    "sources": "H flower: oneiric, fairy_tale",
+    "tags": "plant",
+    "skin_examples": "oneiric: Somnifoil; wuxia: Drowsy-cloud herb"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.earthroot",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "fortify",
+    "effect_2": "paralyze",
+    "effect_3": "resist_acid",
+    "effect_4": "satiate",
+    "potency_bp": "10000",
+    "mass_g": "40",
+    "value": "5",
+    "sources": "H root: caves",
+    "tags": "plant",
+    "skin_examples": "mythic_antiquity: Gaia root; post_apocalypse: Ironroot"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.ectoplasm_wisp",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "invisibility",
+    "effect_2": "levitate",
+    "effect_3": "dread",
+    "effect_4": "unravel",
+    "potency_bp": "12000",
+    "mass_g": "1",
+    "value": "12",
+    "sources": "D tag ghost, spirit",
+    "tags": "monster",
+    "skin_examples": "gothic_horror: Spirit residue; cosmic_horror: Ectoplasm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.eldritch_eye",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "mind_vision",
+    "effect_2": "dread",
+    "effect_3": "fortify_intellect",
+    "effect_4": "mutate",
+    "potency_bp": "12000",
+    "mass_g": "40",
+    "value": "18",
+    "sources": "D tag eldritch",
+    "tags": "monster",
+    "skin_examples": "cosmic_horror: Eye of the Outer; space_opera: Xeno-ocellus"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.eye_of_newt",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "mind_vision",
+    "effect_2": "night_eye",
+    "effect_3": "fortify_perception",
+    "effect_4": "confuse",
+    "potency_bp": "10000",
+    "mass_g": "5",
+    "value": "4",
+    "sources": "D tag amphibian; B",
+    "tags": "animal",
+    "skin_examples": "fairy_tale: Newt's eye; cyberpunk: Optic jelly"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.fadeleaf",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "mind_vision",
+    "effect_2": "invisibility",
+    "effect_3": "slow",
+    "effect_4": "fortify_perception",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "6",
+    "sources": "H shrub: forest",
+    "tags": "plant",
+    "skin_examples": "cosmic_horror: Veil-leaf; cyberpunk: Ghost-fern"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.fairy_wing",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "levitate",
+    "effect_2": "charm",
+    "effect_3": "featherfall",
+    "effect_4": "confuse",
+    "potency_bp": "11000",
+    "mass_g": "1",
+    "value": "15",
+    "sources": "D tag fae; H",
+    "tags": "monster",
+    "skin_examples": "fairy_tale: Pixie wing; oneiric: Moth-dream wing"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.firebloom",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "burn",
+    "effect_2": "resist_frost",
+    "effect_3": "empower",
+    "effect_4": "blind",
+    "potency_bp": "10000",
+    "mass_g": "15",
+    "value": "5",
+    "sources": "H flower: volcanic",
+    "tags": "plant",
+    "skin_examples": "wuxia: Flame-lotus; post_apocalypse: Burnflower"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.foxglove",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "harm",
+    "effect_2": "haste",
+    "effect_3": "fortify_vigor",
+    "effect_4": "paralyze",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "4",
+    "sources": "H flower: woods",
+    "tags": "plant",
+    "skin_examples": "gothic_horror: Dead-men's-bells; steampunk: Digitalis leaf"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.frost_salt",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "freeze",
+    "effect_2": "resist_fire",
+    "effect_3": "focus",
+    "effect_4": "slow",
+    "potency_bp": "10000",
+    "mass_g": "30",
+    "value": "5",
+    "sources": "M mine: tundra",
+    "tags": "mineral",
+    "skin_examples": "space_opera: Cryo-salt; fairy_tale: Winter salt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.ghoul_tongue",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "paralyze",
+    "effect_2": "disease",
+    "effect_3": "satiate",
+    "effect_4": "wither",
+    "potency_bp": "10000",
+    "mass_g": "40",
+    "value": "5",
+    "sources": "D tag ghoul, undead",
+    "tags": "monster",
+    "skin_examples": "gothic_horror: Ghast tongue; wuxia: Jiangshi tongue"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.ginseng",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "restore_stamina",
+    "effect_2": "fortify_vigor",
+    "effect_3": "regenerate",
+    "effect_4": "restore_aether",
+    "potency_bp": "12000",
+    "mass_g": "25",
+    "value": "9",
+    "sources": "H root: wuxia, fantasy",
+    "tags": "plant",
+    "skin_examples": "wuxia: Thousand-year ginseng; space_opera: Vita-root"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.glowshroom",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "night_eye",
+    "effect_2": "resist_radiation",
+    "effect_3": "irradiate",
+    "effect_4": "focus",
+    "potency_bp": "10000",
+    "mass_g": "15",
+    "value": "4",
+    "sources": "F mushroom: deep caves",
+    "tags": "fungus",
+    "skin_examples": "post_apocalypse: Glowing fungus; space_opera: Lumen-cap"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.hagberry",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "charm",
+    "effect_2": "detox",
+    "effect_3": "weaken",
+    "effect_4": "night_eye",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "6",
+    "sources": "H bush: fairy_tale, gothic",
+    "tags": "plant",
+    "skin_examples": "fairy_tale: Witch's berry; weird_west: Hag's chokeberry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.hemlock",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "paralyze",
+    "effect_2": "poison",
+    "effect_3": "harm",
+    "effect_4": "silence",
+    "potency_bp": "11000",
+    "mass_g": "15",
+    "value": "7",
+    "sources": "H umbel: riverbanks",
+    "tags": "plant",
+    "skin_examples": "mythic_antiquity: Socrates' cup; weird_west: Water hemlock"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.icecap",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "freeze",
+    "effect_2": "resist_fire",
+    "effect_3": "slow",
+    "effect_4": "focus",
+    "potency_bp": "10000",
+    "mass_g": "15",
+    "value": "5",
+    "sources": "H flower: tundra, ice caves",
+    "tags": "plant",
+    "skin_examples": "cosmic_horror: Rime-bloom; space_opera: Cryo-moss"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.ink_lotus",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "weaken",
+    "effect_2": "silence",
+    "effect_3": "restore_aether",
+    "effect_4": "fortify_intellect",
+    "potency_bp": "11000",
+    "mass_g": "10",
+    "value": "10",
+    "sources": "H water plant: Scriptorium pools",
+    "tags": "plant",
+    "skin_examples": "wuxia: Calligrapher's lotus; redacted: Correction lily"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.inkcap",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "blind",
+    "effect_2": "mind_vision",
+    "effect_3": "dread",
+    "effect_4": "unravel",
+    "potency_bp": "10000",
+    "mass_g": "15",
+    "value": "5",
+    "sources": "F mushroom: libraries, manuscripts",
+    "tags": "fungus",
+    "skin_examples": "cosmic_horror: Ink-cap of Yith; gothic_horror: Shaggy mane"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.kraken_ink",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "blind",
+    "effect_2": "water_breathing",
+    "effect_3": "invisibility",
+    "effect_4": "dread",
+    "potency_bp": "11000",
+    "mass_g": "50",
+    "value": "12",
+    "sources": "D tag cephalopod",
+    "tags": "monster",
+    "skin_examples": "cosmic_horror: Deep-one ink; steampunk: Squid ink"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.lich_dust",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "unravel",
+    "effect_2": "wither",
+    "effect_3": "drain_stamina",
+    "effect_4": "resist_umbral",
+    "potency_bp": "12000",
+    "mass_g": "10",
+    "value": "16",
+    "sources": "D tag lich, undead caster",
+    "tags": "monster",
+    "skin_examples": "gothic_horror: Bone-mage ash; wuxia: Corpse-sage powder"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.lodestone",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "resist_shock",
+    "effect_2": "shock",
+    "effect_3": "slow",
+    "effect_4": "fortify",
+    "potency_bp": "10000",
+    "mass_g": "80",
+    "value": "6",
+    "sources": "M mine",
+    "tags": "mineral",
+    "skin_examples": "steampunk: Magnetite; cyberpunk: Ferrite core"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.lotus_seed",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "restore_composure",
+    "effect_2": "purify",
+    "effect_3": "focus",
+    "effect_4": "water_breathing",
+    "potency_bp": "11000",
+    "mass_g": "10",
+    "value": "8",
+    "sources": "H water plant: wuxia, antiquity",
+    "tags": "plant",
+    "skin_examples": "wuxia: Snow lotus seed; mythic_antiquity: Lotus-eater seed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.mageroyal",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "purify",
+    "effect_2": "restore_aether",
+    "effect_3": "cure",
+    "effect_4": "silence",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "6",
+    "sources": "H flower: arcane biomes",
+    "tags": "plant",
+    "skin_examples": "fairy_tale: Queen's lace; space_opera: Filter-reed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.mandrake",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "sleep",
+    "effect_2": "fear",
+    "effect_3": "fortify_intellect",
+    "effect_4": "restore_aether",
+    "potency_bp": "12000",
+    "mass_g": "60",
+    "value": "12",
+    "sources": "H root: graveyards",
+    "tags": "plant",
+    "skin_examples": "fairy_tale: Screaming root; oneiric: Dream-root"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.mender_root",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "heal",
+    "effect_2": "cure",
+    "effect_3": "regenerate",
+    "effect_4": "slow",
+    "potency_bp": "11000",
+    "mass_g": "40",
+    "value": "6",
+    "sources": "H root: forest biomes",
+    "tags": "plant",
+    "skin_examples": "weird_west: Snakeroot; space_opera: Medi-tuber"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.mint_leaf",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "restore_stamina",
+    "effect_2": "detox",
+    "effect_3": "focus",
+    "effect_4": "resist_fire",
+    "potency_bp": "9000",
+    "mass_g": "5",
+    "value": "2",
+    "sources": "H herb: every genre",
+    "tags": "plant",
+    "skin_examples": "cyberpunk: Menthol cartridge; fairy_tale: Pennyroyal"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.mutagen",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "mutate",
+    "effect_2": "irradiate",
+    "effect_3": "regenerate",
+    "effect_4": "`fortify_might`",
+    "potency_bp": "11000",
+    "mass_g": "30",
+    "value": "10",
+    "sources": "D tag mutant; W labs",
+    "tags": "tech",
+    "skin_examples": "post_apocalypse: Mutant serum; cosmic_horror: Shoggoth cell"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.nanopaste",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "heal",
+    "effect_2": "ward",
+    "effect_3": "fortify",
+    "effect_4": "unravel",
+    "potency_bp": "12000",
+    "mass_g": "20",
+    "value": "14",
+    "sources": "S shop; D tag construct",
+    "tags": "tech",
+    "skin_examples": "cyberpunk: Medi-nanite paste; steampunk: Restorative grease"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.nightshade",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "poison",
+    "effect_2": "sleep",
+    "effect_3": "night_eye",
+    "effect_4": "harm",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "5",
+    "sources": "H berry: shade",
+    "tags": "plant",
+    "skin_examples": "gothic_horror: Belladonna; cyberpunk: Black-berry synth"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.ooze_core",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "corrode",
+    "effect_2": "resist_acid",
+    "effect_3": "slow",
+    "effect_4": "satiate",
+    "potency_bp": "10000",
+    "mass_g": "200",
+    "value": "5",
+    "sources": "D tag ooze, amorphous",
+    "tags": "monster",
+    "skin_examples": "post_apocalypse: Sludge heart; space_opera: Protoplasm nucleus"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.peach_of_immortality",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "regenerate",
+    "effect_2": "heal",
+    "effect_3": "inspire",
+    "effect_4": "fortify_vigor",
+    "potency_bp": "14000",
+    "mass_g": "150",
+    "value": "45",
+    "sources": "H tree: wuxia; Reliquary",
+    "tags": "plant",
+    "skin_examples": "wuxia: Immortal peach; mythic_antiquity: Golden apple"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.peyote_flesh",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "mind_vision",
+    "effect_2": "restore_stamina",
+    "effect_3": "confuse",
+    "effect_4": "fear",
+    "potency_bp": "10000",
+    "mass_g": "30",
+    "value": "5",
+    "sources": "H cactus: deserts",
+    "tags": "plant",
+    "skin_examples": "weird_west: Peyote button; space_opera: Psi-cactus"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.phoenix_feather",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "regenerate",
+    "effect_2": "resist_fire",
+    "effect_3": "burn",
+    "effect_4": "bless",
+    "potency_bp": "14000",
+    "mass_g": "5",
+    "value": "40",
+    "sources": "D tag phoenix; Reliquary",
+    "tags": "monster",
+    "skin_examples": "wuxia: Vermilion bird plume; fairy_tale: Firebird feather"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.pitchblende",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "irradiate",
+    "effect_2": "night_eye",
+    "effect_3": "resist_radiation",
+    "effect_4": "harm",
+    "potency_bp": "11000",
+    "mass_g": "100",
+    "value": "8",
+    "sources": "M mine: post_apocalypse, space_opera",
+    "tags": "mineral",
+    "skin_examples": "post_apocalypse: Hot rock; space_opera: Isotope ore"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.poppy_tear",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "sleep",
+    "effect_2": "restore_composure",
+    "effect_3": "slow",
+    "effect_4": "heal",
+    "potency_bp": "10000",
+    "mass_g": "5",
+    "value": "6",
+    "sources": "H flower: fields",
+    "tags": "plant",
+    "skin_examples": "hardboiled_noir: Laudanum gum; wuxia: Dream poppy"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.redcap",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "restore_stamina",
+    "effect_2": "poison",
+    "effect_3": "berserk",
+    "effect_4": "`fortify_might`",
+    "potency_bp": "10000",
+    "mass_g": "20",
+    "value": "3",
+    "sources": "F mushroom: caves",
+    "tags": "fungus",
+    "skin_examples": "fairy_tale: Fly agaric; post_apocalypse: Rad-cap"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.rotberry",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "`fortify_might`",
+    "effect_2": "disease",
+    "effect_3": "satiate",
+    "effect_4": "empower",
+    "potency_bp": "10000",
+    "mass_g": "20",
+    "value": "4",
+    "sources": "H bush: ruins",
+    "tags": "plant",
+    "skin_examples": "post_apocalypse: Mutberry; gothic_horror: Grave-berry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.salamander_tail",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "resist_fire",
+    "effect_2": "regenerate",
+    "effect_3": "burn",
+    "effect_4": "water_breathing",
+    "potency_bp": "11000",
+    "mass_g": "40",
+    "value": "9",
+    "sources": "D tag salamander, amphibian",
+    "tags": "animal",
+    "skin_examples": "mythic_fantasy: Salamander tail; cyberpunk: Regen-graft tissue"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.saltpeter",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "burn",
+    "effect_2": "purify",
+    "effect_3": "resist_frost",
+    "effect_4": "expose",
+    "potency_bp": "9000",
+    "mass_g": "50",
+    "value": "3",
+    "sources": "M mine; S shop",
+    "tags": "mineral",
+    "skin_examples": "steampunk: Nitre; wuxia: Fire-saltpetre"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.serpent_venom",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "poison",
+    "effect_2": "paralyze",
+    "effect_3": "resist_toxin",
+    "effect_4": "expose",
+    "potency_bp": "11000",
+    "mass_g": "10",
+    "value": "8",
+    "sources": "D tag serpent",
+    "tags": "animal",
+    "skin_examples": "weird_west: Rattler venom; mythic_antiquity: Asp venom"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.siren_scale",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "charm",
+    "effect_2": "water_breathing",
+    "effect_3": "restore_composure",
+    "effect_4": "confuse",
+    "potency_bp": "12000",
+    "mass_g": "10",
+    "value": "15",
+    "sources": "D tag siren, merfolk",
+    "tags": "monster",
+    "skin_examples": "mythic_antiquity: Siren scale; space_opera: Lure-scale"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.sorrowmoss",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "poison",
+    "effect_2": "dread",
+    "effect_3": "disease",
+    "effect_4": "resist_toxin",
+    "potency_bp": "10000",
+    "mass_g": "15",
+    "value": "4",
+    "sources": "H moss: swamps",
+    "tags": "plant",
+    "skin_examples": "gothic_horror: Widow's moss; cyberpunk: Toxo-lichen"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.spider_gland",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "paralyze",
+    "effect_2": "poison",
+    "effect_3": "slow",
+    "effect_4": "night_eye",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "6",
+    "sources": "D tag spider",
+    "tags": "animal",
+    "skin_examples": "cyberpunk: Neuro-venom sac; fairy_tale: Ettercap gland"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.spore_sac",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "disease",
+    "effect_2": "confuse",
+    "effect_3": "poison",
+    "effect_4": "resist_toxin",
+    "potency_bp": "9000",
+    "mass_g": "20",
+    "value": "3",
+    "sources": "D tag spore; F",
+    "tags": "fungus",
+    "skin_examples": "post_apocalypse: Mold sac; space_opera: Xeno-spore pod"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.starflower",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "restore_aether",
+    "effect_2": "inspire",
+    "effect_3": "bless",
+    "effect_4": "fortify_perception",
+    "potency_bp": "12000",
+    "mass_g": "10",
+    "value": "10",
+    "sources": "H flower: high places",
+    "tags": "plant",
+    "skin_examples": "mythic_antiquity: Asphodel; space_opera: Nova-bloom"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.stim_gland",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "haste",
+    "effect_2": "empower",
+    "effect_3": "restore_stamina",
+    "effect_4": "berserk",
+    "potency_bp": "12000",
+    "mass_g": "20",
+    "value": "12",
+    "sources": "D tag construct, cyborg; S",
+    "tags": "tech",
+    "skin_examples": "cyberpunk: Adrenal booster; space_opera: Combat gland"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.stormvine",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "levitate",
+    "effect_2": "shock",
+    "effect_3": "haste",
+    "effect_4": "resist_shock",
+    "potency_bp": "10000",
+    "mass_g": "20",
+    "value": "6",
+    "sources": "H vine: storm biomes, steampunk",
+    "tags": "plant",
+    "skin_examples": "steampunk: Galvanic creeper; space_opera: Ion-vine"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.sungrass",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "heal",
+    "effect_2": "regenerate",
+    "effect_3": "satiate",
+    "effect_4": "resist_radiation",
+    "potency_bp": "10000",
+    "mass_g": "15",
+    "value": "4",
+    "sources": "H grass: fantasy, fairy_tale, antiquity",
+    "tags": "plant",
+    "skin_examples": "wuxia: Sun-blade grass; post_apocalypse: Green-stem"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.swiftthistle",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "haste",
+    "effect_2": "restore_stamina",
+    "effect_3": "featherfall",
+    "effect_4": "confuse",
+    "potency_bp": "10000",
+    "mass_g": "10",
+    "value": "5",
+    "sources": "H thistle: plains",
+    "tags": "plant",
+    "skin_examples": "cyberpunk: Kick-weed; weird_west: Jackrabbit thistle"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.troll_fat",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "regenerate",
+    "effect_2": "heal",
+    "effect_3": "fortify_vigor",
+    "effect_4": "slow",
+    "potency_bp": "12000",
+    "mass_g": "80",
+    "value": "12",
+    "sources": "D tag troll, brute",
+    "tags": "animal fat",
+    "skin_examples": "fairy_tale: Ogre lard; post_apocalypse: Mutant fat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.unicorn_hair",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "cure",
+    "effect_2": "purify",
+    "effect_3": "heal",
+    "effect_4": "bless",
+    "potency_bp": "14000",
+    "mass_g": "1",
+    "value": "40",
+    "sources": "D tag unicorn; Reliquary",
+    "tags": "monster holy",
+    "skin_examples": "fairy_tale: Unicorn mane; wuxia: Qilin hair"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.vampire_dust",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "wither",
+    "effect_2": "invisibility",
+    "effect_3": "regenerate",
+    "effect_4": "dread",
+    "potency_bp": "12000",
+    "mass_g": "10",
+    "value": "14",
+    "sources": "D tag vampire",
+    "tags": "monster",
+    "skin_examples": "gothic_horror: Nosferatu ash; cyberpunk: Night-gland powder"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.vitriol",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "corrode",
+    "effect_2": "purify",
+    "effect_3": "expose",
+    "effect_4": "resist_acid",
+    "potency_bp": "10000",
+    "mass_g": "50",
+    "value": "5",
+    "sources": "M mine; S shop",
+    "tags": "mineral",
+    "skin_examples": "steampunk: Oil of vitriol crystal; cyberpunk: Etchant salt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.wolf_heart",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "berserk",
+    "effect_2": "`fortify_might`",
+    "effect_3": "haste",
+    "effect_4": "wither",
+    "potency_bp": "11000",
+    "mass_g": "300",
+    "value": "8",
+    "sources": "D tag wolf, were",
+    "tags": "animal",
+    "skin_examples": "weird_west: Coyote heart; wuxia: Tiger heart"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.wolfsbane",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "poison",
+    "effect_2": "resist_umbral",
+    "effect_3": "fear",
+    "effect_4": "paralyze",
+    "potency_bp": "10000",
+    "mass_g": "15",
+    "value": "6",
+    "sources": "H flower: mountains",
+    "tags": "plant",
+    "skin_examples": "gothic_horror: Monkshood; wuxia: Aconite of the wolf"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.wyrm_scale",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.2 Catalog (72 effect ingredients)",
+   "fields": {
+    "effect_1": "resist_fire",
+    "effect_2": "fortify",
+    "effect_3": "empower",
+    "effect_4": "burn",
+    "potency_bp": "13000",
+    "mass_g": "60",
+    "value": "25",
+    "sources": "D tag dragon, reptile",
+    "tags": "animal",
+    "skin_examples": "wuxia: Jiao scale; space_opera: Salamander plate"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.quicksalt",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.3 Modifier reagents and special ingredients",
+   "fields": {
+    "role": "Extend",
+    "rule": "every duration × 16000; toxicity × 11000; not with Amplify",
+    "mass_g": "10",
+    "value": "8",
+    "sources": "M, S",
+    "skins": "time-salt, nano-stabilizer, slow-ember sand"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.bright_dust",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.3 Modifier reagents and special ingredients",
+   "fields": {
+    "role": "Amplify",
+    "rule": "every magnitude × 13000, every duration × 6000; toxicity × 12000; not with Extend",
+    "mass_g": "5",
+    "value": "10",
+    "sources": "M, S",
+    "skins": "glowstone dust, overclock powder, gold-cloud dust"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.black_gall",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.3 Modifier reagents and special ingredients",
+   "fields": {
+    "role": "Invert",
+    "rule": "each effect with a twin becomes its twin (§9.4)",
+    "mass_g": "10",
+    "value": "6",
+    "sources": "D tag insect, S",
+    "skins": "oak gall, null-code shard, reversal gall"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.puffball",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.3 Modifier reagents and special ingredients",
+   "fields": {
+    "role": "Aerosol",
+    "rule": "the potion becomes an aerosol (§10.4); not with Linger",
+    "mass_g": "15",
+    "value": "5",
+    "sources": "F",
+    "skins": "puffball spore, atomizer cell, smoke-gourd"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.gum_resin",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.3 Modifier reagents and special ingredients",
+   "fields": {
+    "role": "Linger",
+    "rule": "the potion's spill also creates a surface patch (§10.6); not with Aerosol",
+    "mass_g": "15",
+    "value": "5",
+    "sources": "H tree",
+    "skins": "pine gum, adhesive polymer, frankincense"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.essence",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.3 Modifier reagents and special ingredients",
+   "fields": {
+    "role": "transmutation currency (§15)",
+    "rule": "stack 999",
+    "mass_g": "1",
+    "value": "1",
+    "sources": "alchemizing (§15.1)",
+    "skins": "quintessence, reagent credits, refined qi, ichor salt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ing.black_powder",
+   "kind": "ing",
+   "owner": "08",
+   "section": "08 8.3 Modifier reagents and special ingredients",
+   "fields": {
+    "role": "bomb charge (§13.2)",
+    "rule": "no brewing use",
+    "mass_g": "20",
+    "value": "3",
+    "sources": "§15 recipe, S",
+    "skins": "gunpowder, flash compound, fire medicine"
+   },
+   "also_in": []
+  }
+ ]
+}

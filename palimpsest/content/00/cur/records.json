@@ -1,0 +1,63 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "cur.lucre",
+   "kind": "cur",
+   "owner": "00",
+   "section": "00 14. Currencies",
+   "fields": {
+    "name": "Lucre",
+    "scope": "run, per Erratum",
+    "source": "drops, sales",
+    "spent_on": "in-run shops, services, Fortune Engines; displayed under the local genre's Lucre skin (§5.2); one shared value across genres; passes between party members only as dropped piles (doc 11 §17); lost when the run ends"
+   },
+   "also_in": []
+  },
+  {
+   "id": "cur.quire",
+   "kind": "cur",
+   "owner": "00",
+   "section": "00 14. Currencies",
+   "fields": {
+    "name": "Quires",
+    "scope": "account",
+    "source": "run score, achievements, Codex tiers",
+    "spent_on": "the Margin unlock tree (doc 14)"
+   },
+   "also_in": [
+    "15 2.1 Currency table"
+   ]
+  },
+  {
+   "id": "cur.ink",
+   "kind": "cur",
+   "owner": "00",
+   "section": "00 14. Currencies",
+   "fields": {
+    "name": "Ink",
+    "scope": "account",
+    "source": "a one-time welcome grant, play time, run completion, Codex tiers, achievements",
+    "spent_on": "Inkwell pulls (doc 15)"
+   },
+   "also_in": [
+    "15 2.1 Currency table"
+   ]
+  },
+  {
+   "id": "cur.vellum",
+   "kind": "cur",
+   "owner": "00",
+   "section": "00 14. Currencies",
+   "fields": {
+    "name": "Vellum",
+    "scope": "account",
+    "source": "Inkwell duplicates and unused spark at banner end",
+    "spent_on": "the Vellum Archive: past featured Echoes, Scripts and cosmetic tiers (doc 15)"
+   },
+   "also_in": [
+    "15 2.1 Currency table"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,44 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "afflict.hunger",
+   "kind": "afflict",
+   "owner": "04",
+   "section": "00 16.4 Afflictions",
+   "fields": {
+    "skins": "vampirism, ghoul hunger, jiangshi",
+    "effects": "dark-vision +2 m; melee heals 1000 Bp of damage dealt; no natural HP regeneration while `light_at ≥ 12`; resist radiant −5000"
+   },
+   "also_in": [
+    "04 15.7 Afflictions and wounds"
+   ]
+  },
+  {
+   "id": "afflict.beast",
+   "kind": "afflict",
+   "owner": "04",
+   "section": "00 16.4 Afflictions",
+   "fields": {
+    "skins": "lycanthropy, were-forms",
+    "effects": "once per Folio, or whenever composure is below 25%, gain `st.polymorphed` into a beast template for 30 s: melee × 15000, no items"
+   },
+   "also_in": [
+    "04 15.7 Afflictions and wounds"
+   ]
+  },
+  {
+   "id": "afflict.red_ink",
+   "kind": "afflict",
+   "owner": "04",
+   "section": "00 16.4 Afflictions",
+   "fields": {
+    "skins": "the Editors' forbidden ink",
+    "effects": "each dose unlocks one Marginalia power (doc 04) and lowers the hunter threshold by 1 (§11.6)"
+   },
+   "also_in": [
+    "04 15.7 Afflictions and wounds"
+   ]
+  }
+ ]
+}

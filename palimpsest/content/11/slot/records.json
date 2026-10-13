@@ -1,0 +1,197 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "slot.head",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "head armor",
+    "templates": "`arch.armor.head_<class>`",
+    "exotic_group": "armor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.body",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "body armor",
+    "templates": "`arch.armor.body_<class>`",
+    "exotic_group": "armor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.hands",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "hand armor",
+    "templates": "`arch.armor.hands_<class>`",
+    "exotic_group": "armor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.legs",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "leg armor",
+    "templates": "`arch.armor.legs_<class>`",
+    "exotic_group": "armor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.feet",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "foot armor",
+    "templates": "`arch.armor.feet_<class>`",
+    "exotic_group": "armor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.ring_l",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "rings",
+    "templates": "`item.ring.*`, `item.palimpsestic.endpaper_band`",
+    "exotic_group": "other"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.ring_r",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "rings",
+    "templates": "as `slot.ring_l`",
+    "exotic_group": "other"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.weapon_1",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "any melee or ranged weapon",
+    "templates": "`cat.weapon_melee` and `cat.weapon_ranged` templates",
+    "exotic_group": "weapon"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.weapon_2",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "as `slot.weapon_1`",
+    "templates": "as `slot.weapon_1`",
+    "exotic_group": "weapon"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.weapon_3",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "as `slot.weapon_1`",
+    "templates": "as `slot.weapon_1`",
+    "exotic_group": "weapon"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.implant_head",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "implants",
+    "templates": "implant-form `aug.*` of the head region (doc 04 §9.4)",
+    "exotic_group": "other"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.implant_torso",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "implants",
+    "templates": "implant-form `aug.*` of the torso region",
+    "exotic_group": "other"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.implant_arms",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "implants",
+    "templates": "implant-form `aug.*` of the arms region",
+    "exotic_group": "other"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.implant_legs",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "implants",
+    "templates": "implant-form `aug.*` of the legs region",
+    "exotic_group": "other"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.hand_extra_1",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "granted by `bp.arm_extra_1`: one one-handed weapon or off-hand item",
+    "templates": "one-handed `cat.weapon_melee` and `cat.weapon_ranged` templates, `cat.offhand` templates",
+    "exotic_group": "weapon"
+   },
+   "also_in": []
+  },
+  {
+   "id": "slot.hand_extra_2",
+   "kind": "slot",
+   "owner": "11",
+   "section": "11 3.9 Equipment slots",
+   "fields": {
+    "accepts_canon_13_2": "granted by `bp.arm_extra_2`, as `slot.hand_extra_1`",
+    "templates": "as `slot.hand_extra_1`",
+    "exotic_group": "weapon"
+   },
+   "also_in": []
+  }
+ ]
+}

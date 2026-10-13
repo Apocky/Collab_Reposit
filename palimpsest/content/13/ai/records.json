@@ -1,0 +1,1069 @@
+{
+ "schema": "13.table_row",
+ "records": [
+  {
+   "id": "ai.input.self_hp",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`floor_div(hp × 10000, hp_max)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.target_hp",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "the same for the current target"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.target_dist",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`clamp(floor_div(dist_mm × 10000, ref_mm), 0, 10000)` with `ref_mm` from the consideration"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.target_visible",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if doc 09 reports sight of the target on the latest perception tick, else 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.target_aware",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "doc 09 §6.1's value for the agent's highest pair (ties to the newest `lkp_tick`, then the lower subject, the disturbance as subject 0): `aware.unaware` 0, `aware.curious` 2500, `aware.suspicious` 5000, `aware.searching` 6000, `aware.lost` 8000, `aware.alert` 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.cooldown_ready",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if `t >= cooldown_until[attack]`, else 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.has_token",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if the agent holds, or the squad would grant now, a token of the action's kind (§4.10), else 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.in_cover",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "current cover level against the target: none 0, half 6000, full 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.cover_gain",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`max(0, best_candidate_cover_score - current_cover_score)` (§4.11)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.allies_near",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`min(10000, 2000 × allies within 12000 mm)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.morale",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`morale_bp`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.threat_share",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`floor_div(threat[target] × 10000, Σ threat)`; 10000 when the table holds only the target"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.ammo",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "carried ammo over magazine size for agents with an ammo `carry` entry, else 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.aether",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`floor_div(aether × 10000, aether_max)`; 10000 for agents with no aether pool"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.ally_low_hp",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`10000 - min(hp ratio of allies within 15000 mm)`; 0 with no ally"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.since_damaged",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`clamp(floor_div((t - last_damaged) × 10000, ref_ticks), 0, 10000)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.flank_angle",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`floor_div(ang_diff(target.yaw, bearing(target → agent)) × 10000, 32768)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.fire_lane",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if no allied capsule intersects the segment from the agent's muzzle point to the target's torso, else 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.charge_lane",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if every cell of the straight walk line of the charge length is walkable at the agent's nav class"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.corpse_near",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if a `cat.corpse` lies within 8000 mm on a reachable cell, else 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.item_value",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "pickup score of the best reachable ground weapon within 8000 mm (§5.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.owner_dist",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "minions only: `clamp(floor_div(dist_mm × 10000, 16000), 0, 10000)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.light_here",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "`floor_div(light_at(agent) × 10000, 15)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.squad_order",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if the squad order matches the action's order tag, else 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.input.carrying",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.3 Inputs",
+   "fields": {
+    "value": "10000 if the agent carries an item usable by the action, else 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.linear_up",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Linear m 10000, b 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.linear_down",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Linear m −10000, b 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.soft_up",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Linear m 7500, b 2500 (never zero)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.quad_up",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Poly k 2, m 10000, b 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.quad_down",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Poly k 2, m 10000, b 0, invert"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.cubic_up",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Poly k 3, m 10000, b 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.binary",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Step t 1, lo 0, hi 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.binary_not",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Step t 1, lo 0, hi 10000, invert (10000 only when x = 0)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.gate_half",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Step t 5000, lo 0, hi 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.gate_reach",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Step t 5000, lo 0, hi 10000, invert (10000 when x ≤ 5000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.logistic_up",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Table `[67, 124, 230, 421, 759, 1330, 2227, 3486, 5000, 6514, 7773, 8670, 9241, 9579, 9770, 9876, 9933]`, which is `10000 / (1 + e^(-10(x/10000 - 0.5)))` rounded half-even"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.logistic_down",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "the same table, invert"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.bell_mid",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Table `[183, 468, 1054, 2096, 3679, 5698, 7788, 9394, 10000, 9394, 7788, 5698, 3679, 2096, 1054, 468, 183]`, which is `10000 × e^(-((x/10000 - 0.5) / 0.25)^2)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.curve.plateau",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.4 Response curves",
+   "fields": {
+    "definition": "Table `[3000, 5000, 7000, 9000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 8000, 4000, 0]` (ranged attacks: best between 25% and 81% of max range)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.melee",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.5 Scoring and selection",
+   "fields": {
+    "weight": "10000",
+    "considerations_input_curve": "`target_dist`[ref 5000] → `gate_reach`; `has_token` → `binary`; `cooldown_ready` → `binary`",
+    "values": "`x = 10000` → 0",
+    "score": "0"
+   },
+   "also_in": [
+    "13 4.7 Action catalog and behavior sets"
+   ]
+  },
+  {
+   "id": "ai.action.advance",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.5 Scoring and selection",
+   "fields": {
+    "weight": "9000",
+    "considerations_input_curve": "`target_dist`[ref 20000] → `logistic_up`; `has_token` → `binary`; `target_visible` → `binary`",
+    "values": "1868, 10000, 10000; `adj(1868) = 2880`",
+    "score": "2,592"
+   },
+   "also_in": [
+    "13 4.7 Action catalog and behavior sets"
+   ]
+  },
+  {
+   "id": "ai.action.charge",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.5 Scoring and selection",
+   "fields": {
+    "weight": "12000",
+    "considerations_input_curve": "`target_dist`[ref 12000] → `bell_mid`; `cooldown_ready` → `binary`; `charge_lane` → `binary`; `self_hp` → `soft_up`",
+    "values": "8859, 10000, 10000, 7750; adj 9616 and 9057",
+    "score": "10,450"
+   },
+   "also_in": [
+    "13 4.7 Action catalog and behavior sets"
+   ]
+  },
+  {
+   "id": "ai.action.retreat",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.5 Scoring and selection",
+   "fields": {
+    "weight": "8000",
+    "considerations_input_curve": "`self_hp` → `quad_down`; `morale` (9000) → `linear_down`",
+    "values": "900, 1000; adj 1309 and 1450",
+    "score": "151"
+   },
+   "also_in": [
+    "13 4.7 Action catalog and behavior sets"
+   ]
+  },
+  {
+   "id": "ai.action.idle",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "1000",
+    "considerations": "none (always 10000)",
+    "notes": "stand, play idle; while the highest pair is `aware.curious` it stops and turns its head to `lkp` (doc 09 §6.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.wander",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "2000",
+    "considerations": "`target_aware` → `binary_not`",
+    "notes": "goal = `cells[range(n)]` with one `range` call on `rng.ai_idle`, where `cells` lists the walkable cells within 8000 mm straight-line distance of `home` in ascending cell index, truncated to the first 256 (`n` its length; with `n = 0` the agent idles and draws nothing)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.patrol",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "3000",
+    "considerations": "`target_aware` → `binary_not`",
+    "notes": "doc 12 patrol route"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.investigate",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "7000",
+    "considerations": "precondition `target_aware ∈ {5000, 8000}` (`aware.suspicious` or `aware.lost`); `target_aware` → `gate_half`",
+    "notes": "suspicious: walk to `lkp` with weapon ready, never attacks (SPD v4, R1 §2.12); lost: run to the doc 09 §6.5 predicted `lkp`; attack actions return as soon as doc 09 T5 restores `aware.alert`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.search",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "6000",
+    "considerations": "precondition `target_aware` = 6000",
+    "notes": "doc 09 §6.7 plan: visit P0, then `min(3, n)` points (`n` = drawable plan points) drawn without replacement by `min(3, n)` `weighted` calls on keyed `rng.ai` seq 1 with the plan weights, a chosen point's weight set to 0; 60 ticks of look-around at each point; squad split per doc 09 §6.7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.return",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "4000",
+    "considerations": "precondition `target_aware` = 0 and origin more than 2000 mm from `home` or off its patrol route",
+    "notes": "path home, or to the nearest patrol waypoint (doc 09 T8 \"returns to post\")"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.shoot",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "10000",
+    "considerations": "`target_dist`[range] → `plateau`; `fire_lane` → `binary`; `target_visible` → `binary`; `has_token` → `binary`; `cooldown_ready` → `binary`",
+    "notes": "basic ranged attack"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.ability",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "per ability, default 11000",
+    "considerations": "`cooldown_ready` → `binary`; `target_dist`[range] → `plateau`; `has_token` → `binary`; ability-specific extra",
+    "notes": "one entry per non-basic attack"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.circle",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "6000",
+    "considerations": "`has_token` → `binary_not`; `target_visible` → `binary`",
+    "notes": "hold a ring 6000 to 10000 mm from the target"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.take_cover",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "8000",
+    "considerations": "`in_cover` → `linear_down`; `cover_gain` → `quad_up`; `since_damaged`[180] → `logistic_down`",
+    "notes": "§4.11"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.flank",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "8500",
+    "considerations": "`squad_order` → `binary`; `flank_angle` → `linear_down`",
+    "notes": "§4.12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.suppress",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9000",
+    "considerations": "`squad_order` → `binary`; `in_cover` (target's) → `gate_half`",
+    "notes": "shooters"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.reload",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9000",
+    "considerations": "`ammo` → `quad_down`",
+    "notes": "90 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.use_item",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "11000",
+    "considerations": "`self_hp` → `logistic_down`; `carrying` → `binary`",
+    "notes": "§5.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.throw",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9500",
+    "considerations": "`carrying` → `binary`; `target_dist`[20000] → `plateau`; `has_token` (grenade) → `binary`",
+    "notes": "§5.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.heal_ally",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "10500",
+    "considerations": "`ally_low_hp` → `logistic_up`; `cooldown_ready` → `binary`; `aether` → `soft_up`",
+    "notes": "support"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.buff_ally",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "8000",
+    "considerations": "`allies_near` → `linear_up`; `cooldown_ready` → `binary`",
+    "notes": "support"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.summon",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9500",
+    "considerations": "`cooldown_ready` → `binary`; `allies_near` → `linear_down`",
+    "notes": "summoner"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.call_allies",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9000",
+    "considerations": "`target_aware` → `gate_half`; `allies_near` → `soft_up`",
+    "notes": "30-tick shout; emits the doc 09 callout"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.pick_up",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "8500",
+    "considerations": "`item_value` → `linear_up`; `since_damaged`[120] → `linear_up`",
+    "notes": "§5.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.dig",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "7000",
+    "considerations": "precondition: path blocked by a breakable block",
+    "notes": "§4.13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.breach",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "7500",
+    "considerations": "precondition: the agent's next path link is a breach link (§4.13)",
+    "notes": "doc 07 §10.5; a channel action (§4.6) that lasts until the cell breaks: the agent faces the Errata-placed cell and strikes it on every tick `t0 + k × cycle_ticks` (`t0` the `Channel` start, `k ≥ 1`), each strike `damage_block(cell, B1, basic-attack shares, agent, 5000)` (doc 03 §13.2, the melee block factor; `B1` is the agent's ×1 basic-attack `B` of §2.2, whatever its basic attack's kind); placeables are `tooltier.t0`, so every strike counts; no token, no telegraph, no draw; when the cell breaks (cause `grid.cause.broken`) the §4.6 invalid-cell row ends the channel and the next think resumes the path"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.vanish",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9000",
+    "considerations": "`target_visible` → `binary`; `cooldown_ready` → `binary`; `light_here` → `linear_down`",
+    "notes": "stalker"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.eat_corpse",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "8000",
+    "considerations": "`corpse_near` → `binary`; `self_hp` → `quad_down`",
+    "notes": "ghouls, beasts: heals 2500 Bp of Max HP over 120 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.follow_owner",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "7000",
+    "considerations": "`owner_dist` → `logistic_up`",
+    "notes": "minions (§6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.guard_owner",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9000",
+    "considerations": "owner downed or under attack precondition",
+    "notes": "minions"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.raise_alarm",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "9500",
+    "considerations": "precondition: sapient, `target_aware` = 10000, a bell or klaxon prop (doc 12 dressing) within 16000 mm of path, no `raise_alarm` by its faction within doc 09 `CALLOUT_COOLDOWN`; `allies_near` → `linear_down`",
+    "notes": "walk to the prop, 60-tick channel, then doc 09 `raise_alarm(faction, prop pos, target, bell)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.relight",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "6500",
+    "considerations": "precondition: sapient, not `construct`, `undead` or `beast`, a doc 09 §2.4 darkness disturbance at `aware.suspicious`, `target_aware` < 10000",
+    "notes": "walk to the darkened cell (or the room's fuse box for an electric cut, doc 09 §2.4); 60-tick channel; then doc 07's lit state of the fixture is written with `set_block` and cause `grid.cause.toggled` (doc 03); needs `uses_items` for flame sources"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.action.wake_ally",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "weight": "8500",
+    "considerations": "precondition: sapient, an ally with `st.sleeping` or doc 09 subdued within 16000 mm of path, `target_aware` < 10000",
+    "notes": "walk to it, 60-tick interact; the ally wakes and enters `aware.searching` at its own position with Vigilance (doc 09 §9.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.soldier",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, advance, circle, take_cover, flank, retreat, reload, use_item, throw, pick_up"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.swarmer",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, advance, eat_corpse"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.brute",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, advance, charge, pick_up"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.skirmisher",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, advance, circle, flank, retreat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.shooter",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, suppress, take_cover, advance, circle, reload, throw"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.sniper",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, take_cover, retreat, reload"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.caster",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, take_cover, retreat, use_item"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.controller",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, take_cover, circle, retreat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.support",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, heal_ally, buff_ally, take_cover, retreat, use_item"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.guardian",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, advance, circle, pick_up"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.summoner",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, summon, take_cover, retreat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.stalker",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, vanish, flank, retreat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.artillery",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "shoot, take_cover, retreat, throw"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.sapper",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, dig, advance, throw"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.flier",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, shoot, advance, circle, retreat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.charger",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, charge, advance, circle"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.minion",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "follow_owner, guard_owner, melee, shoot, advance, take_cover, retreat (§6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.vendor",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "call_allies, retreat; becomes `ai.set.guardian` when hostile (§13.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.hunter",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "melee, ability, advance, charge (§10.5)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.set.boss",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.7 Action catalog and behavior sets",
+   "fields": {
+    "extra_actions": "scripted by the boss phase table (§9.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.nav.small",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.13 Navigation",
+   "fields": {
+    "walkable_cell_rule": "solid floor below, 1 passable cell of headroom",
+    "moves": "walk, jump-up, drop, climb"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.nav.humanoid",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.13 Navigation",
+   "fields": {
+    "walkable_cell_rule": "floor below, 2 passable cells",
+    "moves": "walk, jump-up, drop, climb, door"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.nav.large",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.13 Navigation",
+   "fields": {
+    "walkable_cell_rule": "floor below a 2 × 2 footprint, 3 passable cells",
+    "moves": "walk, jump-up, drop, door (breaks wooden doors)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.nav.burrower",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.13 Navigation",
+   "fields": {
+    "walkable_cell_rule": "humanoid rule",
+    "moves": "humanoid moves plus dig"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.nav.flier",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.13 Navigation",
+   "fields": {
+    "walkable_cell_rule": "any passable air cell with 1 passable cell above",
+    "moves": "26-connected flight"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ai.nav.swimmer",
+   "kind": "ai",
+   "owner": "13",
+   "section": "13 4.13 Navigation",
+   "fields": {
+    "walkable_cell_rule": "liquid cell (water, blood, oil)",
+    "moves": "26-connected inside liquid"
+   },
+   "also_in": []
+  }
+ ]
+}

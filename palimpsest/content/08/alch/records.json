@@ -1,0 +1,2562 @@
+{
+ "schema": "08.table_row",
+ "records": [
+  {
+   "id": "alch.rx.water_lava",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "10",
+    "a_ratio_units": "`[aq_boil]` 1",
+    "b_ratio_units": "lava 1",
+    "max_n": "20",
+    "reaction_per_n": "consume a 1, b all lava in the cell (once); `set_block` `block.obsidian`; gas `(boil_gas, 10000)` once"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.coolant_lava",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "11",
+    "a_ratio_units": "coolant 1",
+    "b_ratio_units": "lava 1",
+    "max_n": "20",
+    "reaction_per_n": "consume a 1, b all lava; `set_block` `block.obsidian`; gas `(gas.steam, 5000)` once"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.metal_water",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "12",
+    "a_ratio_units": "molten_metal 1",
+    "b_ratio_units": "`[aq_boil]` 1",
+    "max_n": "20",
+    "reaction_per_n": "consume a all molten metal, b 1; `set_block` `block.slag`; gas `(boil_gas, 10000)` once"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.coolant_water",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "13",
+    "a_ratio_units": "coolant 1",
+    "b_ratio_units": "water 4 (kept)",
+    "max_n": "1",
+    "reaction_per_n": "consume a 1; `set_block` `block.ice`; gas `(gas.cold_fog, 5000)` once"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.holy_red_ink",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "20",
+    "a_ratio_units": "holy_water 1",
+    "b_ratio_units": "red_ink 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce water 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.holy_unholy",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "21",
+    "a_ratio_units": "holy_water 1",
+    "b_ratio_units": "unholy_water 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce water 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.ichor_unholy",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "22",
+    "a_ratio_units": "ichor 1",
+    "b_ratio_units": "unholy_water 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce holy_water 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.holy_ectoplasm",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "23",
+    "a_ratio_units": "holy_water 1",
+    "b_ratio_units": "ectoplasm 1",
+    "max_n": "20",
+    "reaction_per_n": "consume 1 and 1; gas `(gas.incense, 10000)` once"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.red_ink_blood",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "30",
+    "a_ratio_units": "red_ink 1 (kept)",
+    "b_ratio_units": "blood 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume b 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.bile_water",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "40",
+    "a_ratio_units": "bile 1",
+    "b_ratio_units": "water 4",
+    "max_n": "200",
+    "reaction_per_n": "consume 1 and 4; produce swamp_water 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.acid_slime",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "41",
+    "a_ratio_units": "acid 1",
+    "b_ratio_units": "slime 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce water 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.acid_milk",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "42",
+    "a_ratio_units": "acid 1",
+    "b_ratio_units": "milk 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce slime 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.venom_milk",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "43",
+    "a_ratio_units": "venom 1",
+    "b_ratio_units": "milk 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce milk 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.honey_alcohol",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "44",
+    "a_ratio_units": "honey 1",
+    "b_ratio_units": "alcohol 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce wine 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.mana_water",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "45",
+    "a_ratio_units": "mana 1",
+    "b_ratio_units": "water 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume 1 and 1; produce water 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.nanite_rad",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "46",
+    "a_ratio_units": "nanite_slurry 1 (kept)",
+    "b_ratio_units": "rad_sludge 1",
+    "max_n": "1000",
+    "reaction_per_n": "consume b 1; produce water 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.acid_block",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "50",
+    "a_ratio_units": "acid 5",
+    "b_ratio_units": "block tagged `block.tag.destructible` (Canon §4.3) whose material has `mat.tag.acid_soluble` (doc 07)",
+    "max_n": "1",
+    "reaction_per_n": "consume a 5; the partner block becomes air (cause `grid.cause.reaction`, no drops)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.flammable_lava",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "51",
+    "a_ratio_units": "lava or molten_metal 1 (kept)",
+    "b_ratio_units": "any `fire_fuel` liquid 1 (kept)",
+    "max_n": "1",
+    "reaction_per_n": "`ignite = true` (the cell starts a liquid fire)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.rx.lava_ice",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 5.3 Reactions: `alch_react`",
+   "fields": {
+    "pri": "52",
+    "a_ratio_units": "lava or molten_metal 1 (kept)",
+    "b_ratio_units": "block `block.ice` (the cell's own block or the block below)",
+    "max_n": "1",
+    "reaction_per_n": "the partner block becomes air (cause `grid.cause.reaction`, its `timed_revert` entry removed); gas `(gas.steam, 10000)` once"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.heal",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "bp_maxhp",
+    "base_mag": "3000",
+    "base_dur": "—",
+    "mag_cap": "9000",
+    "dur_cap": "—",
+    "tox_milli": "12000",
+    "value": "30",
+    "twin": "`harm`",
+    "mechanic": "res.hp +mag (Canon §10.9 healing rules)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.restore_stamina",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "bp_pool",
+    "base_mag": "5000",
+    "base_dur": "—",
+    "mag_cap": "10000",
+    "dur_cap": "—",
+    "tox_milli": "5000",
+    "value": "12",
+    "twin": "`drain_stamina`",
+    "mechanic": "res.stamina +mag of max"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.restore_aether",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "aether",
+    "kind": "instant",
+    "unit": "bp_pool",
+    "base_mag": "4000",
+    "base_dur": "—",
+    "mag_cap": "10000",
+    "dur_cap": "—",
+    "tox_milli": "9000",
+    "value": "25",
+    "twin": "`unravel`",
+    "mechanic": "res.aether +mag of max"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.restore_composure",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "bp_pool",
+    "base_mag": "3000",
+    "base_dur": "—",
+    "mag_cap": "9000",
+    "dur_cap": "—",
+    "tox_milli": "7000",
+    "value": "20",
+    "twin": "`dread`",
+    "mechanic": "res.composure +mag of max"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.regenerate",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "600",
+    "mag_cap": "—",
+    "dur_cap": "2400",
+    "tox_milli": "10000",
+    "value": "30",
+    "twin": "`wither`",
+    "mechanic": "st.regenerating for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.cure",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "—",
+    "mag_cap": "—",
+    "dur_cap": "—",
+    "tox_milli": "6000",
+    "value": "25",
+    "twin": "`disease`",
+    "mechanic": "ends st.poisoned, st.diseased, st.bleeding, st.incubating; blessed: cures 1 affliction"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.detox",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "milli_tox",
+    "base_mag": "20000",
+    "base_dur": "—",
+    "mag_cap": "60000",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "res.toxicity -mag; removes up to 3 st.irradiated stacks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.purify",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant+timed",
+    "unit": "mm_radius",
+    "base_mag": "3000",
+    "base_dur": "1200",
+    "mag_cap": "6000",
+    "dur_cap": "4800",
+    "tox_milli": "3000",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "removes gas within radius; inhaled-route immunity for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.satiate",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "points",
+    "base_mag": "300",
+    "base_dur": "—",
+    "mag_cap": "900",
+    "dur_cap": "—",
+    "tox_milli": "1000",
+    "value": "6",
+    "twin": "—",
+    "mechanic": "res.satiation +mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.water_breathing",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "aether",
+    "kind": "timed",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "1800",
+    "mag_cap": "—",
+    "dur_cap": "7200",
+    "tox_milli": "4000",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "res.breath does not drain for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.haste",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "900",
+    "mag_cap": "—",
+    "dur_cap": "3600",
+    "tox_milli": "12000",
+    "value": "30",
+    "twin": "`slow`",
+    "mechanic": "st.hasted for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.fortify",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "1200",
+    "mag_cap": "—",
+    "dur_cap": "4800",
+    "tox_milli": "9000",
+    "value": "25",
+    "twin": "`expose`",
+    "mechanic": "st.fortified for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.empower",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "900",
+    "mag_cap": "—",
+    "dur_cap": "3600",
+    "tox_milli": "14000",
+    "value": "35",
+    "twin": "`weaken`",
+    "mechanic": "st.empowered for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.focus",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "1200",
+    "mag_cap": "—",
+    "dur_cap": "4800",
+    "tox_milli": "6000",
+    "value": "20",
+    "twin": "`confuse`",
+    "mechanic": "st.focused for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.ward",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "aether",
+    "kind": "status",
+    "unit": "bp_maxhp",
+    "base_mag": "2500",
+    "base_dur": "600",
+    "mag_cap": "7500",
+    "dur_cap": "2400",
+    "tox_milli": "9000",
+    "value": "30",
+    "twin": "—",
+    "mechanic": "st.shielded pool = mag of Max HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.invisibility",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "aether",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "900",
+    "mag_cap": "—",
+    "dur_cap": "3600",
+    "tox_milli": "10000",
+    "value": "35",
+    "twin": "—",
+    "mechanic": "st.invisible for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.levitate",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "aether",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "900",
+    "mag_cap": "—",
+    "dur_cap": "3600",
+    "tox_milli": "8000",
+    "value": "25",
+    "twin": "—",
+    "mechanic": "st.levitating for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.featherfall",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "aether",
+    "kind": "timed",
+    "unit": "mm",
+    "base_mag": "8000",
+    "base_dur": "1800",
+    "mag_cap": "24000",
+    "dur_cap": "7200",
+    "tox_milli": "2000",
+    "value": "10",
+    "twin": "—",
+    "mechanic": "SAFE_FALL + mag mm for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.night_eye",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "mm",
+    "base_mag": "6000",
+    "base_dur": "3600",
+    "mag_cap": "18000",
+    "dur_cap": "14400",
+    "tox_milli": "3000",
+    "value": "10",
+    "twin": "`blind`",
+    "mechanic": "dark-vision radius + mag mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.mind_vision",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "aether",
+    "kind": "timed",
+    "unit": "mm",
+    "base_mag": "20000",
+    "base_dur": "1200",
+    "mag_cap": "60000",
+    "dur_cap": "4800",
+    "tox_milli": "6000",
+    "value": "25",
+    "twin": "—",
+    "mechanic": "see creatures through walls within mag mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.resist_fire",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "bp",
+    "base_mag": "2500",
+    "base_dur": "3600",
+    "mag_cap": "7500",
+    "dur_cap": "14400",
+    "tox_milli": "5000",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "resist[dmg.fire] + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.resist_frost",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "bp",
+    "base_mag": "2500",
+    "base_dur": "3600",
+    "mag_cap": "7500",
+    "dur_cap": "14400",
+    "tox_milli": "5000",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "resist[dmg.frost] + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.resist_shock",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "bp",
+    "base_mag": "2500",
+    "base_dur": "3600",
+    "mag_cap": "7500",
+    "dur_cap": "14400",
+    "tox_milli": "5000",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "resist[dmg.shock] + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.resist_toxin",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "bp",
+    "base_mag": "2500",
+    "base_dur": "3600",
+    "mag_cap": "7500",
+    "dur_cap": "14400",
+    "tox_milli": "5000",
+    "value": "15",
+    "twin": "`poison`",
+    "mechanic": "resist[dmg.toxin] + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.resist_acid",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "bp",
+    "base_mag": "2500",
+    "base_dur": "3600",
+    "mag_cap": "7500",
+    "dur_cap": "14400",
+    "tox_milli": "5000",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "resist[dmg.acid] + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.resist_radiation",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "bp",
+    "base_mag": "2500",
+    "base_dur": "3600",
+    "mag_cap": "7500",
+    "dur_cap": "14400",
+    "tox_milli": "5000",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "resist[dmg.radiation] + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.resist_umbral",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "mythos",
+    "kind": "timed",
+    "unit": "bp",
+    "base_mag": "2500",
+    "base_dur": "3600",
+    "mag_cap": "7500",
+    "dur_cap": "14400",
+    "tox_milli": "5000",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "resist[dmg.umbral] + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.fortify_might",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "points",
+    "base_mag": "10",
+    "base_dur": "3600",
+    "mag_cap": "20",
+    "dur_cap": "7200",
+    "tox_milli": "8000",
+    "value": "25",
+    "twin": "—",
+    "mechanic": "PWR, BRN, GRP + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.fortify_finesse",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "points",
+    "base_mag": "10",
+    "base_dur": "3600",
+    "mag_cap": "20",
+    "dur_cap": "7200",
+    "tox_milli": "8000",
+    "value": "25",
+    "twin": "—",
+    "mechanic": "PRC, AGI, SLT + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.fortify_vigor",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "points",
+    "base_mag": "10",
+    "base_dur": "3600",
+    "mag_cap": "20",
+    "dur_cap": "7200",
+    "tox_milli": "8000",
+    "value": "25",
+    "twin": "—",
+    "mechanic": "TGH, END, RES + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.fortify_intellect",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "points",
+    "base_mag": "10",
+    "base_dur": "3600",
+    "mag_cap": "20",
+    "dur_cap": "7200",
+    "tox_milli": "8000",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "LOG, MEM, ANL + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.fortify_perception",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "timed",
+    "unit": "points",
+    "base_mag": "10",
+    "base_dur": "3600",
+    "mag_cap": "20",
+    "dur_cap": "7200",
+    "tox_milli": "8000",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "SGT, HRG, ITU + mag"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.inspire",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "verve",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "1200",
+    "mag_cap": "—",
+    "dur_cap": "4800",
+    "tox_milli": "6000",
+    "value": "30",
+    "twin": "`fear`",
+    "mechanic": "st.inspired for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.bless",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "mythos",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "1800",
+    "mag_cap": "—",
+    "dur_cap": "7200",
+    "tox_milli": "4000",
+    "value": "35",
+    "twin": "—",
+    "mechanic": "st.blessed for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.berserk",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "status",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "600",
+    "mag_cap": "—",
+    "dur_cap": "2400",
+    "tox_milli": "15000",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "st.berserk on self for dur"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.poison",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "15",
+    "twin": "`resist_toxin`",
+    "mechanic": "st.poisoned buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.harm",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "damage",
+    "unit": "mhp",
+    "base_mag": "15000",
+    "base_dur": "—",
+    "mag_cap": "45000",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`heal`",
+    "mechanic": "dmg.toxin hit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.burn",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "damage",
+    "unit": "mhp",
+    "base_mag": "10000",
+    "base_dur": "—",
+    "mag_cap": "30000",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "dmg.fire hit + st.burning p 50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.freeze",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "damage",
+    "unit": "mhp",
+    "base_mag": "10000",
+    "base_dur": "—",
+    "mag_cap": "30000",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "dmg.frost hit + st.frozen p 50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.shock",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "damage",
+    "unit": "mhp",
+    "base_mag": "10000",
+    "base_dur": "—",
+    "mag_cap": "30000",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "dmg.shock hit + st.shocked p 50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.corrode",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "damage",
+    "unit": "mhp",
+    "base_mag": "8000",
+    "base_dur": "—",
+    "mag_cap": "24000",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "dmg.acid hit + st.corroded p 40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.paralyze",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "50",
+    "base_dur": "—",
+    "mag_cap": "150",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "25",
+    "twin": "—",
+    "mechanic": "st.stunned buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.sleep",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "—",
+    "mechanic": "st.sleeping buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.blind",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "15",
+    "twin": "`night_eye`",
+    "mechanic": "st.blinded buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.silence",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "aether",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "25",
+    "twin": "—",
+    "mechanic": "st.silenced buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.unravel",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "aether",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`restore_aether`",
+    "mechanic": "st.unraveled buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.weaken",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "direct",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "360",
+    "mag_cap": "—",
+    "dur_cap": "1440",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`empower`",
+    "mechanic": "st.weakened direct"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.slow",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "direct",
+    "unit": "—",
+    "base_mag": "—",
+    "base_dur": "240",
+    "mag_cap": "—",
+    "dur_cap": "960",
+    "tox_milli": "—",
+    "value": "15",
+    "twin": "`haste`",
+    "mechanic": "st.slowed direct"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.drain_stamina",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "bp_pool",
+    "base_mag": "3000",
+    "base_dur": "—",
+    "mag_cap": "9000",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "10",
+    "twin": "`restore_stamina`",
+    "mechanic": "res.stamina -mag of max"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.confuse",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`focus`",
+    "mechanic": "st.confused buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.fear",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`inspire`",
+    "mechanic": "st.feared buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.dread",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "mythos",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "60",
+    "base_dur": "—",
+    "mag_cap": "180",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`restore_composure`",
+    "mechanic": "st.dread buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.wither",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "mythos",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "50",
+    "base_dur": "—",
+    "mag_cap": "150",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`regenerate`",
+    "mechanic": "st.withering buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.disease",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "50",
+    "base_dur": "—",
+    "mag_cap": "150",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "15",
+    "twin": "`cure`",
+    "mechanic": "st.diseased buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.irradiate",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "40",
+    "base_dur": "—",
+    "mag_cap": "120",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "15",
+    "twin": "—",
+    "mechanic": "st.irradiated buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.expose",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "50",
+    "base_dur": "—",
+    "mag_cap": "150",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "20",
+    "twin": "`fortify`",
+    "mechanic": "st.exposed buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.charm",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "aether",
+    "kind": "buildup",
+    "unit": "p",
+    "base_mag": "50",
+    "base_dur": "—",
+    "mag_cap": "150",
+    "dur_cap": "—",
+    "tox_milli": "—",
+    "value": "40",
+    "twin": "—",
+    "mechanic": "st.charmed buildup"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.mutate",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "B",
+    "dep": "none",
+    "kind": "instant",
+    "unit": "points",
+    "base_mag": "1",
+    "base_dur": "—",
+    "mag_cap": "1",
+    "dur_cap": "—",
+    "tox_milli": "20000",
+    "value": "40",
+    "twin": "—",
+    "mechanic": "+1 doc 04 mutation point (natural form; supernatural form when the origin genre has MYTHOS >= 8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.eff.red_dose",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 7. Alchemical effects (`alch.eff.*`)",
+   "fields": {
+    "pol": "H",
+    "dep": "none",
+    "kind": "special",
+    "unit": "doses",
+    "base_mag": "1",
+    "base_dur": "—",
+    "mag_cap": "1",
+    "dur_cap": "—",
+    "tox_milli": "5000",
+    "value": "0",
+    "twin": "—",
+    "mechanic": "`add_affliction_dose(e, afflict.red_ink)`: one dose (doc 04 §10.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.healing",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "heal 3000 Bp",
+    "base": "water",
+    "toxicity_per_dose": "12,000",
+    "value": "30",
+    "defining_effect": "heal"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.stamina",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "restore_stamina 5000 Bp",
+    "base": "water",
+    "toxicity_per_dose": "5,000",
+    "value": "12",
+    "defining_effect": "restore_stamina"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.aether",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "restore_aether 4000 Bp",
+    "base": "water",
+    "toxicity_per_dose": "9,000",
+    "value": "25",
+    "defining_effect": "restore_aether"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.calm",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "restore_composure 3000 Bp",
+    "base": "wine",
+    "toxicity_per_dose": "5,600",
+    "value": "20",
+    "defining_effect": "restore_composure"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.haste",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "haste 900 ticks",
+    "base": "water",
+    "toxicity_per_dose": "12,000",
+    "value": "30",
+    "defining_effect": "haste"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.invisibility",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "invisibility 900 ticks",
+    "base": "water",
+    "toxicity_per_dose": "10,000",
+    "value": "35",
+    "defining_effect": "invisibility"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.levitation",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "levitate 900 ticks",
+    "base": "water",
+    "toxicity_per_dose": "8,000",
+    "value": "25",
+    "defining_effect": "levitate"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.purity",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "purify 3000 mm, 1200 ticks",
+    "base": "water",
+    "toxicity_per_dose": "3,000",
+    "value": "20",
+    "defining_effect": "purify"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.potion.mind_vision",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "mind_vision 20000 mm, 1200 ticks",
+    "base": "water",
+    "toxicity_per_dose": "6,000",
+    "value": "25",
+    "defining_effect": "mind_vision"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.fortitude",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "fortify 1200 ticks",
+    "base": "water",
+    "toxicity_per_dose": "9,000",
+    "value": "25",
+    "defining_effect": "fortify"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.cure",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "cure",
+    "base": "water",
+    "toxicity_per_dose": "6,000",
+    "value": "25",
+    "defining_effect": "cure"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.night_eye",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "night_eye 6000 mm, 3600 ticks",
+    "base": "water",
+    "toxicity_per_dose": "3,000",
+    "value": "10",
+    "defining_effect": "night_eye"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.liquid_flame",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "burn 10 HP, burning p 50",
+    "base": "oil",
+    "toxicity_per_dose": "0",
+    "value": "20",
+    "defining_effect": "burn"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.frost",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "freeze 10 HP, frozen p 50",
+    "base": "water",
+    "toxicity_per_dose": "0",
+    "value": "20",
+    "defining_effect": "freeze"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.toxic_gas",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "poison p 60; shatters into 4 cells of `gas.miasma`",
+    "base": "water",
+    "toxicity_per_dose": "0",
+    "value": "15",
+    "defining_effect": "poison with Aerosol"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.slumber",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.1 Canonical potions (`alch.potion.*`, `cat.potion`, `idc.potion`)",
+   "fields": {
+    "effects_base_values": "sleep p 60; shatters into 4 cells of `gas.soporific`",
+    "base": "water",
+    "toxicity_per_dose": "0",
+    "value": "20",
+    "defining_effect": "sleep with Aerosol"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.shielding",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "ward 4000 Bp, 900 ticks",
+    "base": "water",
+    "toxicity_per_dose": "9,000",
+    "value": "30",
+    "made_from_15": "healing"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.adrenaline",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "empower 900 ticks; haste 600 ticks",
+    "base": "water",
+    "toxicity_per_dose": "26,000",
+    "value": "65",
+    "made_from_15": "stamina"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.shadowmeld",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "invisibility 1500 ticks; night_eye 6000 mm, 1500 ticks",
+    "base": "water",
+    "toxicity_per_dose": "13,000",
+    "value": "45",
+    "made_from_15": "invisibility"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.dragonfire",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "burn 20 HP, burning p 100",
+    "base": "fuel",
+    "toxicity_per_dose": "0",
+    "value": "20",
+    "made_from_15": "liquid_flame"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.snap_freeze",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "freeze 15 HP, frozen p 100; slow 240 ticks",
+    "base": "water",
+    "toxicity_per_dose": "0",
+    "value": "35",
+    "made_from_15": "frost"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.corrosive_gas",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "corrode 8 HP; shatters into 4 cells of `gas.caustic`",
+    "base": "water",
+    "toxicity_per_dose": "0",
+    "value": "20",
+    "made_from_15": "toxic_gas"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.cleansing",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "purify 6000 mm, 2400 ticks; cure; detox 20000",
+    "base": "water",
+    "toxicity_per_dose": "9,000",
+    "value": "60",
+    "made_from_15": "purity"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.panacea",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "cure; detox 40000; regenerate 900 ticks",
+    "base": "water",
+    "toxicity_per_dose": "16,000",
+    "value": "70",
+    "made_from_15": "cure"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.honeyed_healing",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "heal 2000 Bp; regenerate 900 ticks; satiate 300",
+    "base": "honey",
+    "toxicity_per_dose": "16,100",
+    "value": "66",
+    "made_from_15": "healing + honey"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.dragons_blood",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "resist_fire 5000 Bp, 3600 ticks; empower 900 ticks",
+    "base": "water",
+    "toxicity_per_dose": "19,000",
+    "value": "50",
+    "made_from_15": "liquid_flame + wyrm scale"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.aquatic_rejuvenation",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "water_breathing 3600 ticks; regenerate 1800 ticks",
+    "base": "water",
+    "toxicity_per_dose": "14,000",
+    "value": "45",
+    "made_from_15": "healing + siren scale"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.arcane_armor",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "ward 3000 Bp, 1200 ticks; resist_umbral 2500 Bp, 3600 ticks",
+    "base": "water",
+    "toxicity_per_dose": "14,000",
+    "value": "50",
+    "made_from_15": "aether + amber"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.potion.draught",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 12.2 Exotics, elixirs and the draught",
+   "fields": {
+    "effects": "whatever was brewed (custom brews and murky draughts)",
+    "base": "brewed",
+    "toxicity_per_dose": "brewed",
+    "value": "brewed",
+    "made_from_15": "brewing (§12.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.firebomb",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 300 ml oil, alcohol or fuel",
+    "radius_inner_mm_edge_bp": "2000 / 1000 / 5000",
+    "base_damage_shares": "6 HP fire",
+    "status_power": "burning 40",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.explosion.incendiary`",
+    "value": "12",
+    "release": "spills the fill (1 unit); the explosion's fire is a trigger on it (§5.2)"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.bomb.frost",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 300 ml water + `ing.frost_salt`",
+    "radius_inner_mm_edge_bp": "2500 / 1000 / 5000",
+    "base_damage_shares": "8 HP frost",
+    "status_power": "frozen 60",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "12",
+    "release": "spills water (1 unit, below the 100-unit ice threshold); its frost freezes standing water of at least 100 units in the trigger cells"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.acid",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 300 ml acid",
+    "radius_inner_mm_edge_bp": "2000 / 1000 / 5000",
+    "base_damage_shares": "6 HP acid",
+    "status_power": "corroded 50",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "12",
+    "release": "spills acid"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.shock",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 300 ml brine + `ing.lodestone`",
+    "radius_inner_mm_edge_bp": "2500 / 1000 / 5000",
+    "base_damage_shares": "8 HP shock",
+    "status_power": "shocked 60",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "12",
+    "release": "spills brine; the shock electrifies it and any connected conductive liquid (§5.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.blasting",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 100 ml nitro + `ing.black_powder`",
+    "radius_inner_mm_edge_bp": "3000 / 750 / 2000",
+    "base_damage_shares": "40 HP: blunt 7000, fire 3000",
+    "status_power": "none",
+    "block_power_milli": "2000",
+    "noise_doc_09": "`noise.explosion.grenade`",
+    "value": "14",
+    "release": "`incendiary`, `ignite_radius_mm` 1500, `ignite_bp` 10000; the nitro is consumed by this explosion and never spills or chains"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.smoke",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + `ing.black_powder` + `ing.charcoal`",
+    "radius_inner_mm_edge_bp": "none",
+    "base_damage_shares": "none",
+    "status_power": "none",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.explosion.smoke`",
+    "value": "10",
+    "release": "8 cells of `gas.smoke`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.bomb.stink",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 300 ml bile",
+    "radius_inner_mm_edge_bp": "none",
+    "base_damage_shares": "none",
+    "status_power": "none",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "14",
+    "release": "4 cells of `gas.miasma`; spills bile"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.sleep",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + `ing.dreamfoil` + `ing.poppy_tear`",
+    "radius_inner_mm_edge_bp": "none",
+    "base_damage_shares": "none",
+    "status_power": "none",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "14",
+    "release": "4 cells of `gas.soporific`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.flash",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 100 ml phosphor + `ing.black_powder`",
+    "radius_inner_mm_edge_bp": "8000, status only",
+    "base_damage_shares": "none",
+    "status_power": "blinded 80 to targets whose facing is within 16384 Bam of the burst",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.explosion.flash`",
+    "value": "12",
+    "release": "`light_block` 15 at the impact cell for 30 ticks (doc 03 timed light)"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.bomb.tar",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 300 ml tar + `ing.puffball`",
+    "radius_inner_mm_edge_bp": "none",
+    "base_damage_shares": "none",
+    "status_power": "none",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "14",
+    "release": "the tar foams to 9,000 ml: `splash(impact cell, liq.tar, 9, slot)`, 1 unit in each of up to 9 cells"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.salt",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + 2 × `ing.blessed_salt`",
+    "radius_inner_mm_edge_bp": "2500, status only",
+    "base_damage_shares": "none",
+    "status_power": "`st.unraveled` and `st.silenced` directly for exactly 180 ticks, unscaled by Canon §11.4; carries `counter.disruptor`",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "14",
+    "release": "none: the dependency-none `counter.disruptor` source of Canon §17.3a"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "alch.bomb.incense",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + `ing.gum_resin` + `ing.blessed_salt`",
+    "radius_inner_mm_edge_bp": "none",
+    "base_damage_shares": "none",
+    "status_power": "none",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "14",
+    "release": "4 cells of `gas.incense`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.infernal",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "§15 recipe",
+    "radius_inner_mm_edge_bp": "3000 / 1000 / 5000",
+    "base_damage_shares": "8 HP fire",
+    "status_power": "burning 60",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.explosion.incendiary`",
+    "value": "14",
+    "release": "4 cells of `gas.miasma`, then a fire trigger on them (the Canon 3 m miasma blast, §5.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.bomb.grenade",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 13.2 Bombs (`alch.bomb.*`, `cat.throwable`)",
+   "fields": {
+    "recipe_shell_apparatus_vessel_grenade_shell": "shell + any potion (30 ticks)",
+    "radius_inner_mm_edge_bp": "3000 / 3000 / 10000",
+    "base_damage_shares": "the potion's damage effects as a splash (§10.2)",
+    "status_power": "per potion",
+    "block_power_milli": "0",
+    "noise_doc_09": "`noise.item.shatter_ceramic`",
+    "value": "2 + the potion's value",
+    "release": "spills the potion's base, `ceil_div(dose_ml, 1000)` units"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_shielding",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.healing`",
+    "essence": "4",
+    "output": "`alch.potion.shielding`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_adrenaline",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.stamina`",
+    "essence": "4",
+    "output": "`alch.potion.adrenaline`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_shadowmeld",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.invisibility`",
+    "essence": "4",
+    "output": "`alch.potion.shadowmeld`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_dragonfire",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.liquid_flame`",
+    "essence": "4",
+    "output": "`alch.potion.dragonfire`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_snap_freeze",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.frost`",
+    "essence": "4",
+    "output": "`alch.potion.snap_freeze`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_corrosive_gas",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.toxic_gas`",
+    "essence": "4",
+    "output": "`alch.potion.corrosive_gas`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_cleansing",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.purity`",
+    "essence": "4",
+    "output": "`alch.potion.cleansing`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.exotic_panacea",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.cure`",
+    "essence": "6",
+    "output": "`alch.potion.panacea`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.elixir_honeyed_healing",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.healing` + 250 ml honey",
+    "essence": "2",
+    "output": "`alch.potion.honeyed_healing`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.elixir_dragons_blood",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.liquid_flame` + `ing.wyrm_scale`",
+    "essence": "8",
+    "output": "`alch.potion.dragons_blood`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.elixir_aquatic",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.healing` + `ing.siren_scale`",
+    "essence": "6",
+    "output": "`alch.potion.aquatic_rejuvenation`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.elixir_arcane_armor",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.aether` + `ing.amber`",
+    "essence": "8",
+    "output": "`alch.potion.arcane_armor`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.consecrate",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "any `cat.potion` + 250 ml holy water",
+    "essence": "2",
+    "output": "the same potion, `buc.blessed`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.uncurse",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "a cursed `cat.potion` + `ing.blessed_salt`",
+    "essence": "1",
+    "output": "the same potion, `buc.uncursed`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.holy_water",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml water + `ing.blessed_salt`",
+    "essence": "1",
+    "output": "250 ml `liq.holy_water`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.distill",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "1500 ml wine; a retort is required",
+    "essence": "1",
+    "output": "750 ml `liq.alcohol`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.nitro",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml acid + 250 ml oil + `ing.saltpeter`",
+    "essence": "3",
+    "output": "100 ml `liq.nitro` in a vial"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.mana",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml water + `ing.aether_crystal`",
+    "essence": "3",
+    "output": "250 ml `liq.mana`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.coolant",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "500 ml water + `ing.frost_salt`; a dewar is required",
+    "essence": "2",
+    "output": "500 ml `liq.coolant` in the dewar"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.lamp_oil",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "1 `cat.ingredient` unit tagged fat (`ing.troll_fat`) or 1 `cat.material` unit with `mat.tag.fat` (doc 07 `mat.flesh`)",
+    "essence": "1",
+    "output": "250 ml `liq.oil`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.brine",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "750 ml water + `ing.saltpeter`",
+    "essence": "0",
+    "output": "750 ml `liq.brine`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.vitriol",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml water + `ing.vitriol`",
+    "essence": "1",
+    "output": "250 ml `liq.acid`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.unholy_water",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml water + `ing.lich_dust` or `ing.vampire_dust`",
+    "essence": "1",
+    "output": "250 ml `liq.unholy_water`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.quicksilver",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "2 `ing.cinnabar`; a calcinator is required",
+    "essence": "2",
+    "output": "100 ml `liq.quicksilver`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.venom",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml water + `ing.serpent_venom` or `ing.spider_gland`",
+    "essence": "1",
+    "output": "250 ml `liq.venom`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.nanites",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml water + `ing.nanopaste`",
+    "essence": "2",
+    "output": "250 ml `liq.nanite_slurry`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.phosphor",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "250 ml water + `ing.glowshroom`",
+    "essence": "1",
+    "output": "250 ml `liq.phosphor`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.charcoal",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "1 doc 07 `mat.coal` unit",
+    "essence": "0",
+    "output": "2 `ing.charcoal`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.black_powder",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`ing.saltpeter` + `ing.charcoal` + `ing.brimstone`",
+    "essence": "0",
+    "output": "3 `ing.black_powder`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.concentrate",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "3 brewed potions of one type, one quality, identical effects",
+    "essence": "6",
+    "output": "1 of them at the next quality tier (refused at `q.peerless`); each magnitude and duration `x` becomes `min(cap, floor_div(x × new_q, old_q))`, except `damage` magnitudes, which take quality at use (§7)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.transmute_ingredient",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "2 units of one effect ingredient",
+    "essence": "1",
+    "output": "1 unit of the next ingredient in ascending ID byte order whose first effect equals this one's first effect (wrapping); refused when none exists"
+   },
+   "also_in": []
+  },
+  {
+   "id": "alch.tx.infernal_bomb",
+   "kind": "alch",
+   "owner": "08",
+   "section": "08 15.3 Recipes",
+   "fields": {
+    "inputs": "`alch.potion.toxic_gas` + `alch.potion.liquid_flame` + a grenade shell",
+    "essence": "4",
+    "output": "`alch.bomb.infernal`"
+   },
+   "also_in": []
+  }
+ ]
+}

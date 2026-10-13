@@ -1,0 +1,194 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "calling.vanguard",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "heavy melee frontliner",
+    "major_skills": "hafted, armor, shield",
+    "minor_skills": "athletics, leadership, smithing"
+   },
+   "also_in": [
+    "04 15.3 Callings",
+    "05 5.5 Calling reference weapons (doc 02 anchor duel)"
+   ]
+  },
+  {
+   "id": "calling.duelist",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "agile swordfighter",
+    "major_skills": "blade, acrobatics, speech",
+    "minor_skills": "sneak, throwing, unarmed"
+   },
+   "also_in": [
+    "04 15.3 Callings",
+    "05 5.5 Calling reference weapons (doc 02 anchor duel)"
+   ]
+  },
+  {
+   "id": "calling.gunslinger",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "precision shooter",
+    "major_skills": "marksmanship, acrobatics, throwing",
+    "minor_skills": "tinkering, speech, security"
+   },
+   "also_in": [
+    "04 15.3 Callings",
+    "05 5.5 Calling reference weapons (doc 02 anchor duel)"
+   ]
+  },
+  {
+   "id": "calling.grenadier",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "heavy weapons, explosives and sapping",
+    "major_skills": "heavy_arms, throwing, armor",
+    "minor_skills": "tinkering, fieldcraft, medicine"
+   },
+   "also_in": [
+    "04 15.3 Callings",
+    "05 5.5 Calling reference weapons (doc 02 anchor duel)"
+   ]
+  },
+  {
+   "id": "calling.spellwright",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "spell designer and caster",
+    "major_skills": "evocation, spellcraft, alteration",
+    "minor_skills": "abjuration, inscription, divination"
+   },
+   "also_in": [
+    "04 15.3 Callings"
+   ]
+  },
+  {
+   "id": "calling.alchemist",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "brewer and bomber",
+    "major_skills": "alchemy, throwing, medicine",
+    "minor_skills": "survival, restoration, appraisal"
+   },
+   "also_in": [
+    "04 15.3 Callings",
+    "05 5.5 Calling reference weapons (doc 02 anchor duel)"
+   ]
+  },
+  {
+   "id": "calling.shade",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "stealth assassin and thief",
+    "major_skills": "sneak, blade, security",
+    "minor_skills": "pickpocket, acrobatics, illusion"
+   },
+   "also_in": [
+    "04 15.3 Callings",
+    "05 5.5 Calling reference weapons (doc 02 anchor duel)"
+   ]
+  },
+  {
+   "id": "calling.artificer",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "crafter, gunsmith, gadgeteer",
+    "major_skills": "tinkering, smithing, marksmanship",
+    "minor_skills": "security, inscription, appraisal"
+   },
+   "also_in": [
+    "04 15.3 Callings",
+    "05 5.5 Calling reference weapons (doc 02 anchor duel)"
+   ]
+  },
+  {
+   "id": "calling.warden",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "protector and healer",
+    "major_skills": "shield, abjuration, restoration",
+    "minor_skills": "polearm, devotion, leadership"
+   },
+   "also_in": [
+    "04 15.3 Callings"
+   ]
+  },
+  {
+   "id": "calling.oracle",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "seer and priest",
+    "major_skills": "divination, devotion, conjuration",
+    "minor_skills": "appraisal, illusion, speech"
+   },
+   "also_in": [
+    "04 15.3 Callings"
+   ]
+  },
+  {
+   "id": "calling.netrunner",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "hacker and infiltrator",
+    "major_skills": "hacking, tinkering, sneak",
+    "minor_skills": "security, awareness, illusion"
+   },
+   "also_in": [
+    "04 15.3 Callings"
+   ]
+  },
+  {
+   "id": "calling.beastbinder",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "tamer and pack leader",
+    "major_skills": "handling, conjuration, survival",
+    "minor_skills": "polearm, leadership, restoration"
+   },
+   "also_in": [
+    "04 15.3 Callings"
+   ]
+  },
+  {
+   "id": "calling.monk",
+   "kind": "calling",
+   "owner": "04",
+   "section": "00 16.2 Callings and Echoes",
+   "fields": {
+    "identity": "martial artist",
+    "major_skills": "unarmed, acrobatics, athletics",
+    "minor_skills": "alteration, medicine, awareness"
+   },
+   "also_in": [
+    "04 15.3 Callings"
+   ]
+  }
+ ]
+}

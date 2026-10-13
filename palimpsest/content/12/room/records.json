@@ -1,0 +1,1002 @@
+{
+ "schema": "12.table_row",
+ "records": [
+  {
+   "id": "room.rule.axiom",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "A",
+    "rewrite": "`in –Open– Room –RubricGate– out`",
+    "selection": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_lock_key",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "middle Room → `in–a`, `a–K1`, `K1→in` OneWay, `in–m` Locked(k1), `m–out`",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_hidden_shortcut",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "`in–a–b–c–out`; `in–c` Hidden",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_gauntlet_return",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "`in–Gauntlet–Treasury`, `Treasury→in` OneWay; `in–a–out`",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_two_key_hub",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "`in–Hub`; `Hub–a–K1`, `K1→Hub` OneWay; `Hub–b–K2`, `K2→Hub` OneWay; `Hub–c` Locked(k1, k2); `c–out`",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_flooded_detour",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "`in–w–x` with `w` flooded (§11.2); `in–a–b–x`; `x–out`",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_collapsing_bridge",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "`in–c`, `c→x` OneWay (the bridge collapses after the first crossing), `x–out`; `in–a–b–x`",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_patrol_loop",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "`in–a–b–x`; `in–c–d–x`; `x–out`; a patrol route on the loop (§12)",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.cycle_foreshadowed_vault",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "B",
+    "rewrite": "`in–w–out`; `w–Treasury` Locked(k1) with a window tile on the shared face; `in–a–K1`, `K1→w` OneWay",
+    "selection": "`cycle_w`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.extend",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "C, w 50",
+    "rewrite": "split an `Open` edge `u–v` (never the RubricGate) into `u–n–v`",
+    "selection": "`range` over Open edges"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.branch",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "C, w 30",
+    "rewrite": "dead end `u–n` on a Room or Hub with degree < 4",
+    "selection": "`range` over those nodes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.minor_cycle",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "C, w 20 while loops remain",
+    "rewrite": "`u–n–v` for Rooms `u < v`, both of degree < 4, hop distance 2..=4",
+    "selection": "`range` over those pairs"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.lock_key",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D1",
+    "rewrite": "applied while the graph holds fewer `Locked` edges than the lock target (§8.3): an Open main-path edge becomes `Locked(k)`; its key goes on a Room dead end reachable from `in` without crossing any Locked, PuzzleGate or OneWay edge (that Room becomes a `Key`), else on a new `Key` branch of a reachable Room or Hub of degree < 4, else of `in`",
+    "selection": "2 `range`: the edge among Open main-path edges other than the first, then the key spot among the dead ends, or among the branch anchors when no dead end exists"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.interleaf",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D2",
+    "rewrite": "pos 4, standard and challenge: split main-path edge `min(floor_div(len × 5000, 10000), len - 2)` (0-based, `len` edges, the RubricGate last) with an `Interleaf`",
+    "selection": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.service",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D3",
+    "rewrite": "standard and challenge: attach the `room.shop` Service as a dead end of main-path node `clamp(floor_div(len × 5000, 10000), 1, len - 1)`; when the Oneiric secret exit is planned (§17.4) and the graph has no Campfire, also attach a `Campfire` dead end at main-path node `clamp(floor_div(len × 3000, 10000), 1, len - 1)`",
+    "selection": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.arena",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D4",
+    "rewrite": "standard and challenge: the main-path Room whose index fraction `floor_div(i × 10000, len)` is nearest 6000 (ties to the lower index) becomes an `Arena` (mini-boss room)",
+    "selection": "1 `roll_bp(3000)`, always drawn; a siege challenge converts regardless of the roll"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.puzzle_gate",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D5",
+    "rewrite": "an Open main-path edge other than the first and the last becomes `PuzzleGate(p)`; `Puzzle(p)` is a dead end of its `in`-side node",
+    "selection": "`roll_bp(2500)`, then `range` on success"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.vault",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D6",
+    "rewrite": "attach a `Vault` (Reliquary room) as a dead end of a non-main-path Room of degree < 4, else of a main-path Room of degree < 4",
+    "selection": "`roll_bp(5000)`, then `range` on success"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.gauntlet_branch",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D7",
+    "rewrite": "attach `Gauntlet–Treasury` as a branch of a Room of degree < 4; skipped when the graph already holds a Treasury or the challenge is a gauntlet",
+    "selection": "`roll_bp(2000)`, always drawn, then `range` on success"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.rescue",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D8",
+    "rewrite": "standard and challenge: the main-path Room nearest fraction 7000 (ties to the lower index) hosts doc 13's stranded native (flag `rescue`)",
+    "selection": "`roll_bp(2000)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.challenge",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D9",
+    "rewrite": "the challenge kind's structure (§6.3)",
+    "selection": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.secret",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D10",
+    "rewrite": "each of `n_secrets` (§17.1) `Secret` nodes joins by a `Hidden` edge a non-secret node other than `in` and `out` of degree < 4 (any non-secret node other than `in` and `out` when none has degree < 4)",
+    "selection": "`range` per secret"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.secret_exit",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "D11",
+    "rewrite": "when §17.4 planned a secret exit to genre `g`: `SecretExit(g)` by a `Hidden` edge to the non-secret node farthest in hops from `in` (not `out`; ties to the lower `NodeId`)",
+    "selection": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.boss_spine",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "boss",
+    "rewrite": "`in–Checkpoint–BossArena–out`",
+    "selection": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.rule.rest_ring",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 8.2 Rules",
+   "fields": {
+    "phase": "rest",
+    "rewrite": "`in–Campfire`; spokes `Campfire–Service(shop)`, `Campfire–Service(fortune_hall)`, `Campfire–r_1` … `Campfire–r_j` with `j = range_incl(1, 3)`, and `Campfire–out` (the RubricGate, unsealed from entry)",
+    "selection": "1 `range`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.incipit",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1–2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "safe, sanctuary; spawn and respawn point; boss antechamber"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.colophon",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "safe, sanctuary, no_bleed; doc 14 §3.9 services, 5 exit-door volumes, 2 fixed destructible crates"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.interleaf",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×2–2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "safe, sanctuary; Hearth, vendor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.editor_checkpoint",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "3",
+    "lw": "0",
+    "tags_and_function": "boss approach (§21.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.boss_arena",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "per §21.2",
+    "st": "2",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "no_bleed; doc 13 §9 geometry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.campfire",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1–2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "safe; rest (§16.3); the rest Folio's hub and the Oneiric secret exit's trigger"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.arena",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "3×3",
+    "st": "2",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "mini-boss room (doc 13), paid from the Folio's population budget"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.key_room",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1–2×2",
+    "st": "1",
+    "max": "—",
+    "w": "—",
+    "verb": "—",
+    "pop": "2",
+    "lw": "0",
+    "tags_and_function": "key pedestal"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.treasury",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×2",
+    "st": "1",
+    "max": "2",
+    "w": "40",
+    "verb": "—",
+    "pop": "1",
+    "lw": "3",
+    "tags_and_function": "locked chests"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.reliquary_vault",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1–2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "2",
+    "tags_and_function": "Reliquary spots first"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.gauntlet",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×3",
+    "st": "1",
+    "max": "4",
+    "w": "60",
+    "verb": "traverse",
+    "pop": "0",
+    "lw": "2",
+    "tags_and_function": "5–7 hazards; chest at the end"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.puzzle",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "2",
+    "tags_and_function": "§16.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.cistern",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1–2",
+    "max": "1",
+    "w": "40",
+    "verb": "traverse",
+    "pop": "2",
+    "lw": "1",
+    "tags_and_function": "basins always filled"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.chasm",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×3",
+    "st": "1",
+    "max": "1",
+    "w": "40",
+    "verb": "traverse",
+    "pop": "1",
+    "lw": "1",
+    "tags_and_function": "a trench 5 wide and 6 deep along the long axis (`hazard.chasm`) under a 3-wide destructible plank bridge; a 12-step slab stair climbs from the trench floor to the ledge at the lower-`NodeId` door"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.hall",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2–3×3",
+    "st": "1–2",
+    "max": "—",
+    "w": "300",
+    "verb": "melee",
+    "pop": "4",
+    "lw": "2",
+    "tags_and_function": "combat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.guardpost",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1–1×2",
+    "st": "1",
+    "max": "—",
+    "w": "200",
+    "verb": "shoot",
+    "pop": "2",
+    "lw": "1",
+    "tags_and_function": "stealth"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.barracks",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "2",
+    "w": "120",
+    "verb": "melee",
+    "pop": "5",
+    "lw": "2",
+    "tags_and_function": "sleepers"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.crossroads",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "—",
+    "w": "100",
+    "verb": "—",
+    "pop": "2",
+    "lw": "1",
+    "tags_and_function": "hub"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.gallery",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×3",
+    "st": "1",
+    "max": "—",
+    "w": "120",
+    "verb": "sneak",
+    "pop": "2",
+    "lw": "1",
+    "tags_and_function": "stealth"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.ambush_den",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "2",
+    "w": "50",
+    "verb": "sneak",
+    "pop": "3",
+    "lw": "1",
+    "tags_and_function": "stealth, dark"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.overlook",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "2",
+    "max": "1",
+    "w": "40",
+    "verb": "traverse",
+    "pop": "2",
+    "lw": "1",
+    "tags_and_function": "atrium"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.shrine",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1",
+    "st": "1",
+    "max": "1",
+    "w": "80",
+    "verb": "pray",
+    "pop": "1",
+    "lw": "1",
+    "tags_and_function": "patron altar `block.altar` of the zone genre (docs 06, 07) and `station.enchanting`; local MYT ≥ 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.library",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1–2",
+    "max": "1",
+    "w": "70",
+    "verb": "cast",
+    "pop": "1",
+    "lw": "2",
+    "tags_and_function": "4 lore sockets; `station.enchanting`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.observatory",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "2",
+    "max": "1",
+    "w": "30",
+    "verb": "cast",
+    "pop": "1",
+    "lw": "2",
+    "tags_and_function": "2 lore sockets"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.alchemy_lab",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×2",
+    "st": "1",
+    "max": "1",
+    "w": "60",
+    "verb": "craft",
+    "pop": "1",
+    "lw": "1",
+    "tags_and_function": "`station.alchemy` (docs 07, 08)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.forge",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "60",
+    "verb": "craft",
+    "pop": "2",
+    "lw": "1",
+    "tags_and_function": "`station.forge` (doc 07 §5.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.workshop",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "50",
+    "verb": "craft",
+    "pop": "2",
+    "lw": "2",
+    "tags_and_function": "`station.workbench` and `station.loom` (doc 07 §5.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.armory",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×2",
+    "st": "1",
+    "max": "1",
+    "w": "70",
+    "verb": "shoot",
+    "pop": "2",
+    "lw": "3",
+    "tags_and_function": "racks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.prison",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "50",
+    "verb": "talk",
+    "pop": "3",
+    "lw": "1",
+    "tags_and_function": "captive hireling (doc 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.garden",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2–3×3",
+    "st": "1",
+    "max": "1",
+    "w": "60",
+    "verb": "craft",
+    "pop": "1",
+    "lw": "1",
+    "tags_and_function": "H nodes, food"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.larder",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1",
+    "st": "1",
+    "max": "1",
+    "w": "50",
+    "verb": "craft",
+    "pop": "1",
+    "lw": "1",
+    "tags_and_function": "food; `station.kitchen`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.crypt",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "60",
+    "verb": "pray",
+    "pop": "3",
+    "lw": "1",
+    "tags_and_function": "undead roster"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.server_room",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×2–2×2",
+    "st": "1",
+    "max": "1",
+    "w": "40",
+    "verb": "hack",
+    "pop": "2",
+    "lw": "2",
+    "tags_and_function": "electronic; local TEC ≥ 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.stable",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "30",
+    "verb": "traverse",
+    "pop": "1",
+    "lw": "0",
+    "tags_and_function": "stalls, tack and fodder as dressing only; `station.loom`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.shop",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "safe; 2 vendor and 2 Fortune Engine sockets (§6.2, doc 11 §11.1, §12.1); placed by `room.rule.service` and `room.rule.rest_ring`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.scriptorium",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "20",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "safe; `station.scriptorium`; §16.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.fortune_hall",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "—",
+    "verb": "—",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "safe; 2 Fortune Engine sockets for the rest Folio's brass and silver Engines (doc 11 §11.1); placed by `room.rule.rest_ring`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.illumination_vault",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×2",
+    "st": "1",
+    "max": "1",
+    "w": "40",
+    "verb": "—",
+    "pop": "0",
+    "lw": "2",
+    "tags_and_function": "unlock-gated; sigil-sealed (§16.3); one `loot.secret.vault` roll; flag `illumination_vault`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.hireling_hall",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "30",
+    "verb": "talk",
+    "pop": "0",
+    "lw": "0",
+    "tags_and_function": "unlock-gated; doc 13 hirelings"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.bleed_shrine",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "1×1",
+    "st": "1",
+    "max": "1",
+    "w": "40",
+    "verb": "pray",
+    "pop": "1",
+    "lw": "0",
+    "tags_and_function": "unlock-gated; needs a bleed zone; §14.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "room.duel_page",
+   "kind": "room",
+   "owner": "12",
+   "section": "12 16.1 Kinds",
+   "fields": {
+    "fp": "2×2",
+    "st": "1",
+    "max": "1",
+    "w": "30",
+    "verb": "melee",
+    "pop": "0",
+    "lw": "1",
+    "tags_and_function": "unlock-gated; a one-aspect champion guards a chest"
+   },
+   "also_in": []
+  }
+ ]
+}

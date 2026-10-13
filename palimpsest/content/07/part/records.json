@@ -1,0 +1,404 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "part.barrel.short",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "bs",
+    "slot": "barrel",
+    "modifiers": "H −2000, R −1500",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.barrel.long",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "bl",
+    "slot": "barrel",
+    "modifiers": "R +2500, H +1000",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.barrel.heavy",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "bh",
+    "slot": "barrel",
+    "modifiers": "D +600, S −500",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.barrel.rifled",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "br",
+    "slot": "barrel",
+    "modifiers": "P −1500",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.feed.extended",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "fe",
+    "slot": "feed",
+    "modifiers": "M +3000",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.feed.quick",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "fq",
+    "slot": "feed",
+    "modifiers": "L −1500",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.feed.drum",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "fd",
+    "slot": "feed",
+    "modifiers": "M +5000, H +2000",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.optic.iron",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "oi",
+    "slot": "optic",
+    "modifiers": "X +500",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.optic.scope",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "os",
+    "slot": "optic",
+    "modifiers": "X +1500, H +1500",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.optic.reflex",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "or",
+    "slot": "optic",
+    "modifiers": "P −800",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.edge.keen",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "ek",
+    "slot": "edge",
+    "modifiers": "pen +800",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.edge.heavy",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "eh",
+    "slot": "edge",
+    "modifiers": "O +3000, S −400",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.edge.serrated",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "es",
+    "slot": "edge",
+    "modifiers": "+20 `st.bleeding` power",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.haft.long",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "hl",
+    "slot": "haft",
+    "modifiers": "reach +200 mm, S −300",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.haft.light",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "hg",
+    "slot": "haft",
+    "modifiers": "S +500, D −300",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.grip.wrapped",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "gw",
+    "slot": "grip",
+    "modifiers": "T −1200",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.grip.guarded",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "gg",
+    "slot": "grip",
+    "modifiers": "+800 Bp shield stability while blocking",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.focus.crystal",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "fc",
+    "slot": "focus",
+    "modifiers": "+600 Bp spell damage",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.focus.conduit",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "fn",
+    "slot": "focus",
+    "modifiers": "cast ticks × 9000",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.plate.reinforced",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "pr",
+    "slot": "plate",
+    "modifiers": "AR × 11500, W +1000",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.lining.padded",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "lp",
+    "slot": "lining",
+    "modifiers": "+400 Bp resist blunt",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.coil.capacitor",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "cc",
+    "slot": "coil",
+    "modifiers": "ward capacity × 11500",
+    "source": "loot, crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.barrel.suppressor",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "—",
+    "slot": "barrel",
+    "modifiers": "R −1000, D −200; tag `suppressor` (doc 09 §7.3: powered skins only; muzzle flash 12 → 4)",
+    "source": "crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.stock.braced",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "—",
+    "slot": "stock",
+    "modifiers": "recoil −1500, H +500",
+    "source": "crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.stock.folding",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "—",
+    "slot": "stock",
+    "modifiers": "H −2000, recoil +1000",
+    "source": "crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.module.battery",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "—",
+    "slot": "module (either module slot)",
+    "modifiers": "gadget duration +5000",
+    "source": "crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.module.plating",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "—",
+    "slot": "module",
+    "modifiers": "gadget Max HP +3000",
+    "source": "crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.module.targeting",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "—",
+    "slot": "module",
+    "modifiers": "gadget spread −3000, gadget range +2000",
+    "source": "crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.module.payload",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.2 Part catalog",
+   "fields": {
+    "code": "—",
+    "slot": "module",
+    "modifiers": "gadget damage (D) +2000",
+    "source": "crafted"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.graft.oneiric.somnambule",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.5 Licensed grafts",
+   "fields": {
+    "origin_genre": "`genre.oneiric`",
+    "count": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "part.graft.redacted.bureau",
+   "kind": "part",
+   "owner": "07",
+   "section": "07 7.5 Licensed grafts",
+   "fields": {
+    "origin_genre": "`genre.redacted`",
+    "count": "1"
+   },
+   "also_in": []
+  }
+ ]
+}

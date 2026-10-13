@@ -1,0 +1,359 @@
+{
+ "schema": "16.table_row",
+ "records": [
+  {
+   "id": "net.route.sdr",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.1 Transport trait",
+   "fields": {
+    "transport": "Steam `ISteamNetworkingSockets` P2P (`CreateListenSocketP2P`, `ConnectP2P` by SteamID, virtual port 0) through Steam Datagram Relay",
+    "nat_traversal": "relay, handled by Steam",
+    "ip_privacy": "yes",
+    "used_for": "every Steam session (`flag.net.transport = 0`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.route.direct",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.1 Transport trait",
+   "fields": {
+    "transport": "`renet` 2.0.0 over UDP, port 27310",
+    "nat_traversal": "none: LAN, or a forwarded port",
+    "ip_privacy": "no",
+    "used_for": "LAN, direct IP, dedicated servers (`flag.net.transport = 1`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.route.relay",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.1 Transport trait",
+   "fields": {
+    "transport": "none: retired before shipping (§3.5, DECISIONS 112)",
+    "nat_traversal": "—",
+    "ip_privacy": "—",
+    "used_for": "no session; the ID stays reserved"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.route.in_process",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.1 Transport trait",
+   "fields": {
+    "transport": "`crossbeam-channel` pairs",
+    "nat_traversal": "none",
+    "ip_privacy": "n/a",
+    "used_for": "tests, bots, CI (`flag.net.transport = 2`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.ch.control",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.2 Channels and lanes",
+   "fields": {
+    "channel": "0",
+    "delivery": "reliable, ordered",
+    "direction": "both",
+    "lane_priority_0_highest_weight": "1, 1",
+    "contents": "handshake, intents, owner, party and run state, hash reports, chat, session"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.ch.input",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.2 Channels and lanes",
+   "fields": {
+    "channel": "1",
+    "delivery": "unreliable",
+    "direction": "client → host",
+    "lane_priority_0_highest_weight": "0, 1",
+    "contents": "input packets"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.ch.snapshot",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.2 Channels and lanes",
+   "fields": {
+    "channel": "2",
+    "delivery": "unreliable",
+    "direction": "host → client",
+    "lane_priority_0_highest_weight": "0, 1",
+    "contents": "snapshots"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.ch.world",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.2 Channels and lanes",
+   "fields": {
+    "channel": "3",
+    "delivery": "reliable, ordered",
+    "direction": "host → client",
+    "lane_priority_0_highest_weight": "2, 3",
+    "contents": "world edits, keyframes, Folio-entry state, chunk data, full state"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.ch.cil",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.2 Channels and lanes",
+   "fields": {
+    "channel": "4",
+    "delivery": "reliable, ordered",
+    "direction": "host → client",
+    "lane_priority_0_highest_weight": "2, 1",
+    "contents": "Confirmed Input Log, backlog and unseal messages (§6.14)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.ch.voice",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 3.2 Channels and lanes",
+   "fields": {
+    "channel": "5",
+    "delivery": "unreliable",
+    "direction": "both",
+    "lane_priority_0_highest_weight": "3, 1",
+    "contents": "voice frames; lowest priority, dropped first (§9.12)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.disconnected",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "start; `Bye` with a terminal reason; `Reject`; migration failed",
+    "event": "player joins a lobby, enters an address, uses Quick Join, or picks an invasion beacon (§9.13)",
+    "next": "`connecting`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.connecting",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "transport connect issued",
+    "event": "transport `Connected`",
+    "next": "`handshaking`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.handshaking",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "transport connected; waits for `Challenge`, then sends `Hello`",
+    "event": "`Welcome` with a slot and no run",
+    "next": "`lobby`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.lobby",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "",
+    "event": "`RunHeader` (doc 14 `Commit`)",
+    "next": "`loading`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.awaiting_folio",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "drop-in or rejoin pending (§9.1)",
+    "event": "`JoinReady` then `FolioEnter` for that Folio",
+    "next": "`loading`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.loading",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "`FolioEnter` received, or a migration or invader `Welcome`",
+    "event": "blueprint hash equal and `Keyframe` decoded",
+    "next": "`playing` (sends `FolioReady`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.playing",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "",
+    "event": "no snapshot for `NET_STALL_MS`",
+    "next": "`stalled`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.stalled",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "overlay shown; prediction frozen at `PRED_STALL_TICKS`",
+    "event": "snapshot arrives",
+    "next": "`playing`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.cstate.migrating",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.1 Client",
+   "fields": {
+    "entered_when": "§9.3; an invader never enters it",
+    "event": "this client claimed the session as successor and finished catch-up",
+    "next": "host role (§9.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.peer.pending",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.2 Host, per peer",
+   "fields": {
+    "entered_when": "transport `Connected`; `Challenge` sent",
+    "event": "valid `Hello`, run not started",
+    "next": "`lobby`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.peer.lobby",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.2 Host, per peer",
+   "fields": {
+    "entered_when": "",
+    "event": "`Commit`",
+    "next": "`loading`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.peer.waiting",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.2 Host, per peer",
+   "fields": {
+    "entered_when": "drop-in or rejoin pending",
+    "event": "`JoinRequest` held at the exit-commit tick of the current Folio",
+    "next": "`loading` at the next Folio entry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.peer.loading",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.2 Host, per peer",
+   "fields": {
+    "entered_when": "`FolioEnter`, migration `Welcome` or invader `Welcome` sent",
+    "event": "`FolioReady`",
+    "next": "`in_game`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.peer.in_game",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.2 Host, per peer",
+   "fields": {
+    "entered_when": "",
+    "event": "silence for `NET_TIMEOUT_MS`, or transport `Disconnected`",
+    "next": "`lost` (party member); closed with `InvaderLeave { reason: 0 }` (invader)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.peer.lost",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 4.2 Host, per peer",
+   "fields": {
+    "entered_when": "`SlotDormant` session intent at the next tick",
+    "event": "reconnect with `resume_slot`",
+    "next": "`waiting`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.migrate.cold",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 9.3 Host migration",
+   "fields": {
+    "condition": "the successor's CIL lacks sealed slot-4 records at or before `L`: an invasion was in progress, or its `cil_unseal` had not arrived (§6.14)",
+    "procedure": "restore the Folio-entry save; truncate the CIL (§6.14)",
+    "resume_tick": "`E`"
+   },
+   "also_in": [
+    "16 9.3 Host migration"
+   ]
+  },
+  {
+   "id": "net.migrate.hot",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 9.3 Host migration",
+   "fields": {
+    "condition": "a Shadow is running",
+    "procedure": "step the Shadow to boundary `L + 1`",
+    "resume_tick": "`L + 1`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "net.migrate.warm",
+   "kind": "net",
+   "owner": "16",
+   "section": "16 9.3 Host migration",
+   "fields": {
+    "condition": "`(L + 1 − E) × measured_tick_us ≤ MIGRATE_WARM_MAX_MS × 1000`",
+    "procedure": "`Sim::deserialize` the Folio-entry save copy, then step every CIL tick to `L + 1` on the worker thread, comparing `HashReport`s along the way",
+    "resume_tick": "`L + 1`"
+   },
+   "also_in": []
+  }
+ ]
+}

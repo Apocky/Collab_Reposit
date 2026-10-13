@@ -1,0 +1,44 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "engine.brass",
+   "kind": "engine",
+   "owner": "11",
+   "section": "11 11.1 Tiers",
+   "fields": {
+    "base_price": "60",
+    "face_rarities_0_5": "C, C, U, U, R, E",
+    "face_weights_0_5_bp": "2600, 2600, 1800, 1800, 900, 300",
+    "placement": "1 in every standard and challenge Folio; 1 in each rest Folio's Engine hall"
+   },
+   "also_in": []
+  },
+  {
+   "id": "engine.silver",
+   "kind": "engine",
+   "owner": "11",
+   "section": "11 11.1 Tiers",
+   "fields": {
+    "base_price": "160",
+    "face_rarities_0_5": "U, U, R, R, E, L",
+    "face_weights_0_5_bp": "2500, 2500, 1800, 1800, 1000, 400",
+    "placement": "5000 Bp in standard and challenge Folios from Folio 3; 1 in each rest Folio's Engine hall"
+   },
+   "also_in": []
+  },
+  {
+   "id": "engine.gilt",
+   "kind": "engine",
+   "owner": "11",
+   "section": "11 11.1 Tiers",
+   "fields": {
+    "base_price": "420",
+    "face_rarities_0_5": "R, R, E, E, L, X",
+    "face_weights_0_5_bp": "2500, 2500, 1800, 1800, 1000, 400",
+    "placement": "every boss Folio's Colophon, available from the Editor's death; `loot.secret.vault`"
+   },
+   "also_in": []
+  }
+ ]
+}

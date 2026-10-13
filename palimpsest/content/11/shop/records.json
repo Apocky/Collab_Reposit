@@ -1,0 +1,104 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "shop.colophon",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "3 consumable lines (`Fixed` potion, text, throwable); 5 counter-charge lines × 2; 5 counter-grenade lines × 1; `alch.bomb.salt` × 1; `alch.bomb.smoke` × 1; 3 equipment lines (`Fixed` equipment cards) shift 1500 floor Uncommon",
+    "markup_bp": "15000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.general",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "6 consumable lines (`Fixed` potion, text, throwable); 5 counter-charge lines × 2; 5 counter-grenade lines × 1; `alch.bomb.salt` × 1; `alch.bomb.smoke` × 1; `item.food.ration` × 5; `item.food.bread` × 5; `item.tool.bandage` × 5; `item.tool.torch` × 5; `item.tool.rope` × 2; `item.tool.grapple` × 1",
+    "markup_bp": "14000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.armorer",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "6 equipment lines (`Fixed` armor, offhand, ward_gen) shift 1000",
+    "markup_bp": "17500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.gunsmith",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "6 equipment lines (`Fixed` melee, ranged) shift 1000; one pickup of each doc 05 ammunition family (light, heavy, rifle, shell, cell, ordnance, draw) × 2",
+    "markup_bp": "17500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.apothecary",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "6 potion lines × 2; 2 doc 08 ingredient lines × 5; `apparatus.vessel.flask` × 5; `item.tool.salve` × 3; `item.tool.splint` × 3",
+    "markup_bp": "14000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.arcanist",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "1 wand line; 1 implement line (`arch.ranged.staff`, `arch.offhand.focus`, `arch.offhand.tome`, template weights); 2 accessory lines; 2 text lines × 2; 1 glyph-tome line (§3.5 Books); `item.tool.blank_text` × 5; trainer service",
+    "markup_bp": "17500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.tinker",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "3 gadget lines; 3 part lines; 1 implant line (accessory where local TEC < 5); `item.tool.lockpicks` × 1; `item.tool.toolkit` × 1; `item.tool.hacking_deck` × 1",
+    "markup_bp": "16000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.fence",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "3 equipment lines (`Fixed` equipment cards) shift 3000 floor Rare; buys at sell trade × 11000 (§12.2)",
+    "markup_bp": "22000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "shop.scribe",
+   "kind": "shop",
+   "owner": "11",
+   "section": "11 12.1 Shop types, placement and stock",
+   "fields": {
+    "lines_per_player": "4 text lines; 1 schematic line (§3.5 Books); `item.tool.blank_text` × 5; `item.tool.rewrite_quill` × 1; every Scriptorium service (§12.3)",
+    "markup_bp": "15000"
+   },
+   "also_in": []
+  }
+ ]
+}

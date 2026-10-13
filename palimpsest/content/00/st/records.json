@@ -1,0 +1,1031 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "st.bleeding",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "DoT",
+    "threshold_group": "nerve",
+    "scaling": "nerve",
+    "stacking": "intensity 5",
+    "base_duration": "6 s",
+    "canonical_effect": "DoT rate 100 Bp per stack as `dmg.true`; a bandage or a single heal of at least 10% Max HP ends it",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.burning",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "DoT",
+    "threshold_group": "nerve",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "4 s",
+    "canonical_effect": "DoT rate 200 Bp as `dmg.fire`; ignites flammable blocks; water ends it",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.poisoned",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "DoT",
+    "threshold_group": "body",
+    "scaling": "body",
+    "stacking": "intensity 5",
+    "base_duration": "8 s",
+    "canonical_effect": "DoT rate 75 Bp per stack as `dmg.toxin`",
+    "owner": "08"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.corroded",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "DoT",
+    "threshold_group": "body",
+    "scaling": "body",
+    "stacking": "intensity 5",
+    "base_duration": "10 s",
+    "canonical_effect": "AR × `(10000 - 1000 × stacks)`; DoT rate 50 Bp as `dmg.acid`",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.irradiated",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "DoT",
+    "threshold_group": "body",
+    "scaling": "body",
+    "stacking": "intensity 10",
+    "base_duration": "30 s",
+    "canonical_effect": "Max HP × `(10000 - 200 × stacks)` while active",
+    "owner": "08"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.withering",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "DoT",
+    "threshold_group": "body",
+    "scaling": "body",
+    "stacking": "refresh",
+    "base_duration": "8 s",
+    "canonical_effect": "healing received × 5000; DoT rate 50 Bp as `dmg.umbral`",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.diseased",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "body",
+    "scaling": "body",
+    "stacking": "refresh",
+    "base_duration": "300 s",
+    "canonical_effect": "natural HP regeneration 0; stamina regeneration × 5000",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.exposed",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "body",
+    "scaling": "body",
+    "stacking": "intensity 5",
+    "base_duration": "6 s",
+    "canonical_effect": "damage taken × `(10000 + 800 × stacks)`; each buildup fill adds one stack",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.staggered",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "poise",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "30 ticks",
+    "canonical_effect": "cannot act or move; interrupts casting",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.stunned",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "nerve",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "90 ticks",
+    "canonical_effect": "cannot act or move",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.frozen",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "nerve",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "120 ticks",
+    "canonical_effect": "cannot act or move; the next blunt hit is × 15000 and ends it",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.blinded",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "nerve",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "4 s",
+    "canonical_effect": "vision radius 2 m; spread × 20000; AI loses sight targets",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.chilled",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "direct",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "3 s",
+    "canonical_effect": "move and attack speed × 8000",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.shocked",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "nerve",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "3 s",
+    "canonical_effect": "every 30 active ticks, a 6-tick micro-stun; each hit taken chains (§11.5)",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.knocked_down",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "direct",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "60 ticks",
+    "canonical_effect": "prone; cannot act; damage taken × 11000",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.rooted",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "direct",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "2 s",
+    "canonical_effect": "cannot move; can act",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.slowed",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "direct",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "4 s",
+    "canonical_effect": "move speed × 7000",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.disarmed",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "direct",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "3 s",
+    "canonical_effect": "active weapon unusable",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.deafened",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "nerve",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "6 s",
+    "canonical_effect": "hearing −30 dB; no footstep indicators",
+    "owner": "09"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.silenced",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "arcane",
+    "scaling": "arcane",
+    "stacking": "refresh",
+    "base_duration": "4 s",
+    "canonical_effect": "cannot cast spells",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.unraveled",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "arcane",
+    "scaling": "arcane",
+    "stacking": "refresh",
+    "base_duration": "5 s",
+    "canonical_effect": "aether regeneration 0; −10 aether on application",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.sleeping",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "8 s",
+    "canonical_effect": "cannot act; any damage ends it; sneak attacks always apply",
+    "owner": "06"
+   },
+   "also_in": [
+    "00 11.8 Player-controlled bearers",
+    "04 12.5 Player-controlled statuses (Canon §11.8)",
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.charmed",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "6 s",
+    "canonical_effect": "fights for the applier's faction",
+    "owner": "06"
+   },
+   "also_in": [
+    "00 11.8 Player-controlled bearers",
+    "04 12.5 Player-controlled statuses (Canon §11.8)",
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.feared",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "4 s",
+    "canonical_effect": "flees from the source; cannot attack",
+    "owner": "06"
+   },
+   "also_in": [
+    "00 11.8 Player-controlled bearers",
+    "04 12.5 Player-controlled statuses (Canon §11.8)",
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.confused",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "5 s",
+    "canonical_effect": "every 30 active ticks, movement input rotates by a keyed `rng.status` angle",
+    "owner": "06"
+   },
+   "also_in": [
+    "00 11.8 Player-controlled bearers",
+    "04 12.5 Player-controlled statuses (Canon §11.8)",
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.berserk",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "6 s",
+    "canonical_effect": "attacks the nearest entity; damage dealt × 13000",
+    "owner": "06"
+   },
+   "also_in": [
+    "00 11.8 Player-controlled bearers",
+    "04 12.5 Player-controlled statuses (Canon §11.8)",
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.dread",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "mental",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "6 s",
+    "canonical_effect": "composure −15 on application; composure regeneration 0",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.madness",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "mental",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "until composure ≥ 25% of max",
+    "base_duration": "none",
+    "canonical_effect": "hallucinated entities; aim sway × 20000; whispers",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.weakened",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "6 s",
+    "canonical_effect": "damage dealt × 7500",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.marked",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "8 s",
+    "canonical_effect": "visible through walls to the marker and every ally of the marker",
+    "owner": "09"
+   },
+   "also_in": [
+    "09 6.5 Last known position"
+   ]
+  },
+  {
+   "id": "st.soaked",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "10 s",
+    "canonical_effect": "shock buildup × 15000; fire buildup × 5000; ends burning",
+    "owner": "08"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.oiled",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "debuff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "20 s",
+    "canonical_effect": "fire buildup × 20000",
+    "owner": "08"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.hungry",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "need",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while satiation ≤ 600",
+    "base_duration": "none",
+    "canonical_effect": "stamina regeneration × 8000",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.starving",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "need",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while satiation = 0",
+    "base_duration": "none",
+    "canonical_effect": "1% Max HP lost per 5 s; no natural HP regeneration",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.encumbered",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "need",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while `10000 < load_bp <= 12500`",
+    "base_duration": "none",
+    "canonical_effect": "move speed × 8500; stamina regeneration × 7500",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.overburdened",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "need",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while `load_bp > 12500`",
+    "base_duration": "none",
+    "canonical_effect": "move speed × 5000; no sprint, jump or dodge",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.exhausted",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "need",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "2 s after stamina hits 0",
+    "base_duration": "2 s",
+    "canonical_effect": "no sprint, dodge or heavy attack",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.contradicted",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "indicator",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while any equipped component has C ≥ 3",
+    "base_duration": "none",
+    "canonical_effect": "UI only",
+    "owner": "12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.hasted",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "8 s",
+    "canonical_effect": "move speed × 12500; attack and cast speed × 11500",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.regenerating",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "10 s",
+    "canonical_effect": "heals at rate 200 Bp of Max HP per s",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.shielded",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "pool",
+    "base_duration": "10 s",
+    "canonical_effect": "`res.ward` pool absorbs damage first",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.invisible",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "10 s",
+    "canonical_effect": "sight detection × 1000; ends on attack",
+    "owner": "09"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.hidden",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "indicator",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while no hostile holds awareness `aware.alert` or higher toward the bearer",
+    "base_duration": "none",
+    "canonical_effect": "UI only; never gates sneak attacks (§10.5 step 2.4)",
+    "owner": "09"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.empowered",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "8 s",
+    "canonical_effect": "damage dealt × 12000",
+    "owner": "06"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.fortified",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "10 s",
+    "canonical_effect": "AR × 12000; poise × 12000",
+    "owner": "06"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.focused",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "10 s",
+    "canonical_effect": "spread × 7000; aim sway × 5000",
+    "owner": "08"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.levitating",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "10 s",
+    "canonical_effect": "gravity 0; vertical control 1500 mm/s",
+    "owner": "06"
+   },
+   "also_in": [
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.blessed",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "30 s",
+    "canonical_effect": "crit chance +1000 Bp; all thresholds × 11000",
+    "owner": "06"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.inspired",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "buff",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "10 s",
+    "canonical_effect": "personal VERVE +2 (§5.8)",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.downed",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "special",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "until revived or bled out",
+    "base_duration": "30 s bleed-out for the first down in a Folio; later downs, damage shortening and revive HP per doc 16 §9.4",
+    "canonical_effect": "crawl only; an ally revives in 3 s",
+    "owner": "16"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.deaths_door",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "special",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "60 ticks",
+    "canonical_effect": "invulnerable",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.erasure",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "special",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "intensity 10",
+    "base_duration": "until Folio exit",
+    "canonical_effect": "§11.6",
+    "owner": "13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.hacked",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "6 s",
+    "canonical_effect": "applies only to `body.construct` and electronic entities; fights for the hacker's faction; constructs are immune to every other mind status",
+    "owner": "09"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.taunted",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "mind",
+    "scaling": "mind",
+    "stacking": "refresh",
+    "base_duration": "4 s",
+    "canonical_effect": "must target the taunter; damage dealt to others × 7500",
+    "owner": "05"
+   },
+   "also_in": [
+    "00 11.8 Player-controlled bearers",
+    "04 12.5 Player-controlled statuses (Canon §11.8)"
+   ]
+  },
+  {
+   "id": "st.grappled",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "control",
+    "threshold_group": "direct",
+    "scaling": "nerve",
+    "stacking": "refresh",
+    "base_duration": "3 s",
+    "canonical_effect": "cannot move; can use one-handed actions; ends when the grappler takes at least 10% of its Max HP",
+    "owner": "05"
+   },
+   "also_in": [
+    "04 12.5 Player-controlled statuses (Canon §11.8)"
+   ]
+  },
+  {
+   "id": "st.polymorphed",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "special",
+    "threshold_group": "direct",
+    "scaling": "arcane",
+    "stacking": "refresh",
+    "base_duration": "30 s",
+    "canonical_effect": "body plan and base stats replaced by a template; equipment stowed; HP ratio kept",
+    "owner": "06"
+   },
+   "also_in": [
+    "04 12.5 Player-controlled statuses (Canon §11.8)",
+    "06 15. Statuses owned by this chapter"
+   ]
+  },
+  {
+   "id": "st.incubating",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "special",
+    "threshold_group": "direct",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "7200 ticks",
+    "canonical_effect": "an affliction incubates; at expiry the affliction takes hold (§16.4)",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.suffocating",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "DoT",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while `res.breath` = 0",
+    "base_duration": "none",
+    "canonical_effect": "DoT rate 500 Bp as `dmg.true`",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.bound",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "indicator",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "while a minion is bound to its owner",
+    "base_duration": "none",
+    "canonical_effect": "§15.1",
+    "owner": "13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.ghost",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "special",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "until resurrected",
+    "base_duration": "none",
+    "canonical_effect": "§17.6",
+    "owner": "16"
+   },
+   "also_in": []
+  },
+  {
+   "id": "st.unmoored",
+   "kind": "st",
+   "owner": "00",
+   "section": "00 11.1 Status list",
+   "fields": {
+    "category": "special",
+    "threshold_group": "special",
+    "scaling": "—",
+    "stacking": "refresh",
+    "base_duration": "300 ticks",
+    "canonical_effect": "§5.11",
+    "owner": "12"
+   },
+   "also_in": []
+  }
+ ]
+}

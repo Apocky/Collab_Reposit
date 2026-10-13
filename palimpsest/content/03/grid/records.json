@@ -1,0 +1,658 @@
+{
+ "schema": "03.table_row",
+ "records": [
+  {
+   "id": "grid.despawn.expired",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "`Lifetime.end_tick` reached (zones, corpses, markers, item drops with a lifetime); a projectile at its `end_tick` (§5.19)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.consumed",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "a projectile that stops on a body or a block (§5.19)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.picked_up",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "an item drop whose item enters an inventory (doc 11)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.merged",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "an item drop merged into a Lost Satchel at `GROUND_ITEM_CAP` (doc 11)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.folio_exit",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "an entity that does not travel with the party when it leaves a Folio (doc 14)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.cap_evicted",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "the projectile Canon §4 evicts at `PROJECTILE_CAP` when a new one spawns: the lowest-`EntityId` non-player projectile, else the lowest `EntityId` (§5.19)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.landed",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "a falling block that lands and becomes a block or an item (§13.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.dismissed",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "a minion or summon dismissed by its owner (Canon §15.1; docs 06, 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.despawn.script",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.1 Identity: generational IDs and dense indices",
+   "fields": {
+    "producer": "scripted removal by docs 12, 13 and 14, including a spared creature leaving through an exit door (doc 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.erratum",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "a player character, alive, downed or ghost",
+    "required_components": "`kind`, `pos`, `vel`, `body`, `move`, `control`, `player`, `faction`, `tags`, `pools`, `statuses`, `buildup`, `body_plan`, `pose`, `stats`, `inventory`, `equipment`, `env`, `interest`",
+    "optional_components": "`light_emitter`, `mining`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.creature",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "any NPC: enemy, neutral, minion, hireling; also the invader (Canon §17.9)",
+    "required_components": "`kind`, `pos`, `vel`, `body`, `move`, `control`, `faction`, `tags`, `pools`, `statuses`, `buildup`, `body_plan`, `pose`, `stats`, `env`, and either `ai` with `perception` (every NPC) or `player` with slot 4 (the invader, doc 13 template `enemy.editors.invader`)",
+    "optional_components": "`inventory`, `equipment`, `light_emitter`, `interest`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.projectile",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "any moving shot, thrown item or spell bolt",
+    "required_components": "`kind`, `pos`, `vel`, `projectile`",
+    "optional_components": "`light_emitter`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.item_drop",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "an item lying in the world",
+    "required_components": "`kind`, `pos`, `vel`, `body`, `move`, `item_drop`",
+    "optional_components": "`lifetime`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.falling_block",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "a block in free fall",
+    "required_components": "`kind`, `pos`, `vel`, `body`, `move`, `falling_block`",
+    "optional_components": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.container",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "chest, Reliquary, Fortune Engine, shop counter",
+    "required_components": "`kind`, `pos`, `container`",
+    "optional_components": "`pools`, `body_plan`, `pose`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.gadget",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "turret, trap, mine, drone base",
+    "required_components": "`kind`, `pos`, `gadget`, `faction`",
+    "optional_components": "`pools`, `body_plan`, `pose`, `vel`, `body`, `move`, `light_emitter`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.zone",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "an area effect: spell field, aura, trigger volume",
+    "required_components": "`kind`, `pos`, `zone`",
+    "optional_components": "`lifetime`, `light_emitter`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.corpse",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "NPC remains kept for loot or necromancy",
+    "required_components": "`kind`, `pos`, `vel`, `body`, `move`, `corpse`",
+    "optional_components": "`lifetime`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.ekind.marker",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 3.2 Entity kinds",
+   "fields": {
+    "meaning": "a non-physical anchor: spawn point, scripted interest anchor, exit",
+    "required_components": "`kind`, `pos`",
+    "optional_components": "`interest`, `lifetime`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.none",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "—",
+    "predefined_mask_at_facing_n": "empty",
+    "micro_voxels": "0",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.full",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "—",
+    "predefined_mask_at_facing_n": "`R(all, all, all)`",
+    "micro_voxels": "64",
+    "chips_13_2": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.pillar",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–1 axis (0 Y, 1 X, 2 Z), presentation only",
+    "predefined_mask_at_facing_n": "as full",
+    "micro_voxels": "64",
+    "chips_13_2": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.slab",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0 half (0 bottom, 1 top)",
+    "predefined_mask_at_facing_n": "bottom `R(all, all, {0, 1})`; top `R(all, all, {2, 3})`",
+    "micro_voxels": "32",
+    "chips_13_2": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.stairs",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–1 facing (the high side), b2 upside-down",
+    "predefined_mask_at_facing_n": "`R(all, all, {0, 1})` and `R(all, {0, 1}, {2, 3})`; upside-down `R(all, all, {2, 3})` and `R(all, {0, 1}, {0, 1})`",
+    "micro_voxels": "48",
+    "chips_13_2": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.door",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–1 facing, b2 open, b3 upper half, b4 hinge right",
+    "predefined_mask_at_facing_n": "closed `R(all, {0}, all)`; open, hinge left `R({0}, all, all)`; open, hinge right `R({3}, all, all)`",
+    "micro_voxels": "16",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.trapdoor",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–1 facing (hinge side), b2 open, b3 top",
+    "predefined_mask_at_facing_n": "closed bottom `R(all, all, {0})`; closed top `R(all, all, {3})`; open `R(all, {0}, all)`",
+    "micro_voxels": "16",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.ladder",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–1 facing (away from the wall)",
+    "predefined_mask_at_facing_n": "empty; climbable",
+    "micro_voxels": "0",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.fence",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–3 connect N, W, S, E",
+    "predefined_mask_at_facing_n": "post `R({1, 2}, {1, 2}, all)`; per connected side the rails `R({1, 2}, {0}, {1, 3})` rotated to that side",
+    "micro_voxels": "16 + 4 per side",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.pane",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–3 connect N, W, S, E",
+    "predefined_mask_at_facing_n": "post `R({1, 2}, {1, 2}, all)`; per connected side the arm `R({1, 2}, {0}, all)` rotated to that side",
+    "micro_voxels": "16 + 8 per side",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.layer",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–2 level 0..=7",
+    "predefined_mask_at_facing_n": "`R(all, all, 0..rows)` with `rows = ceil_div(level + 1, 2)`",
+    "micro_voxels": "16 × `rows`",
+    "chips_13_2": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.cross",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–2 growth age 0..=7",
+    "predefined_mask_at_facing_n": "empty; `replaceable`",
+    "micro_voxels": "0",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.shape.fixture",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 4.4 Shapes, props and micro-voxel masks",
+   "fields": {
+    "props_bits": "b0–2 attach face (index into `N6`)",
+    "predefined_mask_at_facing_n": "empty",
+    "micro_voxels": "0",
+    "chips_13_2": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.liqi.blocks",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 6.2 Capacity",
+   "fields": {
+    "liquid_cap_c": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.liqi.permeable",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 6.2 Capacity",
+   "fields": {
+    "liquid_cap_c": "`floor_div(1000 × (64 − fill(c)), 64)` (Canon §4.4): a slab 500, stairs 250, a door, a trapdoor or a one-row layer 750, a ladder, cross or fixture 1000, a chipped cell by its current mask"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.liqi.displaced",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 6.2 Capacity",
+   "fields": {
+    "liquid_cap_c": "1000; the first transfer into the cell breaks the block with cause `grid.cause.liquid` and its normal drops (destructible blocks only, §4.5 loader rule 2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.liqi.absorbs",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 6.2 Capacity",
+   "fields": {
+    "liquid_cap_c": "0; the block absorbs film from the cell above (§6.4 step 8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.worldgen",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "doc 12 generation, before `folio_entry_tick`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.script",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "docs 12 and 14 scripted changes: seals, Rubric gates, `set_protect`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.placed",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.3 placement (doc 07), doc 06 conjured blocks, doc 07 gadget-made blocks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.mined",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.2 mining"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.broken",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.2 block damage; doc 07 web struggle"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.explosion",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§12.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.fire",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§8.4 burnout"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.liquid",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§6.2 displaced blocks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.unsupported",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.5 lost attachment"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.connected",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.5 fence and pane connection props"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.fell",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.6 a gravity block starts to fall"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.landed",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.6 a falling block lands"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.melted",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§9.5 heat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.froze",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§6.4 step 3 and the §6.9 frost trigger, including doc 08 §5.2's frost rows (lava to `block.basalt`, molten metal to `block.slag`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.reaction",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§6.8 doc 08 reaction outcomes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.toggled",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.4 doors and trapdoors; doc 07 §10.6 light-block twin swaps (snuff, douse, switch and relight, by doc 09 §2.4 and doc 13 `ai.action.relight`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.erased",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§13.8 Editor and red-ink erasure"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.reverted",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "§6.9 timed revert of frost ice"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.cause.expired",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.1 `set_block`",
+   "fields": {
+    "producer": "doc 07 placed-block expiry and doc 06 conjured blocks at the end of their duration"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.rt.none",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.7 Random block ticks (`rng.blocktick`)",
+   "fields": {
+    "fields": "—",
+    "effect": "nothing"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.rt.grow",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.7 Random block ticks (`rng.blocktick`)",
+   "fields": {
+    "fields": "`chance_bp`, `max_age`",
+    "effect": "`roll < chance_bp` and age < `max_age`: age + 1 (cause `grid.cause.grew`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.rt.decay",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.7 Random block ticks (`rng.blocktick`)",
+   "fields": {
+    "fields": "`chance_bp`, `to`",
+    "effect": "`roll < chance_bp`: becomes `to` (cause `grid.cause.decayed`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "grid.rt.spread",
+   "kind": "grid",
+   "owner": "03",
+   "section": "03 13.7 Random block ticks (`rng.blocktick`)",
+   "fields": {
+    "fields": "`chance_bp`, `from`, `to`",
+    "effect": "`roll < chance_bp` and the `N4A[roll & 3]` neighbor is `from`: that neighbor becomes `to` (cause `grid.cause.spread`)"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,238 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "gadget.turret_light",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "reusable",
+    "deploy": "60",
+    "hp_ar_base": "40 / 10",
+    "lasts": "1800",
+    "effect": "nearest visible hostile within 20000 mm; base 4 HP pierce every 30 ticks, `rifle_auto` ballistics, spread 182 Bam, precision 15000",
+    "recharge": "1800",
+    "recipe_tier_skill_inputs": "1, 20, F2 + 1 G",
+    "pool": "base"
+   },
+   "also_in": [
+    "11 3.6 Gadgets and loose parts"
+   ]
+  },
+  {
+   "id": "gadget.drone_scout",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "reusable",
+    "deploy": "30",
+    "hp_ar_base": "20 / 0",
+    "lasts": "3600",
+    "effect": "hovers 2500 mm above the owner; direct `st.marked` on hostiles in sight within 12000 mm every 60 ticks",
+    "recharge": "2400",
+    "recipe_tier_skill_inputs": "1, 20, F1 + 1 G + 1 copper",
+    "pool": "base"
+   },
+   "also_in": [
+    "11 3.6 Gadgets and loose parts"
+   ]
+  },
+  {
+   "id": "gadget.mine_frag",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "consumable ×2",
+    "deploy": "45",
+    "hp_ar_base": "—",
+    "lasts": "arms 60",
+    "effect": "hostile within 1500 mm: blast radius 3000, base 30 HP pierce, `block_power_milli` 0",
+    "recharge": "—",
+    "recipe_tier_skill_inputs": "1, 15, F1 + 1 coal",
+    "pool": "base"
+   },
+   "also_in": [
+    "11 3.6 Gadgets and loose parts"
+   ]
+  },
+  {
+   "id": "gadget.trap_snare",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "consumable ×2",
+    "deploy": "30",
+    "hp_ar_base": "—",
+    "lasts": "until sprung",
+    "effect": "hostile within 600 mm: direct `st.rooted`",
+    "recharge": "—",
+    "recipe_tier_skill_inputs": "1, 10, M1 + 1 S",
+    "pool": "base"
+   },
+   "also_in": [
+    "11 3.6 Gadgets and loose parts"
+   ]
+  },
+  {
+   "id": "gadget.beacon_mend",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "reusable",
+    "deploy": "60",
+    "hp_ar_base": "30 / 5",
+    "lasts": "600",
+    "effect": "allies within 4000 mm heal 100 Bp of Max HP per second",
+    "recharge": "2400",
+    "recipe_tier_skill_inputs": "2, 30, F1 + 1 G + 1 `arcane_reagent`",
+    "pool": "base"
+   },
+   "also_in": [
+    "11 3.6 Gadgets and loose parts"
+   ]
+  },
+  {
+   "id": "gadget.decoy",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "consumable",
+    "deploy": "30",
+    "hp_ar_base": "60 / 10",
+    "lasts": "300",
+    "effect": "direct `st.taunted` toward the decoy on hostiles within 8000 mm at deploy",
+    "recharge": "—",
+    "recipe_tier_skill_inputs": "1, 10, 1 S + 1 W",
+    "pool": "base"
+   },
+   "also_in": [
+    "11 3.6 Gadgets and loose parts"
+   ]
+  },
+  {
+   "id": "gadget.turret_flame",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "reusable",
+    "deploy": "90",
+    "hp_ar_base": "60 / 15",
+    "lasts": "1200",
+    "effect": "cone 5461 Bam, 5000 mm; every 10 ticks base 2 HP fire and 30 `st.burning` power per target",
+    "recharge": "2400",
+    "recipe_tier_skill_inputs": "2, 35, F2 + 2 coal",
+    "pool": "gadgets_2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gadget.drone_combat",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "reusable",
+    "deploy": "30",
+    "hp_ar_base": "30 / 5",
+    "lasts": "2400",
+    "effect": "follows the owner; fires at the owner's last target within 15000 mm, base 3 HP pierce every 20 ticks",
+    "recharge": "3000",
+    "recipe_tier_skill_inputs": "2, 40, F2 + 1 G + 1 copper",
+    "pool": "gadgets_2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gadget.mine_cryo",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "consumable ×2",
+    "deploy": "45",
+    "hp_ar_base": "—",
+    "lasts": "arms 60",
+    "effect": "hostile within 1500 mm: blast radius 3000, base 15 HP frost, 80 `st.frozen` power; freezes water",
+    "recharge": "—",
+    "recipe_tier_skill_inputs": "2, 30, F1 + 1 ice",
+    "pool": "gadgets_2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gadget.barrier_projector",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "reusable",
+    "deploy": "30",
+    "hp_ar_base": "—",
+    "lasts": "900",
+    "effect": "3 × 2 cells of `block.cover.barrier` facing the placer's view, each `hp_max = mul_bp(mul_bp(20000, T(src_lvl)), quality)`",
+    "recharge": "1800",
+    "recipe_tier_skill_inputs": "2, 35, F1 + 2 G",
+    "pool": "gadgets_2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gadget.tesla_coil",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "reusable",
+    "deploy": "60",
+    "hp_ar_base": "50 / 10",
+    "lasts": "1200",
+    "effect": "every 60 ticks hits up to 3 hostiles within 5000 mm (nearest first) for base 6 HP shock, 30 `st.shocked` power, flag `no_chain`",
+    "recharge": "2400",
+    "recipe_tier_skill_inputs": "3, 50, F1 + 2 copper",
+    "pool": "gadgets_2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gadget.demolition_charge",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "consumable",
+    "deploy": "60",
+    "hp_ar_base": "—",
+    "lasts": "fuse 120",
+    "effect": "doc 03 explosion: radius 2500, `block_power_milli` 6000, base 40 HP blunt 5000 fire 5000, `drop_bp` 5000; breaks only destructible blocks",
+    "recharge": "—",
+    "recipe_tier_skill_inputs": "1, Fieldcraft 25, M1 + 2 coal + 1 S",
+    "pool": "gadgets_2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gadget.noisemaker",
+   "kind": "gadget",
+   "owner": "07",
+   "section": "07 11.2 Catalog",
+   "fields": {
+    "kind": "consumable ×2",
+    "deploy": "30",
+    "hp_ar_base": "—",
+    "lasts": "600",
+    "effect": "emits `noise.gadget.noisemaker` (70 dB, doc 09 §7.6) at its cell every 60 ticks; AI investigates it (doc 09 §12)",
+    "recharge": "—",
+    "recipe_tier_skill_inputs": "1, 10, F1 + 1 copper",
+    "pool": "craft"
+   },
+   "also_in": []
+  }
+ ]
+}

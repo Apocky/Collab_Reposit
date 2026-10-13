@@ -1,0 +1,29 @@
+{
+ "schema": "03.table_row",
+ "records": [
+  {
+   "id": "block.ice",
+   "kind": "block",
+   "owner": "03",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "ground acceleration and friction × 1500"
+   },
+   "also_in": [
+    "07 10.1 Block catalog"
+   ]
+  },
+  {
+   "id": "block.web",
+   "kind": "block",
+   "owner": "03",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "`st.rooted` while inside"
+   },
+   "also_in": [
+    "07 10.1 Block catalog"
+   ]
+  }
+ ]
+}

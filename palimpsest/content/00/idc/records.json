@@ -1,0 +1,100 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "idc.potion",
+   "kind": "idc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "item_types": "every `cat.potion` type",
+    "appearance_pool_examples": "colors: crimson, murky green, ..."
+   },
+   "also_in": [
+    "10 3.2 Pool sizes and type budgets",
+    "10 13. Content bindings"
+   ]
+  },
+  {
+   "id": "idc.text",
+   "kind": "idc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "item_types": "every `cat.text` type",
+    "appearance_pool_examples": "sigils, glyph scripts, file hashes"
+   },
+   "also_in": [
+    "10 3.2 Pool sizes and type budgets",
+    "10 13. Content bindings"
+   ]
+  },
+  {
+   "id": "idc.ring",
+   "kind": "idc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "item_types": "every ring type in `cat.accessory`",
+    "appearance_pool_examples": "stones and metals"
+   },
+   "also_in": [
+    "10 3.2 Pool sizes and type budgets"
+   ]
+  },
+  {
+   "id": "idc.amulet",
+   "kind": "idc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "item_types": "every amulet type in `cat.accessory`",
+    "appearance_pool_examples": "pendant shapes"
+   },
+   "also_in": [
+    "10 3.2 Pool sizes and type budgets"
+   ]
+  },
+  {
+   "id": "idc.wand",
+   "kind": "idc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "item_types": "every `cat.wand` type",
+    "appearance_pool_examples": "woods and alloys"
+   },
+   "also_in": [
+    "10 3.2 Pool sizes and type budgets",
+    "10 13. Content bindings"
+   ]
+  },
+  {
+   "id": "idc.implant",
+   "kind": "idc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "item_types": "every `cat.implant` type",
+    "appearance_pool_examples": "manufacturer stamps"
+   },
+   "also_in": [
+    "10 3.2 Pool sizes and type budgets",
+    "10 13. Content bindings"
+   ]
+  },
+  {
+   "id": "idc.relic",
+   "kind": "idc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "item_types": "every trinket type in `cat.accessory`",
+    "appearance_pool_examples": "carvings"
+   },
+   "also_in": [
+    "10 3.2 Pool sizes and type budgets"
+   ]
+  }
+ ]
+}

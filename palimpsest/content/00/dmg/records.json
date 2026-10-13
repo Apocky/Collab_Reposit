@@ -1,0 +1,215 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "dmg.slash",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "physical",
+    "default_color": "`#C9CED6`",
+    "builds_status": "`st.bleeding`",
+    "armor_efficiency_bp": "10000",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.pierce",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "physical",
+    "default_color": "`#E8E2C8`",
+    "builds_status": "`st.exposed`",
+    "armor_efficiency_bp": "7500",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.blunt",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "physical",
+    "default_color": "`#A68A64`",
+    "builds_status": "`st.stunned`; poise damage × `10000 + floor_div(share_blunt, 2)` Bp, so × 15000 for a pure blunt hit",
+    "armor_efficiency_bp": "5000",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.fire",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "elemental",
+    "default_color": "`#FF6A1A`",
+    "builds_status": "`st.burning`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "7500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.frost",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "elemental",
+    "default_color": "`#9BE7FF`",
+    "builds_status": "`st.frozen`; each hit also applies `st.chilled`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.shock",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "elemental",
+    "default_color": "`#FFE14D`",
+    "builds_status": "`st.shocked`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "15000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.acid",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "elemental",
+    "default_color": "`#9AE13B`",
+    "builds_status": "`st.corroded`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "7500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.radiation",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "elemental",
+    "default_color": "`#2F6BFF`",
+    "builds_status": "`st.irradiated`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.sonic",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "elemental",
+    "default_color": "`#C8B6FF`",
+    "builds_status": "`st.deafened`; each hit emits `ev.noise` at `60 + floor_div(d_mhp, 1000)` dB at the impact point and ends `st.frozen` like blunt",
+    "armor_efficiency_bp": "2500",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.toxin",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "biological",
+    "default_color": "`#6B8E23`",
+    "builds_status": "`st.poisoned`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "5000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.radiant",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "esoteric",
+    "default_color": "`#FFF4C2`",
+    "builds_status": "`st.blinded`; × 15000 against undead and fiends (step 3a)",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.umbral",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "esoteric",
+    "default_color": "`#5B2A86`",
+    "builds_status": "`st.withering`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.psychic",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "esoteric",
+    "default_color": "`#FF5FD2`",
+    "builds_status": "`st.dread`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.arcane",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "esoteric",
+    "default_color": "`#3FE0D0`",
+    "builds_status": "`st.unraveled`",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "12500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "dmg.true",
+   "kind": "dmg",
+   "owner": "00",
+   "section": "00 10.1 Damage types",
+   "fields": {
+    "category": "true",
+    "default_color": "`#FFFFFF`",
+    "builds_status": "none; ignores resistance and armor",
+    "armor_efficiency_bp": "0",
+    "ward_mult_bp": "10000"
+   },
+   "also_in": []
+  }
+ ]
+}

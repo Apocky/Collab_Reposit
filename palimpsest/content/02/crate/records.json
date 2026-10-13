@@ -1,0 +1,285 @@
+{
+ "schema": "02.table_row",
+ "records": [
+  {
+   "id": "crate.math",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_math`",
+    "layer": "0",
+    "kind": "lib",
+    "no_std": "yes",
+    "responsibility": "integer primitives, `I256`, `Fx`, `Fx3`, `Bam`, trig, CORDIC, `isqrt_u128`, geometry, RNG, seeds, FNV-1a, BLAKE3 wrapper, power tables"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.data",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_data`",
+    "layer": "1",
+    "kind": "lib",
+    "no_std": "yes (core); `loader` feature uses std",
+    "responsibility": "content IDs and `Id32`, ID registry, text keys, hex `u64`, content record types, `ContentDb`, schema generation, loader, `content_hash` and `presentation_hash`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.econ",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_econ`",
+    "layer": "1",
+    "kind": "lib",
+    "no_std": "yes",
+    "responsibility": "doc 15's shared economy logic: in-house ChaCha20 (RFC 8439), HMAC-SHA256 draw derivation, commit-reveal verification, odds and pity math, receipt canonical JSON and Ed25519 verification, `FairStream` and doc 15's pull, open and Transcription algorithms, `PAID_RANDOM_ITEMS_ENABLED = false`; used by the client (offline receipts, the local verify button) and by `palimpsest_services`; never reads simulation state"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.gen",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_gen`",
+    "layer": "2",
+    "kind": "lib",
+    "no_std": "yes",
+    "responsibility": "Folio generation as a pure function (doc 12)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.ai",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_ai`",
+    "layer": "2",
+    "kind": "lib",
+    "no_std": "yes",
+    "responsibility": "utility scoring, response curves, A* and HPA* (doc 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.sim",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_sim`",
+    "layer": "3",
+    "kind": "lib",
+    "no_std": "yes",
+    "responsibility": "world store, scheduler, every simulation system, Sim API, canonical serialization, view extraction"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.net",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_net`",
+    "layer": "4",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "`Transport` trait, protocol framing, input buffers, prediction and reconciliation (doc 16), desync detection (§6.7)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.bridge",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_bridge`",
+    "layer": "4",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "view-frame mailbox, interpolation, entity mapping data, event queue, the float conversion boundary `conv`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.mod_api",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_mod_api`",
+    "layer": "4",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "WIT world, wasmtime host (`host` feature) implementing `ScriptHost`, guest SDK (`guest` feature)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.scribe",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_scribe`",
+    "layer": "4",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "on-device flavor-text jobs (`flag.scribe.enabled`, default off), template fallback; never linked into the simulation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.render",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_render`",
+    "layer": "5",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "Bevy plugin: voxel meshing, materials, lighting, viewmodel, post, particles, decals, transitions"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.audio",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_audio`",
+    "layer": "5",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "Bevy plugin: voices, spatialization, occlusion, music stems"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.ui",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_ui`",
+    "layer": "5",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "Bevy plugin: input action layer, HUD, menus, widgets, screen-reader nodes and `access.narrator` speech, localization, dev overlay"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.platform",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_platform`",
+    "layer": "5",
+    "kind": "lib",
+    "no_std": "no",
+    "responsibility": "`Platform` trait, Steam (feature `steam`) and Null backends, save IO, telemetry, crash upload, receipt cache, `meta` (doc 14's meta-progression rules, headless-testable)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.bots",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_bots`",
+    "layer": "5",
+    "kind": "lib + bin",
+    "no_std": "no",
+    "responsibility": "headless bot players, batch runner, balance Monte Carlo harness"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.server",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_server`",
+    "layer": "5",
+    "kind": "lib + bin",
+    "no_std": "no",
+    "responsibility": "headless dedicated host, replay runner, and the verifier that re-simulates ranked, daily and weekly replays to verify their scores (DECISIONS.md item 123)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.client",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_client`",
+    "layer": "6",
+    "kind": "bin",
+    "no_std": "no",
+    "responsibility": "the game executable: assembles plugins, owns the sim thread"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.services",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_services`",
+    "layer": "6",
+    "kind": "bin",
+    "no_std": "no",
+    "responsibility": "backend: economy endpoints (doc 15), the ranked, daily and weekly verification queue, which calls `palimpsest_server`'s `verify_replay`, telemetry and crash ingest"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.tools",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`palimpsest_tools`",
+    "layer": "6",
+    "kind": "bins `pal`, `palimpsest-verify`",
+    "no_std": "no",
+    "responsibility": "validate, bake, schema export, golden bless, desync diff, generator sweeps, trig check, content extraction and spec sync, catalog, odds, scenarios, balance; doc 15 §4.3's `palimpsest-verify`, a second binary here because its `--content` check regenerates Keepsakes through doc 11's item generator in `palimpsest_sim`, which `palimpsest_econ` may not link"
+   },
+   "also_in": []
+  },
+  {
+   "id": "crate.xtask",
+   "kind": "crate",
+   "owner": "02",
+   "section": "02 3.2 Crates",
+   "fields": {
+    "package": "`xtask`",
+    "layer": "6",
+    "kind": "bin",
+    "no_std": "no",
+    "responsibility": "dependency DAG check, float scan, size limits, SPEC reference check"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,410 @@
+{
+ "schema": "01.table_row",
+ "records": [
+  {
+   "id": "kpi.run.standard_minutes_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "median of `floor_div(end_tick - start_tick, 3600)` over `run.end.victory` runs of `mode.standard`",
+    "mode": "band",
+    "target": "100..=150",
+    "alert_band": "90..=165",
+    "source": "a, b",
+    "owner": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.run.abridged_minutes_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "the same over `mode.abridged` victories",
+    "mode": "band",
+    "target": "60..=75",
+    "alert_band": "50..=85",
+    "source": "a, b",
+    "owner": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.run.folio_seconds_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "median doc 14 §4.2 `secs_f` over cleared Folios of Standard and Abridged runs",
+    "mode": "band",
+    "target": "180..=420",
+    "alert_band": "150..=480",
+    "source": "a, b",
+    "owner": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.run.daily_minutes_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "median `floor_div(end_tick, 3600)` over ranked Daily submissions",
+    "mode": "band",
+    "target": "20..=30",
+    "alert_band": "15..=35",
+    "source": "b",
+    "owner": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.run.first_editor_5runs",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "share of accounts with ≥ 5 runs whose first 5 runs include a `boss.editor_v1` death with the player present, Bp",
+    "mode": "band",
+    "target": "≥ 5000",
+    "alert_band": "≥ 4000",
+    "source": "a",
+    "owner": "13, 14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.run.g0_victory_bp",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "share of Grade-0 `mode.standard` runs ending `run.end.victory`, among accounts with ≥ 10 runs, Bp",
+    "mode": "band",
+    "target": "1500..=3500",
+    "alert_band": "1000..=4500",
+    "source": "a, b",
+    "owner": "13, 14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.genre.door_pick_bp",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "per core genre `g`: among committed 2-door offers that contain `g`, the share in which `g`'s door committed, Bp",
+    "mode": "band, per genre",
+    "target": "3500..=6500",
+    "alert_band": "3000..=7000",
+    "source": "a, f",
+    "owner": "12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.genre.contradiction_exposure",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "share of (Folio entry, slot) pairs in which the maximum `C` over the slot's equipped components is ≥ 1 on the entry tick, Bp",
+    "mode": "band",
+    "target": "5000..=8500",
+    "alert_band": "4000..=9000",
+    "source": "a, f",
+    "owner": "05, 11, 12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.genre.disconnected_entry",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "share of (Folio entry, slot) pairs in which an equipped weapon's base-function component has `C ≥ 6` on the entry tick, Bp",
+    "mode": "band",
+    "target": "≤ 1500",
+    "alert_band": "≤ 2500",
+    "source": "a, f",
+    "owner": "05, 11, 12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.pillar.rewrites_per_run_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "median count of committed Rewrites per `mode.standard` run, all slots",
+    "mode": "band",
+    "target": "≥ 2",
+    "alert_band": "≥ 1",
+    "source": "a",
+    "owner": "11"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.pillar.systemic_kill_share",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "`systemic_share` (below), Bp",
+    "mode": "band",
+    "target": "≥ 800",
+    "alert_band": "≥ 500",
+    "source": "a, f",
+    "owner": "03, 07, 08, 12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.coop.party_parity",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "`max over n in 1..=4 of abs(clear_n - mean)`, where `clear_n` is the Volume I clear share (runs in which `boss.editor_v1` dies) of Grade-0 Standard runs at party size `n`, and `mean = floor_div(Σ clear_n, 4)`, Bp",
+    "mode": "band",
+    "target": "≤ 1000",
+    "alert_band": "≤ 1500",
+    "source": "a, f",
+    "owner": "13, 14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.coop.hours_share",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "run hours with party size ≥ 2 over all run hours, Bp",
+    "mode": "band",
+    "target": "≥ 4000",
+    "alert_band": "≥ 2500",
+    "source": "a",
+    "owner": "16"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.coop.desyncs_per_1000h",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "`floor_div(desyncs × 1000, coop_hours)`, with `coop_hours = floor_div(coop_ticks, 216000)` and `min_sample` 1,000 hours",
+    "mode": "band",
+    "target": "≤ 5",
+    "alert_band": "≤ 10",
+    "source": "a",
+    "owner": "02, 16"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.quality.crash_free_bp",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "sessions without a crash over all sessions, Bp",
+    "mode": "band",
+    "target": "≥ 9950",
+    "alert_band": "≥ 9900",
+    "source": "e",
+    "owner": "02"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.quality.review_positive_90d",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "positive Steam reviews over all Steam reviews on EA day 90, Bp",
+    "mode": "band",
+    "target": "≥ 8500",
+    "alert_band": "≥ 8000",
+    "source": "d",
+    "owner": "01"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.biz.units_90d",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "units sold in the first 90 days of EA",
+    "mode": "band",
+    "target": "≥ 200,000",
+    "alert_band": "≥ 100,000",
+    "source": "d",
+    "owner": "01"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.biz.return_14d",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "share of buyers who start runs on ≥ 2 distinct UTC dates within 14 days of their first run, Bp; never driven by rewards or notifications",
+    "mode": "band",
+    "target": "≥ 6000",
+    "alert_band": "≥ 4500",
+    "source": "a",
+    "owner": "01"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.fair.replay_verify_bp",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "ranked submissions passing verification over all ranked submissions, Bp",
+    "mode": "band",
+    "target": "≥ 9990",
+    "alert_band": "≥ 9950",
+    "source": "b",
+    "owner": "14, 16"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.featured_hours_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "doc 15 §12: median reference hours from banner start to a player's first featured Illuminated, among players who pull on that banner",
+    "mode": "band",
+    "target": "≤ 25",
+    "alert_band": "≤ 30",
+    "source": "c",
+    "owner": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.ink_per_hour_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "doc 15 §12: Ink from play per active hour, median",
+    "mode": "band",
+    "target": "≥ 350",
+    "alert_band": "≥ 300",
+    "source": "c",
+    "owner": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.quires_per_hour_p50",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "Quires from runs per active run hour, median over accounts",
+    "mode": "band",
+    "target": "50..=160",
+    "alert_band": "40..=200",
+    "source": "c",
+    "owner": "14, 15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.codex_completion",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "share of premium owners reaching tier 100 within 24 weeks of purchase, Bp",
+    "mode": "band",
+    "target": "≥ 6000",
+    "alert_band": "≥ 5000",
+    "source": "c",
+    "owner": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.refund_rate",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "refunded over purchased SKUs, 28 days, Bp",
+    "mode": "band",
+    "target": "≤ 300",
+    "alert_band": "≤ 500",
+    "source": "c, d",
+    "owner": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.minor_refunds",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "unauthorized-minor refunds per 28 days",
+    "mode": "no_rise",
+    "target": "no rise over the previous window",
+    "alert_band": "any rise alerts",
+    "source": "c",
+    "owner": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.spend_top1_share",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "revenue share of the top 1% of spenders, Bp",
+    "mode": "info",
+    "target": "none",
+    "alert_band": "none",
+    "source": "c",
+    "owner": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "kpi.econ.chat_report_rate",
+   "kind": "kpi",
+   "owner": "01",
+   "section": "01 10.3 KPI table",
+   "fields": {
+    "measure_exact_definition": "chat and voice reports per 1,000 sessions",
+    "mode": "no_rise",
+    "target": "no rise over the previous window",
+    "alert_band": "any rise alerts",
+    "source": "c",
+    "owner": "15, 16"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,437 @@
+{
+ "schema": "13.table_row",
+ "records": [
+  {
+   "id": "boss.mythic_fantasy.ember_wyrm",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "avian",
+    "arena": "collapsed cathedral 32 × 32 × 16 m, 4 pillars",
+    "attacks_phase_2_additions_marked_p2": "`flame_breath` cone 5461 Bam 9000 mm, w60 a90 r40, ×0.4 fire per 10 ticks, `st.burning` 60; `tail_sweep` rear arc 16384 Bam 4000 mm, w24, ×1.5 blunt, `knockback_mm_s` 6000; P2 takes flight and adds `firebomb` 3 circles r3000 on Errata, w75, ×2.0 fire"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.mythic_fantasy.orc_warchief",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid, beastkin",
+    "arena": "war camp 36 × 36 m, 4 palisade towers 2 × 2 × 4 m, a war drum at the center",
+    "attacks_phase_2_additions_marked_p2": "`cleaver_combo` 3 hits, arc 10923 Bam 3000 mm, w24 each, ×1.2 slash; `war_stomp` circle r4000, w45, ×2.5 blunt, direct `st.knocked_down`; `rally_horn` summons 4 `orc_raider` (rank minion, tag `summoned`) at the walkable cells nearest the 4 tower bases, w60, cooldown 1200; P2 `blood_rage` every 1800 ticks, after a 45-tick `ring` telegraph: for 600 ticks its damage is ×1.3 and `war_stomp`'s cooldown is 180"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.gothic_horror.blood_countess",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid, undead",
+    "arena": "ballroom 30 × 30 m, 6 coffins",
+    "attacks_phase_2_additions_marked_p2": "`blood_tide` ring 0 to 12000 mm over 60 ticks, w45, ×1.5 umbral, `st.withering` 60; `bat_form` 180 ticks invisible then a claw behind the target, marker w30, ×2.0 slash; P2 `thrall_call` summons 3 `ghoul`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.gothic_horror.moor_beast",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "quadruped, beast",
+    "arena": "moorland graveyard 32 × 32 m, 8 headstones 1 × 1 × 2 blocks, a ruined chapel 8 × 8 m",
+    "attacks_phase_2_additions_marked_p2": "`pounce` leap up to 10000 mm onto a circle r2500 at its target's cell, w36, ×2.0 slash, direct `st.knocked_down`; `rending_claws` 2 hits, arc 8192 Bam 3000 mm, w18 each, ×1.0 slash, `st.bleeding` 60; `blood_howl` area r16000, w45, `st.feared` 60; P2 `call_the_pack` summons 2 `werewolf` (rank minion, tag `summoned`) at the walkable cells nearest the chapel door, w60, cooldown 1800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.cosmic_horror.drowned_herald",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "serpentine, eldritch",
+    "arena": "flooded crypt 28 × 28 m, 1 m water",
+    "attacks_phase_2_additions_marked_p2": "4 tentacles `bp.weakpoint_1..4`, share 1000 each, precision; `tentacle_slam` line 12000 mm, w36, ×2.0 blunt; `maddening_hymn` area 20000 mm, w60, `st.dread` 80, composure −10; P2 `abyss_pull` drags every Erratum 3000 mm toward it, w45"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.cosmic_horror.high_hierophant",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid, mutant (extra_arm), eldritch",
+    "arena": "drowned observatory 32 × 32 m, 0.5 m water, a 6 m orrery at the center, 4 ritual circles r2000 at radius 10 m",
+    "attacks_phase_2_additions_marked_p2": "`void_gaze` beam 20000 mm, w45 a60, ×0.3 umbral per 10 ticks, `st.dread` 15 per hit; `star_sigil` `marker` on each Erratum, impact at tick 90, circle r2500, ×2.0 umbral; `summon_the_deep` summons 2 `deep_one` (rank minion, tag `summoned`) at the centers of the 2 ritual circles nearest its target (ties to the lower circle index), w60, cooldown 1800; P2 `starfall_rite` w90, a circle r3000 on every ritual circle, ×3.0 fire"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.space_opera.dread_admiral",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "bridge deck 36 × 24 m",
+    "attacks_phase_2_additions_marked_p2": "`orbital_strike` 3 markers r3000, w90, ×3.0 fire; `command_pistol` 3 shots ×0.5, w18; P2 `shield_drones`: 2 construct drones (rank minion, electronic), each granting a `st.shielded` pool of 2000 Bp of its Max HP while alive"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.space_opera.hive_queen",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "insectoid, beast",
+    "arena": "hive chamber 40 × 40 m, 8 resin pillars, 6 egg clusters at the walls",
+    "attacks_phase_2_additions_marked_p2": "`acid_rain` a circle r2500 on each Erratum's cell, w60, ×1.5 acid, `st.corroded` 60; `ovipositor_strike` line 8000 mm, w36, ×2.5 pierce, `st.poisoned` 80; `brood_call` one `hive_drone` (rank minion, tag `summoned`) hatches at each egg cluster, w60, cooldown 1200, at most 6 drones alive; P2 `royal_jelly` regenerates 300 Bp of Max HP per second while 3 or more of its drones live"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.cyberpunk.ice_daemon",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "construct, electronic",
+    "arena": "server vault 28 × 28 m, 6 terminals",
+    "attacks_phase_2_additions_marked_p2": "`black_ice` beam 20000 mm, w45 a60, ×0.3 shock per 10 ticks, `st.shocked` 40; `firewall` ring r8000, w45, ×2.0 fire; P2 activates 2 terminals as turrets (rank minion) every 900 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.cyberpunk.chrome_king",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid, construct, electronic",
+    "arena": "nightclub 36 × 28 m, a 12 × 12 m dance floor of light tiles, 2 DJ booths, a bar",
+    "attacks_phase_2_additions_marked_p2": "`mantis_blades` a `line` dash 6000 mm, w24, then 3 hits, arc 8192 Bam 2500 mm, ×0.8 slash, 12 ticks apart; `smartgun_spray` 10 rounds ×0.3 pierce that turn 2048 Bam per tick toward their target; `overclock` direct `st.hasted` on itself, w30, cooldown 900; P2 `strobe_overload` w60, then for 600 ticks it requests one doc 03 §10.6 box `LightOverride` over the dance floor every 30 ticks, alternating `min_level = max_level = 15` and `min_level = max_level = 0`, each with `until = t + 30`, and each Erratum on the floor at a flash gains `st.blinded` 30"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.post_apocalypse.war_boss",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "dust arena 48 × 48 m",
+    "attacks_phase_2_additions_marked_p2": "fights on foot in a welded ram harness; `rig_ram` line charge at 12000 mm/s up to 24000 mm, w45, ×3.0 blunt, the §3 `lance_charge` trample (one hit per Erratum crossed, `knockback_mm_s` 6000); `flamethrower` cone 5461 Bam, w30 a90, ×0.3 fire per 10 ticks; P2 adds `chain_swing` arc 16384 Bam, w36, ×2.0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.post_apocalypse.reactor_saint",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid, mutant (hide)",
+    "arena": "reactor hall 36 × 36 m, a 6 × 6 m reactor core at the center, 4 coolant pipes",
+    "attacks_phase_2_additions_marked_p2": "`fission_bolt` projectile ×1.0 radiation, `st.irradiated` 60, w24; `meltdown_pulse` ring 0 to 14000 mm over 60 ticks, w60, ×1.5 radiation; `fallout_vent` w45, the pipe nearest its target (ties to the lower pipe index) calls `emit_gas_volume(cell, gas.fallout, 4)` at its mouth, cooldown 600; P2 `critical_mass` regenerates 200 Bp of Max HP per second while within 6000 mm of the core, and `meltdown_pulse` cooldown 300"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.weird_west.hanging_judge",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid, undead",
+    "arena": "gallows square 32 × 32 m",
+    "attacks_phase_2_additions_marked_p2": "`high_noon_duel` 120-tick marker on each Erratum in turn, a guaranteed crit ×3.0 shot if that Erratum is visible at the end; `verdict` line through the gallows, w45, ×2.0 umbral; P2 `dead_mans_posse` summons 3 `dead_miner`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.weird_west.sand_wyrm_matriarch",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "serpentine, beast",
+    "arena": "dry wash 40 × 24 m with a 2 m sand floor, 3 rock arches",
+    "attacks_phase_2_additions_marked_p2": "`burrow_strike` submerges in `block.sand` for 120 ticks (no capsule tests, takes no damage), then erupts under its target: circle r3000, w45, ×2.5 pierce, direct `st.knocked_down`; `sand_spray` cone 8192 Bam 10000 mm, w30, ×1.0 blunt, `st.blinded` 50; `tail_lash` rear arc 16384 Bam 5000 mm, w24, ×1.5 blunt; P2 `brood_rises` summons 2 `sand_wyrm` (rank minion, tag `summoned`) at the walkable cells nearest the points 4000 mm left and right of its target, w60, cooldown 1200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.hardboiled_noir.the_fixer",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "penthouse 30 × 20 m, glass walls, 8 tables",
+    "attacks_phase_2_additions_marked_p2": "uses `take_cover` at weight 15000; `drum_spray` 12 rounds ×0.25, w24; `smoke_bomb` 25 cells of `gas.smoke` then relocates; 2 `leg_breaker` at the start and 2 more at P2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.hardboiled_noir.the_cleaner",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "rain-slick rooftop 36 × 36 m, 2 water towers, 6 chimney stacks, a neon sign",
+    "attacks_phase_2_additions_marked_p2": "`silenced_shot` hitscan ×2.5 pierce, w45 with a visible aim beam, cooldown 300; `garrote_wire` 3 tripwire `line` markers between chimneys 1 and 2, 3 and 4, and 5 and 6 for 900 ticks, w30, cooldown 1200; an Erratum crossing one gains direct `st.slowed` and `st.marked`; `vanish_into_rain` direct `st.invisible` 300 ticks and a teleport to the chimney whose minimum distance to the living Errata is largest (ties to the lower chimney index), cooldown 900; P2 `knife_work` 4 hits, arc 8192 Bam 2000 mm, w12 each, ×0.6 slash, `st.bleeding` 40, and 2 `shadow_tail` at the P2 start"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.wuxia.sword_saint",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "bamboo courtyard 28 × 28 m",
+    "attacks_phase_2_additions_marked_p2": "`thousand_blades` 8 radiating lines, w45, ×1.5 slash; `parry_stance` 90 ticks in which melee hits deal 0 and trigger a ×1.5 riposte (ranged hits land); P2 `qinggong_descent` leap to a circle r3000, w60, ×2.5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.wuxia.nine_tailed_fox",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "quadruped, fae, beast",
+    "arena": "moon pavilion 32 × 32 m, a lotus pond 8 × 8 m with 1 m water, 4 lantern posts",
+    "attacks_phase_2_additions_marked_p2": "`foxfire_orbs` 9 projectiles at its yaw + `floor_div(i × 65536, 9)` Bam for `i` 0 to 8, ×0.4 fire, `st.burning` 30; `bewitching_glance` cone 8192 Bam 12000 mm, w45, `st.charmed` 60; `nine_tail_lash` arc 24576 Bam 5000 mm, w30, ×2.0 slash; P2 `foxfire_pillars` w45, a circle r2500 on the cells of up to 3 Errata (highest threat first) that burns for 300 ticks at ×0.3 fire per 30 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.steampunk.brass_colossus",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "construct, electronic",
+    "arena": "foundry 36 × 36 m, 4 vents",
+    "attacks_phase_2_additions_marked_p2": "rear boiler `bp.weakpoint_1`, share 1500, precision; `hammerfall` circle r4000, w60, ×3.0 blunt; `rivet_gun` 6 rounds ×0.4; P2 vents emit `gas.steam` for 300 ticks every 900"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.steampunk.sky_captain",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "airship deck 40 × 20 m, 2 masts 12 m tall with rope ladders, a deck rail",
+    "attacks_phase_2_additions_marked_p2": "`cutlass_flurry` 3 hits, arc 8192 Bam 2500 mm, w18 each, ×1.0 slash; `broadside` 6 markers r2500 in a line across the deck through its target, impact at tick 90, ×2.5, shares fire 5000 and blunt 5000; `grapnel_dive` swings to a mast top over 45 ticks, then dives onto a circle r2000 at its target, w45, ×2.0 blunt; P2 `boarding_party` summons 2 `sky_aeronaut` (rank minion, tag `summoned`) at the rail cells nearest its target, w60, cooldown 1500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.fairy_tale.wicked_queen",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid, fae",
+    "arena": "mirror hall 30 × 30 m, 6 breakable mirrors",
+    "attacks_phase_2_additions_marked_p2": "`mirror_images` 3 decoys with 1 HP each, which copy her telegraphs without damage; `poisoned_apple` lob ×1.0 and `st.poisoned` 100; P2 `curse_of_sleep` cone 8192 Bam, w60, `st.sleeping` 100"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.fairy_tale.cloud_giant",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "giant's kitchen 40 × 40 m, a hearth 8 × 4 m, 6 oversize chairs 2 × 2 × 3 blocks, a golden harp on a 2 m table",
+    "attacks_phase_2_additions_marked_p2": "`fee_fi_stomp` circle r5000, w45, ×3.0 blunt, `knockback_mm_s` 8000; `boulder_hurl` lob r3000, w45, ×2.5 blunt; `giant_grab` direct `st.grappled` on one Erratum within 3000 mm, w36, then 60 ticks later a throw, `apply_knockback(target, dir, 8000)` along its facing and ×2.0 blunt; P2 `golden_harp` the harp wakes (rank minion, `body.construct`, tag `summoned`, 3000 Bp of the giant's Max HP, never moves) and heals the giant 200 Bp of Max HP per second while it lives"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.mythic_antiquity.gorgon_matriarch",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "serpentine",
+    "arena": "temple ruins 32 × 32 m, columns",
+    "attacks_phase_2_additions_marked_p2": "`petrifying_gaze` w60: every Erratum whose facing is within 8192 Bam of the bearing to her gains direct `st.frozen`; `serpent_volley` 6 projectiles ×0.5 toxin, `st.poisoned` 40; P2 `tail_crush` arc, w30, ×2.0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.mythic_antiquity.lernaean_hydra",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "serpentine, beast",
+    "arena": "marsh temple 32 × 32 m, 0.5 m swamp water, 4 broken columns",
+    "attacks_phase_2_additions_marked_p2": "heads `bp.weakpoint_1..4` (share 1000 each, precision), 2 of them grown at spawn; `head_strike` one line 6000 mm per grown head, 2048 Bam apart and centered on its target, w30, ×1.5 pierce, `st.poisoned` 60; `venom_spit` lob r2500, w45, ×1.0 toxin, pours 1000 ml of `liq.venom`; a grown head whose pool reaches 0 falls, and 600 ticks later two heads grow in its place (at most 4 grown) unless `dmg.fire` hit the hydra in those 600 ticks; P2 `undying_head` regenerates 100 Bp of Max HP per second per grown head"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.oneiric.sandman",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "giant bedroom 48 × 48 m",
+    "attacks_phase_2_additions_marked_p2": "`dream_sand` area r6000, w45, `st.sleeping` 80; `gravity_flip` w90, arena gravity reversed for 300 ticks (doc 12 §9.5 gravity-flip volume over the arena); P2 summons 2 `nightmare_mare` every 1200 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.oneiric.the_examiner",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "endless exam hall 40 × 40 m, 24 desks 1 × 1 × 1 blocks in 4 rows, a clock face 4 m wide on the north wall",
+    "attacks_phase_2_additions_marked_p2": "`pencils_down` w60 with a `ring` telegraph over the arena; at impact every Erratum whose origin moved more than 500 mm in the last 30 ticks gains direct `st.stunned`; cooldown 900; `failing_grade` `marker` on its target, impact at tick 90, circle r2000, ×3.0 psychic; `chalk_volley` 8 projectiles in a 4096 Bam fan, ×0.3 arcane; P2 `retake` summons 2 `faceless_teacher` (rank minion, tag `summoned`) at the 2 desks nearest the clock, w60, cooldown 1500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.redacted.director_of_records",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "humanoid",
+    "arena": "open-plan office 40 × 30 m",
+    "attacks_phase_2_additions_marked_p2": "`file_wall` places a 6 × 3 block wall of cabinets removed on its death; `termination_notice` marker w90, ×3.0 arcane; P2 `memo_storm` 10 projectiles ×0.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.redacted.the_anomaly",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.3 Genre mini-bosses",
+   "fields": {
+    "body": "amorphous, eldritch",
+    "arena": "containment wing 40 × 30 m, 4 containment cells 8 × 8 m with glass walls, an observation deck 3 m up",
+    "attacks_phase_2_additions_marked_p2": "`reality_tear` line 20000 × 2000 mm, w45, ×2.5 arcane, direct `st.unraveled`; `memetic_broadcast` area r18000, w60, `st.confused` 60; `swap_out` w45 with a `marker` on the living Errata nearest and farthest from it (ties to the lower EntityId), which then trade places; P2 `containment_failure` w60 breaks the glass walls of the unbroken containment cell nearest its target (ties to the lower cell index) and releases one `spatial_anomaly` (rank minion, tag `summoned`) from it, cooldown 900"
+   },
+   "also_in": []
+  },
+  {
+   "id": "boss.editor_v1_rev",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.4 Second Edition: the revised Editors and the Author",
+   "fields": {
+    "working_name_doc_18_owns_display_text": "the Proofreader, revised",
+    "revises": "`boss.editor_v1`",
+    "template_hp_damage": "100 / 12",
+    "phases_end_at_bp": "7500, 5000, 2500",
+    "boss_folio": "`n = 5` or `n = 10` (below)"
+   },
+   "also_in": [
+    "13 9.4 Second Edition: the revised Editors and the Author"
+   ]
+  },
+  {
+   "id": "boss.editor_v2_rev",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.4 Second Edition: the revised Editors and the Author",
+   "fields": {
+    "working_name_doc_18_owns_display_text": "the Censor, revised",
+    "revises": "`boss.editor_v2`",
+    "template_hp_damage": "100 / 12",
+    "phases_end_at_bp": "7500, 5000, 2500",
+    "boss_folio": "`n = 5` or `n = 10`"
+   },
+   "also_in": [
+    "13 9.4 Second Edition: the revised Editors and the Author"
+   ]
+  },
+  {
+   "id": "boss.editor_v3_rev",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.4 Second Edition: the revised Editors and the Author",
+   "fields": {
+    "working_name_doc_18_owns_display_text": "the Continuity Editor, revised",
+    "revises": "`boss.editor_v3`",
+    "template_hp_damage": "100 / 12",
+    "phases_end_at_bp": "7500, 5000, 2500",
+    "boss_folio": "`n = 5` or `n = 10`"
+   },
+   "also_in": [
+    "13 9.4 Second Edition: the revised Editors and the Author"
+   ]
+  },
+  {
+   "id": "boss.editor_v4_rev",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.4 Second Edition: the revised Editors and the Author",
+   "fields": {
+    "working_name_doc_18_owns_display_text": "the Abridger, revised",
+    "revises": "`boss.editor_v4`",
+    "template_hp_damage": "100 / 12",
+    "phases_end_at_bp": "7500, 5000, 2500",
+    "boss_folio": "`n = 5` or `n = 10`"
+   },
+   "also_in": [
+    "13 9.4 Second Edition: the revised Editors and the Author"
+   ]
+  },
+  {
+   "id": "boss.ur_editor_rev",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.4 Second Edition: the revised Editors and the Author",
+   "fields": {
+    "working_name_doc_18_owns_display_text": "the Last Word, revised",
+    "revises": "`boss.ur_editor`",
+    "template_hp_damage": "100 / 12",
+    "phases_end_at_bp": "8000, 6000, 4000, 2000",
+    "boss_folio": "`n = 15`, first"
+   },
+   "also_in": [
+    "13 9.4 Second Edition: the revised Editors and the Author"
+   ]
+  },
+  {
+   "id": "boss.author",
+   "kind": "boss",
+   "owner": "13",
+   "section": "13 9.4 Second Edition: the revised Editors and the Author",
+   "fields": {
+    "working_name_doc_18_owns_display_text": "the Author",
+    "revises": "none",
+    "template_hp_damage": "120 / 12",
+    "phases_end_at_bp": "7500, 5000, 2500",
+    "boss_folio": "`n = 15`, after the revised Last Word"
+   },
+   "also_in": [
+    "13 9.4 Second Edition: the revised Editors and the Author"
+   ]
+  }
+ ]
+}

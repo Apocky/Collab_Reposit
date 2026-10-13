@@ -1,0 +1,61 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "reliq.plain",
+   "kind": "reliq",
+   "owner": "11",
+   "section": "11 10. In-run Reliquaries",
+   "fields": {
+    "key": "none; 90-tick open",
+    "contents_each_a_10000_line_in_order": "L1: 1 item from the opener's deck (`Decrement`); L2: 1 equipment item floor Uncommon",
+    "shift": "0",
+    "mimic_bp": "400",
+    "placement_doc_12_places_the_room_spot": "standard and challenge Folios: `1 + range(2)`; rest Folios: 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "reliq.bound",
+   "kind": "reliq",
+   "owner": "11",
+   "section": "11 10. In-run Reliquaries",
+   "fields": {
+    "key": "`item.key.bound`",
+    "contents_each_a_10000_line_in_order": "L1, L2: equipment floor Uncommon; L3: consumable bundle",
+    "shift": "2000",
+    "mimic_bp": "300",
+    "placement_doc_12_places_the_room_spot": "6000 Bp per standard or challenge Folio from Folio 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "reliq.gilded",
+   "kind": "reliq",
+   "owner": "11",
+   "section": "11 10. In-run Reliquaries",
+   "fields": {
+    "key": "`item.key.gilded`",
+    "contents_each_a_10000_line_in_order": "L1, L2: equipment floor Rare; L3: equipment floor Epic",
+    "shift": "3000",
+    "mimic_bp": "200",
+    "placement_doc_12_places_the_room_spot": "2500 Bp per standard or challenge Folio from Folio 6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "reliq.illumined",
+   "kind": "reliq",
+   "owner": "11",
+   "section": "11 10. In-run Reliquaries",
+   "fields": {
+    "key": "`item.key.illumined`",
+    "contents_each_a_10000_line_in_order": "L1 to L3: equipment floor Rare; L4: equipment floor Legendary",
+    "shift": "4000",
+    "mimic_bp": "0",
+    "placement_doc_12_places_the_room_spot": "every boss Folio's Colophon, available from the Editor's death; `loot.secret.vault`"
+   },
+   "also_in": []
+  }
+ ]
+}

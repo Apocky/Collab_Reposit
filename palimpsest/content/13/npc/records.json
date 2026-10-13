@@ -1,0 +1,525 @@
+{
+ "schema": "13.table_row",
+ "records": [
+  {
+   "id": "npc.quest.hunt",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.3 Quest givers and quests",
+   "fields": {
+    "objective": "kill a marked elite of a faction hostile to the giver; the Director promotes one placed standard",
+    "tier": "2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.quest.rescue",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.3 Quest givers and quests",
+   "fields": {
+    "objective": "free an `npc.captive.<genre_suffix>` held by a hostile pack and bring it within 4000 mm of the giver",
+    "tier": "2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.quest.retrieve",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.3 Quest givers and quests",
+   "fields": {
+    "objective": "bring back a `cat.quest` item placed in a room at least 48000 mm away",
+    "tier": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.quest.deliver",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.3 Quest givers and quests",
+   "fields": {
+    "objective": "carry a `cat.quest` item to a named NPC of another non-hostile faction",
+    "tier": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.quest.sabotage",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.3 Quest givers and quests",
+   "fields": {
+    "objective": "destroy 3 marked blocks in a hostile faction's territory",
+    "tier": "2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.quest.parley",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.3 Quest givers and quests",
+   "fields": {
+    "objective": "pass a dialogue check (§13.7) with the leader of a −200 faction",
+    "tier": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.quest.cleanse",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.3 Quest givers and quests",
+   "fields": {
+    "objective": "kill every hostile in one marked room",
+    "tier": "3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.apothecary",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "role": "support",
+    "service": "carries 2 healing potions per Folio (doc 08) and drinks or gives one when its owner is below 3500 Bp HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.cartographer",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "role": "skirmisher",
+    "service": "reveals the current Folio's room graph on its owner's map at Folio entry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.lamplighter",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "role": "support",
+    "service": "places one light source (`light_emit` 12) at its cell every 600 ticks, at most 6 per Folio, which denies spawns there (Canon §12.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.porter",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "role": "guardian",
+    "service": "holds up to 30,000 g of its owner's items in its own inventory, exchanged by interact"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.sellsword",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "role": "soldier",
+    "service": "template HP × 13000 and damage × 12000 in the §6 formulas"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_mythic_fantasy",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.mythic_fantasy.kingsguard_knight` (no soldier in the roster)",
+    "role": "guardian"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_gothic_horror",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.gothic_horror.torch_villager`",
+    "role": "soldier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_cosmic_horror",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.cosmic_horror.expedition_rifleman` (the soldier `drowned_thrall` is mindless)",
+    "role": "sniper"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_space_opera",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.space_opera.navy_trooper`",
+    "role": "soldier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_cyberpunk",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.cyberpunk.corp_enforcer`",
+    "role": "soldier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_post_apocalypse",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.post_apocalypse.raider_scav`",
+    "role": "soldier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_weird_west",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.weird_west.outlaw_gunhand` (no soldier)",
+    "role": "shooter"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_hardboiled_noir",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.hardboiled_noir.mob_torpedo` (the soldier `crooked_cop` calls allies)",
+    "role": "shooter"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_wuxia",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.wuxia.sect_disciple` (no soldier)",
+    "role": "skirmisher"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_steampunk",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.steampunk.sky_aeronaut` (the soldier `brass_automaton` is not sapient)",
+    "role": "flier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_fairy_tale",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.fairy_tale.woodcutter`",
+    "role": "soldier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.hireling.chapter_mythic_antiquity",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.4 Hirelings",
+   "fields": {
+    "base_roster_entry": "`enemy.mythic_antiquity.hoplite` (the soldier `shade_warrior` is mindless)",
+    "role": "guardian"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.sir_brannoc",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "mythic_fantasy",
+    "role": "guardian",
+    "likes": "valor, order",
+    "dislikes": "cunning",
+    "loyalty_perk_approval_60": "its `shield_wall` also protects its owner within 3000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.mother_vesper",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "gothic_horror",
+    "role": "support",
+    "likes": "zeal, mercy",
+    "dislikes": "greed",
+    "loyalty_perk_approval_60": "`mend` also targets its owner, cooldown 300"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.dr_halloway",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "cosmic_horror",
+    "role": "controller",
+    "likes": "curiosity, cunning",
+    "dislikes": "zeal",
+    "loyalty_perk_approval_60": "owner composure loss × 8000 within 8000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.ensign_okafor",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "space_opera",
+    "role": "soldier",
+    "likes": "order, valor",
+    "dislikes": "cunning",
+    "loyalty_perk_approval_60": "`call_allies` gives the party direct `st.focused`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.glitch",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "cyberpunk",
+    "role": "controller",
+    "likes": "cunning, greed",
+    "dislikes": "order",
+    "loyalty_perk_approval_60": "+10 to its owner's doc 09 §13.4 and §13.5 hacking rating while within 12000 mm of its owner (doc 09 hacks have no buildup)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.rust_mae",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "post_apocalypse",
+    "role": "sapper",
+    "likes": "greed, kinship",
+    "dislikes": "mercy",
+    "loyalty_perk_approval_60": "breaking a container yields one extra `cat.material`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.deputy_cole",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "weird_west",
+    "role": "sniper",
+    "likes": "order, mercy",
+    "dislikes": "greed",
+    "loyalty_perk_approval_60": "`high_noon` on any target its owner damaged"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.iris_kane",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "hardboiled_noir",
+    "role": "stalker",
+    "likes": "cunning, curiosity",
+    "dislikes": "zeal",
+    "loyalty_perk_approval_60": "marks the nearest hidden hostile with `st.marked` every 600 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.lan_feiyu",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "wuxia",
+    "role": "skirmisher",
+    "likes": "valor, mercy",
+    "dislikes": "greed",
+    "loyalty_perk_approval_60": "`qinggong_leap` carries its owner when both stand within 1500 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.gearwright",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "steampunk",
+    "role": "artillery",
+    "likes": "curiosity, greed",
+    "dislikes": "zeal",
+    "loyalty_perk_approval_60": "owner gadgets recharge × 11500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.bramble",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "fairy_tale",
+    "role": "summoner",
+    "likes": "kinship, curiosity",
+    "dislikes": "order",
+    "loyalty_perk_approval_60": "summons gain +2000 Bp Max HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.companion.kallias",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.5 Companions and approval",
+   "fields": {
+    "genre": "mythic_antiquity",
+    "role": "guardian",
+    "likes": "valor, zeal",
+    "dislikes": "cunning",
+    "loyalty_perk_approval_60": "`phalanx` AR bonus applies to its owner within 2000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.archivist",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "the Bestiary and the Index, the item encyclopedia (doc 10 §12)",
+    "owner_of_the_service": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.binder",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "Quire unlock tree",
+    "owner_of_the_service": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.recollector",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "Echo Recollection trials",
+    "owner_of_the_service": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.cartographer",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "run history, typed run seeds, daily and weekly runs",
+    "owner_of_the_service": "14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.inkwell_keeper",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "Inkwell",
+    "owner_of_the_service": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.codex_scribe",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "Codex pass",
+    "owner_of_the_service": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.quartermaster",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "store of deterministic goods",
+    "owner_of_the_service": "15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "npc.margin.drillmaster",
+   "kind": "npc",
+   "owner": "13",
+   "section": "13 13.6 Margin NPCs",
+   "fields": {
+    "service": "training yard: spawns any template from the account's bestiary at Folio-1 stats and a chosen rank; no XP, loot or skill XP",
+    "owner_of_the_service": "13"
+   },
+   "also_in": []
+  }
+ ]
+}

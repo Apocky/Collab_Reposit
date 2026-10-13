@@ -1,0 +1,767 @@
+{
+ "schema": "09.table_row",
+ "records": [
+  {
+   "id": "noise.step.crouch",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "25 + surface",
+    "cadence": "doc 03 stride 500 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.step.walk",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "40 + surface",
+    "cadence": "stride 700 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.step.sprint",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "55 + surface",
+    "cadence": "stride 900 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.step.crawl",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "20 + surface",
+    "cadence": "stride 500 mm while downed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.land",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "`40 + floor_div(5 × fall_mm, 1000)` + surface",
+    "cadence": "`ev.entity_landed` (fall ≥ 300 mm)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.swim",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "35",
+    "cadence": "every 60 ticks swimming"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.climb",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "30",
+    "cadence": "every 30 ticks climbing"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.mantle",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "35",
+    "cadence": "each mantle"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.slide",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "45 + surface",
+    "cadence": "on the tick doc 03 §3.4 `MoveState.mode` becomes `grid.move.slide` (`last_slide_start == now`; DECISIONS 95)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.reel",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "30",
+    "cadence": "while `MoveState.grapple` is some, on each tick with `grapple.t > 0` and `grapple.t mod 30 == 0` (DECISIONS 95)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.dodge",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "45",
+    "cadence": "each dodge"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.splash",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "50",
+    "cadence": "entering liquid with `"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.move.flap",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "base_db": "35",
+    "cadence": "every 30 ticks for fliers"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.metal",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+10",
+    "source_doc_07_2_4_materials_or_the_override": "copper, tin, zinc, bronze, iron, cold_iron, scrap_iron, cast_iron, steel, brass, silver, hexed_silver, gold, chrome, titanium, moonsilver, plasteel, orichalcum, star_metal, aetherium, redacted_alloy, gold_leaf"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.glass",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+8",
+    "source_doc_07_2_4_materials_or_the_override": "glass, rad_glass, psi_crystal"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.water",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+8",
+    "source_doc_07_2_4_materials_or_the_override": "override: ≥ 1 unit of any liquid other than `liq.mud` in the feet cell"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.stone",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+6",
+    "source_doc_07_2_4_materials_or_the_override": "granite, sandstone, slate, basalt, marble, obsidian, jade, brick, concrete, terracotta, coral, slag, void"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.ice",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+4",
+    "source_doc_07_2_4_materials_or_the_override": "ice (`block.ice`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.bone",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+4",
+    "source_doc_07_2_4_materials_or_the_override": "bone, dragonbone, chitin"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.wood",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+3",
+    "source_doc_07_2_4_materials_or_the_override": "pine, birch, cedar, bamboo, oak, thornwood, blackwood, elderwood"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.synthetic",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+2",
+    "source_doc_07_2_4_materials_or_the_override": "polymer, carbon_fiber"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.mud",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "+2",
+    "source_doc_07_2_4_materials_or_the_override": "override: ≥ 1 unit of `liq.mud` in the feet cell"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.dirt",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "0",
+    "source_doc_07_2_4_materials_or_the_override": "soil, coal; the default for a material with no `acoustic` value"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.sand",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "−2",
+    "source_doc_07_2_4_materials_or_the_override": "sand"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.soft",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "−4",
+    "source_doc_07_2_4_materials_or_the_override": "hide, leather, rubber, flesh"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.foliage",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "−4",
+    "source_doc_07_2_4_materials_or_the_override": "leaves"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.grass",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "−6",
+    "source_doc_07_2_4_materials_or_the_override": "override: a `block.tall_grass` cell as the feet cell"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.paper",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "−6",
+    "source_doc_07_2_4_materials_or_the_override": "paper, vellum"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.cloth",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "−8",
+    "source_doc_07_2_4_materials_or_the_override": "linen, tweed, silk, nanoweave, dreamstuff, web"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.surface.snow",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.2 Movement and footsteps",
+   "fields": {
+    "db": "−8",
+    "source_doc_07_2_4_materials_or_the_override": "override: a feet cell where `wx_snow` holds (§15.3); doc 07 defines no snow material or block (doc 07 §2.4, triage G-203), so no base-game material reads it, and data-pack materials (doc 02 modding) may"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.spell.evocation",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.4 Spells and prayers",
+   "fields": {
+    "default_db": "60",
+    "class": "investigate",
+    "id": "`noise.spell.restoration`",
+    "default_db_2": "40",
+    "class_2": "curious"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.spell.abjuration",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.4 Spells and prayers",
+   "fields": {
+    "default_db": "45",
+    "class": "curious",
+    "id": "`noise.spell.divination`",
+    "default_db_2": "30",
+    "class_2": "curious"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.spell.alteration",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.4 Spells and prayers",
+   "fields": {
+    "default_db": "40",
+    "class": "curious",
+    "id": "`noise.spell.impact`",
+    "default_db_2": "50 + 10 × essences",
+    "class_2": "investigate"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.spell.conjuration",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.4 Spells and prayers",
+   "fields": {
+    "default_db": "55",
+    "class": "investigate",
+    "id": "`noise.spell.fizzle`",
+    "default_db_2": "70 (doc 06)",
+    "class_2": "investigate"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.spell.illusion",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.4 Spells and prayers",
+   "fields": {
+    "default_db": "30",
+    "class": "curious",
+    "id": "`noise.spell.surge`",
+    "default_db_2": "90 (doc 06)",
+    "class_2": "alarm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.prayer",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.4 Spells and prayers",
+   "fields": {
+    "default_db": "50",
+    "class": "curious",
+    "id": "",
+    "default_db_2": "",
+    "class_2": ""
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.block.break",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "by acoustic class: metal 85, glass 80, stone 75, ice 70, bone, wood and synthetic 65, dirt, sand and mud 45, soft 40, foliage and grass 35, cloth, paper and snow 30",
+    "id": "`noise.block.hit`",
+    "db_2": "break − 15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.block.place",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "40 (placeables, Canon §4.3)",
+    "id": "`noise.block.fall`",
+    "db_2": "break − 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.block.erase",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "50 (Editor erasure)",
+    "id": "`noise.node.harvest`",
+    "db_2": "50 (resource nodes)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.door.open",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "45 wood, 55 metal; −15 when crouched",
+    "id": "`noise.door.close`",
+    "db_2": "open + 5; −15 when crouched"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.door.locked",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "40 (rattling a locked door)",
+    "id": "`noise.lock.pick`",
+    "db_2": "25 per attempt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.lock.snap",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "35 (a pick slips, §13.2)",
+    "id": "`noise.lock.open`",
+    "db_2": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.lock.force",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "75 (Force check, doc 04)",
+    "id": "`noise.hack.beep`",
+    "db_2": "30 per attempt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.hack.fail",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "60 at the device",
+    "id": "`noise.light.snuff`",
+    "db_2": "20"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.light.switch",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "25",
+    "id": "`noise.light.power`",
+    "db_2": "45"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.item.drop",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "35",
+    "id": "`noise.item.use`",
+    "db_2": "30 (drink, eat, read)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.item.impact",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "`40 + min(30, floor_div(mass_g, 100))` + surface",
+    "id": "`noise.item.shatter_glass`, `noise.item.shatter_ceramic`",
+    "db_2": "70, 75 (doc 08)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.body.fall",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "55 (death collapse)",
+    "id": "`noise.body.drop`",
+    "db_2": "50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.body.thud",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "65 (thrown body)",
+    "id": "`noise.hide.enter`, `noise.hide.exit`",
+    "db_2": "35"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.takedown.lethal",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.5 World, locks, items and bodies",
+   "fields": {
+    "db": "35",
+    "id": "`noise.takedown.subdue`",
+    "db_2": "30"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.voice.shout",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "85 (Errata emote)",
+    "id": "`noise.voice.whistle`",
+    "db_2": "55 (Errata lure)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.voice.callout",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "85",
+    "id": "`noise.voice.bark`",
+    "db_2": "50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.voice.scream",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "95",
+    "id": "`noise.voice.pain`",
+    "db_2": "60"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.voice.death",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "70",
+    "id": "`noise.voice.breath`",
+    "db_2": "30 (doc 13 stalkers)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.voice.groan",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "40 (downed, every 120 ticks)",
+    "id": "`noise.voice.dog_bark`",
+    "db_2": "90"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.voice.squawk",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "90 (tattlers; doc 12 `hazard.alarm` level)",
+    "id": "`noise.explosion`",
+    "db_2": "150 (doc 03 `block.powder_keg`, doc 08 §5.6 `liq.nitro` detonation)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.explosion.grenade",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "140",
+    "id": "`noise.explosion.concussion`",
+    "db_2": "150"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.explosion.flash",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "160",
+    "id": "`noise.explosion.incendiary`",
+    "db_2": "110"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.explosion.smoke",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "55",
+    "id": "`noise.explosion.surface`",
+    "db_2": "100 (liquid blasts, Canon §12.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.alarm",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "90",
+    "id": "`noise.alarm.bell`",
+    "db_2": "100"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.alarm.radio",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "50",
+    "id": "`noise.trap.trigger`",
+    "db_2": "60"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.gadget.deploy",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "45",
+    "id": "`noise.gadget.noisemaker`",
+    "db_2": "70 every 60 ticks for 600 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.gadget.hum",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "40 every 60 ticks (drones, turrets idle)",
+    "id": "`noise.env.distant`",
+    "db_2": "70 (doc 12 event)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.env.debris",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "80",
+    "id": "`noise.env.steam`",
+    "db_2": "50"
+   },
+   "also_in": []
+  },
+  {
+   "id": "noise.env.fire",
+   "kind": "noise",
+   "owner": "09",
+   "section": "09 7.6 Voices, explosions, alarms, gadgets and environment",
+   "fields": {
+    "db": "45 on `ev.fire_started`",
+    "id": "",
+    "db_2": ""
+   },
+   "also_in": []
+  }
+ ]
+}

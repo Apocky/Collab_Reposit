@@ -1,0 +1,401 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "aug.eye_lowlight",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 1",
+    "effect_at_rank_1_potency_10000": "`RowFlat(31, 3)`",
+    "forms": "implant, graft, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.eye_targeting",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 2",
+    "effect_at_rank_1_potency_10000": "`RowPost(15, 9000)`",
+    "forms": "implant, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.cortex_buffer",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 2",
+    "effect_at_rank_1_potency_10000": "composure losses × 8000; `RowFlat(24, 20)`",
+    "forms": "implant, graft, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.audio_dampers",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 1",
+    "effect_at_rank_1_potency_10000": "immune to `st.deafened`; resist `dmg.sonic` +2500",
+    "forms": "implant, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.neural_jack",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 2",
+    "effect_at_rank_1_potency_10000": "hack time × 8000; hack range +5 m",
+    "forms": "implant"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.third_eye",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 2",
+    "effect_at_rank_1_potency_10000": "`RowFlat(35, 1500)`; see `st.invisible` within 6 m",
+    "forms": "graft, supernatural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.memory_lattice",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 2",
+    "effect_at_rank_1_potency_10000": "`RowFlat(27, 1)`",
+    "forms": "implant, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.gills",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "head 1",
+    "effect_at_rank_1_potency_10000": "no breath drain in `liq.water`; the implant skin (rebreather) also makes gases breathable",
+    "forms": "natural mutation, graft, implant"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.dermal_plating",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 2",
+    "effect_at_rank_1_potency_10000": "natural armor `mul_bp(6, T(d_cur))` on every part",
+    "forms": "implant, graft, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.second_heart",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 2",
+    "effect_at_rank_1_potency_10000": "`RowPost(2, 15000)`",
+    "forms": "graft, natural mutation, implant"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.toxin_filter",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 1",
+    "effect_at_rank_1_potency_10000": "toxicity decay +500 per s; `RowFlat(22, 30)`",
+    "forms": "implant, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.adrenal_pump",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 2",
+    "effect_at_rank_1_potency_10000": "HP falling below 3000 Bp of max applies `st.hasted` 300 ticks; cooldown 3600",
+    "forms": "implant, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.subdermal_ward",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 2",
+    "effect_at_rank_1_potency_10000": "on Folio entry and after 600 ticks without damage, `st.shielded` pool set to `max(current, mul_bp(max_hp, 1000))`",
+    "forms": "implant, graft, supernatural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.thermal_regulator",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 1",
+    "effect_at_rank_1_potency_10000": "comfort band +150 DeciC each side",
+    "forms": "implant, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.chitin_carapace",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 3",
+    "effect_at_rank_1_potency_10000": "natural armor `mul_bp(12, T(d_cur))` on torso and arms; resist slash +1000; `RowPost(40, 12000)`",
+    "forms": "natural mutation, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.photosynthetic_skin",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 1",
+    "effect_at_rank_1_potency_10000": "+1 satiation per 2 s while `light_at ≥ 12` and not `in_combat`",
+    "forms": "natural mutation, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.venom_sacs",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 1",
+    "effect_at_rank_1_potency_10000": "unarmed hits +40 `st.poisoned` power",
+    "forms": "natural mutation, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.extra_arm",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 3",
+    "effect_at_rank_1_potency_10000": "adds `bp.arm_extra_1`, or `bp.arm_extra_2` when the body already has `bp.arm_extra_1` (share 1000 from the plan's donor part, §15.8; hit_mult 8500), granting `slot.hand_extra_1` or `slot.hand_extra_2`; refused when the body has both (Canon §13.2)",
+    "forms": "natural mutation, implant, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.tail",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 1",
+    "effect_at_rank_1_potency_10000": "adds `bp.tail` (share 500 from the plan's donor part, §15.8); `RowFlat(18, 5)`; refused when the body already has `bp.tail`",
+    "forms": "natural mutation, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.wings",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 3",
+    "effect_at_rank_1_potency_10000": "adds `bp.wing_l`, `bp.wing_r` (750 each from the plan's donor part, §15.8); holding jump while falling glides at −2000 mm/s vertical and up to 9000 mm/s horizontal with no fall damage on landing; refused on `body.avian`",
+    "forms": "natural or supernatural mutation, graft, implant (jet glider)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.reactive_skin",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 2",
+    "effect_at_rank_1_potency_10000": "the first control status from buildup on you each Folio, per status, lasts × 5000",
+    "forms": "implant, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.blood_battery",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "torso 2",
+    "effect_at_rank_1_potency_10000": "a cast short of aether pays the rest from HP, 1 mHP per 1 m-aether, never below 1,000 mHP",
+    "forms": "graft, supernatural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.climbing_claws",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "arms 1",
+    "effect_at_rank_1_potency_10000": "`RowPost(21, 15000)`; Climb checks +15",
+    "forms": "natural mutation, implant, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.myomer_bundles",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "arms 2",
+    "effect_at_rank_1_potency_10000": "`RowFlat(10, 10)`; `RowPost(20, 12500)`",
+    "forms": "implant, graft, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.blade_arm",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "arms 2",
+    "effect_at_rank_1_potency_10000": "bare-hand strikes become `B × 15000` with a 10000 Bp `dmg.slash` share",
+    "forms": "implant, natural mutation, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.smartlink",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "arms 1",
+    "effect_at_rank_1_potency_10000": "ranged weapons `RowPost(15, 8500)`",
+    "forms": "implant"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.static_palms",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "arms 1",
+    "effect_at_rank_1_potency_10000": "melee hits +30 `st.shocked` power",
+    "forms": "implant, graft, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.spring_tendons",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "legs 2",
+    "effect_at_rank_1_potency_10000": "one extra air jump per airborne period at `mul_bp(JUMP_H, 6000)`; fall damage × 7500",
+    "forms": "implant, natural mutation, graft"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.sprint_servos",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "legs 1",
+    "effect_at_rank_1_potency_10000": "`RowPost(6, 7000)`",
+    "forms": "implant, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.silent_pads",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "legs 1",
+    "effect_at_rank_1_potency_10000": "footstep noise −6 dB",
+    "forms": "natural mutation, graft, implant"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.anchor_feet",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "legs 2",
+    "effect_at_rank_1_potency_10000": "`RowFlat(18, 15)`; immune to knockback",
+    "forms": "implant, natural mutation"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.prosthetic_arm",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "arms 0",
+    "effect_at_rank_1_potency_10000": "§9.5",
+    "forms": "prosthetic, implant, graft, verve skin"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aug.prosthetic_leg",
+   "kind": "aug",
+   "owner": "04",
+   "section": "04 9.4 Augment list",
+   "fields": {
+    "region_points": "legs 0",
+    "effect_at_rank_1_potency_10000": "§9.5",
+    "forms": "prosthetic, implant, graft, verve skin"
+   },
+   "also_in": []
+  }
+ ]
+}

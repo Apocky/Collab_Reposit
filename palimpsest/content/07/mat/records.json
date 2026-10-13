@@ -1,0 +1,313 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "mat.role.blade",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "bl",
+    "recipe_key_6_6": "B",
+    "reference_material": "`mat.iron`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.head",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "hd",
+    "recipe_key_6_6": "D",
+    "reference_material": "`mat.iron`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.haft",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "ha",
+    "recipe_key_6_6": "H",
+    "reference_material": "`mat.oak`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.limb",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "li",
+    "recipe_key_6_6": "L",
+    "reference_material": "`mat.oak`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.frame",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "fr",
+    "recipe_key_6_6": "F",
+    "reference_material": "`mat.iron`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.plate",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "pl",
+    "recipe_key_6_6": "P",
+    "reference_material": "`mat.iron`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.soft",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "so",
+    "recipe_key_6_6": "S",
+    "reference_material": "`mat.leather`, `mat.linen`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.focus",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "fo",
+    "recipe_key_6_6": "O",
+    "reference_material": "`mat.oak`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.role.block",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "code_2_2": "bk",
+    "recipe_key_6_6": "—",
+    "reference_material": "— (building material; no recipe keys on it)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.tag.ricochet",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "rule": "doc 05 §7 ricochet faces"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.tag.flammable",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "rule": "`flammability_bp >= 500`; doc 03 fire, doc 05 and doc 06 hooks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.tag.fuel",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "rule": "burns in stations (§5.3); `kin.construct` refuels from it (Canon §16.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.tag.alloying",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "rule": "crafting input only, never a loot primary"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.tag.arcane_reagent",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "rule": "doc 06 §9.3 enchanting reagent"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.tag.luminous",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.4 Roles and tags",
+   "fields": {
+    "rule": "blocks of it emit `light_block` 7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.copper.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.copper`",
+    "unit_mass_g": "1568",
+    "unit_value_lucre_at_p_1": "3",
+    "node_9_3": "`block.node.copper`",
+    "smelted_by_6_6": "`recipe.smelt.copper`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.tin.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.tin`",
+    "unit_mass_g": "1275",
+    "unit_value_lucre_at_p_1": "2",
+    "node_9_3": "`block.node.tin`",
+    "smelted_by_6_6": "`recipe.smelt.tin`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.zinc.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.zinc`",
+    "unit_mass_g": "1249",
+    "unit_value_lucre_at_p_1": "2",
+    "node_9_3": "`block.node.zinc`",
+    "smelted_by_6_6": "`recipe.smelt.zinc`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.iron.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.iron`",
+    "unit_mass_g": "1376",
+    "unit_value_lucre_at_p_1": "2",
+    "node_9_3": "`block.node.iron`",
+    "smelted_by_6_6": "`recipe.smelt.iron`; also `recipe.alloy.cast_iron`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.silver.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.silver`",
+    "unit_mass_g": "1835",
+    "unit_value_lucre_at_p_1": "7",
+    "node_9_3": "`block.node.silver`",
+    "smelted_by_6_6": "`recipe.smelt.silver`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.gold.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.gold`",
+    "unit_mass_g": "3377",
+    "unit_value_lucre_at_p_1": "7",
+    "node_9_3": "`block.node.gold`",
+    "smelted_by_6_6": "`recipe.smelt.gold`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.titanium.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.titanium`",
+    "unit_mass_g": "788",
+    "unit_value_lucre_at_p_1": "13",
+    "node_9_3": "`block.node.titanium`",
+    "smelted_by_6_6": "`recipe.smelt.titanium`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.orichalcum.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.orichalcum`",
+    "unit_mass_g": "1225",
+    "unit_value_lucre_at_p_1": "42",
+    "node_9_3": "`block.node.orichalcum`",
+    "smelted_by_6_6": "`recipe.smelt.orichalcum`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.star_metal.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.star_metal`",
+    "unit_mass_g": "1662",
+    "unit_value_lucre_at_p_1": "38",
+    "node_9_3": "`block.node.star_metal`",
+    "smelted_by_6_6": "`recipe.smelt.star_metal`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "mat.aetherium.ore",
+   "kind": "mat",
+   "owner": "07",
+   "section": "07 2.6 Raw ores",
+   "fields": {
+    "metal": "`mat.aetherium`",
+    "unit_mass_g": "525",
+    "unit_value_lucre_at_p_1": "44",
+    "node_9_3": "`block.node.aetherium`",
+    "smelted_by_6_6": "`recipe.smelt.aetherium`"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,365 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "sub.power",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "PWR",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "MGT",
+    "governed_skills_canon_7": "hafted, unarmed",
+    "canon_6_4_rows": "10, 20",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.brawn",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "BRN",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "MGT",
+    "governed_skills_canon_7": "shield, smithing",
+    "canon_6_4_rows": "18, 19",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.grip",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "GRP",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "MGT",
+    "governed_skills_canon_7": "polearm, heavy_arms",
+    "canon_6_4_rows": "16, 21",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.precision",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "PRC",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "FIN",
+    "governed_skills_canon_7": "blade, marksmanship",
+    "canon_6_4_rows": "13, 15",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.agility",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "AGI",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "FIN",
+    "governed_skills_canon_7": "acrobatics, sneak",
+    "canon_6_4_rows": "11",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.sleight",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "SLT",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "FIN",
+    "governed_skills_canon_7": "throwing, security",
+    "canon_6_4_rows": "17",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.toughness",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "TGH",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "VIG",
+    "governed_skills_canon_7": "armor",
+    "canon_6_4_rows": "1, 23",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.endurance",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "END",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "VIG",
+    "governed_skills_canon_7": "athletics, fieldcraft",
+    "canon_6_4_rows": "4, 5, 6",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.resilience",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "RES",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "VIG",
+    "governed_skills_canon_7": "restoration",
+    "canon_6_4_rows": "2, 3, 22",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.logic",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "LOG",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "INT",
+    "governed_skills_canon_7": "spellcraft, tinkering, hacking",
+    "canon_6_4_rows": "26",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.memory",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "MEM",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "INT",
+    "governed_skills_canon_7": "conjuration, inscription",
+    "canon_6_4_rows": "27, 28",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.analysis",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "ANL",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "INT",
+    "governed_skills_canon_7": "alchemy, medicine",
+    "canon_6_4_rows": "none",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.focus",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "FOC",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "WIL",
+    "governed_skills_canon_7": "alteration",
+    "canon_6_4_rows": "7, 30",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.resolve",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "RSV",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "WIL",
+    "governed_skills_canon_7": "abjuration",
+    "canon_6_4_rows": "9, 24",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.attunement",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "ATN",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "WIL",
+    "governed_skills_canon_7": "evocation",
+    "canon_6_4_rows": "8, 25, 29",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.sight",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "SGT",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "PER",
+    "governed_skills_canon_7": "survival",
+    "canon_6_4_rows": "31, 32",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.hearing",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "HRG",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "PER",
+    "governed_skills_canon_7": "awareness",
+    "canon_6_4_rows": "33, 34",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.intuition",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "ITU",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "PER",
+    "governed_skills_canon_7": "divination, appraisal",
+    "canon_6_4_rows": "35, 36",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.charm",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "CHM",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "PRE",
+    "governed_skills_canon_7": "speech, handling",
+    "canon_6_4_rows": "37, 38",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.menace",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "MEN",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "PRE",
+    "governed_skills_canon_7": "leadership",
+    "canon_6_4_rows": "39",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.guile",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "GUI",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "PRE",
+    "governed_skills_canon_7": "illusion, pickpocket",
+    "canon_6_4_rows": "40",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.fate",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "FAT",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "FOR",
+    "governed_skills_canon_7": "none",
+    "canon_6_4_rows": "13, 41",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.serendipity",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "SER",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "FOR",
+    "governed_skills_canon_7": "none",
+    "canon_6_4_rows": "42",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "sub.providence",
+   "kind": "sub",
+   "owner": "04",
+   "section": "04 15.1 Primary attributes and sub-attributes",
+   "fields": {
+    "code": "PRV",
+    "kind": "sub-attribute",
+    "sub_attributes_or_parent_primary": "FOR",
+    "governed_skills_canon_7": "devotion",
+    "canon_6_4_rows": "43, 44",
+    "key_primary_of_7_1": "—"
+   },
+   "also_in": []
+  }
+ ]
+}

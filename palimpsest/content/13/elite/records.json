@@ -1,0 +1,265 @@
+{
+ "schema": "13.table_row",
+ "records": [
+  {
+   "id": "elite.warded",
+   "kind": "elite",
+   "owner": "13",
+   "section": "00 17.3a Champion counters and elite aspects",
+   "fields": {
+    "meaning": "ward equal to 50% of Max HP; fully regenerates 180 ticks after it last took damage; countered by `counter.ward_breaker`"
+   },
+   "also_in": [
+    "13 7.2 Elite modifiers",
+    "13 7.3 Champions and counters"
+   ]
+  },
+  {
+   "id": "elite.surging",
+   "kind": "elite",
+   "owner": "13",
+   "section": "00 17.3a Champion counters and elite aspects",
+   "fields": {
+    "meaning": "attack and cast speed × 13000; heals 2% Max HP per second unless `st.unraveled` or `st.shocked`; countered by `counter.disruptor`"
+   },
+   "also_in": [
+    "13 7.2 Elite modifiers",
+    "13 7.3 Champions and counters"
+   ]
+  },
+  {
+   "id": "elite.unstoppable",
+   "kind": "elite",
+   "owner": "13",
+   "section": "00 17.3a Champion counters and elite aspects",
+   "fields": {
+    "meaning": "immune to `st.staggered` from poise; countered by `counter.staggerer`"
+   },
+   "also_in": [
+    "13 7.2 Elite modifiers",
+    "13 7.3 Champions and counters"
+   ]
+  },
+  {
+   "id": "elite.vampiric",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "heals 1500 Bp of the HP damage it deals",
+    "min_folio": "1",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.molten",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "immune to `st.burning`; attack shares scaled by 7000 and `dmg.fire` 3000 added; on death a 3000 mm environmental `dmg.fire` blast of base 15 HP (Canon §10.6)",
+    "min_folio": "1",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.glacial",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "immune to `st.frozen`; Errata within 4000 mm gain direct `st.chilled` each status pulse",
+    "min_folio": "1",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.voltaic",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "each hit adds 40 `st.shocked` power; on death direct `st.shocked` to every entity within 3000 mm of its origin, its own allies included, in ascending EntityId",
+    "min_folio": "1",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.thorned",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "each melee hit it takes reflects `min(mul_bp(hp_loss, 2000), mul_bp(B1, 2500))` mHP to the attacker as a `dmg.slash` thorns hit (Canon §10.6, entering at step 3), where `hp_loss` is the HP the hit removed and `B1` is the elite's own ×1 basic-attack `B` (§2.2)",
+    "min_folio": "1",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.hasty",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "move speed × 13000; `cycle`, windup and recovery × 8000, rounded up with `ceil_div`; a windup never drops below the §1 rule 3 floor of its attack (30 ticks at `dmg_mult_bp ≥ 20000`, 45 at ≥ 40000)",
+    "min_folio": "1",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.armored",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "every part's AR × 25000; immune to `st.corroded` buildup; countered by `counter.sunder` (doc 05 §15.1: 5 direct `st.corroded` stacks remove the modifier for 300 ticks)",
+    "min_folio": "1",
+    "excluded_roles": "swarmer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.shrouded",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "gains `st.invisible` after 180 ticks without attacking or taking damage",
+    "min_folio": "1",
+    "excluded_roles": "stalker"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.brood",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "every 600 ticks spawns 2 rank-minion swarmers of its roster, tag `summoned`, at most 4 alive",
+    "min_folio": "1",
+    "excluded_roles": "summoner, swarmer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.splitting",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "on death spawns 2 copies at rank minion, tag `summoned`, without modifiers",
+    "min_folio": "6",
+    "excluded_roles": "swarmer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.mirrored",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "the first projectile hit it takes in each 240-tick window deals it nothing and instead reflects to the projectile's owner as a Canon §10.6 reflected hit with the projectile's shares and `D2 = min(that hit's D2, mul_bp(B1, 15000))`, no crit",
+    "min_folio": "6",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.phasing",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "every 240 ticks becomes intangible for 60 ticks (no capsule tests) and blinks up to 6000 mm to the walkable cell nearest the point 3000 mm behind its target (ties lower cell index, no draw) after a 30-tick `marker` telegraph; countered by `counter.anchor` (doc 05 §15.1: no phasing for 300 ticks)",
+    "min_folio": "6",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.redlined",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "each hit pours 1000 ml of `liq.red_ink` on the target's feet cell (Canon §12.1), at most once per 600 ticks",
+    "min_folio": "6",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.miasmic",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "immune to `st.poisoned`; every 120 ticks emits one saturated cell of `gas.miasma` at its feet cell, `emit_gas_volume(cell, gas.miasma, 1)` (doc 08 §2.7)",
+    "min_folio": "6",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.rallying",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "every 300 ticks, allies of its faction within 12000 mm gain direct `st.empowered` and +1500 morale",
+    "min_folio": "11",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.gravitic",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "every 360 ticks, after a 45-tick `ring` telegraph, pulls every Erratum within 10000 mm 3000 mm toward itself over 20 ticks",
+    "min_folio": "11",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "elite.vengeful",
+   "kind": "elite",
+   "owner": "13",
+   "section": "13 7.2 Elite modifiers",
+   "fields": {
+    "aspect": "no",
+    "effect": "on death, after a 90-tick `circle` telegraph, a 4000 mm `dmg.arcane` blast with `dmg_mult_bp` 30000",
+    "min_folio": "11",
+    "excluded_roles": "—"
+   },
+   "also_in": []
+  }
+ ]
+}

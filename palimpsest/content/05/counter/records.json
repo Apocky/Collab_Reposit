@@ -1,0 +1,67 @@
+{
+ "schema": "05.table_row",
+ "records": [
+  {
+   "id": "counter.ward_breaker",
+   "kind": "counter",
+   "owner": "05",
+   "section": "00 17.3a Champion counters and elite aspects",
+   "fields": {
+    "meaning": "hits deal × 30000 to the target's ward; breaking the ward applies `st.stunned` directly"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "counter.disruptor",
+   "kind": "counter",
+   "owner": "05",
+   "section": "00 17.3a Champion counters and elite aspects",
+   "fields": {
+    "meaning": "applies `st.unraveled` and `st.silenced` directly for exactly 180 ticks, unscaled by §11.4, and stops the champion's regeneration"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "counter.staggerer",
+   "kind": "counter",
+   "owner": "05",
+   "section": "00 17.3a Champion counters and elite aspects",
+   "fields": {
+    "meaning": "deals poise damage × 30000, even against poise-immune targets"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "counter.sunder",
+   "kind": "counter",
+   "owner": "05",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "counter_charge_doc_05": "`ammo.charge_sunder`",
+    "counter_grenade_here": "`item.throwable.counter_sunder`",
+    "other_dependency_none_source": "—",
+    "skin_examples_of_the_grenade_mf_cp_wx": "Rust Flask / Nanite Spray / Corroding Powder"
+   },
+   "also_in": []
+  },
+  {
+   "id": "counter.anchor",
+   "kind": "counter",
+   "owner": "05",
+   "section": "11 3.5 Consumables, ammunition, tools, keys, bags and currency",
+   "fields": {
+    "counter_charge_doc_05": "`ammo.charge_anchor`",
+    "counter_grenade_here": "`item.throwable.counter_anchor`",
+    "other_dependency_none_source": "—",
+    "skin_examples_of_the_grenade_mf_cp_wx": "Binding Net / Mag-Tether / Rope Snare"
+   },
+   "also_in": []
+  }
+ ]
+}

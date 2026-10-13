@@ -1,0 +1,1300 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "perk.honed_edge",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "E",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "pen_bp +[1500]"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.weighted_head",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "poise damage ×(10000 + [3000]); attack speed −300 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.serrated",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "E",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[25] st.bleeding power per hit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.balanced_tang",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "attack speed +[600] Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.long_haft",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "reach +[250] mm; attack speed −300 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.rifled_bore",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "DGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "base spread ×(10000 − [1500])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.long_barrel",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "DGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "effective range ×(10000 + [2500]); handling ticks ×11000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.ported_barrel",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "GH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "recoil ×(10000 − [2000])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.heavy_bore",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "DGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[700] Bp damage; attack speed −500 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.choke",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "G",
+    "req": "—",
+    "dep": "none",
+    "wt": "60",
+    "effect_n_enhanced_magnitude": "shotgun: pellet spread ×(10000 − [3000]); other guns: spread ×9000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.focused_conduit",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[600] Bp spell damage"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.swift_conduit",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "cast ticks ×(10000 − [1000])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.wide_conduit",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "1",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "spell area radius ×(10000 + [2000])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.light_grip",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "melee stamina cost ×(10000 − [1500])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.guarded_hilt",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[1000] Bp shield stability while blocking with this weapon"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.quick_draw",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "EBDGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "swap and draw ticks ×(10000 − [3500])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.counterweight",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "heavy-attack stamina cost ×(10000 − [2000])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.tempered",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "EBDGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "+[4] armor poise while this is the active weapon"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.extended_mag",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "DGH",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "magazine ×(10000 + [3000]), at least +1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.quick_feed",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "DGH",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "reload ticks ×(10000 − [1500])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.drum_feed",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "GH",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "magazine ×(10000 + [5000]); handling ticks ×12000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.hot_loads",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "DGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "+[500] Bp damage; attack noise +6 dB"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.steady_feed",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "DGH",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "reloading does not slow movement; reload ticks ×(10000 − [500])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.deep_reservoir",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "wand: +[1] max charge; staff: aether cost ×9000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.quick_siphon",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "wand: recharge ticks ×(10000 − [1500]); staff: spell kills restore 2 aether"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.stable_reservoir",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "2",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "aether cost ×(10000 − [500]) and cast ticks ×(10000 − [500])"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.rampage",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBDGHC",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "each kill: +1 stack (max 3) of +[1000] Bp damage for 300 ticks, refreshed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.outlaw",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DG",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "precision kill: next reload within 300 ticks ×(10000 − [5000]) ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.kill_clip",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DGH",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "reload started within 180 ticks of a kill: +[2500] Bp damage for 300 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.feeding_frenzy",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DG",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "each kill +1 stack (max 5, 210 ticks): reload ticks ×(10000 − [1000]× stacks)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.opening_shot",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DG",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "first shot after 120 ticks without firing: spread ×5000 and +[1000] Bp precision multiplier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.vorpal",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBDGHC",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[1000] Bp vs champion, boss, editor and hunter ranks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.coup_de_grace",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBDGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[2000] Bp vs targets below 3000 Bp HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.headhunter",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DG",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[2000] Bp precision multiplier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.momentum",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "after 30 ticks of sprinting, the next melee hit +[3000] Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.adrenaline",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBDGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "each kill restores [10] stamina"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.bloodletting",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EB",
+    "req": "—",
+    "dep": "mythos",
+    "wt": "60",
+    "effect_n_enhanced_magnitude": "melee hits heal [150] Bp of HP damage dealt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.chain_reaction",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DGH",
+    "req": "—",
+    "dep": "verve",
+    "wt": "60",
+    "effect_n_enhanced_magnitude": "kills explode: [3000] Bp of the killing D2 as dmg.fire, radius 2500 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.trench_barrel",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "G",
+    "req": "magazine",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "a melee hit loads the next 3 shots with +[2500] Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.close_quarters",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBDGH",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[1500] Bp while 2 or more hostiles are within 8000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.dragonfly",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DG",
+    "req": "—",
+    "dep": "verve",
+    "wt": "60",
+    "effect_n_enhanced_magnitude": "precision kills: [2500] Bp of the hit as dmg.shock, radius 2000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.slipstream",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DGH",
+    "req": "magazine",
+    "dep": "verve",
+    "wt": "60",
+    "effect_n_enhanced_magnitude": "a dodge reloads the magazine fully; at most once per 300 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.unrelenting",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBDGHC",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "3 kills within 300 ticks heal [500] Bp of Max HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.sharpshooter",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DG",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "+[1500] Bp on hits beyond 20000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.cadence",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EB",
+    "req": "—",
+    "dep": "none",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "the 3rd consecutive hit within 90 ticks of the previous +[2000] Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.sunder",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBH",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "+[35] st.exposed power per hit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.frenzy",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "EBDGHC",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "after 600 ticks in_combat: +[1500] Bp damage and +1000 Bp attack speed until not in_combat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.stillness",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "DGC",
+    "req": "—",
+    "dep": "none",
+    "wt": "80",
+    "effect_n_enhanced_magnitude": "crouched and still for 60 ticks: spread ×6000 and +[1500] Bp precision multiplier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.arcane_surge",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "every [5]th spell cast through this item costs 0 aether"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.overflow",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "C",
+    "req": "—",
+    "dep": "aether",
+    "wt": "100",
+    "effect_n_enhanced_magnitude": "spell kills restore [3] aether"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.ricochet_rounds",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "col": "3, 4",
+    "families": "G",
+    "req": "ricochet",
+    "dep": "none",
+    "wt": "60",
+    "effect_n_enhanced_magnitude": "`max_ricochets` becomes 2 (doc 05 §7.5) and each ricochet keeps [7500] Bp of the hit's damage factor instead of 6000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.mythic_fantasy",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Heroic Quest",
+    "dep": "arcana",
+    "effect": "+[1000] Bp vs elite rank and above"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.gothic_horror",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Silvered",
+    "dep": "mythos",
+    "effect": "+[1500] Bp vs undead and fiend"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.cosmic_horror",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Unspeakable",
+    "dep": "mythos",
+    "effect": "+[20] st.dread power per hit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.space_opera",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Overcharged Cell",
+    "dep": "techne",
+    "effect": "the first hit after each reload or after 120 ticks idle +[2500] Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.cyberpunk",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Smartlink",
+    "dep": "techne",
+    "effect": "+[1000] Bp precision multiplier; HUD marks precision parts"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.post_apocalypse",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Scavenger",
+    "dep": "none",
+    "effect": "each kill restores [2000] Bp of a magazine (melee and weapons without a magazine: 5 stamina)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.weird_west",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Dead Man's Hand",
+    "dep": "verve",
+    "effect": "while HP ≤ 5000 Bp of Max HP: +[1000] Bp crit chance"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.hardboiled_noir",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Hard-Boiled",
+    "dep": "none",
+    "effect": "+[1000] Bp while no allied Erratum is within 10000 mm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.wuxia",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Wind and Cloud",
+    "dep": "verve",
+    "effect": "the first hit within 60 ticks after a dodge or air jump +[2000] Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.steampunk",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Pressure Gauge",
+    "dep": "techne",
+    "effect": "+[1500] Bp while the magazine (melee and weapons without a magazine: stamina) is above 7500 Bp of max"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.fairy_tale",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Once Upon a Time",
+    "dep": "arcana",
+    "effect": "the first hit on each target in a Folio +[3000] Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.mythic_antiquity",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Kleos",
+    "dep": "mythos",
+    "effect": "killing an elite or higher rank applies st.inspired for [600] ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.oneiric",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Lucid",
+    "dep": "arcana",
+    "effect": "every 600 ticks the next hit adds [40] st.sleeping power"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.redacted",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Clearance",
+    "dep": "techne",
+    "effect": "+[1500] Bp vs targets that are not native (Canon §5.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.unwritten",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Blank Slate",
+    "dep": "none",
+    "effect": "kills of fac.editors members restore [500] Bp of Max HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.genre.ur_text",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 7.2 Perk table (51 perks) and genre traits (16)",
+   "fields": {
+    "genre_trait": "Archetypal",
+    "dep": "none",
+    "effect": "+[800] Bp vs every target"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.echoing_strike",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "base",
+    "dep": "none",
+    "effect": "every 4th hit repeats 20 ticks later as a Canon §10.6 step-3 hit with `D2` = 5000 Bp of the original, no crit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.bloodsong",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "base",
+    "dep": "mythos",
+    "effect": "each kill applies `st.empowered` directly"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.worldbreaker",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_1",
+    "dep": "none",
+    "effect": "block damage × 30000 (doc 03) against blocks tagged `block.tag.destructible`; such blocks of hardness ≤ 3 break on hit"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.inkdrinker",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_1",
+    "dep": "mythos",
+    "effect": "hits on `fac.editors` heal 500 Bp of damage dealt; each such kill removes 1 `st.erasure` stack from the wielder"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.overture",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_1",
+    "dep": "verve",
+    "effect": "the first hit after `in_combat` turns true +10000 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.recursion",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_1",
+    "dep": "none",
+    "effect": "kills reset the attack interval and restore 5000 Bp of the magazine"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.hunters_mark",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_1",
+    "dep": "none",
+    "effect": "precision-part hits apply one `st.exposed` stack directly"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.last_stand",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_2",
+    "dep": "verve",
+    "effect": "while HP ≤ 2500 Bp of Max HP: +4000 Bp and attack speed +2000 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.mirror_edge",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_2",
+    "dep": "verve",
+    "effect": "a block started within 6 ticks before impact grants +5000 Bp to the next hit within 120 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.stormcall",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "W",
+    "pool": "legendary_perks_2",
+    "dep": "aether",
+    "effect": "crits strike the target with 4000 Bp of the crit's `D2` as `dmg.shock` (Canon §10.6 step 3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.bulwark",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "base",
+    "dep": "none",
+    "effect": "after 30 ticks without moving, every equipped armor piece's AR × 12000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.second_skin",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "base",
+    "dep": "none",
+    "effect": "a hit of at least 2000 Bp of Max HP applies `st.fortified` directly; once per 600 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.thornmail",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_1",
+    "dep": "none",
+    "effect": "melee attackers take 2000 Bp of the hit's `D2` reflected (Canon §10.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.phoenix_lining",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_1",
+    "dep": "mythos",
+    "effect": "once per Folio, when HP first falls below 2000 Bp of Max HP, heal 3000 Bp of Max HP (Canon §10.9)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.shadowweave",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_1",
+    "dep": "none",
+    "effect": "crouched with `light_at ≤ 4`: sight detection of the wearer × 7000 (doc 09)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.adamant",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_1",
+    "dep": "none",
+    "effect": "immune to `st.corroded` and `st.knocked_down`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.mirror_plate",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_2",
+    "dep": "aether",
+    "effect": "spell hits taken reflect 2000 Bp of their `D2` to the caster"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.windrunner",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_2",
+    "dep": "verve",
+    "effect": "dodge stamina cost × 5000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.grounded",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_2",
+    "dep": "none",
+    "effect": "+10 poise; no `st.staggered` from poise while blocking"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.cold_blood",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "A",
+    "pool": "legendary_perks_2",
+    "dep": "none",
+    "effect": "composure loss × 7000 (doc 04)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.fortunes_favor",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "X",
+    "pool": "base",
+    "dep": "none",
+    "effect": "+4 SER; each qualifying roll adds 2 to the bearer's §9.4 counters"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.overcapacitor",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "X (ward)",
+    "pool": "base",
+    "dep": "base",
+    "effect": "ward capacity × 13000; ward break applies `st.hasted` for 120 ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.lifeline",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "X",
+    "pool": "legendary_perks_1",
+    "dep": "none",
+    "effect": "kills heal 300 Bp of Max HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.spellweaver",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "X",
+    "pool": "legendary_perks_2",
+    "dep": "aether",
+    "effect": "every 3rd spell cast +3000 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.cartographer",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "X",
+    "pool": "legendary_perks_2",
+    "dep": "none",
+    "effect": "at Folio entry the HUD map reveals every room and Reliquary"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perk.leg.redoubt",
+   "kind": "perk",
+   "owner": "11",
+   "section": "11 8.1 Legendary perks (26)",
+   "fields": {
+    "group": "X (ward)",
+    "pool": "legendary_perks_2",
+    "dep": "base",
+    "effect": "while ward > 0, immune to `st.stunned` and `st.feared`"
+   },
+   "also_in": []
+  }
+ ]
+}

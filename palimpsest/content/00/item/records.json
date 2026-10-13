@@ -1,0 +1,131 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "item.text.mending",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "`spell.text_mending` = `nova mend`: heals the reader and every ally within 5000 mm",
+    "targeted": "no",
+    "use_id": "`appr.use.on_effect`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.blink",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "the reader teleports up to 8000 mm along the aim to the farthest standable cell with line of effect (the `ench.blink` rule)",
+    "targeted": "no",
+    "use_id": "`appr.use.always`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.mapping",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "every room outline, door and exit of the current Folio appears on the party map (doc 17); secrets stay hidden",
+    "targeted": "no",
+    "use_id": "`appr.use.always`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.demolition",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "`spell.text_demolition` = `nova force shape`: force damage to hostiles and shape against `block.tag.destructible` blocks within the nova",
+    "targeted": "no",
+    "use_id": "`appr.use.on_effect`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.recharge",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "the chosen wand: uncursed sets charges to max and lowers max by 1 (never below 1); blessed sets charges to max and keeps max; cursed sets charges to `mul_bp(old max, 7500)` and lowers max by 1",
+    "targeted": "yes, `cat.wand`",
+    "use_id": "`appr.use.always`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.warding",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "`spell.text_warding` = `nova ward`: a `st.shielded` pool on the reader and every ally within 5000 mm",
+    "targeted": "no",
+    "use_id": "`appr.use.on_effect`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.silence",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "`spell.text_silence` = `field hush`: a null field at the aimed point (§14.4)",
+    "targeted": "no",
+    "use_id": "`appr.use.always`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.summoning",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "`spell.text_summoning` = `manifest summon edge`: one `summon.hound`",
+    "targeted": "no",
+    "use_id": "`appr.use.always`"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  },
+  {
+   "id": "item.text.inscribed",
+   "kind": "item",
+   "owner": "00",
+   "section": "06 8.3 Texts",
+   "fields": {
+    "effect": "the inscribed spell",
+    "targeted": "as the spell",
+    "use_id": "never type-hidden; created identified (doc 10 §2)"
+   },
+   "also_in": [
+    "11 3.5 Consumables, ammunition, tools, keys, bags and currency"
+   ]
+  }
+ ]
+}

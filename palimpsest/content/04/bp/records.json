@@ -1,0 +1,560 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "bp.head",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 8.3 Wound effects (humanoid)",
+   "fields": {
+    "tier_1": "aim sway × 11000",
+    "tier_2": "aim sway × 13000",
+    "tier_3": "aim sway × 16000; composure losses × 12500",
+    "tier_4": "`RowPost(15, 15000)`, `RowFlat(31, -2)`, `RowFlat(33, -10)`; NPCs gain `st.stunned` directly once"
+   },
+   "also_in": [
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "bp.torso",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 8.3 Wound effects (humanoid)",
+   "fields": {
+    "tier_1": "`RowPost(5, 9500)`",
+    "tier_2": "`RowPost(5, 9000)`",
+    "tier_3": "`RowPost(5, 7500)`, `RowPost(6, 12500)`",
+    "tier_4": "`RowPost(5, 5000)`; no sprint"
+   },
+   "also_in": [
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "bp.arm_l",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "humanoid 1250",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "650",
+    "wound_row_8_3": "arm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.arm_r",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "humanoid 1250",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "650",
+    "wound_row_8_3": "arm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_l",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "humanoid 1250, avian 1000",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "humanoid 1650, avian 1000",
+    "wound_row_8_3": "leg"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_r",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "humanoid 1250, avian 1000",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "humanoid 1650, avian 1000",
+    "wound_row_8_3": "leg"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_fl",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "quadruped 1000",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "900",
+    "wound_row_8_3": "leg, quadruped factors (§8.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_fr",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "quadruped 1000",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "900",
+    "wound_row_8_3": "leg, quadruped factors (§8.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_hl",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "quadruped 1000",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "900",
+    "wound_row_8_3": "leg, quadruped factors (§8.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_hr",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "quadruped 1000",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "900",
+    "wound_row_8_3": "leg, quadruped factors (§8.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.wing_l",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "avian 1500; added by `aug.wings` 750",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "avian 1100; added 750",
+    "wound_row_8_3": "wings"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.wing_r",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "avian 1500; added by `aug.wings` 750",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "avian 1100; added 750",
+    "wound_row_8_3": "wings"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.body_front",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "serpentine 4000",
+    "hit_mult_bp": "10000",
+    "precision": "no",
+    "severable": "no",
+    "mass_share_bp": "4000",
+    "wound_row_8_3": "torso"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.body_rear",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "serpentine 3000",
+    "hit_mult_bp": "9000",
+    "precision": "no",
+    "severable": "no",
+    "mass_share_bp": "3500",
+    "wound_row_8_3": "one leg (locomotion part)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.tail",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "serpentine 1000; added by `kin.beastkin` or `aug.tail` 500",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "serpentine 1300; added 500",
+    "wound_row_8_3": "tail"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.thorax",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 3500",
+    "hit_mult_bp": "10000",
+    "precision": "no",
+    "severable": "no",
+    "mass_share_bp": "3500",
+    "wound_row_8_3": "torso"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.abdomen",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 2600",
+    "hit_mult_bp": "10000",
+    "precision": "no",
+    "severable": "no",
+    "mass_share_bp": "3502",
+    "wound_row_8_3": "torso"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_1",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 400",
+    "hit_mult_bp": "8000",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "333",
+    "wound_row_8_3": "arm when bound as an arm (§13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_2",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 400",
+    "hit_mult_bp": "8000",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "333",
+    "wound_row_8_3": "arm when bound as an arm (§13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_3",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 400",
+    "hit_mult_bp": "8000",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "333",
+    "wound_row_8_3": "`BodyMove 8500` at tier 4 or severed; none below tier 4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_4",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 400",
+    "hit_mult_bp": "8000",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "333",
+    "wound_row_8_3": "`BodyMove 8500` at tier 4 or severed; none below tier 4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_5",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 400",
+    "hit_mult_bp": "8000",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "333",
+    "wound_row_8_3": "`BodyMove 8500` at tier 4 or severed; none below tier 4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.leg_6",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "insectoid 400",
+    "hit_mult_bp": "8000",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "333",
+    "wound_row_8_3": "`BodyMove 8500` at tier 4 or severed; none below tier 4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.core",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "amorphous 2000, construct 2000",
+    "hit_mult_bp": "10000",
+    "precision": "yes",
+    "severable": "no",
+    "mass_share_bp": "construct 1500; amorphous none (nothing severs, §13)",
+    "wound_row_8_3": "head"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.mass",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "amorphous 8000, swarm 10000",
+    "hit_mult_bp": "10000",
+    "precision": "no",
+    "severable": "no",
+    "mass_share_bp": "none (never severs)",
+    "wound_row_8_3": "amorphous torso; swarm none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.chassis",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "construct 5000",
+    "hit_mult_bp": "10000",
+    "precision": "no",
+    "severable": "no",
+    "mass_share_bp": "5500",
+    "wound_row_8_3": "torso"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.limb_1",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "construct 750",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "750",
+    "wound_row_8_3": "arm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.limb_2",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "construct 750",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "750",
+    "wound_row_8_3": "arm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.limb_3",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "construct 750",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "750",
+    "wound_row_8_3": "leg"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.limb_4",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "construct 750",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "750",
+    "wound_row_8_3": "leg"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.arm_extra_1",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "added: `aug.extra_arm` 1000; serpentine Echo 750 (§13)",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "equal to its share",
+    "wound_row_8_3": "extra arms"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.arm_extra_2",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "added: `aug.extra_arm` 1000; serpentine Echo 750 (§13)",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "yes",
+    "mass_share_bp": "equal to its share",
+    "wound_row_8_3": "extra arms"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.horn",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "added: 500, by an NPC template or an augment that names it",
+    "hit_mult_bp": "8500",
+    "precision": "no",
+    "severable": "no",
+    "mass_share_bp": "500",
+    "wound_row_8_3": "extra parts (tail, wings, extra arms row)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.weakpoint_1",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "added: the boss template's share (doc 13)",
+    "hit_mult_bp": "10000",
+    "precision": "yes",
+    "severable": "no",
+    "mass_share_bp": "equal to its share",
+    "wound_row_8_3": "its mapped attacks off at tier 4 (NPC part-to-attack map)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.weakpoint_2",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "added: the boss template's share (doc 13)",
+    "hit_mult_bp": "10000",
+    "precision": "yes",
+    "severable": "no",
+    "mass_share_bp": "equal to its share",
+    "wound_row_8_3": "its mapped attacks off at tier 4 (NPC part-to-attack map)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.weakpoint_3",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "added: the boss template's share (doc 13)",
+    "hit_mult_bp": "10000",
+    "precision": "yes",
+    "severable": "no",
+    "mass_share_bp": "equal to its share",
+    "wound_row_8_3": "its mapped attacks off at tier 4 (NPC part-to-attack map)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "bp.weakpoint_4",
+   "kind": "bp",
+   "owner": "04",
+   "section": "04 15.8 Body plans and parts",
+   "fields": {
+    "share_bp_by_plan": "added: the boss template's share (doc 13)",
+    "hit_mult_bp": "10000",
+    "precision": "yes",
+    "severable": "no",
+    "mass_share_bp": "equal to its share",
+    "wound_row_8_3": "its mapped attacks off at tier 4 (NPC part-to-attack map)"
+   },
+   "also_in": []
+  }
+ ]
+}

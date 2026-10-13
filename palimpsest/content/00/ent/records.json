@@ -1,0 +1,18 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "ent.quill",
+   "kind": "ent",
+   "owner": "00",
+   "section": "15 2.1 Currency table",
+   "fields": {
+    "purchasable": "true (entitlement)",
+    "tradeable": "false",
+    "sources_exact_rates_in_2_2_to_2_5": "Codex premium purchase, tier 100 of an owned premium track",
+    "sinks": "redeemed for one Codex premium track (§6.5)"
+   },
+   "also_in": []
+  }
+ ]
+}

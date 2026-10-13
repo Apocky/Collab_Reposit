@@ -1,0 +1,131 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "station.hand",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "3×3 grid; recipes marked hand; quality cap Normal",
+    "tiers": "—",
+    "buildable": "always available",
+    "found_in": "—",
+    "fuel": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.campfire",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "cooking tier 1; smelting with melt cap 12000; charcoal",
+    "tiers": "1",
+    "buildable": "yes, `block.campfire` (a light source, Canon §4.3)",
+    "found_in": "`room.campfire` service",
+    "fuel": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.workbench",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "3×3 grid; assembly; fabrication; ammunition; salvage; graft extraction; implant crafting (doc 04 Tinkering 75); the doc 04 §9.3 augment station (300-tick install)",
+    "tiers": "1–5",
+    "buildable": "no",
+    "found_in": "`room.workshop`, Colophon",
+    "fuel": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.forge",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "smelting and alloying with melt cap; 3×3 smithing grid; shields; forge reforge; recast",
+    "tiers": "1–5",
+    "buildable": "no",
+    "found_in": "`room.forge`",
+    "fuel": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.loom",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "tanning, weaving, cloth and light armor",
+    "tiers": "1–5",
+    "buildable": "no",
+    "found_in": "`room.workshop`; any other doc 12 room whose row lists it",
+    "fuel": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.kitchen",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "every cooking recipe",
+    "tiers": "1–5",
+    "buildable": "no",
+    "found_in": "`room.larder`",
+    "fuel": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.alchemy",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "doc 08 brewing; five apparatus slots, one per doc 08 §9.1 kind (mortar, retort, alembic, calcinator, vaporizer); worldgen installs a mortar, retort, alembic and calcinator of the station's tier",
+    "tiers": "1–5",
+    "buildable": "no",
+    "found_in": "`room.alchemy_lab`",
+    "fuel": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.enchanting",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "doc 06 §9 enchanting; ritual processes",
+    "tiers": "1–5",
+    "buildable": "no",
+    "found_in": "`room.shrine`, `room.library`",
+    "fuel": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "station.scriptorium",
+   "kind": "station",
+   "owner": "07",
+   "section": "07 5.1 Station list",
+   "fields": {
+    "functions": "doc 11 Rewrite and reforge; doc 10 services",
+    "tiers": "1",
+    "buildable": "no",
+    "found_in": "`room.scriptorium`, Colophon",
+    "fuel": "no"
+   },
+   "also_in": []
+  }
+ ]
+}

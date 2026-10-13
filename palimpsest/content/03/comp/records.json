@@ -1,0 +1,346 @@
+{
+ "schema": "03.table_row",
+ "records": [
+  {
+   "id": "comp.ai",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Blackboard` (doc 13 §4.2: target, last-known positions, threat, morale, squad order, cover, path, cooldowns, action state), serialized in doc 13's declared field order",
+    "semantics": "13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.body",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`BodyState`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.body_plan",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`BodyPlanState { plan: Id32, parts: Vec<PartState> }` with doc 04 §8.1's `PartState { part: Id32, max: Milli, pool: Milli, tier: u8, kind: u8 /* laceration, fracture, burn, trauma */, treated: bool, severed: bool, nat_ar: i64 }` in body-plan part order; the summary wound ID is derived, never stored",
+    "semantics": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.buildup",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Buildup { meters: Vec<Meter> }`, `Meter { status: Id32, value: i32, last_add: Tick, protect_until: Tick, protect_bp: Bp }`, sorted by `status`",
+    "semantics": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.container",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`ContainerState { inv: Vec<u64>, opened_by: u8 /* slot bitmask */, kind: Id32 }`",
+    "semantics": "11"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.control",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Control`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.corpse",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`CorpseState { template: Id32, killed_tick: Tick, looted_by: u8 }`",
+    "semantics": "13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.env",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Env`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.equipment",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Equipment { slots: Vec<(Id32 /* slot.* */, u64 /* uid */)> }` sorted by slot ID",
+    "semantics": "11"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.faction",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`FactionC { faction: Id32, owner_slot: u8 /* 0xFF none */ }`",
+    "semantics": "13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.falling_block",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`FallingBlock`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.gadget",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`GadgetState` (doc 07 §11.3 deployment state machine fields), serialized in doc 07's declared field order",
+    "semantics": "07"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.interest",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Interest { radius_chunks: u8 }`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.inventory",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Inventory { uids: Vec<u64> }` ascending",
+    "semantics": "11"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.item_drop",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`ItemDrop { uid: u64, for_slot: u8 /* 0xFF any */, pickup_tick: Tick }`",
+    "semantics": "11"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.kind",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Kind { kind: Id32, template: Id32, spawn_tick: Tick, owner: Option<EntityId>, flags: u32 }`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.lifetime",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Lifetime { end_tick: Tick }`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.light_emitter",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`LightEmitter { level: u8, admitted: Option<Gidx> }`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.mining",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Mining`",
+    "semantics": "03, 07"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.move",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`MoveState`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.perception",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`PerceptionState` (doc 09 §1.4: profile, senses, at most 16 `PairAware` records, disturbance, timers, decay accumulator)",
+    "semantics": "09"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.player",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Player { slot: u8 /* 0..=4 */, downs_folio: u8, bleed_left: u16, revive_progress: u16, reviver: Option<EntityId>, downed_by: Option<EntityId>, mark_cooldown_until: Tick, trade: Option<TradeState>, mercy_on: bool, mercy_bp: Bp, breath_held: bool, last_stand_until: Tick /* 0 = none open */, last_stand_used: bool }` (doc 16 §9.4; `last_stand_*` §5.25; `mercy_*` doc 17 §13; `breath_held` doc 17 §12.1: set and cleared by the `SetBreathHold` intent in `sys.input_apply`, also cleared by doc 04's breath step when `res.breath` reaches 0)",
+    "semantics": "16, 17"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.pools",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Pools { hp, hp_max, stamina, stamina_max, aether, aether_max, composure, composure_max, poise, poise_max, ward, toxicity, breath, breath_max: Milli, satiation: i32 }`",
+    "semantics": "04, 06"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.pos",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Pos { p: Fx3, yaw: Bam, pitch: i16 }`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.pose",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Pose`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.projectile",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Projectile`",
+    "semantics": "03, 05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.stats",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Stats` (doc 04: 24 base sub-attributes and training marks, 36 skills with milli-XP, level, char XP, talents), serialized in doc 04's declared field order",
+    "semantics": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.statuses",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Statuses { list: Vec<StatusInst> }`, `StatusInst { id: Id32, applied: Tick, expiry: Option<Tick>, stacks: u8, pool: Milli, source: EntityId, potency_bp: Bp, acc: i64, env: bool }`, sorted by `id`; `env` is the flag of the application that created the instance or last refreshed it or added a stack: true when that application came from a hit carrying `DmgFlags.env` or from this chapter's grid contact (§6.10, §8.4, §9.4), and every DoT pulse of an instance with `env` set carries `env` (triage C-32)",
+    "semantics": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.tags",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Tags { bits: u64 }` (undead, fiend, divine, eldritch, construct, electronic, flier, swimmer, swarm, breathless, …; bit positions owned by doc 13)",
+    "semantics": "13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.vel",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`Vel { v: Fx3 }`",
+    "semantics": "03"
+   },
+   "also_in": []
+  },
+  {
+   "id": "comp.zone",
+   "kind": "comp",
+   "owner": "03",
+   "section": "03 3.3 Component catalog",
+   "fields": {
+    "rust_type": "`ZoneState { shape: ZoneShape, effect: Id32, period: Ticks, next_pulse: Tick }`",
+    "semantics": "06"
+   },
+   "also_in": []
+  }
+ ]
+}

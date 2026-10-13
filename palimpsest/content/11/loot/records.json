@@ -1,0 +1,477 @@
+{
+ "schema": "11.table_row",
+ "records": [
+  {
+   "id": "loot.cat",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "§2.3 step 1, category",
+    "draws": "1 `weighted` per attempt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.arch",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 2, template; loose-part template (§5.4); counter charge of the ammo card and bundle potion list (§3.5, §10); glyph-tome school (§3.5 Books)",
+    "draws": "1 `weighted` (bundle potions 2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.rarity",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 3",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.exotic",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 3b",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.mfr",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 5; part manufacturer (§5.4)",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.quality",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 6",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.material",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 7",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.affix",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 8; Gloss manufacturer (§6.3)",
+    "draws": "3 per affix, 4 for `affix.gloss`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.perk",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 9; crafted weapons (doc 07 §4.4)",
+    "draws": "`n_opt` per rolled column"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.legendary",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 11",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.glyph",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 11b",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.spell",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 11c",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.buc",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 12, doc 10 `roll_curse`",
+    "draws": "3 or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.illum",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "step 13",
+    "draws": "1 `roll_bp` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.book",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "`teaches` of a generated book (§3.5 Books)",
+    "draws": "glyph tome: doc 06 `glyph_tome` (at most 2); schematic: 1 `weighted`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.lucre",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "Lucre line amount (§9.1)",
+    "draws": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.ammo",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "ammunition line family (§3.5)",
+    "draws": "1 `weighted` or 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.key",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "mini-boss key line, gilded or bound (§9.5)",
+    "draws": "1 `weighted`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.bundle",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.3 Generation pipeline",
+   "fields": {
+    "used_by": "Reliquary consumable bundle (§10)",
+    "draws": "4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.exotic_arms",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.exotic_arms`",
+    "adds": "12 Exotic weapons",
+    "where": "§8.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.exotic_armor",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.exotic_armor`",
+    "adds": "8 Exotic armor pieces",
+    "where": "§8.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.legendary_perks_1",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.legendary_perks_1`",
+    "adds": "10 Legendary perks",
+    "where": "§8.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.legendary_perks_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.legendary_perks_2`",
+    "adds": "10 Legendary perks",
+    "where": "§8.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.cross_glosses",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.cross_glosses`",
+    "adds": "`affix.gloss`",
+    "where": "§6.2, §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.implants_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.implants_2`",
+    "adds": "8 implant-form augments: `aug.adrenal_pump`, `aug.extra_arm`, `aug.neural_jack`, `aug.reactive_skin`, `aug.smartlink`, `aug.spring_tendons`, `aug.subdermal_ward`, `aug.wings` (doc 04 §9.4); the other implant-form augments are pool `base`",
+    "where": "§3.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.relics_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.relics_2`",
+    "adds": "10 trinkets",
+    "where": "§3.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.throwables_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.throwables_2`",
+    "adds": "doc 08's `alch.bomb.{blasting, incense, infernal, sleep, stink, tar}`",
+    "where": "§3.5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.glyphs_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.glyphs_2`",
+    "adds": "8 glyphs that glyph tomes, trainers and text study can teach (doc 06 §8.1)",
+    "where": "§3.5 Books, §12.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.recipes_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.recipes_2`",
+    "adds": "the 12 recipes doc 07 flags `r2` and the schematics that teach them",
+    "where": "§3.5 Books"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.brews_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.brews_2`",
+    "adds": "8 brewing recipes and 4 ingredients (doc 08); the ingredients enter apothecary ingredient lines",
+    "where": "§12.1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.pool.gadgets_2",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 2.5 Pool tags",
+   "fields": {
+    "bindery_node": "`unlock.loot.gadgets_2`",
+    "adds": "6 gadgets (doc 07 §11.2)",
+    "where": "§3.6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.drop.minion",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.5 Rank tables",
+   "fields": {
+    "item_lines": "250 scaled",
+    "lucre_line": "3000 scaled, × 3000",
+    "key_lines": "—",
+    "other_lines": "—",
+    "ammunition_line": "750 scaled"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.drop.standard",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.5 Rank tables",
+   "fields": {
+    "item_lines": "700 scaled",
+    "lucre_line": "5000 scaled, × 10000",
+    "key_lines": "—",
+    "other_lines": "—",
+    "ammunition_line": "2500 scaled"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.drop.elite",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.5 Rank tables",
+   "fields": {
+    "item_lines": "3000 scaled, shift 2000",
+    "lucre_line": "10000, × 30000",
+    "key_lines": "`item.key.bound` 1500 scaled",
+    "other_lines": "`item.bag.lucky` 300, Marginalia only",
+    "ammunition_line": "7500 scaled"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.drop.champion",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.5 Rank tables",
+   "fields": {
+    "item_lines": "10000 and 5000 scaled, shift 4000, floor Uncommon",
+    "lucre_line": "10000, × 60000",
+    "key_lines": "bound 4000, gilded 1000, both scaled",
+    "other_lines": "lucky bag 1000 (2500 in Marginalia)",
+    "ammunition_line": "10000 scaled"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.chest.plain",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.6 Chests, floor loot, trophies, quests and war spoils",
+   "fields": {
+    "lines_in_order": "item 10000; item 3000; Lucre 7000 at `range_incl(mul_bp(15, P), mul_bp(23, P))`; consumable 5000 (`Fixed` potion, text, throwable); `item.food.ration` 3000; bound key 600; gilded key 100"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.floor",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.6 Chests, floor loot, trophies, quests and war spoils",
+   "fields": {
+    "lines_in_order": "Placed: per slot 0 to 3 whatever the party size, `place_rng(f, \"floor\", slot)` draws 3 item seeds (`Fixed` all deck cards) then 6 Lucre amounts `range_incl(mul_bp(18, P), mul_bp(27, P))`, each × `gp.lucre_bp` into a fresh pile (9 draws); Abridged: 5 items and 10 piles (15 draws); none in `genre.unwritten`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.trophy",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.6 Chests, floor loot, trophies, quests and war spoils",
+   "fields": {
+    "lines_in_order": "beast-role item line: one item from the killed template's doc 13 `trophy` list (materials and ingredients), weights from that list; templates without a list use the local genre's doc 08 ingredient list"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.secret.cache",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.8 Bosses, Volume rewards, secrets and Palimpsestic sources",
+   "fields": {
+    "contents": "3 items shift 3000 floor Uncommon, plus a plain-chest Lucre line (§9.6)",
+    "generator": "a container: rolled per player on opening (§9.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.secret.vault",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.8 Bosses, Volume rewards, secrets and Palimpsestic sources",
+   "fields": {
+    "contents": "one gilt Fortune Engine (`engine.gilt`) or one illumined Reliquary (`reliq.illumined`)",
+    "generator": "Placed: `place_rng(f, \"vault\", spot)`, 1 `weighted([5000, 5000])` (§9.11)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "loot.secret.palimpsest",
+   "kind": "loot",
+   "owner": "11",
+   "section": "11 9.8 Bosses, Volume rewards, secrets and Palimpsestic sources",
+   "fields": {
+    "contents": "one Palimpsestic unique per Active Erratum (step 3b; Legendary when every unique is acquired)",
+    "generator": "keyed `rng.loot`, actor = vault uid, seq = slot"
+   },
+   "also_in": []
+  }
+ ]
+}

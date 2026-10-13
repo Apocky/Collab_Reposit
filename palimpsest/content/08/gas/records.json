@@ -1,0 +1,231 @@
+{
+ "schema": "08.table_row",
+ "records": [
+  {
+   "id": "gas.steam",
+   "kind": "gas",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "DoT rate 50 Bp as `dmg.fire`"
+   },
+   "also_in": [
+    "08 4.2 Gas catalog"
+   ]
+  },
+  {
+   "id": "gas.miasma",
+   "kind": "gas",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "20 `st.poisoned` buildup; unbreathable"
+   },
+   "also_in": [
+    "08 4.2 Gas catalog"
+   ]
+  },
+  {
+   "id": "gas.smoke",
+   "kind": "gas",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "sight concealment only (§12.2)"
+   },
+   "also_in": [
+    "08 4.2 Gas catalog"
+   ]
+  },
+  {
+   "id": "gas.fuel_vapor",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "0",
+    "diffuse_bp": "5000",
+    "rise_bp": "−2000",
+    "dissip_bp": "80",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "none",
+    "fire_trigger": "2 m blast (inner 500 mm, edge 2500 Bp), environmental base `floor_div(conc, 250) × 1000` mHP `dmg.fire` (40,000 at 10000); the cell's fuel vapor is consumed",
+    "color": "#D9CFA0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.caustic",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "skin",
+    "conceal_full": "1",
+    "diffuse_bp": "5000",
+    "rise_bp": "−2000",
+    "dissip_bp": "100",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "15 `st.corroded` buildup",
+    "fire_trigger": "none",
+    "color": "#B5E655"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.soporific",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "1",
+    "diffuse_bp": "5000",
+    "rise_bp": "0",
+    "dissip_bp": "120",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "25 `st.sleeping` buildup",
+    "fire_trigger": "none",
+    "color": "#C9B8E8"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.cold_fog",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "skin",
+    "conceal_full": "2",
+    "diffuse_bp": "6000",
+    "rise_bp": "−3000",
+    "dissip_bp": "200",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "`st.chilled`; 10 `st.frozen` buildup",
+    "fire_trigger": "becomes `gas.steam` at half concentration",
+    "color": "#DDF6FF"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.spore",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "2",
+    "diffuse_bp": "5000",
+    "rise_bp": "0",
+    "dissip_bp": "60",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "15 `st.diseased` buildup",
+    "fire_trigger": "becomes `gas.smoke` at half concentration",
+    "color": "#A89F68"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.laughing",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "1",
+    "diffuse_bp": "6000",
+    "rise_bp": "0",
+    "dissip_bp": "120",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "20 `st.confused` buildup",
+    "fire_trigger": "none",
+    "color": "#F2C6DE"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.terror",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "1",
+    "diffuse_bp": "6000",
+    "rise_bp": "0",
+    "dissip_bp": "120",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "20 `st.feared` buildup",
+    "fire_trigger": "none",
+    "color": "#4B3B5C"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.incense",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "2",
+    "diffuse_bp": "5000",
+    "rise_bp": "1500",
+    "dissip_bp": "80",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "tagged undead or fiend: DoT rate 100 Bp as `dmg.radiant`; others: composure +1 per s (accumulator `k = 4`), ignoring Canon §12's light and combat conditions",
+    "fire_trigger": "none",
+    "color": "#F5E6C4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.fallout",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "1",
+    "diffuse_bp": "4000",
+    "rise_bp": "−2000",
+    "dissip_bp": "30",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "10 `st.irradiated` buildup",
+    "fire_trigger": "none",
+    "color": "#9DB36B"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gas.alch_vapor",
+   "kind": "gas",
+   "owner": "08",
+   "section": "08 4.2 Gas catalog",
+   "fields": {
+    "route": "inhaled",
+    "conceal_full": "1",
+    "diffuse_bp": "6000",
+    "rise_bp": "0",
+    "dissip_bp": "100",
+    "unbreathable": "no",
+    "condense": "—",
+    "contact_per_status_pulse_while_held": "payload exposure (§2.5, §10.4)",
+    "fire_trigger": "none",
+    "color": "payload color"
+   },
+   "also_in": []
+  }
+ ]
+}

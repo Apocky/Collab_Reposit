@@ -1,0 +1,135 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "res.hp",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=max`",
+    "canonical_rule": "§6.4 rows 1–3; lethal resolution §10.8",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.stamina",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=max`",
+    "canonical_rule": "spent by sprint, dodge, melee, block; §6.4 rows 4–6",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.aether",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=max`",
+    "canonical_rule": "spent by spells and arcane items; displayed under the local genre's Aether skin (§5.2)",
+    "owner": "06"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.composure",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=max`",
+    "canonical_rule": "lost to horror and psychic effects; at 0 applies `st.madness`",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.satiation",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "i32",
+    "range": "`0..=2400`",
+    "canonical_rule": "−1 per second; starts at 1800 each run; `st.hungry` at ≤ 600; `st.starving` at 0",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.toxicity",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=100,000`",
+    "canonical_rule": "raised by potions and stims; −500 per second; at 100,000 applies 3 stacks of `st.poisoned` every 5 s",
+    "owner": "08"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.poise",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=poise`",
+    "canonical_rule": "reduced by impact; at 0 applies `st.staggered` and refills",
+    "owner": "05"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.ward",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=pool`",
+    "canonical_rule": "the `st.shielded` pool plus the ward generator's ward (§13.2 `slot.ward`); absorbs damage before HP (§10.5 step 7)",
+    "owner": "06"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.breath",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "Milli",
+    "range": "`0..=max`",
+    "canonical_rule": "max `10 + floor_div(END, 10)` s, so 14 s at END 40; drains 1000 per s while the eye cell holds liquid or an unbreathable gas; regenerates 5000 per s otherwise; at 0 applies `st.suffocating`; kin that need no breath are exempt; a working respirator in `slot.face` makes gases breathable (doc 08 filters)",
+    "owner": "04"
+   },
+   "also_in": []
+  },
+  {
+   "id": "res.favor",
+   "kind": "res",
+   "owner": "00",
+   "section": "00 12. Resources",
+   "fields": {
+    "type": "i32",
+    "range": "`-1000..=1000` per patron",
+    "canonical_rule": "run-scoped standing with each genre's patron (§16.5)",
+    "owner": "06"
+   },
+   "also_in": []
+  }
+ ]
+}

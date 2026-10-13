@@ -1,0 +1,476 @@
+{
+ "schema": "13.table_row",
+ "records": [
+  {
+   "id": "enemy.role.soldier",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "60",
+    "dmg": "10",
+    "cycle": "90",
+    "range_mm": "25000",
+    "walk_run_mm_s": "3600 / 5800",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "40 + 0 = 40",
+    "ar": "10",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "45 / 40 / 40",
+    "stamina_aether": "80 / 0",
+    "impact": "10",
+    "behavior_set": "`ai.set.soldier`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.swarmer",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "minion",
+    "hp": "40",
+    "dmg": "6",
+    "cycle": "60",
+    "range_mm": "1800",
+    "walk_run_mm_s": "4800 / 7000",
+    "nav": "small",
+    "brn_armor_poise_poise": "20 + 0 = 30",
+    "ar": "0",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "35 / 50 / 30",
+    "stamina_aether": "60 / 0",
+    "impact": "4",
+    "behavior_set": "`ai.set.swarmer`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.brute",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "110",
+    "dmg": "18",
+    "cycle": "120",
+    "range_mm": "2500",
+    "walk_run_mm_s": "3400 / 5200",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "60 + 30 = 80",
+    "ar": "15",
+    "role_resist_bp": "blunt 2000",
+    "sgt_hrg_itu": "35 / 40 / 35",
+    "stamina_aether": "120 / 0",
+    "impact": "30",
+    "behavior_set": "`ai.set.brute`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.skirmisher",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "50",
+    "dmg": "8",
+    "cycle": "50",
+    "range_mm": "2000",
+    "walk_run_mm_s": "4800 / 7200",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "35 + 0 = 37",
+    "ar": "6",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "45 / 45 / 45",
+    "stamina_aether": "100 / 0",
+    "impact": "8",
+    "behavior_set": "`ai.set.skirmisher`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.shooter",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "55",
+    "dmg": "4 per round, 4-round burst",
+    "cycle": "120",
+    "range_mm": "30000",
+    "walk_run_mm_s": "3600 / 5800",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "40 + 10 = 50",
+    "ar": "10",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "45 / 40 / 40",
+    "stamina_aether": "80 / 0",
+    "impact": "3",
+    "behavior_set": "`ai.set.shooter`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.sniper",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "45",
+    "dmg": "22",
+    "cycle": "240",
+    "range_mm": "60000",
+    "walk_run_mm_s": "3400 / 5600",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "35 + 0 = 37",
+    "ar": "5",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "60 / 35 / 45",
+    "stamina_aether": "70 / 0",
+    "impact": "15",
+    "behavior_set": "`ai.set.sniper`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.caster",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "45",
+    "dmg": "14",
+    "cycle": "150",
+    "range_mm": "30000",
+    "walk_run_mm_s": "3400 / 5600",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "30 + 0 = 35",
+    "ar": "4",
+    "role_resist_bp": "arcane 3000",
+    "sgt_hrg_itu": "40 / 40 / 50",
+    "stamina_aether": "60 / 80",
+    "impact": "8",
+    "behavior_set": "`ai.set.caster`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.controller",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "50",
+    "dmg": "6, status power 60",
+    "cycle": "180",
+    "range_mm": "20000",
+    "walk_run_mm_s": "3400 / 5600",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "35 + 0 = 37",
+    "ar": "6",
+    "role_resist_bp": "psychic 2000",
+    "sgt_hrg_itu": "45 / 45 / 50",
+    "stamina_aether": "70 / 80",
+    "impact": "5",
+    "behavior_set": "`ai.set.controller`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.support",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "50",
+    "dmg": "6",
+    "cycle": "120",
+    "range_mm": "15000",
+    "walk_run_mm_s": "3600 / 5800",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "35 + 0 = 37",
+    "ar": "8",
+    "role_resist_bp": "radiant 2000",
+    "sgt_hrg_itu": "40 / 45 / 50",
+    "stamina_aether": "70 / 100",
+    "impact": "5",
+    "behavior_set": "`ai.set.support`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.guardian",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "90",
+    "dmg": "10",
+    "cycle": "100",
+    "range_mm": "2500",
+    "walk_run_mm_s": "3200 / 5000",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "60 + 40 = 90",
+    "ar": "25",
+    "role_resist_bp": "slash 2000, pierce 2000",
+    "sgt_hrg_itu": "40 / 40 / 40",
+    "stamina_aether": "140 / 0",
+    "impact": "20",
+    "behavior_set": "`ai.set.guardian`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.summoner",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "55",
+    "dmg": "8",
+    "cycle": "150",
+    "range_mm": "25000",
+    "walk_run_mm_s": "3400 / 5600",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "30 + 0 = 35",
+    "ar": "4",
+    "role_resist_bp": "umbral 2000",
+    "sgt_hrg_itu": "40 / 40 / 50",
+    "stamina_aether": "60 / 120",
+    "impact": "6",
+    "behavior_set": "`ai.set.summoner`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.stalker",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "45",
+    "dmg": "20",
+    "cycle": "90",
+    "range_mm": "2000",
+    "walk_run_mm_s": "4400 / 7000",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "35 + 0 = 37",
+    "ar": "5",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "50 / 55 / 50",
+    "stamina_aether": "100 / 40",
+    "impact": "12",
+    "behavior_set": "`ai.set.stalker`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.artillery",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "60",
+    "dmg": "16, radius 2500",
+    "cycle": "240",
+    "range_mm": "40000, min 6000",
+    "walk_run_mm_s": "3200 / 5000",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "45 + 10 = 52",
+    "ar": "12",
+    "role_resist_bp": "fire 2000",
+    "sgt_hrg_itu": "45 / 35 / 40",
+    "stamina_aether": "80 / 0",
+    "impact": "20",
+    "behavior_set": "`ai.set.artillery`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.sapper",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "55",
+    "dmg": "10; charge 25, radius 3000",
+    "cycle": "90",
+    "range_mm": "2000",
+    "walk_run_mm_s": "3600 / 5800",
+    "nav": "burrower",
+    "brn_armor_poise_poise": "50 + 0 = 45",
+    "ar": "10",
+    "role_resist_bp": "blunt 2000",
+    "sgt_hrg_itu": "35 / 50 / 40",
+    "stamina_aether": "120 / 0",
+    "impact": "15",
+    "behavior_set": "`ai.set.sapper`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.flier",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "40",
+    "dmg": "9",
+    "cycle": "90",
+    "range_mm": "2000 melee, 15000 ranged",
+    "walk_run_mm_s": "fly 6000 / 9000",
+    "nav": "flier",
+    "brn_armor_poise_poise": "30 + 0 = 35",
+    "ar": "4",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "55 / 40 / 40",
+    "stamina_aether": "100 / 0",
+    "impact": "6",
+    "behavior_set": "`ai.set.flier`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.role.charger",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 3. Roles",
+   "fields": {
+    "default_rank": "standard",
+    "hp": "70",
+    "dmg": "12; charge × 12500",
+    "cycle": "90",
+    "range_mm": "3000",
+    "walk_run_mm_s": "4000 / 7000",
+    "nav": "humanoid",
+    "brn_armor_poise_poise": "50 + 20 = 65",
+    "ar": "12",
+    "role_resist_bp": "none",
+    "sgt_hrg_itu": "45 / 40 / 40",
+    "stamina_aether": "120 / 0",
+    "impact": "25",
+    "behavior_set": "`ai.set.charger`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.mimic",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 8.17 Cross-genre templates",
+   "fields": {
+    "role": "brute, rank elite",
+    "body": "amorphous",
+    "kin_tags": "—; mindless",
+    "faction": "wild of the local genre",
+    "signature": "`lid_snap`: the opening Erratum takes × 15000 `dmg.slash` and direct `st.grappled` 3 s (doc 11 §9.4 mimic Reliquary; `no_loot`)",
+    "dep": "—",
+    "loot": "—",
+    "w": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.editors.revisor",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 8.17 Cross-genre templates",
+   "fields": {
+    "role": "brute, rank hunter (`rank.elite` multipliers as the Erasure hunter, §10.5)",
+    "body": "humanoid",
+    "kin_tags": "—; editor, breathless",
+    "faction": "editors",
+    "signature": "§10.5",
+    "dep": "—",
+    "loot": "—",
+    "w": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.editors.invader",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 8.17 Cross-genre templates",
+   "fields": {
+    "role": "player-controlled, rank hunter",
+    "body": "humanoid",
+    "kin_tags": "—; editor, breathless",
+    "faction": "editors",
+    "signature": "§10.7",
+    "dep": "—",
+    "loot": "—",
+    "w": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.editors.kit.revisor",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 10.7 Invading Editors",
+   "fields": {
+    "primary": "`strike_through`: melee line 4000 mm, ×1.0 `dmg.slash`, w 12 a 6 r 18",
+    "secondary": "`redact`: cone 8192 Bam 8000 mm, direct `st.silenced` and `st.marked`, w 40, cooldown 600",
+    "ability_1": "`margin_lunge`: charge 9000 mm/s up to 10000 mm, ×1.5 `dmg.blunt`, w 30, cooldown 480",
+    "ability_2": "`revision`: direct `st.fortified` on itself, cooldown 1800"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.editors.kit.annotator",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 10.7 Invading Editors",
+   "fields": {
+    "primary": "`annotation`: projectile 40000 mm/s, ×0.8 `dmg.arcane`, w 10 a 4 r 20",
+    "secondary": "`red_mark`: `marker` on an Erratum within 30000 mm, impact at tick 90, `circle` r 2500, ×2.0 `dmg.arcane`, cooldown 600",
+    "ability_1": "`footnote_blink`: teleport 8000 mm to a walkable cell, w 20, cooldown 600",
+    "ability_2": "`gloss_over`: direct `st.invisible` 300 ticks, cooldown 2400"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.editors.kit.censor",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 10.7 Invading Editors",
+   "fields": {
+    "primary": "`bar`: hitscan 20000 mm, ×0.6 `dmg.arcane`, w 8 a 2 r 16",
+    "secondary": "`gag_order`: cone 8192 Bam 12000 mm, ×1.2 `dmg.psychic`, direct `st.silenced`, w 50, cooldown 480",
+    "ability_1": "`bar_sweep`: a 12000 × 1500 × 3000 mm bar crossing at 4000 mm/s after a 60-tick `line` telegraph, ×1.5 `dmg.arcane`, cooldown 900",
+    "ability_2": "`blackout`: effective light 0 within 12000 mm for 300 ticks, w 30, cooldown 2400"
+   },
+   "also_in": []
+  },
+  {
+   "id": "enemy.editors.kit.footnoter",
+   "kind": "enemy",
+   "owner": "13",
+   "section": "13 10.7 Invading Editors",
+   "fields": {
+    "primary": "`ibid`: projectile 30000 mm/s, ×0.7 `dmg.arcane`, w 12 a 4 r 20",
+    "secondary": "`blot`: lob, `circle` r 2000, 1000 ml `liq.red_ink` on the landing cell, ×0.5 `dmg.arcane`, w 30, cooldown 360",
+    "ability_1": "`footnote`: summons 2 `enemy.editors.inkling` at rank minion, tag `summoned`, at most 4 alive, w 60, cooldown 900",
+    "ability_2": "`cross_reference`: swaps places with its nearest inkling within 16000 mm, cooldown 1200"
+   },
+   "also_in": []
+  }
+ ]
+}

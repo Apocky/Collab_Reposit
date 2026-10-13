@@ -1,0 +1,348 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "cat.weapon_melee",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "melee weapons",
+    "owner": "05, 11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles",
+    "11 9.2 Category deck"
+   ]
+  },
+  {
+   "id": "cat.weapon_ranged",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "every ranged weapon archetype, including bows, guns and staves",
+    "owner": "05, 11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles",
+    "11 9.2 Category deck"
+   ]
+  },
+  {
+   "id": "cat.wand",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "charge-based casting items",
+    "owner": "06, 10, 11"
+   },
+   "also_in": [
+    "10 2.1 Category property table",
+    "10 7.1 Generation: `roll_curse`",
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.armor",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "head, body, hands, legs and feet pieces",
+    "owner": "05, 11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles",
+    "11 9.2 Category deck"
+   ]
+  },
+  {
+   "id": "cat.offhand",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "shields, foci, lanterns, off-hand sidearms",
+    "owner": "05, 11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles",
+    "11 9.2 Category deck"
+   ]
+  },
+  {
+   "id": "cat.accessory",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "rings, amulets, trinkets, belts, back items",
+    "owner": "11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles",
+    "11 9.2 Category deck"
+   ]
+  },
+  {
+   "id": "cat.implant",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "augments installed into the body",
+    "owner": "04, 11"
+   },
+   "also_in": [
+    "10 2.1 Category property table",
+    "10 7.1 Generation: `roll_curse`",
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.ammo",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "ammunition",
+    "owner": "05"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.potion",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "drinkable or throwable liquids in containers",
+    "owner": "08"
+   },
+   "also_in": [
+    "10 2.1 Category property table",
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.text",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "scroll-like single-use texts: scrolls, writs, data shards, talismans",
+    "owner": "06, 10"
+   },
+   "also_in": [
+    "10 2.1 Category property table",
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.book",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "permanent learning: glyph tomes, recipe books, lore",
+    "owner": "06, 07"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.food",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "satiation items",
+    "owner": "04"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.throwable",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "grenades, bombs, flasks, throwing knives",
+    "owner": "05, 08"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.gadget",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "deployables: turrets, drones, snares, mines, charges",
+    "owner": "07"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.tool",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "pickaxes, lockpicks, hacking decks, rope, bandages",
+    "owner": "07, 09"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.material",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "crafting materials",
+    "owner": "07"
+   },
+   "also_in": []
+  },
+  {
+   "id": "cat.ingredient",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "alchemical ingredients",
+    "owner": "08"
+   },
+   "also_in": []
+  },
+  {
+   "id": "cat.container",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "bottles, flasks, bags, satchels",
+    "owner": "08, 11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.placeable",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "barricades, bridge spans, ladders, block traps (spikes, webs), light sources, deployable cover (§4.3)",
+    "owner": "07"
+   },
+   "also_in": []
+  },
+  {
+   "id": "cat.key",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "keys and keycards of any skin",
+    "owner": "11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.currency",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "Lucre piles",
+    "owner": "11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.quest",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "narrative items",
+    "owner": "12"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.part",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "loose weapon parts and licensed grafts that cross manufacturers",
+    "owner": "07, 11"
+   },
+   "also_in": [
+    "10 2.1 Category property table",
+    "10 7.1 Generation: `roll_curse`",
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.ward_gen",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "ward generators: shields of every skin, from aegis charms to kinetic barriers",
+    "owner": "05, 11"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.corpse",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "corpses and Errata Remains: carry, loot, eat, raise, sacrifice",
+    "owner": "04, 13, 16"
+   },
+   "also_in": [
+    "11 3.1 Categories and loot roles"
+   ]
+  },
+  {
+   "id": "cat.body_part",
+   "kind": "cat",
+   "owner": "00",
+   "section": "00 13.1 Categories",
+   "fields": {
+    "meaning": "severed body parts (§9.1)",
+    "owner": "04, 07, 08"
+   },
+   "also_in": []
+  }
+ ]
+}

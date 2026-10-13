@@ -1,0 +1,1008 @@
+{
+ "schema": "08.table_row",
+ "records": [
+  {
+   "id": "liq.water",
+   "kind": "liq",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "`st.soaked`"
+   },
+   "also_in": [
+    "08 3.1 Physical properties",
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.oil",
+   "kind": "liq",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "`st.oiled`; ground friction × 3000"
+   },
+   "also_in": [
+    "08 3.1 Physical properties",
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.alcohol",
+   "kind": "liq",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "`st.oiled`"
+   },
+   "also_in": [
+    "08 3.1 Physical properties",
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.acid",
+   "kind": "liq",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "25 `st.corroded` buildup"
+   },
+   "also_in": [
+    "08 3.1 Physical properties",
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.lava",
+   "kind": "liq",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "DoT rate 1000 Bp as `dmg.fire`, plus 100 `st.burning` buildup"
+   },
+   "also_in": [
+    "08 3.1 Physical properties",
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.red_ink",
+   "kind": "liq",
+   "owner": "08",
+   "section": "00 12.1 Surfaces and reactions",
+   "fields": {
+    "effect": "+1 `st.erasure` per 300 ticks of contact"
+   },
+   "also_in": [
+    "08 3.1 Physical properties",
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.brine",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1025",
+    "flow_bp": "10000",
+    "move_bp": "10000",
+    "evap_period": "60",
+    "freeze_dc_block": "−210→`block.ice`",
+    "boil_dc_gas": "1010→`gas.steam`",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "2",
+    "evap_gas_conc": "—",
+    "color": "#4E8FA8",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.blood",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1060",
+    "flow_bp": "8000",
+    "move_bp": "9000",
+    "evap_period": "100",
+    "freeze_dc_block": "−5→`block.ice`",
+    "boil_dc_gas": "1000→`gas.steam`",
+    "temp_decic": "370",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "4",
+    "evap_gas_conc": "—",
+    "color": "#8A0303",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.sepia",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1050",
+    "flow_bp": "9000",
+    "move_bp": "9000",
+    "evap_period": "100",
+    "freeze_dc_block": "−20→`block.ice`",
+    "boil_dc_gas": "1000→`gas.steam`",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "no",
+    "conceal_per_cell": "10",
+    "evap_gas_conc": "—",
+    "color": "#3B2A1A",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.honey",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1420",
+    "flow_bp": "2500",
+    "move_bp": "5000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "6",
+    "evap_gas_conc": "—",
+    "color": "#E8A317",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.slime",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "gel",
+    "density_g_per_l": "1100",
+    "flow_bp": "3000",
+    "move_bp": "6000",
+    "evap_period": "100",
+    "freeze_dc_block": "−50→`block.ice`",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "1",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "5",
+    "evap_gas_conc": "—",
+    "color": "#7FD957",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.tar",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "oily",
+    "density_g_per_l": "1200",
+    "flow_bp": "1000",
+    "move_bp": "4000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "2000",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "15",
+    "evap_gas_conc": "—",
+    "color": "#1C1C1C",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.mud",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1700",
+    "flow_bp": "3000",
+    "move_bp": "6000",
+    "evap_period": "100",
+    "freeze_dc_block": "−10→`block.ice`",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "8",
+    "evap_gas_conc": "—",
+    "color": "#6B4F2A",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.wine",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "990",
+    "flow_bp": "10000",
+    "move_bp": "9500",
+    "evap_period": "60",
+    "freeze_dc_block": "−50→`block.ice`",
+    "boil_dc_gas": "900→`gas.steam`",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "4",
+    "evap_gas_conc": "—",
+    "color": "#6D0E2A",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.milk",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1030",
+    "flow_bp": "9500",
+    "move_bp": "9500",
+    "evap_period": "60",
+    "freeze_dc_block": "−5→`block.ice`",
+    "boil_dc_gas": "1000→`gas.steam`",
+    "temp_decic": "50",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "6",
+    "evap_gas_conc": "—",
+    "color": "#F2EFE6",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.holy_water",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1000",
+    "flow_bp": "10000",
+    "move_bp": "10000",
+    "evap_period": "100",
+    "freeze_dc_block": "0→`block.ice`",
+    "boil_dc_gas": "1000→`gas.incense`",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "3",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "2",
+    "evap_gas_conc": "—",
+    "color": "#CFE8FF",
+    "dep": "mythos",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.unholy_water",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1000",
+    "flow_bp": "10000",
+    "move_bp": "10000",
+    "evap_period": "100",
+    "freeze_dc_block": "0→`block.ice`",
+    "boil_dc_gas": "1000→`gas.miasma`",
+    "temp_decic": "50",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "4",
+    "evap_gas_conc": "—",
+    "color": "#3A2F4A",
+    "dep": "mythos",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.quicksilver",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "metal",
+    "density_g_per_l": "13534",
+    "flow_bp": "7000",
+    "move_bp": "5000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "yes",
+    "conceal_per_cell": "15",
+    "evap_gas_conc": "—",
+    "color": "#C0C6CC",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.molten_metal",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "molten",
+    "density_g_per_l": "7000",
+    "flow_bp": "3000",
+    "move_bp": "3000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "15000",
+    "heat_drive_bp": "3000",
+    "light_emit": "14",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "yes",
+    "conceal_per_cell": "15",
+    "evap_gas_conc": "—",
+    "color": "#FFB347",
+    "dep": "none",
+    "vessel_flag": "molten"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.coolant",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "cryo",
+    "density_g_per_l": "810",
+    "flow_bp": "10000",
+    "move_bp": "9000",
+    "evap_period": "2",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "−1950→`gas.cold_fog`",
+    "temp_decic": "-1960",
+    "heat_drive_bp": "3000",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "2",
+    "evap_gas_conc": "—",
+    "color": "#BEEFFF",
+    "dep": "none",
+    "vessel_flag": "cryogenic"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.ichor",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1050",
+    "flow_bp": "8000",
+    "move_bp": "9000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "370",
+    "heat_drive_bp": "0",
+    "light_emit": "6",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "6",
+    "evap_gas_conc": "—",
+    "color": "#FFD700",
+    "dep": "mythos",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.ectoplasm",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "ether",
+    "density_g_per_l": "600",
+    "flow_bp": "5000",
+    "move_bp": "6000",
+    "evap_period": "30",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "50",
+    "heat_drive_bp": "0",
+    "light_emit": "5",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "3",
+    "evap_gas_conc": "—",
+    "color": "#B8FFE0",
+    "dep": "mythos",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.venom",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1050",
+    "flow_bp": "9000",
+    "move_bp": "9000",
+    "evap_period": "100",
+    "freeze_dc_block": "−20→`block.ice`",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "4",
+    "evap_gas_conc": "—",
+    "color": "#9C2DB5",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.bile",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1100",
+    "flow_bp": "7000",
+    "move_bp": "8000",
+    "evap_period": "50",
+    "freeze_dc_block": "−30→`block.ice`",
+    "boil_dc_gas": "1000→`gas.miasma`",
+    "temp_decic": "300",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "6",
+    "evap_gas_conc": "`gas.miasma` 2000",
+    "color": "#5C6B2A",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.swamp_water",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1010",
+    "flow_bp": "9000",
+    "move_bp": "9500",
+    "evap_period": "60",
+    "freeze_dc_block": "0→`block.ice`",
+    "boil_dc_gas": "1000→`gas.steam`",
+    "temp_decic": "200",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "4",
+    "evap_gas_conc": "`gas.miasma` 500",
+    "color": "#4A5D23",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.nitro",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "oily",
+    "density_g_per_l": "1600",
+    "flow_bp": "8000",
+    "move_bp": "8000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "explosive",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "2",
+    "evap_gas_conc": "—",
+    "color": "#F5F0C8",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.fuel",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "oily",
+    "density_g_per_l": "740",
+    "flow_bp": "10000",
+    "move_bp": "9000",
+    "evap_period": "20",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "950→`gas.fuel_vapor`",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "8000",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "2",
+    "evap_gas_conc": "`gas.fuel_vapor` 3000",
+    "color": "#D4B483",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.mana",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "ether",
+    "density_g_per_l": "900",
+    "flow_bp": "10000",
+    "move_bp": "9000",
+    "evap_period": "30",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "9",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "3",
+    "evap_gas_conc": "—",
+    "color": "#3FE0D0",
+    "dep": "arcana",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.nanite_slurry",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1800",
+    "flow_bp": "6000",
+    "move_bp": "7000",
+    "evap_period": "100",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "1",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "yes",
+    "conceal_per_cell": "8",
+    "evap_gas_conc": "—",
+    "color": "#7A8B99",
+    "dep": "techne",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  },
+  {
+   "id": "liq.rad_sludge",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1400",
+    "flow_bp": "4000",
+    "move_bp": "6000",
+    "evap_period": "100",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "300",
+    "heat_drive_bp": "0",
+    "light_emit": "8",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "yes",
+    "conceal_per_cell": "8",
+    "evap_gas_conc": "`gas.fallout` 1000",
+    "color": "#7CFC00",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.phosphor",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1000",
+    "flow_bp": "9000",
+    "move_bp": "9500",
+    "evap_period": "60",
+    "freeze_dc_block": "0→`block.ice`",
+    "boil_dc_gas": "1000→`gas.steam`",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "10",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "3",
+    "evap_gas_conc": "—",
+    "color": "#C6FF6B",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.sap",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "gel",
+    "density_g_per_l": "1150",
+    "flow_bp": "2000",
+    "move_bp": "5000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "1000",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "6",
+    "evap_gas_conc": "—",
+    "color": "#C08A2D",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.hemolymph",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1040",
+    "flow_bp": "9000",
+    "move_bp": "9500",
+    "evap_period": "100",
+    "freeze_dc_block": "−10→`block.ice`",
+    "boil_dc_gas": "1000→`gas.steam`",
+    "temp_decic": "200",
+    "heat_drive_bp": "0",
+    "light_emit": "0",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "4",
+    "evap_gas_conc": "—",
+    "color": "#7FBF3F",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.wellspring",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1000",
+    "flow_bp": "10000",
+    "move_bp": "10000",
+    "evap_period": "0",
+    "freeze_dc_block": "0→`block.ice`",
+    "boil_dc_gas": "1000→`gas.steam`",
+    "temp_decic": "120",
+    "heat_drive_bp": "0",
+    "light_emit": "4",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "yes",
+    "conductive": "yes",
+    "conceal_per_cell": "2",
+    "evap_gas_conc": "—",
+    "color": "#9F7FFF",
+    "dep": "none",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid"
+   ]
+  },
+  {
+   "id": "liq.nectar",
+   "kind": "liq",
+   "owner": "08",
+   "section": "08 3.1 Physical properties",
+   "fields": {
+    "grp": "aq",
+    "density_g_per_l": "1300",
+    "flow_bp": "3000",
+    "move_bp": "6000",
+    "evap_period": "0",
+    "freeze_dc_block": "—",
+    "boil_dc_gas": "—",
+    "temp_decic": "150",
+    "heat_drive_bp": "0",
+    "light_emit": "3",
+    "fire_fuel_flammability_bp": "—",
+    "extinguishes": "no",
+    "conductive": "no",
+    "conceal_per_cell": "6",
+    "evap_gas_conc": "—",
+    "color": "#FFB7D5",
+    "dep": "arcana",
+    "vessel_flag": "—"
+   },
+   "also_in": [
+    "08 3.2 Contact and drink rows",
+    "08 3.5 Liquid sources",
+    "08 5.2a Trigger matrix for every liquid",
+    "08 9.2 Base liquids"
+   ]
+  }
+ ]
+}

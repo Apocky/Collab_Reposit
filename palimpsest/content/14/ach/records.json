@@ -1,0 +1,772 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "ach.first_page",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "complete Folio 1 of the account's first run (DECISIONS 137)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.turned_page",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear Folio 1",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.volume_1",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "present at `boss.editor_v1`'s death",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.volume_2",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "present at `boss.editor_v2`'s death",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.volume_3",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "present at `boss.editor_v3`'s death",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.volume_4",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "present at `boss.editor_v4`'s death",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.ur_text",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "Standard victory",
+    "grade": "4",
+    "quires": "100",
+    "ink": "320"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.abridged",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "Abridged victory",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.novella",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "Novella victory",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.marginalia_30",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear Folio 30",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.marginalia_50",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear Folio 50",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.marginalia_100",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear Folio 100",
+    "grade": "4",
+    "quires": "100",
+    "ink": "320"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.grade_5",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "victory at Grade ≥ 5",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.grade_10",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "victory at Grade ≥ 10",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.grade_15",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "victory at Grade ≥ 15",
+    "grade": "4",
+    "quires": "100",
+    "ink": "320"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.grade_20",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "victory at Grade 20",
+    "grade": "4",
+    "quires": "100",
+    "ink": "320"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.callings_v1",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "`boss.editor_v1` killed as each of the 13 Callings (cumulative)",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.callings_win",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "victory as each of the 13 Callings (cumulative)",
+    "grade": "4",
+    "quires": "100",
+    "ink": "320"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.origins_v1",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "`boss.editor_v1` killed with each of the 12 core Origins (cumulative)",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.atlas",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear a Folio of each of the 12 core genres (cumulative)",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.oneiric",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "enter `genre.oneiric`",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.redacted",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "enter `genre.redacted`",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.unwritten",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "enter `genre.unwritten`",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.secret_trio",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "all three of `genre.oneiric`, `genre.redacted` and `genre.unwritten` entered (cumulative)",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.anachronist",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "100 kills of native targets by a base component with `E >= 3` (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.shock_of_new",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "trigger Shock of the New 50 times (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.coherent_volume",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear Folios 1 to 5 of one run without ever gaining `st.contradicted`",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.rewritten",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "50 Rewrites committed (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.appraiser",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "500 item instances identified (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.connoisseur",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "every potion type of the run's content set known in one run",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.master",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "any skill reaches 100 in one run",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.triad",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "three skills at ≥ 50 at once",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.level_30",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "character level 30",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.palimpsestic",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "equip a Palimpsestic item",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.exotic_pair",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "equip an Exotic weapon and an Exotic armor piece at once",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.crafter",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "100 `ev.item_crafted` (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.brewer",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "100 `ev.potion_brewed` (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.builder",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "place 1,000 `cat.placeable` blocks (cumulative; Canon §4.3)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.excavator",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "break 1,000 destructible cells that no Erratum placed (cumulative; §3.5 rule)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.ghost_step",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "complete `run.note.silent`",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.pacifist",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear a standard or challenge Folio with `party_pacified >= 5` and `party_kills = 0`",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.deaths_door",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "25 Death's Door saves (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.erasure_10",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "exit a Folio while holding 10 Erasure stacks",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.hunter",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "kill an Erasure hunter",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.hunter_10",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "kill 10 Erasure hunters (cumulative)",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.swift_volume",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "`boss.editor_v1` dies before run tick 54,000 (15 min) in Standard",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.speed_win",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "Standard victory with `end_tick < 324000` (90 min)",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.party_of_four",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "clear Folio 5 in a party of 4",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.reviver",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "50 `ev.player_revived` as the reviver (cumulative)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.full_house",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "Standard victory in a party of 4 with `S_deaths = 0`",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.daily_10",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "10 ranked Daily runs ended (cumulative)",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.gauntlet",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "Weekly Gauntlet victory",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.recollection",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "complete one Recollection trial",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.recollection_all",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "complete all 24 Recollection trials",
+    "grade": "4",
+    "quires": "100",
+    "ink": "320"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.bindery_half",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "own 46 of the 91 Bindery nodes",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.bindery_all",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "own all 91 Bindery nodes",
+    "grade": "3",
+    "quires": "50",
+    "ink": "160"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.notes_100",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "complete 100 marginal notes (cumulative)",
+    "grade": "2",
+    "quires": "25",
+    "ink": "80"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.cartographer",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "complete `run.note.cartographer` in 5 Folios of one run",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ach.going_native",
+   "kind": "ach",
+   "owner": "14",
+   "section": "14 10. Achievements",
+   "fields": {
+    "condition": "Go Native at a Colophon (Canon §5.11)",
+    "grade": "1",
+    "quires": "10",
+    "ink": "40"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,83 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "tooltier.t0",
+   "kind": "tooltier",
+   "owner": "07",
+   "section": "07 9.1 Tool tiers",
+   "fields": {
+    "held_by": "bare hands; a crafter carrying no toolkit; any non-pick item whose primary is tier 0",
+    "tool_speed_bp_9_2": "3000",
+    "tool_term_4_2": "−60",
+    "resource_nodes_it_mines_9_3_req_at_or_below": "timber, sand, clay, salvage, bone"
+   },
+   "also_in": []
+  },
+  {
+   "id": "tooltier.t1",
+   "kind": "tooltier",
+   "owner": "07",
+   "section": "07 9.1 Tool tiers",
+   "fields": {
+    "held_by": "a pick with a tier-0 or tier-1 head; any other item with a tier-1 primary",
+    "tool_speed_bp_9_2": "10000",
+    "tool_term_4_2": "0",
+    "resource_nodes_it_mines_9_3_req_at_or_below": "the t0 nodes plus copper, tin, zinc, silver, gold, iron, coal, obsidian, coral, stone"
+   },
+   "also_in": []
+  },
+  {
+   "id": "tooltier.t2",
+   "kind": "tooltier",
+   "owner": "07",
+   "section": "07 9.1 Tool tiers",
+   "fields": {
+    "held_by": "an item whose primary (a pick's head) is tier 2",
+    "tool_speed_bp_9_2": "13000",
+    "tool_term_4_2": "10",
+    "resource_nodes_it_mines_9_3_req_at_or_below": "the t1 nodes plus titanium, jade"
+   },
+   "also_in": []
+  },
+  {
+   "id": "tooltier.t3",
+   "kind": "tooltier",
+   "owner": "07",
+   "section": "07 9.1 Tool tiers",
+   "fields": {
+    "held_by": "primary or head tier 3",
+    "tool_speed_bp_9_2": "16000",
+    "tool_term_4_2": "20",
+    "resource_nodes_it_mines_9_3_req_at_or_below": "the t2 nodes plus orichalcum, star_metal, aetherium, psi_crystal"
+   },
+   "also_in": []
+  },
+  {
+   "id": "tooltier.t4",
+   "kind": "tooltier",
+   "owner": "07",
+   "section": "07 9.1 Tool tiers",
+   "fields": {
+    "held_by": "primary or head tier 4",
+    "tool_speed_bp_9_2": "20000",
+    "tool_term_4_2": "30",
+    "resource_nodes_it_mines_9_3_req_at_or_below": "the t3 nodes plus dreamstuff, vellum (every node)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "tooltier.t5",
+   "kind": "tooltier",
+   "owner": "07",
+   "section": "07 9.1 Tool tiers",
+   "fields": {
+    "held_by": "primary or head tier 5",
+    "tool_speed_bp_9_2": "25000",
+    "tool_term_4_2": "40",
+    "resource_nodes_it_mines_9_3_req_at_or_below": "every node"
+   },
+   "also_in": []
+  }
+ ]
+}

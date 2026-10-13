@@ -1,0 +1,110 @@
+{
+ "schema": "05.table_row",
+ "records": [
+  {
+   "id": "ammo.light",
+   "kind": "ammo",
+   "owner": "05",
+   "section": "05 8.1 Families",
+   "fields": {
+    "used_by": "pistol, SMG",
+    "carry_cap": "240",
+    "mass_per_unit_g": "8",
+    "pickup_size": "96",
+    "value_per_100_units_lucre_ilvl_1": "20",
+    "ref_units_per_standard_kill": "pistol 7.45, SMG 16.65"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ammo.heavy",
+   "kind": "ammo",
+   "owner": "05",
+   "section": "05 8.1 Families",
+   "fields": {
+    "used_by": "heavy pistol, auto rifle",
+    "carry_cap": "180",
+    "mass_per_unit_g": "15",
+    "pickup_size": "64",
+    "value_per_100_units_lucre_ilvl_1": "40",
+    "ref_units_per_standard_kill": "heavy pistol 2.83, auto rifle 11.88"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ammo.rifle",
+   "kind": "ammo",
+   "owner": "05",
+   "section": "05 8.1 Families",
+   "fields": {
+    "used_by": "marksman rifle, sniper",
+    "carry_cap": "60",
+    "mass_per_unit_g": "25",
+    "pickup_size": "28",
+    "value_per_100_units_lucre_ilvl_1": "300",
+    "ref_units_per_standard_kill": "marksman 5.14, sniper 1.36"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ammo.shell",
+   "kind": "ammo",
+   "owner": "05",
+   "section": "05 8.1 Families",
+   "fields": {
+    "used_by": "shotgun",
+    "carry_cap": "48",
+    "mass_per_unit_g": "40",
+    "pickup_size": "10",
+    "value_per_100_units_lucre_ilvl_1": "200",
+    "ref_units_per_standard_kill": "1.40"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ammo.cell",
+   "kind": "ammo",
+   "owner": "05",
+   "section": "05 8.1 Families",
+   "fields": {
+    "used_by": "beam",
+    "carry_cap": "300 units",
+    "mass_per_unit_g": "10",
+    "pickup_size": "60",
+    "value_per_100_units_lucre_ilvl_1": "20",
+    "ref_units_per_standard_kill": "14.93 (plus §8.4 recharge)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ammo.ordnance",
+   "kind": "ammo",
+   "owner": "05",
+   "section": "05 8.1 Families",
+   "fields": {
+    "used_by": "launcher",
+    "carry_cap": "8",
+    "mass_per_unit_g": "1500",
+    "pickup_size": "2",
+    "value_per_100_units_lucre_ilvl_1": "1500",
+    "ref_units_per_standard_kill": "0.91"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ammo.draw",
+   "kind": "ammo",
+   "owner": "05",
+   "section": "05 8.1 Families",
+   "fields": {
+    "used_by": "charge rifle, crossbow",
+    "carry_cap": "60",
+    "mass_per_unit_g": "30",
+    "pickup_size": "12",
+    "value_per_100_units_lucre_ilvl_1": "100",
+    "ref_units_per_standard_kill": "charge rifle 1.91, crossbow 1.59"
+   },
+   "also_in": []
+  }
+ ]
+}

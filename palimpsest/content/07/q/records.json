@@ -1,0 +1,82 @@
+{
+ "schema": "07.table_row",
+ "records": [
+  {
+   "id": "q.awful",
+   "kind": "q",
+   "owner": "07",
+   "section": "00 13.5 Quality",
+   "fields": {
+    "name": "Awful",
+    "multiplier_bp": "7000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "q.poor",
+   "kind": "q",
+   "owner": "07",
+   "section": "00 13.5 Quality",
+   "fields": {
+    "name": "Poor",
+    "multiplier_bp": "8500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "q.normal",
+   "kind": "q",
+   "owner": "07",
+   "section": "00 13.5 Quality",
+   "fields": {
+    "name": "Normal",
+    "multiplier_bp": "10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "q.good",
+   "kind": "q",
+   "owner": "07",
+   "section": "00 13.5 Quality",
+   "fields": {
+    "name": "Good",
+    "multiplier_bp": "11000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "q.excellent",
+   "kind": "q",
+   "owner": "07",
+   "section": "00 13.5 Quality",
+   "fields": {
+    "name": "Excellent",
+    "multiplier_bp": "12000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "q.masterwork",
+   "kind": "q",
+   "owner": "07",
+   "section": "00 13.5 Quality",
+   "fields": {
+    "name": "Masterwork",
+    "multiplier_bp": "13500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "q.peerless",
+   "kind": "q",
+   "owner": "07",
+   "section": "00 13.5 Quality",
+   "fields": {
+    "name": "Peerless",
+    "multiplier_bp": "15000"
+   },
+   "also_in": []
+  }
+ ]
+}

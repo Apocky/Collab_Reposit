@@ -1,0 +1,104 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "wound.bruised",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "tier 1",
+    "rule_8_2": "`frac` in `5001..=7500`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.wounded",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "tier 2",
+    "rule_8_2": "`frac` in `2501..=5000`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.crippled",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "tier 3",
+    "rule_8_2": "`frac <= 2500` and `pool > 0`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.disabled",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "tier 4",
+    "rule_8_2": "`pool = 0`, not severed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.severed",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "severed",
+    "rule_8_2": "the part is severed (§8.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.laceration",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "kind",
+    "rule_8_2": "largest share slash or pierce"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.fracture",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "kind",
+    "rule_8_2": "largest share blunt, or fall damage"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.burn",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "kind",
+    "rule_8_2": "largest share fire, frost, acid, shock, radiation or sonic"
+   },
+   "also_in": []
+  },
+  {
+   "id": "wound.trauma",
+   "kind": "wound",
+   "owner": "04",
+   "section": "04 15.7 Afflictions and wounds",
+   "fields": {
+    "class": "kind",
+    "rule_8_2": "largest share toxin, radiant, umbral, psychic, arcane or true"
+   },
+   "also_in": []
+  }
+ ]
+}

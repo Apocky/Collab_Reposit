@@ -1,0 +1,35 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "buc.blessed",
+   "kind": "buc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "effect": "consumables: positive effects × 12500; equipment: +1 effective enhancement"
+   },
+   "also_in": []
+  },
+  {
+   "id": "buc.uncursed",
+   "kind": "buc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "effect": "normal"
+   },
+   "also_in": []
+  },
+  {
+   "id": "buc.cursed",
+   "kind": "buc",
+   "owner": "00",
+   "section": "00 13.6 Knowledge, curses and unknown appearances",
+   "fields": {
+    "effect": "cannot be unequipped until uncursed; `curse_penalty` 1..=3; carries one curse affix (doc 10)"
+   },
+   "also_in": []
+  }
+ ]
+}

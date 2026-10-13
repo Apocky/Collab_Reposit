@@ -1,0 +1,329 @@
+{
+ "schema": "18.table_row",
+ "records": [
+  {
+   "id": "nar.lore.palimpsest",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "Every story ever told lies in one bottomless manuscript, scraped thin and written over. Nobody has seen its binding."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.first_edition",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "The Ur-Text is the first draft under every page: all axioms at 5, nothing contradicts. Who wrote it is the one question no text in the game answers."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.authors",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "Each genre has one Author, its patron (Canon §16.5). Authors wrote their genres and then stopped; they answer prayers but never appear in person."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.scraping",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "When a story wears thin it is scraped and overwritten. The scraping is weather, not malice."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.style",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "The Style is the rule that every page agree with itself. It is not a being. The Editors serve it."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.errata",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "Characters who slipped through the knife when their page was scraped. They remember one genre and can hold any other's tools."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.red_ink",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "The Editors' correcting fluid. It erases what it touches; drunk, it lets an Erratum correct the world (doc 04 Marginalia powers) at the price of becoming visible to every Editor (Canon §11.6)."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.margin",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "The blank edge of the page, where Errata gather between descents and where no Editor has jurisdiction."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.marginalia",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "Notes written past the last page. Beyond the Ur-Text there is only margin, and Errata may keep writing there."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.colophon",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "The sign-off at the end of every page, where the scribe rests. Editors respect a signed page; a Colophon defaced by Errata is treated as forged, and an Editor waits at every later one (Canon §17.1)."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.lore.redactors",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.1 Lore bible (`nar.lore.*`)",
+   "fields": {
+    "entry": "The Censor keeps an office of junior redactors. When a party leaves its page open (Canon §17.9), another reader can borrow a desk and a red pen for one page."
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.archivist",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.archivist`",
+    "name_origin": "Ottoline Gloss, Gothic Horror",
+    "look_and_voice": "widow's black, magnifier on a chain; dry, precise",
+    "sample_line": "\"Another specimen. Do try to bring the whole thing next time.\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.binder",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.binder`",
+    "name_origin": "Tamsin Stitchwort, Fairy Tale",
+    "look_and_voice": "thimbles on every finger, a needle behind one ear; warm, brisk",
+    "sample_line": "\"Quires in, pages out. Mind the glue.\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.recollector",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.recollector`",
+    "name_origin": "Ascender, Space Opera",
+    "look_and_voice": "a courtesy android with a cracked faceplate; polite, literal",
+    "sample_line": "\"Memory located. Shall I play it back for you?\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.cartographer",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.cartographer`",
+    "name_origin": "Ines Verso, Weird West",
+    "look_and_voice": "surveyor's chain and a blank map; laconic",
+    "sample_line": "\"Map's blank till you walk it. Then it's mine.\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.inkwell_keeper",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.inkwell_keeper`",
+    "name_origin": "Sepia, Cosmic Horror",
+    "look_and_voice": "ink to the elbows, eyes like wet print; soft, unhurried",
+    "sample_line": "\"The well gives what it gives. Every chance is written on the rim.\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.codex_scribe",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.codex_scribe`",
+    "name_origin": "Brother Rubric, Mythic Fantasy",
+    "look_and_voice": "tonsure, red-and-black ink pots; cheerful pedant",
+    "sample_line": "\"Another page done. I'll rule the next line for you.\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.quartermaster",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.quartermaster`",
+    "name_origin": "Mags Ferrule, Post-Apocalypse",
+    "look_and_voice": "goggles, a ledger and a cart; blunt and fair",
+    "sample_line": "\"Price is the price. Same tomorrow.\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.margin.drillmaster",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 8.4 The Margin cast (`nar.margin.<npc>`)",
+   "fields": {
+    "npc_doc_13_13_6": "`npc.margin.drillmaster`",
+    "name_origin": "Master Kerning, Wuxia",
+    "look_and_voice": "old swordsman in plain robes; spare",
+    "sample_line": "\"Again. Slower. Now the same, but correctly.\""
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.scribe.model.compact",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.2 Model choice (`nar.scribe.model.*`)",
+   "fields": {
+    "model_r4_8_1_8_6": "Qwen3.5-0.8B, non-thinking mode, Q4_K_M GGUF, Apache-2.0",
+    "file": "485 MB (0.8 × 10⁹ × 4.85 bits)",
+    "where": "default on every PC and Steam Deck",
+    "runtime": "`llama-cpp-2` 0.1.159; CPU, 2 threads, below-normal priority; context 1,024 tokens"
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.scribe.model.rich",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.2 Model choice (`nar.scribe.model.*`)",
+   "fields": {
+    "model_r4_8_1_8_6": "Qwen3.5-2B, non-thinking, Q4_K_M GGUF, Apache-2.0",
+    "file": "1,212 MB",
+    "where": "desktop only, with ≥ 16 GiB RAM (it exceeds the Deck's 1,024 MiB Scribe budget)",
+    "runtime": "as above; Vulkan offload when measured free VRAM ≥ 1,536 MiB, else CPU with `min(2, max(1, physical_cores − 4))` threads (R4 §8.6's 2-thread cap)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.job.colophon_note",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.3 Jobs (`nar.job.*`)",
+   "fields": {
+    "queued": "entering `InColophon`",
+    "deadline_else_template": "first lectern interaction",
+    "input_tokens": "160",
+    "output_tokens": "48",
+    "output_fields": "`note` ≤ 160 chars"
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.job.folio_intro",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.3 Jobs (`nar.job.*`)",
+   "fields": {
+    "queued": "doors light, one per door in door order",
+    "deadline_else_template": "the page turn's hold point for the committed door",
+    "input_tokens": "160",
+    "output_tokens": "64",
+    "output_fields": "`title` ≤ 48, `line` ≤ 200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.job.bark_pack",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.3 Jobs (`nar.job.*`)",
+   "fields": {
+    "queued": "after the intros, one per door, for the destination genre's primary faction",
+    "deadline_else_template": "entry of the next Folio",
+    "input_tokens": "140",
+    "output_tokens": "128",
+    "output_fields": "8 strings ≤ 90 named `idle_0`, `idle_1`, `curious`, `suspicious`, `searching`, `lost`, `alert_0`, `alert_1` (§8.8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.job.ending_epilogue",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.3 Jobs (`nar.job.*`)",
+   "fields": {
+    "queued": "run end, one per present slot in slot order",
+    "deadline_else_template": "leaving the run-end screen",
+    "input_tokens": "200",
+    "output_tokens": "64",
+    "output_fields": "`line` ≤ 200"
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.job.codex_story",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.3 Jobs (`nar.job.*`)",
+   "fields": {
+    "queued": "opening a Folio Leaf in the Margin",
+    "deadline_else_template": "none",
+    "input_tokens": "220",
+    "output_tokens": "160",
+    "output_fields": "`title` ≤ 48, `text` ≤ 600"
+   },
+   "also_in": []
+  },
+  {
+   "id": "nar.job.codex_item",
+   "kind": "nar",
+   "owner": "18",
+   "section": "18 9.3 Jobs (`nar.job.*`)",
+   "fields": {
+    "queued": "opening an item in the Index",
+    "deadline_else_template": "none",
+    "input_tokens": "140",
+    "output_tokens": "64",
+    "output_fields": "`flavor` ≤ 140"
+   },
+   "also_in": []
+  }
+ ]
+}

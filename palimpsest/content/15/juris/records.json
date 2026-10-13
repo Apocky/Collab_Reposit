@@ -1,0 +1,410 @@
+{
+ "schema": "15.table_row",
+ "records": [
+  {
+   "id": "juris.region.eu",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "AT, BE, BG, CY, CZ, DE, DK, EE, ES, FI, FR, GR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK (EU-27) and IS, LI, NO (EEA)"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.be",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "BE (after `eu`)"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.nl",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "NL (after `eu`)"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.uk",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "GB"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.us",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "US, PR, GU, VI, AS, MP"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.ca",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "CA"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.au",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "AU"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.br",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "BR"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.kr",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "KR"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.jp",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "JP"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.region.cn",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.1 Region resolution",
+   "fields": {
+    "countries": "CN (mainland; HK, MO and TW use `default`)"
+   },
+   "also_in": [
+    "15 8.3 Region profiles"
+   ]
+  },
+  {
+   "id": "juris.paid_random_items_enabled",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "and",
+    "behaviour": "compile-time false; never flipped (SEP-5); not merged, because no profile may set it"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.store_enabled",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "true",
+    "strict": "and",
+    "behaviour": "false hides the fiat store"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.purchases_default_on",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "and",
+    "behaviour": "new accounts start with purchases off"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.minor_age",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "int",
+    "default": "18",
+    "strict": "max",
+    "behaviour": "a platform age below this value marks the account minor (§8.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.vat_inclusive_display",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "prices shown tax-inclusive"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.withdrawal_waiver_consent",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "§7.3 checkbox"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.refund_window_days",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "int",
+    "default": "14",
+    "strict": "max",
+    "behaviour": "§7.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.minor_refund_window_days",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "int",
+    "default": "90",
+    "strict": "max",
+    "behaviour": "§7.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.odds_public_pages",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "true",
+    "strict": "or",
+    "behaviour": "§3.11.3, §5.6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.draw_log_retention_days",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "int",
+    "default": "1826",
+    "strict": "max",
+    "behaviour": "§4.4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.minor_chat_default",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "int: 0 = `friends_only`, 1 = `quick_ping_only`",
+    "default": "0",
+    "strict": "max",
+    "behaviour": "§8.5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.child_data_consent_age",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "int",
+    "default": "13",
+    "strict": "max",
+    "behaviour": "below it, without verified guardian consent: offline-only profile, no chat, no analytics"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.minor_playtime_window",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "minors play online only 20:00 to 21:00 local time on Fridays, Saturdays, Sundays and public holidays"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.real_name_required",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "publisher real-name check before online play"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.minor_store_block",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "fiat store hidden for minors"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.minor_inkwell_block",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "Inkwell pulls and Reliquary opening hidden for minors; earning and banking continue, so nothing is lost if the block lifts"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.no_random_trading",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "true",
+    "strict": "or",
+    "behaviour": "no transfer of any randomized reward (always true; SEP-7)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.dfa_watch",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "publication of the EU Digital Fairness Act text opens a compliance review due within 30 days"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.kr_domestic_representative",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "KR representative designation is active and named on the odds pages"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.fr_store_text",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "bool",
+    "default": "false",
+    "strict": "or",
+    "behaviour": "store, odds pages and purchase dialogs must be available in French"
+   },
+   "also_in": []
+  },
+  {
+   "id": "juris.flag.invasion_minor_default",
+   "kind": "juris",
+   "owner": "15",
+   "section": "15 8.2 Flags",
+   "fields": {
+    "kind": "int: 0 = off, 1 = on",
+    "default": "0",
+    "strict": "min",
+    "behaviour": "invasions (Canon §17.9) start off for minor-flagged accounts, both opening their own runs (`mode.invasion_open`) and invading others; only a guardian enables them"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,135 @@
+{
+ "schema": "02.table_row",
+ "records": [
+  {
+   "id": "perf.deck.sim.tick_mean",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "5.0 ms over 3,600 ticks of `perf_saturation_4p`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.sim.tick_p99",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "8.0 ms over the same ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.sim.tick_worst",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "14.5 ms for any single tick of `perf_saturation_4p` and of `perf_spike_4p`, which adds 4 explosions, 32,768 settled sound cells and a full liquid run on one tick"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.hash_ms",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "4.0 ms on a worker thread"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.gen.folio_p50_ms",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "110 ms to generate one Folio (doc 12 §6.3) on 4 threads: the sim thread and 3 compute workers"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.gen.folio_p99_ms",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "260 ms, same conditions"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.gen.folio_max_ms",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "900 ms hard cap including 3 retries and the fallback (doc 12 §6.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.load.folio_ms",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "1,500 ms from exit choice to the first frame of the new Folio, hidden by the page turn"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.mem.ram",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "6,144 MiB resident: sim and checkpoints 384, content 192, CPU-side assets 1,408, render CPU 768, audio 256, UI and fonts 128, net 64, mods 256, Scribe 1,024, code and stacks 512, headroom 1,152"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.mem.vram",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "2,560 MiB: entity textures 896, block arrays 32, chunk quads 64, light and bleed fields 24, render targets 160, shadow maps 48, skinned meshes 384, particles and decals 96, UI atlases 96, LUTs and misc 48, headroom 712"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.frame.gpu",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "14.0 ms: shadows 1.4, depth prepass 0.8, voxels 2.6, entities 2.0, viewmodel 0.5, liquids and translucent 1.0, particles 0.9, decals 0.3, post 1.6, AA 0.7, UI 0.5, transition or bleed 0.4, headroom 1.2 (sum 13.9)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.deck.net.host_kbps",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "384 kbit/s host upstream in total (doc 16 §15): with 3 clients, 128 kbit/s per peer (96 kbit/s snapshots, 32 kbit/s reliable channels); with 3 clients and an invader, 96 kbit/s per peer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "perf.ci.bot_tps",
+   "kind": "perf",
+   "owner": "02",
+   "section": "02 15. Performance budgets",
+   "fields": {
+    "budget": "≥ 6,000 ticks per second (100× real time) per run of scenario `bot_typical`: Standard mode, 2 Pilgrim bots, doc 13 director population, `EMIT_VIEW` off, `HASH_AT_60` on, one core of the GitHub `ubuntu-24.04` x86_64 runner. That is a mean tick of at most 166 µs. A 100 to 150 minute run takes 60 to 90 s, so the 200 nightly runs (§16) cost 4.2 core-hours at the 125-minute average."
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,208 @@
+{
+ "schema": "13.table_row",
+ "records": [
+  {
+   "id": "fac.errata",
+   "kind": "fac",
+   "owner": "13",
+   "section": "00 15. Factions",
+   "fields": {
+    "members": "player characters, allied Errata, hirelings",
+    "default_stance_toward_fac_errata": "allied"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.editors",
+   "kind": "fac",
+   "owner": "13",
+   "section": "00 15. Factions",
+   "fields": {
+    "members": "Editors and their Red Ink servants; appear in every genre",
+    "default_stance_toward_fac_errata": "hostile; also hostile to natives carrying Contradicted items"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.margin",
+   "kind": "fac",
+   "owner": "13",
+   "section": "00 15. Factions",
+   "fields": {
+    "members": "hub NPCs",
+    "default_stance_toward_fac_errata": "allied, non-combat"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.neutral",
+   "kind": "fac",
+   "owner": "13",
+   "section": "00 15. Factions",
+   "fields": {
+    "members": "wandering vendors and non-combatants",
+    "default_stance_toward_fac_errata": "neutral until attacked"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.wild.mythic_fantasy",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.2 Stances and the hostility matrix",
+   "fields": {
+    "kingsguard_150": "hostile [2]",
+    "mage_conclave_200": "hostile [2]",
+    "orc_warband_600": "hostile [2]",
+    "fac_wild_mythic_fantasy": "neutral [2]",
+    "fac_editors": "hostile [1]",
+    "fac_neutral": "hostile [2]"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.kill_vendor",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "kill an F vendor or quest giver",
+    "to_faction_f": "−500; −150 unwitnessed",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.execute",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "kill a surrendered F member",
+    "to_faction_f": "−200",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.kill_member",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "kill an F member",
+    "to_faction_f": "−150; −40 unwitnessed",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.damage_member",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "damage an F member, first time per member per 600 ticks",
+    "to_faction_f": "−50",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.kill_enemy_of",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "kill an entity hostile to F within 24000 mm of a living F member",
+    "to_faction_f": "`+min(120, floor_div(20 × rank_xp_bp, 10000))`",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.spare",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "spare a surrendered F member",
+    "to_faction_f": "+60",
+    "witness": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.pickpocket_caught",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "a failed pickpocket attempt on an F member (doc 09 §13.7)",
+    "to_faction_f": "−100",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.theft",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "take an item from an F-owned container or an F member's inventory",
+    "to_faction_f": "−100",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.trespass",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "ignore a territory warning for 120 ticks",
+    "to_faction_f": "−50",
+    "witness": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.gift",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "gift through dialogue, once per Folio per faction",
+    "to_faction_f": "`+min(100, isqrt(item.value))`",
+    "witness": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.free_captive",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "free a captive of F",
+    "to_faction_f": "+150; +100 more when it answers a `gpv.evt.plea` within 1800 ticks (doc 12 §19)",
+    "witness": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "fac.rep.desecrate",
+   "kind": "fac",
+   "owner": "13",
+   "section": "13 12.3 Reputation events",
+   "fields": {
+    "event": "destroy an F shrine or banner block",
+    "to_faction_f": "−75",
+    "witness": "yes"
+   },
+   "also_in": []
+  }
+ ]
+}

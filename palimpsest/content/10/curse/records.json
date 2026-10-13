@@ -1,0 +1,533 @@
+{
+ "schema": "10.table_row",
+ "records": [
+  {
+   "id": "curse.leaden",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "10000",
+    "effect_while_equipped": "the item's mass in the bearer's `carried_g` (doc 11 §14.1) × `(10000 + m)`; its stored `mass_g` is unchanged"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.thirsting",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "2500",
+    "effect_while_equipped": "natural HP regeneration × `(10000 − m)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.fumbling",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "SLT −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.feeble",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "PWR −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.sluggish",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "AGI −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.frail",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "TGH −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.addled",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "MEM −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.myopic",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "SGT −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.muffled",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "HRG −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.ill_starred",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "5",
+    "effect_while_equipped": "FAT −`m` and SER −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.blunted",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "weapons, `cat.offhand`",
+    "unit": "1000",
+    "effect_while_equipped": "−`m` Bp in the additive bucket (Canon §10.5 step 1) of every hit the bearer deals"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.misfire",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "`cat.weapon_ranged`, `cat.wand`",
+    "unit": "300",
+    "effect_while_equipped": "+`m` Bp to the base-function failure chance (Canon §5.5), rolled at the Canon §5.5 cadence even when Contradiction gives 0; a wand's failed zap is a doc 06 fizzle, so its charge is spent for nothing"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.dulled",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "weapons",
+    "unit": "500",
+    "effect_while_equipped": "crit chance gear term −`m` Bp (Canon §6.4 row 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.loud",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "2",
+    "effect_while_equipped": "every noise the bearer emits +`m` dB (doc 09)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.beacon",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "2",
+    "effect_while_equipped": "the bearer is a dynamic light source of level `min(15, 2 + m)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.ravenous",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "1",
+    "effect_while_equipped": "−`m` satiation on Needs ticks where `floor_div(t, 60) % 4 == 0`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.brittle",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "weapons, `cat.armor`, `cat.offhand`, `cat.ward_gen`",
+    "unit": "500",
+    "effect_while_equipped": "the bearer's `resist[t]` for `dmg.slash`, `dmg.pierce` and `dmg.blunt` −`m` Bp (Canon §10.2), before the Canon §10.5 step-4 clamp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.bloodprice",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "weapons, `cat.wand`, `cat.offhand`",
+    "unit": "50",
+    "effect_while_equipped": "each activation (a melee swing, a shot, a zap or an off-hand use) costs `max(1000, mul_bp(max_hp_mhp, m))` mHP as a `dmg.true` hit on the bearer entering Canon §10.5 at step 4 (no crit, no chip floor, no buildup); the hit never lowers HP below 1,000 mHP. An item pays at most once per 30 ticks (the Canon §5.5 failure cadence); activations inside that window are free, so at `p = 3` the cost is at most 3% of Max HP per second"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.backlash",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "weapons",
+    "unit": "500",
+    "effect_while_equipped": "each hit returns `mul_bp(HP damage dealt, m)` to the wielder as a `dmg.true` hit by the bloodprice rule (step 4, never below 1,000 mHP); a return of 0 deals nothing"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.dread",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "10",
+    "effect_while_equipped": "composure regeneration 0; max composure −`m`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.red_letter",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "8000",
+    "effect_while_equipped": "every `fac.editors` member within `m` mm with line of sight targets the bearer (doc 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.siphon",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "250",
+    "effect_while_equipped": "aether regeneration −`m` m-aether per s, floored at 0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.greed",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "equipment",
+    "unit": "1500",
+    "effect_while_equipped": "each fresh Lucre pile the bearer picks up (doc 11 §9.1) × `(10000 − m)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.fragile_ward",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "`cat.ward_gen`",
+    "unit": "1500",
+    "effect_while_equipped": "ward capacity × `(10000 − m)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.spoiled",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "`cat.potion`",
+    "unit": "10000",
+    "effect_while_equipped": "drinking also adds `m` mTox to `res.toxicity`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.misprint",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "`cat.text`",
+    "unit": "—",
+    "effect_while_equipped": "targeted: the target is a random eligible item (1 `rng.ident` draw); untargeted: positive effects × 5000 instead of × 7500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.backfire",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "`cat.wand`",
+    "unit": "500",
+    "effect_while_equipped": "each zap rolls `roll_bp(m)` on `rng.ident`; success: the effect originates at and targets the zapper"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.leaking",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.3 Curse affixes",
+   "fields": {
+    "applies_to": "`cat.wand`",
+    "unit": "—",
+    "effect_while_equipped": "a zap after which `zaps_total % (4 − p) == 0` spends one extra charge; inactive when Disconnected"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.bloodthirst",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "`cat.weapon_melee`",
+    "drawback_unit": "the bearer loses `mul_bp(max_hp_mhp, m)` mHP per s through the Canon §2.3 accumulator, never below 1,000 mHP; this is HP loss, not a hit (100)",
+    "boon_unit": "each hostile kill credited to the bearer (Canon §15.1) heals `mul_bp(max_hp_mhp, m)` mHP (1000); each crit dealt with this weapon heals `mul_bp(HP damage dealt, m)` mHP (2000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.fury",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "weapons",
+    "drawback_unit": "each hit dealt with this weapon returns `mul_bp(HP damage dealt, m)` to the wielder by the `curse.backlash` rule (1500)",
+    "boon_unit": "+`m` Bp in the additive bucket (Canon §10.5 step 1) of every hit dealt with this weapon (4000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.executioner",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "weapons",
+    "drawback_unit": "−`m` Bp in the additive bucket of every hit dealt with this weapon to a target whose HP before the hit is above half its Max HP (2500)",
+    "boon_unit": "+`m` Bp in the additive bucket of every hit dealt with this weapon to a target whose HP before the hit is at most half its Max HP (6000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.glass",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "weapons",
+    "drawback_unit": "TGH −`m` (20)",
+    "boon_unit": "crit damage multiplier gear term +`m` Bp (Canon §6.4 row 14) (5000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.overcharge",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "`cat.wand`",
+    "drawback_unit": "each zap costs `max(1000, mul_bp(max_hp_mhp, m))` mHP by the `curse.bloodprice` rule, at most once per 30 ticks (300)",
+    "boon_unit": "a zap after which `zaps_total % 2 == 0` spends no charge; inactive when Disconnected (no unit)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.wildfire",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "`cat.wand`",
+    "drawback_unit": "+`m` Bp to the zap's base-function failure chance by the `curse.misfire` rule (1000)",
+    "boon_unit": "the zap's positive magnitudes (doc 06 `mag_chain`, heal and ward) × `(10000 + m)` (5000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.bulwark",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "`cat.armor`, `cat.offhand`",
+    "drawback_unit": "the item's mass in `carried_g` × `(10000 + m)`, by the `curse.leaden` rule (15000)",
+    "boon_unit": "poise +`m` (Canon §6.4 row 18) (20); TGH +`m` (10)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.thorns",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "`cat.armor`, `cat.offhand`",
+    "drawback_unit": "healing the bearer receives × `(10000 − m)` (3000)",
+    "boon_unit": "each hit that deals HP damage to the bearer returns `mul_bp(HP damage taken, m)` to its attacker as a `dmg.true` hit entering Canon §10.5 at step 4 (no crit, no chip floor, no buildup); a return of 0 deals nothing, and a return never causes another return (3000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.aegis",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "`cat.ward_gen`",
+    "drawback_unit": "TGH −`m` (15)",
+    "boon_unit": "ward capacity × `(10000 + m)` (6000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.titan",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "equipment",
+    "drawback_unit": "AGI −`m` (20)",
+    "boon_unit": "PWR +`m` and BRN +`m` (15 each)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.seer",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "equipment",
+    "drawback_unit": "SGT −`m` (25)",
+    "boon_unit": "ITU +`m` (25); HRG +`m` (10)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.gambler",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "equipment",
+    "drawback_unit": "PRV −`m` (25)",
+    "boon_unit": "SER +`m` (20); FAT +`m` (10)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.miser",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "equipment",
+    "drawback_unit": "healing the bearer receives × `(10000 − m)` (2000)",
+    "boon_unit": "each fresh Lucre pile the bearer picks up (doc 11 §9.1) × `(10000 + m)` (3000)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.hush",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "equipment",
+    "drawback_unit": "HRG −`m` (25)",
+    "boon_unit": "every noise the bearer emits −`m` dB (doc 09) (6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.nightmare",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "equipment",
+    "drawback_unit": "composure regeneration 0 and max composure −`m`, by the `curse.dread` rule (30)",
+    "boon_unit": "crit chance gear term +`m` Bp (Canon §6.4 row 13) (1500)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "curse.pact.transfusion",
+   "kind": "curse",
+   "owner": "10",
+   "section": "10 7.8 Pact curses",
+   "fields": {
+    "applies_to": "equipment",
+    "drawback_unit": "natural HP regeneration × `(10000 − m)` (10000)",
+    "boon_unit": "aether regeneration +`m` m-aether per s (1500)"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,717 @@
+{
+ "schema": "12.table_row",
+ "records": [
+  {
+   "id": "gpv.layout.keep",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "20 25 35 15 5",
+    "two_storey_bp": "1500",
+    "open_bp": "1000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.manor",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "25 30 30 10 5",
+    "two_storey_bp": "1500",
+    "open_bp": "500",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.labyrinth",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "30 40 20 10 0",
+    "two_storey_bp": "1000",
+    "open_bp": "0",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.ship",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "20 35 30 15 0",
+    "two_storey_bp": "1000",
+    "open_bp": "0",
+    "start_storey": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.arcology",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "20 30 30 15 5",
+    "two_storey_bp": "2500",
+    "open_bp": "2500",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.ruins",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "15 25 35 15 10",
+    "two_storey_bp": "1000",
+    "open_bp": "6000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.frontier",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "20 25 35 15 5",
+    "two_storey_bp": "500",
+    "open_bp": "7000",
+    "start_storey": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.streets",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "25 30 30 10 5",
+    "two_storey_bp": "2000",
+    "open_bp": "5000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.terraces",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "20 25 30 15 10",
+    "two_storey_bp": "2500",
+    "open_bp": "6000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.foundry",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "15 25 35 15 10",
+    "two_storey_bp": "2500",
+    "open_bp": "2000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.woodland",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "15 25 35 15 10",
+    "two_storey_bp": "1500",
+    "open_bp": "8000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.temple",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "15 20 35 20 10",
+    "two_storey_bp": "2000",
+    "open_bp": "4000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.dream",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "20 25 30 15 10",
+    "two_storey_bp": "3000",
+    "open_bp": "5000",
+    "start_storey": "1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.office",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "40 40 20 0 0",
+    "two_storey_bp": "0",
+    "open_bp": "0",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.blank",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "50 40 10 0 0",
+    "two_storey_bp": "0",
+    "open_bp": "10000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.layout.palimpsest",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 3.4 Layout styles (`gpv.layout.*`)",
+   "fields": {
+    "fp_weights": "15 25 35 15 10",
+    "two_storey_bp": "2000",
+    "open_bp": "3000",
+    "start_storey": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.light_failure",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "the target room's fixtures go dark for 600 ticks",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.weather_front",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "1800 ticks: fog +1 per 8 m, doc 09 sound attenuation × 12000",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.distant_noise",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "`ev.noise` 70 dB at the target room's center; its target rooms are those at least 2 graph hops from every Erratum's room",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.tremor",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "fires the room's falling debris, else drops 2 `block.rubble`",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.whispers",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "−5 composure (× the Canon §5.7 MYTHOS composure factor, doc 04) to each Erratum there with `light_at < 8`",
+    "requires": "MYT ≥ 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.boon",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "`st.blessed` applied directly (30 s) to each Erratum there",
+    "requires": "MYT ≥ 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.lore_echo",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "a lore object with an unread story event appears (§20)",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.editor_glimpse",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "2,000,000 ml (2 full cells) of `liq.red_ink` appear at the room's center floor and spread by doc 03's liquid rules",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.gravity_shift",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "every gravity-flip volume toggles for 600 ticks",
+    "requires": "flip cells"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.door_slam",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "ambient",
+    "effect": "the open door nearest an Erratum closes and carries `protect` for 600 ticks",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.wandering_vendor",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "a `fac.neutral` vendor stays 1800 ticks (doc 11)",
+    "requires": "`unlock.room.wandering_scribe`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.genre_storm",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "a dynamic zone (§14.3) of the Folio genre's top-weight lattice neighbor (§5.2, or §5.3 return weights; ties to lattice order; Cyberpunk → Hardboiled Noir) covers the target room for 1200 ticks, moving every 400 ticks to that room's lowest-`NodeId` non-safe neighbor",
+    "requires": "`unlock.event.genre_storms`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.patrol_shift",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "doc 13 spawns a 1000-mSKE wave at the spawn anchor nearest the Colophon, walking toward the Incipit",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.ambush",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "doc 13 spawns a 2000-mSKE wave split over the 2 ambush anchors of the target room (§12; 0 or 2 more draws)",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.reinforcements",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "doc 13 spawns a 3000-mSKE wave at the qualifying anchor farthest from every Erratum",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.plea",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "a bound `npc.captive.<genre_suffix>` of the zone genre (doc 13 §13.1, trader faction) appears in the target room; freeing it (60-tick interact) within 1800 ticks pays doc 13's `fac.rep.free_captive` with its plea bonus (+150, then +100 more) and a `soldier` hireling offer (doc 13 §13.4); it fulfils `law.mythic_fantasy.oathbound`",
+    "requires": "not the Unwritten"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.duel_challenge",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "a champion carrying the aspect set's first aspect (doc 13 §10.4) challenges the party; the first Erratum to accept (interact) duels it behind a barrier of `protect` cells for at most 1800 ticks",
+    "requires": "VRV ≥ 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.flood",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "the target room's lowest-index filled basin releases 20,000,000 ml of its liquid over 600 ticks",
+    "requires": "a filled basin in the room"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.fire_outbreak",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "ignites the flammable block nearest the room center (doc 03)",
+    "requires": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.lockdown",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative, electronic",
+    "effect": "the doors of the target room and its neighbors shut and carry `protect` for 900 ticks; cameras there activate (hackable, doc 09)",
+    "requires": "TEC ≥ 3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.evt.redaction_sweep",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 19.1 Archetypes",
+   "fields": {
+    "class": "narrative",
+    "effect": "a `hazard.redaction_bar` sweeps the lowest-index corridor adjoining the target room once",
+    "requires": "TEC ≥ 1; the room has a corridor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.origin.foundling",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`orphan`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.origin.heir",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`noble`, `rival_kin`",
+    "domains": "oath, empire, jade"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.origin.apprentice",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`trained`",
+    "domains": "machine, steam, data"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.rise.oath_sworn",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`noble` or `trained`",
+    "grants": "`oath`",
+    "domains": "oath, sword"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.rise.relic_found",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`relic`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.rise.pact",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`orphan`",
+    "grants": "`pact`",
+    "domains": "bargain, hex, deep"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.deed.slew_beast",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`relic` or `oath`",
+    "grants": "`renown`",
+    "domains": "wyrm, wolf, sea"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.deed.built_wonder",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`trained`",
+    "grants": "`renown`, `wonder`",
+    "domains": "brass, clock, chrome"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.deed.stole_fire",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`pact`",
+    "grants": "`renown`, `curse`",
+    "domains": "flame, star, data"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.fall.betrayed",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`rival_kin` or `renown`",
+    "grants": "`betrayed`",
+    "domains": "lie, money, blood"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.fall.hubris",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`renown`",
+    "grants": "`fallen`",
+    "domains": "hubris, star, sky"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.fall.cursed",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "`curse` or `pact`",
+    "grants": "`fallen`",
+    "domains": "moon, madness, crypt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.met_rival",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`rival_kin`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.won_fame",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`renown`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.ennobled",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`noble`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.orphaned",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`orphan`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.found_relic",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`relic`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.apprenticed",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`trained`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.made_pact",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`pact`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.bridge.was_cursed",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`curse`",
+    "domains": "any"
+   },
+   "also_in": []
+  },
+  {
+   "id": "gpv.story.erasure.scraped",
+   "kind": "gpv",
+   "owner": "12",
+   "section": "12 20.2 Events and rationalization",
+   "fields": {
+    "requires": "—",
+    "grants": "`erased`",
+    "domains": "any"
+   },
+   "also_in": []
+  }
+ ]
+}

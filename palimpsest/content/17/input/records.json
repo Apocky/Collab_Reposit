@@ -1,0 +1,457 @@
+{
+ "schema": "17.table_row",
+ "records": [
+  {
+   "id": "input.attack",
+   "kind": "input",
+   "owner": "17",
+   "section": "05 1.7 Inputs consumed",
+   "fields": {
+    "bit_doc_02": "0 `ATTACK_PRIMARY`",
+    "use_in_this_chapter": "light attack, trigger, draw, beam"
+   },
+   "also_in": [
+    "17 12.1 Action list"
+   ]
+  },
+  {
+   "id": "input.alt",
+   "kind": "input",
+   "owner": "17",
+   "section": "05 1.7 Inputs consumed",
+   "fields": {
+    "bit_doc_02": "1 `ATTACK_SECONDARY`",
+    "use_in_this_chapter": "guard, ADS, off-hand attack"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.reload",
+   "kind": "input",
+   "owner": "17",
+   "section": "05 1.7 Inputs consumed",
+   "fields": {
+    "bit_doc_02": "2",
+    "use_in_this_chapter": "reload, clear a jam; taunt while guarding with a shield (§19.2)"
+   },
+   "also_in": [
+    "17 12.1 Action list"
+   ]
+  },
+  {
+   "id": "input.interact",
+   "kind": "input",
+   "owner": "17",
+   "section": "05 1.7 Inputs consumed",
+   "fields": {
+    "bit_doc_02": "7",
+    "use_in_this_chapter": "struggle while grappled (§19.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.heavy",
+   "kind": "input",
+   "owner": "17",
+   "section": "05 1.7 Inputs consumed",
+   "fields": {
+    "bit_doc_02": "8 `MELEE_QUICK`",
+    "use_in_this_chapter": "heavy charge; shove or shield bash while guarding; quick melee with a ranged weapon"
+   },
+   "also_in": [
+    "17 12.1 Action list"
+   ]
+  },
+  {
+   "id": "input.throw",
+   "kind": "input",
+   "owner": "17",
+   "section": "05 1.7 Inputs consumed",
+   "fields": {
+    "bit_doc_02": "10",
+    "use_in_this_chapter": "cook and throw the quickbar throwable"
+   },
+   "also_in": [
+    "17 12.1 Action list"
+   ]
+  },
+  {
+   "id": "input.move",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "A2",
+    "sim": "`move_x`, `move_z`",
+    "action": "`input.look`",
+    "kind_2": "A2",
+    "sim_2": "`yaw`, `pitch`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.crouch",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "B",
+    "sim": "bit 4",
+    "action": "`input.sprint`",
+    "kind_2": "B",
+    "sim_2": "bit 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.dodge",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "B",
+    "sim": "bit 6",
+    "action": "`input.interact`",
+    "kind_2": "B",
+    "sim_2": "bit 7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ping",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "B",
+    "sim": "bit 23",
+    "action": "`input.walk`",
+    "kind_2": "B",
+    "sim_2": "bit 24"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cast_wheel",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "B",
+    "sim": "`WHEEL_SELECT` on release",
+    "action": "`input.speak_vitals`",
+    "kind_2": "B",
+    "sim_2": "client (§13.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.pray",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "B",
+    "sim": "`Pray` intent",
+    "action": "`input.examine`",
+    "kind_2": "B",
+    "sim_2": "`Examine` intent"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.camera",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "B",
+    "sim": "client (first/third person)",
+    "action": "`input.menu_book`, `input.menu_map`, `input.menu_journal`, `input.menu_character`, `input.menu_exits`",
+    "kind_2": "B",
+    "sim_2": "client"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.pause",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "B",
+    "sim": "client",
+    "action": "`input.scoreboard`",
+    "kind_2": "B",
+    "sim_2": "client"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.look_gyro",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "kind": "A2",
+    "sim": "`yaw`, `pitch`",
+    "action": "`input.hold_breath`",
+    "kind_2": "B",
+    "sim_2": "`SetBreathHold { on }` intent on press and release"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.menu",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "1",
+    "active_when": "any `ui.menu.*` screen, `ui.hud.hack` or `ui.hud.pickpocket` is open",
+    "bindings_it_changes": "the menu bindings of §12.3 and §12.4 (`input.ui_*`, `input.examine`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.wheel",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "2",
+    "active_when": "a wheel is open (§6.5)",
+    "bindings_it_changes": "the right stick or the mouse selects a socket; releasing the input that opened the wheel commits the selection"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.lockpick",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "3",
+    "active_when": "`ui.hud.lockpick` runs a manual lock or hack attempt (§10.11, §10.12)",
+    "bindings_it_changes": "only `input.attack` (set the pin), `input.ui_back` (abandon) and look"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.placement",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "4",
+    "active_when": "placement mode (§6.2)",
+    "bindings_it_changes": "`input.attack` confirms, `input.alt` cancels, `input.weapon_next` / `input.weapon_prev` rotate by 16384 Bam"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.casting",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "5",
+    "active_when": "the local cast machine, as the client last knows it, is in Winding, Overcasting, Channeling or Charging (doc 06 §3.5)",
+    "bindings_it_changes": "gamepad base-layer B is `input.cast_cancel`; a second B within 18 frames dodges (§12.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.ghost",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "6",
+    "active_when": "the local Erratum is a ghost (§10.4)",
+    "bindings_it_changes": "`input.attack` marks, `input.interact` opens doors and presses switches and levers, `input.ping` pings, `input.weapon_next` / `input.weapon_prev` spectate, `input.jump` returns to the ghost body"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.downed",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "7",
+    "active_when": "the local Erratum holds `st.downed` (§10.4a)",
+    "bindings_it_changes": "only look, crawl (`input.move`), `input.ping` and `input.chat`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.margin",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "8",
+    "active_when": "the local player is in the Margin hub (§11.1)",
+    "bindings_it_changes": "`input.menu_book` opens `ui.menu.margin_index` instead of `ui.menu.book`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.ctx.on_foot",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.1 Action list",
+   "fields": {
+    "rank": "9",
+    "active_when": "no other context applies",
+    "bindings_it_changes": "the preset's base bindings for every §12.1 action"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.mouse_sens_milli",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "100..=10000",
+    "default": "1000",
+    "rule": "`yaw_deg = counts × 22 × sens_milli / 1,000,000` (§12.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.ads_mult_bp",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "2500..=20000",
+    "default": "10000",
+    "rule": "multiplies mouse sensitivity while ADS (§12.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.invert_y",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "off, on",
+    "default": "off",
+    "rule": "negates the vertical look delta (§12.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.deadzone_inner_bp",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "0..=3000",
+    "default": "1200",
+    "rule": "radial inner deadzone (§12.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.deadzone_outer_bp",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "8000..=10000",
+    "default": "9500",
+    "rule": "radial outer deadzone; deflection rescales linearly between the two (§12.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.look_curve",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "`linear`, `classic`, `precise`",
+    "default": "`classic`",
+    "rule": "`r`, `r²` or `r³` of the rescaled deflection (§12.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.look_yaw_dps",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "60..=600",
+    "default": "240",
+    "rule": "stick yaw speed at full deflection, °/s (§12.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.look_pitch_dps",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "60..=600",
+    "default": "160",
+    "rule": "stick pitch speed at full deflection, °/s (§12.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.vibration_bp",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "0..=10000",
+    "default": "7000",
+    "rule": "multiplies every `ui.rumble.*` motor value (§16.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.trigger_bp",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "2000..=8000",
+    "default": "3000",
+    "rule": "trigger actuation point (§12.4)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.gyro_mode",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "`always`, `while_aiming`, `while_touching_right_pad`, `off`",
+    "default": "`while_aiming`",
+    "rule": "gyro activation (§12.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "input.cfg.aim_assist_gyro",
+   "kind": "input",
+   "owner": "17",
+   "section": "17 12.10 Device settings (`input.cfg.*`)",
+   "fields": {
+    "values": "off, on",
+    "default": "off",
+    "rule": "when on, gyro deltas receive aim assist at `low` at most (§12.6, §12.7)"
+   },
+   "also_in": []
+  }
+ ]
+}

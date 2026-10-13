@@ -1,0 +1,395 @@
+{
+ "schema": "12.table_row",
+ "records": [
+  {
+   "id": "law.mythic_fantasy.true_names",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "once the party has killed 3 NPCs of one enemy template in the Folio, Errata hits on that template add +1000 Bp"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.mythic_fantasy.oathbound",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "an Erratum who accepts a `gpv.evt.plea` and completes it in the same Folio gains `st.blessed` directly"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.gothic_horror.dread_escalation",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "clock",
+    "exact_effect": "dread meter, step 250, cap 2500 (below)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.gothic_horror.sanctified_ground",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "inside `room.shrine` and `secret.room.shrine`, Errata hits on undead- or fiend-tagged NPCs add +3000 Bp"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.cosmic_horror.dread_escalation",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "clock",
+    "exact_effect": "dread meter, step 300, cap 3000"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.cosmic_horror.non_euclidean",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "2 relink door pairs, period 3600 ticks (§9.4)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.cosmic_horror.forbidden_knowledge",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "reading a lore object costs the reader 5 composure (Canon §5.7 MYTHOS factor applies); the Folio story is solved at 2 distinct events instead of 3 (§20.4)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.space_opera.shipboard_systems",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "doors here are electronic; locked ones are hackable (doc 09)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.space_opera.hull",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "after stage `hazard`, while the Space Opera zones hold fewer than `floor_div(rooms_total, 4)` `hazard.hull_breach` panels, one panel goes to the first free hazard socket of the lowest-`NodeId` non-safe Space Opera room without one; no draws"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.cyberpunk.netrun",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "electronic hazards, locks and doors here are hackable (doc 09); hacking a camera disables its room's cameras for 1800 ticks"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.cyberpunk.corporate_response",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "each camera alarm makes doc 13's Director spawn a wave at once (ignoring its 900-tick spacing), at most 2 per Folio"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.post_apocalypse.scavenge",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "destroyed crates and barrels here drop 1 material of the genre's Canon §5.9 pool (doc 07)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.post_apocalypse.scarcity",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "resource-node yields × 15000 (doc 07); `2 × floor_div(rooms_total, 4)` extra ore veins (§11.2)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.weird_west.high_noon",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "binding",
+    "exact_effect": "`law_bound` target of duel techniques (doc 05). Standoff: aiming within 1024 Bam of a hostile ≤ 20,000 mm away while both move < 100 mm for 90 ticks gives the next shot within 60 ticks +5000 Bp and a direct `st.staggered`"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.hardboiled_noir.void_rules",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "clock",
+    "exact_effect": "keeps no meter: its complication checks roll a constant `dread_bp = 500`, which never escalates or resets"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.hardboiled_noir.leads",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "solving the Folio story (§20.4) also discovers the Folio's secret exit, if one exists"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.wuxia.qinggong",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "binding",
+    "exact_effect": "`law_bound` target of qinggong techniques (wall-run, glide; docs 04, 05); no other effect"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.wuxia.honor_duel",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "during an accepted `gpv.evt.duel_challenge`, other NPCs in the duel room never target the duelist (doc 13)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.steampunk.weird_science",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "grant",
+    "exact_effect": "`law_grants: [{component_class: gadget, axis: techne, tol_bonus: 2}]`"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.steampunk.clockwork",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "every puzzle room here uses the lever variant (§16.3)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.fairy_tale.rule_of_three",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "after 2 failed attempts at a lever puzzle, the correct order glows on the levers"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.fairy_tale.cold_iron",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "Errata hits with a weapon of primary material `mat.cold_iron` on fae-tagged NPCs add +2500 Bp"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.mythic_antiquity.hubris",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "on the tick the party's 40th kill in the Folio lands, if no Erratum has yet prayed at a `room.shrine` or `secret.room.shrine` altar in this Folio (doc 06 \"made at a shrine\"), the Director spawns one Nemesis (a `rank.champion` with the Folio's whole aspect set) at the anchor farthest from every Erratum; once per Folio. Doc 13 §10.1's budget yields 38 enemies in its reference Folio, so a party that clears that and the Folio's waves without praying meets the Nemesis near the end"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.mythic_antiquity.favor",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "each Erratum's first prayer per Folio at a `room.shrine` gains +50 favor before Canon §16.5 scaling (doc 06)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.oneiric.gravity_flip",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "2..=4 gravity-flip volumes (§9.5)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.oneiric.dream_doors",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "1 relink door pair, period 1800 ticks"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.redacted.dread_escalation",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "clock",
+    "exact_effect": "dread meter, step 250, cap 2500"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.redacted.censorship",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "additive",
+    "exact_effect": "items picked up here show a redacted name until `know.appraised` (doc 10)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.unwritten.editors_only",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "roster is `fac.editors` only; no shop and no Lucre containers (Canon §5.2)"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  },
+  {
+   "id": "law.ur_text.pure_reading",
+   "kind": "law",
+   "owner": "12",
+   "section": "12 4. World Laws (`law.*`, Canon §5.10)",
+   "fields": {
+    "kind": "structural",
+    "exact_effect": "records the Canon §5.5 override `C = 0`, `E = 0`"
+   },
+   "also_in": [
+    "12 4.1 Discovery in play (Canon §5.8, DECISIONS 56)"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,93 @@
+{
+ "schema": "06.table_row",
+ "records": [
+  {
+   "id": "school.evocation",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.evocation` (ATN)",
+    "glyphs_of_the_school": "forms bolt, orb, beam, cone, nova, chain; essences flame, frost, storm, arcane, thunder; modifiers widen, charged, split, pierce, volatile"
+   },
+   "also_in": []
+  },
+  {
+   "id": "school.abjuration",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.abjuration` (RSV)",
+    "glyphs_of_the_school": "forms aura, rune; essences ward, unmaking, hush; modifiers siphon, sculpt"
+   },
+   "also_in": []
+  },
+  {
+   "id": "school.alteration",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.alteration` (FOC)",
+    "glyphs_of_the_school": "forms touch, self, field, wall; essences acid, force, venom, swiftness, levitate, bind, polymorph, shape, gale; modifiers extend, anchor, heavy"
+   },
+   "also_in": []
+  },
+  {
+   "id": "school.conjuration",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.conjuration` (MEM)",
+    "glyphs_of_the_school": "form manifest; essences edge, shadow, summon, tide; modifier linger"
+   },
+   "also_in": []
+  },
+  {
+   "id": "school.illusion",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.illusion` (GUI)",
+    "glyphs_of_the_school": "essences mind, veil, dread, dominion, slumber; modifier hushed"
+   },
+   "also_in": []
+  },
+  {
+   "id": "school.restoration",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.restoration` (RES)",
+    "glyphs_of_the_school": "essences radiance, mend; modifier leech"
+   },
+   "also_in": []
+  },
+  {
+   "id": "school.divination",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.divination` (ITU)",
+    "glyphs_of_the_school": "essences lumen, sight, appraise, omen, psychometry; modifiers homing, keen"
+   },
+   "also_in": []
+  },
+  {
+   "id": "school.spellcraft",
+   "kind": "school",
+   "owner": "06",
+   "section": "06 7.1 Schools",
+   "fields": {
+    "skill_canon_7": "`skill.spellcraft` (LOG)",
+    "glyphs_of_the_school": "modifiers empower, reach, quicken, ricochet, delay, thrift, twin; every trigger and condition"
+   },
+   "also_in": []
+  }
+ ]
+}

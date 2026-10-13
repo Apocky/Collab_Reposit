@@ -1,0 +1,209 @@
+{
+ "schema": "12.table_row",
+ "records": [
+  {
+   "id": "lattice.challenge.gauntlet",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 6.3 Challenge kinds",
+   "fields": {
+    "w": "25",
+    "structure_rule_room_rule_challenge_8_2": "3 `room.gauntlet` nodes, inserted one at a time by splitting the non-RubricGate main-path edge whose start fraction is nearest 2500, 5000 and then 7500 Bp (ties to the lower index), recomputing the main path after each split",
+    "success": "no `ev.player_downed` and no Erratum `ev.entity_killed` in the Folio"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.challenge.siege",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 6.3 Challenge kinds",
+   "fields": {
+    "w": "20",
+    "structure_rule_room_rule_challenge_8_2": "`room.rule.arena` always fires; the Arena seals for 7200 ticks when the first Erratum enters it; doc 13 sends 8 waves of 1500 mSKE, one every 900 ticks (doc 13 §10.4)",
+    "success": "every siege-wave member is dead on the tick the seal ends"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.challenge.heist",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 6.3 Challenge kinds",
+   "fields": {
+    "w": "20",
+    "structure_rule_room_rule_challenge_8_2": "a `Treasury` attached to the main-path Room nearest fraction 6000 Bp by a `Locked(k)` edge, its `Key` on a dead end branching from the main-path Room nearest 3000 Bp; this is the Folio's one lock (§8.3)",
+    "success": "the Treasury door opens while no hostile has ever held `aware.alert` toward any Erratum in the Folio"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.challenge.duel",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 6.3 Challenge kinds",
+   "fields": {
+    "w": "15",
+    "structure_rule_room_rule_challenge_8_2": "a champion carrying the Folio's whole aspect set waits in the main-path Room adjacent to the Colophon (doc 13 §10.2 step 4)",
+    "success": "the champion is dead"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.challenge.race",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 6.3 Challenge kinds",
+   "fields": {
+    "w": "20",
+    "structure_rule_room_rule_challenge_8_2": "none",
+    "success": "an exit commits within 10800 ticks of entry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.annotated",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "60",
+    "excluded": "—",
+    "effect": "`n_secrets` + 2 (§17.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.bleeding",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "80",
+    "excluded": "RD, UW, UT; every Folio while `bleed_on` is 0",
+    "effect": "drift chance 10000 and one extra drift genre (`extra = 1` in §14.1), within the cap of 3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.brittle",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "60",
+    "excluded": "—",
+    "effect": "every worldgen `destructible` block (doors, crates, barrels, planks, glass, cracked walls) has half its doc 07 block HP"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.champions",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "60",
+    "excluded": "—",
+    "effect": "doc 13 doubles the budget champions and adds one aspect to the aspect set, at most 3 (doc 13 §7.3, §10.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.dense",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "100",
+    "excluded": "—",
+    "effect": "`density_bp` × 12500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.erased",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "40",
+    "excluded": "—",
+    "effect": "after stage `hazard`, 3 more `hazard.ink_seep`, each in a non-safe room by `range` on a free hazard socket (3 draws)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.flooded",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "60",
+    "excluded": "UW",
+    "effect": "every basin socket of a non-safe room fills (chance 10000); each `room.cistern` turns 2 more free floor areas into filled basins, no draw"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.sealed",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "40",
+    "excluded": "UW",
+    "effect": "D3 places no `room.shop`, so the Folio has no mid-Folio vendors or Fortune Engines (the Colophon and Interleaf keep theirs); chests `c + 2`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.silent",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "60",
+    "excluded": "—",
+    "effect": "sound carries farther: doc 09's per-block sound attenuation × 7000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.trapped",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "80",
+    "excluded": "—",
+    "effect": "`trap_bp` × 20000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.unlit",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "80",
+    "excluded": "—",
+    "effect": "`bright_bp` × 5000; worldgen fixtures emit `fixture_level - 2`, so `protect_r` drops by 2 (Gothic Horror 4 → 2); safe rooms are still spawn-proofed (§11.3 step 3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "lattice.marg.volatile",
+   "kind": "lattice",
+   "owner": "12",
+   "section": "12 22. Marginalia modifiers",
+   "fields": {
+    "w": "60",
+    "excluded": "UW",
+    "effect": "after stage `hazard`, `floor_div(rooms_total, 4)` more hazards, each one `weighted([1, 1])` (`flame_jet`, `oil_slick`) and one `range` over non-safe rooms with a free hazard socket (2 draws each)"
+   },
+   "also_in": []
+  }
+ ]
+}

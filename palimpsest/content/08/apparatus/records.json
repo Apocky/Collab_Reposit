@@ -1,0 +1,305 @@
+{
+ "schema": "08.table_row",
+ "records": [
+  {
+   "id": "apparatus.respirator.cloth",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 4.3 Breathing and respirators",
+   "fields": {
+    "filter_ticks": "1800",
+    "mass_g": "200",
+    "hearing": "0 dB",
+    "dep": "none",
+    "skins": "plague-doctor beak (gothic_horror), herb veil (fairy_tale), rag mask (post_apocalypse), silk face-cloth (wuxia)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.respirator.mask",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 4.3 Breathing and respirators",
+   "fields": {
+    "filter_ticks": "3600",
+    "mass_g": "600",
+    "hearing": "−3 dB",
+    "dep": "none",
+    "skins": "gas mask (steampunk, weird_west, hardboiled_noir), filter hood (cosmic_horror)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.respirator.rebreather",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 4.3 Breathing and respirators",
+   "fields": {
+    "filter_ticks": "7200",
+    "mass_g": "900",
+    "hearing": "−5 dB",
+    "dep": "techne",
+    "skins": "rebreather (cyberpunk, space_opera), breath-gill (redacted)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.vial",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "100",
+    "doses": "1",
+    "empty_mass_g": "60",
+    "value": "1",
+    "material": "glass",
+    "shatters_when_thrown": "yes",
+    "splash_radius_mm": "1000",
+    "deliveries": "drink, throw, coat",
+    "skins": "phial, ampul-vial, pill-gourd"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.flask",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "250",
+    "doses": "1",
+    "empty_mass_g": "150",
+    "value": "2",
+    "material": "glass",
+    "shatters_when_thrown": "yes",
+    "splash_radius_mm": "2000",
+    "deliveries": "drink, throw, coat",
+    "skins": "flask, stim-cartridge, pill jar, dewdrop bead"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.bottle",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "750",
+    "doses": "3",
+    "empty_mass_g": "400",
+    "value": "3",
+    "material": "glass",
+    "shatters_when_thrown": "yes",
+    "splash_radius_mm": "2500",
+    "deliveries": "drink, throw, coat",
+    "skins": "bottle, canteen-jet, wine jar"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.ampoule",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "50",
+    "doses": "1",
+    "empty_mass_g": "30",
+    "value": "2",
+    "material": "polymer",
+    "shatters_when_thrown": "never thrown",
+    "splash_radius_mm": "0",
+    "deliveries": "inject, drink",
+    "skins": "auto-injector (cyberpunk), hypo (space_opera), acupuncture needle (wuxia), bee-sting lancet (fairy_tale)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.grenade_shell",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "300",
+    "doses": "1",
+    "empty_mass_g": "200",
+    "value": "2",
+    "material": "ceramic",
+    "shatters_when_thrown": "yes",
+    "splash_radius_mm": "3000",
+    "deliveries": "throw",
+    "skins": "clay pot, thunder pellet, tin grenade, glass orb"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.waterskin",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "2000",
+    "doses": "8",
+    "empty_mass_g": "250",
+    "value": "3",
+    "material": "leather",
+    "shatters_when_thrown": "no",
+    "splash_radius_mm": "0",
+    "deliveries": "drink, pour, empty",
+    "skins": "waterskin, water bladder, gourd"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.canteen",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "1000",
+    "doses": "4",
+    "empty_mass_g": "300",
+    "value": "4",
+    "material": "metal",
+    "shatters_when_thrown": "no",
+    "splash_radius_mm": "0",
+    "deliveries": "drink, pour, empty",
+    "skins": "canteen, flask-tin"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.bucket",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "10000",
+    "doses": "0",
+    "empty_mass_g": "1500",
+    "value": "3",
+    "material": "wood",
+    "shatters_when_thrown": "no",
+    "splash_radius_mm": "0",
+    "deliveries": "pour, dump, empty",
+    "skins": "bucket, pail, jerrycan"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.crucible",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "1000",
+    "doses": "0",
+    "empty_mass_g": "1200",
+    "value": "8",
+    "material": "ceramic",
+    "shatters_when_thrown": "no",
+    "splash_radius_mm": "0",
+    "deliveries": "pour, empty",
+    "skins": "crucible, ladle"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.dewar",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "500",
+    "doses": "2",
+    "empty_mass_g": "800",
+    "value": "12",
+    "material": "metal",
+    "shatters_when_thrown": "no",
+    "splash_radius_mm": "0",
+    "deliveries": "drink, pour, empty",
+    "skins": "dewar, cryo-flask"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vessel.cask",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 6.1 Vessels (`cat.container`)",
+   "fields": {
+    "capacity_ml": "20000",
+    "doses": "0",
+    "empty_mass_g": "6000",
+    "value": "10",
+    "material": "wood",
+    "shatters_when_thrown": "no",
+    "splash_radius_mm": "0",
+    "deliveries": "pour, dump, empty; carried, never placed (Canon §4.3)",
+    "skins": "cask, drum, amphora"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.mortar",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 9.1 Apparatus (`apparatus.*`, `cat.tool`)",
+   "fields": {
+    "tier_values_t1_t5": "`mortar_bp` 9000, 10000, 11000, 12000, 13000",
+    "applies_to": "quality score (§9.5)",
+    "mass_g_t1_t5": "800, 1000, 1200, 1400, 1600"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.retort",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 9.1 Apparatus (`apparatus.*`, `cat.tool`)",
+   "fields": {
+    "tier_values_t1_t5": "`retort_bp = 10000 + 1000 × tier`",
+    "applies_to": "durations of beneficial effects",
+    "mass_g_t1_t5": "1500 + 300 × tier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.alembic",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 9.1 Apparatus (`apparatus.*`, `cat.tool`)",
+   "fields": {
+    "tier_values_t1_t5": "`alembic_bp = 10000 − 1500 × tier`; `alembic_tox_bp = 10000 − 800 × tier`",
+    "applies_to": "magnitudes of harmful effects in a potion whose primary effect is beneficial; that potion's toxicity",
+    "mass_g_t1_t5": "1500 + 300 × tier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.calcinator",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 9.1 Apparatus (`apparatus.*`, `cat.tool`)",
+   "fields": {
+    "tier_values_t1_t5": "`calc_bp = 10000 + 500 × tier`",
+    "applies_to": "magnitudes of every effect, harmful ones included (Morrowind)",
+    "mass_g_t1_t5": "2000 + 300 × tier"
+   },
+   "also_in": []
+  },
+  {
+   "id": "apparatus.vaporizer",
+   "kind": "apparatus",
+   "owner": "08",
+   "section": "08 9.1 Apparatus (`apparatus.*`, `cat.tool`)",
+   "fields": {
+    "tier_values_t1_t5": "none",
+    "applies_to": "vaporize delivery (§10.4)",
+    "mass_g_t1_t5": "1200"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,487 @@
+{
+ "schema": "09.table_row",
+ "records": [
+  {
+   "id": "aware.profile.humanoid",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "8000 / 24000",
+    "near_far_periph_half_bam": "6372 / 10012 / 18204",
+    "fill": "2500",
+    "aw_base": "20",
+    "sneak_base": "0",
+    "hear_db": "20",
+    "dv_mm": "0",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.sentry",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "10000 / 32000",
+    "near_far_periph_half_bam": "5461 / 8192 / 16384",
+    "fill": "3000",
+    "aw_base": "30",
+    "sneak_base": "0",
+    "hear_db": "18",
+    "dv_mm": "0",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.stalker",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "8000 / 20000",
+    "near_far_periph_half_bam": "6372 / 10012 / 18204",
+    "fill": "2500",
+    "aw_base": "25",
+    "sneak_base": "40",
+    "hear_db": "15",
+    "dv_mm": "2000",
+    "flags": "stealthy"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.beast",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "6000 / 16000",
+    "near_far_periph_half_bam": "8192 / 12743 / 21845",
+    "fill": "2000",
+    "aw_base": "25",
+    "sneak_base": "20",
+    "hear_db": "15",
+    "dv_mm": "2000",
+    "flags": "ignores light changes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.hound",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "6000 / 14000",
+    "near_far_periph_half_bam": "8192 / 12743 / 21845",
+    "fill": "2000",
+    "aw_base": "30",
+    "sneak_base": "0",
+    "hear_db": "10",
+    "dv_mm": "2000",
+    "flags": "scent; ignores disguises; bark alarm"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.undead",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "5000 / 12000",
+    "near_far_periph_half_bam": "5461 / 8192 / 0",
+    "fill": "2000",
+    "aw_base": "10",
+    "sneak_base": "0",
+    "hear_db": "25",
+    "dv_mm": "6000",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.construct",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "10000 / 30000",
+    "near_far_periph_half_bam": "4551 / 6372 / 0",
+    "fill": "3000",
+    "aw_base": "30",
+    "sneak_base": "0",
+    "hear_db": "20",
+    "dv_mm": "4000",
+    "flags": "hackable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.flier",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "8000 / 32000",
+    "near_far_periph_half_bam": "10923 / 16384 / 21845",
+    "fill": "2000",
+    "aw_base": "25",
+    "sneak_base": "0",
+    "hear_db": "20",
+    "dv_mm": "0",
+    "flags": "`θ_v` limit 16384"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.swarm",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "4000 / 8000",
+    "near_far_periph_half_bam": "32768 / 32768 / 32768",
+    "fill": "1500",
+    "aw_base": "10",
+    "sneak_base": "0",
+    "hear_db": "20",
+    "dv_mm": "4000",
+    "flags": "—"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.horror",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "0 / 0",
+    "near_far_periph_half_bam": "—",
+    "fill": "0",
+    "aw_base": "40",
+    "sneak_base": "30",
+    "hear_db": "5",
+    "dv_mm": "0",
+    "flags": "hearing only; hearing can alert; tremor"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.civilian",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "6000 / 16000",
+    "near_far_periph_half_bam": "6372 / 10012 / 18204",
+    "fill": "1500",
+    "aw_base": "10",
+    "sneak_base": "0",
+    "hear_db": "20",
+    "dv_mm": "0",
+    "flags": "crime triggers only (§15.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.boss",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "16000 / 40000",
+    "near_far_periph_half_bam": "10923 / 16384 / 24576",
+    "fill": "5000",
+    "aw_base": "60",
+    "sneak_base": "0",
+    "hear_db": "15",
+    "dv_mm": "4000",
+    "flags": "ignores disguises"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.editor",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "12000 / 32000",
+    "near_far_periph_half_bam": "8192 / 12743 / 21845",
+    "fill": "3500",
+    "aw_base": "50",
+    "sneak_base": "0",
+    "hear_db": "15",
+    "dv_mm": "8000",
+    "flags": "ignores disguises"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.camera",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "16000 / 16000",
+    "near_far_periph_half_bam": "8192 / 8192 / 0",
+    "fill": "timer",
+    "aw_base": "0",
+    "sneak_base": "0",
+    "hear_db": "—",
+    "dv_mm": "0 (8000 at local TEC ≥ 8)",
+    "flags": "§15.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.turret",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "12000 / 20000",
+    "near_far_periph_half_bam": "8192 / 8192 / 0",
+    "fill": "4000",
+    "aw_base": "30",
+    "sneak_base": "0",
+    "hear_db": "15",
+    "dv_mm": "8000",
+    "flags": "hackable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.drone",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "8000 / 20000",
+    "near_far_periph_half_bam": "10923 / 10923 / 0",
+    "fill": "2500",
+    "aw_base": "30",
+    "sneak_base": "0",
+    "hear_db": "20",
+    "dv_mm": "8000",
+    "flags": "spotlight 12; hackable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.ward",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "sphere 4000",
+    "near_far_periph_half_bam": "—",
+    "fill": "trip",
+    "aw_base": "0",
+    "sneak_base": "0",
+    "hear_db": "—",
+    "dv_mm": "—",
+    "flags": "ignores light and invisibility (§15.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.laser",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "segment",
+    "near_far_periph_half_bam": "—",
+    "fill": "trip",
+    "aw_base": "0",
+    "sneak_base": "0",
+    "hear_db": "—",
+    "dv_mm": "—",
+    "flags": "§15.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.tattler",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "6000 / 6000",
+    "near_far_periph_half_bam": "32768 / 32768 / 0",
+    "fill": "trip",
+    "aw_base": "0",
+    "sneak_base": "0",
+    "hear_db": "15",
+    "dv_mm": "0",
+    "flags": "§15.2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.profile.erratum",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 4.1 Perception profiles",
+   "fields": {
+    "near_far_mm": "12000 / 48000",
+    "near_far_periph_half_bam": "10923 / 10923 / 16384",
+    "fill": "2500",
+    "aw_base": "skill",
+    "sneak_base": "skill",
+    "hear_db": "—",
+    "dv_mm": "0",
+    "flags": "reveal meters only (§4.8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.react.ignore",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 7.7 Attribution and AI reactions",
+   "fields": {
+    "noises": "`noise.voice.bark`, `noise.gadget.hum`",
+    "hostile_attributed_emitter": "none",
+    "unattributed": "none",
+    "allied_emitter": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.react.curious",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 7.7 Attribution and AI reactions",
+   "fields": {
+    "noises": "steps, landing below 60 dB, swim, climb, mantle, dodge, slide, reel, flap, swing, reload, swap, dryfire, throw, item drop and use, lock pick and beep, light snuff and switch, door, hide, takedowns, breath, groan, casts emitted at 45 dB or less",
+    "hostile_attributed_emitter": "pair gain",
+    "unattributed": "disturbance gain",
+    "allied_emitter": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.react.investigate",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 7.7 Attribution and AI reactions",
+   "fields": {
+    "noises": "landing ≥ 60 dB, splash, melee hit, clang, block, parry, impacts (sonic included), item impact and shatter, block hit, break, place, fall, erase, harvest, lock snap, open and force, hack fail, light power, suppressed and mundane shots, energy shots, casts emitted above 45 dB, spell impact, fizzle, pain, whistle, shout, squawk, trap trigger, deploy, noisemaker, smoke burst, steam, fire, distant",
+    "hostile_attributed_emitter": "pair gain; T2 when margin ≥ 10",
+    "unattributed": "disturbance gain; T2 when margin ≥ 10",
+    "allied_emitter": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.react.alarm",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 7.7 Attribution and AI reactions",
+   "fields": {
+    "noises": "powered unsuppressed shots, explosions (except smoke), surge, scream, death cry, dog bark, alarms, debris",
+    "hostile_attributed_emitter": "pair gain; T2 always; doc 13 runs instead of walks",
+    "unattributed": "disturbance becomes searching (1800 ticks)",
+    "allied_emitter": "callout rule if the ally is alert (§6.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.react.callout",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 7.7 Attribution and AI reactions",
+   "fields": {
+    "noises": "`noise.voice.callout`",
+    "hostile_attributed_emitter": "—",
+    "unattributed": "—",
+    "allied_emitter": "§6.6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.hide.enclosed",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 10.1 Hiding spot kinds",
+   "fields": {
+    "where": "closets, lockers, wardrobes, barrels, hay carts, dumpsters, sarcophagi: doc 07 props or placeables with `hide: enclosed`; capacity 1 Erratum or 2 bodies",
+    "effect": "`n = 0` for every observer except the one checking the spot"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.hide.under",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 10.1 Hiding spot kinds",
+   "fields": {
+    "where": "beds, tables, carts: doc 07 props with `hide: under`; capacity 1 Erratum or 1 body; entered like an enclosed spot (§10.2) in 20 ticks, the occupant lying in doc 03's 600 mm downed-height capsule at the prop cell and unable to move until it exits (20 ticks)",
+    "effect": "`f_frac` capped at 4000; `f_stance` 3500"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.hide.foliage",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 10.1 Hiding spot kinds",
+   "fields": {
+    "where": "crouch-only conceal cells: tall grass, bushes, reeds",
+    "effect": "§3.2 conceal sums"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.hide.water",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 10.1 Hiding spot kinds",
+   "fields": {
+    "where": "eye submerged",
+    "effect": "stance 3000 plus 2 conceal per water block (Canon §12.2)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.hide.ledge",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 10.1 Hiding spot kinds",
+   "fields": {
+    "where": "standing at least 2500 mm above an observer's eye",
+    "effect": "the `θ_v ≤ 10923` cone limit excludes steep angles"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.hide.shadow",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 10.1 Hiding spot kinds",
+   "fields": {
+    "where": "effective light ≤ 4",
+    "effect": "§2.2, §3.3 posture rule"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aware.hide.crowd",
+   "kind": "aware",
+   "owner": "09",
+   "section": "09 10.1 Hiding spot kinds",
+   "fields": {
+    "where": "moving at walk or slower within a crowd",
+    "effect": "§15.2"
+   },
+   "also_in": []
+  }
+ ]
+}

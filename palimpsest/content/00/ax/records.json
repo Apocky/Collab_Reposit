@@ -1,0 +1,49 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "ax.arcana",
+   "kind": "ax",
+   "owner": "00",
+   "section": "00 5.1 Axioms",
+   "fields": {
+    "name": "ARCANA",
+    "governs": "how well magic works: spells, wands, enchantments, magical effects"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ax.techne",
+   "kind": "ax",
+   "owner": "00",
+   "section": "00 5.1 Axioms",
+   "fields": {
+    "name": "TECHNE",
+    "governs": "how well technology works: firearms, energy weapons, gadgets, implants, electronics"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ax.mythos",
+   "kind": "ax",
+   "owner": "00",
+   "section": "00 5.1 Axioms",
+   "fields": {
+    "name": "MYTHOS",
+    "governs": "how strongly the supernatural operates: gods, prayer, relics, curses, undead, fiends, the uncanny"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ax.verve",
+   "kind": "ax",
+   "owner": "00",
+   "section": "00 5.1 Axioms",
+   "fields": {
+    "name": "VERVE",
+    "governs": "how cinematic reality is: crits, acrobatics, jump height, lucky escapes"
+   },
+   "also_in": []
+  }
+ ]
+}

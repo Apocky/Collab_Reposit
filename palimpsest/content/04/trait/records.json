@@ -1,0 +1,845 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "trait.origin.destined",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.mythic_fantasy`",
+    "kind": "passive",
+    "effect": "§2.3 item 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.monster_hunter",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.gothic_horror`",
+    "kind": "passive",
+    "effect": "§2.3 item 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.already_broken",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.cosmic_horror`",
+    "kind": "passive",
+    "effect": "§2.3 item 3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.spacer",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.space_opera`",
+    "kind": "passive",
+    "effect": "§2.3 item 4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.wired",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.cyberpunk`",
+    "kind": "passive",
+    "effect": "§2.3 item 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.scavenger",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.post_apocalypse`",
+    "kind": "passive",
+    "effect": "§2.3 item 6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.quickdraw",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.weird_west`",
+    "kind": "passive",
+    "effect": "§2.3 item 7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.gumshoe",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.hardboiled_noir`",
+    "kind": "passive",
+    "effect": "§2.3 item 8"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.qinggong",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.wuxia`",
+    "kind": "passive",
+    "effect": "§2.3 item 9"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.gearwright",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.steampunk`",
+    "kind": "passive",
+    "effect": "§2.3 item 10"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.courtesy",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.fairy_tale`",
+    "kind": "passive",
+    "effect": "§2.3 item 11"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.favored",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.mythic_antiquity`",
+    "kind": "passive",
+    "effect": "§2.3 item 12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.lucid",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.oneiric`",
+    "kind": "passive",
+    "effect": "§2.3 item 13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.cleared",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.redacted`",
+    "kind": "passive",
+    "effect": "§2.3 item 14"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.blank_page",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.unwritten`",
+    "kind": "creation",
+    "effect": "§2.3 item 15"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.origin.first_draft",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`origin.ur_text`",
+    "kind": "passive",
+    "effect": "§2.3 item 16"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.human.versatile",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.human`",
+    "kind": "creation",
+    "effect": "§2.4 `kin.human`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.construct.machine_body",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.construct`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.construct`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.construct.fuel_cell",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.construct`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.construct`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.construct.conductive",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.construct`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.construct`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.construct.poor_chemistry",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.construct`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.construct`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.construct.self_repair",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.construct`",
+    "kind": "channel",
+    "effect": "§2.4 `kin.construct`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.construct.plated",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.construct`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.construct`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.undead.deathless",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.undead`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.undead`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.undead.umbral_communion",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.undead`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.undead`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.undead.light_averse",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.undead`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.undead`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.undead.grave_appetite",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.undead`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.undead`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.undead.unfeeling",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.undead`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.undead`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.beastkin.claws",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.beastkin`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.beastkin`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.beastkin.night_eyes",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.beastkin`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.beastkin`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.beastkin.tail_balance",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.beastkin`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.beastkin`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.beastkin.keen_nose",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.beastkin`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.beastkin`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.beastkin.fast_metabolism",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.beastkin`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.beastkin`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.fae.glamour_born",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.fae`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.fae`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.fae.iron_bane",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.fae`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.fae`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.fae.light_step",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.fae`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.fae`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.fae.fair_folk",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.fae`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.fae`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.mutant.unstable_genome",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.mutant`",
+    "kind": "creation and passive",
+    "effect": "§2.4 `kin.mutant`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.mutant.adaptive",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.mutant`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.mutant`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.kin.mutant.mutable_flesh",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`kin.mutant`",
+    "kind": "passive",
+    "effect": "§2.4 `kin.mutant`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.strikethrough",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "active",
+    "effect": "§10.3 item 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.redaction",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "active",
+    "effect": "§10.3 item 2"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.rewrite_wound",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "active",
+    "effect": "§10.3 item 3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.ink_sight",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "passive",
+    "effect": "§10.3 item 4"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.footnote",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "passive",
+    "effect": "§10.3 item 5"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.erase",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "active",
+    "effect": "§10.3 item 6"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.margin_step",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "active",
+    "effect": "§10.3 item 7"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.marginalia.dictation",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "bearer": "`afflict.red_ink` dose",
+    "kind": "active",
+    "effect": "§10.3 item 8"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.fenrir",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.fenrir`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.wren_long_index",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.wren_long_index`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.lilith",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.lilith`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.mother_ilse",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.mother_ilse`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.jormungandr",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.jormungandr`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.drowned_clerk",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.drowned_clerk`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.ostra_vey",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.ostra_vey`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.kestrel_unit",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.kestrel_unit`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.nix_seventeen",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.nix_seventeen`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.ronin_valdez",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.ronin_valdez`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.ma_rust",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.ma_rust`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.tallow",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.tallow`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.josephine_crowe",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.josephine_crowe`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.preacher_amos",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.preacher_amos`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.dex_halloran",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.dex_halloran`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.vera_lux",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.vera_lux`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.lan_ninth_peak",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.lan_ninth_peak`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.sun_wukong",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.sun_wukong`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.ada_brassvane",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.ada_brassvane`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.colonel_wexley",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.colonel_wexley`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.briar_thornwood",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.briar_thornwood`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.wolf_in_wool",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.wolf_in_wool`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.kallias_twice_drowned",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.kallias_twice_drowned`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  },
+  {
+   "id": "trait.echo.loki",
+   "kind": "trait",
+   "owner": "04",
+   "section": "04 15.6 Traits",
+   "fields": {
+    "echo": "`echo.loki`",
+    "effect": "doc 14 §6.3"
+   },
+   "also_in": []
+  }
+ ]
+}

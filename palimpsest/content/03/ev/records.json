@@ -1,0 +1,399 @@
+{
+ "schema": "03.table_row",
+ "records": [
+  {
+   "id": "ev.wound_changed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`entity: EntityId, part: Id32, tier: u8 /* 0..=4 */, kind: u8 /* 0 laceration, 1 fracture, 2 burn, 3 trauma */, treated: bool`",
+    "producer": "04",
+    "main_consumers": "13, 17"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ev.augment_changed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`entity: EntityId, aug: Id32, change: u8 /* 0 installed, 1 removed, 2 rank up, 3 enabled, 4 disabled by Contradiction */, rank: u8`",
+    "producer": "04",
+    "main_consumers": "17"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ev.entity_pacified",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`target: EntityId, by: EntityId, slot: u8, method: u8 /* 0 spared surrender, 1 dialogue (Persuade, Intimidate or bribe), 2 tamed, 3 hacked (doc 09 §13.5), 4 subdued (doc 09 §9.4) */`",
+    "producer": "13",
+    "main_consumers": "04, 14, 17"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ev.secret_found",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`finder: EntityId, slot: u8, cell: Gidx, kind: u8 /* doc 12 §17.3 hiding method row index, 0..=10 */`",
+    "producer": "12",
+    "main_consumers": "04, 14, 17"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ev.objective_completed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`kind: u8 /* 0 rubric, 1 challenge, 2 story */, objective: Id32, by_slot: u8`",
+    "producer": "12",
+    "main_consumers": "14, 17"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ev.law_discovered",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`law: Id32 /* law.* */, slots: u8 /* bitmask of the slots holding an Active Erratum on the trigger tick */`; emitted once per Law per run, on the tick it first triggers (doc 12 §4.1, DECISIONS.md item 56)",
+    "producer": "12",
+    "main_consumers": "14, 17"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ev.cast_started",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`caster: EntityId, spell_hash: u64, source: u8 /* 0 grimoire, 1 tome, 2 text, 3 wand, 4 on-use, 5 prayer */, form: Id32, ct: Ticks, aim_point: Fx3`",
+    "producer": "06",
+    "main_consumers": "09, 13, 17"
+   },
+   "also_in": [
+    "06 19.1 Events"
+   ]
+  },
+  {
+   "id": "ev.cast_interrupted",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`caster: EntityId, spell_hash: u64, cause: u8 /* 0 hard status, 1 soft hit, 2 counterspell, 3 null field, 4 voluntary cancel */, refund_maero: i64`",
+    "producer": "06",
+    "main_consumers": "13, 17"
+   },
+   "also_in": [
+    "06 19.1 Events"
+   ]
+  },
+  {
+   "id": "ev.wild_surge",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`caster: EntityId, spell_hash: u64, c: u8 /* Contradiction level, 4 or 5 */, entry: u8 /* doc 06 §11.3 entry 1..=12 */, param: u16`",
+    "producer": "06",
+    "main_consumers": "17"
+   },
+   "also_in": [
+    "06 19.1 Events"
+   ]
+  },
+  {
+   "id": "ev.glyph_learned",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`erratum: EntityId, glyph: Id32, origin: Id32, source: u8 /* 0 run start, 1 tome, 2 text study, 3 trainer, 4 Rewrite, 5 kit */`",
+    "producer": "06",
+    "main_consumers": "14, 17"
+   },
+   "also_in": [
+    "06 19.1 Events"
+   ]
+  },
+  {
+   "id": "ev.enchant_applied",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`erratum: EntityId, uid: u64, ench: Id32, tier: u8, origin: Id32`",
+    "producer": "06",
+    "main_consumers": "10, 17"
+   },
+   "also_in": [
+    "06 19.1 Events"
+   ]
+  },
+  {
+   "id": "ev.prayer_resolved",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`erratum: EntityId, patron: Id32, prayer: Id32, outcome: u8 /* 0 pleased, 1 displeased, 2 helped, 3 angry, 4 unheard, 5 petition */, need: u8 /* 0 none, 1..=8 */`",
+    "producer": "06",
+    "main_consumers": "14, 17"
+   },
+   "also_in": [
+    "06 19.1 Events"
+   ]
+  },
+  {
+   "id": "ev.favor_changed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`erratum: EntityId, patron: Id32, old: i32, new: i32, cause: u8 /* 0 sacrifice, 1 prayer, 2 taboo, 3 Folio exit, 4 Editor kill, 5 rider, 6 altar, 7 shrine bonus */`",
+    "producer": "06",
+    "main_consumers": "17"
+   },
+   "also_in": [
+    "06 19.1 Events"
+   ]
+  },
+  {
+   "id": "ev.alarm_raised",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`raiser: EntityId /* 0 for a block device */, pos: Fx3, kind: u8 /* 0 creature (hound, civilian, bell or klaxon), 1 every other alarm device, 2 camera; a callout raises none */`",
+    "producer": "09",
+    "main_consumers": "13, 17"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.body_discovered",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`observer: EntityId, body: EntityId, pos: Fx3`",
+    "producer": "09",
+    "main_consumers": "13"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.disguise_blown",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`wearer: EntityId, observer: EntityId`",
+    "producer": "09",
+    "main_consumers": "13, 17"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.lock_opened",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`by: EntityId, lock_key: u64 /* door Gidx or container EntityId, doc 09 §1.4 */, method: u8 /* 0 key, 1 picked, 2 hacked, 3 forced */`",
+    "producer": "09",
+    "main_consumers": "04, 13"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.object_revealed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`observer: EntityId, object_key: u64, kind: u8 /* 0 trap, 1 secret */`",
+    "producer": "09",
+    "main_consumers": "12, 17"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.device_hacked",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`by: EntityId, device: u64 /* the device's EntityId, or its Gidx for a block device; a Gidx is below 2^22 and every EntityId is at least 2^40 */`",
+    "producer": "09",
+    "main_consumers": "04, 13"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.takedown",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`attacker: EntityId, target: EntityId, lethal: bool`",
+    "producer": "09",
+    "main_consumers": "04, 13"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.item_stolen",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`thief: EntityId, victim: EntityId, uid: u64`",
+    "producer": "09",
+    "main_consumers": "13, 15"
+   },
+   "also_in": [
+    "09 1.7 Events produced"
+   ]
+  },
+  {
+   "id": "ev.rubric_completed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`folio_index: u32, rubric: Id32`",
+    "producer": "14",
+    "main_consumers": "12, 17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  },
+  {
+   "id": "ev.colophon_entered",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`entity: EntityId, slot: u8, first: bool /* first Erratum this Folio */`",
+    "producer": "14",
+    "main_consumers": "13, 17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  },
+  {
+   "id": "ev.colophon_desecrated",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`by: EntityId, cell: Gidx`",
+    "producer": "14",
+    "main_consumers": "13, 17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  },
+  {
+   "id": "ev.boon_committed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`entity: EntityId, slot: u8, boon: Id32`",
+    "producer": "14",
+    "main_consumers": "17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  },
+  {
+   "id": "ev.note_completed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`slot: u8, note: Id32`",
+    "producer": "14",
+    "main_consumers": "17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  },
+  {
+   "id": "ev.exit_committed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`folio_index: u32, exit_index: u8, genre: Id32`",
+    "producer": "14",
+    "main_consumers": "12, 16, 17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  },
+  {
+   "id": "ev.boss_engaged",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`boss: EntityId, template: Id32`",
+    "producer": "14",
+    "main_consumers": "13, 16, 17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  },
+  {
+   "id": "ev.volume_completed",
+   "kind": "ev",
+   "owner": "03",
+   "section": "03 14.3 Bus events registered for other chapters",
+   "fields": {
+    "payload_fields": "`volume: u8, folio_index: u32`",
+    "producer": "14",
+    "main_consumers": "15, 17"
+   },
+   "also_in": [
+    "14 3.11 Run-layer events"
+   ]
+  }
+ ]
+}

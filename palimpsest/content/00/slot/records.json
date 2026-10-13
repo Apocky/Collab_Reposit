@@ -1,0 +1,89 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "slot.back",
+   "kind": "slot",
+   "owner": "00",
+   "section": "00 13.2 Equipment slots",
+   "fields": {
+    "accepts": "cloaks, backpacks, jetpacks, wings"
+   },
+   "also_in": [
+    "11 3.9 Equipment slots"
+   ]
+  },
+  {
+   "id": "slot.neck",
+   "kind": "slot",
+   "owner": "00",
+   "section": "00 13.2 Equipment slots",
+   "fields": {
+    "accepts": "amulets"
+   },
+   "also_in": [
+    "11 3.9 Equipment slots"
+   ]
+  },
+  {
+   "id": "slot.belt",
+   "kind": "slot",
+   "owner": "00",
+   "section": "00 13.2 Equipment slots",
+   "fields": {
+    "accepts": "belts; a belt sets the quickbar size"
+   },
+   "also_in": [
+    "11 3.9 Equipment slots"
+   ]
+  },
+  {
+   "id": "slot.trinket",
+   "kind": "slot",
+   "owner": "00",
+   "section": "00 13.2 Equipment slots",
+   "fields": {
+    "accepts": "relics and charms"
+   },
+   "also_in": [
+    "11 3.9 Equipment slots"
+   ]
+  },
+  {
+   "id": "slot.offhand",
+   "kind": "slot",
+   "owner": "00",
+   "section": "00 13.2 Equipment slots",
+   "fields": {
+    "accepts": "off-hand items; empty while a two-handed weapon is active"
+   },
+   "also_in": [
+    "11 3.9 Equipment slots"
+   ]
+  },
+  {
+   "id": "slot.ward",
+   "kind": "slot",
+   "owner": "00",
+   "section": "00 13.2 Equipment slots",
+   "fields": {
+    "accepts": "one ward generator: capacity `cap_base_mhp → × T(ilvl) → × rarity power → × quality → × (10000 + 600 × eff_enh) → × Contradiction potency`, one `mul_bp` per arrow, with no material term; recharge starts 180 ticks after the bearer last took damage and restores 2500 Bp of capacity per second; dependency from its skin"
+   },
+   "also_in": [
+    "11 3.9 Equipment slots"
+   ]
+  },
+  {
+   "id": "slot.face",
+   "kind": "slot",
+   "owner": "00",
+   "section": "00 13.2 Equipment slots",
+   "fields": {
+    "accepts": "masks, goggles, respirators; respirators make gases breathable; masks serve disguises (doc 09)"
+   },
+   "also_in": [
+    "11 3.9 Equipment slots"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+family.ember	chapter 06
+family.hollow	chapter 06
+family.mirror	chapter 06
+family.storm	chapter 06
+family.thorn	chapter 06
+family.tide	chapter 06
+wx.clear	chapter 09
+wx.rain	chapter 09
+wx.storm	chapter 09
+wx.fog	chapter 09
+wx.snow	chapter 09
+wx.dust	chapter 09

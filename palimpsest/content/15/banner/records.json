@@ -1,0 +1,124 @@
+{
+ "schema": "15.table_row",
+ "records": [
+  {
+   "id": "banner.tier.illuminated",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.1 Catalog, tiers and entry kinds",
+   "fields": {
+    "name": "Illuminated",
+    "frame_colour": "gold leaf `#D4A93C`",
+    "contains": "Illuminated (slot A) Echoes, Illuminated Scripts"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.tier.rubricated",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.1 Catalog, tiers and entry kinds",
+   "fields": {
+    "name": "Rubricated",
+    "frame_colour": "vermilion `#C8341E`",
+    "contains": "Rubricated (slot B) Echoes, Rubricated Scripts"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.tier.plain",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.1 Catalog, tiers and entry kinds",
+   "fields": {
+    "name": "Plain",
+    "frame_colour": "iron-gall black `#2B2622`",
+    "contains": "Plain cosmetics"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.pool.illuminated_echo",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.1.2 Script catalog",
+   "fields": {
+    "members": "12 Illuminated Echoes",
+    "size": "12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.pool.illuminated_script",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.1.2 Script catalog",
+   "fields": {
+    "members": "12 Illuminated Scripts",
+    "size": "12"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.pool.rubricated",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.1.2 Script catalog",
+   "fields": {
+    "members": "12 Rubricated Echoes + 24 Rubricated Scripts",
+    "size": "36"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.pool.plain",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.1.2 Script catalog",
+   "fields": {
+    "members": "60 Plain cosmetics",
+    "size": "60"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.hazard.illuminated_std",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.3 The hazard function",
+   "fields": {
+    "base_bp": "100",
+    "soft_start": "46",
+    "step_bp": "650",
+    "hard": "60"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.hazard.rubricated_std",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.3 The hazard function",
+   "fields": {
+    "base_bp": "600",
+    "soft_start": "9",
+    "step_bp": "6000",
+    "hard": "10"
+   },
+   "also_in": []
+  },
+  {
+   "id": "banner.hazard.illuminated_beginner",
+   "kind": "banner",
+   "owner": "15",
+   "section": "15 3.3 The hazard function",
+   "fields": {
+    "base_bp": "100",
+    "soft_start": "21",
+    "step_bp": "1000",
+    "hard": "30"
+   },
+   "also_in": []
+  }
+ ]
+}

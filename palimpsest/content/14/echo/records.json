@@ -1,0 +1,317 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "echo.fenrir",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "MF, Monk, beastkin, `body.quadruped`",
+    "signature_trait_variant_a": "unarmed damage +2000 Bp; buy prices ×11000",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; V2 as Monk; 200 sneak kills",
+    "ch": "470"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.wren_long_index",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "MF, Spellwright, fae",
+    "signature_trait_variant_a": "+1 Grimoire slot; complexity budget −1",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; V3 as Spellwright; 1,300 `dmg.arcane` kills",
+    "ch": "915"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.lilith",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "GH, Shade, fae",
+    "signature_trait_variant_a": "sneak multiplier +2000 Bp at `light_at ≤ 4`, −2000 Bp at `light_at ≥ 10`",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 300 sneak kills; V2 as Shade",
+    "ch": "520"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.mother_ilse",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "GH, Alchemist, human",
+    "signature_trait_variant_a": "brews of 2+ potions yield +1; toxicity decay 300 per s instead of 500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 110 brews; V3 as Alchemist",
+    "ch": "920"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.jormungandr",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "CH, Oracle, beastkin, `body.serpentine`",
+    "signature_trait_variant_a": "composure loss ×7500; Max composure −20",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 60 identifications; V2 as Oracle",
+    "ch": "490"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.drowned_clerk",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "CH, Spellwright, undead",
+    "signature_trait_variant_a": "spell potency +1500 Bp while `st.soaked`; `dmg.fire` spell potency −2000 Bp",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "11 Folios; 4 Erasure exits; V4 as Spellwright",
+    "ch": "905"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.ostra_vey",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "SO, Gunslinger, human",
+    "signature_trait_variant_a": "swap speed ×13000; reload speed ×9000",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 600 `dmg.pierce` kills; V2 as Gunslinger",
+    "ch": "520"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.kestrel_unit",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "SO, Artificer, construct",
+    "signature_trait_variant_a": "gadgets deploy with +1 charge; gadget recharge ×8500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 80 crafts; V4 as Artificer",
+    "ch": "910"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.nix_seventeen",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "CP, Netrunner, construct",
+    "signature_trait_variant_a": "lockpick and hack time ×6000; Max HP ×9500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 300 Edge kills; V2 as Netrunner",
+    "ch": "470"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.ronin_valdez",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "CP, Duelist, human",
+    "signature_trait_variant_a": "blade crit damage +2500 Bp; crit chance −300 Bp",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 1,000 `dmg.slash` kills; V4 as Duelist",
+    "ch": "920"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.ma_rust",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "PA, Grenadier, mutant",
+    "signature_trait_variant_a": "destructible blocks its explosions break yield ×2 materials; own explosive damage taken ×12500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 100 blocks; V2 as Grenadier",
+    "ch": "470"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.tallow",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "PA, Alchemist, human",
+    "signature_trait_variant_a": "food satiation +2500 Bp; potion durations −1500 Bp",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 80 brews; V4 as Alchemist",
+    "ch": "910"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.josephine_crowe",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "WW, Gunslinger, undead",
+    "signature_trait_variant_a": "crit chance +500 Bp at HP ≤ 30%; Max HP ×9500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 2 hunters; V2 as Gunslinger",
+    "ch": "490"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.preacher_amos",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "WW, Warden, human",
+    "signature_trait_variant_a": "restoration heals deal 2000 Bp of the heal as `dmg.radiant` to undead and fiends within 4,000 mm; restoration aether cost ×11500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 6 Death's Door saves; V4 as Warden",
+    "ch": "910"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.dex_halloran",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "HN, Duelist, human",
+    "signature_trait_variant_a": "unarmed stun buildup ×13000; blade damage −1000 Bp",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 400 `dmg.blunt` kills; V2 as Duelist",
+    "ch": "470"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.vera_lux",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "HN, Alchemist, human",
+    "signature_trait_variant_a": "thrown poison flasks add +1 `st.poisoned` stack on a direct hit; buy prices ×10500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 960 `dmg.toxin` kills; V4 as Alchemist",
+    "ch": "910"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.lan_ninth_peak",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "WX, Monk, human",
+    "signature_trait_variant_a": "dodge distance 4,000 mm; dodge cost 26 stamina",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 12 notes; V2 as Monk",
+    "ch": "514"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.sun_wukong",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "WX, Monk, beastkin",
+    "signature_trait_variant_a": "polearm damage +1500 Bp; move speed multiplier +500 Bp; damage taken +500 Bp",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 20 notes; V4 as Monk",
+    "ch": "910"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.ada_brassvane",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "SP, Artificer, human",
+    "signature_trait_variant_a": "crafting time ×7500; sell prices ×9000",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 40 crafts; V2 as Artificer",
+    "ch": "490"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.colonel_wexley",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "SP, Grenadier, human",
+    "signature_trait_variant_a": "launcher projectile range ×12500; launcher reload ×8500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 960 `dmg.fire` kills; V4 as Grenadier",
+    "ch": "910"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.briar_thornwood",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "FT, Beastbinder, fae",
+    "signature_trait_variant_a": "minion Max HP +1500 Bp (summons and tamed beasts); Conjuration aether cost ×11500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 6 Rewrites; V2 as Beastbinder",
+    "ch": "490"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.wolf_in_wool",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "FT, Shade, beastkin",
+    "signature_trait_variant_a": "disguise suspicion rate ×7000; Max HP ×9000",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "10 Folios; 480 sneak kills; V4 as Shade",
+    "ch": "910"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.kallias_twice_drowned",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "MA, Vanguard, human",
+    "signature_trait_variant_a": "swim speed ×15000 and no drowning damage for 1800 ticks submerged; `dmg.fire` taken +1000 Bp",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "6 Folios; 3 Death's Door saves; V2 as Vanguard",
+    "ch": "490"
+   },
+   "also_in": []
+  },
+  {
+   "id": "echo.loki",
+   "kind": "echo",
+   "owner": "14",
+   "section": "14 6.3 Roster, signature traits and trials",
+   "fields": {
+    "origin_calling_kin": "MA, Oracle, human",
+    "signature_trait_variant_a": "Illusion spell potency +2000 Bp; healing from prayers ×7500",
+    "trial_steps_genre_steps_use_the_echo_s_origin": "11 Folios; 1 secret exit; V3 as Oracle",
+    "ch": "925"
+   },
+   "also_in": []
+  }
+ ]
+}

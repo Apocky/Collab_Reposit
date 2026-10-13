@@ -1,0 +1,568 @@
+{
+ "schema": "10.table_row",
+ "records": [
+  {
+   "id": "appr.reason.use",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.1: an Erratum's drink, throw or read identifies the type, and drinking sets the dose's required flags; a doc 06 wand snap reveals `CHARGES` (§4.3)",
+    "by": "the user"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.zap",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.1: a zap identifies the wand's type; a zap at 0 charges reveals `CHARGES` (§4.3)",
+    "by": "the zapper"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.equip",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.2 step 4 (`display` rule); a `conditional` type's first observable trigger reported by its effect owner (§5.2, §13)",
+    "by": "the bearer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.bind",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.2 step 1 (curse resistance succeeds) and step 3 (the item binds)",
+    "by": "the equipping Erratum"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.witness",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.3: an NPC's use or zap seen by an Erratum",
+    "by": "the NPC user"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.deduction",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.3: one candidate remains",
+    "by": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.text",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.4: `appr.eff.identify`, `appr.eff.survey`, `appr.eff.omen`, `appr.eff.unbind`, `appr.eff.consecrate` and `appr.eff.intuit` acting on their targets; doc 06's recharge text revealing `CHARGES` (§4.3)",
+    "by": "the reader"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.appraisal",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.5: passive completions, including after the descent bonus; the Appraisal-50 pickup set; `run.boon.appraising_eye`; the Appraisal-100 identification after 600 carried ticks",
+    "by": "the appraiser"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.analysis",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.6: a successful Analysis",
+    "by": "the analyst"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.familiarity",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.7: a familiarity stage",
+    "by": "the bearer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.service",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.9: `appr.svc.appraise`, `appr.svc.classify`, `appr.svc.identify` and `appr.svc.unbind`; a doc 11 recharge, reforge or Rewrite service that shows a changed property (§2.4)",
+    "by": "the paying Erratum"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.altar",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.9: `appr.svc.drop_test` and `appr.svc.consecrate`",
+    "by": "the Erratum who dropped the item or paid"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.glyph",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.10: `appr.eff.divine_identify`, `appr.eff.divine_omen`, `appr.eff.aura` and `appr.eff.psychometry`",
+    "by": "the caster"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.sense",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§5.11: curse sense on pickup or unsealing",
+    "by": "the holder"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.cross_reference",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§12.3: a correct Cross-Reference",
+    "by": "the guessing player"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.kit",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§2.6: type-hidden kit item types and each Calling's two lore types at run start (doc 14 §2.4)",
+    "by": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.craft",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§2.6: a crafted item (doc 07) or an inscribed text (`item.text.inscribed`, doc 06 §8.3) whose type joins `known`",
+    "by": "the crafter"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.brew",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "§2.6: brewing a canonical potion type (doc 08); `alch.tx.uncurse` and `alch.tx.consecrate` revealing `BUC` (§7.6)",
+    "by": "the brewer"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.talent",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "doc 04 talent `prophecy` (`identify_type` on a chosen carried item)",
+    "by": "the talent's owner"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.prayer",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "doc 06: the Cosmic Horror patron boon (`identify_one_unknown`); prayer need (4) and `prayer.absolution` uncursing (§7.6)",
+    "by": "the praying Erratum"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.story",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "doc 12: the story relic of a solved story (`identify_instance`)",
+    "by": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.reason.emendation",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5. Identification methods",
+   "fields": {
+    "emitted_by": "an Emendation (Canon §13.7) setting `BUC` on the cursed item it uncurses, or `CLEAN` on any other item (§7.6)",
+    "by": "the Erratum who applied it"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.use.always",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.1 Use, zap and throw",
+   "fields": {
+    "identifies_when": "the use resolves, whatever happened"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.use.on_effect",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.1 Use, zap and throw",
+   "fields": {
+    "identifies_when": "the resolution's `observable` flag is true"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.use.never",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.1 Use, zap and throw",
+   "fields": {
+    "identifies_when": "never by use (no launch text has it)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.use.display",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.2 Equip-ID and binding",
+   "fields": {
+    "identifies_when": "equipping completes; the effect is a stat the character sheet shows"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.use.conditional",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.2 Equip-ID and binding",
+   "fields": {
+    "identifies_when": "the effect owner reports its first observable trigger, or familiarity stage F-type (§5.7)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.survey",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.4 Doc-10 texts",
+   "fields": {
+    "uncursed": "every inventory item: tier-0 reveal set (§5.5), `est_steps += 1`",
+    "blessed": "tier-1 reveal set, `est_steps += 1`",
+    "cursed": "tier-0 reveal set on 1 random item",
+    "draws": "cursed: 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.omen",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.4 Doc-10 texts",
+   "fields": {
+    "uncursed": "BUC of every inventory item",
+    "blessed": "also every item carried by a party member or on the ground within 16 m",
+    "cursed": "OMEN or CLEAN on 1 random item",
+    "draws": "cursed: 1"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.unbind",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.4 Doc-10 texts",
+   "fields": {
+    "uncursed": "every equipped cursed item becomes uncursed (§7.6)",
+    "blessed": "also every carried cursed item",
+    "cursed": "nothing; not observable",
+    "draws": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.intuit",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.4 Doc-10 texts",
+   "fields": {
+    "uncursed": "name one seen, unknown descriptor and one candidate type: correct → `identify_type`; wrong → `excluded[d].insert(t)`",
+    "blessed": "two guesses for the same descriptor",
+    "cursed": "the guess resolves, but a wrong guess is not recorded",
+    "draws": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.amnesia",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.4 Doc-10 texts",
+   "fields": {
+    "uncursed": "forget 2 identified types; set composure to max; end `st.dread` and `st.madness`",
+    "blessed": "forget 1",
+    "cursed": "forget 3",
+    "draws": "`min(k, n)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.tier.novice",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.5 Appraisal (passive, `skill.appraisal`)",
+   "fields": {
+    "tier": "0",
+    "skill_appraisal": "0–24",
+    "adds": "RARITY; records the estimate skill (`est_skill = max(est_skill, skill)`, §6.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.tier.apprentice",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.5 Appraisal (passive, `skill.appraisal`)",
+   "fields": {
+    "tier": "1",
+    "skill_appraisal": "25–49",
+    "adds": "BUC (with ENH, §2.3), CHARGES"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.tier.journeyman",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.5 Appraisal (passive, `skill.appraisal`)",
+   "fields": {
+    "tier": "2",
+    "skill_appraisal": "50–74",
+    "adds": "every `AFFIX_NAME[i]` (a pact's whole identity, §7.8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.tier.expert",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.5 Appraisal (passive, `skill.appraisal`)",
+   "fields": {
+    "tier": "3",
+    "skill_appraisal": "75–99",
+    "adds": "every `AFFIX_ROLL[i]` (completes identification of every non-type-hidden item); for a type-hidden item of unknown type, an exact price observation (§5.8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.tier.master",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.5 Appraisal (passive, `skill.appraisal`)",
+   "fields": {
+    "tier": "4",
+    "skill_appraisal": "100",
+    "adds": "the type of a type-hidden item"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.svc.appraise",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.9 Scriptorium and altar services",
+   "fields": {
+    "where": "Scriptorium, every vendor",
+    "effect": "tier-1 reveal set and `est_steps += 2`",
+    "cost": "`mul_bp(20, P(d))`",
+    "d1": "20",
+    "d3": "23",
+    "d12": "51",
+    "d25": "158"
+   },
+   "also_in": [
+    "11 12.3 Restock, buyback and services"
+   ]
+  },
+  {
+   "id": "appr.svc.classify",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.9 Scriptorium and altar services",
+   "fields": {
+    "where": "Scriptorium",
+    "effect": "type of one type-hidden instance",
+    "cost": "`mul_bp(40, P(d))`",
+    "d1": "40",
+    "d3": "47",
+    "d12": "103",
+    "d25": "316"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.svc.identify",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.9 Scriptorium and altar services",
+   "fields": {
+    "where": "Scriptorium",
+    "effect": "every required flag plus type",
+    "cost": "`mul_bp(60, P(d))`",
+    "d1": "60",
+    "d3": "71",
+    "d12": "154",
+    "d25": "474"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.svc.unbind",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.9 Scriptorium and altar services",
+   "fields": {
+    "where": "Scriptorium",
+    "effect": "one cursed item becomes uncursed (§7.6), even while bound",
+    "cost": "`mul_bp(150, P(d))`",
+    "d1": "150",
+    "d3": "178",
+    "d12": "387",
+    "d25": "1186"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.svc.drop_test",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.9 Scriptorium and altar services",
+   "fields": {
+    "where": "altar",
+    "effect": "dropping any item on a worldgen `block.altar` reveals its BUC; genre-skinned bright flash if blessed, dark flash if cursed",
+    "cost": "free",
+    "d1": "0",
+    "d3": "0",
+    "d12": "0",
+    "d25": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.svc.consecrate",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.9 Scriptorium and altar services",
+   "fields": {
+    "where": "altar",
+    "effect": "cursed → uncursed, or uncursed → blessed; refused for blessed items; at most once per item per Folio",
+    "cost": "`mul_bp(300, P(d))` Lucre, or 100 favor with the altar's patron when favor ≥ 100",
+    "d1": "300",
+    "d3": "356",
+    "d12": "774",
+    "d25": "2373"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.divine_identify",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.10 Divination glyphs (`skill.divination`)",
+   "fields": {
+    "glyph_doc_06_5_3": "`glyph.ess.appraise`",
+    "effect": "as uncursed `appr.eff.identify`; as blessed when `skill.divination >= 75`",
+    "draws": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.divine_omen",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.10 Divination glyphs (`skill.divination`)",
+   "fields": {
+    "glyph_doc_06_5_3": "`glyph.ess.omen`",
+    "effect": "BUC of every item on the ground or carried by a party member within `4000 + 2000 × div_tier` mm",
+    "draws": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.aura",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.10 Divination glyphs (`skill.divination`)",
+   "fields": {
+    "glyph_doc_06_5_3": "`glyph.ess.sight`",
+    "effect": "also sets AURA on every non-mundane item within the omen radius: **plain** (no affixes, `eff_enh = enhancement`, uncursed), **ominous** (cursed), or **storied** (anything else). Plain also sets `BUC` (with `ENH` and `CLEAN`); ominous also sets `OMEN`; storied sets nothing more",
+    "draws": "0"
+   },
+   "also_in": []
+  },
+  {
+   "id": "appr.eff.psychometry",
+   "kind": "appr",
+   "owner": "10",
+   "section": "10 5.10 Divination glyphs (`skill.divination`)",
+   "fields": {
+    "glyph_doc_06_5_3": "`glyph.ess.psychometry`",
+    "effect": "one type-hidden item of unknown type in the caster's inventory: success → type; shares the Analysis lock `analysis_lvl[slot]`",
+    "draws": "1 `roll_bp`"
+   },
+   "also_in": []
+  }
+ ]
+}

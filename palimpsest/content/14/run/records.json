@@ -1,0 +1,829 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "run.kit.vanguard_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.melee.axe` (58) replaces the mace (58); `arch.offhand.shield_buckler` (36), `item.tool.bandage` ×2 (12) and `item.tool.torch` ×2 (4) replace the medium shield (52)",
+    "script_value": "206",
+    "difference": "0 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.duelist_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.melee.blade_short` (52) and `item.face.mask` (30) replace the long blade (76)",
+    "script_value": "198",
+    "difference": "+312 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.gunslinger_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.ranged.pistol_heavy` (84) and `ammo.heavy` ×30 (12) replace the sidearm (70) and `ammo.light` ×60 (12); `arch.armor.hands_light` (10) removed",
+    "script_value": "190",
+    "difference": "+215 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.grenadier_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.armor.head_heavy`, `arch.armor.body_heavy`, `arch.armor.legs_heavy` (22 + 46 + 28) replace the medium set (98)",
+    "script_value": "312",
+    "difference": "−64 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.spellwright_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.offhand.tome` (48) replaces the focus (44); the primer is unchanged",
+    "script_value": "176",
+    "difference": "+232 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.alchemist_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.melee.quarterstaff` (38) replaces the dagger (40)",
+    "script_value": "107",
+    "difference": "−184 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.shade_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.melee.dagger` (40) and `item.tool.rope` ×2 (12) replace the short blade (52)",
+    "script_value": "182",
+    "difference": "0 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.artificer_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.ranged.smg` (86, fires `ammo.light`) replaces the sidearm (70); the light set (80) replaces the medium set (98)",
+    "script_value": "246",
+    "difference": "−81 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.warden_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.offhand.shield_buckler` (36) and `item.back.cloak` (40) replace the tower shield (70)",
+    "script_value": "280",
+    "difference": "+218 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.oracle_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.ranged.wand` (72) and `arch.offhand.lantern` (28) replace the staff (100)",
+    "script_value": "240",
+    "difference": "0 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.netrunner_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "the cloth set (52) and `item.face.mask` (30) replace the light set (80)",
+    "script_value": "224",
+    "difference": "+90 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.beastbinder_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "`arch.melee.quarterstaff` (38), `item.tool.bandage` ×2 (12), `item.tool.rope` (6) and `item.tool.torch` (2) replace the spear (58)",
+    "script_value": "138",
+    "difference": "0 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.kit.monk_script",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 2.4.2 Calling kits `run.kit.<calling>` (variant 0)",
+   "fields": {
+    "script_kit_change": "the cloth set (52) and `item.belt.sash` (30, quickbar 5) replace the light set (80)",
+    "script_value": "138",
+    "difference": "+147 Bp"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.rubric.keeper",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.4 Rubric (exit unlock)",
+   "fields": {
+    "setup_doc_12_doc_13": "one NPC flagged `keeper`, rank per §3.1, placed in the room with the greatest path distance from the Incipit",
+    "complete_when": "the Keeper's `ev.entity_killed`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.rubric.catchwords",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.4 Rubric (exit unlock)",
+   "fields": {
+    "setup_doc_12_doc_13": "three `item.quest.catchword` placed in three distinct rooms, each at path distance ≥ 30,000 mm from the Incipit and ≥ 20,000 mm from each other",
+    "complete_when": "the party has picked up all three (any Erratum, any order); catchwords cannot be dropped"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.rubric.seal",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.4 Rubric (exit unlock)",
+   "fields": {
+    "setup_doc_12_doc_13": "a Seal point with a 4,000 mm radius; doc 13 spawns a wave on hold ticks 0, 600 and 1200",
+    "complete_when": "the Seal accumulates 1800 held ticks; a tick is held when at least one Active, living Erratum's origin is within 4,000 mm of the Seal center and no hostile NPC's origin is"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.cartographer",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "always",
+    "completed_when_checked_at_exit_commit": "`rooms_visited == rooms_total`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.excavate",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "always",
+    "completed_when_checked_at_exit_commit": "`fac.errata` members broke at least 20 destructible cells (`block.tag.destructible`, resource nodes included, Canon §4.3) in this Folio, not counting cells an Erratum placed (doc 03 `is_errata_placed(c)`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.illuminate",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "the layout has an Illumination vault",
+    "completed_when_checked_at_exit_commit": "the vault was opened"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.native",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "always",
+    "completed_when_checked_at_exit_commit": "every Active Erratum's equipped components all have `C = 0`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.purge",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "at least one elite or champion was placed",
+    "completed_when_checked_at_exit_commit": "every elite- or champion-rank NPC spawned in this Folio is dead"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.rescue",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "the layout has a rescue event",
+    "completed_when_checked_at_exit_commit": "the stranded native is alive inside `room.colophon`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.scribe",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "always (every Colophon holds a Scriptorium station, Canon §17.1)",
+    "completed_when_checked_at_exit_commit": "at least one Rewrite was committed in this Folio, at a Scriptorium room or at the Colophon's station"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.silent",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "always",
+    "completed_when_checked_at_exit_commit": "doc 09's `folio_alerted` was still false on the tick the Rubric completed: no hostile AI had reached `aware.alert` toward any Erratum in this Folio"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.swift",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "always",
+    "completed_when_checked_at_exit_commit": "`commit_tick - entry_tick <= 14400` (240 s)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.note.unbroken",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.5 Marginal notes (optional objectives)",
+   "fields": {
+    "eligible_when": "always",
+    "completed_when_checked_at_exit_commit": "no `ev.player_downed` and no Erratum `ev.entity_killed` in this Folio"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.appraising_eye",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "every item the bearer picks up rises to at least `know.appraised` on pickup (doc 10); no draw"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.blessing",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "`st.blessed` applied directly to the bearer at Folio entry and again at Rubric completion or the Editor's death"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.deep_pockets",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "every fresh Lucre pile the bearer picks up × 12500 (doc 11 §9.1), applied by doc 11 after `gp.lucre_bp`; sales and dropped piles are excluded"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.editors_bane",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "Canon §10.5 step 13 factor 11000 on the bearer's hits against `rank.editor` (§7.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.hunters_bane",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "step 13 factor 13000 on the bearer's hits against `rank.hunter` (§7.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.keen_edge",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "+1000 Bp in the bearer's Canon §10.5 step 1 additive bucket, potency 10000"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.provisioned",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "on commit, 2 `item.food.ration` and 2 `item.tool.bandage` at `ilvl = d(f)` enter the bearer's bag; no effect in the next Folio"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.quickened",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "`st.hasted` applied directly at Folio entry and again at Rubric completion or the Editor's death"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.second_wind",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "`st.regenerating` applied directly at Folio entry and again at Rubric completion or the Editor's death"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.shadowed",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "`st.invisible` applied directly at Folio entry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.surveyor",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "at Folio entry the bearer's map shows every room outline and the Colophon (a per-slot flag the client reads; rooms do not count as visited)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.boon.thick_hide",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 3.9 Rest rooms",
+   "fields": {
+    "effect_while_active_one_folio": "step 13 factor 9000 on NPC hits against the bearer (§7.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.end.victory",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 4.3 Run end states",
+   "fields": {
+    "trigger": "the Final Folio's Endpaper closes, or the \"Close the Book\" door of a `VictoryChoice` commits (§3.2)",
+    "scope": "party"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.end.erased",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 4.3 Run end states",
+   "fields": {
+    "trigger": "§3.2 row 1",
+    "scope": "party"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.end.abandoned",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 4.3 Run end states",
+   "fields": {
+    "trigger": "solo: Abandon at any tick; co-op: host Abandon, confirmed by holding the menu button 120 ticks",
+    "scope": "party"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.end.abandoned_version",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 4.3 Run end states",
+   "fields": {
+    "trigger": "resume refused for a `sim_version` or `content_hash` mismatch and the player chooses Close the Book (§12.2, doc 02 §12.3)",
+    "scope": "party; applied by the meta layer from the save's checkpoint record"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.end.margin_closed",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 4.3 Run end states",
+   "fields": {
+    "trigger": "the \"Close the Book\" door commits in a Marginalia boss Folio's exit vote (§3.2)",
+    "scope": "party"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.end.margin_exhausted",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 4.3 Run end states",
+   "fields": {
+    "trigger": "the only door of Folio `MARGINALIA_MAX_FOLIO`, \"Close the Book\", commits",
+    "scope": "party"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.end.departed",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 4.3 Run end states",
+   "fields": {
+    "trigger": "a player leaves a co-op run (§8.8)",
+    "scope": "one slot; the run continues"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.ambushes",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "`ambush_extra += 2`",
+    "score_bp": "11000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.bare_kit",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "kit consumables and kit armor removed",
+    "score_bp": "12000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.blind_exits",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "doors hide genre, axioms and forecasts until committed",
+    "score_bp": "10500",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.champion_parade",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "`champion_extra += 2`",
+    "score_bp": "12500",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.dear_pages",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "`shop_price_bp` chain 15000",
+    "score_bp": "11000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.elite_ink",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "`elite_promote_add_bp += 2000`",
+    "score_bp": "12000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.hungry_hunters",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "hunter-scoped HP and damage factor 15000",
+    "score_bp": "11000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.iron_ink",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "damage chain factor 15000",
+    "score_bp": "13000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.no_rest",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "Interleaf Rest disabled; `rest_heal_bp` chain 5000",
+    "score_bp": "12000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.pauper",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "`lucre_bp` chain 5000",
+    "score_bp": "11500",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.thick_skins",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "HP chain factor 15000",
+    "score_bp": "13000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.wild_bleed",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "doc 12 bleed-zone count ×2",
+    "score_bp": "11000",
+    "easing": "no",
+    "gauntlet_pool": "yes"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.paper_foes",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "HP chain factor 6000",
+    "score_bp": "5000",
+    "easing": "yes",
+    "gauntlet_pool": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.patron",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "`lucre_bp` chain 20000",
+    "score_bp": "8000",
+    "easing": "yes",
+    "gauntlet_pool": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.short_book",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "`final_folio = 10` (`boss.editor_v2` final); valid only with the Standard structure; `mode_quire_bp = 2000`",
+    "score_bp": "10000",
+    "easing": "no",
+    "gauntlet_pool": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.mut.soft_ink",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 8.7 Custom mutators",
+   "fields": {
+    "effect": "damage chain factor 6000",
+    "score_bp": "5000",
+    "easing": "yes",
+    "gauntlet_pool": "no"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.ambush_pages",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "`ambush_extra += r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.bleeding_genres",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "doc 12 bleed-zone count `+ r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.brittle_kit",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "Errata hits on NPCs: step 13 factor `brittle_bp = max(7500, 10000 - 500 × r)` (§7.3)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.champion_tide",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "`champion_extra += r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.cramped_hearth",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "`rest_heal_bp` chain `max(2500, 10000 - 1500 × r)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.dear_margins",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "`shop_price_bp` chain `10000 + 1000 × r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.editors_wrath",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "editor damage factor `10000 + 1000 × r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.elite_margins",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "`elite_promote_add_bp += 500 × r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.hunters_pack",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "hunter HP factor `10000 + 2000 × r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.lean_purse",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "`lucre_bp` chain `max(5000, 10000 - 1000 × r)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.red_ink",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "damage factor `10000 + 500 × r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "run.marg.thick_vellum",
+   "kind": "run",
+   "owner": "14",
+   "section": "14 9.3 Marginal mutations",
+   "fields": {
+    "effect_at_rank_r": "HP factor `10000 + 1000 × r`"
+   },
+   "also_in": []
+  }
+ ]
+}

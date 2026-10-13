@@ -1,0 +1,173 @@
+{
+ "schema": "18.table_row",
+ "records": [
+  {
+   "id": "aud.sfx.wpn.clang",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`noise.melee.clang` (70 dB)",
+    "pool": "combat",
+    "caption_key": "`loc.aud.caption.clang`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.wpn.parry",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`noise.melee.parry`",
+    "pool": "combat",
+    "caption_key": "`loc.aud.caption.parry`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.wpn.block",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`noise.melee.block`",
+    "pool": "combat",
+    "caption_key": "`loc.aud.caption.block`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.wpn.dry",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`noise.weapon.dryfire` (30 dB)",
+    "pool": "stealth",
+    "caption_key": "`loc.aud.caption.dry_fire`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.wpn.reload",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`noise.weapon.reload`",
+    "pool": "stealth",
+    "caption_key": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.wpn.swap",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`noise.weapon.swap`",
+    "pool": "stealth",
+    "caption_key": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.wpn.spark",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "the gadget spark's own `noise.*` (Canon §5.5, doc 07)",
+    "pool": "stealth",
+    "caption_key": "`loc.aud.caption.spark`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.hit.ward_break",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`ev.ward_broken`, for the hit's owner",
+    "pool": "ui",
+    "caption_key": "`loc.aud.caption.ward_break`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.env.ward_break",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`ev.ward_broken`, positional for every other slot",
+    "pool": "combat",
+    "caption_key": "`loc.aud.caption.ward_break`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.hit.crit",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`ev.damage_dealt` with flag `crit`",
+    "pool": "ui",
+    "caption_key": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.hit.precision",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`ev.damage_dealt` with flag `precision`",
+    "pool": "ui",
+    "caption_key": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.hit.kill",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`ev.damage_dealt` with flag `lethal`",
+    "pool": "ui",
+    "caption_key": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.hit.sever",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`ev.part_severed`",
+    "pool": "ui",
+    "caption_key": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "aud.sfx.hit.stagger",
+   "kind": "aud",
+   "owner": "18",
+   "section": "18 6.3 SFX taxonomy",
+   "fields": {
+    "trigger_event_or_noise": "`ev.status_applied` of `st.staggered` on a target the local slot hit on that tick",
+    "pool": "ui",
+    "caption_key": "none"
+   },
+   "also_in": []
+  }
+ ]
+}

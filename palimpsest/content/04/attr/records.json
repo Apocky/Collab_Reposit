@@ -1,0 +1,109 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "attr.might",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "MGT",
+    "sub_attribute_ids_codes": "`sub.power` (PWR), `sub.brawn` (BRN), `sub.grip` (GRP)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  },
+  {
+   "id": "attr.finesse",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "FIN",
+    "sub_attribute_ids_codes": "`sub.precision` (PRC), `sub.agility` (AGI), `sub.sleight` (SLT)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  },
+  {
+   "id": "attr.vigor",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "VIG",
+    "sub_attribute_ids_codes": "`sub.toughness` (TGH), `sub.endurance` (END), `sub.resilience` (RES)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  },
+  {
+   "id": "attr.intellect",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "INT",
+    "sub_attribute_ids_codes": "`sub.logic` (LOG), `sub.memory` (MEM), `sub.analysis` (ANL)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  },
+  {
+   "id": "attr.will",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "WIL",
+    "sub_attribute_ids_codes": "`sub.focus` (FOC), `sub.resolve` (RSV), `sub.attunement` (ATN)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  },
+  {
+   "id": "attr.perception",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "PER",
+    "sub_attribute_ids_codes": "`sub.sight` (SGT), `sub.hearing` (HRG), `sub.intuition` (ITU)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  },
+  {
+   "id": "attr.presence",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "PRE",
+    "sub_attribute_ids_codes": "`sub.charm` (CHM), `sub.menace` (MEN), `sub.guile` (GUI)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  },
+  {
+   "id": "attr.fortune",
+   "kind": "attr",
+   "owner": "04",
+   "section": "00 6.1 Structure",
+   "fields": {
+    "code": "FOR",
+    "sub_attribute_ids_codes": "`sub.fate` (FAT), `sub.serendipity` (SER), `sub.providence` (PRV)"
+   },
+   "also_in": [
+    "04 15.1 Primary attributes and sub-attributes"
+   ]
+  }
+ ]
+}

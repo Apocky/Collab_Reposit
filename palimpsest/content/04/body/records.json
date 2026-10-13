@@ -1,0 +1,114 @@
+{
+ "schema": "04.table_row",
+ "records": [
+  {
+   "id": "body.humanoid",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.head` (1500, 10000, yes), `bp.torso` (3500, 10000, no), `bp.arm_l` (1250, 8500, no), `bp.arm_r` (1250, 8500, no), `bp.leg_l` (1250, 8500, no), `bp.leg_r` (1250, 8500, no)"
+   },
+   "also_in": [
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "body.quadruped",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.head` (1500, 10000, yes), `bp.torso` (4500, 10000, no), `bp.leg_fl` (1000, 8500, no), `bp.leg_fr` (1000, 8500, no), `bp.leg_hl` (1000, 8500, no), `bp.leg_hr` (1000, 8500, no)"
+   },
+   "also_in": [
+    "04 8.3 Wound effects (humanoid)",
+    "04 13. Echo bodies",
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "body.avian",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.head` (1500, 10000, yes), `bp.torso` (3500, 10000, no), `bp.wing_l` (1500, 8500, no), `bp.wing_r` (1500, 8500, no), `bp.leg_l` (1000, 8500, no), `bp.leg_r` (1000, 8500, no)"
+   },
+   "also_in": [
+    "04 8.3 Wound effects (humanoid)",
+    "04 13. Echo bodies",
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "body.serpentine",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.head` (2000, 10000, yes), `bp.body_front` (4000, 10000, no), `bp.body_rear` (3000, 9000, no), `bp.tail` (1000, 8500, no)"
+   },
+   "also_in": [
+    "04 8.3 Wound effects (humanoid)",
+    "04 13. Echo bodies",
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "body.insectoid",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.head` (1500, 10000, yes), `bp.thorax` (3500, 10000, no), `bp.abdomen` (2600, 10000, no), `bp.leg_1` to `bp.leg_6` (400 each, 8000, no)"
+   },
+   "also_in": [
+    "04 8.3 Wound effects (humanoid)",
+    "04 13. Echo bodies",
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "body.amorphous",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.core` (2000, 10000, yes), `bp.mass` (8000, 10000, no)"
+   },
+   "also_in": [
+    "04 8.3 Wound effects (humanoid)",
+    "04 13. Echo bodies",
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "body.construct",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.core` (2000, 10000, yes), `bp.chassis` (5000, 10000, no), `bp.limb_1` to `bp.limb_4` (750 each, 8500, no)"
+   },
+   "also_in": [
+    "04 8.3 Wound effects (humanoid)",
+    "04 13. Echo bodies",
+    "04 15.8 Body plans and parts"
+   ]
+  },
+  {
+   "id": "body.swarm",
+   "kind": "body",
+   "owner": "04",
+   "section": "00 9. Body plans and hit locations",
+   "fields": {
+    "parts_id_share_bp_hit_mult_bp_precision": "`bp.mass` (10000, 10000, no); area damage against a swarm is × 15000 (§10.5 step 2.10)"
+   },
+   "also_in": [
+    "04 8.3 Wound effects (humanoid)",
+    "04 15.8 Body plans and parts"
+   ]
+  }
+ ]
+}

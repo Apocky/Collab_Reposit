@@ -1,0 +1,616 @@
+{
+ "schema": "14.table_row",
+ "records": [
+  {
+   "id": "unlock.set.starter",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "contents": "content every account owns at creation: Callings Vanguard, Duelist, Gunslinger, Spellwright; Origins Mythic Fantasy, Gothic Horror, Cyberpunk, Weird West; the 13 standard kits; every item, room and event not gated by a `unlock.loot.*`, `unlock.room.*`, `unlock.event.*`, `unlock.glyph.*` or `unlock.hireling.*` ID"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.daily_baseline",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "contents": "`unlock.set.starter` ∪ all 13 Callings ∪ all 12 core Origins. No alt kits, no Bindery loot, room or event nodes, no Scripts, no Echoes, no Keepsakes, no secret Origins (Canon §13.6, doc 15)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.glyph.ember",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.glyphs_<family>` for that family (Rubricated)",
+    "adds_to_the_account_content_set": "the 4 glyphs of doc 06 `family.ember` in the glyph loot pool, inside their rarity bands"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.glyph.hollow",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.glyphs_<family>`",
+    "adds_to_the_account_content_set": "the 4 glyphs of `family.hollow`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.glyph.mirror",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.glyphs_<family>`",
+    "adds_to_the_account_content_set": "the 4 glyphs of `family.mirror`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.glyph.storm",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.glyphs_<family>`",
+    "adds_to_the_account_content_set": "the 4 glyphs of `family.storm`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.glyph.thorn",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.glyphs_<family>`",
+    "adds_to_the_account_content_set": "the 4 glyphs of `family.thorn`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.glyph.tide",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.glyphs_<family>`",
+    "adds_to_the_account_content_set": "the 4 glyphs of `family.tide`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.hireling.apothecary",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.hireling_<type>` for that type (Rubricated)",
+    "adds_to_the_account_content_set": "1 hireling type in the Hireling Hall pool (doc 13)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.hireling.cartographer",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.hireling_<type>`",
+    "adds_to_the_account_content_set": "1 hireling type in the Hireling Hall pool"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.hireling.lamplighter",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.hireling_<type>`",
+    "adds_to_the_account_content_set": "1 hireling type in the Hireling Hall pool"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.hireling.porter",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.hireling_<type>`",
+    "adds_to_the_account_content_set": "1 hireling type in the Hireling Hall pool"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.hireling.sellsword",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 2.3 Content sets",
+   "fields": {
+    "granted_by_doc_15_3_1_2": "`bundle.script.hireling_<type>`",
+    "adds_to_the_account_content_set": "1 hireling type in the Hireling Hall pool"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.grenadier",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires_gate": "none",
+    "effect": "Grenadier selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.alchemist",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires_gate": "none",
+    "effect": "Alchemist selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.monk",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires_gate": "none",
+    "effect": "Monk selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.shade",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "requires_gate": "`unlock.calling.alchemist`",
+    "effect": "Shade selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.artificer",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "requires_gate": "`unlock.calling.grenadier`",
+    "effect": "Artificer selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.netrunner",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "requires_gate": "`unlock.calling.artificer`",
+    "effect": "Netrunner selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.beastbinder",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "requires_gate": "`unlock.calling.monk`",
+    "effect": "Beastbinder selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.warden",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "200",
+    "requires_gate": "any of shade, artificer",
+    "effect": "Warden selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.calling.oracle",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "200",
+    "requires_gate": "`unlock.calling.warden`",
+    "effect": "Oracle selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.origin.cosmic_horror",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "125",
+    "requires_gate": "any 3 `unlock.origin.*` nodes",
+    "effect": "Cosmic Horror Origin selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.origin.oneiric",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "250",
+    "requires_gate": "gate: the account entered `genre.oneiric`",
+    "effect": "secret Origin selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.origin.redacted",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "250",
+    "requires_gate": "gate: entered `genre.redacted`",
+    "effect": "secret Origin selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.origin.unwritten",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "250",
+    "requires_gate": "gate: entered `genre.unwritten`",
+    "effect": "secret Origin selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.origin.ur_text",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "375",
+    "requires_gate": "gate: `first_ur_text_victory`",
+    "effect": "secret Origin selectable"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.exotic_arms",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "requires": "none",
+    "adds": "12 Exotic weapons"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.exotic_armor",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "requires": "none",
+    "adds": "8 Exotic armor pieces"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.legendary_perks_1",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires": "none",
+    "adds": "10 legendary perks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.legendary_perks_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "requires": "`legendary_perks_1`",
+    "adds": "10 legendary perks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.cross_glosses",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires": "none",
+    "adds": "the cross-genre affix family (a manufacturer trait from one genre on another genre's item)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.implants_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "125",
+    "requires": "none",
+    "adds": "8 implants"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.relics_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "125",
+    "requires": "none",
+    "adds": "10 trinkets"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.throwables_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "75",
+    "requires": "none",
+    "adds": "6 throwables"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.glyphs_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "125",
+    "requires": "none",
+    "adds": "8 spell glyphs (doc 06)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.recipes_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires": "none",
+    "adds": "12 crafting recipes (doc 07)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.brews_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires": "none",
+    "adds": "8 brewing recipes and 4 ingredients (doc 08)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.loot.gadgets_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "requires": "none",
+    "adds": "6 gadgets (doc 07)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.room.fortune_engines_2",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "75",
+    "adds": "3 Fortune Engine variants (doc 11)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.room.hireling_hall",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "125",
+    "adds": "Hireling Hall room (doc 13 hirelings)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.room.bleed_shrine",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "adds": "Bleed Shrine room: the party can re-anchor one bleed zone to the Folio genre"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.room.wandering_scribe",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "75",
+    "adds": "wandering `fac.neutral` vendor event"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.room.illumination_vault",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "150",
+    "adds": "Illumination vault room (enables `run.note.illuminate`)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.room.duel_page",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "adds": "optional champion duel room"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.event.genre_storms",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "100",
+    "adds": "moving bleed-storm events (doc 12)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.option.seed_journal",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "125",
+    "requires": "none",
+    "effect": "the Ledger can launch any past run's seed as a Seeded run with its route shown"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.option.lens_pocket",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "200",
+    "requires": "none",
+    "effect": "§2.4.3 trade: second lore type for a Lattice Lens"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.option.dramatis_slots",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "50",
+    "requires": "none",
+    "effect": "Erratum presets 4 → 10"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.facility.proving_page",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3 The unlock tree",
+   "fields": {
+    "quires": "75",
+    "requires_gate": "gate: `first_editor_v1`",
+    "effect": "opens `margin.proving_page`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.invader.annotator",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3a Invader kit unlocks",
+   "fields": {
+    "grants_the_invader_kit": "`enemy.editors.kit.annotator`",
+    "gate": "`margin.milestone.first_editor_v1`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.invader.censor",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3a Invader kit unlocks",
+   "fields": {
+    "grants_the_invader_kit": "`enemy.editors.kit.censor`",
+    "gate": "`margin.milestone.first_editor_v2`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "unlock.invader.footnoter",
+   "kind": "unlock",
+   "owner": "14",
+   "section": "14 5.3a Invader kit unlocks",
+   "fields": {
+    "grants_the_invader_kit": "`enemy.editors.kit.footnoter`",
+    "gate": "`margin.milestone.first_victory`"
+   },
+   "also_in": []
+  }
+ ]
+}

@@ -1,0 +1,917 @@
+{
+ "schema": "17.table_row",
+ "records": [
+  {
+   "id": "ui.skin.mythic_fantasy",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#1B311B`",
+    "ink": "`#D2E1F0`",
+    "accent": "`#C9A227`",
+    "muted": "`#92A3A5`",
+    "ink_paper": "10.50",
+    "accent_paper": "5.78",
+    "muted_paper": "5.33"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.gothic_horror",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#1A0E13`",
+    "ink": "`#E9E7E1`",
+    "accent": "`#AF6E72`",
+    "muted": "`#A19B99`",
+    "ink_paper": "15.22",
+    "accent_paper": "4.75",
+    "muted_paper": "6.87"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.cosmic_horror",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#061315`",
+    "ink": "`#E3F6CF`",
+    "accent": "`#588571`",
+    "muted": "`#96A78E`",
+    "ink_paper": "16.51",
+    "accent_paper": "4.51",
+    "muted_paper": "7.39"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.space_opera",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#050711`",
+    "ink": "`#FFD0B1`",
+    "accent": "`#3D7BFF`",
+    "muted": "`#A88A79`",
+    "ink_paper": "14.27",
+    "accent_paper": "5.24",
+    "muted_paper": "6.29"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.cyberpunk",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#08050E`",
+    "ink": "`#99F5FF`",
+    "accent": "`#FF2E88`",
+    "muted": "`#66A1AB`",
+    "ink_paper": "16.24",
+    "accent_paper": "5.78",
+    "muted_paper": "6.98"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.post_apocalypse",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#302315`",
+    "ink": "`#E7DAC4`",
+    "accent": "`#E5693D`",
+    "muted": "`#A79A87`",
+    "ink_paper": "11.06",
+    "accent_paper": "4.66",
+    "muted_paper": "5.53"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.weird_west",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#151C23`",
+    "ink": "`#F3E2C8`",
+    "accent": "`#A97763`",
+    "muted": "`#A59D8E`",
+    "ink_paper": "13.52",
+    "accent_paper": "4.50",
+    "muted_paper": "6.39"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.hardboiled_noir",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#070707`",
+    "ink": "`#C5C5C5`",
+    "accent": "`#CE5555`",
+    "muted": "`#828282`",
+    "ink_paper": "11.67",
+    "accent_paper": "4.85",
+    "muted_paper": "5.24"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.wuxia",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#0E1A15`",
+    "ink": "`#F0E9DA`",
+    "accent": "`#CA6363`",
+    "muted": "`#A1A195`",
+    "ink_paper": "14.76",
+    "accent_paper": "4.65",
+    "muted_paper": "6.84"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.steampunk",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#211A12`",
+    "ink": "`#BFDCD9`",
+    "accent": "`#B5793A`",
+    "muted": "`#889893`",
+    "ink_paper": "11.84",
+    "accent_paper": "4.72",
+    "muted_paper": "5.70"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.fairy_tale",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#F2D7E8`",
+    "ink": "`#2C4C2E`",
+    "accent": "`#685920`",
+    "muted": "`#526651`",
+    "ink_paper": "7.18",
+    "accent_paper": "5.15",
+    "muted_paper": "4.64"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.mythic_antiquity",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#F0E6D2`",
+    "ink": "`#274C74`",
+    "accent": "`#8D551E`",
+    "muted": "`#4D6986`",
+    "ink_paper": "7.15",
+    "accent_paper": "4.91",
+    "muted_paper": "4.61"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.oneiric",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#130C23`",
+    "ink": "`#FFE7F3`",
+    "accent": "`#8E7CFF`",
+    "muted": "`#AC9AAA`",
+    "ink_paper": "16.28",
+    "accent_paper": "5.86",
+    "muted_paper": "7.20"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.redacted",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#F2F2F2`",
+    "ink": "`#1A1A1A`",
+    "accent": "`#CC242C`",
+    "muted": "`#666666`",
+    "ink_paper": "15.55",
+    "accent_paper": "4.86",
+    "muted_paper": "5.13"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.unwritten",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#FFFFFF`",
+    "ink": "`#525252`",
+    "accent": "`#707070`",
+    "muted": "`#767676`",
+    "ink_paper": "7.81",
+    "accent_paper": "4.95",
+    "muted_paper": "4.54"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.ur_text",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#E8D9B0`",
+    "ink": "`#1C1408`",
+    "accent": "`#78571C`",
+    "muted": "`#635943`",
+    "ink_paper": "13.00",
+    "accent_paper": "4.71",
+    "muted_paper": "4.93"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.skin.margin",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 2.2 Color tokens",
+   "fields": {
+    "paper": "`#1E1A14`",
+    "ink": "`#EDE3CC`",
+    "accent": "`#C9A227`",
+    "muted": "`#A59D8C`",
+    "ink_paper": "13.57",
+    "accent_paper": "7.16",
+    "muted_paper": "6.43"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.hud.folio_header",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TL",
+    "offset": "(0, 0)",
+    "size": "340 × 56",
+    "rect_at_1280_800": "24,24–364,80",
+    "priority": "60",
+    "visible_when": "in a run",
+    "content": "Folio number, Volume, local genre sigil and skinned name (bleed zones show both sigils split diagonally), four axiom pips of the local genre, one glyph per World Law active at the player's position that the viewer has discovered (§7; nothing for any other Law), Erasure clock and stack count"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.party",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TL",
+    "offset": "(0, 72)",
+    "size": "248 × 164",
+    "rect_at_1280_800": "24,96–272,260",
+    "priority": "80",
+    "visible_when": "2+ slots",
+    "content": "one 52 px frame per other slot: name, level, HP bar (`hp_bp`), ward bar, up to 6 status icons, downed bleed timer, ghost glyph, voice-speaking glyph, ping in ms on hold of `input.scoreboard`"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.minions",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TL",
+    "offset": "(0, 248)",
+    "size": "248 × 148",
+    "rect_at_1280_800": "24,272–272,420",
+    "priority": "50",
+    "visible_when": "owner has ≥ 1 minion",
+    "content": "§10.3"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.compass",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TC",
+    "offset": "(0, 0)",
+    "size": "480 × 32",
+    "rect_at_1280_800": "400,24–880,56",
+    "priority": "70",
+    "visible_when": "always in a run",
+    "content": "180° heading tape, cardinal letters, pings, party markers, objective markers, Colophon marker once open"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.boss_bar",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TC",
+    "offset": "(0, 40)",
+    "size": "520 × 36",
+    "rect_at_1280_800": "380,64–900,100",
+    "priority": "85",
+    "visible_when": "a boss, Editor or hunter is alerted toward the party",
+    "content": "name, HP bar with phase ticks, ward bar, champion aspect icons with counter icons"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.invasion",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TC",
+    "offset": "(0, 84)",
+    "size": "480 × 28",
+    "rect_at_1280_800": "400,108–880,136",
+    "priority": "90",
+    "visible_when": "an invader is present",
+    "content": "\"A Redactor is reading this page\", invader HP when visible, time left of the 300 s window"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.ghost",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TC",
+    "offset": "(0, 144)",
+    "size": "480 × 28",
+    "rect_at_1280_800": "400,168–880,196",
+    "priority": "88",
+    "visible_when": "the local Erratum is a ghost",
+    "content": "§10.4 banner and resurrection forecast"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.notifications",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TR",
+    "offset": "(0, 0)",
+    "size": "320 × 196",
+    "rect_at_1280_800": "936,24–1256,220",
+    "priority": "30",
+    "visible_when": "events",
+    "content": "5 lines of 36 px, newest on top, 4 s each: pickups, identifications, skill-ups, level-ups, favor changes, World Law discoveries (§7); Narrator notes take up to 2 lines for 8 s (§16.4)"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.minimap",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "TR",
+    "offset": "(0, 212)",
+    "size": "176 × 176",
+    "rect_at_1280_800": "1080,236–1256,412",
+    "priority": "20",
+    "visible_when": "`access.minimap` on (default off)",
+    "content": "top-down slice of the visited map at the player's floor (§8)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.hud.crosshair",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "C",
+    "offset": "(0, 0)",
+    "size": "64 × 64",
+    "rect_at_1280_800": "608,368–672,432",
+    "priority": "100",
+    "visible_when": "first person, not in a menu",
+    "content": "reticle, spread ring from `cone` (doc 05 §6.3), hit markers (doc 05 §18), lean chevrons (§10.9), cast-progress arc"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.prompt",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "C",
+    "offset": "(0, 72)",
+    "size": "420 × 48",
+    "rect_at_1280_800": "430,448–850,496",
+    "priority": "95",
+    "visible_when": "an interactable is targeted",
+    "content": "binding glyph, verb, target name, hold-progress ring for timed interacts"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.vote",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "C",
+    "offset": "(0, −128)",
+    "size": "480 × 64",
+    "rect_at_1280_800": "400,240–880,304",
+    "priority": "75",
+    "visible_when": "`ExitVote` or `VictoryChoice`",
+    "content": "each door's voter count, `need`, hold counter `hold/120` and interact counter `interact_hold/180` (doc 14 §3.6)"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.downed",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "C",
+    "offset": "(0, −64)",
+    "size": "360 × 40",
+    "rect_at_1280_800": "460,316–820,356",
+    "priority": "92",
+    "visible_when": "the local Erratum holds `st.downed`",
+    "content": "§10.4a bleed-out and revive bars"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.vitals",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BL",
+    "offset": "(0, 0)",
+    "size": "320 × 104",
+    "rect_at_1280_800": "24,672–344,776",
+    "priority": "100",
+    "visible_when": "always",
+    "content": "HP bar 320 × 20 with ward bar 320 × 6 above it; stamina 256 × 10; aether 256 × 10 (skinned name); composure 256 × 10; toxicity 256 × 6 with band ticks; breath bubbles when draining; satiation, temperature and respirator glyphs; Scribe's Mercy quill with its percent when on"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.status",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BL",
+    "offset": "(0, −112)",
+    "size": "320 × 72",
+    "rect_at_1280_800": "24,592–344,664",
+    "priority": "65",
+    "visible_when": "≥ 1 status",
+    "content": "2 rows × 9 icons of 32 px with 4 px gaps; each shows stacks and a remaining-time arc; afflictions first, then control, DoT, debuff, mental, buff, indicator"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.body",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BL",
+    "offset": "(328, 0)",
+    "size": "56 × 104",
+    "rect_at_1280_800": "352,672–408,776",
+    "priority": "45",
+    "visible_when": "always",
+    "content": "paper doll of the body plan, each part tinted by wound tier 0 to 4, severed parts drawn as dashed outline"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.hud.quickbar",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BC",
+    "offset": "(0, 0)",
+    "size": "432 × 56",
+    "rect_at_1280_800": "424,720–856,776",
+    "priority": "90",
+    "visible_when": "always",
+    "content": "4 to 8 slots of 48 px with 6 px gaps (Canon §13.2), stack counts, binding glyphs, selected slot outline"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.abilities",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BC",
+    "offset": "(0, −64)",
+    "size": "212 × 48",
+    "rect_at_1280_800": "534,664–746,712",
+    "priority": "85",
+    "visible_when": "≥ 1 active talent",
+    "content": "4 slots of 44 px with 12 px gaps, cooldown sweep and seconds"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.stealth",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BC",
+    "offset": "(0, −120)",
+    "size": "264 × 44",
+    "rect_at_1280_800": "508,612–772,656",
+    "priority": "70",
+    "visible_when": "§10.10 visibility rule",
+    "content": "§10.10"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.subtitles",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BC",
+    "offset": "(0, −176)",
+    "size": "592 × 100",
+    "rect_at_1280_800": "344,500–936,600",
+    "priority": "98",
+    "visible_when": "a captioned line plays",
+    "content": "§13.2"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.weapon",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BR",
+    "offset": "(0, 0)",
+    "size": "320 × 104",
+    "rect_at_1280_800": "936,672–1256,776",
+    "priority": "95",
+    "visible_when": "always",
+    "content": "weapon skinned name and rarity, magazine/reserve or charges or heat, fire mode, Contradiction icon with potency and failure percent, counter icons the weapon carries"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.spell",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "BR",
+    "offset": "(0, −112)",
+    "size": "320 × 64",
+    "rect_at_1280_800": "936,600–1256,664",
+    "priority": "80",
+    "visible_when": "≥ 1 castable entry",
+    "content": "active spell name, cast cost in display aether, cooldown, cast type glyph; prayer readiness and favor with the local patron (§10.7)"
+   },
+   "also_in": [
+    "17 3.4 Large layout (`access.hud_layout = large`)"
+   ]
+  },
+  {
+   "id": "ui.hud.chat",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 3.2 Element table",
+   "fields": {
+    "anchor": "ML",
+    "offset": "(0, 78)",
+    "size": "320 × 100",
+    "rect_at_1280_800": "24,428–344,528",
+    "priority": "40",
+    "visible_when": "a message in the last 10 s, or chat open",
+    "content": "4 lines; full history in the chat panel"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.contradiction",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.contradiction_changed` with `new_c ≥ 3` on an item the local Erratum holds",
+    "glyphs": "`input.ui_details`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.anachronism_edge",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ui.icon.edge` drawn for the first time (Anachronism Edge active against the current target, §2.5)",
+    "glyphs": "`input.ui_details`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.erasure",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.erasure_stack` on the local Erratum",
+    "glyphs": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.colophon",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.colophon_entered` for the local slot",
+    "glyphs": "`input.interact`, `input.menu_exits`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.ward",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.ward_broken` on the local Erratum",
+    "glyphs": "none"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.minions",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.minion_bound` with the local slot as `owner_slot`",
+    "glyphs": "`input.minion_follow`, `input.minion_hold`, `input.minion_attack`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.ghost",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.player_ghosted` for the local slot",
+    "glyphs": "`input.attack`, `input.ping`, `input.weapon_next`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.affliction",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.affliction_changed` on the local Erratum",
+    "glyphs": "`input.menu_character`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.prayer",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.favor_changed` on the local Erratum",
+    "glyphs": "`input.pray`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.lean",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.awareness_changed` with the local Erratum as `subject` and `to` other than `aware.unaware`",
+    "glyphs": "`input.lean_l`, `input.lean_r`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.stealth_light",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "the stealth meter (`ui.hud.stealth`, §10.10) shown for the first time",
+    "glyphs": "`input.crouch`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.placeables",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.item_picked_up` of a `cat.placeable` item into the local Erratum's inventory",
+    "glyphs": "`input.attack`, `input.alt`, `input.weapon_next`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.ledger",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "`ev.item_picked_up` of an item whose type the local player does not know",
+    "glyphs": "`input.menu_journal`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.tip.scribes_mercy",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 15. Onboarding and tooltips",
+   "fields": {
+    "trigger": "the local Erratum's first death (Canon §10.8 step 3, counted as §13.1 counts deaths) while `access.scribes_mercy` is off; shown after the death screen with the text \"Scribe's Mercy is in Settings if you want it\"",
+    "glyphs": "`input.pause`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.rumble.hit_taken",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 16.3 Haptics (`ui.rumble.*`)",
+   "fields": {
+    "low_motor_bp": "6000",
+    "high_motor_bp": "3000",
+    "frames": "8",
+    "trigger": "`ev.damage_dealt` on the local player, scaled by `min(10000, 20 × hp_lost_bp)`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.rumble.fire_light",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 16.3 Haptics (`ui.rumble.*`)",
+   "fields": {
+    "low_motor_bp": "0",
+    "high_motor_bp": "2500",
+    "frames": "3",
+    "trigger": "own semi or auto shot"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.rumble.fire_heavy",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 16.3 Haptics (`ui.rumble.*`)",
+   "fields": {
+    "low_motor_bp": "5000",
+    "high_motor_bp": "4000",
+    "frames": "6",
+    "trigger": "launcher, shotgun, sniper shot"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.rumble.parry",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 16.3 Haptics (`ui.rumble.*`)",
+   "fields": {
+    "low_motor_bp": "3000",
+    "high_motor_bp": "8000",
+    "frames": "6",
+    "trigger": "own parry"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.rumble.ward_break",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 16.3 Haptics (`ui.rumble.*`)",
+   "fields": {
+    "low_motor_bp": "7000",
+    "high_motor_bp": "7000",
+    "frames": "10",
+    "trigger": "own `ev.ward_broken`"
+   },
+   "also_in": []
+  },
+  {
+   "id": "ui.rumble.level_up",
+   "kind": "ui",
+   "owner": "17",
+   "section": "17 16.3 Haptics (`ui.rumble.*`)",
+   "fields": {
+    "low_motor_bp": "2000",
+    "high_motor_bp": "2000",
+    "frames": "20",
+    "trigger": "`ev.level_gained`"
+   },
+   "also_in": []
+  }
+ ]
+}

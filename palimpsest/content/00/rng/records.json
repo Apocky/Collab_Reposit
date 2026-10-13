@@ -1,0 +1,258 @@
+{
+ "schema": "00.table_row",
+ "records": [
+  {
+   "id": "rng.lattice",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "12",
+    "draws_for": "genre candidates offered at the exit of that Folio: always exactly 3 candidates by one fixed procedure (§17.1)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.appearance",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "run",
+    "owner": "10",
+    "draws_for": "the run-start appearance shuffle (§13.6)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.worldgen",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "12",
+    "draws_for": "layout, rooms, blocks, dressing, and the counts and positions of loot spots (chests, floor spots, caches)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.spawn",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "13",
+    "draws_for": "initial population and spawn waves"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.loot_place",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "11",
+    "draws_for": "everything placed in loot spots and containers, and shop stock"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.event",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "12",
+    "draws_for": "ambient and narrative events"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.ai_idle",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "13",
+    "draws_for": "idle and wander behavior with no actor input"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.fire",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "03",
+    "draws_for": "fire ignition and spread"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.blocktick",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "03",
+    "draws_for": "random block ticks"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.physics",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "03",
+    "draws_for": "debris, explosion block-break variation and explosion block drops"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.run",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.2 Sequential streams",
+   "fields": {
+    "scope": "folio",
+    "owner": "14",
+    "draws_for": "Daily setup and Weekly mutators (`folio_index = 0`), marginal notes and Marginal mutations"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.combat",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "05",
+    "used_for": "crits, spread and recoil jitter, Contradiction failure for every activation (docs 05, 06, 07), on-hit procs, Death's Door (04)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.status",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "05",
+    "used_for": "only effects a doc explicitly declares as \"X Bp chance to apply\", and `st.confused` rotations; buildup itself never draws"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.magic",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "06",
+    "used_for": "wild surges, spell variance, cast interruption (§6.4 row 30)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.stealth",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "09",
+    "used_for": "AI detection rolls, pickpocket, lockpicking, trap and secret detection (§6.4 row 35)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.ident",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "10",
+    "used_for": "appraisal error, curse sensing on pickup (§6.4 row 36)"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.craft",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "07",
+    "used_for": "crafting quality"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.alchemy",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "08",
+    "used_for": "brewing variance, unknown liquid effects"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.loot",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "11",
+    "used_for": "drops from kills and opened containers, Reliquary contents, Fortune Engine dispensing"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.ai",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "13",
+    "used_for": "utility AI tie-breaks during an agent's think"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.progress",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "04",
+    "used_for": "talent offers and level-up choices, with `actor` = the player's EntityId"
+   },
+   "also_in": []
+  },
+  {
+   "id": "rng.check",
+   "kind": "rng",
+   "owner": "00",
+   "section": "00 3.3 Keyed draws",
+   "fields": {
+    "owner": "04",
+    "used_for": "non-combat skill checks (doc 04 §4.2) and madness episodes. Disguise challenges are AI detection rolls and use `rng.stealth` (doc 09)"
+   },
+   "also_in": []
+  }
+ ]
+}
