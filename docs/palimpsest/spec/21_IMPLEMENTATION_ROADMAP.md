@@ -1,6 +1,6 @@
 # 21 — Implementation Roadmap
 
-As of 2026-10-11. Status: BINDING. Written against canon-1.12 (adversarial check pending).
+As of 2026-10-11. Status: BINDING. Conforms to canon-1.11.
 
 This chapter turns the specification into a build plan. It states what the Rust workspace holds today, what ships at Early Access, at 1.0 and in the first Folio Expansions, the milestones with their dates and testable exit criteria, the 128 work packages (WPs) that coding agents pick up, the content production plan, the engineering process every agent follows, the risk register and the dependency graph. It owns no content namespace (Canon §19) and adds no simulation state. Product-owner rows in `DECISIONS.md` bind it; where a chapter still disagrees with such a row, this chapter follows the row and lists the conflict under Canon gaps.
 
@@ -1031,7 +1031,7 @@ Each default below is in force until answered; answers land in `DECISIONS.md`.
 | RQ-08 | Post-launch genre order? | Fairy Tale and Mythic Antiquity, then Cosmic Horror and Hardboiled Noir, then Space Opera and Post-Apocalypse |
 | RQ-09 | Kaiju and Mecha without vehicles: mecha as powered armor and Going Native forms? | yes (DECISIONS 55 binds) |
 | RQ-10 | Planning capacity of 8 concurrent agent lanes? | yes |
-| RQ-11 | Folio Expansion price inside 9.99 to 14.99? | USD 12.99, as doc 15 §1.1 lists |
+| RQ-11 | Folio Expansion price | USD 9.99 fixed (DECISIONS 122) |
 | RQ-12 | Do the Ur-Text and the Unwritten need 2 mini-bosses each? | no; they keep doc 13 §9.3's champion |
 | RQ-13 | A public demo before Early Access? | no; the Steam Playtest app on the `playtest` channel serves pre-launch players, and the WebGPU demo of doc 02 §14 is dropped under DECISIONS 98 |
 | RQ-14 | Streaming votes (DECISIONS 104) at Early Access or later? | Update 2 |

@@ -448,7 +448,7 @@ Each default below is in force until answered; answers land in `DECISIONS.md`.
 | RQ-08 | Post-launch genre order? | Fairy Tale and Mythic Antiquity, then Cosmic Horror and Hardboiled Noir, then Space Opera and Post-Apocalypse |
 | RQ-09 | Kaiju and Mecha without vehicles: mecha as powered armor and Going Native forms? | yes (DECISIONS 55 binds) |
 | RQ-10 | Planning capacity of 8 concurrent agent lanes? | yes |
-| RQ-11 | Folio Expansion price inside 9.99 to 14.99? | USD 12.99, as doc 15 §1.1 lists |
+| RQ-11 | Folio Expansion price | USD 9.99 fixed (DECISIONS 122) |
 | RQ-12 | Do the Ur-Text and the Unwritten need 2 mini-bosses each? | no; they keep doc 13 §9.3's champion |
 | RQ-13 | A public demo before Early Access? | no; the Steam Playtest app on the `playtest` channel serves pre-launch players, and the WebGPU demo of doc 02 §14 is dropped under DECISIONS 98 |
 | RQ-14 | Streaming votes (DECISIONS 104) at Early Access or later? | Update 2 |

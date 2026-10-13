@@ -1283,7 +1283,7 @@ The tables of §13.2, §13.5 and §13.10 give every other `access.*` setting's v
 | `ui.tip.scribes_mercy` | the local Erratum's first death (Canon §10.8 step 3, counted as §13.1 counts deaths) while `access.scribes_mercy` is off; shown after the death screen with the text "Scribe's Mercy is in Settings if you want it" | `input.pause` |
 - **First-open explainers**: each major menu shows a one-page explainer the first time, re-openable from its "?" button.
 - **Tooltips**: mouse hover 300 ms; gamepad shows the focused element's tooltip at once in a side panel; nested glossary links open with `input.ui_details` and back with `input.ui_back`.
-- The Prologue's room L3 (doc 14 §11, triage C-03) teaches harvesting the `block.node.timber` resource node with the `item.tool.pick` lying there, then placing the 3 `block.ladder.wood` against the 3,000 mm wall and the 2 `block.bridge.plank` across the 2,000 mm gap (`cat.placeable`, doc 07 §10.1); the prompt shows each placement's binding glyphs (§6.2), and nothing in L3 mines terrain (Canon §4.3).
+- The Prologue is retired (DECISIONS 132), so its room L3 lesson is not taught. Harvesting and placement are taught by contextual tips (doc 14 §11).
 
 ## 16. Feedback and juice
 
