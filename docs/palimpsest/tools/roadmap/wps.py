@@ -399,7 +399,7 @@ wp(99, "EA balance and bot pillar sweeps", "M6", "EA",
    {"02": [47], "P": ["one_ruleset.t1", "out_of_story.t1", "out_of_story.t2", "living_page.t1", "living_page.t3", "party_of_errata.t1"]}, 10)
 wp(100, "Human playtests and blind genre recognition", "M7", "EA",
    [("01", ["2.1"])], "palimpsest_client (test flag)", [61, 65] + list(asset_ids.values()),
-   "≥ 20 fresh testers over the 6 EA genres with labels hidden, Deck sessions, co-op nights, P0 and P1 triage",
+   "≥ 20 fresh testers over the 12 core genres at EA with labels hidden, Deck sessions, co-op nights, P0 and P1 triage",
    {"P": ["one_ruleset.t3"]}, 4)
 wp(101, "Release engineering for EA", "M7", "EA",
    [("02", ["17.2"]), ("15", ["8.6", "3.2"])], "CI; store back ends", [75, 61, 69, 98],

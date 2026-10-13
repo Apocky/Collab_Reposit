@@ -8,7 +8,7 @@ This chapter turns the specification into a build plan. It states what the Rust 
 
 | Source | Consumed |
 |---|---|
-| `DECISIONS.md` items 1–104 | every tier decision: 6 Early Access genres (41), USD 19.99 at Early Access and 1.0 (42), Folio Expansion order (53), roster size (69), crossplay (73), Margin hub (77), PC only through 1.0 (98), and the newest rows 81–104 (ghost XP, Mercy, Lucre drops, limb loss, co-op skill growth, invader rewards, cosmetic mods, Somnambule, chargers, Crowns, hunter identity, FOV, host migration, ink gore, movement kit, asynchronous traces, creator presets, time of day and weather, Second Edition, streaming votes) |
+| `DECISIONS.md` items 1–104 | every tier decision: 12 core genres at Early Access (114, which supersedes 41's 6), USD 19.99 at Early Access and 1.0 (42), Folio Expansion order (53), roster size (69), crossplay (73), Margin hub (77), PC only through 1.0 (98), and the newest rows 81–104 (ghost XP, Mercy, Lucre drops, limb loss, co-op skill growth, invader rewards, cosmetic mods, Somnambule, chargers, Crowns, hunter identity, FOV, host migration, ink gore, movement kit, asynchronous traces, creator presets, time of day and weather, Second Edition, streaming votes) |
 | `DESIGN_BRIEF.md` §1–§9 | high concept, omni-genre engine, 12 core plus 4 secret genres, run shape, technology, monetization stance, document contract |
 | Canon §1–§3, §5.2, §16.2, §17, §19, §21, §22 | numeric and RNG rules agents must follow, the genre table, Origins and Echoes, run constants and `GENRE_REPEAT_RULE`, namespace ownership, acceptance tests 1–47, invariants |
 | Doc 01 §2, §3.13, §4.2, §9.3, §10, §11 | the 18 pillar tests and the Early Access gate, signature moments SM-01 to SM-11, parity items PAR-11 to PAR-13, KPIs, the question default Q-19 (Q-11 is superseded by DECISIONS 98) |
@@ -89,7 +89,7 @@ Rule 5 (freshness) and the 3 `range` calls of `rng.lattice` are unchanged, so th
 | Test | Doc 01 wording | Early Access reading |
 |---|---|---|
 | `pillar.one_ruleset.t2` | all 66 core pairs | unchanged: GPV records for all 16 genres exist from M2 |
-| `pillar.one_ruleset.t3` | 12 core genres, 12 display names | the 6 Early Access genres, 6 display names |
+| `pillar.one_ruleset.t3` | 12 core genres, 12 display names | the 12 core genres at Early Access, 12 display names |
 | `pillar.out_of_story.t1` | 1,000 solo Standard bot runs | 1,000 solo `mode.novella` bot runs |
 | `pillar.out_of_story.t2` | 12 core genres × 13 Callings | 6 genres × 13 Callings |
 | `pillar.living_page.t1` | Standard bot runs | `mode.novella` bot runs |
@@ -118,7 +118,7 @@ Novella plays Folios 1 to 15 at the Standard depth `d(f) = f` (doc 14 §8.3, Nov
 |---|---|---|---|---|
 | Simulation core (doc 03) | integer and fixed-point primitives, tick timers, `EntityId`, save and hash skeleton | entity store, scheduler, all six grids, controller with the DECISIONS 95 kit, explosions, block edits, event bus | unchanged | unchanged |
 | Determinism and tooling (doc 02) | float and `HashMap` bans, canon tests | `xtask`, 5-target matrix (Linux verifiers must match Windows clients), golden replays, SyncTest, desync dumps, `pal` tools | unchanged | unchanged |
-| World generation and genres (doc 12) | genre table, Contradiction, Anachronism Edge, World Law formulas | 6 genres, Ur-Text Folios, cascade of §2.3, bleed, seams, secret rooms, time of day and weather | 16 genres, secret exits, gravity flip, Marginalia modifiers, fused Second Edition Folios | expansion genres |
+| World generation and genres (doc 12) | genre table, Contradiction, Anachronism Edge, World Law formulas | 12 core genres, Ur-Text Folios, cascade of §2.3, bleed, seams, secret rooms, time of day and weather | 16 genres, secret exits, gravity flip, Marginalia modifiers, fused Second Edition Folios | expansion genres |
 | Combat (doc 05) | damage pipeline, wards, blocking | melee, ranged, armor, counters, jams, grappling tool | unchanged | expansion skins |
 | Attributes, skills, body (doc 04) | derived stats, skills, levels | full chapter, crippled-pool severing (DECISIONS 84) | unchanged | unchanged |
 | Magic (doc 06) | glyph dependency rule | full chapter, Glyph Library | unchanged | expansion skins |
@@ -169,9 +169,9 @@ A milestone that misses its target moves every later milestone by the same numbe
 
 **M2 Headless rules.** (1) Every acceptance test assigned to WP-022 to WP-042 is green: docs 04, 06, 07, 08, 09 and 10 completely, doc 05 except 41 (M5) and 48 (M3), doc 11 except 28 (1.0) and 36 (M5), the doc 13 AI tests, and C 13–23, 25, 26, 28, 35–42 and 47. (2) SyncTest depth 8 passes over golden replays that exercise combat, magic, alchemy, stealth and crafting fixtures. (3) `pal extract` and `pal catalog` regenerate `spec/20_CONTENT_CATALOG.md` byte-identically from the chapter tables.
 
-**M3 Headless game.** (1) C 1–47 are all green, test 31 comparing block data. (2) The doc 12 pull-request sweep (12: 18) passes over the 6 Early Access genres and the Ur-Text with today's 7-template rosters. (3) Doc 13 is green except 47 (M5); doc 14 is green for every test of WP-046. (4) SM-01 to SM-11 pass headless (01: 20). (5) `perf.ci.bot_tps` is at least 6,000, and 200 nightly bot runs of `mode.novella` and `mode.abridged` finish with no panic, no desync between two replicas and no Folio longer than 36,000 ticks (doc 02 §16, Testing strategy, item 6).
+**M3 Headless game.** (1) C 1–47 are all green, test 31 comparing block data. (2) The doc 12 pull-request sweep (12: 18) passes over the 12 core genres at Early Access and the Ur-Text with today's 7-template rosters. (3) Doc 13 is green except 47 (M5); doc 14 is green for every test of WP-046. (4) SM-01 to SM-11 pass headless (01: 20). (5) `perf.ci.bot_tps` is at least 6,000, and 200 nightly bot runs of `mode.novella` and `mode.abridged` finish with no panic, no desync between two replicas and no Folio longer than 36,000 ticks (doc 02 §16, Testing strategy, item 6).
 
-**M4 First playable client.** (1) A tester plays a first run with contextual tips and a `mode.abridged` run from the Lectern to the closing manuscript on Windows and on Steam Deck through Proton, with greybox art in the 6 Early Access genres. (2) Doc 02 tests 12–16, 18, 34, 37, 42 and 43, the doc 17 tests of WP-053 to WP-055 and WP-057, and the doc 18 tests of WP-050 to WP-052 are green. (3) The client smoke test passes under 16 schedule shuffle seeds. (4) SM-10 and then SM-06 are playable in the client (doc 01 §11 Q-19).
+**M4 First playable client.** (1) A tester plays a first run with contextual tips and a `mode.abridged` run from the Lectern to the closing manuscript on Windows and on Steam Deck through Proton, with greybox art in the 12 core genres at Early Access. (2) Doc 02 tests 12–16, 18, 34, 37, 42 and 43, the doc 17 tests of WP-053 to WP-055 and WP-057, and the doc 18 tests of WP-050 to WP-052 are green. (3) The client smoke test passes under 16 schedule shuffle seeds. (4) SM-10 and then SM-06 are playable in the client (doc 01 §11 Q-19).
 
 **M5 Online, platforms and economy.** (1) Docs 15 and 16 are green; doc 14 tests 16–18, 24, 26, 36, 39–41, 46, 47, 49 and 51 are green. (2) `pillar.fair_page.t1`, `pillar.fair_page.t2` and `pillar.fair_page.t3` pass. (3) A 4-player Abridged run over Steam Datagram Relay and one over LAN finish; an Epic Games Store client and a Steam client finish a Folio together over `svc.relay`; an invasion runs from beacon to Redaction and from beacon to invader death. (4) Nightly 4-player bot co-op shows 0 desyncs over 1,000 bot hours.
 
@@ -287,7 +287,7 @@ Every Canon §21 test and every acceptance test on disk in chapters 01 to 18 is 
 
 ### 5.2 Order of production
 
-Doc 18 §10.1 fixes the order: every per-genre asset family for the 6 Early Access genres first, then the other 6 core genres, then the secret genres. This chapter adds the Ur-Text and Unwritten sets to the Early Access batch, because the final Folio and Unwritten need them (Canon gaps G13). Global assets ship complete at Early Access. The product owner curates every AI-assisted asset under doc 18 §10.3 (AI-assisted production, curation and licensing) in weekly batches; an uncurated asset never ships.
+Doc 18 §10.1 fixes the order: every per-genre asset family for the 12 core genres at Early Access (DECISIONS 114), then the 4 secret genres, then the secret genres. This chapter adds the Ur-Text and Unwritten sets to the Early Access batch, because the final Folio and Unwritten need them (Canon gaps G13). Global assets ship complete at Early Access. The product owner curates every AI-assisted asset under doc 18 §10.3 (AI-assisted production, curation and licensing) in weekly batches; an uncurated asset never ships.
 
 ### 5.3 Counts per core genre
 
@@ -491,12 +491,12 @@ This chapter defines no content ID and owns no Canon §19 namespace. It exports 
 
 ## Canon gaps
 
-- **G1. Lattice feasibility below 8 core genres.** Canon §17.1 (Run constants) requires exactly 3 lattice candidates under `GENRE_REPEAT_RULE`, and doc 12 §5.4 asserts at least 3 eligible genres. With the 6 Early Access genres a Volume's fifth Folio leaves 2 and Abridged Folios 12 and 14 leave 1. Proposal: canon-1.12 adds the cascade of §2.3 (a) to `LATTICE_CANDIDATES`, and doc 12 §5.5 implements it; it is inert with 12 core genres.
+- **G1. Lattice feasibility below 8 core genres.** Canon §17.1 (Run constants) requires exactly 3 lattice candidates under `GENRE_REPEAT_RULE`, and doc 12 §5.4 asserts at least 3 eligible genres. With the superseded 6-genre count (DECISIONS 41; DECISIONS 114 now sets 12, so this arithmetic must be recomputed before use) a Volume's fifth Folio leaves 2 and Abridged Folios 12 and 14 leave 1. Proposal: canon-1.12 adds the cascade of §2.3 (a) to `LATTICE_CANDIDATES`, and doc 12 §5.5 implements it; it is inert with 12 core genres.
 - **G2. Folio 1 for an unshipped Origin genre.** `FOLIO_1_GENRE` names the host's Origin genre, which can lie outside the content set. Proposal: the mapping of §2.3 (b), in Canon §17.1 and doc 12 §5.6 (Folio 1).
 - **G3. Shipped genre set.** The canon has no notion of a build whose content set holds fewer than 12 core genres. Proposal: as doc 12 §25 does for expansions, a core genre outside the content set is not a lattice node.
 - **G4. Pillar tests at Early Access.** Doc 01 §2 words five tests for Standard runs and 12 genres. Proposal: doc 01 adopts the readings of §2.3 (e) for the Early Access gate.
 - **G5. Price.** Doc 01 §9.3 and doc 15 §1.1 list USD 24.99 at Early Access and 29.99 at 1.0; DECISIONS 42 sets 19.99 for both. This chapter uses 19.99; both chapters change.
-- **G6. Early Access breadth.** Doc 01 §4.2 (PAR-12) and §11 (Q-06) put all 16 genres at Early Access; DECISIONS 41 sets 6. PAR-12's lower bound of 8 genres holds from Update 1 on.
+- **G6. Early Access breadth.** Doc 01 §4.2 (PAR-12) and §11 (Q-06) put all 16 genres at Early Access; DECISIONS 114 sets all 12 core genres at Early Access, so G6 is resolved. PAR-12's lower bound of 8 genres holds from Update 1 on.
 - **G7. `T0`.** Doc 15 §3.2.3 uses placeholder `T0` values in its examples; the value is set at launch (§3.3).
 - **G8. Erasure onset.** Doc 01 §6 (Core loops at five time scales) and its test 15 grant stack 1 at clock 25,200; Canon §17.1 (Run constants) grants it at 43,200 since canon-1.6 (DECISIONS 26), and doc 14 §3.8 (Erasure pressure timeline) now follows the canon. WPs implement the canon.
 - **G9. Milestone labels.** Doc 02 §18 item 8 uses M0 to M15 for its task order and calls the slice "M0 to M4"; the slice covers the math step and parts of the data and save steps, and none of the grids. Proposal: doc 02 replaces item 8 with a pointer to §3.5 of this chapter.

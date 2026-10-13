@@ -17,11 +17,76 @@
    "why": "doc 17 G29 (already present in canon-1.12 §17.1)"
   }
  ],
- "cross_chapter_requests": [],
+ "cross_chapter_requests": [
+  {
+   "to": "01",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): its §7 verb table copies §12.1, §12.3 and §12.4, including the gamepad cast cancel of §12.4 and without the retired mount input (triage C-30)"
+  },
+  {
+   "to": "02",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): the §5.5 bit table with §12.2's `ACTION` (bits 26–28) and `WHEEL_ENTRY` (bits 29–31) and with bit 25, the retired `MOUNT_TOGGLE`, reserved and 0 (triage C-10, C-30); `IntentKind` additions `SetScribesMercy { on }`, `MapPing { cell: [i32; 3] }`, `AssignWheelEntry { index, source }`, `AssignAbilitySlot { slot, talent }`, `QuickbarAssign { index, uid }`, `SetFocusLock { uid }`, `Examine { uid }`, `ShopHaggle { shop }`, `SetCastItemTarget { uid }`, `SetBreathHold { on }`, `Vocalize { kind }` (C-15) and `SetLockMode { manual }` (§10.11); the FOV setting 60–120 (§8.4, C-11), cited as this chapter's §13.5 `access.fov_deg` where doc 02 writes \"doc 17 §8.4\"; AccessKit through `bevy_a11y` in `bevy_winit` and `tts` 0.26.3 for `access.narrator` (§2.2, present); `flag.scribe.enabled` (doc 18 §9.10); the host's required mod set synced to co-op joiners without a subscribe prompt (§13.4, DECISIONS 126), as §11.9's `ui.menu.mod_sync` shows it"
+  },
+  {
+   "to": "03",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): `ev.noise` `heard` entries per slot; `mercy_on`, `mercy_bp` and `breath_held` in `comp.player`; step 6c executed by the damage system for every involuntary HP loss (Canon §10.5); every event this chapter reads registered in §14.3; DECISIONS 95's movement kit reached through existing bits: the ledge mantle on a `JUMP` press (§5.9 reaches 2,000 mm per DECISIONS 95 and Canon §4.2), the sprint-slide on a `CROUCH` press while `SPRINT` is held and the Erratum sprints (§12.1; doc 03 G31 specifies the motion) and the grappling tool as a doc 11 item used from the quickbar, so it needs no new button bit and bit 25 stays 0; `ev.law_discovered` with doc 12 §4.1's payload (present)"
+  },
+  {
+   "to": "04",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): `explain_row(entity, row) -> Explanation` (doc 04 §1.2) over the same code path as §6.4 evaluation; the Prologue death hook counted for Mercy; `PickTalent` resolving stored Interpolation offers; creation validation failures as text keys; §11.5's \"holds `input.hold_breath`\" read as `breath_held`; madness phantoms (§12.4) identifiable on the bearer's client, so `access.mark_hallucinations` can mark them; the 12 creator presets per kin with palette and marking colors (DECISIONS 97)"
+  },
+  {
+   "to": "05",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): `aim_assist_bp` per weapon archetype (default 10000); `lean_k` and the shrunken lean offset replicated to the owner for the indicator; hold breath while aimed per §6.7; the retired mount input gone from §1.7's inputs (C-30)"
+  },
+  {
+   "to": "06",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): `compile()` callable on the client with a `CasterStats` snapshot; `Pray { patron, kind }`; channel and charge wheel entries select without casting, and `SetCastItemTarget { uid }` replaces an item uid in the command, acknowledged in `OwnerDelta` (C-28); Grimoire presses counted as §12.2 states; the prayer component's failure chance exposed to the client; §16.3's draws and §16.4's gate as §10.7 copies them"
+  },
+  {
+   "to": "07",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): doc 02's `Craft` intent carrying `StartCraft { recipe, count }`; the recipe kinds of §6.1; the inputs of §4.2's `craft_quality` (center, caps, Smithing-50 and `masterwork` flags) exposed to the client for §6.1's odds; placement validity with a reason code; placement ticks by Fieldcraft"
+  },
+  {
+   "to": "09",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): `StealthHud` (§8) in the doc 16 snapshot; the six states of §6.1; noise IDs `noise.<category>` or `noise.<category>.<name>`; `Vocalize { kind: whistle \\ | shout }` producing §12's whistle and shout; `SetBreathHold` as `input.hold_breath`; §13.3's per-slot `lock_mode` set by `SetLockMode`, governing picks and hacks, Seize included; the manual pin targets computable on the owner's client from the keyed seq 1004 draws; the slip roll of doc 09 §13.2 (no break, no wear); §13.4's deck spark ending a hack attempt; `StealthHud` marks whose `flags` bit 0 is set while the pair's meter rose in the last 20 ticks (§8.3), which §10.10's arcs read; for a targeted device its verbs, `chance`, `ticks` and `hack_fails`, and for a pickpocket target its stealable items with chance and ticks, available to the owner's client; `Hack { target, verb }`, `Steal { target, uid }` and `Plant { target, uid }` as doc 02 intents (§10.12)"
+  },
+  {
+   "to": "10",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): `ItemView` per §2.8, extended with doc 11's perk columns, parts, stack, value, `illuminated` and `finder_slot`; `candidates(d)` replicated for the Ledger"
+  },
+  {
+   "to": "11",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): the instance fields of §2.2 in `ItemView`; `displayed_weights` and Reliquary line weights exposed to the opener's client; the mimic placement rate per tier (§10); §12.2's trade factor and `ShopHaggle { shop }`; §12.3's services without repair or mount mending (C-30, C-31); `DropLucre { amount }` (§17); the cursed capsule sealed with `OMEN` and its cursed share (§11.2)"
+  },
+  {
+   "to": "12",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): the §5.7 plan functions callable on the client for door panels; §4.1's per-Law triggers, `laws_triggered` slot masks and viewer rule (present), which §7 follows; the Folio quest of §20.6 with §20.4's read count and §20.5's Leaf (present); for Second Edition (DECISIONS 101), how `local_genre` reads in a fused Folio and the order of its genre pair, which §11.10 uses for the skin fallback and the header sigils"
+  },
+  {
+   "to": "13",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): `MinionCommand { kind, minions: All \\ | List(Vec<EntityId>), cell, target }` resolving into §6's per-minion `Follow`, `Hold(CellIdx)`, `Attack(EntityId)`; companion approval, loyalty and quest state in the owner's `OwnerDelta`"
+  },
+  {
+   "to": "14",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): the 32 `margin.slot.*` records of §5.1a (defined); `RunSummary` carrying `mercy_ever_on` and `min_game_speed_bp`; Grade unlocks and achievements ignoring Mercy (DECISIONS 82, C-04); ranked eligibility excluding game speeds below 10000 (G-201); the party's visited-room set; the Prologue room L3 rewrite (C-03); §3.8's `clock_start` with Canon §17.1's 43,200-tick onset, the cap of 10 stacks and one hunter per Folio (Canon §11.6); the account's discovered World Laws kept with the Index (§5.5, present); Glyph Library picks with their refusal reasons in `ErratumSelect`, made on the Dramatis page (§5.7); arc beats made available per resident (§5.6); the closing manuscript inputs (§4.7); §8.9's Second Edition door order, stakes, forfeit, `RunSummary.ironman` and board mark (present), offered from Early Access (DECISIONS 118), where §8.9 still writes 1.0"
+  },
+  {
+   "to": "15",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): the account profile syncing `mercy_enabled` and `mercy_bp`; odds and history endpoints for the Inkwell and Vault screens; the `transcription` counter and the claim with its `insufficient_transcription` refusal (§3.9.1); epoch state, commitment, client-seed modes, \"Reveal now\" and the verifier library for the Fairness panel (§4.1, §4.3); `cosm.frame.ironman` (§2.2); voice with non-friends muted by default (§8.5)"
+  },
+  {
+   "to": "16",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): the snapshot `HUD` section carrying `light_sky` and `light_block`, after light overrides, in one byte (low nibble block, high nibble sky, the `ChunkView.light` layout) beside `light_at` (C-09); `StealthHud` in the snapshot's `STEALTH` section with its caps of 4 rings, 8 marks and 4 steps and each mark's `bearing` (§6.8, present); the sanitizer accepting §12.2's values and replacing a command with `ACTION` 6 or 7 or bit 25 set (C-10); a second `PING` press within `ping_danger_ticks` (15) upgrading the ping to danger (§9.12, present); `RunView` carrying the Folio quest state (story events read, `story_solved`, the slot holding the Folio Leaf) and the run's `laws_triggered`, and `ev.law_discovered` delivered to the clients of the slots it names, so §7 keeps its inputs across a join or reconnect; the lobby browser data, `Welcome.presentation_hash`, `VoiceMute`, kick votes, client states and `MigrateAnnounce` that §11.9 draws (present); game speed locked to 10000 with remote peers; `RunState` carrying the party map reveal of `item.text.mapping`; the trace service and the vote path of DECISIONS 96 and 104 (doc 16 O2), before §11.6 adds their screens"
+  },
+  {
+   "to": "18",
+   "request": "Interface assumption from chapter 17 (its own statement of what it needs): caption keys on `aud.*` records; `art.icon.<status>` and `art.icon.aether.<genre_suffix>` glyphs; heading faces (`art.font.*`) and font files with license fields; every `loc.ui.*` string; `vfx.aware.*` over-head glyphs with doc 09's state names; Narrator notes (`loc.nar.note.*`) tagged with the moment that shows them, so §16.4 can place them; the Margin cast lines and arc beats of §8.4 and the closing manuscript of §8.5a; the creator presets of DECISIONS 97"
+  }
+ ],
  "product_questions": [],
  "unresolved": [
-  "The log names cross-chapter requests to docs 02, 03, 06, 09, 12, 14, 16 and 21 but does not record their text; the text must be recovered from the chapter edits before those requests can be checked.",
-  "Petition count (32 vs 40) left open for doc 06 in log_17.md."
+  "Petition count (32 vs 40) left open for doc 06 in log_17.md.",
+  "Cross-chapter request texts are taken from chapter 17's Interface assumptions rows, since its log does not record them; each row's present or requested status is unverified against the target chapter."
  ],
  "summary": "Reconstructed from log_17.md, which records the dispositions. G28 applied to canon §5.8 and recorded in the canon-1.12 changelog; G29 already present."
 }

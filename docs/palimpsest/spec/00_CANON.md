@@ -2054,7 +2054,7 @@ Cut from the wave-2 canon requests (audit/canon_1_12_apply_log.txt; 37 applied, 
 - Ghosts (doc 03 G6, requests 28 and 34): a ghost collides with voxels only (§17.6).
 - Law memory (doc 17 G28): a discovered World Law is remembered by the account's Index, not the Codex battle pass (§5.8). Erasure schedule keyed on clock_start (doc 17 G29; already in §17.1).
 
-Not in this cut: the ghost-collision rule (old text did not match), the 1,600 mm mantle wording (old text did not match), doc 19's §19 table restructure (rejected: it broke the generator), and the Second Edition revised-Editor rule (doc 13 owns it).
+Not in this cut: the ghost-collision rule (old text did not match), the 1,600 mm mantle wording (applied instead through the §4.2 movement kit, 2,000 mm), doc 19's §19 table restructure (rejected: it broke the generator), and the Second Edition revised-Editor rule (doc 13 owns it).
 
 ### canon-1.12 (2026-10-12)
 
