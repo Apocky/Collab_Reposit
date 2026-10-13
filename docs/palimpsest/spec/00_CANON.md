@@ -1906,6 +1906,7 @@ Doc 03 owns the event bus and the full payload schemas. The IDs below are the ca
 | `comp.`, `sys.`, `grid.` | 03 |
 | `loc.` text keys | 18 (not content IDs, §1.10) |
 | `wx.` | 09 (weather states, §5.12) |
+| `tod.` | 03 (time-of-day records, §5.12) |
 | `family.` | 06 (glyph families, doc 06) |
 
 ---

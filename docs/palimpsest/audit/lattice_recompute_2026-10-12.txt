@@ -1,11 +1,10 @@
 Standard 25, draws m=2..24 (doc 12 feasibility scope): N_min = 12; N-1 = 11 fails choosing Folio 20 with 2 eligible after ['MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'WX', 'SP', 'G7', 'G8', 'G9']
-Standard 25 (draws m=2..25): N_min = 13; N-1 = 12 fails choosing Folio 25 with 2 eligible after ['MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'SP', 'MF', 'GH', 'CP', 'WX', 'SP', 'WW', 'WX', 'SP', 'G7', 'G8', 'G7', 'G8', 'G9', 'G10']
-Standard + Marginalia (m=26..50): N_min = 13; N-1 = 12 fails choosing Folio 25 with 2 eligible after ['MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'SP', 'MF', 'GH', 'CP', 'WX', 'SP', 'WW', 'WX', 'SP', 'G7', 'G8', 'G7', 'G8', 'G9', 'G10']
+Standard 25 (draws m=2..25): N_min = 12; N-1 = 11 fails choosing Folio 20 with 2 eligible after ['MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'WX', 'SP', 'G7', 'G8', 'G9']
+Standard + Marginalia (m=26..50): N_min = 12; N-1 = 11 fails choosing Folio 20 with 2 eligible after ['MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'WX', 'MF', 'GH', 'CP', 'WW', 'WX', 'SP', 'G7', 'G8', 'G9']
 Abridged 15 (m=2..15): N_min = 9; N-1 = 8 fails choosing Folio 15 with 2 eligible after ['MF', 'GH', 'CP', 'MF', 'GH', 'WW', 'MF', 'CP', 'WW', 'GH', 'CP', 'WW', 'WX', 'SP']
 Novella / Weekly 15 (m=2..15): N_min = 7; N-1 = 6 fails choosing Folio 5 with 2 eligible after ['MF', 'GH', 'CP', 'WW']
 Daily 5 (m=1..5): N_min = 7; N-1 = 6 fails choosing Folio 5 with 2 eligible after ['MF', 'GH', 'CP', 'WW']
 Second Edition pairs (cap=3 per genre): N_min = 11; N-1 fails choosing Folio 5 with 1 eligible pairs after [('MF', 'GH'), ('CP', 'WW'), ('WX', 'SP'), ('G7', 'G8')]
 Second Edition pairs (cap=none): N_min = 11; N-1 fails choosing Folio 5 with 1 eligible pairs after [('MF', 'GH'), ('CP', 'WW'), ('WX', 'SP'), ('G7', 'G8')]
 
-Recomputed 2026-10-12 with tools/roadmap/lattice_min.py (strict rules of doc 12 5.4 and 5.5; DECISIONS 115 exempts the exit draw before the forced Ur-Text Folio, which is why the Standard scope stops at draw 24).
-Reading: N_min is the smallest core genre count at which every reachable history keeps 3 eligible exits. At 12 core genres (DECISIONS 114): Standard 25 (draws 2 to 24), Abridged 15, Novella and Weekly 15, Daily 5 and Second Edition pairs hold; Marginalia (draws 26 to 50) needs 13 and fails at 12.
+Recomputed 2026-10-12 after applying DECISIONS 115 to the forced Ur-Text exit draw (m=25) in tools/roadmap/lattice_min.py. The first run did not apply the exemption and reported Marginalia at 13; that run is superseded. Reading: at 12 core genres every scope holds (Standard 25, Marginalia, Abridged 15, Novella, Weekly, Daily, Second Edition pairs). The minimum for each scope is the N_min line.

@@ -491,7 +491,7 @@ This chapter defines no content ID and owns no Canon §19 namespace. It exports 
 
 ## Canon gaps
 
-- **G1. Lattice feasibility, recomputed 2026-10-12.** The strict rules of doc 12 §5.4 and §5.5 need these core genre counts (audit/lattice_recompute_2026-10-12.txt): Standard 25 with the forced Ur-Text draw exempt (DECISIONS 115) 12; Abridged 15 9; Novella and Weekly 7; Daily 7; Second Edition pairs 11; Marginalia 13. At 12 core genres (DECISIONS 114) everything passes except Marginalia. DECISIONS 146 gates Marginalia on the 13th genre, so no cascade is needed at Early Access. Canon-1.12 must not adopt the relaxation cascade proposed in doc 12 G20 for Early Access; it stays a proposal for the 13th genre if the owner overturns 146.
+- **G1. Lattice feasibility, recomputed 2026-10-12.** The strict rules of doc 12 §5.4 and §5.5 need these core genre counts with DECISIONS 115 applied (audit/lattice_recompute_2026-10-12.txt): Standard 25 12; Marginalia 12; Abridged 15 9; Novella and Weekly 7; Daily 7; Second Edition pairs 11. DECISIONS 114's 12 core genres meet every scope, so no cascade or gate is needed at Early Access.
 - **G2. Folio 1 for an unshipped Origin genre.** `FOLIO_1_GENRE` names the host's Origin genre, which can lie outside the content set. Proposal: the mapping of §2.3 (b), in Canon §17.1 and doc 12 §5.6 (Folio 1).
 - **G3. Shipped genre set.** The canon has no notion of a build whose content set holds fewer than 12 core genres. Proposal: as doc 12 §25 does for expansions, a core genre outside the content set is not a lattice node.
 - **G4. Pillar tests at Early Access.** Doc 01 §2 words five tests for Standard runs and 12 genres. Proposal: doc 01 adopts the readings of §2.3 (e) for the Early Access gate.

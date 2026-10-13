@@ -806,7 +806,7 @@ This chapter defines no content IDs. It exports:
 - **G9. Negative zero.** Canon §1.6 is silent on the integer token `-0`. This chapter rejects it with `E_FLOAT_TOKEN`, matching `palimpsest_data`, whose `serde_json` reads it as `-0.0`. Proposal: Canon §1.6 adds "`-0` is not an integer".
 - **G10. Repeated object keys.** Neither the canon nor doc 02 rules on a JSON object that repeats a key; `serde_json` keeps the last value silently. This chapter rejects it (`E_JSON`), and §7 item 5 asks the loader to match. Proposal: Canon §1.6 forbids repeated keys.
 - **G11. Schemas for shared namespaces.** Canon §19 gives some namespaces two owners (`ax.` and `genre.`, `block.`, `ev.` and `rng.`, the core values of rows 10 to 12) without saying whose file holds a given record. This chapter keeps one record per ID (§1.2) and places each kind in one owner's directory in §5. Proposal: Canon §19 names, per shared namespace, the document whose files hold the records.
-- **G12. Retired IDs of DECISIONS.md 128 and 132.** `gen_namespaces.py` retires only what Canon §17.7 declares, and §17.7 does not yet name the IDs that DECISIONS.md 128 and 132 retire. Until it does, content holding them passes stage 8. Proposal: Canon §17.7 adds the sentence "cat.seed, block.crop and mat.tag.tillable (DECISIONS.md, item 128) and mode.prologue (item 132) are retired IDs and must not appear in content."
+- **G12. Retired IDs of DECISIONS.md 128 and 132.** Closed by canon-1.12: Canon §17.7 names cat.seed, block.crop, mat.tag.tillable (DECISIONS 128) and mode.prologue (DECISIONS 132) as retired and not to appear in content.
 
 ## Acceptance tests
 
@@ -824,7 +824,7 @@ This chapter defines no content IDs. It exports:
 12. **Rust mirror (milestone M2).** The `palimpsest_data` equivalence test of §7 item 9 passes, and `pal schema export --check` passes on the committed schemas.
 13. **Template loot IDs (§1.2).** A `11.template_loot` record for `arch.melee.spear` has the ID loot.tpl.arch_melee_spear and `template` `arch.melee.spear`; a second record for the same template gives `E_DUP_ID`; a `template` holding an `st.` ID gives `E_REF_PREFIX`.
 14. **Patchable lines (§3.6).** The `11.loot_table` schema passes stage 1 with `"x-patchable": true` on `lines`; the same keyword on a non-array subschema gives `E_SCHEMA_DEF`.
-15. **Retirements of DECISIONS.md 128 and 132 (§1.4, G12).** Once Canon §17.7 carries the G12 sentence, `gen_namespaces.py --check` fails until the table is regenerated, and a record or reference cat.seed, block.crop, mat.tag.tillable or mode.prologue then gives `E_RETIRED`.
+15. **Retirements of DECISIONS.md 128 and 132 (§1.4, G12).** Canon §17.7 carries the retirement sentence (canon-1.12), so gen_namespaces.py --check matches it; a record or reference to a retired ID fails stage 8.
 16. **Achievements (§5, DECISIONS.md 141).** `content/14/ach/` holds at most 40 `14.achievement` records; every other account milestone is a `14.codex_mark` record.
 17. **Doc 13 fields (§5.1).** A `13.enemy_template` record without `visual` or `body_state.crouch_mm` gives `E_SCHEMA`; `flags.net_always` set to 2 gives `E_SCHEMA`; a `13.ability` record with a negative `knockback_mm_s` gives `E_SCHEMA`; a `visual` that starts with another prefix than `art.visual.` gives `E_REF_PREFIX`.
 18. **Service schemas (§1.3).** A file under `palimpsest/schemas/svc/` is not read by stage 1 and no `E_SCHEMA_DEF` names it.

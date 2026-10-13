@@ -47,6 +47,8 @@ def solve(N, mode):
         return (m, tuple(sorted(sig)))
     def elig(hist, m):
         cur = hist[-1] if hist else None
+        if m == 25:  # DECISIONS 115: the exit draw before the forced Ur-Text Folio is exempt from volume and cap rules; rule 4 still applies
+            return [g for g in range(N) if g != cur]
         vm = volume_of(mode, m)
         same = {hist[i - 1] for i in range(1, m) if volume_of(mode, i) == vm}
         return [g for g in range(N) if g != cur and g not in same and (m > 25 or hist.count(g) < 3)]

@@ -1950,7 +1950,7 @@ Canon-1.11 closes every gap this chapter listed at canon-1.4 (audit/canon_gaps_t
 
 1. **Abridged kill drops.** Canon §17.1 defines Abridged "loot quantity" as worldgen chests and floor-loot spots, leaves Reliquaries, Fortune Engines and vendor stock unchanged, and does not mention kill drops. This chapter also multiplies scaled kill-drop lines by 16667 Bp (§9.1), matching Abridged's × 16667 kill XP so that a 15-Folio run yields the kill loot of a 25-Folio one; §13.2's Abridged Lucre target assumes it. Proposed: §17.1 adds "and scaled kill-drop lines (doc 11 §9.1)".
 2. **Second Edition `ENH_CAP`.** DECISIONS 102 and 106 carry the Errata into Second Edition with their gear at depth `25 + 2n`, and canon-1.11 §13.7 states `ENH_CAP` for the main run and Marginalia only. This chapter applies the Marginalia formula to Second Edition Folios (§16.1, §16.2) without making them Marginalia (doc 14 §8.9). Proposed Canon §13.7 text: "`ENH_CAP = 15` in the main run and `15 + floor_div(d_current - 25, 5)` in Marginalia and in Second Edition, whose Folio `n` has `d_current = 25 + 2n`." The grappling tool needs no canon text: doc 03 §5.24 states its movement and §3.5 defines `item.tool.grapple`.
-3. **Seeds.** DECISIONS 128 cuts seeds; Canon §13.1 still lists the row "| cat.seed | plantable seeds | 07, 08 |". This chapter retires the category (§3.1, Exports 26 `cat.` IDs). Proposed: Canon §13.1 deletes that row and Canon §17.7 lists cat.seed as retired.
+3. **Seeds.** DECISIONS 128 cuts seeds; Canon §13.1 still lists the row "| cat.seed | plantable seeds | 07, 08 |". This chapter retires the category (§3.1, Exports 26 `cat.` IDs). Canon §13.1 has no seed row, and Canon §17.7 (canon-1.12) lists cat.seed as retired.
 
 ## Acceptance tests
 
