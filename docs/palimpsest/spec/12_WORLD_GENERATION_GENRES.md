@@ -42,7 +42,7 @@ This chapter owns everything that turns a run seed into a playable Folio: the fu
 | `d`, `pos` | depth and structural position of a Folio (doc 14 §3.1); `d` is a `u32` of at least 1 (Canon §13.8) |
 | `n` | the Folio index that keys streams and `EntityId`s (Canon §1.11, §3.2); equal to `d` except in Abridged |
 | Block linear index | `bx + 256 × (bz + 256 × by)` for a block of the Folio box, range `0..=4194303` (the doc 02 `Gidx` order) |
-| Pit depth | every worldgen pit (spike pit, collapsing floor) is 2 blocks deep, which every Erratum leaves with a jump and a mantle: a mantle whose top lies at most 2000 mm above the feet climbs it (Canon §4.2; a jump adds no reach) |
+| Pit depth | every worldgen pit (spike pit, collapsing floor) is 2 blocks deep, which every Erratum leaves with a jump and a mantle: a mantle whose top lies at most 2000 mm above the feet climbs it (Canon §4.2; doc 03 §5.9 measures it from the last grounded floor, and a jump adds no reach) |
 | `rooms_total` | the count of non-secret mission-graph nodes after stage `graph` (Incipit and Colophon included) |
 
 This chapter owns full `genre.` vectors and the namespaces `gpv.`, `lattice.`, `room.`, `biome.`, `hazard.`, `secret.`, `law.` and `zone.` (Canon §19), plus the behavior of `rng.lattice`, `rng.worldgen`, `rng.event`, `st.contradicted`, `st.unmoored` (§24.3) and `cat.quest` items placed by worldgen (§20.5).
@@ -1022,7 +1022,7 @@ Wall and floor blocks at Chebyshev distance `dist ∈ {0, 1}` from a face betwee
 Nodes are feet cells (§1). Edges, each also listing what it needs:
 
 - **Walk:** to a horizontally adjacent feet cell at the same level.
-- **Climb up:** 1 block (step-up or jump) when the target has 2 air cells above it; 2 blocks (mantle, doc 03 §5.9 and Canon §4.2: a ledge top at most 2000 mm above the feet; a jump adds no reach) when the target has 2 air cells above it and the source column has 4. Climbable blocks (doc 03 `climbable`) and slab stairs link every level they span.
+- **Climb up:** 1 block (step-up or jump) when the target has 2 air cells above it; 2 blocks (mantle, Canon §4.2 and doc 03 §5.9: a ledge top at most 2000 mm above the feet; doc 03 §5.9 adds no reach for a jump) when the target has 2 air cells above it and the source column has 4. Climbable blocks (doc 03 `climbable`) and slab stairs link every level they span.
 - **Drop:** to the feet cell below an adjacent air column. A **safe drop** falls at most `floor_div(SAFE_FALL(v), 1000)` blocks, `v` the target's local VERVE (Canon §4.2: 3 blocks at VERVE 0, 4 at VERVE 10); any longer drop is a **hard drop**, which costs HP but is still possible.
 - **Swim:** through water, blood, oil, alcohol and every other liquid except lava, acid and red ink, which block; a swim segment longer than 16 blocks without a 2-block air pocket blocks (breath, §11.2).
 - **Doors:** Open doors pass; `Locked(keys)` passes when every key is held; a OneWay door passes only from its `from` side; a `PuzzleGate` passes once its puzzle room is reached (§16.3 guarantees solvability); the `RubricGate` passes once every Rubric target is reached (always in rest Folios); `Hidden` edges pass for V4 only (a player who found the secret may use it) and never for V1–V3; relink doors follow the state being checked.
