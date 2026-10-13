@@ -1,146 +1,79 @@
-# PALIMPSEST — Session Handover
+# PALIMPSEST: handover (2026-10-12, local Windows session)
 
-Written 2026-10-12 at the end of a cloud session. The next session has local file access at `C:\Users\Apocky\source\repos\The Game`. Read this file first, then `README.md` in this folder.
+Supersedes `HANDOVER-2026-10-12-cloud-archived.md`, written at the end of the cloud session and kept for history. Read this file first, then `README.md`. `DECISIONS.md` overrides every chapter, and `spec/00_CANON.md` (canon-1.12) overrides chapter numbers.
 
-## 1. What the project is
+## 1. What this is
 
-PALIMPSEST (working title) is a first-person, real-time 60 Hz co-op roguelike for 1 to 4 players. Every floor, called a Folio, is written in a different fictional genre. The player characters are Errata and the antagonists are the Editors. The Margin is a walkable 3D hub, and the final Folio is the Ur-Text.
+PALIMPSEST is a first-person 60 Hz co-op roguelike. Players are Errata, characters who fell out of their own stories. They descend through Folios, each written in a different genre, toward the Ur-Text, while the Editors try to erase them. Platform: Steam (Windows, Steam Deck via Proton). Stack: Rust 1.99 with Bevy 0.20 over a deterministic integer simulation. Monetization: earned randomness, paid certainty. Base game USD 19.99, Folio Expansions USD 9.99, Codex premium USD 9.99.
 
-- **Platform and stack:** PC on Steam only. Rust 1.99.0 with Bevy 0.20.0.
-- **Simulation:** a deterministic integer simulation in `palimpsest_sim`, with no floats in state.
-- **Monetization:** "Earned Randomness, Paid Certainty". The base game is USD 19.99, Folio Expansions are USD 9.99, and the Codex premium pass is USD 9.99. There is no premium currency.
+The owner is Apocky. He wants clarification questions asked continuously, each answer recorded as a numbered row in `DECISIONS.md`, and no hard release dates.
 
-The user, Apocky, is the product owner. They want to be **asked clarification questions for every system, continuously** ("just keep them coming"). Each answer is recorded as a numbered row in `DECISIONS.md`.
+## 2. Where things are
 
-## 2. Getting the files
+- Repo: `C:\Users\Apocky\source\repos\The Game`, remote `github.com/Apocky/Collab_Reposit`, branch `claude/3d-omni-genre-roguelike-se65qx`. HEAD when this was written: `6359fe5`. No pull request; do not open one unless asked.
+- Spec: `docs/palimpsest/spec/00` to `21`. Chapters 00 to 18 are the design, 19 the data format, 20 the generated content catalog, 21 the generated roadmap.
+- Ledger: `docs/palimpsest/DECISIONS.md`, rows 1 to 147. Row 147 supersedes row 146, which was retracted.
+- Rust: `palimpsest/` with crates `palimpsest_math`, `palimpsest_data` and `palimpsest_sim`. Content is in `palimpsest/content/`, schemas in `palimpsest/schemas/`, and the validator is `palimpsest/tools/validate_content.py`.
+- Audit: `docs/palimpsest/audit/` holds the wave-2 logs and outboxes, the canon-1.12 apply log, the lattice recompute, and the unowned namespace list.
+- Generators: `docs/palimpsest/tools/roadmap/gen.py` builds the roadmap from `template.md` and `wps.py`. Also `tools/roadmap/lattice_min.py`, `tools/roadmap/record_wp.py`, `tools/catalog/extract_content.py`, `tools/catalog/gen_catalog.py`, and the linter `tools/spec_lint.py`.
 
-```powershell
-git clone --branch claude/3d-omni-genre-roguelike-se65qx --single-branch https://github.com/Apocky/Collab_Reposit.git "C:\Users\Apocky\source\repos\The Game"
-```
+## 3. Health checks
 
-The last pushed commit is `2d83dda`. Work only on branch `claude/3d-omni-genre-roguelike-se65qx`. No pull request exists, and none should be opened unless the user asks.
+Run these from the repo. They all passed when this was written.
 
-For a standalone repository, `docs/palimpsest/tools/export_standalone.ps1 -Name "The Game"` mirrors `palimpsest/` to the repository root and `docs/palimpsest/` to `docs/`.
+    cd "C:/Users/Apocky/source/repos/The Game/palimpsest"
+    cargo fmt --all -- --check
+    cargo clippy --workspace --all-targets --locked -- -D warnings
+    cargo test --workspace --locked
+    python tools/validate_content.py
+    python tools/gen_namespaces.py --check
+    cd "../docs/palimpsest"
+    python tools/spec_lint.py
+    python tools/roadmap/checks.py spec/21_IMPLEMENTATION_ROADMAP.md
 
-## 3. Layout
+Measured results: 562 cargo tests passing. The validator reports 0 errors across 3,592 records, which is 3,451 game records and 141 namespace records. The namespaces match canon. The spec linter is clean except the pre-existing hedge "optionally" in chapter 00. No ID is defined in more than one chapter. The roadmap checks report 0 errors.
 
-| Path | Contents |
-|---|---|
-| `docs/palimpsest/DESIGN_BRIEF.md` | Orchestrator brief with the structural decisions |
-| `docs/palimpsest/DECISIONS.md` | **Binding ledger: product-owner rows 1–145** plus orchestrator rows. It overrides everything else. |
-| `docs/palimpsest/spec/00_CANON.md` | Binding source of truth, **canon-1.11**. The §23 changelog and the §21 acceptance tests 1–47 are in it. |
-| `docs/palimpsest/spec/01..18_*.md` | System chapters |
-| `docs/palimpsest/spec/19_DATA_SCHEMAS.md` | Content format, JSON Schema 2020-12, the validator pipeline and 25 error codes |
-| `docs/palimpsest/spec/21_IMPLEMENTATION_ROADMAP.md` | **Generated** by `tools/roadmap/gen.py` from `wps.py` and `template.md`. Never hand-edit it. |
-| `docs/palimpsest/research/R1..R7` | Web-verified research dossiers |
-| `docs/palimpsest/audit/` | ID maps, canon gap triage, `canon_1_11_notes.md`, `fix_NN.md` (wave 1 logs), `wave2/requests_NN.json` and `wave2/log_NN.md` |
-| `docs/palimpsest/tools/` | `spec_lint.py`, `apply_id_maps.py`, `export_standalone.ps1`, `roadmap/` (including `lattice_min.py`) |
-| `palimpsest/` | Rust workspace: `palimpsest_math`, `palimpsest_data`, `palimpsest_sim`; `schemas/`, `content/`, `tools/validate_content.py`, `tools/gen_namespaces.py`, `CHANGELOG_canon_1_11.md` |
-| `.github/workflows/palimpsest-ci.yml` | CI: fmt, clippy, tests, and a content job that runs the validator self-test and checks namespaces against the canon |
+## 4. Local traps on this machine
 
-## 4. Health checks to run first
+- Use `python`, not `python3`.
+- Every Python read and write of spec text needs `encoding="utf-8"`. The default here is cp1252, which crashed the linter once.
+- The default rustup host is `windows-gnu`, which has no `dlltool`. The workspace is pinned to `1.99.0-x86_64-pc-windows-msvc` by a directory override set on `palimpsest/`. Do not change `rust-toolchain.toml`.
+- The working tree is CRLF through `core.autocrlf`. Git warnings about LF endings are expected.
+- The console is cp1252. Print with `PYTHONIOENCODING=utf-8` or write to a file.
+- Shell heredocs containing quoted text broke once. For large text files, use the file write tool.
 
-```sh
-cd palimpsest
-cargo fmt --all -- --check
-cargo clippy --workspace --all-targets -- -D warnings
-cargo test --workspace                        # expect 558 passing
-python3 tools/validate_content.py --self-test # 27/27 cases, 25/25 codes
-python3 tools/validate_content.py
-python3 tools/gen_namespaces.py --check
-cd ../docs/palimpsest
-python3 tools/spec_lint.py                    # expect near-dry; see section 6
-```
+## 5. How the work is run
 
-## 5. Status
+- Timestamps: the owner asked for a clock stamp at the start of each reply, read with the `date` command, so time between turns is visible. Record each measured duration.
+- Subagents: the owner asked for no subagents during the chapter work. Later he said to do whatever is needed to resolve blockers. One bounded three-reviewer review ran and was useful. Ask before running more.
+- Commit trailer for commits made by the local session: `Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>`. Never put model identifiers in repository files.
+- Push, then read back with `git ls-remote`. A commit is not delivered until origin shows it.
+- Edit rules: anchored replacements that assert one match, then grep to confirm. Numbers are exact integers in millimetres, ticks, basis points or Bam. No floats. Hedge words are forbidden in prose.
 
-**Done**
-- Research, the canon (now at 1.11), and chapters 01–18, each written and reviewed.
-- The ID reconcile: 13 namespace clusters, with the maps applied.
-- The canon gap triage: 79 amendments, all applied in canon-1.11.
-- Wave-1 chapter fixes: one fixer plus one adversarial verifier per chapter for 01–18. The doc 13 roster now has at least 12 enemy types per genre.
-- The Rust slice conforms to canon-1.11, with 558 tests and an adversarial review.
-- Chapter 19 with its schemas, validator and CI.
-- Chapter 21 roadmap and its generator.
+## 6. Settled decisions that matter most
 
-**In progress: wave 2.** It was stopped by the account's weekly usage limit, which resets on Oct 15 at 14:00 UTC.
-- **Goal:** apply each chapter's routed cross-chapter requests (`audit/wave2/requests_NN.json`) and DECISIONS rows 89–145, then cut **canon-1.12**, then run an adversarial verify on every chapter.
-- **Complete:** chapter 07 and chapter 17. Their logs are in `audit/wave2/log_07.md` and `log_17.md`.
-- **Partial:** chapters 03, 09, 13, 14, 15 and 18. Some edits are on disk and committed. Read `log_NN.md` before continuing.
-- **Not started:** chapters 01, 02, 04, 05, 06, 08, 10, 11, 12, 16, 19 and 21.
-- **Workflow script:** the wave-2 script was in the session scratchpad, which is gone. Its prompts are summarized in section 7.
+- Early Access ships all 12 core genres (DECISIONS 114). The four secret genres follow the unlock rules.
+- Marginalia holds at 12 core genres under the strict lattice rules, once DECISIONS 115 is applied to the forced Ur-Text exit draw (DECISIONS 147, which retracted 146). Relaxation stays rejected (110).
+- No Prologue. Onboarding is contextual tips (DECISIONS 132 and 136). The first-run achievement replaces the Prologue achievements (137).
+- Steam only (DECISIONS 112 and 123). No EOS, no Epic store, no itch.io, no demo, no photo mode.
+- No item durability (65). No mounts or vehicles (55). No seeds or farming (128).
+- The ledge mantle reaches 2,000 mm above the feet (DECISIONS 95, canon §4.2). Doc 03 §5.9 measures it from the last grounded floor and says a jump adds no reach.
+- No hard release dates (111). Roadmap milestones are gates. `T0` is a configuration value set at launch.
 
-**Not started**
-- **Chapter 20:** a content catalog generated from validated JSON data. Per-owner agents must extract each chapter's tables into `palimpsest/content/<owner>/<namespace>/*.json` under schemas `<owner>.<kind>`. They write their schema sections into chapter 19's `<!-- SCHEMA-FRAGMENT:NN -->` placeholders. A generator script then writes `spec/20_CONTENT_CATALOG.md`.
-- Regenerate chapter 21 for decisions 109–145.
-- A final lint pass that runs until it reports nothing, a completeness critic, and a README refresh.
+## 7. Open work, with the next action for each
 
-## 6. Known open items
+1. **Roadmap calibration.** Sizes are in agent-days and are not calibrated. Section 3.6 of the roadmap says NOT CALIBRATED with 0 of 3 rows recorded. Next action: finish three work packages, then record each with `python tools/roadmap/record_wp.py WP-NNN START FINISH AGENT_DAYS "note"` (UTC times), then regenerate. Do not estimate elapsed time before then.
+2. **Adversarial verification.** Partly done: a three-reviewer pass covered canon consistency, Prologue retirement and the lattice numbers, and its verified findings are fixed. Not done for every chapter. Next action: with the owner's go-ahead, one reviewer per chapter group, defects reported as quotes, fixes applied only after verification.
+3. **Chapter headers** say "Written against canon-1.12 (adversarial check pending)". Remove that parenthetical after item 2 passes.
+4. **Canon-1.12 skipped requests.** The cut applied 37 of 43 requests. Later the ghost-collision sentence and the Law-memory wording were applied. Still open: chapter 03's 1,600 mm mantle wording, which the canon now replaces with the §4.2 movement kit, and some wording in chapters 09 and 13. The full list is in `audit/canon_1_12_apply_log.txt`.
+5. **Chapter 17 cross-chapter requests.** The 16 requests come from chapter 17's Interface assumptions rows, because its log does not record the request text. Each target chapter's status is unverified.
+6. **Chapter 20 field semantics.** The catalog holds all 3,451 IDs from the chapter tables, with fields as table text. Per-kind field schemas are not written. Next action: each owner chapter defines its kinds, then the validator checks the fields.
+7. **Rust.** The doc 02 follow-ups are done: tangent `ray_sphere`, `dda` with `max_steps`, `isqrt_u64`, the no-std simulation build, and the data crate's module names. The `Seed` category is removed from the loot code. Test count is 562.
 
-1. **Canon-1.12 inputs.** These need canon text:
-   - Decisions 95 (movement kit: mantle up to 2,000 mm, sprint-slide, grapple as an item), 99 (time of day and weather), 101, 105–108 and 117 (Second Edition), 115 (forced Ur-Text draw exemption), 116 (Origin genre fallback), 128 (retire `cat.seed`, `block.crop`, `mat.tag.tillable`), 131 and 134–135 (last stand) and 132 (retire `mode.prologue`).
-   - Doc 19's Canon gaps G1–G11.
-   - The canon requests in the chapter 07 and 17 results. Chapter 07's include the destructible-block list, fused-Folio `local_genre`, and the Second Edition depth of 25 + 2n.
-   - Add the newly retired IDs to `spec_lint.py` RETIRED.
-2. **Rust follow-ups.** Doc 02 requires these:
-   - `ray_sphere` must hit when `h == 0`.
-   - The DDA takes `max_steps`. Verify this.
-   - Add `isqrt_u64`.
-   - `palimpsest_sim` needs `no_std` under `cfg(not(test))`.
-   - Name the future `palimpsest_data` modules `loader`, `schema` and `mods`.
-   - Implement every canon-1.12 change once it is cut.
-3. **Leftovers to sweep for after wave 2:**
-   - "Nobles" must become "Crowns" (decision 90). Doc 18's name review must exempt Crowns.
-   - Prices of 24.99, 29.99 or 12.99.
-   - Any mention of EOS, Epic or itch.io.
-   - A demo or photo mode.
-   - Seeds, the Prologue, or relationships with Margin residents.
-   - "6 genres at Early Access" (decision 114 makes it all 12).
-   - Calendar release dates (decision 111 removes them).
-   - Achievements: about 40 curated, so doc 14 must trim from 60 (decision 141).
-4. **Product questions** that chapter agents raised with defaults applied are listed in each agent's result and log. Chapter 07 raised three: `mat.role.block`, sandbag blast resistance, and the lockpick yield and staff skill. Put these to the user.
-5. Doc 19 flags several cross-document conflicts:
-   - Doc 11's loot-record IDs duplicate template IDs.
-   - Doc 16's `content/16/schema/` path is not allowed.
-   - Doc 01 shows bare arrays without the envelope.
-   - Both doc 03 and doc 07 claim `block.air`.
-6. The ID `enemy.role.charger` replaces cavalry (decision 89). The Erasure hunter keeps `rank.hunter` identity but uses `rank.elite` multipliers (decision 91).
+## 8. Next steps, in order
 
-## 7. How the work was run, to reproduce it
-
-- **Wave-2 apply prompt, per chapter:** read `audit/wave2/requests_NN.json` and the DECISIONS rows that land in the chapter. For each item, mark it satisfied, edit it, propose a canon request, raise a cross-chapter request, or raise a product question with the default applied. Then lint the chapter and log progress to `audit/wave2/log_NN.md` as you go.
-- **Canon prompt:** collect every canon request plus the decisions with canon impact. Amend or reject each one, add tests, bump to canon-1.12 with a §23 changelog entry, and write `audit/canon_1_12_notes.md`.
-- **Verify prompt, per chapter:** check every request, decision and canon-1.12 change. Grep for leftovers, run the lint, and recompute worked examples.
-- **Edit rules:**
-  - Make edits with Python scripts that assert each anchor occurs exactly once, then grep to confirm each insertion.
-  - Numbers are exact integers in mm, ticks, Bp or Bam.
-  - No hedge words.
-  - Every chapter keeps Imports, Exports, Canon gaps, Interface assumptions and Acceptance tests.
-  - Each chapter edits only its own file.
-- **Concurrency:** on a 4-CPU machine a workflow runs only 2 agents at once. Split the work across parallel runs and commit after every finished agent, because usage limits stop agents mid-task.
-- **Commit trailer:**
-  ```
-  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
-  Claude-Session: https://claude.ai/code/session_01Sdvgk9fCZZciM32inVoMrZ
-  ```
-  Never put model identifiers in repository files.
-
-## 8. User preferences
-
-- Reason in the CSLv3 register. NIL and CSLv4 are auxiliary, with references at `C:\Users\Apocky\source\repos\NIL` and `CSLv4`. These are now reachable locally.
-- Acknowledge frustration before starting a task, and never treat it as aimed at the collaborator.
-- Favor velocity and see the whole system. Preserve provenance, authority, counterexamples and rollback.
-- Ask questions continuously, with a recommended default first. Record every answer in `DECISIONS.md`.
-
-## 9. Suggested next steps, in order
-
-1. Run the health checks in section 4.
-2. Finish wave 2: resume the partial chapters from their logs, then apply the chapters not started.
-3. Cut canon-1.12.
-4. Run the wave-2 verify on all chapters.
-5. Do the leftover sweep in item 3 of section 6.
-6. Implement canon-1.12 and the doc 02 follow-ups in the Rust slice, and keep the gates green.
-7. Regenerate chapter 21.
-8. Do the data extraction and write chapter 20.
-9. Run the lint until it reports nothing, run a completeness critic, refresh the README, then commit and push.
-10. Keep asking the user questions throughout.
+1. Get the owner's written confirmation of the settled points in section 6, especially 114, 146 and 147, 132, and 112.
+2. Finish three work packages and record them, which is the only way the roadmap gets a real calibration.
+3. With the owner's go-ahead, run item 2, then clear the headers.
+4. Work through item 6 chapter by chapter, starting with the chapters that have the most rows: 06, 11, 04 and 08.
+5. Keep asking the owner questions continuously. Record each answer in `DECISIONS.md` as a new row. Do not overwrite existing rows.
