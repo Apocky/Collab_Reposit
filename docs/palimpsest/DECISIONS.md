@@ -158,6 +158,7 @@ Decided by the product owner (Apocky) in session. "Kept" means the current spec 
 | 143 | Camera | Kept: first person by default with an over-the-shoulder third-person toggle; hit detection identical in both | Docs 05, 17, 18 |
 | 144 | Save profiles | Kept: 3 account profiles per Steam account, each with one suspended run, synced through Steam Cloud | Docs 02, 16 |
 | 145 | Survival meters | Kept: hunger only; no thirst or fatigue | Docs 04, 08 |
+| 146 | Marginalia lattice at Early Access | **New (orchestrator call from the recomputed lattice minimums, audit/lattice_recompute_2026-10-12.txt; owner may overturn):** at 12 core genres the strict lattice rules hold for Standard 25, Abridged 15, Novella, Weekly, Daily and Second Edition, but Marginalia (draws 26 to 50) needs 13 core genres. Rule 109 requires the strict rules in every mode, so Marginalia unlocks when the 13th genre ships, not at Early Access. Relaxation stays rejected (110). | Canon §17; docs 12, 14, 21 |
 
 ## 2026-10-11 — Orchestrator decisions from research
 
